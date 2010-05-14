@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orderingFromXml="true">
+	<PreferenceCategory android:title="@string/pref_cat_rtm_title">
+
+		<PreferenceScreen android:orderingFromXml="true"
+			android:title="@string/pref_scr_api_credentials_title"
+			android:summary="@string/pref_scr_api_credentials_summary">
+			<EditTextPreference android:key="@string/pref_api_key_key"
+				android:title="@string/pref_api_key_title" />
+			<EditTextPreference android:key="@string/pref_api_shared_secret_key"
+				android:title="@string/pref_api_shared_secret_title" />
+		</PreferenceScreen>
+
+		<dev.drsoran.moloko.prefs.RtmPermissionPreference android:title="@string/pref_permission_title"
+			android:key="@string/pref_permission_key" android:entries="@array/rtm_permissions"
+			android:entryValues="@array/rtm_permissions_values"
+			android:dependency="@string/pref_api_key_key" android:defaultValue="@string/pref_perm_no" />
+	</PreferenceCategory>
+
+</PreferenceScreen>

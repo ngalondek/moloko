@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Moloko</string>
+	<string name="app_preferences">Einstellungen</string>
+	<string name="app_login">Anmelden</string>
+	<string name="app_login_RtmWebAccess">Remember The Milk Anmeldung</string>
+	<string name="svc_rtm">Moloko.RtmService</string>
+	<string name="svc_rtm_process">:Moloko</string>
+
+   <!-- Global tags -->
+
+	<!-- Global keys -->
+	<string name="key_authToken">authToken</string>
+	<string name="key_authToken_date">authTokenDate</string>
+	<string name="key_url">url</string>
+	<string name="key_lastError">lastError</string>
+
+   <!-- Global errors -->
+   <string name="err_saving_preferences">Fehler beim Speichern der Einstellungen</string>
+   
+	<!-- Global buttons -->
+	<string name="btn_continue">Weiter</string>
+
+	<!-- Main activity -->
+	  <!-- Menus -->
+	  <string name="main_menu_opt_prefs_title">@string/app_preferences</string>
+
+	<!-- Preferences activity -->
+	<string name="pref_login_username_key">pref_login_username</string>
+	<string name="pref_login_username_title">Benutzername</string>
+	<string name="pref_login_username_summary">RTM Benutzername</string>
+	<string name="pref_login_pass_key">pref_login_pass</string>
+	<string name="pref_login_pass_title">Passwort</string>
+	<string name="pref_login_pass_summary">RTM Passwort</string>
+	<string name="pref_cat_rtm_title">RTM Zugriff</string>
+	<string name="pref_scr_api_credentials_title">API Referenzen</string>
+	<string name="pref_scr_api_credentials_summary">Milk API Akkreditierungsangaben</string>
+	<string name="pref_api_key_key">pref_api_key</string>
+	<string name="pref_api_key_title">API key</string>
+	<string name="pref_api_shared_secret_key">pref_api_shared_secret</string>
+	<string name="pref_api_shared_secret_title">Shared secret</string>
+	<string name="pref_permission_key">pref_permission</string>
+	<string name="pref_permission_title">Berechtigung</string>
+	<string name="pref_permission_summary">Legt die Zugriffsebene für die RTM Daten fest
+	</string>
+	<string name="pref_perm_no">Keine</string>
+	<string name="pref_perm_read">Lesen</string>
+	<string name="pref_perm_write">Lesen und Schreiben</string>
+	<string name="pref_perm_delete">Lesen, Schreiben und Löschen</string>
+	<string name="pref_perm_has">%1$s</string>
+	<string name="pref_perm_has_since">%1$s seit dem %2$s</string>
+	<string name="pref_perm_has_not">Diese Anwendung hat keine Zugangsberechtigung</string>
+     <!-- Dialogs -->
+	  <string name="pref_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene:</string>
+	  <string name="pref_dlg_finsihed">Zugriff gewährt für Ebene:</string>
+	  <string name="pref_dlg_error">Zugriff nicht gewährt. Grund:</string>
+	  <!-- Menus -->
+	  <string name="pref_ctxmenu_perm_check_auth_token">Überprüfe Gültigkeit</string>
+	  
+	  
+	<!-- Login activity -->
+	<string name="login_ret_success">Erfolg</string>
+	<string name="login_ret_canceled">Abgebrochen</string>
+	<string name="login_ret_error">Fehler</string>
+	<string name="login_err_conn_lost">Verbinding zum Dienst ist unerwartet abgebrochen</string>
+	<string name="login_err_rtmWebAccess">RTM Webzugriff ist fehlgeschlagen</string>
+	<string name="login_err_invalid_auth_token">Ungültiges Auth-Token</string>
+
+	<!-- RTM service status messages -->
+	<string name="rtmSvc_state_unknown">Unbekannt</string>
+	<string name="rtmSvc_state_internal_error">Interner Service Fehler</string>
+	<string name="rtmSvc_state_connected">Verbunden</string>
+	<string name="rtmSvc_state_disconnected">Getrennt</string>
+	  <!-- Auth -->
+	  <string name="rtmSvc_auth_get_url_start">Empfange Anmelde-URL</string>
+	  <string name="rtmSvc_auth_get_url_fin">Anmelde-URL empfangen</string>
+	  <string name="rtmSvc_auth_get_token_start">Empfange Authentifiezierungs-Token</string>
+	  <string name="rtmSvc_auth_get_token_fin">Authentifiezierungs-Token empfangen</string>
+	  <string name="rtmSvc_auth_failed">Authentifizierung fehlgeschlagen</string>
+
+	<!-- Log messages -->
+	<string name="log_e_resource_not_found">Resource not found</string>
+
+</resources>

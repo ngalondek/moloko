@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	android:versionCode="1" android:versionName="1.0" package="dev.drsoran.moloko">
+	<application android:icon="@drawable/icon" android:label="@string/app_name"
+		android:hasCode="true">
+		<activity android:label="@string/app_name" android:name=".main.Main">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+
+		<activity android:label="@string/app_preferences"
+			android:name=".prefs.Preferences"></activity>
+		<activity android:theme="@android:style/Theme.Translucent"
+			android:taskAffinity="@string/app_name" android:name=".login.Login"></activity>
+		<service android:exported="false" android:label="@string/svc_rtm"
+			android:process=".service.RtmService" android:name=".service.RtmService">
+			<intent-filter>
+				<action android:name="dev.drsoran.moloko.service.IRtmService"></action>
+			</intent-filter>
+		</service>
+		<activity android:name=".login.RtmWebAccess"
+			android:launchMode="singleTop" android:label="@string/app_login_RtmWebAccess"></activity>
+	
+</application>
+
+
+
+
+	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+</manifest> 

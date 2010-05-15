@@ -2,25 +2,18 @@ package dev.drsoran.moloko.service;
 
 import dev.drsoran.moloko.service.IRtmServiceCallback;
 import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
+import dev.drsoran.moloko.service.parcel.ParcelableRtmAuth;
 
 
 interface IRtmService
 {
-   void beginAuthorization( in ParcelableApplicationInfo info );
+   void initialize( in ParcelableApplicationInfo info );
    
-   String getLoginUrl();
+   String beginAuthorization( in ParcelableApplicationInfo info );
    
-   void completeAuthorization();
-   
-   String getAuthToken();
+   String completeAuthorization();
    
    boolean isAuthorized();
    
-   void registerCallback( IRtmServiceCallback callback );
-   
-   void unregisterCallback( IRtmServiceCallback callback );
-   
-   String getLastErrorDescription();
-   
-   int getLastErrorCode();
+   ParcelableRtmAuth checkAuthToken( in String authToken );
 }

@@ -67,4 +67,66 @@ public final class RtmServiceConstants
             return R.string.rtmSvc_state_unknown;
       }
    }
+   
+   
+   public final static class RtmErrorCodes
+   {
+      public final static int INVALID_SIGNATURE = 96;
+      
+      public final static int MISSING_SIGNATURE = 97;
+      
+      public final static int LOGIN_FAILED = 98;
+      
+      public final static int INVALID_AUTH_TOKEN = 98;
+      
+      public final static int NOT_LOGGED_IN = 99;
+      
+      public final static int INVALID_API_KEY = 100;
+      
+      public final static int SERVICE_UNAVAILABLE = 105;
+      
+      public final static int FORMAT_NOT_FOUND = 111;
+      
+      public final static int METHOD_NOT_FOUND = 112;
+      
+      public final static int INVALID_SOAP_ENVELOPE = 114;
+      
+      public final static int INVALID_XML_RPC_CALL = 115;
+      
+      public final static int INVALID_TIMELINE = 300;
+      
+      public final static int TRANSACTION_INVALID_ID = 310;
+      
+      public final static int LIST_INVALID_ID = 320;
+      
+      public final static int TASK_INVALID_ID = 340;
+      
+      public final static int NOTE_INVALID_ID = 350;
+      
+      public final static int CONTACT_INVALID_ID = 360;
+      
+      public final static int GROUP_ID_INVALID = 370;
+      
+      public final static int LOCATION_ID_INVALID = 380;
+      
+      public final static int CONTACT_INVALID = 1000;
+      
+      public final static int CONTACT_ALREADY_EXISTS = 1010;
+      
+      public final static int CONTACT_DOES_NOT_EXISTS = 1020;
+      
+      public final static int CONTACT_CANNOT_ADD_YOURSELF = 1030;
+      
+      public final static int GROUP_NAME_INVALID = 2000;
+      
+      public final static int GROUP_ALREADY_EXISTS = 2010;
+      
+      public final static int LIST_NAME_INVALID = 3000;
+      
+      public final static int LIST_LOCKED = 3010;
+      
+      public final static int TASK_NAME_INVALID = 4000;
+      
+      public final static int TASK_CANNOT_MOVE = 4010;
+   }
 }

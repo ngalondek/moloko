@@ -14,31 +14,24 @@ public class ParcelableApplicationInfo implements Parcelable
    private RtmAuth.Perms permission;
    
    public static final Parcelable.Creator< ParcelableApplicationInfo > CREATOR =
-            new Parcelable.Creator< ParcelableApplicationInfo >()
-            {
-               
-               public ParcelableApplicationInfo createFromParcel( Parcel source )
-               {
-                  return new ParcelableApplicationInfo( source );
-               }
-               
+      new Parcelable.Creator< ParcelableApplicationInfo >()
+      {
+         
+         public ParcelableApplicationInfo createFromParcel( Parcel source )
+         {
+            return new ParcelableApplicationInfo( source );
+         }
+         
 
 
-               public ParcelableApplicationInfo[] newArray( int size )
-               {
-                  return new ParcelableApplicationInfo[ size ];
-               }
-               
-            };
+         public ParcelableApplicationInfo[] newArray( int size )
+         {
+            return new ParcelableApplicationInfo[ size ];
+         }
+         
+      };
    
    
-
-   public ParcelableApplicationInfo()
-   {
-      
-   }
-   
-
 
    public ParcelableApplicationInfo( ApplicationInfo applicationInfo,
                                      RtmAuth.Perms permission )
@@ -87,8 +80,10 @@ public class ParcelableApplicationInfo implements Parcelable
    public void readFromParcel( Parcel in )
    {
       applicationInfo =
-               new ApplicationInfo( in.readString(), in.readString(), in
-                  .readString(), in.readString() );
+         new ApplicationInfo( in.readString(),
+                              in.readString(),
+                              in.readString(),
+                              in.readString() );
       permission = RtmAuth.Perms.valueOf( in.readString() );
    }
    

@@ -62,7 +62,7 @@ public class RtmWebAccess extends Activity
 
    private void returnWithCode( int code )
    {
-      setResult( code );
+      setResult( code, getIntent() );
       finish();
    }
 }

@@ -15,7 +15,13 @@
 	<string name="key_url">url</string>
 	<string name="key_lastError">lastError</string>
 
+   <!-- Global phrases -->
+   <string name="phr_please_wait">Bitte warten</string>
+
    <!-- Global errors -->
+   <string name="err_error">Fehler</string>
+   <string name="err_success">Erfolg</string>
+   <string name="err_canceled">Abgebrochen</string>
    <string name="err_saving_preferences">Fehler beim Speichern der Einstellungen</string>
    
 	<!-- Global buttons -->
@@ -51,20 +57,24 @@
 	<string name="pref_perm_has_since">%1$s seit dem %2$s</string>
 	<string name="pref_perm_has_not">Diese Anwendung hat keine Zugangsberechtigung</string>
      <!-- Dialogs -->
-	  <string name="pref_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene:</string>
-	  <string name="pref_dlg_finsihed">Zugriff gewährt für Ebene:</string>
-	  <string name="pref_dlg_error">Zugriff nicht gewährt. Grund:</string>
+	  <string name="pref_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene \'%1$s\'</string>
+	  <string name="pref_dlg_check_auth_token">Überprüfe Zugriffsebene %1$s</string>
+	  <string name="pref_dlg_check_auth_token_finished">Zugriffsebene %1$s für Benutzer %2$s bestätigt</string>
+	  <string name="pref_dlg_check_auth_token_invalid">Zugriff nicht bestätigt. Bitte neu beantragen</string>
+	  <string name="pref_dlg_update_svc_failed">Update der Zugriffsdaten fehlgeschlagen. Grund: %1$s</string>
+	  <string name="pref_dlg_finsihed">Zugriff der Ebene %1$s gewährt</string>
+	  <string name="pref_dlg_error">Zugriff nicht gewährt. Grund: %1$s</string>
+	  <!-- Errors -->	  
+     <string name="pref_err_conn_lost">Verbinding zum Dienst ist unerwartet abgebrochen</string>
+     <string name="pref_err_rtmWebAccess">RTM Webzugriff ist fehlgeschlagen</string>
+     <string name="pref_err_invalid_auth_token">Ungültiges Auth-Token</string>
+     <string name="pref_err_check_auth_token_failed">Überprüfung konnte nicht durchgeführt werden</string>
 	  <!-- Menus -->
 	  <string name="pref_ctxmenu_perm_check_auth_token">Überprüfe Gültigkeit</string>
 	  
 	  
 	<!-- Login activity -->
-	<string name="login_ret_success">Erfolg</string>
-	<string name="login_ret_canceled">Abgebrochen</string>
-	<string name="login_ret_error">Fehler</string>
-	<string name="login_err_conn_lost">Verbinding zum Dienst ist unerwartet abgebrochen</string>
-	<string name="login_err_rtmWebAccess">RTM Webzugriff ist fehlgeschlagen</string>
-	<string name="login_err_invalid_auth_token">Ungültiges Auth-Token</string>
+
 
 	<!-- RTM service status messages -->
 	<string name="rtmSvc_state_unknown">Unbekannt</string>

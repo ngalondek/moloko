@@ -34,7 +34,7 @@ public class RtmAuth extends RtmData
    
    public enum Perms
    {
-      none, read, write, delete
+      nothing, read, write, delete
    }
    
    public static final Parcelable.Creator< RtmAuth > CREATOR =

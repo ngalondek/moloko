@@ -123,7 +123,7 @@ public class Preferences extends PreferenceActivity implements
 
    public static RtmAuth.Perms getRtmPermission( Context context )
    {
-      RtmAuth.Perms perms = RtmAuth.Perms.none;
+      RtmAuth.Perms perms = RtmAuth.Perms.nothing;
       
       final SharedPreferences prefs =
          PreferenceManager.getDefaultSharedPreferences( context );
@@ -132,7 +132,7 @@ public class Preferences extends PreferenceActivity implements
       {
          perms =
             RtmAuth.Perms.valueOf( prefs.getString( context.getString( R.string.pref_permission_key ),
-                                                    RtmAuth.Perms.none.toString() ) );
+                                                    RtmAuth.Perms.nothing.toString() ) );
       }
       
       return perms;

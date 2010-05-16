@@ -9,9 +9,10 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
-import dev.drsoran.moloko.service.parcel.ParcelableRtmAuth;
+import dev.drsoran.moloko.service.parcel.ParcelableDate;
 
 
 public class RtmService extends Service
@@ -101,9 +102,9 @@ public class RtmService extends Service
       
 
 
-      public ParcelableRtmAuth checkAuthToken( String authToken ) throws RemoteException
+      public RtmAuth checkAuthToken( String authToken ) throws RemoteException
       {
-         ParcelableRtmAuth rtmAuth = null;
+         RtmAuth rtmAuth = null;
          
          if ( serviceImpl == null )
          {
@@ -112,8 +113,7 @@ public class RtmService extends Service
          
          try
          {
-            rtmAuth =
-                     new ParcelableRtmAuth( serviceImpl.auth_checkToken( authToken ) );
+            rtmAuth = serviceImpl.auth_checkToken( authToken );
          }
          catch ( ServiceException e )
          {
@@ -121,6 +121,35 @@ public class RtmService extends Service
          }
          
          return rtmAuth;
+      }
+      
+
+
+      public RtmTasks tasks_getList( String listId,
+                                     String filter,
+                                     ParcelableDate lastSync ) throws RemoteException
+      {
+         RtmTasks rtmTasks = null;
+         
+         if ( serviceImpl == null )
+         {
+            throw new RtmServiceException( RtmServiceConstants.ServiceState.INTERNAL_ERROR );
+         }
+         
+         try
+         {
+            rtmTasks =
+               serviceImpl.tasks_getList( listId,
+                                          filter,
+                                          ( lastSync != null ? lastSync.getDate()
+                                                            : null ) );
+         }
+         catch ( ServiceException e )
+         {
+            throw new RtmServiceException( e );
+         }
+         
+         return rtmTasks;
       }
    }
    

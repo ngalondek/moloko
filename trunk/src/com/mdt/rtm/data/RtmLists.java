@@ -23,38 +23,108 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.Element;
 
-public class RtmLists
-    extends RtmData
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
+public class RtmLists extends RtmData
 {
+   
+   public static final Parcelable.Creator< RtmLists > CREATOR =
+      new Parcelable.Creator< RtmLists >()
+      {
+         
+         public RtmLists createFromParcel( Parcel source )
+         {
+            return new RtmLists( source );
+         }
+         
 
-  private final Map<String, RtmList> lists;
 
-  public RtmLists()
-  {
-    this.lists = new HashMap<String, RtmList>();
-  }
+         public RtmLists[] newArray( int size )
+         {
+            return new RtmLists[ size ];
+         }
+         
+      };
+   
+   private final Map< String, RtmList > lists;
+   
+   
 
-  public RtmLists(Element elt)
-  {
-    final List<Element> children = children(elt, "list");
-    this.lists = new HashMap<String, RtmList>(children.size());
-    for (Element listElt : children)
-    {
-      RtmList list = new RtmList(listElt);
-      lists.put(list.getId(), list);
-    }
-  }
+   public RtmLists()
+   {
+      this.lists = new HashMap< String, RtmList >();
+   }
+   
 
-  public RtmList getList(String id)
-  {
-    return lists.get(id);
-  }
 
-  public Map<String, RtmList> getLists()
-  {
-    return Collections.unmodifiableMap(lists);
-  }
+   public RtmLists( Element elt )
+   {
+      final List< Element > children = children( elt, "list" );
+      this.lists = new HashMap< String, RtmList >( children.size() );
+      for ( Element listElt : children )
+      {
+         RtmList list = new RtmList( listElt );
+         lists.put( list.getId(), list );
+      }
+   }
+   
+
+
+   public RtmLists( Parcel source )
+   {
+      lists = new HashMap< String, RtmList >();
+      
+      final Bundle bundle = source.readBundle();
+      
+      final Set< String > keys = bundle.keySet();
+      
+      for ( String key : keys )
+      {
+         lists.put( key, (RtmList) bundle.getParcelable( key ) );
+      }
+   }
+   
+
+
+   public RtmList getList( String id )
+   {
+      return lists.get( id );
+   }
+   
+
+
+   public Map< String, RtmList > getLists()
+   {
+      return Collections.unmodifiableMap( lists );
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      final Bundle bundle = new Bundle( lists.size() );
+      
+      final Set< String > keys = lists.keySet();
+      
+      for ( String key : keys )
+      {
+         bundle.putParcelable( key, lists.get( key ) );
+      }
+      
+      dest.writeBundle( bundle );
+   }
 }

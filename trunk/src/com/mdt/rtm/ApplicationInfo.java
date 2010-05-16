@@ -20,55 +20,69 @@
 package com.mdt.rtm;
 
 /**
- * Encapsulates information about an application that is a client of RememberTheMilk. Includes information required by RTM to connect: the API key and
- * the shared secret.
+ * Encapsulates information about an application that is a client of RememberTheMilk. Includes information required by
+ * RTM to connect: the API key and the shared secret.
  * 
  * @author Will Ross Jun 22, 2007
  */
 public class ApplicationInfo
 {
+   
+   private final String apiKey;
+   
+   private final String sharedSecret;
+   
+   private final String name;
+   
+   private final String authToken;
+   
+   
 
-  private final String apiKey;
+   public ApplicationInfo( String apiKey, String sharedSecret, String name )
+   {
+      this( apiKey, sharedSecret, name, null );
+   }
+   
 
-  private final String sharedSecret;
 
-  private final String name;
+   public ApplicationInfo( String apiKey,
+                           String sharedSecret,
+                           String name,
+                           String authToken )
+   {
+      super();
+      this.apiKey = apiKey;
+      this.sharedSecret = sharedSecret;
+      this.name = name;
+      this.authToken = authToken;
+   }
+   
 
-  private final String authToken;
 
-  public ApplicationInfo(String apiKey, String sharedSecret, String name)
-  {
-    this(apiKey, sharedSecret, name, null);
-  }
+   public String getApiKey()
+   {
+      return apiKey;
+   }
+   
 
-  public ApplicationInfo(String apiKey, String sharedSecret, String name,
-      String authToken)
-  {
-    super();
-    this.apiKey = apiKey;
-    this.sharedSecret = sharedSecret;
-    this.name = name;
-    this.authToken = authToken;
-  }
 
-  public String getApiKey()
-  {
-    return apiKey;
-  }
+   public String getSharedSecret()
+   {
+      return sharedSecret;
+   }
+   
 
-  public String getSharedSecret()
-  {
-    return sharedSecret;
-  }
 
-  public String getName()
-  {
-    return name;
-  }
+   public String getName()
+   {
+      return name;
+   }
+   
 
-  public String getAuthToken()
-  {
-    return authToken;
-  }
 
+   public String getAuthToken()
+   {
+      return authToken;
+   }
+   
 }

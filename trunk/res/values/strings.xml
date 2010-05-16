@@ -29,6 +29,7 @@
 
 	<!-- Main activity -->
 	  <!-- Menus -->
+	  <string name="main_menu_opt_sync_title">Aktualisieren</string>
 	  <string name="main_menu_opt_prefs_title">@string/app_preferences</string>
 
 	<!-- Preferences activity -->

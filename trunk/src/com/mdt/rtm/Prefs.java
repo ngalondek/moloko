@@ -21,27 +21,40 @@ package com.mdt.rtm;
 
 import java.util.prefs.Preferences;
 
+
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class Prefs {
+public class Prefs
+{
+   
+   Preferences preferences;
+   
+   
+   public enum PrefKey
+   {
+      AuthToken
+   }
+   
+   
 
-  Preferences preferences;
+   public Prefs()
+   {
+      preferences = Preferences.userNodeForPackage( Prefs.class );
+   }
+   
 
-  public enum PrefKey {
-    AuthToken
-  }
 
-  public Prefs() {
-    preferences = Preferences.userNodeForPackage(Prefs.class);
-  }
+   public String getAuthToken()
+   {
+      return preferences.get( PrefKey.AuthToken.toString(), null );
+   }
+   
 
-  public String getAuthToken() {
-    return preferences.get(PrefKey.AuthToken.toString(), null);
-  }
 
-  public void setAuthToken(String authToken) {
-    preferences.put(PrefKey.AuthToken.toString(), authToken);
-  }
+   public void setAuthToken( String authToken )
+   {
+      preferences.put( PrefKey.AuthToken.toString(), authToken );
+   }
 }

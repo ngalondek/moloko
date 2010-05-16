@@ -21,19 +21,72 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
-public class RtmTimeline extends RtmData {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-  private final String id;
 
-  public RtmTimeline(String id) {
-    this.id = id;
-  }
+public class RtmTimeline extends RtmData
+{
+   
+   public static final Parcelable.Creator< RtmTimeline > CREATOR =
+      new Parcelable.Creator< RtmTimeline >()
+      {
+         
+         public RtmTimeline createFromParcel( Parcel source )
+         {
+            return new RtmTimeline( source );
+         }
+         
 
-  public RtmTimeline(Element elt) {
-    id = text(elt);
-  }
 
-  public String getId() {
-    return id;
-  }
+         public RtmTimeline[] newArray( int size )
+         {
+            return new RtmTimeline[ size ];
+         }
+         
+      };
+   
+   private final String id;
+   
+   
+
+   public RtmTimeline( String id )
+   {
+      this.id = id;
+   }
+   
+
+
+   public RtmTimeline( Element elt )
+   {
+      id = text( elt );
+   }
+   
+
+
+   public RtmTimeline( Parcel source )
+   {
+      id = source.readString();
+   }
+   
+
+
+   public String getId()
+   {
+      return id;
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( id );
+   }
 }

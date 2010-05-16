@@ -21,27 +21,85 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
-public class RtmList extends RtmData {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-  private final String id;
 
-  private final String name;
+public class RtmList extends RtmData
+{
+   
+   public static final Parcelable.Creator< RtmList > CREATOR =
+      new Parcelable.Creator< RtmList >()
+      {
+         
+         public RtmList createFromParcel( Parcel source )
+         {
+            return new RtmList( source );
+         }
+         
 
-  public RtmList(String id, String name) {
-    this.id = id;
-    this.name = name;
-  }
 
-  public RtmList(Element elt) {
-    id = elt.getAttribute("id");
-    name = elt.getAttribute("name");
-  }
+         public RtmList[] newArray( int size )
+         {
+            return new RtmList[ size ];
+         }
+         
+      };
+   
+   private final String id;
+   
+   private final String name;
+   
+   
 
-  public String getId() {
-    return id;
-  }
+   public RtmList( String id, String name )
+   {
+      this.id = id;
+      this.name = name;
+   }
+   
 
-  public String getName() {
-    return name;
-  }
+
+   public RtmList( Element elt )
+   {
+      id = elt.getAttribute( "id" );
+      name = elt.getAttribute( "name" );
+   }
+   
+
+
+   public RtmList( Parcel source )
+   {
+      id = source.readString();
+      name = source.readString();
+   }
+   
+
+
+   public String getId()
+   {
+      return id;
+   }
+   
+
+
+   public String getName()
+   {
+      return name;
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( id );
+      dest.writeString( name );
+   }
 }

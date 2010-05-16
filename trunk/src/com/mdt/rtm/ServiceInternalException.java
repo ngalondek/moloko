@@ -19,35 +19,39 @@
  */
 package com.mdt.rtm;
 
-
 /**
- * Introduced in order to get rid of the {@link RuntimeException}, and have only one time of regular exception to cope with, from the API end-user
- * point of view.
+ * Introduced in order to get rid of the {@link RuntimeException}, and have only one time of regular exception to cope
+ * with, from the API end-user point of view.
  * 
  * @author Edouard Mercier
  * @since 2008.04.23
  */
-public class ServiceInternalException
-    extends ServiceException
+public class ServiceInternalException extends ServiceException
 {
-  private static final long serialVersionUID = -423838945284984432L;
+   private static final long serialVersionUID = -423838945284984432L;
+   
+   private final Exception enclosedException;
+   
+   
 
-  private final Exception enclosedException;
+   public ServiceInternalException( String message )
+   {
+      this( message, null );
+   }
+   
 
-  public ServiceInternalException(String message)
-  {
-    this(message, null);
-  }
 
-  public ServiceInternalException(String message, Exception exception)
-  {
-    super(-1, "Service internal exception: " + message);
-    this.enclosedException = exception;
-  }
+   public ServiceInternalException( String message, Exception exception )
+   {
+      super( -1, "Service internal exception: " + message );
+      this.enclosedException = exception;
+   }
+   
 
-  public Exception getEnclosedException()
-  {
-    return enclosedException;
-  }
 
+   public Exception getEnclosedException()
+   {
+      return enclosedException;
+   }
+   
 }

@@ -24,31 +24,75 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
 /**
  * Represents the notes of a task.
  * 
  * @author Edouard Mercier
  * @since 2008.04.22
  */
-public class RtmTaskNotes
-    extends RtmData
+public class RtmTaskNotes extends RtmData
 {
+   public static final Parcelable.Creator< RtmTaskNotes > CREATOR =
+      new Parcelable.Creator< RtmTaskNotes >()
+      {
+         
+         public RtmTaskNotes createFromParcel( Parcel source )
+         {
+            return new RtmTaskNotes( source );
+         }
+         
 
-  private List<RtmTaskNote> notes;
 
-  public RtmTaskNotes(Element element)
-  {
-    final List<Element> children = children(element, "note");
-    notes = new ArrayList<RtmTaskNote>(children.size());
-    for (Element child : children)
-    {
-      notes.add(new RtmTaskNote(child));
-    }
-  }
+         public RtmTaskNotes[] newArray( int size )
+         {
+            return new RtmTaskNotes[ size ];
+         }
+         
+      };
+   
+   private List< RtmTaskNote > notes;
+   
+   
 
-  public List<RtmTaskNote> getNotes()
-  {
-    return notes;
-  }
+   public RtmTaskNotes( Element element )
+   {
+      final List< Element > children = children( element, "note" );
+      notes = new ArrayList< RtmTaskNote >( children.size() );
+      for ( Element child : children )
+      {
+         notes.add( new RtmTaskNote( child ) );
+      }
+   }
+   
 
+
+   public RtmTaskNotes( Parcel source )
+   {
+      notes = source.createTypedArrayList( RtmTaskNote.CREATOR );
+   }
+   
+
+
+   public List< RtmTaskNote > getNotes()
+   {
+      return notes;
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeTypedList( notes );
+   }
 }

@@ -23,25 +23,36 @@ package com.mdt.rtm;
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class ServiceException extends Exception {
+public class ServiceException extends Exception
+{
+   
+   private static final long serialVersionUID = -6711156026040643361L;
+   
+   int responseCode;
+   
+   String responseMessage;
+   
+   
 
-  private static final long serialVersionUID = -6711156026040643361L;
+   public ServiceException( int responseCode, String responseMessage )
+   {
+      super( "Service invocation failed.  Code: " + responseCode
+         + "; message: " + responseMessage );
+      this.responseCode = responseCode;
+      this.responseMessage = responseMessage;
+   }
+   
 
-  int responseCode;
 
-  String responseMessage;
+   public int getResponseCode()
+   {
+      return responseCode;
+   }
+   
 
-  public ServiceException(int responseCode, String responseMessage) {
-    super("Service invocation failed.  Code: " + responseCode + "; message: " + responseMessage);
-    this.responseCode = responseCode;
-    this.responseMessage = responseMessage;
-  }
 
-  public int getResponseCode() {
-    return responseCode;
-  }
-
-  public String getResponseMessage() {
-    return responseMessage;
-  }
+   public String getResponseMessage()
+   {
+      return responseMessage;
+   }
 }

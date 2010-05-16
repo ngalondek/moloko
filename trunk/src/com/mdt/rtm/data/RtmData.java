@@ -31,89 +31,110 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.os.Parcelable;
+
+
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public abstract class RtmData
+public abstract class RtmData implements Parcelable
 {
+   
+   private static final DateFormat DATE_FORMAT =
+      new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
+   
+   
 
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+   public RtmData()
+   {
+   }
+   
 
-  public RtmData()
-  {
-  }
 
-  /**
-   * The method is not optimized at most, but circumvents a bug in Android runtime.
-   */
-  public static Element child(Element elt, String nodeName)
-  {
-    NodeList childNodes = elt.getChildNodes();
-    for (int index = 0; index < childNodes.getLength(); index++)
-    {
-      Node child = childNodes.item(index);
-      if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(nodeName))
+   /**
+    * The method is not optimized at most, but circumvents a bug in Android runtime.
+    */
+   public static Element child( Element elt, String nodeName )
+   {
+      NodeList childNodes = elt.getChildNodes();
+      for ( int index = 0; index < childNodes.getLength(); index++ )
       {
-        return (Element) child;
+         Node child = childNodes.item( index );
+         if ( child.getNodeType() == Node.ELEMENT_NODE
+            && child.getNodeName().equals( nodeName ) )
+         {
+            return (Element) child;
+         }
       }
-    }
-    return null;
-  }
+      return null;
+   }
+   
 
-  /**
-   * The method is not optimized at most, but circumvents a bug in Android runtime.
-   */
-  public static List<Element> children(Element elt, String nodeName)
-  {
-    final List<Element> result = new LinkedList<Element>();
-    NodeList childNodes = elt.getChildNodes();
-    for (int index = 0; index < childNodes.getLength(); index++)
-    {
-      Node child = childNodes.item(index);
-      if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(nodeName))
+
+   /**
+    * The method is not optimized at most, but circumvents a bug in Android runtime.
+    */
+   public static List< Element > children( Element elt, String nodeName )
+   {
+      final List< Element > result = new LinkedList< Element >();
+      NodeList childNodes = elt.getChildNodes();
+      for ( int index = 0; index < childNodes.getLength(); index++ )
       {
-        result.add((Element) child);
+         Node child = childNodes.item( index );
+         if ( child.getNodeType() == Node.ELEMENT_NODE
+            && child.getNodeName().equals( nodeName ) )
+         {
+            result.add( (Element) child );
+         }
       }
-    }
-    return result;
-  }
+      return result;
+   }
+   
 
-  protected String text(Element elt)
-  {
-    StringBuilder result = new StringBuilder();
-    Node child = elt.getFirstChild();
-    while (child != null)
-    {
-      switch (child.getNodeType())
+
+   protected String text( Element elt )
+   {
+      StringBuilder result = new StringBuilder();
+      Node child = elt.getFirstChild();
+      while ( child != null )
       {
-      case Node.TEXT_NODE:
-      case Node.CDATA_SECTION_NODE:
-        result.append(child.getNodeValue());
-        break;
-      default:
-        break;
+         switch ( child.getNodeType() )
+         {
+            case Node.TEXT_NODE:
+            case Node.CDATA_SECTION_NODE:
+               result.append( child.getNodeValue() );
+               break;
+            default :
+               break;
+         }
+         child = child.getNextSibling();
       }
-      child = child.getNextSibling();
-    }
-    return result.toString();
-  }
+      return result.toString();
+   }
+   
 
-  public static Date parseDate(String s)
-  {
-    try
-    {
-      Date d = DATE_FORMAT.parse(s);
-      return new Date(d.getTime() + TimeZone.getDefault().getOffset(d.getTime()));
-    }
-    catch (ParseException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
 
-  public static String formatDate(Date d)
-  {
-    return DATE_FORMAT.format(new Date(d.getTime() - TimeZone.getDefault().getOffset(d.getTime()))) + "Z";
-  }
+   public static Date parseDate( String s )
+   {
+      try
+      {
+         Date d = DATE_FORMAT.parse( s );
+         return new Date( d.getTime()
+            + TimeZone.getDefault().getOffset( d.getTime() ) );
+      }
+      catch ( ParseException e )
+      {
+         throw new RuntimeException( e );
+      }
+   }
+   
+
+
+   public static String formatDate( Date d )
+   {
+      return DATE_FORMAT.format( new Date( d.getTime()
+         - TimeZone.getDefault().getOffset( d.getTime() ) ) )
+         + "Z";
+   }
 }

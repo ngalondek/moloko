@@ -21,24 +21,77 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class RtmFrob extends RtmData {
+public class RtmFrob extends RtmData
+{
+   
+   public static final Parcelable.Creator< RtmFrob > CREATOR =
+      new Parcelable.Creator< RtmFrob >()
+      {
+         
+         public RtmFrob createFromParcel( Parcel source )
+         {
+            return new RtmFrob( source );
+         }
+         
 
-  private final String value;
 
-  public RtmFrob(String value) {
-    this.value = value;
-  }
+         public RtmFrob[] newArray( int size )
+         {
+            return new RtmFrob[ size ];
+         }
+         
+      };
+   
+   private final String value;
+   
+   
 
-  public RtmFrob(Element elt) {
-    this.value = text(elt);
-  }
+   public RtmFrob( String value )
+   {
+      this.value = value;
+   }
+   
 
-  public String getValue() {
-    return value;
-  }
 
+   public RtmFrob( Element elt )
+   {
+      this.value = text( elt );
+   }
+   
+
+
+   public RtmFrob( Parcel source )
+   {
+      value = source.readString();
+   }
+   
+
+
+   public String getValue()
+   {
+      return value;
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( value );
+   }
+   
 }

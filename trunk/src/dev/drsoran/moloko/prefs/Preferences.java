@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -78,7 +79,7 @@ public class Preferences extends PreferenceActivity implements
       
       asyncService =
          new AsyncRtmService( this,
-                              getRtmApplicationInfo(),
+                              getRtmApplicationInfo( this ),
                               RtmAuth.Perms.valueOf( getPermissionList().getValue() ) );
    }
    
@@ -91,6 +92,50 @@ public class Preferences extends PreferenceActivity implements
       
       asyncService.shutdown();
       asyncService = null;
+   }
+   
+
+
+   public static ApplicationInfo getRtmApplicationInfo( Context context )
+   {
+      ApplicationInfo applicationInfo = null;
+      
+      final SharedPreferences prefs =
+         PreferenceManager.getDefaultSharedPreferences( context );
+      
+      if ( prefs != null )
+      {
+         applicationInfo =
+            new ApplicationInfo( prefs.getString( context.getString( R.string.pref_api_key_key ),
+                                                  null ),
+                                 prefs.getString( context.getString( R.string.pref_api_shared_secret_key ),
+                                                  null ),
+                                 prefs.getString( context.getString( R.string.pref_login_username_key ),
+                                                  null ),
+                                 prefs.getString( context.getString( R.string.key_authToken ),
+                                                  null ) );
+      }
+      
+      return applicationInfo;
+   }
+   
+
+
+   public static RtmAuth.Perms getRtmPermission( Context context )
+   {
+      RtmAuth.Perms perms = RtmAuth.Perms.none;
+      
+      final SharedPreferences prefs =
+         PreferenceManager.getDefaultSharedPreferences( context );
+      
+      if ( prefs != null )
+      {
+         perms =
+            RtmAuth.Perms.valueOf( prefs.getString( context.getString( R.string.pref_permission_key ),
+                                                    RtmAuth.Perms.none.toString() ) );
+      }
+      
+      return perms;
    }
    
 
@@ -332,7 +377,7 @@ public class Preferences extends PreferenceActivity implements
                             getString( R.string.pref_dlg_get_auth_token,
                                        newPermissionRequest ) );
             cancelOperationHandle =
-               asyncService.beginAuthorization( getRtmApplicationInfo(),
+               asyncService.beginAuthorization( getRtmApplicationInfo( this ),
                                                 RtmAuth.Perms.valueOf( newPermissionValue ),
                                                 new ResultCallback< String >( bundle )
                                                 {
@@ -479,7 +524,7 @@ public class Preferences extends PreferenceActivity implements
       {
          try
          {
-            asyncService.updateService( getRtmApplicationInfo(),
+            asyncService.updateService( getRtmApplicationInfo( this ),
                                         RtmAuth.Perms.valueOf( permissionLevel ) );
          }
          catch ( RemoteException e )
@@ -538,31 +583,6 @@ public class Preferences extends PreferenceActivity implements
       }
       
       return listPreference;
-   }
-   
-
-
-   private ApplicationInfo getRtmApplicationInfo()
-   {
-      ApplicationInfo applicationInfo = null;
-      
-      final SharedPreferences prefs =
-         PreferenceManager.getDefaultSharedPreferences( this );
-      
-      if ( prefs != null )
-      {
-         applicationInfo =
-            new ApplicationInfo( prefs.getString( getString( R.string.pref_api_key_key ),
-                                                  null ),
-                                 prefs.getString( getString( R.string.pref_api_shared_secret_key ),
-                                                  null ),
-                                 prefs.getString( getString( R.string.pref_login_username_key ),
-                                                  null ),
-                                 prefs.getString( getString( R.string.key_authToken ),
-                                                  null ) );
-      }
-      
-      return applicationInfo;
    }
    
 

@@ -21,39 +21,96 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
 /**
  * Represents a location.
  * 
  * @author Edouard Mercier
  * @since 2008.05.22
  */
-public class RtmLocation
-    extends RtmData
+public class RtmLocation extends RtmData
 {
+   public static final Parcelable.Creator< RtmLocation > CREATOR =
+      new Parcelable.Creator< RtmLocation >()
+      {
+         
+         public RtmLocation createFromParcel( Parcel source )
+         {
+            return new RtmLocation( source );
+         }
+         
 
-  public final String id;
 
-  public final String name;
+         public RtmLocation[] newArray( int size )
+         {
+            return new RtmLocation[ size ];
+         }
+         
+      };
+   
+   public final String id;
+   
+   public final String name;
+   
+   public final float longitude;
+   
+   public final float latitude;
+   
+   public final String address;
+   
+   public final boolean viewable;
+   
+   public int zoom;
+   
+   
 
-  public final float longitude;
+   public RtmLocation( Element element )
+   {
+      id = element.getAttribute( "id" );
+      name = element.getAttribute( "name" );
+      longitude = Float.parseFloat( element.getAttribute( "longitude" ) );
+      latitude = Float.parseFloat( element.getAttribute( "latitude" ) );
+      address = element.getAttribute( "address" );
+      zoom = Integer.parseInt( element.getAttribute( "zoom" ) );
+      viewable = element.getAttribute( "viewable" ).equals( "1" ) ? true
+                                                                 : false;
+   }
+   
 
-  public final float latitude;
 
-  public final String address;
+   public RtmLocation( Parcel source )
+   {
+      id = source.readString();
+      name = source.readString();
+      longitude = source.readFloat();
+      latitude = source.readFloat();
+      address = source.readString();
+      viewable = source.readInt() == 1;
+      zoom = source.readInt();
+      
+   }
+   
 
-  public final boolean viewable;
 
-  public int zoom;
+   public int describeContents()
+   {
+      return 0;
+   }
+   
 
-  public RtmLocation(Element element)
-  {
-    id = element.getAttribute("id");
-    name = element.getAttribute("name");
-    longitude = Float.parseFloat(element.getAttribute("longitude"));
-    latitude = Float.parseFloat(element.getAttribute("latitude"));
-    address = element.getAttribute("address");
-    zoom = Integer.parseInt(element.getAttribute("zoom"));
-    viewable = element.getAttribute("viewable").equals("1") ? true : false;
-  }
 
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( id );
+      dest.writeString( name );
+      dest.writeFloat( longitude );
+      dest.writeFloat( latitude );
+      dest.writeString( address );
+      dest.writeInt( viewable ? 1
+                             : 0 );
+      dest.writeInt( zoom );
+   }
 }

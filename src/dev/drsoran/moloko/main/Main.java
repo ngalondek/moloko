@@ -12,7 +12,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.SimpleAdapter;
+import android.widget.SimpleAdapter.ViewBinder;
 
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskSeries;
@@ -30,12 +33,35 @@ public class Main extends ListActivity
    
    private final static String ITEM_KEY = "ITEM_KEY";
    
-   private final ArrayList< HashMap< String, String > > tasks =
-      new ArrayList< HashMap< String, String > >();
+   private final ArrayList< HashMap< String, RtmTaskSeries > > tasks =
+      new ArrayList< HashMap< String, RtmTaskSeries > >();
    
    private SimpleAdapter adapter = null;
    
    private AsyncRtmService asyncRtmService = null;
+   
+   
+   private final class TaskViewBinder implements ViewBinder
+   {
+      
+      public boolean setViewValue( View view,
+                                   Object data,
+                                   String textRepresentation )
+      {
+         if ( data instanceof RtmTaskSeries && view instanceof CheckBox )
+         {
+            final RtmTaskSeries rtmTaskSeries = (RtmTaskSeries) data;
+            final CheckBox checkBox = (CheckBox) view;
+            
+            checkBox.setText( rtmTaskSeries.getName() );
+            checkBox.setChecked( rtmTaskSeries.getTask().getCompleted() != null );
+            
+            return true;
+         }
+         
+         return false;
+      }
+   }
    
    
 
@@ -59,6 +85,8 @@ public class Main extends ListActivity
                             { ITEM_KEY },
                             new int[]
                             { R.id.main_list_tasks_task_desc } );
+      
+      adapter.setViewBinder( new TaskViewBinder() );
       
       setListAdapter( adapter );
    }
@@ -126,8 +154,9 @@ public class Main extends ListActivity
             // for each task
             for ( RtmTaskSeries rtmTaskSeries : receivedTasks )
             {
-               HashMap< String, String > task = new HashMap< String, String >();
-               task.put( ITEM_KEY, rtmTaskSeries.getName() );
+               HashMap< String, RtmTaskSeries > task =
+                  new HashMap< String, RtmTaskSeries >();
+               task.put( ITEM_KEY, rtmTaskSeries );
                tasks.add( task );
             }
          }

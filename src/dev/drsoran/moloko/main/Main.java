@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
 
+import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
@@ -110,6 +111,17 @@ public class Main extends ListActivity
       inflater.inflate( R.menu.main_menu_options, menu );
       
       return addOptionsMenuIntents( menu );
+   }
+   
+
+
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      MenuItem syncItem = (MenuItem) menu.findItem( R.id.main_menu_opt_sync );
+      syncItem.setEnabled( Preferences.getRtmPermission( this ) != RtmAuth.Perms.nothing );
+      
+      return true;
    }
    
 

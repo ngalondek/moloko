@@ -21,42 +21,107 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class RtmUser extends RtmData {
+public class RtmUser extends RtmData
+{
+   public static final Parcelable.Creator< RtmUser > CREATOR =
+      new Parcelable.Creator< RtmUser >()
+      {
+         
+         public RtmUser createFromParcel( Parcel source )
+         {
+            return new RtmUser( source );
+         }
+         
 
-  private final String id;
 
-  private final String username;
+         public RtmUser[] newArray( int size )
+         {
+            return new RtmUser[ size ];
+         }
+         
+      };
+   
+   private final String id;
+   
+   private final String username;
+   
+   private final String fullname;
+   
+   
 
-  private final String fullname;
+   public RtmUser( String id, String username, String fullname )
+   {
+      this.id = id;
+      this.username = username;
+      this.fullname = fullname;
+   }
+   
 
-  public RtmUser(String id, String username, String fullname) {
-    this.id = id;
-    this.username = username;
-    this.fullname = fullname;
-  }
 
-  public RtmUser(Element elt) {
-    if (!elt.getNodeName().equals("user")) { throw new IllegalArgumentException("Element " + elt.getNodeName() + " does not represent a User object."); }
+   public RtmUser( Element elt )
+   {
+      if ( !elt.getNodeName().equals( "user" ) )
+      {
+         throw new IllegalArgumentException( "Element " + elt.getNodeName()
+            + " does not represent a User object." );
+      }
+      
+      this.id = elt.getAttribute( "id" );
+      this.username = elt.getAttribute( "username" );
+      this.fullname = elt.getAttribute( "fullname" );
+   }
+   
 
-    this.id = elt.getAttribute("id");
-    this.username = elt.getAttribute("username");
-    this.fullname = elt.getAttribute("fullname");
-  }
 
-  public String getId() {
-    return id;
-  }
+   public RtmUser( Parcel source )
+   {
+      id = source.readString();
+      username = source.readString();
+      fullname = source.readString();
+   }
+   
 
-  public String getUsername() {
-    return username;
-  }
 
-  public String getFullname() {
-    return fullname;
-  }
+   public String getId()
+   {
+      return id;
+   }
+   
 
+
+   public String getUsername()
+   {
+      return username;
+   }
+   
+
+
+   public String getFullname()
+   {
+      return fullname;
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( id );
+      dest.writeString( username );
+      dest.writeString( fullname );
+   }
 }

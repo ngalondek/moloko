@@ -22,35 +22,83 @@ package com.mdt.rtm.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.w3c.dom.Element;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class RtmTasks
-    extends RtmData
+public class RtmTasks extends RtmData
 {
+   public static final Parcelable.Creator< RtmTasks > CREATOR =
+      new Parcelable.Creator< RtmTasks >()
+      {
+         
+         public RtmTasks createFromParcel( Parcel source )
+         {
+            return new RtmTasks( source );
+         }
+         
 
-  private final List<RtmTaskList> lists;
 
-  public RtmTasks()
-  {
-    this.lists = new ArrayList<RtmTaskList>();
-  }
+         public RtmTasks[] newArray( int size )
+         {
+            return new RtmTasks[ size ];
+         }
+         
+      };
+   
+   private final List< RtmTaskList > lists;
+   
+   
 
-  public RtmTasks(Element elt)
-  {
-    final List<Element> children = children(elt, "list");
-    this.lists = new ArrayList<RtmTaskList>(children.size());
-    for (Element listElt : children)
-    {
-      lists.add(new RtmTaskList(listElt));
-    }
-  }
+   public RtmTasks()
+   {
+      this.lists = new ArrayList< RtmTaskList >();
+   }
+   
 
-  public List<RtmTaskList> getLists()
-  {
-    return Collections.unmodifiableList(lists);
-  }
+
+   public RtmTasks( Element elt )
+   {
+      final List< Element > children = children( elt, "list" );
+      this.lists = new ArrayList< RtmTaskList >( children.size() );
+      for ( Element listElt : children )
+      {
+         lists.add( new RtmTaskList( listElt ) );
+      }
+   }
+   
+
+
+   public RtmTasks( Parcel source )
+   {
+      lists = source.createTypedArrayList( RtmTaskList.CREATOR );
+   }
+   
+
+
+   public List< RtmTaskList > getLists()
+   {
+      return Collections.unmodifiableList( lists );
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeTypedList( lists );
+   }
 }

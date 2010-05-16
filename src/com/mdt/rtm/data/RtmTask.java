@@ -25,183 +25,292 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class RtmTask
-    extends RtmData
+public class RtmTask extends RtmData
 {
-
-  private static final Log log = LogFactory.getLog("RtmTask");
-
-  private final String id;
-
-  private final Date due;
-
-  private final int hasDueTime;
-
-  private final Date added;
-
-  private final Date completed;
-
-  private final Date deleted;
-
-  private final Priority priority;
-
-  private final int postponed;
-
-  private final String estimate;
-
-  public enum Priority
-  {
-    High, Medium, Low, None
-  }
-
-  public static String convertPriority(Priority priority)
-  {
-    switch (priority)
-    {
-    case None:
-      return new String(new char[] { 'n' });
-    case Low:
-      return new String(new char[] { '3' });
-    case Medium:
-      return new String(new char[] { '2' });
-    case High:
-      return new String(new char[] { '1' });
-    default:
-      log.error("Unrecognized RTM task priority: '" + priority + "'");
-      return new String(new char[] { 'n' });
-    }
-  }
-
-  public RtmTask(String id, Date due, int hasDueTime, Date added, Date completed, Date deleted, Priority priority, int postponed, String estimate)
-  {
-    this.id = id;
-    this.due = due;
-    this.hasDueTime = hasDueTime;
-    this.added = added;
-    this.completed = completed;
-    this.deleted = deleted;
-    this.priority = priority;
-    this.postponed = postponed;
-    this.estimate = estimate;
-  }
-
-  public RtmTask(Element elt)
-  {
-    id = elt.getAttribute("id");
-    String dueStr = elt.getAttribute("due");
-    due = (dueStr == null || dueStr.length() == 0) ? null : parseDate(dueStr);
-    hasDueTime = Integer.parseInt(elt.getAttribute("has_due_time"));
-    String addedStr = elt.getAttribute("added");
-    added = (addedStr == null || addedStr.length() == 0) ? null : parseDate(addedStr);
-    String completedStr = elt.getAttribute("completed");
-    completed = (completedStr == null || completedStr.length() == 0) ? null : parseDate(completedStr);
-    String deletedStr = elt.getAttribute("deleted");
-    deleted = (deletedStr == null || deletedStr.length() == 0) ? null : parseDate(deletedStr);
-    String priorityStr = elt.getAttribute("priority");
-    if (priorityStr.length() > 0)
-    {
-      switch (priorityStr.charAt(0))
+   public static final Parcelable.Creator< RtmTask > CREATOR =
+      new Parcelable.Creator< RtmTask >()
       {
-      case 'N':
-      case 'n':
-        priority = Priority.None;
-        break;
-      case '3':
-        priority = Priority.Low;
-        break;
-      case '2':
-        priority = Priority.Medium;
-        break;
-      case '1':
-        priority = Priority.High;
-        break;
-      default:
-        System.err.println("Unrecognized RTM task priority: '" + priorityStr + "'");
-        priority = Priority.Medium;
+         
+         public RtmTask createFromParcel( Parcel source )
+         {
+            return new RtmTask( source );
+         }
+         
+
+
+         public RtmTask[] newArray( int size )
+         {
+            return new RtmTask[ size ];
+         }
+         
+      };
+   
+   private static final Log log = LogFactory.getLog( "RtmTask" );
+   
+   private final String id;
+   
+   private final Date due;
+   
+   private final int hasDueTime;
+   
+   private final Date added;
+   
+   private final Date completed;
+   
+   private final Date deleted;
+   
+   private final Priority priority;
+   
+   private final int postponed;
+   
+   private final String estimate;
+   
+   
+   public enum Priority
+   {
+      High, Medium, Low, None
+   }
+   
+   
+
+   public static String convertPriority( Priority priority )
+   {
+      switch ( priority )
+      {
+         case None:
+            return new String( new char[]
+            { 'n' } );
+         case Low:
+            return new String( new char[]
+            { '3' } );
+         case Medium:
+            return new String( new char[]
+            { '2' } );
+         case High:
+            return new String( new char[]
+            { '1' } );
+         default :
+            log.error( "Unrecognized RTM task priority: '" + priority + "'" );
+            return new String( new char[]
+            { 'n' } );
       }
-    }
-    else
-    {
+   }
+   
+
+
+   public RtmTask( String id,
+                   Date due,
+                   int hasDueTime,
+                   Date added,
+                   Date completed,
+                   Date deleted,
+                   Priority priority,
+                   int postponed,
+                   String estimate )
+   {
+      this.id = id;
+      this.due = due;
+      this.hasDueTime = hasDueTime;
+      this.added = added;
+      this.completed = completed;
+      this.deleted = deleted;
+      this.priority = priority;
+      this.postponed = postponed;
+      this.estimate = estimate;
+   }
+   
+
+
+   public RtmTask( Element elt )
+   {
+      id = elt.getAttribute( "id" );
+      String dueStr = elt.getAttribute( "due" );
+      due = ( dueStr == null || dueStr.length() == 0 ) ? null
+                                                      : parseDate( dueStr );
+      hasDueTime = Integer.parseInt( elt.getAttribute( "has_due_time" ) );
+      String addedStr = elt.getAttribute( "added" );
+      added =
+         ( addedStr == null || addedStr.length() == 0 ) ? null
+                                                       : parseDate( addedStr );
+      String completedStr = elt.getAttribute( "completed" );
+      completed =
+         ( completedStr == null || completedStr.length() == 0 ) ? null
+                                                               : parseDate( completedStr );
+      String deletedStr = elt.getAttribute( "deleted" );
+      deleted =
+         ( deletedStr == null || deletedStr.length() == 0 ) ? null
+                                                           : parseDate( deletedStr );
+      String priorityStr = elt.getAttribute( "priority" );
+      if ( priorityStr.length() > 0 )
+      {
+         switch ( priorityStr.charAt( 0 ) )
+         {
+            case 'N':
+            case 'n':
+               priority = Priority.None;
+               break;
+            case '3':
+               priority = Priority.Low;
+               break;
+            case '2':
+               priority = Priority.Medium;
+               break;
+            case '1':
+               priority = Priority.High;
+               break;
+            default :
+               System.err.println( "Unrecognized RTM task priority: '"
+                  + priorityStr + "'" );
+               priority = Priority.Medium;
+         }
+      }
+      else
+      {
+         priority = Priority.None;
+      }
+      if ( elt.hasAttribute( "postponed" ) == true
+         && elt.getAttribute( "postponed" ).length() > 0 )
+      {
+         postponed = Integer.parseInt( elt.getAttribute( "postponed" ) );
+      }
+      else
+      {
+         postponed = 0;
+      }
+      estimate = elt.getAttribute( "estimate" );
+   }
+   
+
+
+   public RtmTask( Element elt, boolean deleted )
+   {
+      id = elt.getAttribute( "id" );
+      String deletedStr = elt.getAttribute( "deleted" );
+      this.deleted =
+         ( deletedStr == null || deletedStr.length() == 0 ) ? null
+                                                           : parseDate( deletedStr );
+      due = null;
+      hasDueTime = 0;
+      added = null;
+      completed = null;
       priority = Priority.None;
-    }
-    if (elt.hasAttribute("postponed") == true && elt.getAttribute("postponed").length() > 0)
-    {
-      postponed = Integer.parseInt(elt.getAttribute("postponed"));
-    }
-    else
-    {
       postponed = 0;
-    }
-    estimate = elt.getAttribute("estimate");
-  }
+      estimate = null;
+   }
+   
 
-  public RtmTask(Element elt, boolean deleted)
-  {
-    id = elt.getAttribute("id");
-    String deletedStr = elt.getAttribute("deleted");
-    this.deleted = (deletedStr == null || deletedStr.length() == 0) ? null : parseDate(deletedStr);
-    due = null;
-    hasDueTime = 0;
-    added = null;
-    completed = null;
-    priority = Priority.None;
-    postponed = 0;
-    estimate = null;
-  }
 
-  public String getId()
-  {
-    return id;
-  }
+   public RtmTask( Parcel source )
+   {
+      this.id = source.readString();
+      this.due = new Date( source.readLong() );
+      this.hasDueTime = source.readInt();
+      this.added = new Date( source.readLong() );
+      this.completed = new Date( source.readLong() );
+      this.deleted = new Date( source.readLong() );
+      this.priority = Priority.valueOf( source.readString() );
+      this.postponed = source.readInt();
+      this.estimate = source.readString();
+   }
+   
 
-  public Date getDue()
-  {
-    return due;
-  }
 
-  public int getHasDueTime()
-  {
-    return hasDueTime;
-  }
+   public String getId()
+   {
+      return id;
+   }
+   
 
-  public Date getAdded()
-  {
-    return added;
-  }
 
-  public Date getCompleted()
-  {
-    return completed;
-  }
+   public Date getDue()
+   {
+      return due;
+   }
+   
 
-  public Date getDeleted()
-  {
-    return deleted;
-  }
 
-  public Priority getPriority()
-  {
-    return priority;
-  }
+   public int getHasDueTime()
+   {
+      return hasDueTime;
+   }
+   
 
-  public int getPostponed()
-  {
-    return postponed;
-  }
 
-  public String getEstimate()
-  {
-    return estimate;
-  }
+   public Date getAdded()
+   {
+      return added;
+   }
+   
 
-  @Override
-  public String toString()
-  {
-    return "Task<" + id + ">";
-  }
 
+   public Date getCompleted()
+   {
+      return completed;
+   }
+   
+
+
+   public Date getDeleted()
+   {
+      return deleted;
+   }
+   
+
+
+   public Priority getPriority()
+   {
+      return priority;
+   }
+   
+
+
+   public int getPostponed()
+   {
+      return postponed;
+   }
+   
+
+
+   public String getEstimate()
+   {
+      return estimate;
+   }
+   
+
+
+   @Override
+   public String toString()
+   {
+      return "Task<" + id + ">";
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( id );
+      dest.writeLong( due.getTime() );
+      dest.writeInt( hasDueTime );
+      dest.writeLong( added.getTime() );
+      dest.writeLong( completed.getTime() );
+      dest.writeLong( deleted.getTime() );
+      dest.writeString( priority.toString() );
+      dest.writeInt( postponed );
+      dest.writeString( estimate );
+   }
 }

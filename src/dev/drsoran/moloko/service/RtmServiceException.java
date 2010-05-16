@@ -24,7 +24,7 @@ public class RtmServiceException extends RemoteException
 
    public RtmServiceException( int errorCode, final String rtmCause )
    {
-      this.errorCode = errorCode;     
+      this.errorCode = errorCode;
       this.rtmCause = rtmCause;
    }
    
@@ -32,7 +32,7 @@ public class RtmServiceException extends RemoteException
 
    public RtmServiceException( final ServiceException e )
    {
-      this.errorCode = e.getResponseCode();      
+      this.errorCode = e.getResponseCode();
       this.rtmCause = e.getResponseMessage();
    }
    

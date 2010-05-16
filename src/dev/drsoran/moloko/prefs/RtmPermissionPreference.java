@@ -13,9 +13,11 @@ import android.view.View;
 import dev.drsoran.moloko.R;
 
 
-public class RtmPermissionPreference extends ListPreference implements OnSharedPreferenceChangeListener
+public class RtmPermissionPreference extends ListPreference implements
+                                                           OnSharedPreferenceChangeListener
 {
-   public final static String TAG = RtmPermissionPreference.class.getSimpleName();
+   public final static String TAG =
+      RtmPermissionPreference.class.getSimpleName();
    
    private boolean hasAuthToken = false;
    
@@ -40,29 +42,34 @@ public class RtmPermissionPreference extends ListPreference implements OnSharedP
    {
       final Resources resources = getContext().getResources();
       
-      final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
+      final SharedPreferences prefs =
+         getPreferenceManager().getSharedPreferences();
       
       hasAuthToken = prefs != null;
       
       if ( hasAuthToken )
       {
-         final String authToken = prefs.getString( resources.getString( R.string.key_authToken ),
-                                                   null );
+         final String authToken =
+            prefs.getString( resources.getString( R.string.key_authToken ),
+                             null );
          
          hasAuthToken = authToken != null;
          
          if ( hasAuthToken )
          {
-            final String permission = getPermissionEntry( resources,
-                                                          prefs.getString( resources.getString( R.string.pref_permission_key ),
-                                                                           null ) );
+            final String permission =
+               getPermissionEntry( resources,
+                                   prefs.getString( resources.getString( R.string.pref_permission_key ),
+                                                    null ) );
             
-            final long sinceDate = prefs.getLong( resources.getString( R.string.key_authToken_date ),
-                                                  -1 );
+            final long sinceDate =
+               prefs.getLong( resources.getString( R.string.key_authToken_date ),
+                              -1 );
             
             if ( sinceDate > -1 )
             {
-               final java.text.DateFormat dateFormat = DateFormat.getDateFormat( getContext() );
+               final java.text.DateFormat dateFormat =
+                  DateFormat.getDateFormat( getContext() );
                
                setSummary( resources.getString( R.string.pref_perm_has_since,
                                                 permission,
@@ -97,7 +104,8 @@ public class RtmPermissionPreference extends ListPreference implements OnSharedP
    {
       String entry = null;
       
-      final String[] permValues = resources.getStringArray( R.array.rtm_permissions_values );
+      final String[] permValues =
+         resources.getStringArray( R.array.rtm_permissions_values );
       
       boolean found = false;
       
@@ -113,7 +121,8 @@ public class RtmPermissionPreference extends ListPreference implements OnSharedP
       
       if ( found )
       {
-         entry = resources.getStringArray( R.array.rtm_permissions )[ i ].toString();
+         entry =
+            resources.getStringArray( R.array.rtm_permissions )[ i ].toString();
       }
       
       return ( entry );
@@ -126,8 +135,9 @@ public class RtmPermissionPreference extends ListPreference implements OnSharedP
    {
       final Resources res = getContext().getResources();
       
-      if ( key.equals( res.getString( R.string.key_authToken ) ) || key.equals( res.getString( R.string.key_authToken_date ) )
-           || key.equals( res.getString( R.string.pref_permission_key ) ) )
+      if ( key.equals( res.getString( R.string.key_authToken ) )
+         || key.equals( res.getString( R.string.key_authToken_date ) )
+         || key.equals( res.getString( R.string.pref_permission_key ) ) )
       {
          notifyChanged();
       }

@@ -1,12 +1,10 @@
 package dev.drsoran.moloko.service;
 
+import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import com.mdt.rtm.ApplicationInfo;
-import com.mdt.rtm.data.RtmAuth;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,8 +14,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+
+import com.mdt.rtm.ApplicationInfo;
+import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.data.RtmTasks;
+
 import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
-import dev.drsoran.moloko.service.parcel.ParcelableRtmAuth;
+import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.util.ResultCallback;
 
 
@@ -243,11 +246,42 @@ public class AsyncRtmService implements ServiceConnection
             {
                if ( isConnected() )
                {
-                  final ParcelableRtmAuth parcelableRtmAuth =
-                     syncService.checkAuthToken( authToken );
-                  
-                  if ( parcelableRtmAuth != null )
-                     res = parcelableRtmAuth.getRtmAuth();
+                  res = syncService.checkAuthToken( authToken );
+               }
+            }
+            catch ( RemoteException e )
+            {
+               handler.post( callback.setResult( res, e ) );
+               return;
+            }
+            
+            handler.post( callback.setResult( res ) );
+         }
+      } );
+   }
+   
+
+
+   public Future< ? > task_getList( final String listId,
+                                    final String filter,
+                                    final Date lastSync,
+                                    final ResultCallback< RtmTasks > callback )
+   {
+      return executor.submit( new Runnable()
+      {
+         public void run()
+         {
+            RtmTasks res = null;
+            
+            try
+            {
+               if ( isConnected() )
+               {
+                  res =
+                     syncService.tasks_getList( listId,
+                                                filter,
+                                                ( lastSync != null ? new ParcelableDate( lastSync )
+                                                                  : null ) );
                }
             }
             catch ( RemoteException e )

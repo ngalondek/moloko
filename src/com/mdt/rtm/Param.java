@@ -23,42 +23,52 @@ import java.util.Date;
 
 import com.mdt.rtm.data.RtmData;
 
+
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class Param
-    implements Comparable<Param>
+public class Param implements Comparable< Param >
 {
+   
+   private final String name;
+   
+   private final String value;
+   
+   
 
-  private final String name;
+   public Param( String name, String value )
+   {
+      this.name = name;
+      this.value = value;
+   }
+   
 
-  private final String value;
 
-  public Param(String name, String value)
-  {
-    this.name = name;
-    this.value = value;
-  }
+   public Param( String name, Date value )
+   {
+      this.name = name;
+      this.value = RtmData.formatDate( value );
+   }
+   
 
-  public Param(String name, Date value)
-  {
-    this.name = name;
-    this.value = RtmData.formatDate(value);
-  }
 
-  public String getName()
-  {
-    return name;
-  }
+   public String getName()
+   {
+      return name;
+   }
+   
 
-  public String getValue()
-  {
-    return value;
-  }
 
-  public int compareTo(Param p)
-  {
-    return name.compareTo(p.getName());
-  }
+   public String getValue()
+   {
+      return value;
+   }
+   
+
+
+   public int compareTo( Param p )
+   {
+      return name.compareTo( p.getName() );
+   }
 }

@@ -21,45 +21,113 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class RtmAuth extends RtmData {
+public class RtmAuth extends RtmData
+{
+   
+   public enum Perms
+   {
+      none, read, write, delete
+   }
+   
+   public static final Parcelable.Creator< RtmAuth > CREATOR =
+      new Parcelable.Creator< RtmAuth >()
+      {
+         
+         public RtmAuth createFromParcel( Parcel source )
+         {
+            return new RtmAuth( source );
+         }
+         
 
-  public enum Perms {
-    read, write, delete
-  }
 
-  private final String token;
+         public RtmAuth[] newArray( int size )
+         {
+            return new RtmAuth[ size ];
+         }
+         
+      };
+   
+   private final String token;
+   
+   private final Perms perms;
+   
+   private final RtmUser user;
+   
+   
 
-  private final Perms perms;
+   public RtmAuth( String token, Perms perms, RtmUser user )
+   {
+      this.token = token;
+      this.perms = perms;
+      this.user = user;
+   }
+   
 
-  private final RtmUser user;
 
-  public RtmAuth(String token, Perms perms, RtmUser user) {
-    this.token = token;
-    this.perms = perms;
-    this.user = user;
-  }
+   public RtmAuth( Element elt )
+   {
+      if ( !elt.getNodeName().equals( "auth" ) )
+      {
+         throw new IllegalArgumentException( "Element " + elt.getNodeName()
+            + " does not represent an Auth object." );
+      }
+      
+      this.token = text( child( elt, "token" ) );
+      this.perms = Enum.valueOf( Perms.class, text( child( elt, "perms" ) ) );
+      this.user = new RtmUser( child( elt, "user" ) );
+   }
+   
 
-  public RtmAuth(Element elt) {
-    if (!elt.getNodeName().equals("auth")) { throw new IllegalArgumentException("Element " + elt.getNodeName() + " does not represent an Auth object."); }
 
-    this.token = text(child(elt, "token"));
-    this.perms = Enum.valueOf(Perms.class, text(child(elt, "perms")));
-    this.user = new RtmUser(child(elt, "user"));
-  }
+   public RtmAuth( Parcel source )
+   {
+      token = source.readString();
+      perms = Perms.valueOf( source.readString() );
+      user = new RtmUser( source );
+   }
+   
 
-  public String getToken() {
-    return token;
-  }
 
-  public Perms getPerms() {
-    return perms;
-  }
+   public String getToken()
+   {
+      return token;
+   }
+   
 
-  public RtmUser getUser() {
-    return user;
-  }
+
+   public Perms getPerms()
+   {
+      return perms;
+   }
+   
+
+
+   public RtmUser getUser()
+   {
+      return user;
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( token );
+      dest.writeString( perms.toString() );
+      user.writeToParcel( dest, flags );
+   }
 }

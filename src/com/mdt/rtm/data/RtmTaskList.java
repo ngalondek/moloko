@@ -25,55 +25,106 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
 /**
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskList
-    extends RtmData
+public class RtmTaskList extends RtmData
 {
-
-  private final String id;
-
-  private final List<RtmTaskSeries> series;
-
-  public RtmTaskList(String id)
-  {
-    this.id = id;
-    this.series = new ArrayList<RtmTaskSeries>();
-  }
-
-  public RtmTaskList(Element elt)
-  {
-    id = elt.getAttribute("id");
-    final List<Element> children = children(elt, "taskseries");
-    series = new ArrayList<RtmTaskSeries>(children.size());
-    for (Element seriesElt : children)
-    {
-      series.add(new RtmTaskSeries(seriesElt));
-    }
-    // There may also be 'deleted' elements in which are 'taskseries' elements
-    for (Element deletedElement : children(elt, "deleted"))
-    {
-      for (Element seriesElt : children(deletedElement, "taskseries"))
+   public static final Parcelable.Creator< RtmTaskList > CREATOR =
+      new Parcelable.Creator< RtmTaskList >()
       {
-        series.add(new RtmTaskSeries(seriesElt, true));
+         
+         public RtmTaskList createFromParcel( Parcel source )
+         {
+            return new RtmTaskList( source );
+         }
+         
+
+
+         public RtmTaskList[] newArray( int size )
+         {
+            return new RtmTaskList[ size ];
+         }
+         
+      };
+   
+   private final String id;
+   
+   private final List< RtmTaskSeries > series;
+   
+   
+
+   public RtmTaskList( String id )
+   {
+      this.id = id;
+      this.series = new ArrayList< RtmTaskSeries >();
+   }
+   
+
+
+   public RtmTaskList( Parcel source )
+   {
+      id = source.readString();
+      series = source.createTypedArrayList( RtmTaskSeries.CREATOR );
+   }
+   
+
+
+   public RtmTaskList( Element elt )
+   {
+      id = elt.getAttribute( "id" );
+      final List< Element > children = children( elt, "taskseries" );
+      series = new ArrayList< RtmTaskSeries >( children.size() );
+      for ( Element seriesElt : children )
+      {
+         series.add( new RtmTaskSeries( seriesElt ) );
       }
-    }
+      // There may also be 'deleted' elements in which are 'taskseries' elements
+      for ( Element deletedElement : children( elt, "deleted" ) )
+      {
+         for ( Element seriesElt : children( deletedElement, "taskseries" ) )
+         {
+            series.add( new RtmTaskSeries( seriesElt, true ) );
+         }
+      }
+      
+      if ( id == null || id.length() == 0 )
+      {
+         throw new RuntimeException( "No id found in task list." );
+      }
+   }
+   
 
-    if (id == null || id.length() == 0)
-    {
-      throw new RuntimeException("No id found in task list.");
-    }
-  }
 
-  public String getId()
-  {
-    return id;
-  }
+   public String getId()
+   {
+      return id;
+   }
+   
 
-  public List<RtmTaskSeries> getSeries()
-  {
-    return Collections.unmodifiableList(series);
-  }
+
+   public List< RtmTaskSeries > getSeries()
+   {
+      return Collections.unmodifiableList( series );
+   }
+   
+
+
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( id );
+      dest.writeTypedList( series );
+   }
 }

@@ -2,6 +2,7 @@ package dev.drsoran.moloko.service;
 
 import java.util.Date;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -19,6 +20,7 @@ import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTasks;
 
+import dev.drsoran.moloko.service.auth.AsyncRtmServiceAuth;
 import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.util.ResultCallback;
@@ -28,11 +30,35 @@ public class AsyncRtmService implements ServiceConnection
 {
    private final static String TAG = AsyncRtmService.class.getSimpleName();
    
-   // private final Lock lock = new ReentrantLock();
-   //   
-   // private final Condition svcConnected = lock.newCondition();
-   //   
-   // private final Condition svcDisconnected = lock.newCondition();
+   
+   public interface Auth
+   {
+      public Future< ? > beginAuthorization( ApplicationInfo applicationInfo,
+                                             RtmAuth.Perms permission,
+                                             ResultCallback< String > callback );
+      
+
+
+      public Future< ? > completeAuthorization( ResultCallback< String > callback );
+      
+
+
+      public Future< ? > checkAuthToken( String authToken,
+                                         ResultCallback< RtmAuth > callback );
+   }
+   
+
+   public interface Task
+   {
+      public Future< ? > getList( String listId,
+                                  String filter,
+                                  Date lastSync,
+                                  ResultCallback< RtmTasks > callback );
+   }
+   
+   // class AsyncRtmService
+   
+   public final Auth AUTH = new AsyncRtmServiceAuth();
    
    private final Handler handler = new Handler();
    
@@ -134,11 +160,16 @@ public class AsyncRtmService implements ServiceConnection
    public void onServiceConnected( ComponentName name, IBinder service )
    {
       syncService = IRtmService.Stub.asInterface( service );
+      
       try
       {
          syncService.initialize( new ParcelableApplicationInfo( applicationInfo,
                                                                 permission ) );
          Log.d( TAG, "Service connected." );
+         
+         ( (AsyncRtmServiceAuth) AUTH ).connectService( syncService,
+                                                        handler,
+                                                        executor );
       }
       catch ( RemoteException e )
       {
@@ -146,6 +177,14 @@ public class AsyncRtmService implements ServiceConnection
          // do anything with it; we can count on soon being
          // disconnected (and then reconnected if it can be restarted)
          // so there is no need to do anything here.
+      }
+      catch ( InterruptedException e )
+      {
+         // TODO Auto-generated catch block
+      }
+      catch ( ExecutionException e )
+      {
+         // TODO Auto-generated catch block
       }
    }
    
@@ -173,100 +212,12 @@ public class AsyncRtmService implements ServiceConnection
    
 
 
-   // / ASYNCRONOUS INTERFACE ///
-   
-   public Future< ? > beginAuthorization( final ApplicationInfo applicationInfo,
-                                          final RtmAuth.Perms permission,
-                                          final ResultCallback< String > callback )
-   {
-      return executor.submit( new Runnable()
-      {
-         public void run()
-         {
-            String res = null;
-            
-            try
-            {
-               if ( isConnected() )
-               {
-                  res =
-                     syncService.beginAuthorization( new ParcelableApplicationInfo( applicationInfo,
-                                                                                    permission ) );
-               }
-            }
-            catch ( RemoteException e )
-            {
-               handler.post( callback.setResult( res, e ) );
-               return;
-            }
-            
-            handler.post( callback.setResult( res ) );
-         }
-      } );
-   }
-   
-
-
-   public Future< ? > completeAuthorization( final ResultCallback< String > callback )
-   {
-      return executor.submit( new Runnable()
-      {
-         public void run()
-         {
-            String res = null;
-            
-            try
-            {
-               if ( isConnected() )
-                  res = syncService.completeAuthorization();
-            }
-            catch ( RemoteException e )
-            {
-               handler.post( callback.setResult( res, e ) );
-               return;
-            }
-            
-            handler.post( callback.setResult( res ) );
-         }
-      } );
-   }
-   
-
-
-   public Future< ? > checkAuthToken( final String authToken,
-                                      final ResultCallback< RtmAuth > callback )
-   {
-      return executor.submit( new Runnable()
-      {
-         public void run()
-         {
-            RtmAuth res = null;
-            
-            try
-            {
-               if ( isConnected() )
-               {
-                  res = syncService.checkAuthToken( authToken );
-               }
-            }
-            catch ( RemoteException e )
-            {
-               handler.post( callback.setResult( res, e ) );
-               return;
-            }
-            
-            handler.post( callback.setResult( res ) );
-         }
-      } );
-   }
-   
-
-
    public Future< ? > task_getList( final String listId,
                                     final String filter,
                                     final Date lastSync,
                                     final ResultCallback< RtmTasks > callback )
    {
+      
       return executor.submit( new Runnable()
       {
          public void run()
@@ -312,25 +263,6 @@ public class AsyncRtmService implements ServiceConnection
    
 
 
-   // private boolean waitConnected( long time, TimeUnit unit ) throws
-   // InterruptedException
-   // {
-   // lock.lock();
-   //      
-   // boolean ok = false;
-   //      
-   // try
-   // {
-   // ok = svcConnected.await( time, unit );
-   // }
-   // finally
-   // {
-   // lock.unlock();
-   // }
-   //      
-   // return ok;
-   // }
-   
    private void disconnect()
    {
       if ( syncService != null )

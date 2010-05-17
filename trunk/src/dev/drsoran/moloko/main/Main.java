@@ -78,6 +78,18 @@ public class Main extends ListActivity
                               Preferences.getRtmApplicationInfo( this ),
                               Preferences.getRtmPermission( this ) );
       
+      asyncRtmService.AUTH.checkAuthToken( Preferences.getRtmAuthToken( this ),
+                                           new ResultCallback< RtmAuth >()
+                                           {
+                                              public void run()
+                                              {
+                                                 new AlertDialog.Builder( Main.this ).setMessage( result.getToken() )
+                                                    .create()
+                                                    .show();                                                 
+                                              }
+                                              
+                                           } );
+      
       adapter =
          new SimpleAdapter( this,
                             tasks,

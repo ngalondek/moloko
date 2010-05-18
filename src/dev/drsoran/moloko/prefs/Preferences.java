@@ -29,8 +29,8 @@ import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.login.RtmWebAccess;
-import dev.drsoran.moloko.service.AsyncRtmService;
 import dev.drsoran.moloko.service.RtmServiceConstants;
+import dev.drsoran.moloko.service.async.AsyncRtmService;
 import dev.drsoran.moloko.util.ResultCallback;
 
 
@@ -174,31 +174,30 @@ public class Preferences extends PreferenceActivity implements
                PreferenceManager.getDefaultSharedPreferences( this );
             
             cancelOperationHandle =
-               asyncService.AUTH.checkAuthToken( prefs.getString( getString( R.string.key_authToken ),
-                                                                  "" ),
-                                                 new ResultCallback< RtmAuth >()
-                                                 {
-                                                    public void run()
-                                                    {
-                                                       if ( exception == null )
-                                                       {
-                                                          onCheckAuthToken( result,
-                                                                            true );
-                                                       }
-                                                       else if ( exception != null
-                                                          && ( AsyncRtmService.getExceptionCode( exception ) == RtmServiceConstants.RtmErrorCodes.INVALID_AUTH_TOKEN || AsyncRtmService.getExceptionCode( exception ) == RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY ) )
-                                                       {
-                                                          onCheckAuthToken( null,
-                                                                            false );
-                                                       }
-                                                       else
-                                                       {
-                                                          activateDialog( DlgType.ALERT,
-                                                                          getString( R.string.err_error ),
-                                                                          getErrorMessageWithException( exception ) );
-                                                       }
-                                                    }
-                                                 } );
+               asyncService.auth()
+                  .checkAuthToken( prefs.getString( getString( R.string.key_authToken ),
+                                                    "" ),
+                                   new ResultCallback< RtmAuth >()
+                                   {
+                                      public void run()
+                                      {
+                                         if ( exception == null )
+                                         {
+                                            onCheckAuthToken( result, true );
+                                         }
+                                         else if ( exception != null
+                                            && ( AsyncRtmService.getExceptionCode( exception ) == RtmServiceConstants.RtmErrorCodes.INVALID_AUTH_TOKEN || AsyncRtmService.getExceptionCode( exception ) == RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY ) )
+                                         {
+                                            onCheckAuthToken( null, false );
+                                         }
+                                         else
+                                         {
+                                            activateDialog( DlgType.ALERT,
+                                                            getString( R.string.err_error ),
+                                                            getErrorMessageWithException( exception ) );
+                                         }
+                                      }
+                                   } );
             return true;
          default :
             return super.onContextItemSelected( item );
@@ -329,19 +328,20 @@ public class Preferences extends PreferenceActivity implements
             {
                case RtmWebAccess.ReturnCode.SUCCESS:
                   cancelOperationHandle =
-                     asyncService.AUTH.completeAuthorization( new ResultCallback< String >( data.getExtras() )
-                     {
-                        public void run()
+                     asyncService.auth()
+                        .completeAuthorization( new ResultCallback< String >( data.getExtras() )
                         {
-                           if ( exception == null )
-                              onAuthTokenReceived( result,
-                                                   extraData.getString( getString( R.string.pref_permission_key ) ) );
-                           else
-                              activateDialog( DlgType.ALERT,
-                                              getString( R.string.err_error ),
-                                              getErrorMessageWithException( exception ) );
-                        }
-                     } );
+                           public void run()
+                           {
+                              if ( exception == null )
+                                 onAuthTokenReceived( result,
+                                                      extraData.getString( getString( R.string.pref_permission_key ) ) );
+                              else
+                                 activateDialog( DlgType.ALERT,
+                                                 getString( R.string.err_error ),
+                                                 getErrorMessageWithException( exception ) );
+                           }
+                        } );
                   break;
                default :
                   activateDialog( DlgType.ALERT,
@@ -395,25 +395,26 @@ public class Preferences extends PreferenceActivity implements
                             getString( R.string.pref_dlg_get_auth_token,
                                        newPermissionRequest ) );
             cancelOperationHandle =
-               asyncService.AUTH.beginAuthorization( getRtmApplicationInfo( this ),
-                                                     RtmAuth.Perms.valueOf( newPermissionValue ),
-                                                     new ResultCallback< String >( bundle )
-                                                     {
-                                                        public void run()
-                                                        {
-                                                           if ( exception == null )
-                                                           {
-                                                              onLoginUrlReceived( result,
-                                                                                  bundle );
-                                                           }
-                                                           else
-                                                           {
-                                                              activateDialog( DlgType.ALERT,
-                                                                              getString( R.string.err_error ),
-                                                                              getErrorMessageWithException( exception ) );
-                                                           }
-                                                        }
-                                                     } );
+               asyncService.auth()
+                  .beginAuthorization( getRtmApplicationInfo( this ),
+                                       RtmAuth.Perms.valueOf( newPermissionValue ),
+                                       new ResultCallback< String >( bundle )
+                                       {
+                                          public void run()
+                                          {
+                                             if ( exception == null )
+                                             {
+                                                onLoginUrlReceived( result,
+                                                                    bundle );
+                                             }
+                                             else
+                                             {
+                                                activateDialog( DlgType.ALERT,
+                                                                getString( R.string.err_error ),
+                                                                getErrorMessageWithException( exception ) );
+                                             }
+                                          }
+                                       } );
          }
       }
       

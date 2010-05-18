@@ -24,7 +24,7 @@ import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.prefs.Preferences;
-import dev.drsoran.moloko.service.AsyncRtmService;
+import dev.drsoran.moloko.service.async.AsyncRtmService;
 import dev.drsoran.moloko.util.ResultCallback;
 
 
@@ -78,18 +78,6 @@ public class Main extends ListActivity
                               Preferences.getRtmApplicationInfo( this ),
                               Preferences.getRtmPermission( this ) );
       
-      asyncRtmService.AUTH.checkAuthToken( Preferences.getRtmAuthToken( this ),
-                                           new ResultCallback< RtmAuth >()
-                                           {
-                                              public void run()
-                                              {
-                                                 new AlertDialog.Builder( Main.this ).setMessage( result.getToken() )
-                                                    .create()
-                                                    .show();                                                 
-                                              }
-                                              
-                                           } );
-      
       adapter =
          new SimpleAdapter( this,
                             tasks,
@@ -102,6 +90,24 @@ public class Main extends ListActivity
       adapter.setViewBinder( new TaskViewBinder() );
       
       setListAdapter( adapter );
+   }
+   
+
+
+   @Override
+   protected void onResume()
+   {
+      asyncRtmService.task().getList( null,
+                                      null,
+                                      null,
+                                      new ResultCallback< RtmTasks >()
+                                      {
+                                         public void run()
+                                         {
+                                            onTaskGetList( result, exception );
+                                         }
+                                      } );
+      super.onResume();
    }
    
 
@@ -144,17 +150,17 @@ public class Main extends ListActivity
       switch ( item.getItemId() )
       {
          case R.id.main_menu_opt_sync:
-            asyncRtmService.task_getList( null,
-                                          null,
-                                          null,
-                                          new ResultCallback< RtmTasks >()
-                                          {
-                                             public void run()
-                                             {
-                                                onTaskGetList( result,
-                                                               exception );
-                                             }
-                                          } );
+            asyncRtmService.task().getList( null,
+                                            null,
+                                            null,
+                                            new ResultCallback< RtmTasks >()
+                                            {
+                                               public void run()
+                                               {
+                                                  onTaskGetList( result,
+                                                                 exception );
+                                               }
+                                            } );
          default :
             return false;
       }

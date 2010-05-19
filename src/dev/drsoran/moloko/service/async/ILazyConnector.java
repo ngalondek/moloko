@@ -8,11 +8,17 @@ import dev.drsoran.moloko.service.IRtmService;
 
 
 public interface ILazyConnector
-{   
+{
    public void connectService( IRtmService service,
                                Handler handler,
                                ExecutorService executor ) throws InterruptedException,
                                                          ExecutionException;
    
+
+
    public boolean isConnected();
+   
+
+
+   public void disconnectService();
 }

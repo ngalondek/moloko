@@ -73,11 +73,6 @@ public class Main extends ListActivity
       super.onCreate( savedInstanceState );
       setContentView( R.layout.main );
       
-      asyncRtmService =
-         new AsyncRtmService( this,
-                              Preferences.getRtmApplicationInfo( this ),
-                              Preferences.getRtmPermission( this ) );
-      
       adapter =
          new SimpleAdapter( this,
                             tasks,
@@ -97,27 +92,31 @@ public class Main extends ListActivity
    @Override
    protected void onResume()
    {
-      asyncRtmService.task().getList( null,
-                                      null,
-                                      null,
-                                      new ResultCallback< RtmTasks >()
+      getService().task().getList( null,
+                                   null,
+                                   null,
+                                   new ResultCallback< RtmTasks >()
+                                   {
+                                      public void run()
                                       {
-                                         public void run()
-                                         {
-                                            onTaskGetList( result, exception );
-                                         }
-                                      } );
+                                         onTaskGetList( result, exception );
+                                      }
+                                   } );
       super.onResume();
    }
    
 
 
    @Override
-   protected void onDestroy()
+   protected void onPause()
    {
-      asyncRtmService.shutdown();
+      if ( asyncRtmService != null )
+      {
+         asyncRtmService.shutdown();
+         asyncRtmService = null;
+      }
       
-      super.onDestroy();
+      super.onPause();
    }
    
 
@@ -150,17 +149,16 @@ public class Main extends ListActivity
       switch ( item.getItemId() )
       {
          case R.id.main_menu_opt_sync:
-            asyncRtmService.task().getList( null,
-                                            null,
-                                            null,
-                                            new ResultCallback< RtmTasks >()
+            getService().task().getList( null,
+                                         null,
+                                         null,
+                                         new ResultCallback< RtmTasks >()
+                                         {
+                                            public void run()
                                             {
-                                               public void run()
-                                               {
-                                                  onTaskGetList( result,
-                                                                 exception );
-                                               }
-                                            } );
+                                               onTaskGetList( result, exception );
+                                            }
+                                         } );
          default :
             return false;
       }
@@ -226,4 +224,15 @@ public class Main extends ListActivity
       
       return ok;
    }
+   
+
+
+   private AsyncRtmService getService()
+   {
+      if ( asyncRtmService == null )
+         asyncRtmService = AsyncRtmService.create( this );
+      
+      return asyncRtmService;
+   }
+   
 }

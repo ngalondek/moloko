@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,6 +21,7 @@ import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTasks;
 
+import dev.drsoran.moloko.prefs.Preferences;
 import dev.drsoran.moloko.service.IRtmService;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.RtmServiceException;
@@ -119,6 +121,15 @@ public class AsyncRtmService
    
    
 
+   public static AsyncRtmService create( Context context )
+   {
+      return new AsyncRtmService( context,
+                                  Preferences.getRtmApplicationInfo( context ),
+                                  Preferences.getRtmPermission( context ) );
+   }
+   
+
+
    public AsyncRtmService( Context context,
                            final ApplicationInfo applicationInfo,
                            final RtmAuth.Perms permisson )
@@ -165,6 +176,33 @@ public class AsyncRtmService
 
    public void shutdown()
    {
+      executor.shutdown(); // Disable new tasks from being submitted
+      
+      try
+      {
+         // Wait a while for existing tasks to terminate
+         if ( !executor.awaitTermination( 10, TimeUnit.SECONDS ) )
+         {
+            executor.shutdownNow(); // Cancel currently executing tasks
+            // Wait a while for tasks to respond to being canceled
+            if ( !executor.awaitTermination( 60, TimeUnit.SECONDS ) )
+               Log.e( TAG, "Pool did not terminate" );
+         }
+      }
+      catch ( InterruptedException ie )
+      {
+         // (Re-)Cancel if current thread also interrupted
+         executor.shutdownNow();
+         // Preserve interrupt status
+         Thread.currentThread().interrupt();
+      }
+      
+      for ( int i = 0; i < lazyConnectors.length; i++ )
+      {
+         if ( lazyConnectors[ i ] != null )
+            lazyConnectors[ i ].disconnectService();
+      }
+      
       disconnect();
    }
    
@@ -177,6 +215,13 @@ public class AsyncRtmService
       is = syncService != null;
       
       return is;
+   }
+   
+
+
+   public IRtmService sync()
+   {
+      return syncService;
    }
    
 

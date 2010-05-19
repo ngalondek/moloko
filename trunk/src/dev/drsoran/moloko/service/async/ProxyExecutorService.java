@@ -104,7 +104,7 @@ public class ProxyExecutorService implements ExecutorService
 
    public List< Runnable > shutdownNow()
    {
-      new UnsupportedOperationException( "Not supported yet." );
+      taskList.clear();
       return null;
    }
    

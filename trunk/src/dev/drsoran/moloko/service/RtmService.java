@@ -17,11 +17,11 @@ import dev.drsoran.moloko.service.parcel.ParcelableDate;
 
 public class RtmService extends Service
 {
-   private final RtmServiceStub stub = new RtmServiceStub();
+   private RtmServiceStub stub = null;
    
    private ServiceImpl serviceImpl = null;
    
-   private RtmAuth.Perms permission;
+   private RtmAuth.Perms permission = RtmAuth.Perms.nothing;
    
    
    private final class RtmServiceStub extends IRtmService.Stub
@@ -158,6 +158,8 @@ public class RtmService extends Service
    @Override
    public IBinder onBind( Intent intent )
    {
+      stub = new RtmServiceStub();
+      
       IBinder binder = null;
       
       if ( intent != null
@@ -172,10 +174,12 @@ public class RtmService extends Service
 
 
    @Override
-   public void onCreate()
+   public boolean onUnbind( Intent intent )
    {
-      super.onCreate();
+      stub = null;
       
-      // android.os.Debug.waitForDebugger();
+      // Do not notify onRebind()
+      return false;
    }
+   
 }

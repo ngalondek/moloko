@@ -36,11 +36,9 @@ public abstract class AbstractAsyncServicePart implements ILazyConnector
          this.syncService = service;
          this.handler = handler;
          
-         ProxyExecutorService proxyExecutorService =
-            (ProxyExecutorService) this.executor;
+         ProxyExecutorService proxyExecutorService = (ProxyExecutorService) this.executor;
          
-         final Collection< Callable< Void > > cachedTasks =
-            proxyExecutorService.getTaskList();
+         final Collection< Callable< Void > > cachedTasks = proxyExecutorService.getTaskList();
          
          if ( cachedTasks.size() > 0 )
             executor.invokeAny( cachedTasks );

@@ -5,18 +5,36 @@ import java.util.HashMap;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 
 public interface IRtmProviderPart
 {
-   public static int MATCH_TYPE_DIR = 0;
+   public static int MATCH_TYPE = 0;
    
-   public static int MATCH_TYPE_ITEM = 1;
+   public static int MATCH_ITEM_TYPE = 1;
    
    
 
-   public Cursor query( String id, String[] projection, String selection, String[] selectionArgs, String sortOrder );
+   public void create( SQLiteDatabase db ) throws SQLException;
+   
+
+
+   public void upgrade( SQLiteDatabase db, int oldVersion, int newVersion ) throws SQLException;
+   
+
+
+   public void drop( SQLiteDatabase db );
+   
+
+
+   public Cursor query( String id,
+                        String[] projection,
+                        String selection,
+                        String[] selectionArgs,
+                        String sortOrder );
    
 
 
@@ -24,7 +42,10 @@ public interface IRtmProviderPart
    
 
 
-   public int update( String id, ContentValues initialValues, String where, String[] whereArgs );
+   public int update( String id,
+                      ContentValues initialValues,
+                      String where,
+                      String[] whereArgs );
    
 
 
@@ -45,6 +66,10 @@ public interface IRtmProviderPart
 
 
    public String getIdSegement( Uri uri );
+   
+
+
+   public String getType( Uri uri );
    
 
 

@@ -28,23 +28,22 @@ import android.os.Parcelable;
 public class RtmTimeline extends RtmData
 {
    
-   public static final Parcelable.Creator< RtmTimeline > CREATOR =
-      new Parcelable.Creator< RtmTimeline >()
+   public static final Parcelable.Creator< RtmTimeline > CREATOR = new Parcelable.Creator< RtmTimeline >()
+   {
+      
+      public RtmTimeline createFromParcel( Parcel source )
       {
-         
-         public RtmTimeline createFromParcel( Parcel source )
-         {
-            return new RtmTimeline( source );
-         }
-         
+         return new RtmTimeline( source );
+      }
+      
 
 
-         public RtmTimeline[] newArray( int size )
-         {
-            return new RtmTimeline[ size ];
-         }
-         
-      };
+      public RtmTimeline[] newArray( int size )
+      {
+         return new RtmTimeline[ size ];
+      }
+      
+   };
    
    private final String id;
    

@@ -37,23 +37,22 @@ public class RtmAuth extends RtmData
       nothing, read, write, delete
    }
    
-   public static final Parcelable.Creator< RtmAuth > CREATOR =
-      new Parcelable.Creator< RtmAuth >()
+   public static final Parcelable.Creator< RtmAuth > CREATOR = new Parcelable.Creator< RtmAuth >()
+   {
+      
+      public RtmAuth createFromParcel( Parcel source )
       {
-         
-         public RtmAuth createFromParcel( Parcel source )
-         {
-            return new RtmAuth( source );
-         }
-         
+         return new RtmAuth( source );
+      }
+      
 
 
-         public RtmAuth[] newArray( int size )
-         {
-            return new RtmAuth[ size ];
-         }
-         
-      };
+      public RtmAuth[] newArray( int size )
+      {
+         return new RtmAuth[ size ];
+      }
+      
+   };
    
    private final String token;
    

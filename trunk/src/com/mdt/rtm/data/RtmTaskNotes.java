@@ -36,23 +36,22 @@ import android.os.Parcelable;
  */
 public class RtmTaskNotes extends RtmData
 {
-   public static final Parcelable.Creator< RtmTaskNotes > CREATOR =
-      new Parcelable.Creator< RtmTaskNotes >()
+   public static final Parcelable.Creator< RtmTaskNotes > CREATOR = new Parcelable.Creator< RtmTaskNotes >()
+   {
+      
+      public RtmTaskNotes createFromParcel( Parcel source )
       {
-         
-         public RtmTaskNotes createFromParcel( Parcel source )
-         {
-            return new RtmTaskNotes( source );
-         }
-         
+         return new RtmTaskNotes( source );
+      }
+      
 
 
-         public RtmTaskNotes[] newArray( int size )
-         {
-            return new RtmTaskNotes[ size ];
-         }
-         
-      };
+      public RtmTaskNotes[] newArray( int size )
+      {
+         return new RtmTaskNotes[ size ];
+      }
+      
+   };
    
    private List< RtmTaskNote > notes;
    

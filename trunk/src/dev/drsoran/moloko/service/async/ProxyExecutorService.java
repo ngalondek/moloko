@@ -15,8 +15,7 @@ import java.util.concurrent.TimeoutException;
 public class ProxyExecutorService implements ExecutorService
 {
    
-   private final Collection< Callable< Void > > taskList =
-      new ArrayList< Callable< Void > >();
+   private final Collection< Callable< Void > > taskList = new ArrayList< Callable< Void > >();
    
    
 

@@ -1,68 +1,28 @@
 package dev.drsoran.moloko.main;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
+import android.widget.SimpleCursorAdapter;
 
 import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmTaskList;
-import com.mdt.rtm.data.RtmTaskSeries;
-import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.prefs.Preferences;
-import dev.drsoran.moloko.service.async.AsyncRtmService;
-import dev.drsoran.moloko.util.ResultCallback;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class Main extends ListActivity
 {
    private final static String TAG = Main.class.getSimpleName();
    
-   private final static String ITEM_KEY = "ITEM_KEY";
-   
-   private final ArrayList< HashMap< String, RtmTaskSeries > > tasks =
-      new ArrayList< HashMap< String, RtmTaskSeries > >();
-   
-   private SimpleAdapter adapter = null;
-   
-   private AsyncRtmService asyncRtmService = null;
-   
-   
-   private final class TaskViewBinder implements ViewBinder
-   {
-      
-      public boolean setViewValue( View view,
-                                   Object data,
-                                   String textRepresentation )
-      {
-         if ( data instanceof RtmTaskSeries && view instanceof CheckBox )
-         {
-            final RtmTaskSeries rtmTaskSeries = (RtmTaskSeries) data;
-            final CheckBox checkBox = (CheckBox) view;
-            
-            checkBox.setText( rtmTaskSeries.getName() );
-            checkBox.setChecked( rtmTaskSeries.getTask().getCompleted() != null );
-            
-            return true;
-         }
-         
-         return false;
-      }
-   }
+   private final static String[] PROJECTION = new String[]
+   { Tasks._ID, Tasks.COMPLETED_DATE };
    
    
 
@@ -73,16 +33,19 @@ public class Main extends ListActivity
       super.onCreate( savedInstanceState );
       setContentView( R.layout.main );
       
-      adapter =
-         new SimpleAdapter( this,
-                            tasks,
-                            R.layout.main_list_tasks_task,
-                            new String[]
-                            { ITEM_KEY },
-                            new int[]
-                            { R.id.main_list_tasks_task_desc } );
+      final Cursor cursor = managedQuery( Tasks.CONTENT_URI,
+                                          PROJECTION,
+                                          null,
+                                          null,
+                                          Tasks.DEFAULT_SORT_ORDER );
       
-      adapter.setViewBinder( new TaskViewBinder() );
+      SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
+                                                             R.layout.main_list_tasks_task,
+                                                             cursor,
+                                                             new String[]
+                                                             { Tasks.COMPLETED_DATE },
+                                                             new int[]
+                                                             { R.id.main_list_tasks_task_desc } );
       
       setListAdapter( adapter );
    }
@@ -92,16 +55,6 @@ public class Main extends ListActivity
    @Override
    protected void onResume()
    {
-      getService().task().getList( null,
-                                   null,
-                                   null,
-                                   new ResultCallback< RtmTasks >()
-                                   {
-                                      public void run()
-                                      {
-                                         onTaskGetList( result, exception );
-                                      }
-                                   } );
       super.onResume();
    }
    
@@ -110,12 +63,6 @@ public class Main extends ListActivity
    @Override
    protected void onPause()
    {
-      if ( asyncRtmService != null )
-      {
-         asyncRtmService.shutdown();
-         asyncRtmService = null;
-      }
-      
       super.onPause();
    }
    
@@ -149,16 +96,7 @@ public class Main extends ListActivity
       switch ( item.getItemId() )
       {
          case R.id.main_menu_opt_sync:
-            getService().task().getList( null,
-                                         null,
-                                         null,
-                                         new ResultCallback< RtmTasks >()
-                                         {
-                                            public void run()
-                                            {
-                                               onTaskGetList( result, exception );
-                                            }
-                                         } );
+            onTaskGetList();
          default :
             return false;
       }
@@ -166,37 +104,9 @@ public class Main extends ListActivity
    
 
 
-   private void onTaskGetList( RtmTasks result, Exception exception )
+   private void onTaskGetList()
    {
-      if ( exception == null )
-      {
-         tasks.clear();
-         
-         final List< RtmTaskList > lists = result.getLists();
-         
-         // for each task list
-         for ( RtmTaskList rtmTaskList : lists )
-         {
-            final List< RtmTaskSeries > receivedTasks = rtmTaskList.getSeries();
-            
-            // for each task
-            for ( RtmTaskSeries rtmTaskSeries : receivedTasks )
-            {
-               HashMap< String, RtmTaskSeries > task =
-                  new HashMap< String, RtmTaskSeries >();
-               task.put( ITEM_KEY, rtmTaskSeries );
-               tasks.add( task );
-            }
-         }
-         
-         adapter.notifyDataSetChanged();
-      }
-      else
-      {
-         new AlertDialog.Builder( this ).setTitle( getString( R.string.err_error ) )
-            .setMessage( "Tasks konnten nicht geholt werden" )
-            .show();
-      }
+      
    }
    
 
@@ -223,16 +133,6 @@ public class Main extends ListActivity
       }
       
       return ok;
-   }
-   
-
-
-   private AsyncRtmService getService()
-   {
-      if ( asyncRtmService == null )
-         asyncRtmService = AsyncRtmService.create( this );
-      
-      return asyncRtmService;
    }
    
 }

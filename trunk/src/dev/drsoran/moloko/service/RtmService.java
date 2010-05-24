@@ -138,11 +138,11 @@ public class RtmService extends Service
          
          try
          {
-            rtmTasks =
-               serviceImpl.tasks_getList( listId,
-                                          filter,
-                                          ( lastSync != null ? lastSync.getDate()
-                                                            : null ) );
+            rtmTasks = serviceImpl.tasks_getList( listId,
+                                                  filter,
+                                                  ( lastSync != null
+                                                                    ? lastSync.getDate()
+                                                                    : null ) );
          }
          catch ( ServiceException e )
          {

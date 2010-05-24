@@ -9,23 +9,22 @@ import android.os.Parcelable;
 public class ParcelableDate implements Parcelable
 {
    
-   public static final Parcelable.Creator< ParcelableDate > CREATOR =
-      new Parcelable.Creator< ParcelableDate >()
+   public static final Parcelable.Creator< ParcelableDate > CREATOR = new Parcelable.Creator< ParcelableDate >()
+   {
+      
+      public ParcelableDate createFromParcel( Parcel source )
       {
-         
-         public ParcelableDate createFromParcel( Parcel source )
-         {
-            return new ParcelableDate( source );
-         }
-         
+         return new ParcelableDate( source );
+      }
+      
 
 
-         public ParcelableDate[] newArray( int size )
-         {
-            return new ParcelableDate[ size ];
-         }
-         
-      };
+      public ParcelableDate[] newArray( int size )
+      {
+         return new ParcelableDate[ size ];
+      }
+      
+   };
    
    private final Date date;
    
@@ -44,11 +43,13 @@ public class ParcelableDate implements Parcelable
    }
    
 
+
    public Date getDate()
    {
       return date;
    }
    
+
 
    public int describeContents()
    {

@@ -35,23 +35,22 @@ import android.os.Parcelable;
  */
 public class RtmTask extends RtmData
 {
-   public static final Parcelable.Creator< RtmTask > CREATOR =
-      new Parcelable.Creator< RtmTask >()
+   public static final Parcelable.Creator< RtmTask > CREATOR = new Parcelable.Creator< RtmTask >()
+   {
+      
+      public RtmTask createFromParcel( Parcel source )
       {
-         
-         public RtmTask createFromParcel( Parcel source )
-         {
-            return new RtmTask( source );
-         }
-         
+         return new RtmTask( source );
+      }
+      
 
 
-         public RtmTask[] newArray( int size )
-         {
-            return new RtmTask[ size ];
-         }
-         
-      };
+      public RtmTask[] newArray( int size )
+      {
+         return new RtmTask[ size ];
+      }
+      
+   };
    
    private static final Log log = LogFactory.getLog( "RtmTask" );
    
@@ -106,15 +105,9 @@ public class RtmTask extends RtmData
    
 
 
-   public RtmTask( String id,
-                   Date due,
-                   int hasDueTime,
-                   Date added,
-                   Date completed,
-                   Date deleted,
-                   Priority priority,
-                   int postponed,
-                   String estimate )
+   public RtmTask( String id, Date due, int hasDueTime, Date added,
+      Date completed, Date deleted, Priority priority, int postponed,
+      String estimate )
    {
       this.id = id;
       this.due = due;
@@ -137,17 +130,17 @@ public class RtmTask extends RtmData
                                                       : parseDate( dueStr );
       hasDueTime = Integer.parseInt( elt.getAttribute( "has_due_time" ) );
       String addedStr = elt.getAttribute( "added" );
-      added =
-         ( addedStr == null || addedStr.length() == 0 ) ? null
-                                                       : parseDate( addedStr );
+      added = ( addedStr == null || addedStr.length() == 0 )
+                                                            ? null
+                                                            : parseDate( addedStr );
       String completedStr = elt.getAttribute( "completed" );
-      completed =
-         ( completedStr == null || completedStr.length() == 0 ) ? null
-                                                               : parseDate( completedStr );
+      completed = ( completedStr == null || completedStr.length() == 0 )
+                                                                        ? null
+                                                                        : parseDate( completedStr );
       String deletedStr = elt.getAttribute( "deleted" );
-      deleted =
-         ( deletedStr == null || deletedStr.length() == 0 ) ? null
-                                                           : parseDate( deletedStr );
+      deleted = ( deletedStr == null || deletedStr.length() == 0 )
+                                                                  ? null
+                                                                  : parseDate( deletedStr );
       String priorityStr = elt.getAttribute( "priority" );
       if ( priorityStr.length() > 0 )
       {
@@ -194,9 +187,9 @@ public class RtmTask extends RtmData
    {
       id = elt.getAttribute( "id" );
       String deletedStr = elt.getAttribute( "deleted" );
-      this.deleted =
-         ( deletedStr == null || deletedStr.length() == 0 ) ? null
-                                                           : parseDate( deletedStr );
+      this.deleted = ( deletedStr == null || deletedStr.length() == 0 )
+                                                                       ? null
+                                                                       : parseDate( deletedStr );
       due = null;
       hasDueTime = 0;
       added = null;

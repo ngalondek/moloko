@@ -131,8 +131,7 @@ public class AsyncRtmService
 
 
    public AsyncRtmService( Context context,
-                           final ApplicationInfo applicationInfo,
-                           final RtmAuth.Perms permisson )
+      final ApplicationInfo applicationInfo, final RtmAuth.Perms permisson )
    {
       this.context = context;
       this.applicationInfo = applicationInfo;
@@ -232,8 +231,7 @@ public class AsyncRtmService
       
       if ( connector == null )
       {
-         connector =
-            lazyConnectors[ SERVICE_PART_AUTH ] = new AsyncAuthRtmService();
+         connector = lazyConnectors[ SERVICE_PART_AUTH ] = new AsyncAuthRtmService();
       }
       
       if ( !connector.isConnected() )
@@ -252,8 +250,7 @@ public class AsyncRtmService
       
       if ( connector == null )
       {
-         connector =
-            lazyConnectors[ SERVICE_PART_AUTH ] = new AsyncTaskRtmService();
+         connector = lazyConnectors[ SERVICE_PART_AUTH ] = new AsyncTaskRtmService();
       }
       
       if ( !connector.isConnected() )

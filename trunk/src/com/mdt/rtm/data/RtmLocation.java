@@ -33,23 +33,22 @@ import android.os.Parcelable;
  */
 public class RtmLocation extends RtmData
 {
-   public static final Parcelable.Creator< RtmLocation > CREATOR =
-      new Parcelable.Creator< RtmLocation >()
+   public static final Parcelable.Creator< RtmLocation > CREATOR = new Parcelable.Creator< RtmLocation >()
+   {
+      
+      public RtmLocation createFromParcel( Parcel source )
       {
-         
-         public RtmLocation createFromParcel( Parcel source )
-         {
-            return new RtmLocation( source );
-         }
-         
+         return new RtmLocation( source );
+      }
+      
 
 
-         public RtmLocation[] newArray( int size )
-         {
-            return new RtmLocation[ size ];
-         }
-         
-      };
+      public RtmLocation[] newArray( int size )
+      {
+         return new RtmLocation[ size ];
+      }
+      
+   };
    
    public final String id;
    
@@ -109,8 +108,7 @@ public class RtmLocation extends RtmData
       dest.writeFloat( longitude );
       dest.writeFloat( latitude );
       dest.writeString( address );
-      dest.writeInt( viewable ? 1
-                             : 0 );
+      dest.writeInt( viewable ? 1 : 0 );
       dest.writeInt( zoom );
    }
 }

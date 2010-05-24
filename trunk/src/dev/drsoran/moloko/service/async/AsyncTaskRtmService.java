@@ -14,7 +14,7 @@ import dev.drsoran.moloko.util.ResultCallback;
 
 
 public class AsyncTaskRtmService extends AbstractAsyncServicePart implements
-                                                                 Task
+         Task
 {
    public Future< ? > getList( final String listId,
                                final String filter,
@@ -29,11 +29,11 @@ public class AsyncTaskRtmService extends AbstractAsyncServicePart implements
             
             try
             {
-               res =
-                  syncService.tasks_getList( listId,
-                                             filter,
-                                             ( lastSync != null ? new ParcelableDate( lastSync )
-                                                               : null ) );
+               res = syncService.tasks_getList( listId,
+                                                filter,
+                                                ( lastSync != null
+                                                                  ? new ParcelableDate( lastSync )
+                                                                  : null ) );
             }
             catch ( RemoteException e )
             {

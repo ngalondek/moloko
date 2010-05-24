@@ -41,8 +41,7 @@ import android.os.Parcelable;
 public abstract class RtmData implements Parcelable
 {
    
-   private static final DateFormat DATE_FORMAT =
-      new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
+   private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
    
    
 

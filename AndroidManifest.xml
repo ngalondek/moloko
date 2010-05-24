@@ -7,11 +7,20 @@
 	             android:label="@string/app_name"
 		          android:hasCode="true" android:debuggable="true">
 		          
+      <provider android:name=".content.RtmProvider"
+                android:authorities="dev.drsoran.provider.Rtm" />
+
 		<activity android:label="@string/app_name" android:name=".main.Main">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+			<!-- Show a list of tasks -->
+			<intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
+         </intent-filter>
 		</activity>
 
 		<activity android:label="@string/app_preferences"
@@ -28,8 +37,7 @@
 				<action android:name="dev.drsoran.moloko.service.IRtmService"></action>
 			</intent-filter>			
 		</service>
-		
-	</application>
+</application>
 
 	<uses-permission android:name="android.permission.INTERNET"/>
 </manifest> 

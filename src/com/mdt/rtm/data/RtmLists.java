@@ -35,23 +35,22 @@ import android.os.Parcelable;
 public class RtmLists extends RtmData
 {
    
-   public static final Parcelable.Creator< RtmLists > CREATOR =
-      new Parcelable.Creator< RtmLists >()
+   public static final Parcelable.Creator< RtmLists > CREATOR = new Parcelable.Creator< RtmLists >()
+   {
+      
+      public RtmLists createFromParcel( Parcel source )
       {
-         
-         public RtmLists createFromParcel( Parcel source )
-         {
-            return new RtmLists( source );
-         }
-         
+         return new RtmLists( source );
+      }
+      
 
 
-         public RtmLists[] newArray( int size )
-         {
-            return new RtmLists[ size ];
-         }
-         
-      };
+      public RtmLists[] newArray( int size )
+      {
+         return new RtmLists[ size ];
+      }
+      
+   };
    
    private final Map< String, RtmList > lists;
    

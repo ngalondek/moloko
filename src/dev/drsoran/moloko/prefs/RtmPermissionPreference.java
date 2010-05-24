@@ -14,10 +14,9 @@ import dev.drsoran.moloko.R;
 
 
 public class RtmPermissionPreference extends ListPreference implements
-                                                           OnSharedPreferenceChangeListener
+         OnSharedPreferenceChangeListener
 {
-   public final static String TAG =
-      RtmPermissionPreference.class.getSimpleName();
+   public final static String TAG = RtmPermissionPreference.class.getSimpleName();
    
    private boolean hasAuthToken = false;
    
@@ -42,34 +41,29 @@ public class RtmPermissionPreference extends ListPreference implements
    {
       final Resources resources = getContext().getResources();
       
-      final SharedPreferences prefs =
-         getPreferenceManager().getSharedPreferences();
+      final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
       
       hasAuthToken = prefs != null;
       
       if ( hasAuthToken )
       {
-         final String authToken =
-            prefs.getString( resources.getString( R.string.key_authToken ),
-                             null );
+         final String authToken = prefs.getString( resources.getString( R.string.key_authToken ),
+                                                   null );
          
          hasAuthToken = authToken != null;
          
          if ( hasAuthToken )
          {
-            final String permission =
-               getPermissionEntry( resources,
-                                   prefs.getString( resources.getString( R.string.pref_permission_key ),
-                                                    null ) );
+            final String permission = getPermissionEntry( resources,
+                                                          prefs.getString( resources.getString( R.string.pref_permission_key ),
+                                                                           null ) );
             
-            final long sinceDate =
-               prefs.getLong( resources.getString( R.string.key_authToken_date ),
-                              -1 );
+            final long sinceDate = prefs.getLong( resources.getString( R.string.key_authToken_date ),
+                                                  -1 );
             
             if ( sinceDate > -1 )
             {
-               final java.text.DateFormat dateFormat =
-                  DateFormat.getDateFormat( getContext() );
+               final java.text.DateFormat dateFormat = DateFormat.getDateFormat( getContext() );
                
                setSummary( resources.getString( R.string.pref_perm_has_since,
                                                 permission,
@@ -104,8 +98,7 @@ public class RtmPermissionPreference extends ListPreference implements
    {
       String entry = null;
       
-      final String[] permValues =
-         resources.getStringArray( R.array.rtm_permissions_values );
+      final String[] permValues = resources.getStringArray( R.array.rtm_permissions_values );
       
       boolean found = false;
       
@@ -121,8 +114,7 @@ public class RtmPermissionPreference extends ListPreference implements
       
       if ( found )
       {
-         entry =
-            resources.getStringArray( R.array.rtm_permissions )[ i ].toString();
+         entry = resources.getStringArray( R.array.rtm_permissions )[ i ].toString();
       }
       
       return ( entry );

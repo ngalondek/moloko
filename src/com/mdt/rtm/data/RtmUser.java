@@ -31,23 +31,22 @@ import android.os.Parcelable;
  */
 public class RtmUser extends RtmData
 {
-   public static final Parcelable.Creator< RtmUser > CREATOR =
-      new Parcelable.Creator< RtmUser >()
+   public static final Parcelable.Creator< RtmUser > CREATOR = new Parcelable.Creator< RtmUser >()
+   {
+      
+      public RtmUser createFromParcel( Parcel source )
       {
-         
-         public RtmUser createFromParcel( Parcel source )
-         {
-            return new RtmUser( source );
-         }
-         
+         return new RtmUser( source );
+      }
+      
 
 
-         public RtmUser[] newArray( int size )
-         {
-            return new RtmUser[ size ];
-         }
-         
-      };
+      public RtmUser[] newArray( int size )
+      {
+         return new RtmUser[ size ];
+      }
+      
+   };
    
    private final String id;
    

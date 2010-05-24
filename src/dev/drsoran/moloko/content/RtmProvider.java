@@ -3,23 +3,25 @@ package dev.drsoran.moloko.content;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.util.Log;
 
 
 public class RtmProvider extends ContentProvider
 {
-   @SuppressWarnings( "unused" )
    private final static String TAG = RtmProvider.class.getSimpleName();
    
    private final static String DATABASE_NAME = "rtm.db";
    
    private final static int DATABASE_VERSION = 1;
    
-   private static IRtmProviderPart parts[] = null;
+   private static IRtmProviderPart parts[] = new IRtmProviderPart[] {};
+   
    
    private static class RtmProviderOpenHelper extends SQLiteOpenHelper
    {
@@ -32,73 +34,96 @@ public class RtmProvider extends ContentProvider
 
       public void onCreate( SQLiteDatabase db )
       {
-         try
+         
+         for ( int i = 0; i < parts.length; i++ )
          {
-            RtmProvider.parts = new IRtmProviderPart[] { RtmTasksProviderPart.create( this ) };
-         } catch ( SQLException e )
-         {
-            
+            try
+            {
+               parts[ i ].create( db );
+            }
+            catch ( SQLException e )
+            {
+               parts[ i ].drop( db );
+            }
          }
-      }
-      
-
-
-      public void onOpen( SQLiteDatabase sb )
-      {
-         RtmProvider.parts = new IRtmProviderPart[] { new RtmTasksProviderPart( this ) };
+         
       }
       
 
 
       public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
       {
-         try
+         for ( int i = 0; i < parts.length; i++ )
          {
-            RtmProvider.parts = new IRtmProviderPart[] { RtmTasksProviderPart.upgrade( this, oldVersion, newVersion ) };
-         } catch ( SQLException e )
-         {
-            
+            try
+            {
+               parts[ i ].upgrade( db, oldVersion, newVersion );
+            }
+            catch ( SQLException e )
+            {
+               parts[ i ].drop( db );
+            }
          }
       }
    }
    
-   private RtmProviderOpenHelper taskDb = null;
+
+   private final static class MatchType
+   {
+      public IRtmProviderPart part = null;
+      
+      public int type = UriMatcher.NO_MATCH;
+   }
+   
+   private RtmProviderOpenHelper dbHelper = null;
    
    
 
    @Override
    public boolean onCreate()
    {
-      taskDb = new RtmProviderOpenHelper( getContext() );
+      dbHelper = new RtmProviderOpenHelper( getContext() );
+      
+      parts = new IRtmProviderPart[]
+      { new RtmTasksProviderPart( dbHelper ) };
+      
       return true;
    }
    
 
 
    @Override
-   public Cursor query( Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder )
+   public Cursor query( Uri uri,
+                        String[] projection,
+                        String selection,
+                        String[] selectionArgs,
+                        String sortOrder )
    {
       Cursor cursor = null;
       
-      // Find the DB part that can handle the URI.
-      for ( int i = 0; i < parts.length; i++ )
+      final MatchType matchType = matchUriToPart( uri );
+      
+      switch ( matchType.type )
       {
-         final IRtmProviderPart part = parts[ i ];
-         final int matchType = part.matchUri( uri );
+         case IRtmProviderPart.MATCH_TYPE:
+            cursor = matchType.part.query( null,
+                                           projection,
+                                           selection,
+                                           selectionArgs,
+                                           sortOrder );
+            break;
          
-         switch ( matchType )
-         {
-            case IRtmProviderPart.MATCH_TYPE_DIR:
-               cursor = part.query( null, projection, selection, selectionArgs, sortOrder );
-               break;
-            
-            case IRtmProviderPart.MATCH_TYPE_ITEM:
-               cursor = part.query( part.getIdSegement( uri ), projection, selection, selectionArgs, sortOrder );
-               break;
-            
-            default:
-               break;
-         }
+         case IRtmProviderPart.MATCH_ITEM_TYPE:
+            cursor = matchType.part.query( matchType.part.getIdSegement( uri ),
+                                           projection,
+                                           selection,
+                                           selectionArgs,
+                                           sortOrder );
+            break;
+         
+         default :
+            // TODO: Throw and handle exception
+            break;
       }
       
       return cursor;
@@ -107,19 +132,17 @@ public class RtmProvider extends ContentProvider
 
 
    @Override
-   public int delete( Uri uri, String where, String[] whereArgs )
-   {
-      // TODO: Notify changed
-      // getContext().getContentResolver().notifyChange( uri, null );
-      return 0;
-   }
-   
-
-
-   @Override
    public String getType( Uri uri )
    {
-      return null;
+      String type = null;
+      
+      // Find the DB part that can handle the URI.
+      for ( int i = 0; i < parts.length && type == null; i++ )
+      {
+         type = parts[ i ].getType( uri );
+      }
+      
+      return type;
    }
    
 
@@ -127,19 +150,129 @@ public class RtmProvider extends ContentProvider
    @Override
    public Uri insert( Uri uri, ContentValues values )
    {
-      // TODO: Notify changed
-      // context.getContentResolver().notifyChange( noteUri, null );
-      return null;
+      Uri resUri = null;
+      
+      final MatchType matchType = matchUriToPart( uri );
+      
+      if ( matchType != null )
+      {
+         resUri = matchType.part.insert( values );
+      }
+      
+      if ( resUri != null )
+      {
+         getContext().getContentResolver().notifyChange( resUri, null );
+      }
+      else
+      {
+         // TODO: Throw and handle exception.
+         Log.e( TAG, "Failed to insert row into " + uri );
+      }
+      
+      return resUri;
    }
    
 
 
    @Override
-   public int update( Uri uri, ContentValues values, String selection, String[] selectionArgs )
+   public int delete( Uri uri, String where, String[] whereArgs )
    {
-      // TODO: Notify changed
-      // getContext().getContentResolver().notifyChange( uri, null );
-      return 0;
+      int numDeleted = 0;
+      
+      final MatchType matchType = matchUriToPart( uri );
+      
+      switch ( matchType.type )
+      {
+         case IRtmProviderPart.MATCH_TYPE:
+            numDeleted = matchType.part.delete( null, where, whereArgs );
+            break;
+         
+         case IRtmProviderPart.MATCH_ITEM_TYPE:
+            numDeleted = matchType.part.delete( matchType.part.getIdSegement( uri ),
+                                                where,
+                                                whereArgs );
+            break;
+         
+         default :
+            break;
+      }
+      
+      if ( numDeleted > 0 )
+      {
+         getContext().getContentResolver().notifyChange( uri, null );
+      }
+      else
+      {
+         // TODO: Throw and handle exception.
+         Log.e( TAG, "Unknown URI " + uri );
+      }
+      
+      return numDeleted;
    }
    
+
+
+   @Override
+   public int update( Uri uri,
+                      ContentValues values,
+                      String where,
+                      String[] whereArgs )
+   {
+      int numUpdated = 0;
+      
+      final MatchType matchType = matchUriToPart( uri );
+      
+      switch ( matchType.type )
+      {
+         case IRtmProviderPart.MATCH_TYPE:
+            numUpdated = matchType.part.update( null, values, where, whereArgs );
+            break;
+         
+         case IRtmProviderPart.MATCH_ITEM_TYPE:
+            numUpdated = matchType.part.update( matchType.part.getIdSegement( uri ),
+                                                values,
+                                                where,
+                                                whereArgs );
+            break;
+         
+         default :
+            break;
+      }
+      
+      if ( numUpdated > 0 )
+      {
+         getContext().getContentResolver().notifyChange( uri, null );
+      }
+      else
+      {
+         // TODO: Throw and handle exception.
+         Log.e( TAG, "Unknown URI " + uri );
+      }
+      
+      return numUpdated;
+   }
+   
+
+
+   private MatchType matchUriToPart( Uri uri )
+   {
+      MatchType matchType = new MatchType();
+      
+      // Find the DB part that can handle the URI.
+      for ( int i = 0; i < parts.length
+         && matchType.type == UriMatcher.NO_MATCH; i++ )
+      {
+         final IRtmProviderPart part = parts[ i ];
+         final int type = part.matchUri( uri );
+         
+         if ( type != UriMatcher.NO_MATCH )
+         {
+            matchType = new MatchType();
+            matchType.part = part;
+            matchType.type = type;
+         }
+      }
+      
+      return matchType;
+   }
 }

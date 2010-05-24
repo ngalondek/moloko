@@ -39,23 +39,22 @@ public class RtmTaskSeries extends RtmData
    
    private static final Logger log = Logger.getLogger( "TaskSeries" );
    
-   public static final Parcelable.Creator< RtmTaskSeries > CREATOR =
-      new Parcelable.Creator< RtmTaskSeries >()
+   public static final Parcelable.Creator< RtmTaskSeries > CREATOR = new Parcelable.Creator< RtmTaskSeries >()
+   {
+      
+      public RtmTaskSeries createFromParcel( Parcel source )
       {
-         
-         public RtmTaskSeries createFromParcel( Parcel source )
-         {
-            return new RtmTaskSeries( source );
-         }
-         
+         return new RtmTaskSeries( source );
+      }
+      
 
 
-         public RtmTaskSeries[] newArray( int size )
-         {
-            return new RtmTaskSeries[ size ];
-         }
-         
-      };
+      public RtmTaskSeries[] newArray( int size )
+      {
+         return new RtmTaskSeries[ size ];
+      }
+      
+   };
    
    
 
@@ -103,12 +102,8 @@ public class RtmTaskSeries extends RtmData
    
    
 
-   public RtmTaskSeries( String id,
-                         Date created,
-                         Date modified,
-                         String name,
-                         String source,
-                         RtmTask task )
+   public RtmTaskSeries( String id, Date created, Date modified, String name,
+      String source, RtmTask task )
    {
       this.id = id;
       this.created = created;

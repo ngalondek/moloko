@@ -15,7 +15,7 @@ import dev.drsoran.moloko.util.ResultCallback;
 
 
 public class AsyncAuthRtmService extends AbstractAsyncServicePart implements
-                                                                 Auth
+         Auth
 {
    
    public Future< ? > beginAuthorization( final ApplicationInfo applicationInfo,
@@ -30,9 +30,8 @@ public class AsyncAuthRtmService extends AbstractAsyncServicePart implements
             
             try
             {
-               res =
-                  syncService.beginAuthorization( new ParcelableApplicationInfo( applicationInfo,
-                                                                                 permission ) );
+               res = syncService.beginAuthorization( new ParcelableApplicationInfo( applicationInfo,
+                                                                                    permission ) );
             }
             catch ( RemoteException e )
             {

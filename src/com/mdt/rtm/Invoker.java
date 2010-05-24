@@ -79,8 +79,7 @@ public class Invoker
       DocumentBuilder aBuilder;
       try
       {
-         final DocumentBuilderFactory factory =
-            DocumentBuilderFactory.newInstance();
+         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
          factory.setNamespaceAware( false );
          factory.setValidating( false );
          aBuilder = factory.newDocumentBuilder();
@@ -133,10 +132,9 @@ public class Invoker
    
    
 
-   public Invoker( String serverHostName,
-                   int serverPortNumber,
-                   String serviceRelativeUri,
-                   ApplicationInfo applicationInfo ) throws ServiceInternalException
+   public Invoker( String serverHostName, int serverPortNumber,
+      String serviceRelativeUri, ApplicationInfo applicationInfo )
+      throws ServiceInternalException
    {
       this.serviceRelativeUri = serviceRelativeUri;
       host = new HttpHost( serverHostName, serverPortNumber );
@@ -200,18 +198,17 @@ public class Invoker
       {
          if ( connection.isOpen() == false )
          {
-            final Socket socket =
-               new Socket( host.getHostName(), host.getPort() );
+            final Socket socket = new Socket( host.getHostName(),
+                                              host.getPort() );
             connection.bind( socket, globalHttpParams );
          }
       }
       catch ( Exception exception )
       {
-         final StringBuffer message =
-            new StringBuffer( "Cannot open a socket connection to '" ).append( host.getHostName() )
-               .append( "' on port number " )
-               .append( host.getPort() )
-               .append( ": cannot execute query" );
+         final StringBuffer message = new StringBuffer( "Cannot open a socket connection to '" ).append( host.getHostName() )
+                                                                                                .append( "' on port number " )
+                                                                                                .append( host.getPort() )
+                                                                                                .append( ": cannot execute query" );
          log.error( message, exception );
          throw new ServiceInternalException( message.toString() );
       }
@@ -231,21 +228,20 @@ public class Invoker
          try
          {
             requestUri.append( param.getName() )
-               .append( "=" )
-               .append( URLEncoder.encode( param.getValue(), ENCODING ) )
-               .append( "&" );
+                      .append( "=" )
+                      .append( URLEncoder.encode( param.getValue(), ENCODING ) )
+                      .append( "&" );
          }
          catch ( Exception exception )
          {
-            final StringBuffer message =
-               new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
+            final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
             log.error( message, exception );
             throw new ServiceInternalException( message.toString() );
          }
       }
       requestUri.append( API_SIG_PARAM )
-         .append( "=" )
-         .append( calcApiSig( params ) );
+                .append( "=" )
+                .append( calcApiSig( params ) );
       return requestUri;
    }
    
@@ -253,8 +249,8 @@ public class Invoker
 
    public Element invoke( Param... params ) throws ServiceException
    {
-      long timeSinceLastInvocation =
-         System.currentTimeMillis() - lastInvocation;
+      long timeSinceLastInvocation = System.currentTimeMillis()
+         - lastInvocation;
       if ( timeSinceLastInvocation < INVOCATION_INTERVAL )
       {
          // In order not to invoke the RTM service too often
@@ -312,8 +308,8 @@ public class Invoker
          // "setResponseStream()" method!
          final String responseBodyAsString = "";// EntityUtils.toString(response.getEntity());
          log.info( "  Invocation response:\r\n" + responseBodyAsString );
-         final Document responseDoc =
-            builder.parse( response.getEntity().getContent() );
+         final Document responseDoc = builder.parse( response.getEntity()
+                                                             .getContent() );
          final Element wrapperElt = responseDoc.getDocumentElement();
          if ( !wrapperElt.getNodeName().equals( "rsp" ) )
          {
@@ -328,7 +324,7 @@ public class Invoker
                Node errElt = wrapperElt.getFirstChild();
                while ( errElt != null
                   && ( errElt.getNodeType() != Node.ELEMENT_NODE || !errElt.getNodeName()
-                     .equals( "err" ) ) )
+                                                                           .equals( "err" ) ) )
                {
                   errElt = errElt.getNextSibling();
                }
@@ -348,7 +344,7 @@ public class Invoker
                Node dataElt = wrapperElt.getFirstChild();
                while ( dataElt != null
                   && ( dataElt.getNodeType() != Node.ELEMENT_NODE || dataElt.getNodeName()
-                     .equals( "transaction" ) == true ) )
+                                                                            .equals( "transaction" ) == true ) )
                {
                   try
                   {
@@ -405,8 +401,8 @@ public class Invoker
             catch ( IOException exception )
             {
                log.warn( new StringBuffer( "Could not close properly the socket connection to '" ).append( connection.getRemoteAddress() )
-                            .append( "' on port " )
-                            .append( connection.getRemotePort() ),
+                                                                                                  .append( "' on port " )
+                                                                                                  .append( connection.getRemotePort() ),
                          exception );
             }
          }

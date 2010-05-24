@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.content.provider;
+package dev.drsoran.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -6,15 +6,16 @@ import android.provider.BaseColumns;
 
 public class Rtm
 {
-   public static final String AUTHORITY = "dev.drsoran.Rtm";
+   public static final String AUTHORITY = "dev.drsoran.provider.Rtm";
+   
    
    public static final class Tasks implements BaseColumns
    {
       /**
        * The content:// style URL for this table
        */
-      public final static Uri CONTENT_URI = Uri.parse( "content://"
-                                                       + AUTHORITY + "/tasks" );
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/tasks" );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of tasks.
@@ -25,11 +26,6 @@ public class Rtm
        * The MIME type of a {@link #CONTENT_URI} sub-directory of a single task.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.task";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = "modified DESC";
       
       /**
        * The due date of the task
@@ -87,5 +83,10 @@ public class Rtm
        * </P>
        */
       public final static String ESTIMATE = "estimate";
+      
+      /**
+       * The default sort order for this table
+       */
+      public final static String DEFAULT_SORT_ORDER = DUE_DATE + " DESC";
    }
 }

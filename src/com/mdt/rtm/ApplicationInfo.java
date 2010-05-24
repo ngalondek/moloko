@@ -45,10 +45,8 @@ public class ApplicationInfo
    
 
 
-   public ApplicationInfo( String apiKey,
-                           String sharedSecret,
-                           String name,
-                           String authToken )
+   public ApplicationInfo( String apiKey, String sharedSecret, String name,
+      String authToken )
    {
       super();
       this.apiKey = apiKey;

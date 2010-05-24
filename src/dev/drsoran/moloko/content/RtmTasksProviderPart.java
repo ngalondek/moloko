@@ -13,8 +13,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.content.provider.Rtm;
-import dev.drsoran.moloko.content.provider.Rtm.Tasks;
+import dev.drsoran.provider.Rtm;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class RtmTasksProviderPart implements IRtmProviderPart
@@ -23,8 +23,7 @@ public class RtmTasksProviderPart implements IRtmProviderPart
    
    private static final String TABLE_NAME = "tasks";
    
-   private static final String TASK_ID_EQUALS = Tasks._ID
-                                                + "=";
+   private static final String TASK_ID_EQUALS = Tasks._ID + "=";
    
    private static final int TASKS = 1;
    
@@ -60,35 +59,42 @@ public class RtmTasksProviderPart implements IRtmProviderPart
    
 
 
-   public static RtmTasksProviderPart create( SQLiteOpenHelper dbAccess ) throws SQLException
+   public void create( SQLiteDatabase db ) throws SQLException
    {
-      dbAccess.getWritableDatabase().execSQL( "CREATE TABLE "
-                                              + TABLE_NAME + " (" + Tasks._ID + " INTEGER PRIMARY KEY,"
-                                              + Tasks.DUE_DATE + " INTEGER" + Tasks.ADDED_DATE + " INTEGER"
-                                              + Tasks.COMPLETED_DATE + " INTEGER" + Tasks.DELETED_DATE + " INTEGER"
-                                              + Tasks.PRIORITY + " INTEGER CHECK ( " + Tasks.PRIORITY
-                                              + " BETWEEN 0 AND 3 " + ")" + Tasks.POSTPONED + " INTEGER DEFAULT 0"
-                                              + Tasks.ESTIMATE + " TEXT" + ");" );
-      return new RtmTasksProviderPart( dbAccess );
+      db.execSQL( "CREATE TABLE " + TABLE_NAME + " ( " + Tasks._ID
+         + " INTEGER PRIMARY KEY," + Tasks.DUE_DATE + " INTEGER, "
+         + Tasks.ADDED_DATE + " INTEGER, " + Tasks.COMPLETED_DATE
+         + " INTEGER, " + Tasks.DELETED_DATE + " INTEGER, " + Tasks.PRIORITY
+         + " INTEGER CHECK ( " + Tasks.PRIORITY + " BETWEEN 0 AND 3 " + "), "
+         + Tasks.POSTPONED + " INTEGER DEFAULT 0, " + Tasks.ESTIMATE + " TEXT"
+         + ");" );
    }
    
 
 
-   public static RtmTasksProviderPart upgrade( SQLiteOpenHelper dbAccess, int oldVersion, int newVersion ) throws SQLException
+   public void upgrade( SQLiteDatabase db, int oldVersion, int newVersion ) throws SQLException
    {
-      Log.w( TAG, "Upgrading database from version "
-                  + oldVersion + " to " + newVersion + ", which will destroy all old data" );
+      Log.w( TAG, "Upgrading database from version " + oldVersion + " to "
+         + newVersion + ", which will destroy all old data" );
       
-      dbAccess.getWritableDatabase().execSQL( "DROP TABLE IF EXISTS "
-                                              + TABLE_NAME );
-      
-      return create( dbAccess );
+      drop( db );
+      create( db );
    }
    
 
 
-   @Override
-   public Cursor query( String id, String[] projection, String selection, String[] selectionArgs, String sortOrder )
+   public void drop( SQLiteDatabase db )
+   {
+      db.execSQL( "DROP TABLE IF EXISTS " + TABLE_NAME );
+   }
+   
+
+
+   public Cursor query( String id,
+                        String[] projection,
+                        String selection,
+                        String[] selectionArgs,
+                        String sortOrder )
    {
       Cursor cursor = null;
       
@@ -98,8 +104,7 @@ public class RtmTasksProviderPart implements IRtmProviderPart
       
       if ( id != null )
       {
-         qb.appendWhere( TASK_ID_EQUALS
-                         + id );
+         qb.appendWhere( TASK_ID_EQUALS + id );
       }
       
       // If no sort order is specified use the default
@@ -115,18 +120,24 @@ public class RtmTasksProviderPart implements IRtmProviderPart
       
       // Get the database and run the query
       final SQLiteDatabase db = dbAccess.getReadableDatabase();
-      cursor = qb.query( db, projection, selection, selectionArgs, null, null, orderBy );
+      cursor = qb.query( db,
+                         projection,
+                         selection,
+                         selectionArgs,
+                         null,
+                         null,
+                         orderBy );
       
       return cursor;
    }
    
 
 
-   @Override
    public Uri insert( ContentValues initialValues )
    {
-      if ( initialValues != null
-           && initialValues.containsKey( Rtm.Tasks._ID ) )
+      Uri uri = null;
+      
+      if ( initialValues != null && initialValues.containsKey( Rtm.Tasks._ID ) )
       {
          final Long now = Long.valueOf( System.currentTimeMillis() );
          
@@ -141,17 +152,19 @@ public class RtmTasksProviderPart implements IRtmProviderPart
          
          if ( rowId > 0 )
          {
-            return ContentUris.withAppendedId( Rtm.Tasks.CONTENT_URI, rowId );
+            uri = ContentUris.withAppendedId( Rtm.Tasks.CONTENT_URI, rowId );
          }
       }
       
-      throw new SQLException( "Failed to insert row" );
+      return uri;
    }
    
 
 
-   @Override
-   public int update( String id, ContentValues values, String where, String[] whereArgs )
+   public int update( String id,
+                      ContentValues values,
+                      String where,
+                      String[] whereArgs )
    {
       SQLiteDatabase db = dbAccess.getWritableDatabase();
       
@@ -178,7 +191,6 @@ public class RtmTasksProviderPart implements IRtmProviderPart
    
 
 
-   @Override
    public int delete( String id, String where, String[] whereArgs )
    {
       SQLiteDatabase db = dbAccess.getWritableDatabase();
@@ -206,7 +218,6 @@ public class RtmTasksProviderPart implements IRtmProviderPart
    
 
 
-   @Override
    public String getTableName()
    {
       return TABLE_NAME;
@@ -214,7 +225,6 @@ public class RtmTasksProviderPart implements IRtmProviderPart
    
 
 
-   @Override
    public UriMatcher getUriMatcher()
    {
       return uriMatcher;
@@ -222,23 +232,36 @@ public class RtmTasksProviderPart implements IRtmProviderPart
    
 
 
-   @Override
    public int matchUri( Uri uri )
    {
       switch ( uriMatcher.match( uri ) )
       {
          case TASKS:
-            return MATCH_TYPE_DIR;
+            return MATCH_TYPE;
          case TASK_ID:
-            return MATCH_TYPE_ITEM;
-         default:
+            return MATCH_ITEM_TYPE;
+         default :
             return UriMatcher.NO_MATCH;
       }
    }
    
 
 
-   @Override
+   public String getType( Uri uri )
+   {
+      switch ( uriMatcher.match( uri ) )
+      {
+         case TASKS:
+            return Tasks.CONTENT_TYPE;
+         case TASK_ID:
+            return Tasks.CONTENT_ITEM_TYPE;
+         default :
+            return null;
+      }
+   }
+   
+
+
    public String getIdSegement( Uri uri )
    {
       return uri.getPathSegments().get( 1 );
@@ -246,10 +269,8 @@ public class RtmTasksProviderPart implements IRtmProviderPart
    
 
 
-   @Override
    public HashMap< String, String > getProjection()
    {
       return projectionMap;
    }
-   
 }

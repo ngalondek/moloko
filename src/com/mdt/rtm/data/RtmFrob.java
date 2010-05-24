@@ -32,23 +32,22 @@ import android.os.Parcelable;
 public class RtmFrob extends RtmData
 {
    
-   public static final Parcelable.Creator< RtmFrob > CREATOR =
-      new Parcelable.Creator< RtmFrob >()
+   public static final Parcelable.Creator< RtmFrob > CREATOR = new Parcelable.Creator< RtmFrob >()
+   {
+      
+      public RtmFrob createFromParcel( Parcel source )
       {
-         
-         public RtmFrob createFromParcel( Parcel source )
-         {
-            return new RtmFrob( source );
-         }
-         
+         return new RtmFrob( source );
+      }
+      
 
 
-         public RtmFrob[] newArray( int size )
-         {
-            return new RtmFrob[ size ];
-         }
-         
-      };
+      public RtmFrob[] newArray( int size )
+      {
+         return new RtmFrob[ size ];
+      }
+      
+   };
    
    private final String value;
    

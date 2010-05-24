@@ -62,7 +62,7 @@ public class RtmTasksProviderPart implements IRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + TABLE_NAME + " ( " + Tasks._ID
-         + " INTEGER PRIMARY KEY," + Tasks.DUE_DATE + " INTEGER, "
+         + " INTEGER PRIMARY KEY, " + Tasks.DUE_DATE + " INTEGER, "
          + Tasks.ADDED_DATE + " INTEGER, " + Tasks.COMPLETED_DATE
          + " INTEGER, " + Tasks.DELETED_DATE + " INTEGER, " + Tasks.PRIORITY
          + " INTEGER CHECK ( " + Tasks.PRIORITY + " BETWEEN 0 AND 3 " + "), "

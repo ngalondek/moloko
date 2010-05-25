@@ -43,7 +43,7 @@ public class RtmProvider extends ContentProvider
             }
             catch ( SQLException e )
             {
-               parts[ i ].drop( db );
+               // TODO: handle exception
             }
          }
          
@@ -61,7 +61,7 @@ public class RtmProvider extends ContentProvider
             }
             catch ( SQLException e )
             {
-               parts[ i ].drop( db );
+               // TODO: handle exception
             }
          }
       }

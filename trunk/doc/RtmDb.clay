@@ -52,9 +52,6 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe2" mandatory="false" name="source" remarks="By what API">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe1" mandatory="false" name="locationId">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe0" mandatory="false" name="url">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
@@ -63,13 +60,16 @@
 <primary-key-column name="_id"/>
 </primary-key>
 <foreign-key-list>
-<foreign-key id="5122f2:128cb6194ba:-7fc5" name="task" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKS" referenced-table="tasks" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="task" target-multiplicity="1" target-relationship-type="">
-<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
-</foreign-key>
-<foreign-key id="5122f2:128cb6194ba:-7f7e" name="tags" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TAGS" referenced-table="tags" referenced-table-schema="Rtm" source-entity-role="tagged" source-multiplicity="1..*" source-relationship-type="" target-entity-role="tag" target-multiplicity="0..*" target-relationship-type="">
-<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
-</foreign-key>
 <foreign-key id="5122f2:128cb6194ba:-7f17" name="notes" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_NOTES" referenced-table="notes" referenced-table-schema="Rtm" source-entity-role="taskseries" source-multiplicity="1..*" source-relationship-type="" target-entity-role="note" target-multiplicity="0..*" target-relationship-type="">
+<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
+</foreign-key>
+<foreign-key id="5122f2:128cb6194ba:-7f7e" name="tags" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TAGS" referenced-table="tags" referenced-table-schema="Rtm" source-entity-role="tagged" source-multiplicity="0..*" source-relationship-type="" target-entity-role="tag" target-multiplicity="0..*" target-relationship-type="">
+<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
+</foreign-key>
+<foreign-key id="5122f2:128cb6194ba:-7fc5" name="task" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKS" referenced-table="tasks" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="task" target-multiplicity="1..*" target-relationship-type="">
+<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
+</foreign-key>
+<foreign-key id="190abb9:128ce294477:-7ee4" name="location" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LOCATIONS" referenced-table="locations" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
 <foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
@@ -109,17 +109,65 @@
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
+<table id="190abb9:128ce294477:-7fe8" name="lists">
+<column-list>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe2" mandatory="true" name="_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe1" mandatory="true" name="name">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+</column-list>
+<primary-key id="190abb9:128ce294477:-7fe7" name="PK_LISTS">
+<primary-key-column name="_id"/>
+</primary-key>
+<foreign-key-list>
+<foreign-key id="190abb9:128ce294477:-7f6c" name="taskseries" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="" target-multiplicity="0..*" target-relationship-type="">
+<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
+</foreign-key>
+</foreign-key-list>
+</table>
+<table id="190abb9:128ce294477:-7f35" name="locations">
+<column-list>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2b" mandatory="true" name="_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2a" mandatory="true" name="name">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f29" mandatory="true" name="longitude">
+<data-type name="REAL" selected-variant-pattern="REAL"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f28" mandatory="true" name="latitude">
+<data-type name="REAL" selected-variant-pattern="REAL"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f27" mandatory="false" name="address">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="1" id="190abb9:128ce294477:-7f26" mandatory="true" name="viewable">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f25" mandatory="false" name="zoom">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+</column-list>
+<primary-key id="190abb9:128ce294477:-7f34" name="PK_LOCATIONS">
+<primary-key-column name="_id"/>
+</primary-key>
+</table>
 </table-list>
 </schema>
 </schema-list>
 </database-model>
 <diagram>
-<table-figure height="150" refid="5122f2:128cb6194ba:-7fff" width="177" x="164" y="285"/>
-<table-figure refid="5122f2:128cb6194ba:-7fee" x="202" y="70"/>
+<table-figure height="150" refid="5122f2:128cb6194ba:-7fff" width="177" x="236" y="437"/>
+<table-figure refid="5122f2:128cb6194ba:-7fee" x="274" y="222"/>
 <fk-figure refid="5122f2:128cb6194ba:-7fc5">
 <target-terminal x="96" y="4"/>
 </fk-figure>
-<table-figure refid="5122f2:128cb6194ba:-7f9b" x="466" y="22"/>
-<table-figure refid="5122f2:128cb6194ba:-7f59" x="460" y="148"/>
+<table-figure refid="5122f2:128cb6194ba:-7f9b" x="538" y="174"/>
+<table-figure refid="5122f2:128cb6194ba:-7f59" x="532" y="300"/>
+<table-figure refid="190abb9:128ce294477:-7fe8" x="287" y="65"/>
+<table-figure refid="190abb9:128ce294477:-7f35" x="54" y="215"/>
 </diagram>
 </clay-model>

@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.content;
 
-import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -27,15 +26,6 @@ public class RtmTagsProviderPart extends AbstractRtmProviderPart
       db.execSQL( "CREATE TABLE " + tableName + " ( " + Tags._ID
          + " INTEGER NOT NULL CONSTRAINT PK_TAGS PRIMARY KEY AUTOINCREMENT, "
          + Tags.TAG + " TEXT NOT NULL );" );
-   }
-   
-
-
-   @Override
-   protected ContentValues getInitialValues( ContentValues initialValues )
-   {
-      // TODO: initialValues
-      return initialValues;
    }
    
 

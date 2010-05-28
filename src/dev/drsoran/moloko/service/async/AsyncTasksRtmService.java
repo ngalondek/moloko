@@ -8,13 +8,13 @@ import android.os.RemoteException;
 
 import com.mdt.rtm.data.RtmTasks;
 
-import dev.drsoran.moloko.service.async.AsyncRtmService.Task;
+import dev.drsoran.moloko.service.async.AsyncRtmService.Tasks;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.util.ResultCallback;
 
 
-public class AsyncTaskRtmService extends AbstractAsyncServicePart implements
-         Task
+public class AsyncTasksRtmService extends AbstractAsyncServicePart implements
+         Tasks
 {
    public Future< ? > getList( final String listId,
                                final String filter,

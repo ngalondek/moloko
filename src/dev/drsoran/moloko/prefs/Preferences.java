@@ -77,9 +77,17 @@ public class Preferences extends PreferenceActivity implements
       
       registerForContextMenu( getListView() );
       
+      String permValue = getPermissionList().getValue();
+      
+      // if the value is null we do not have preferences yet.
+      if ( permValue == null )
+      {
+         permValue = RtmAuth.Perms.nothing.toString();
+      }
+      
       asyncService = new AsyncRtmService( this,
                                           getRtmApplicationInfo( this ),
-                                          RtmAuth.Perms.valueOf( getPermissionList().getValue() ) );
+                                          RtmAuth.Perms.valueOf( permValue ) );
    }
    
 

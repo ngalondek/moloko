@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.content;
 
-import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -30,15 +29,6 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          + "CONSTRAINT PK_LISTS PRIMARY KEY ( \"" + Lists._ID + "\" )"
          + "CONSTRAINT taskseries FOREIGN KEY ( \"" + TaskSeries._ID
          + "\" ) REFERENCES taskseries ( \"" + TaskSeries._ID + "\" )" + " );" );
-   }
-   
-
-
-   @Override
-   protected ContentValues getInitialValues( ContentValues initialValues )
-   {
-      // TODO: initialValues
-      return initialValues;
    }
    
 

@@ -21,11 +21,15 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
+import dev.drsoran.rtm.data.ISyncable;
+import dev.drsoran.rtm.data.SyncException;
+
+import android.content.ContentResolver;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 
-public class RtmList extends RtmData
+public class RtmList extends RtmData implements ISyncable< RtmTaskList >
 {
    
    public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
@@ -100,5 +104,29 @@ public class RtmList extends RtmData
    {
       dest.writeString( id );
       dest.writeString( name );
+   }
+   
+
+
+   @Override
+   public void create( ContentResolver contentResolver ) throws SyncException
+   {
+      
+   }
+   
+
+
+   @Override
+   public boolean exists( ContentResolver contentResolver )
+   {
+      contentResolver.query( uri, projection, selection, selectionArgs, sortOrder );
+   }
+   
+
+
+   @Override
+   public void updateWith( ContentResolver contentResolver, RtmTaskList update ) throws SyncException
+   {
+      
    }
 }

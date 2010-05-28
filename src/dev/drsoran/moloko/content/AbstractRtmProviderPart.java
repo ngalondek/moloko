@@ -118,8 +118,10 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
       {
          initialValues = getInitialValues( initialValues );
          
-         SQLiteDatabase db = dbAccess.getWritableDatabase();
-         long rowId = db.insert( tableName, BaseColumns._ID, initialValues );
+         final SQLiteDatabase db = dbAccess.getWritableDatabase();
+         final long rowId = db.insert( tableName,
+                                       BaseColumns._ID,
+                                       initialValues );
          
          if ( rowId > 0 )
          {

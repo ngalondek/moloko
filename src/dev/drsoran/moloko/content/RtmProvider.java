@@ -85,7 +85,12 @@ public class RtmProvider extends ContentProvider
       dbHelper = new RtmProviderOpenHelper( getContext() );
       
       parts = new IRtmProviderPart[]
-      { new RtmTasksProviderPart( dbHelper ) };
+      { new RtmTasksProviderPart( dbHelper ),
+       new RtmTaskSeriesProviderPart( dbHelper ),
+       new RtmListsProviderPart( dbHelper ),
+       new RtmTagsProviderPart( dbHelper ),
+       new RtmNotesProviderPart( dbHelper ),
+       new RtmLocationsProviderPart( dbHelper ) };
       
       return true;
    }

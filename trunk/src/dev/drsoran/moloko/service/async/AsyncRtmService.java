@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.prefs.Preferences;
@@ -51,12 +52,18 @@ public class AsyncRtmService
    }
    
 
-   public interface Task
+   public interface Tasks
    {
       public Future< ? > getList( String listId,
                                   String filter,
                                   Date lastSync,
                                   ResultCallback< RtmTasks > callback );
+   }
+   
+
+   public interface Lists
+   {
+      public Future< ? > getList( ResultCallback< RtmLists > callback );
    }
    
    // class AsyncRtmService
@@ -107,9 +114,11 @@ public class AsyncRtmService
    
    private static final int SERVICE_PART_AUTH = 0;
    
-   private static final int SERVICE_PART_TASK = 1;
+   private static final int SERVICE_PART_TASKS = 1;
    
-   private final ILazyConnector[] lazyConnectors = new ILazyConnector[ 2 ];
+   private static final int SERVICE_PART_LISTS = 2;
+   
+   private final ILazyConnector[] lazyConnectors = new ILazyConnector[ 3 ];
    
    private ApplicationInfo applicationInfo = null;
    
@@ -244,13 +253,13 @@ public class AsyncRtmService
    
 
 
-   public Task task()
+   public Tasks tasks()
    {
-      ILazyConnector connector = lazyConnectors[ SERVICE_PART_TASK ];
+      ILazyConnector connector = lazyConnectors[ SERVICE_PART_TASKS ];
       
       if ( connector == null )
       {
-         connector = lazyConnectors[ SERVICE_PART_AUTH ] = new AsyncTaskRtmService();
+         connector = lazyConnectors[ SERVICE_PART_AUTH ] = new AsyncTasksRtmService();
       }
       
       if ( !connector.isConnected() )
@@ -258,7 +267,26 @@ public class AsyncRtmService
          connectLazyConnector( connector );
       }
       
-      return (Task) connector;
+      return (Tasks) connector;
+   }
+   
+
+
+   public Lists lists()
+   {
+      ILazyConnector connector = lazyConnectors[ SERVICE_PART_LISTS ];
+      
+      if ( connector == null )
+      {
+         connector = lazyConnectors[ SERVICE_PART_LISTS ] = new AsyncListsRtmService();
+      }
+      
+      if ( !connector.isConnected() )
+      {
+         connectLazyConnector( connector );
+      }
+      
+      return (Lists) connector;
    }
    
 

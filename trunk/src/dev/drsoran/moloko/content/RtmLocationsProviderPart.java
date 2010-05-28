@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.content;
 
-import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -32,15 +31,6 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
          + Locations.ZOOM + " INTEGER, "
          + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + Locations._ID + "\" )"
          + " );" );
-   }
-   
-
-
-   @Override
-   protected ContentValues getInitialValues( ContentValues initialValues )
-   {
-      // TODO: initialValues
-      return initialValues;
    }
    
 

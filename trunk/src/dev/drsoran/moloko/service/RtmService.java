@@ -9,6 +9,7 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
@@ -150,6 +151,30 @@ public class RtmService extends Service
          }
          
          return rtmTasks;
+      }
+      
+
+
+      @Override
+      public RtmLists lists_getList() throws RemoteException
+      {
+         RtmLists rtmLists = null;
+         
+         if ( serviceImpl == null )
+         {
+            throw new RtmServiceException( RtmServiceConstants.ServiceState.INTERNAL_ERROR );
+         }
+         
+         try
+         {
+            rtmLists = serviceImpl.lists_getList();
+         }
+         catch ( ServiceException e )
+         {
+            throw new RtmServiceException( e );
+         }
+         
+         return rtmLists;
       }
    }
    

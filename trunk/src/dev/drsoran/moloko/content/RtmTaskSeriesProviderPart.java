@@ -49,7 +49,12 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    @Override
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
-      // TODO: initialValues
+      if ( !initialValues.containsKey( TaskSeries.CREATED_DATE ) )
+      {
+         final Long now = Long.valueOf( System.currentTimeMillis() );
+         initialValues.put( TaskSeries.CREATED_DATE, now );
+      }
+      
       return initialValues;
    }
    

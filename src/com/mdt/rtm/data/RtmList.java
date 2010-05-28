@@ -21,15 +21,17 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.os.Parcel;
+import android.os.Parcelable;
+import dev.drsoran.moloko.content.Queries;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.data.ISyncable;
 import dev.drsoran.rtm.data.SyncException;
 
-import android.content.ContentResolver;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-
-public class RtmList extends RtmData implements ISyncable< RtmTaskList >
+public class RtmList extends RtmData implements ISyncable< RtmList >
 {
    
    public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
@@ -49,9 +51,9 @@ public class RtmList extends RtmData implements ISyncable< RtmTaskList >
       
    };
    
-   private final String id;
+   private String id;
    
-   private final String name;
+   private String name;
    
    
 
@@ -111,7 +113,7 @@ public class RtmList extends RtmData implements ISyncable< RtmTaskList >
    @Override
    public void create( ContentResolver contentResolver ) throws SyncException
    {
-      
+      Queries.Lists.insertOrReplace( contentResolver, this );
    }
    
 
@@ -119,14 +121,37 @@ public class RtmList extends RtmData implements ISyncable< RtmTaskList >
    @Override
    public boolean exists( ContentResolver contentResolver )
    {
-      contentResolver.query( uri, projection, selection, selectionArgs, sortOrder );
+      return Queries.exists( contentResolver, Lists.CONTENT_URI, id );
    }
    
 
 
    @Override
-   public void updateWith( ContentResolver contentResolver, RtmTaskList update ) throws SyncException
+   public int updateWith( ContentResolver contentResolver, RtmList update ) throws SyncException
    {
+      int updatesCnt = 0;
       
+      if ( !update.name.equals( name ) )
+      {
+         ContentValues values = new ContentValues();
+         values.put( Lists.NAME, update.name );
+         
+         updatesCnt = contentResolver.update( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                        id ),
+                                              values,
+                                              null,
+                                              null );
+         assignContent( update );
+      }
+      
+      return updatesCnt;
+   }
+   
+
+
+   @Override
+   public void assignContent( RtmList other )
+   {
+      this.name = other.name;
    }
 }

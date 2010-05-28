@@ -148,24 +148,24 @@ public class Main extends ListActivity
          
          for ( RtmList rtmList : lists )
          {
-            Queries.Lists.insertOrReplace( getContentResolver(), rtmList );
             
-            try
-            {
-               final RtmTasks tasks = asyncRtmService.sync()
-                                                     .tasks_getList( rtmList.getId(),
-                                                                     null,
-                                                                     null );
-               syncTasks( tasks );
-            }
-            catch ( RemoteException e )
-            {
-               new AlertDialog.Builder( this ).setTitle( R.string.err_error )
-                                              .setMessage( "Sync fehlegeschlagen. "
-                                                 + e.getMessage() )
-                                              .show();
-               continue;
-            }
+            
+//            try
+//            {
+//               final RtmTasks tasks = asyncRtmService.sync()
+//                                                     .tasks_getList( rtmList.getId(),
+//                                                                     null,
+//                                                                     null );
+//               syncTasks( tasks );
+//            }
+//            catch ( RemoteException e )
+//            {
+//               new AlertDialog.Builder( this ).setTitle( R.string.err_error )
+//                                              .setMessage( "Sync fehlegeschlagen. "
+//                                                 + e.getMessage() )
+//                                              .show();
+//               continue;
+//            }
          }
       }
       
@@ -184,7 +184,7 @@ public class Main extends ListActivity
          
          for ( RtmTaskSeries rtmTaskSeries : listOfTaskSeries )
          {
-            rtmTaskSeries.
+            
          }
       }
    }

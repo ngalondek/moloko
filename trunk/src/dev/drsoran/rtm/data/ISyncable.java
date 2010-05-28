@@ -13,5 +13,9 @@ public interface ISyncable< T >
    
 
 
-   public void updateWith( ContentResolver contentResolver, T update ) throws SyncException;
+   public int updateWith( ContentResolver contentResolver, T update ) throws SyncException;
+   
+
+
+   public void assignContent( T other );
 }

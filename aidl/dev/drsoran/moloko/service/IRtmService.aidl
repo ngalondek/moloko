@@ -5,6 +5,8 @@ import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTasks;
+import com.mdt.rtm.data.RtmLists;
+
 
 interface IRtmService
 {
@@ -19,4 +21,6 @@ interface IRtmService
    RtmAuth checkAuthToken( in String authToken );
    
    RtmTasks tasks_getList( in String listId, in String filter, in ParcelableDate lastSync );
+   
+   RtmLists lists_getList();
 }

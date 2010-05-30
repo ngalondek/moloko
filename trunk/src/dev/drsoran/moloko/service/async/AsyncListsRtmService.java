@@ -25,13 +25,12 @@ public class AsyncListsRtmService extends AbstractAsyncServicePart implements
             try
             {
                res = syncService.lists_getList();
+               handler.post( callback.setResult( res ) );
             }
             catch ( RemoteException e )
             {
                handler.post( callback.setResult( res, e ) );
             }
-            
-            handler.post( callback.setResult( res ) );
             
             return null;
          }

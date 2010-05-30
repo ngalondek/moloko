@@ -1,7 +1,6 @@
 package dev.drsoran.moloko.service.async;
 
 import java.util.Date;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,11 +21,8 @@ import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmTasks;
 
-import dev.drsoran.moloko.prefs.Preferences;
 import dev.drsoran.moloko.service.IRtmService;
-import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.RtmServiceException;
-import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
 import dev.drsoran.moloko.util.ResultCallback;
 
 
@@ -37,8 +33,7 @@ public class AsyncRtmService
    
    public interface Auth
    {
-      public Future< ? > beginAuthorization( ApplicationInfo applicationInfo,
-                                             RtmAuth.Perms permission,
+      public Future< ? > beginAuthorization( RtmAuth.Perms permission,
                                              ResultCallback< String > callback );
       
 
@@ -80,8 +75,7 @@ public class AsyncRtmService
          
          try
          {
-            syncService.initialize( new ParcelableApplicationInfo( applicationInfo,
-                                                                   permission ) );
+            syncService.initialize( applicationInfo );
             Log.d( TAG, "Service connected." );
             
             for ( int i = 0; i < lazyConnectors.length; i++ )
@@ -122,62 +116,17 @@ public class AsyncRtmService
    
    private ApplicationInfo applicationInfo = null;
    
-   private RtmAuth.Perms permission = RtmAuth.Perms.nothing;
-   
    private IRtmService syncService = null;
    
    private Context context = null;
    
    
 
-   public static AsyncRtmService create( Context context )
-   {
-      return new AsyncRtmService( context,
-                                  Preferences.getRtmApplicationInfo( context ),
-                                  Preferences.getRtmPermission( context ) );
-   }
-   
-
-
-   public AsyncRtmService( Context context,
-      final ApplicationInfo applicationInfo, final RtmAuth.Perms permisson )
+   public AsyncRtmService( Context context, ApplicationInfo applicationInfo )
    {
       this.context = context;
       this.applicationInfo = applicationInfo;
-      this.permission = permisson;
       connect( context );
-   }
-   
-
-
-   public void updateService( final ApplicationInfo applicationInfo,
-                              final RtmAuth.Perms permission ) throws RemoteException
-   {
-      if ( syncService == null )
-      {
-         throw new RtmServiceException( RtmServiceConstants.ServiceState.INTERNAL_ERROR );
-      }
-      
-      executor.submit( new Callable< Void >()
-      {
-         
-         public Void call() throws RemoteException
-         {
-            try
-            {
-               syncService.initialize( new ParcelableApplicationInfo( applicationInfo,
-                                                                      permission ) );
-               Log.d( TAG, "Service updated." );
-            }
-            catch ( RemoteException e )
-            {
-               throw new RtmServiceException( RtmServiceConstants.ServiceState.INTERNAL_ERROR );
-            }
-            
-            return null;
-         }
-         
-      } );
    }
    
 

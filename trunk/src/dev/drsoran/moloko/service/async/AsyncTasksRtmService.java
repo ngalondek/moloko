@@ -34,13 +34,13 @@ public class AsyncTasksRtmService extends AbstractAsyncServicePart implements
                                                 ( lastSync != null
                                                                   ? new ParcelableDate( lastSync )
                                                                   : null ) );
+               
+               handler.post( callback.setResult( res ) );
             }
             catch ( RemoteException e )
             {
                handler.post( callback.setResult( res, e ) );
             }
-            
-            handler.post( callback.setResult( res ) );
             
             return null;
          }

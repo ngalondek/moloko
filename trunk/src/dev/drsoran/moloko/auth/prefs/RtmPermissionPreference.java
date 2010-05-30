@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.prefs;
+package dev.drsoran.moloko.auth.prefs;
 
 import java.util.Date;
 
@@ -55,7 +55,7 @@ public class RtmPermissionPreference extends ListPreference implements
          if ( hasAuthToken )
          {
             final String permission = getPermissionEntry( resources,
-                                                          prefs.getString( resources.getString( R.string.pref_permission_key ),
+                                                          prefs.getString( resources.getString( R.string.auth_pref_permission_key ),
                                                                            null ) );
             
             final long sinceDate = prefs.getLong( resources.getString( R.string.key_authToken_date ),
@@ -65,13 +65,13 @@ public class RtmPermissionPreference extends ListPreference implements
             {
                final java.text.DateFormat dateFormat = DateFormat.getDateFormat( getContext() );
                
-               setSummary( resources.getString( R.string.pref_perm_has_since,
+               setSummary( resources.getString( R.string.auth_pref_perm_has_since,
                                                 permission,
                                                 dateFormat.format( new Date( sinceDate ) ) ) );
             }
             else
             {
-               setSummary( resources.getString( R.string.pref_perm_has,
+               setSummary( resources.getString( R.string.auth_pref_perm_has,
                                                 permission ) );
             }
          }
@@ -83,7 +83,7 @@ public class RtmPermissionPreference extends ListPreference implements
       
       if ( !hasAuthToken )
       {
-         setSummary( R.string.pref_perm_has_not );
+         setSummary( R.string.auth_pref_perm_has_not );
       }
       
       prefs.registerOnSharedPreferenceChangeListener( this );
@@ -129,7 +129,7 @@ public class RtmPermissionPreference extends ListPreference implements
       
       if ( key.equals( res.getString( R.string.key_authToken ) )
          || key.equals( res.getString( R.string.key_authToken_date ) )
-         || key.equals( res.getString( R.string.pref_permission_key ) ) )
+         || key.equals( res.getString( R.string.auth_pref_permission_key ) ) )
       {
          notifyChanged();
       }

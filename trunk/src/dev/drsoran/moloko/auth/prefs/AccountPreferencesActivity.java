@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.prefs;
+package dev.drsoran.moloko.auth.prefs;
 
 import java.util.concurrent.Future;
 
@@ -9,9 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -28,18 +26,17 @@ import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.login.RtmWebAccess;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.async.AsyncRtmService;
 import dev.drsoran.moloko.util.ResultCallback;
 
 
-public class Preferences extends PreferenceActivity implements
+public class AccountPreferencesActivity extends PreferenceActivity implements
          Preference.OnPreferenceChangeListener,
          DialogInterface.OnCancelListener
 {
    
-   private final static String TAG = Preferences.class.getSimpleName();
+   private final static String TAG = AccountPreferencesActivity.class.getSimpleName();
    
    public ProgressDialog PROGRESS_DLG = null;
    
@@ -66,7 +63,7 @@ public class Preferences extends PreferenceActivity implements
    {
       super.onCreate( savedInstanceState );
       
-      addPreferencesFromResource( R.xml.preferences );
+      addPreferencesFromResource( R.xml.account_preferences );
       
       ListPreference permPref = getPermissionList();
       
@@ -85,9 +82,9 @@ public class Preferences extends PreferenceActivity implements
          permValue = RtmAuth.Perms.nothing.toString();
       }
       
-      asyncService = new AsyncRtmService( this,
-                                          getRtmApplicationInfo( this ),
-                                          RtmAuth.Perms.valueOf( permValue ) );
+//      asyncService = new AsyncRtmService( this,
+//                                          getRtmApplicationInfo( this ),
+//                                          RtmAuth.Perms.valueOf( permValue ) );
    }
    
 
@@ -111,11 +108,11 @@ public class Preferences extends PreferenceActivity implements
       
       if ( prefs != null )
       {
-         applicationInfo = new ApplicationInfo( prefs.getString( context.getString( R.string.pref_api_key_key ),
+         applicationInfo = new ApplicationInfo( prefs.getString( context.getString( R.string.auth_pref_api_key_key ),
                                                                  null ),
-                                                prefs.getString( context.getString( R.string.pref_api_shared_secret_key ),
+                                                prefs.getString( context.getString( R.string.auth_pref_api_shared_secret_key ),
                                                                  null ),
-                                                prefs.getString( context.getString( R.string.pref_login_username_key ),
+                                                prefs.getString( context.getString( R.string.auth_pref_login_username_key ),
                                                                  null ),
                                                 prefs.getString( context.getString( R.string.key_authToken ),
                                                                  null ) );
@@ -134,7 +131,7 @@ public class Preferences extends PreferenceActivity implements
       
       if ( prefs != null )
       {
-         perms = RtmAuth.Perms.valueOf( prefs.getString( context.getString( R.string.pref_permission_key ),
+         perms = RtmAuth.Perms.valueOf( prefs.getString( context.getString( R.string.auth_pref_permission_key ),
                                                          RtmAuth.Perms.nothing.toString() ) );
       }
       
@@ -165,10 +162,10 @@ public class Preferences extends PreferenceActivity implements
    {
       switch ( item.getItemId() )
       {
-         case R.id.prefs_ctxmenu_perm_check_auth_token:
+         case R.id.auth_prefs_ctxmenu_perm_check_auth_token:
             activateDialog( DlgType.PROGRESS,
                             getString( R.string.phr_please_wait ),
-                            getString( R.string.pref_dlg_check_auth_token,
+                            getString( R.string.auth_pref_dlg_check_auth_token,
                                        RtmPermissionPreference.getPermissionEntry( getResources(),
                                                                                    getPermissionList().getValue() ) ) );
             
@@ -230,7 +227,7 @@ public class Preferences extends PreferenceActivity implements
                if ( permissionPreference.hasAuthToken() )
                {
                   final MenuInflater inflater = getMenuInflater();
-                  inflater.inflate( R.menu.prefs_ctxmenu_perm, menu );
+                  inflater.inflate( R.menu.auth_prefs_ctxmenu_perm, menu );
                   return;
                }
             }
@@ -321,39 +318,39 @@ public class Preferences extends PreferenceActivity implements
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
-      switch ( requestCode )
-      {
-         case RtmWebAccess.ReqType.OPEN_URL:
-            switch ( resultCode )
-            {
-               case RtmWebAccess.ReturnCode.SUCCESS:
-                  cancelOperationHandle = asyncService.auth()
-                                                      .completeAuthorization( new ResultCallback< String >( data.getExtras() )
-                                                      {
-                                                         public void run()
-                                                         {
-                                                            if ( exception == null )
-                                                               onAuthTokenReceived( result,
-                                                                                    extraData.getString( getString( R.string.pref_permission_key ) ) );
-                                                            else
-                                                               activateDialog( DlgType.ALERT,
-                                                                               getString( R.string.err_error ),
-                                                                               getErrorMessageWithException( exception ) );
-                                                         }
-                                                      } );
-                  break;
-               default :
-                  activateDialog( DlgType.ALERT,
-                                  getString( R.string.err_error ),
-                                  getString( R.string.pref_err_rtmWebAccess ) );
-                  break;
-            }
-            break;
-         
-         default :
-            super.onActivityResult( requestCode, resultCode, data );
-            break;
-      }
+//      switch ( requestCode )
+//      {
+//         case RtmWebLoginActivity.ReqType.OPEN_URL:
+//            switch ( resultCode )
+//            {
+//               case RtmWebLoginActivity.ReturnCode.SUCCESS:
+//                  cancelOperationHandle = asyncService.auth()
+//                                                      .completeAuthorization( new ResultCallback< String >( data.getExtras() )
+//                                                      {
+//                                                         public void run()
+//                                                         {
+//                                                            if ( exception == null )
+//                                                               onAuthTokenReceived( result,
+//                                                                                    extraData.getString( getString( R.string.auth_pref_permission_key ) ) );
+//                                                            else
+//                                                               activateDialog( DlgType.ALERT,
+//                                                                               getString( R.string.err_error ),
+//                                                                               getErrorMessageWithException( exception ) );
+//                                                         }
+//                                                      } );
+//                  break;
+//               default :
+//                  activateDialog( DlgType.ALERT,
+//                                  getString( R.string.err_error ),
+//                                  getString( R.string.auth_pref_err_rtmWebAccess ) );
+//                  break;
+//            }
+//            break;
+//         
+//         default :
+//            super.onActivityResult( requestCode, resultCode, data );
+//            break;
+//      }
    }
    
 
@@ -382,7 +379,7 @@ public class Preferences extends PreferenceActivity implements
             // We store the requested permission level in a bundle so that
             // subsequent calls have access to it.
             final Bundle bundle = new Bundle();
-            bundle.putString( getString( R.string.pref_permission_key ),
+            bundle.putString( getString( R.string.auth_pref_permission_key ),
                               newPermissionValue );
             
             final String newPermissionRequest = RtmPermissionPreference.getPermissionEntry( getResources(),
@@ -390,12 +387,11 @@ public class Preferences extends PreferenceActivity implements
             
             activateDialog( DlgType.PROGRESS,
                             getString( R.string.phr_please_wait ),
-                            getString( R.string.pref_dlg_get_auth_token,
+                            getString( R.string.auth_pref_dlg_get_auth_token,
                                        newPermissionRequest ) );
             
             cancelOperationHandle = asyncService.auth()
-                                                .beginAuthorization( getRtmApplicationInfo( this ),
-                                                                     RtmAuth.Perms.valueOf( newPermissionValue ),
+                                                .beginAuthorization( RtmAuth.Perms.valueOf( newPermissionValue ),
                                                                      new ResultCallback< String >( bundle )
                                                                      {
                                                                         public void run()
@@ -427,12 +423,12 @@ public class Preferences extends PreferenceActivity implements
       
       if ( loginUrl != null )
       {
-         final Intent intent = new Intent( android.content.Intent.ACTION_VIEW,
-                                           Uri.parse( loginUrl ),
-                                           Preferences.this,
-                                           RtmWebAccess.class );
-         intent.putExtras( bundle );
-         startActivityForResult( intent, RtmWebAccess.ReqType.OPEN_URL );
+//         final Intent intent = new Intent( android.content.Intent.ACTION_VIEW,
+//                                           Uri.parse( loginUrl ),
+//                                           AccountPreferencesActivity.this,
+//                                           RtmWebLoginActivity.class );
+//         intent.putExtras( bundle );
+//         startActivityForResult( intent, RtmWebLoginActivity.ReqType.OPEN_URL );
       }
       else
       {
@@ -453,13 +449,13 @@ public class Preferences extends PreferenceActivity implements
       {
          activateDialog( DlgType.ALERT,
                          getString( R.string.err_error ),
-                         getErrorMessageWithObjects( getString( R.string.pref_err_invalid_auth_token ) ) );
+                         getErrorMessageWithObjects( getString( R.string.auth_pref_err_invalid_auth_token ) ) );
       }
       else if ( commitNewPermissionLevel( authToken, permissionLevel ) )
       {
          activateDialog( DlgType.ALERT,
                          getString( R.string.err_success ),
-                         getString( R.string.pref_dlg_finsihed,
+                         getString( R.string.auth_pref_dlg_finsihed,
                                     RtmPermissionPreference.getPermissionEntry( getResources(),
                                                                                 permissionLevel ) ) );
       }
@@ -475,14 +471,14 @@ public class Preferences extends PreferenceActivity implements
       {
          activateDialog( DlgType.ALERT,
                          getString( R.string.err_success ),
-                         getString( R.string.pref_dlg_check_auth_token_invalid ) );
+                         getString( R.string.auth_pref_dlg_check_auth_token_invalid ) );
          clearAuthToken();
       }
       else if ( result == null )
       {
          activateDialog( DlgType.ALERT,
                          getString( R.string.err_error ),
-                         getString( R.string.pref_err_check_auth_token_failed ) );
+                         getString( R.string.auth_pref_err_check_auth_token_failed ) );
       }
       else
       {
@@ -490,7 +486,7 @@ public class Preferences extends PreferenceActivity implements
          
          activateDialog( DlgType.ALERT,
                          getString( R.string.err_success ),
-                         getString( R.string.pref_dlg_check_auth_token_finished,
+                         getString( R.string.auth_pref_dlg_check_auth_token_finished,
                                     RtmPermissionPreference.getPermissionEntry( getResources(),
                                                                                 permsStr ),
                                     result.getUser().getUsername() ) );
@@ -514,7 +510,7 @@ public class Preferences extends PreferenceActivity implements
                                                               .edit();
       
       // set permission to nothing
-      prefsEditor.putString( getString( R.string.pref_permission_key ),
+      prefsEditor.putString( getString( R.string.auth_pref_permission_key ),
                              permissionLevelNone );
       
       // remove auth token
@@ -537,26 +533,26 @@ public class Preferences extends PreferenceActivity implements
    {
       if ( asyncService != null )
       {
-         try
-         {
-            asyncService.updateService( getRtmApplicationInfo( this ),
-                                        RtmAuth.Perms.valueOf( permissionLevel ) );
-         }
-         catch ( RemoteException e )
-         {
-            activateDialog( DlgType.ALERT,
-                            getString( R.string.err_error ),
-                            getString( R.string.pref_dlg_update_svc_failed,
-                                       AsyncRtmService.getExceptionCause( e ) ) );
-            return false;
-         }
+//         try
+//         {
+//            asyncService.updateService( getRtmApplicationInfo( this ),
+//                                        RtmAuth.Perms.valueOf( permissionLevel ) );
+//         }
+//         catch ( RemoteException e )
+//         {
+//            activateDialog( DlgType.ALERT,
+//                            getString( R.string.err_error ),
+//                            getString( R.string.auth_pref_dlg_update_svc_failed,
+//                                       AsyncRtmService.getExceptionCause( e ) ) );
+//            return false;
+//         }
       }
       
       // Set new selected permission level
       SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences( this )
                                                               .edit();
       
-      prefsEditor.putString( getString( R.string.pref_permission_key ),
+      prefsEditor.putString( getString( R.string.auth_pref_permission_key ),
                              permissionLevel );
       
       // set auth token
@@ -589,7 +585,7 @@ public class Preferences extends PreferenceActivity implements
    {
       RtmPermissionPreference listPreference = null;
       
-      Preference permPref = findPreference( getString( R.string.pref_permission_key ) );
+      Preference permPref = findPreference( getString( R.string.auth_pref_permission_key ) );
       
       if ( permPref instanceof ListPreference )
       {
@@ -603,7 +599,7 @@ public class Preferences extends PreferenceActivity implements
 
    private String getErrorMessageWithException( final Exception e )
    {
-      return getString( R.string.pref_dlg_error,
+      return getString( R.string.auth_pref_dlg_error,
                         AsyncRtmService.getExceptionCause( e ) );
       
    }
@@ -612,6 +608,6 @@ public class Preferences extends PreferenceActivity implements
 
    private String getErrorMessageWithObjects( final Object... o )
    {
-      return getString( R.string.pref_dlg_error, o );
+      return getString( R.string.auth_pref_dlg_error, o );
    }
 }

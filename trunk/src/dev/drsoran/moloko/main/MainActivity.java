@@ -8,7 +8,6 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,16 +22,15 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.Queries;
-import dev.drsoran.moloko.prefs.Preferences;
+import dev.drsoran.moloko.auth.prefs.AccountPreferencesActivity;
 import dev.drsoran.moloko.service.async.AsyncRtmService;
 import dev.drsoran.moloko.util.ResultCallback;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-public class Main extends ListActivity
+public class MainActivity extends ListActivity
 {
-   private final static String TAG = Main.class.getSimpleName();
+   private final static String TAG = MainActivity.class.getSimpleName();
    
    private final static String[] PROJECTION = new String[]
    { Tasks._ID, Tasks.COMPLETED_DATE };
@@ -46,7 +44,7 @@ public class Main extends ListActivity
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      setContentView( R.layout.main );
+      setContentView( R.layout.main_activity );
       
       final Cursor cursor = managedQuery( Tasks.CONTENT_URI,
                                           PROJECTION,
@@ -55,7 +53,7 @@ public class Main extends ListActivity
                                           Tasks.DEFAULT_SORT_ORDER );
       
       SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
-                                                             R.layout.main_list_tasks_task,
+                                                             R.layout.main_activity_list_tasks_task,
                                                              cursor,
                                                              new String[]
                                                              { Tasks.COMPLETED_DATE },
@@ -98,7 +96,7 @@ public class Main extends ListActivity
    public boolean onPrepareOptionsMenu( Menu menu )
    {
       MenuItem syncItem = (MenuItem) menu.findItem( R.id.main_menu_opt_sync );
-      syncItem.setEnabled( Preferences.getRtmPermission( this ) != RtmAuth.Perms.nothing );
+      syncItem.setEnabled( AccountPreferencesActivity.getRtmPermission( this ) != RtmAuth.Perms.nothing );
       
       return true;
    }
@@ -111,13 +109,12 @@ public class Main extends ListActivity
       switch ( item.getItemId() )
       {
          case R.id.main_menu_opt_sync:
-            asyncRtmService = new AsyncRtmService( this,
-                                                   Preferences.getRtmApplicationInfo( this ),
-                                                   Preferences.getRtmPermission( this ) );
+//            asyncRtmService = new AsyncRtmService( this,
+//                                                   AccountPreferencesActivity.getRtmApplicationInfo( this ),
+//                                                   AccountPreferencesActivity.getRtmPermission( this ) );
             
             asyncRtmService.lists().getList( new ResultCallback< RtmLists >()
             {
-               @Override
                public void run()
                {
                   syncAll( result, exception );
@@ -203,7 +200,7 @@ public class Main extends ListActivity
          
          if ( ok )
          {
-            item.setIntent( new Intent( this, Preferences.class ) );
+            item.setIntent( new Intent( this, AccountPreferencesActivity.class ) );
          }
          else
          {

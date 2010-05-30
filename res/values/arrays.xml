@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string-array name="rtm_permissions">
-		<item>@string/pref_perm_no</item>
-		<item>@string/pref_perm_read</item>
-		<item>@string/pref_perm_write</item>
-		<item>@string/pref_perm_delete</item>
+	<string-array name="rtm_permissions">		
+		<item>@string/auth_pref_perm_read</item>
+		<item>@string/auth_pref_perm_write</item>
+		<item>@string/auth_pref_perm_delete</item>
 	</string-array>
 
 	<string-array name="rtm_permissions_values">
-		<item>nothing</item>
 		<item>read</item>
 		<item>write</item>
 		<item>delete</item>

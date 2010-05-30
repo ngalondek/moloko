@@ -1,14 +1,15 @@
-package dev.drsoran.moloko.login;
+package dev.drsoran.moloko.auth;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 
-public class RtmWebAccess extends Activity
+public class RtmWebLoginActivity extends Activity
 {
-   private final static String TAG = RtmWebAccess.class.getSimpleName();
+   private final static String TAG = RtmWebLoginActivity.class.getSimpleName();
    
    
    final public class ReqType
@@ -24,6 +25,19 @@ public class RtmWebAccess extends Activity
       public static final int NO_URL = 1;
    }
    
+
+   private class RtmWebViewClient extends WebViewClient
+   {
+      // This prevents that a new browser will be started if a link is
+      // clicked. So we handle this.
+      @Override
+      public boolean shouldOverrideUrlLoading( WebView view, String url )
+      {
+         view.loadUrl( url );
+         return true;
+      }
+   }
+   
    private WebView webView = null;
    
    
@@ -34,11 +48,15 @@ public class RtmWebAccess extends Activity
       webView = new WebView( this );
       setContentView( webView );
       
+      webView.getSettings().setJavaScriptEnabled( true );
+      webView.setWebViewClient( new RtmWebViewClient() );
+      
       final String uri = getIntent().toUri( 0 );
       
       Log.d( TAG, new StringBuffer( "Open URL: " ).append( uri ).toString() );
       
       webView.loadUrl( uri );
+      
       super.onCreate( savedInstanceState );
    }
    
@@ -48,14 +66,6 @@ public class RtmWebAccess extends Activity
    public void onBackPressed()
    {
       returnWithCode( ReturnCode.SUCCESS );
-   }
-   
-
-
-   @Override
-   protected void onDestroy()
-   {
-      super.onDestroy();
    }
    
 

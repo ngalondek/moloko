@@ -5,12 +5,10 @@ import java.util.concurrent.Future;
 
 import android.os.RemoteException;
 
-import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.service.async.AsyncRtmService.Auth;
-import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
 import dev.drsoran.moloko.util.ResultCallback;
 
 
@@ -18,8 +16,7 @@ public class AsyncAuthRtmService extends AbstractAsyncServicePart implements
          Auth
 {
    
-   public Future< ? > beginAuthorization( final ApplicationInfo applicationInfo,
-                                          final Perms permission,
+   public Future< ? > beginAuthorization( final Perms permission,
                                           final ResultCallback< String > callback )
    {
       return executor.submit( new Callable< Void >()
@@ -30,15 +27,13 @@ public class AsyncAuthRtmService extends AbstractAsyncServicePart implements
             
             try
             {
-               res = syncService.beginAuthorization( new ParcelableApplicationInfo( applicationInfo,
-                                                                                    permission ) );
+               res = syncService.beginAuthorization( permission.ordinal() );
+               handler.post( callback.setResult( res ) );
             }
             catch ( RemoteException e )
             {
                handler.post( callback.setResult( res, e ) );
             }
-            
-            handler.post( callback.setResult( res ) );
             
             return null;
          }
@@ -59,13 +54,12 @@ public class AsyncAuthRtmService extends AbstractAsyncServicePart implements
             try
             {
                res = syncService.checkAuthToken( authToken );
+               handler.post( callback.setResult( res ) );
             }
             catch ( RemoteException e )
             {
                handler.post( callback.setResult( res, e ) );
             }
-            
-            handler.post( callback.setResult( res ) );
             
             return null;
          }
@@ -85,13 +79,12 @@ public class AsyncAuthRtmService extends AbstractAsyncServicePart implements
             try
             {
                res = syncService.completeAuthorization();
+               handler.post( callback.setResult( res ) );
             }
             catch ( RemoteException e )
             {
                handler.post( callback.setResult( res, e ) );
             }
-            
-            handler.post( callback.setResult( res ) );
             
             return null;
          }

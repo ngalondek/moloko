@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
@@ -12,7 +13,6 @@ import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmTasks;
 
-import dev.drsoran.moloko.service.parcel.ParcelableApplicationInfo;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 
 
@@ -22,18 +22,15 @@ public class RtmService extends Service
    
    private ServiceImpl serviceImpl = null;
    
-   private RtmAuth.Perms permission = RtmAuth.Perms.nothing;
-   
    
    private final class RtmServiceStub extends IRtmService.Stub
    {
       
-      public void initialize( ParcelableApplicationInfo info ) throws RemoteException
+      public void initialize( ApplicationInfo info ) throws RemoteException
       {
          try
          {
-            serviceImpl = new ServiceImpl( info.getApplicationInfo() );
-            permission = info.getPermission();
+            serviceImpl = new ServiceImpl( info );
          }
          catch ( ServiceInternalException e )
          {
@@ -43,14 +40,18 @@ public class RtmService extends Service
       
 
 
-      public String beginAuthorization( ParcelableApplicationInfo info ) throws RemoteException
+      public String beginAuthorization( int permission ) throws RemoteException
       {
          String loginUrl = null;
          
+         if ( serviceImpl == null )
+         {
+            throw new RtmServiceException( RtmServiceConstants.ServiceState.INTERNAL_ERROR );
+         }
+         
          try
          {
-            initialize( info );
-            loginUrl = serviceImpl.beginAuthorization( permission );
+            loginUrl = serviceImpl.beginAuthorization( RtmAuth.Perms.values()[ permission ] );
          }
          catch ( ServiceException e )
          {
@@ -155,7 +156,6 @@ public class RtmService extends Service
       
 
 
-      @Override
       public RtmLists lists_getList() throws RemoteException
       {
          RtmLists rtmLists = null;

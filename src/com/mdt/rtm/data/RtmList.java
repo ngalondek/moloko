@@ -110,7 +110,6 @@ public class RtmList extends RtmData implements ISyncable< RtmList >
    
 
 
-   @Override
    public void create( ContentResolver contentResolver ) throws SyncException
    {
       Queries.Lists.insertOrReplace( contentResolver, this );
@@ -118,7 +117,6 @@ public class RtmList extends RtmData implements ISyncable< RtmList >
    
 
 
-   @Override
    public boolean exists( ContentResolver contentResolver )
    {
       return Queries.exists( contentResolver, Lists.CONTENT_URI, id );
@@ -126,7 +124,6 @@ public class RtmList extends RtmData implements ISyncable< RtmList >
    
 
 
-   @Override
    public int updateWith( ContentResolver contentResolver, RtmList update ) throws SyncException
    {
       int updatesCnt = 0;
@@ -149,7 +146,6 @@ public class RtmList extends RtmData implements ISyncable< RtmList >
    
 
 
-   @Override
    public void assignContent( RtmList other )
    {
       this.name = other.name;

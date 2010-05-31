@@ -23,7 +23,6 @@ import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.service.RtmServiceException;
 import dev.drsoran.moloko.service.async.AsyncRtmService;
 import dev.drsoran.moloko.util.ResultCallback;
 import dev.drsoran.provider.Rtm;
@@ -35,6 +34,10 @@ import dev.drsoran.provider.Rtm;
 public class AuthenticatorActivity extends AccountAuthenticatorActivity
          implements TextWatcher
 {
+   public static final String PARAM_AUTH_TOKEN_EXPIRED = "authTokenExpired";
+   
+   public static final String PARAM_MISSING_CREDENTIALS = "missingCredentials";
+   
    public static final String PARAM_CONFIRMCREDENTIALS = "confirmCredentials";
    
    public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
@@ -201,18 +204,46 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    {
       Log.d( TAG, "AuthToken: " + authToken );
       
-      final Intent intent = new Intent();
-      
       boolean ok = exception == null && authToken != null;
       
       if ( ok )
       {
-         final String accountName = getString( R.string.app_name );
+         // We want to get the complete RtmAuth instance
+         asyncRtmService.auth().checkAuthToken( authToken,
+                                                new ResultCallback< RtmAuth >()
+                                                {
+                                                   public void run()
+                                                   {
+                                                      onRtmAuthReceived( result,
+                                                                         exception );
+                                                   }
+                                                } );
          
+      }
+      else
+      {
+         if ( exception != null )
+         {
+            messageText.setText( getErrorMessage( exception ) );
+         }
+         
+         else if ( authToken == null )
+         {
+            messageText.setText( getErrorMessage( R.string.auth_err_cause_inv_auth_token ) );
+         }
+      }
+   }
+   
+
+
+   private void onRtmAuthReceived( RtmAuth rtmAuth, Exception exception )
+   {
+      if ( exception == null && rtmAuth != null )
+      {
          // Response is received from the server for authentication request.
          // Sets the AccountAuthenticatorResult which is sent back to the caller.
          // Also sets the authToken in AccountManager for this account.
-         final Account account = new Account( accountName,
+         final Account account = new Account( rtmAuth.getUser().getUsername(),
                                               Constants.ACCOUNT_TYPE );
          
          try
@@ -226,48 +257,56 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
                                            getString( R.string.key_shared_secret ),
                                            sharedSecrectEdit.getText()
                                                             .toString() );
+               accountManager.setUserData( account,
+                                           getString( R.string.key_permission ),
+                                           rtmAuth.getPerms().toString() );
+               accountManager.setUserData( account,
+                                           Constants.ACCOUNT_USER_ID,
+                                           rtmAuth.getUser().getId() );
+               accountManager.setUserData( account,
+                                           Constants.ACCOUNT_FULLNAME,
+                                           rtmAuth.getUser().getFullname() );
                
-               intent.putExtra( AccountManager.KEY_ACCOUNT_NAME, accountName );
+               final Intent intent = new Intent();
+               
+               intent.putExtra( AccountManager.KEY_ACCOUNT_NAME,
+                                rtmAuth.getUser().getUsername() );
+               // We store the authToken as password
+               intent.putExtra( AccountManager.KEY_PASSWORD, rtmAuth.getToken() );
                intent.putExtra( AccountManager.KEY_ACCOUNT_TYPE,
                                 Constants.ACCOUNT_TYPE );
-               intent.putExtra( AccountManager.KEY_AUTHTOKEN, authToken );
+               intent.putExtra( AccountManager.KEY_AUTHTOKEN,
+                                rtmAuth.getToken() );
                
                // Set RTM sync for this account.
                ContentResolver.setSyncAutomatically( account,
                                                      Rtm.AUTHORITY,
                                                      true );
                
-               intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, ok );
+               intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, true );
                
                setAccountAuthenticatorResult( intent.getExtras() );
                setResult( RESULT_OK, intent );
                finish();
-            }
-            else
-            {
-               ok = false;
             }
          }
          catch ( SecurityException e )
          {
             messageText.setText( getErrorMessage( R.string.auth_err_cause_scurity )
                + e.getLocalizedMessage() );
-            ok = false;
          }
       }
-      
-      if ( !ok )
+      else
       {
          if ( exception != null )
          {
             messageText.setText( getErrorMessage( exception ) );
          }
          
-         else if ( authToken == null )
+         else if ( rtmAuth == null )
          {
             messageText.setText( getErrorMessage( R.string.auth_err_cause_inv_auth_token ) );
          }
-         
       }
    }
    
@@ -307,36 +346,35 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
 
 
-   private void finsihWithException( Exception exception )
-   {
-      final Intent intent = new Intent();
-      
-      if ( exception instanceof RtmServiceException )
-      {
-         final RtmServiceException rtmServiceException = (RtmServiceException) exception;
-         
-         intent.putExtra( AccountManager.KEY_ERROR_CODE,
-                          AsyncRtmService.getExceptionCode( exception ) );
-         intent.putExtra( AccountManager.KEY_ERROR_MESSAGE,
-                          getErrorMessage( rtmServiceException ) );
-      }
-      else
-      {
-         intent.putExtra( AccountManager.KEY_ERROR_MESSAGE,
-                          getString( R.string.auth_err_with_cause,
-                                     exception.getLocalizedMessage() ) );
-      }
-      
-      intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, false );
-      
-      setAccountAuthenticatorResult( intent.getExtras() );
-      setResult( RESULT_OK, intent );
-      
-      finish();
-   }
+   // TODO: Remove
+   // private void finsihWithException( Exception exception )
+   // {
+   // final Intent intent = new Intent();
+   //      
+   // if ( exception instanceof RtmServiceException )
+   // {
+   // final RtmServiceException rtmServiceException = (RtmServiceException) exception;
+   //         
+   // intent.putExtra( AccountManager.KEY_ERROR_CODE,
+   // AsyncRtmService.getExceptionCode( exception ) );
+   // intent.putExtra( AccountManager.KEY_ERROR_MESSAGE,
+   // getErrorMessage( rtmServiceException ) );
+   // }
+   // else
+   // {
+   // intent.putExtra( AccountManager.KEY_ERROR_MESSAGE,
+   // getString( R.string.auth_err_with_cause,
+   // exception.getLocalizedMessage() ) );
+   // }
+   //      
+   // intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, false );
+   //      
+   // setAccountAuthenticatorResult( intent.getExtras() );
+   // setResult( RESULT_OK, intent );
+   //      
+   // finish();
+   // }
    
-
-
    private String getErrorMessage( Exception exception )
    {
       return getString( R.string.auth_err_with_cause,

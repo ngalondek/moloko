@@ -42,12 +42,12 @@
           
       <activity
           android:name=".auth.AuthenticatorActivity"
-          android:label="@string/moloko_rtm"
+          android:label="@string/rtm_full"
           android:excludeFromRecents="true"/>
           
       <activity
           android:name=".auth.RtmWebLoginActivity"
-          android:label="@string/moloko_rtm"
+          android:label="@string/rtm_full"
           android:excludeFromRecents="true"/>
 		
 		<!-- Services -->	       

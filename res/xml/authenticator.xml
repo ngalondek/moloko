@@ -8,4 +8,4 @@
 	                    android:accountType="dev.drsoran.moloko"
 	                    android:icon="@drawable/rtm"
 	                    android:smallIcon="@drawable/rtm"
-	                    android:label="@string/moloko_rtm" />
+	                    android:label="@string/rtm_full" />

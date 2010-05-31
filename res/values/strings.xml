@@ -6,7 +6,6 @@
 	<string name="svc_auth">Moloko.AuthService</string>
 	<string name="svc_rtm_process">:Moloko</string>
 
-   <string name="moloko_rtm">Remember The Moloko</string>
    <string name="rtm_full">Remember The Milk</string>
    <string name="rtm_short">RTM</string>
    
@@ -20,6 +19,7 @@
 	<string name="key_lastError">lastError</string>
 	<string name="key_api_key">api_key</string>
 	<string name="key_shared_secret">shared_secret</string>
+	<string name="key_permission">permission</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>

@@ -42,6 +42,8 @@
    <!-- Authenticator activity -->
    <string name="auth_username_label">Benutzername</string>
    <string name="auth_password_label">Passwort</string>
+   <string name="auth_missing_credential">Wichtige Kontoangaben fehlen:</string>
+   <string name="auth_expired_auth_token">Die Zugriffsberechtigung der Ebene \'%1$1\' wurde von Remember The Milk für diese Anwendung nicht bestätigt. Bitte neu beantragen.</string>
       <!-- Errors -->
       <string name="auth_err_with_cause">Fehler beim Erstellen des Kontos. Grund: %1$s</string>
       <string name="auth_err_cause_inv_auth_token">Ungüliges AuthToken empfangen</string>

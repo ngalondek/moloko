@@ -65,6 +65,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    {
       super.onCreate( icicle );
       
+      // Initialize UI
       requestWindowFeature( Window.FEATURE_LEFT_ICON );
       setContentView( R.layout.authenticator_activity );
       getWindow().setFeatureDrawableResource( Window.FEATURE_LEFT_ICON,
@@ -85,16 +86,19 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       messageText = (TextView) findViewById( R.id.auth_text_message );
       
       // TODO: Remove this:
-      
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-      
-      if ( prefs != null )
       {
-         apiKeyEdit.setText( prefs.getString( getString( R.string.auth_pref_api_key_key ),
-                                              "" ) );
-         sharedSecrectEdit.setText( prefs.getString( getString( R.string.auth_pref_api_shared_secret_key ),
-                                                     "" ) );
+         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
+         
+         if ( prefs != null )
+         {
+            apiKeyEdit.setText( prefs.getString( getString( R.string.auth_pref_api_key_key ),
+                                                 "" ) );
+            sharedSecrectEdit.setText( prefs.getString( getString( R.string.auth_pref_api_shared_secret_key ),
+                                                        "" ) );
+         }
       }
+      
+      initializeGui();
       
       continueBtn.setEnabled( checkButtonEnabled() );
    }
@@ -174,6 +178,35 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
                               onAuthTokenReceived( result, exception );
                            }
                         } );
+      }
+   }
+   
+
+
+   private void initializeGui()
+   {
+      // Check the intent parameters
+      final Intent intent = getIntent();
+      
+      // Fill the widgets with all information we have
+      final String apiKey = intent.getStringExtra( getString( R.string.key_api_key ) );
+      final String sharedSecret = intent.getStringExtra( getString( R.string.key_shared_secret ) );
+      final String permission = intent.getStringExtra( getString( R.string.key_permission ) );
+      
+      if ( apiKey != null )
+         apiKeyEdit.setText( apiKey );
+      if ( sharedSecret != null )
+         sharedSecrectEdit.setText( sharedSecret );
+      if ( permission != null )
+         selectPermission( permission );
+      
+      if ( intent.getBooleanExtra( PARAM_MISSING_CREDENTIALS, false ) )
+      {
+         messageText.setText( R.string.auth_missing_credential );
+      }
+      else if ( intent.getBooleanExtra( PARAM_AUTH_TOKEN_EXPIRED, false ) )
+      {
+         messageText.setText( R.string.auth_expired_auth_token );
       }
    }
    
@@ -342,6 +375,27 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
       
       return perm;
+   }
+   
+
+
+   private int selectPermission( String permission )
+   {
+      int position = Spinner.INVALID_POSITION;
+      
+      final String[] rtmPermissionsVals = getResources().getStringArray( R.array.rtm_permissions_values );
+      
+      for ( int i = 0; i < rtmPermissionsVals.length
+         && position == Spinner.INVALID_POSITION; i++ )
+      {
+         if ( rtmPermissionsVals[ i ].equals( permission ) )
+            position = i;
+      }
+      
+      if ( position != Spinner.INVALID_POSITION )
+         permDropDown.setSelection( position );
+      
+      return position;
    }
    
 

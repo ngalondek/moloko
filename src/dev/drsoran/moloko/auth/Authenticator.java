@@ -198,7 +198,7 @@ public class Authenticator extends AbstractAccountAuthenticator
                intent.putExtra( features[ FEAT_PERMISSION ], permission );            
             if ( missingCredential )
                intent.putExtra( AuthenticatorActivity.PARAM_MISSING_CREDENTIALS, true );
-            if ( authTokenExpired )
+            else if ( authTokenExpired )
                intent.putExtra( AuthenticatorActivity.PARAM_AUTH_TOKEN_EXPIRED, true );
             
             intent.putExtra( AuthenticatorActivity.PARAM_AUTHTOKEN_TYPE,

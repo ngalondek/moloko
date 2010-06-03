@@ -73,5 +73,9 @@ public interface IRtmProviderPart
    
 
 
-   public HashMap< String, String > getProjection();
+   public HashMap< String, String > getProjectionMap();
+   
+
+
+   public String[] getProjection();
 }

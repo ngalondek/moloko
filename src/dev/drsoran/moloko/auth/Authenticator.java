@@ -8,30 +8,18 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.RemoteException;
 
 import com.mdt.rtm.ApplicationInfo;
-import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.ServiceException;
+import com.mdt.rtm.ServiceImpl;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.service.async.AsyncRtmService;
+import dev.drsoran.moloko.service.RtmServiceConstants;
 
 
 public class Authenticator extends AbstractAccountAuthenticator
 {
-   private final String[] features;
-   
    private final Context context;
-   
-   private static final int FEAT_API_KEY = 0;
-   
-   private static final int FEAT_SHARED_SECRET = 1;
-   
-   private static final int FEAT_PERMISSION = 2;
-   
-   private static final int FEAT_USER_ID = 3;
-   
-   private static final int FEAT_FULLNAME = 4;
    
    
 
@@ -39,12 +27,6 @@ public class Authenticator extends AbstractAccountAuthenticator
    {
       super( context );
       this.context = context;
-      
-      this.features = new String[]
-      { context.getString( R.string.key_api_key ),
-       context.getString( R.string.key_shared_secret ),
-       context.getString( R.string.key_permission ), Constants.ACCOUNT_USER_ID,
-       Constants.ACCOUNT_FULLNAME };
    }
    
 
@@ -79,41 +61,18 @@ public class Authenticator extends AbstractAccountAuthenticator
                                      Account account,
                                      Bundle options ) throws NetworkErrorException
    {
-      final Bundle result = new Bundle();
-      
-      if ( options != null )
-      {
-         final String authToken = options.getString( AccountManager.KEY_AUTHTOKEN );
-         final String apiKey = options.getString( context.getString( R.string.key_api_key ) );
-         final String sharedSecret = options.getString( context.getString( R.string.key_shared_secret ) );
-         final RtmAuth currentAuth = options.getParcelable( context.getString( R.string.key_auth ) );
-         
-         final AsyncRtmService asyncRtmService = new AsyncRtmService( context,
-                                                                      null );
-         RtmAuth auth;
-         
-         try
-         {
-            auth = asyncRtmService.sync().checkAuthToken( authToken );
-            result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, auth != null );
-         }
-         catch ( RemoteException e )
-         {
-            result.putInt( AccountManager.KEY_ERROR_CODE,
-                           AccountManager.ERROR_CODE_REMOTE_EXCEPTION );
-         }
-      }
-      // Launch AuthenticatorActivity to confirm credentials
-      // final Intent intent = new Intent( mContext, AuthenticatorActivity.class );
-      // intent.putExtra( AuthenticatorActivity.PARAM_USERNAME, account.name );
-      // intent.putExtra( AuthenticatorActivity.PARAM_CONFIRMCREDENTIALS, true );
-      // intent.putExtra( AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-      // response );
-      // final Bundle bundle = new Bundle();
-      // bundle.putParcelable( AccountManager.KEY_INTENT, intent );
-      // return bundle;
-      //      
-      return result;
+      throw new UnsupportedOperationException( "confirmCredentials" );
+   }
+   
+
+
+   @Override
+   public Bundle updateCredentials( AccountAuthenticatorResponse response,
+                                    Account account,
+                                    String authTokenType,
+                                    Bundle options ) throws NetworkErrorException
+   {
+      throw new UnsupportedOperationException( "updateCredentials" );
    }
    
 
@@ -145,29 +104,21 @@ public class Authenticator extends AbstractAccountAuthenticator
          final AccountManager accountManager = AccountManager.get( context );
          final String authToken = accountManager.getPassword( account );
          final String apiKey = accountManager.getUserData( account,
-                                                           features[ FEAT_API_KEY ] );
+                                                           Constants.FEAT_API_KEY );
          final String sharedSecret = accountManager.getUserData( account,
-                                                                 features[ FEAT_SHARED_SECRET ] );
+                                                                 Constants.FEAT_SHARED_SECRET );
          final String permission = accountManager.getUserData( account,
-                                                               features[ FEAT_PERMISSION ] );
+                                                               Constants.FEAT_PERMISSION );
          
-         final boolean missingCredential = authToken == null || apiKey == null
-            || sharedSecret == null || permission == null;
+         final boolean missingCredential = apiKey == null || sharedSecret == null || permission == null;
          
-         boolean authTokenExpired = false;
+         boolean authTokenExpired = authToken == null;
          
-         if ( !missingCredential )
+         if ( !missingCredential && !authTokenExpired )
          {
-            RtmAuth rtmAuth;
-            
             try
             {
-               rtmAuth = new AsyncRtmService( context,
-                                              new ApplicationInfo( apiKey,
-                                                                   sharedSecret,
-                                                                   null ) ).sync()
-                                                                           .checkAuthToken( authToken );
-               authTokenExpired = rtmAuth == null;
+               new ServiceImpl( new ApplicationInfo( apiKey, sharedSecret, null ) ).auth_checkToken( authToken );
                
                if ( !authTokenExpired )
                {
@@ -178,10 +129,38 @@ public class Authenticator extends AbstractAccountAuthenticator
                   result.putString( AccountManager.KEY_AUTHTOKEN, authToken );
                }
             }
-            catch ( RemoteException e )
+            catch ( Exception e )
             {
-               result.putInt( AccountManager.KEY_ERROR_CODE,
-                              AccountManager.ERROR_CODE_REMOTE_EXCEPTION );
+               if ( e instanceof ServiceException )
+               {
+                  final ServiceException se = (ServiceException) e;
+                  
+                  if ( se.responseCode == RtmServiceConstants.RtmErrorCodes.INVALID_AUTH_TOKEN )
+                  {
+                     authTokenExpired = true;
+                  }
+                  else
+                  {
+                     result.putInt( AccountManager.KEY_ERROR_CODE,
+                                    AccountManager.ERROR_CODE_REMOTE_EXCEPTION );
+                     result.putString( AccountManager.KEY_ERROR_MESSAGE,
+                                       se.responseMessage );
+                     result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT,
+                                        false );
+                     
+                     return result;
+                  }
+               }
+               else
+               {
+                  result.putInt( AccountManager.KEY_ERROR_CODE,
+                                 AccountManager.ERROR_CODE_REMOTE_EXCEPTION );
+                  result.putString( AccountManager.KEY_ERROR_MESSAGE,
+                                    e.getLocalizedMessage() );
+                  result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
+                  
+                  return result;
+               }
             }
          }
          
@@ -190,19 +169,15 @@ public class Authenticator extends AbstractAccountAuthenticator
             final Intent intent = new Intent( context,
                                               AuthenticatorActivity.class );
             
-            if ( apiKey != null )
-               intent.putExtra( features[ FEAT_API_KEY ], apiKey );
-            if ( sharedSecret != null )
-               intent.putExtra( features[ FEAT_SHARED_SECRET ], sharedSecret );
-            if ( permission != null )
-               intent.putExtra( features[ FEAT_PERMISSION ], permission );            
-            if ( missingCredential )
-               intent.putExtra( AuthenticatorActivity.PARAM_MISSING_CREDENTIALS, true );
-            else if ( authTokenExpired )
-               intent.putExtra( AuthenticatorActivity.PARAM_AUTH_TOKEN_EXPIRED, true );
+            configureIntent( intent, account );
             
-            intent.putExtra( AuthenticatorActivity.PARAM_AUTHTOKEN_TYPE,
-                             authTokenType );
+            if ( missingCredential )
+               intent.putExtra( AuthenticatorActivity.PARAM_MISSINGCREDENTIALS,
+                                true );
+            else if ( authTokenExpired )
+               intent.putExtra( AuthenticatorActivity.PARAM_AUTH_TOKEN_EXPIRED,
+                                true );
+            
             intent.putExtra( AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
                              response );
             
@@ -213,6 +188,7 @@ public class Authenticator extends AbstractAccountAuthenticator
       {
          result.putString( AccountManager.KEY_ERROR_MESSAGE,
                            context.getString( R.string.auth_err_cause_inv_auth_token ) );
+         result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
       }
       
       return result;
@@ -244,9 +220,9 @@ public class Authenticator extends AbstractAccountAuthenticator
       {
          boolean match = false;
          
-         for ( int j = 0; j < this.features.length && !match; j++ )
+         for ( int j = 0; j < Constants.FEATURES.length && !match; j++ )
          {
-            match = features[ i ].equals( this.features[ j ] );
+            match = features[ i ].equals( Constants.FEATURES[ j ] );
          }
          
          satisfied = match;
@@ -259,20 +235,21 @@ public class Authenticator extends AbstractAccountAuthenticator
    
 
 
-   @Override
-   public Bundle updateCredentials( AccountAuthenticatorResponse response,
-                                    Account account,
-                                    String authTokenType,
-                                    Bundle options ) throws NetworkErrorException
+   private void configureIntent( Intent intent, Account account )
    {
-      final Intent intent = new Intent( context, AuthenticatorActivity.class );
+      final AccountManager accountManager = AccountManager.get( context );
       
-      intent.putExtra( AuthenticatorActivity.PARAM_AUTHTOKEN_TYPE,
-                       authTokenType );
-      intent.putExtra( AuthenticatorActivity.PARAM_CONFIRMCREDENTIALS, false );
+      for ( int i = 0; i < Constants.FEATURES.length; i++ )
+      {
+         final String userData = accountManager.getUserData( account,
+                                                             Constants.FEATURES[ i ] );
+         
+         if ( userData != null )
+         {
+            intent.putExtra( Constants.FEATURES[ i ], userData );
+         }
+      }
       
-      final Bundle bundle = new Bundle();
-      bundle.putParcelable( AccountManager.KEY_INTENT, intent );
-      return bundle;
+      intent.putExtra( AccountManager.KEY_ACCOUNT_NAME, account.name );
    }
 }

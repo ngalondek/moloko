@@ -1,9 +1,14 @@
 package dev.drsoran.moloko.auth;
 
+import java.util.concurrent.Future;
+
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -36,7 +41,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
 {
    public static final String PARAM_AUTH_TOKEN_EXPIRED = "authTokenExpired";
    
-   public static final String PARAM_MISSING_CREDENTIALS = "missingCredentials";
+   public static final String PARAM_MISSINGCREDENTIALS = "missingCredentials";
    
    public static final String PARAM_CONFIRMCREDENTIALS = "confirmCredentials";
    
@@ -57,6 +62,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    private Button continueBtn;
    
    private TextView messageText;
+   
+   private boolean newAccount;
+   
+   private Future< ? > cancelHandle;
    
    
 
@@ -100,6 +109,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       
       initializeGui();
       
+      newAccount = getIntent().getStringExtra( AccountManager.KEY_ACCOUNT_NAME ) == null;
+      
       continueBtn.setEnabled( checkButtonEnabled() );
    }
    
@@ -110,6 +121,32 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    {
       shutDownRtmService();
       super.onDestroy();
+   }
+   
+
+
+   @Override
+   protected Dialog onCreateDialog( int id )
+   {
+      final ProgressDialog dialog = new ProgressDialog( this );
+      dialog.setMessage( getString( R.string.auth_dlg_get_auth_token,
+                                    getSelectedPermissionText() ) );
+      dialog.setIndeterminate( true );
+      dialog.setCancelable( true );
+      dialog.setOnCancelListener( new DialogInterface.OnCancelListener()
+      {
+         public void onCancel( DialogInterface dialog )
+         {
+            Log.d( TAG, "cancel has been invoked" );
+            
+            if ( cancelHandle != null )
+            {
+               cancelHandle.cancel( true );
+               finish();
+            }
+         }
+      } );
+      return dialog;
    }
    
 
@@ -127,17 +164,21 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       
       shutDownRtmService();
       
+      showDialog( 0 );
+      
       asyncRtmService = new AsyncRtmService( this, applicationInfo );
       
-      asyncRtmService.auth().beginAuthorization( getSelectedPermission(),
-                                                 new ResultCallback< String >()
-                                                 {
-                                                    public void run()
-                                                    {
-                                                       onLoginUrlReceived( result,
-                                                                           exception );
-                                                    }
-                                                 } );
+      cancelHandle = asyncRtmService.auth()
+                                    .beginAuthorization( getSelectedPermission(),
+                                                         new ResultCallback< String >()
+                                                         {
+                                                            public void run()
+                                                            {
+                                                               cancelHandle = null;
+                                                               onLoginUrlReceived( result,
+                                                                                   exception );
+                                                            }
+                                                         } );
    }
    
 
@@ -170,14 +211,20 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       if ( requestCode == RtmWebLoginActivity.ReqType.OPEN_URL
          && resultCode == RtmWebLoginActivity.ReturnCode.SUCCESS )
       {
-         asyncRtmService.auth()
-                        .completeAuthorization( new ResultCallback< String >()
-                        {
-                           public void run()
-                           {
-                              onAuthTokenReceived( result, exception );
-                           }
-                        } );
+         cancelHandle = asyncRtmService.auth()
+                                       .completeAuthorization( new ResultCallback< String >()
+                                       {
+                                          public void run()
+                                          {
+                                             cancelHandle = null;
+                                             onAuthTokenReceived( result,
+                                                                  exception );
+                                          }
+                                       } );
+      }
+      else
+      {
+         removeDialog( 0 );
       }
    }
    
@@ -189,9 +236,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       final Intent intent = getIntent();
       
       // Fill the widgets with all information we have
-      final String apiKey = intent.getStringExtra( getString( R.string.key_api_key ) );
-      final String sharedSecret = intent.getStringExtra( getString( R.string.key_shared_secret ) );
-      final String permission = intent.getStringExtra( getString( R.string.key_permission ) );
+      final String apiKey = intent.getStringExtra( Constants.FEAT_API_KEY );
+      final String sharedSecret = intent.getStringExtra( Constants.FEAT_SHARED_SECRET );
+      final String permission = intent.getStringExtra( Constants.FEAT_PERMISSION );
       
       if ( apiKey != null )
          apiKeyEdit.setText( apiKey );
@@ -200,13 +247,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       if ( permission != null )
          selectPermission( permission );
       
-      if ( intent.getBooleanExtra( PARAM_MISSING_CREDENTIALS, false ) )
+      if ( intent.getBooleanExtra( PARAM_MISSINGCREDENTIALS, false ) )
       {
          messageText.setText( R.string.auth_missing_credential );
       }
       else if ( intent.getBooleanExtra( PARAM_AUTH_TOKEN_EXPIRED, false ) )
       {
-         messageText.setText( R.string.auth_expired_auth_token );
+         messageText.setText( getString( R.string.auth_expired_auth_token,
+                                         getString( R.string.app_name ) ) );
       }
    }
    
@@ -217,6 +265,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       if ( exception != null )
       {
          messageText.setText( getErrorMessage( exception ) );
+         removeDialog( 0 );
       }
       else
       {
@@ -242,19 +291,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       if ( ok )
       {
          // We want to get the complete RtmAuth instance
-         asyncRtmService.auth().checkAuthToken( authToken,
-                                                new ResultCallback< RtmAuth >()
-                                                {
-                                                   public void run()
-                                                   {
-                                                      onRtmAuthReceived( result,
-                                                                         exception );
-                                                   }
-                                                } );
+         cancelHandle = asyncRtmService.auth()
+                                       .checkAuthToken( authToken,
+                                                        new ResultCallback< RtmAuth >()
+                                                        {
+                                                           public void run()
+                                                           {
+                                                              cancelHandle = null;
+                                                              onRtmAuthReceived( result,
+                                                                                 exception );
+                                                           }
+                                                        } );
          
       }
       else
       {
+         removeDialog( 0 );
+         
          if ( exception != null )
          {
             messageText.setText( getErrorMessage( exception ) );
@@ -271,6 +324,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
 
    private void onRtmAuthReceived( RtmAuth rtmAuth, Exception exception )
    {
+      removeDialog( 0 );
+      
       if ( exception == null && rtmAuth != null )
       {
          // Response is received from the server for authentication request.
@@ -278,20 +333,36 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
          // Also sets the authToken in AccountManager for this account.
          final Account account = new Account( rtmAuth.getUser().getUsername(),
                                               Constants.ACCOUNT_TYPE );
-         
          try
          {
-            if ( accountManager.addAccountExplicitly( account, null, null ) )
+            boolean ok = true;
+            
+            if ( newAccount )
+            {
+               ok = accountManager.addAccountExplicitly( account,
+                                                         rtmAuth.getToken(),
+                                                         null );
+               
+               if ( ok )
+               {
+                  // Set RTM sync for this account.
+                  ContentResolver.setSyncAutomatically( account,
+                                                        Rtm.AUTHORITY,
+                                                        true );
+               }
+            }
+            
+            if ( ok )
             {
                accountManager.setUserData( account,
-                                           getString( R.string.key_api_key ),
+                                           Constants.FEAT_API_KEY,
                                            apiKeyEdit.getText().toString() );
                accountManager.setUserData( account,
-                                           getString( R.string.key_shared_secret ),
+                                           Constants.FEAT_SHARED_SECRET,
                                            sharedSecrectEdit.getText()
                                                             .toString() );
                accountManager.setUserData( account,
-                                           getString( R.string.key_permission ),
+                                           Constants.FEAT_PERMISSION,
                                            rtmAuth.getPerms().toString() );
                accountManager.setUserData( account,
                                            Constants.ACCOUNT_USER_ID,
@@ -310,11 +381,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
                                 Constants.ACCOUNT_TYPE );
                intent.putExtra( AccountManager.KEY_AUTHTOKEN,
                                 rtmAuth.getToken() );
-               
-               // Set RTM sync for this account.
-               ContentResolver.setSyncAutomatically( account,
-                                                     Rtm.AUTHORITY,
-                                                     true );
                
                intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, true );
                
@@ -352,6 +418,27 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
 
 
+   private String getSelectedPermissionText()
+   {
+      final String[] rtmPermissions = getResources().getStringArray( R.array.rtm_permissions );
+      
+      String text = rtmPermissions[ 0 ];
+      
+      final int selectedIdx = permDropDown.getSelectedItemPosition();
+      
+      if ( selectedIdx != Spinner.INVALID_POSITION )
+      {
+         if ( rtmPermissions.length > selectedIdx )
+         {
+            text = rtmPermissions[ selectedIdx ];
+         }
+      }
+      
+      return text;
+   }
+   
+
+
    private RtmAuth.Perms getSelectedPermission()
    {
       RtmAuth.Perms perm = RtmAuth.Perms.nothing;
@@ -379,7 +466,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
 
 
-   private int selectPermission( String permission )
+   private int selectPermission( String permissionValue )
    {
       int position = Spinner.INVALID_POSITION;
       
@@ -388,7 +475,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       for ( int i = 0; i < rtmPermissionsVals.length
          && position == Spinner.INVALID_POSITION; i++ )
       {
-         if ( rtmPermissionsVals[ i ].equals( permission ) )
+         if ( rtmPermissionsVals[ i ].equals( permissionValue ) )
             position = i;
       }
       
@@ -400,35 +487,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
 
 
-   // TODO: Remove
-   // private void finsihWithException( Exception exception )
-   // {
-   // final Intent intent = new Intent();
-   //      
-   // if ( exception instanceof RtmServiceException )
-   // {
-   // final RtmServiceException rtmServiceException = (RtmServiceException) exception;
-   //         
-   // intent.putExtra( AccountManager.KEY_ERROR_CODE,
-   // AsyncRtmService.getExceptionCode( exception ) );
-   // intent.putExtra( AccountManager.KEY_ERROR_MESSAGE,
-   // getErrorMessage( rtmServiceException ) );
-   // }
-   // else
-   // {
-   // intent.putExtra( AccountManager.KEY_ERROR_MESSAGE,
-   // getString( R.string.auth_err_with_cause,
-   // exception.getLocalizedMessage() ) );
-   // }
-   //      
-   // intent.putExtra( AccountManager.KEY_BOOLEAN_RESULT, false );
-   //      
-   // setAccountAuthenticatorResult( intent.getExtras() );
-   // setResult( RESULT_OK, intent );
-   //      
-   // finish();
-   // }
-   
    private String getErrorMessage( Exception exception )
    {
       return getString( R.string.auth_err_with_cause,

@@ -13,7 +13,8 @@
 		<!-- Content Provider -->          
       <provider
          android:name=".content.RtmProvider"
-         android:authorities="dev.drsoran.provider.Rtm" />
+         android:authorities="dev.drsoran.provider.Rtm"
+         android:syncable="true" />
 
       <!-- Activities -->
 		<activity
@@ -73,7 +74,7 @@
       </service>
       
       <service
-            android:name=".sync.SyncService"
+            android:name=".service.sync.SyncService"
             android:exported="true">
             <intent-filter>
                 <action

@@ -21,17 +21,11 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
-import dev.drsoran.moloko.content.Queries;
-import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.rtm.data.ISyncable;
-import dev.drsoran.rtm.data.SyncException;
 
 
-public class RtmList extends RtmData implements ISyncable< RtmList >
+public class RtmList extends RtmData
 {
    
    public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
@@ -106,48 +100,5 @@ public class RtmList extends RtmData implements ISyncable< RtmList >
    {
       dest.writeString( id );
       dest.writeString( name );
-   }
-   
-
-
-   public void create( ContentResolver contentResolver ) throws SyncException
-   {
-      Queries.Lists.insertOrReplace( contentResolver, this );
-   }
-   
-
-
-   public boolean exists( ContentResolver contentResolver )
-   {
-      return Queries.exists( contentResolver, Lists.CONTENT_URI, id );
-   }
-   
-
-
-   public int updateWith( ContentResolver contentResolver, RtmList update ) throws SyncException
-   {
-      int updatesCnt = 0;
-      
-      if ( !update.name.equals( name ) )
-      {
-         ContentValues values = new ContentValues();
-         values.put( Lists.NAME, update.name );
-         
-         updatesCnt = contentResolver.update( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                        id ),
-                                              values,
-                                              null,
-                                              null );
-         assignContent( update );
-      }
-      
-      return updatesCnt;
-   }
-   
-
-
-   public void assignContent( RtmList other )
-   {
-      this.name = other.name;
    }
 }

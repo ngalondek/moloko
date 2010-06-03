@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.sync;
+package dev.drsoran.moloko.service.sync;
 
 import android.app.Service;
 import android.content.Intent;

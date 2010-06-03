@@ -28,9 +28,9 @@ public class ServiceException extends Exception
    
    private static final long serialVersionUID = -6711156026040643361L;
    
-   int responseCode;
+   public int responseCode;
    
-   String responseMessage;
+   public String responseMessage;
    
    
 

@@ -106,6 +106,13 @@ public class RtmLists extends RtmData
    
 
 
+   public void add( RtmList list )
+   {
+      lists.put( list.getId(), list );
+   }
+   
+
+
    public int describeContents()
    {
       return 0;

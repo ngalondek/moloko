@@ -242,9 +242,16 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
    
 
 
-   public HashMap< String, String > getProjection()
+   public HashMap< String, String > getProjectionMap()
    {
       return projectionMap;
+   }
+   
+
+
+   public String[] getProjection()
+   {
+      return (String[]) projectionMap.keySet().toArray();
    }
    
 

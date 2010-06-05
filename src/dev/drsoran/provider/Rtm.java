@@ -36,14 +36,6 @@ public class Rtm
       public final static String NAME = "name";
       
       /**
-       * The ID of the taskseries contained in this list.
-       * <P>
-       * Type: INTEGER (foreign key to table taskseries _ID field)
-       * </P>
-       */
-      public final static String TASKSERIES_ID = "taskseries";
-      
-      /**
        * The default sort order for this table
        */
       public final static String DEFAULT_SORT_ORDER = NAME + " DESC";
@@ -104,6 +96,47 @@ public class Rtm
        * The default sort order for this table
        */
       public final static String DEFAULT_SORT_ORDER = CREATED_DATE + " DESC";
+   }
+   
+
+   public static final class NoteRefs implements BaseColumns
+   {
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/noterefs" );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing a directory of note references.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.noteref";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single note reference.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.noteref";
+      
+      /**
+       * The ID of the taskseries referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table taskseries _ID field)
+       * </P>
+       */
+      public final static String TASKSERIES_ID = "taskseries_id";
+      
+      /**
+       * The ID of the note referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table tag _ID field)
+       * </P>
+       */
+      public final static String NOTE_ID = "note_id";
+      
+      /**
+       * The default sort order for this table
+       */
+      public final static String DEFAULT_SORT_ORDER = null;
    }
    
 
@@ -218,6 +251,47 @@ public class Rtm
    }
    
 
+   public static final class TagRefs implements BaseColumns
+   {
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/tagrefs" );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing a directory of tag references.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.tagref";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single tag reference.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.tagref";
+      
+      /**
+       * The ID of the taskseries referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table taskseries _ID field)
+       * </P>
+       */
+      public final static String TASKSERIES_ID = "taskseries_id";
+      
+      /**
+       * The ID of the tag referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table tag _ID field)
+       * </P>
+       */
+      public final static String TAG_ID = "tag_id";
+      
+      /**
+       * The default sort order for this table
+       */
+      public final static String DEFAULT_SORT_ORDER = null;
+   }
+   
+
    public static final class TaskSeries implements BaseColumns
    {
       /**
@@ -277,28 +351,12 @@ public class Rtm
       public final static String URL = "url";
       
       /**
-       * The ID of the note of this taskseries.
-       * <P>
-       * Type: INTEGER (foreign key to table notes _ID field)
-       * </P>
-       */
-      public final static String NOTES_ID = "notes";
-      
-      /**
-       * The ID of the tag of this taskseries.
-       * <P>
-       * Type: INTEGER (foreign key to table tags _ID field)
-       * </P>
-       */
-      public final static String TAGS_ID = "tags";
-      
-      /**
        * The ID of the task of this taskseries.
        * <P>
        * Type: INTEGER (foreign key to table tasks _ID field)
        * </P>
        */
-      public final static String TASKS_ID = "tasks";
+      public final static String TASK_ID = "task_id";
       
       /**
        * The ID of the location of this taskseries.
@@ -306,7 +364,15 @@ public class Rtm
        * Type: INTEGER (foreign key to table locations _ID field)
        * </P>
        */
-      public final static String LOCATIONS_ID = "locations";
+      public final static String LOCATION_ID = "location_id";
+      
+      /**
+       * The ID of the list this taskseries is in.
+       * <P>
+       * Type: INTEGER (foreign key to table lists _ID field)
+       * </P>
+       */
+      public final static String LIST_ID = "list_id";
       
       /**
        * The default sort order for this table

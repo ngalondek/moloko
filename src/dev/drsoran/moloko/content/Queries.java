@@ -21,6 +21,20 @@ public final class Queries
                                        Uri contentUri,
                                        String id )
    {
+      final Cursor c = getItem( client, contentUri, id );
+      
+      if ( c != null )
+         c.close();
+      
+      return c != null;
+   }
+   
+
+
+   public final static Cursor getItem( ContentProviderClient client,
+                                       Uri contentUri,
+                                       String id )
+   {
       Cursor c;
       try
       {
@@ -32,6 +46,13 @@ public final class Queries
          c = null;
       }
       
-      return c != null;
+      return c;
+   }
+   
+
+
+   public final static String getOptString( Cursor c, int index )
+   {
+      return c.isNull( index ) ? null : c.getString( index );
    }
 }

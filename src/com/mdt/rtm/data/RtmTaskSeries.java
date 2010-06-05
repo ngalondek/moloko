@@ -103,7 +103,8 @@ public class RtmTaskSeries extends RtmData
    
 
    public RtmTaskSeries( String id, Date created, Date modified, String name,
-      String source, RtmTask task )
+      String source, RtmTask task, RtmTaskNotes notes, String locationId,
+      String url, List< String > tags )
    {
       this.id = id;
       this.created = created;
@@ -111,10 +112,10 @@ public class RtmTaskSeries extends RtmData
       this.name = name;
       this.source = source;
       this.task = task;
-      this.locationId = null;
-      notes = null;
-      url = null;
-      tags = null;
+      this.notes = notes;
+      this.locationId = locationId;
+      this.url = url;
+      this.tags = tags;
    }
    
 

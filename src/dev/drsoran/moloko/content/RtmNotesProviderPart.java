@@ -1,5 +1,7 @@
 package dev.drsoran.moloko.content;
 
+import java.util.HashMap;
+
 import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +14,21 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
 {
    @SuppressWarnings( "unused" )
    private static final String TAG = RtmNotesProviderPart.class.getSimpleName();
+   
+   public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
+   
+   public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   
+   static
+   {
+      COL_INDICES.put( Notes._ID, 0 );
+      COL_INDICES.put( Notes.CREATED_DATE, 1 );
+      COL_INDICES.put( Notes.MODIFIED_DATE, 2 );
+      COL_INDICES.put( Notes.TITLE, 3 );
+      COL_INDICES.put( Notes.TEXT, 4 );
+      
+      AbstractRtmProviderPart.fillProjectionMap( PROJECTION_MAP, COL_INDICES );
+   }
    
    
 
@@ -38,23 +55,11 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    {
       if ( !initialValues.containsKey( Notes.CREATED_DATE ) )
       {
-         final Long now = Long.valueOf( System.currentTimeMillis() );         
+         final Long now = Long.valueOf( System.currentTimeMillis() );
          initialValues.put( Notes.CREATED_DATE, now );
       }
       
       return initialValues;
-   }
-   
-
-
-   @Override
-   protected void fillProjectionMap()
-   {
-      projectionMap.put( Notes._ID, Notes._ID );
-      projectionMap.put( Notes.CREATED_DATE, Notes.CREATED_DATE );
-      projectionMap.put( Notes.MODIFIED_DATE, Notes.MODIFIED_DATE );
-      projectionMap.put( Notes.TITLE, Notes.TITLE );
-      projectionMap.put( Notes.TEXT, Notes.TEXT );
    }
    
 
@@ -87,5 +92,19 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    protected String getDefaultSortOrder()
    {
       return Notes.DEFAULT_SORT_ORDER;
+   }
+   
+
+
+   public HashMap< String, String > getProjectionMap()
+   {
+      return PROJECTION_MAP;
+   }
+   
+
+
+   public HashMap< String, Integer > getColumnIndices()
+   {
+      return COL_INDICES;
    }
 }

@@ -27,8 +27,7 @@ import android.os.Parcelable;
 
 public class RtmList extends RtmData
 {
-   
-   public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
+  public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
    {
       
       public RtmList createFromParcel( Parcel source )
@@ -100,5 +99,5 @@ public class RtmList extends RtmData
    {
       dest.writeString( id );
       dest.writeString( name );
-   }
+   }   
 }

@@ -1,5 +1,7 @@
 package dev.drsoran.moloko.content;
 
+import java.util.HashMap;
+
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentUris;
@@ -13,7 +15,6 @@ import android.os.RemoteException;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
-import com.mdt.rtm.data.RtmTaskSeries;
 
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
@@ -24,6 +25,18 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
 {
    @SuppressWarnings( "unused" )
    private static final String TAG = RtmListsProviderPart.class.getSimpleName();
+   
+   public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
+   
+   public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   
+   static
+   {
+      COL_INDICES.put( Lists._ID, 0 );
+      COL_INDICES.put( Lists.NAME, 1 );
+      
+      AbstractRtmProviderPart.fillProjectionMap( PROJECTION_MAP, COL_INDICES );
+   }
    
    
 
@@ -45,7 +58,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       for ( ok = ok && c.moveToFirst(); ok && !c.isAfterLast(); ok = ok
          && c.moveToNext() )
       {
-         final RtmList list = new RtmList( c.getString( 0 ), c.getString( 1 ) );
+         final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
+                                           c.getString( COL_INDICES.get( Lists.NAME ) ) );
          lists.add( list );
       }
       
@@ -66,18 +80,6 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       
       return ContentProviderOperation.newInsert( Rtm.Lists.CONTENT_URI )
                                      .withValues( values )
-                                     .build();
-   }
-   
-
-
-   public final static ContentProviderOperation addTaskSeries( String listId,
-                                                               RtmTaskSeries taskSeries )
-   {
-      return ContentProviderOperation.newUpdate( ContentUris.withAppendedId( Rtm.Lists.CONTENT_URI,
-                                                                             Long.parseLong( listId ) ) )
-                                     .withValue( Rtm.Lists.TASKSERIES_ID,
-                                                 taskSeries.getId() )
                                      .build();
    }
    
@@ -114,18 +116,29 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + tableName + " ( " + Lists._ID
          + " INTEGER NOT NULL, " + Lists.NAME + " TEXT, "
-         + "CONSTRAINT PK_LISTS PRIMARY KEY ( \"" + Lists._ID + "\" )"
-         + "CONSTRAINT taskseries FOREIGN KEY ( \"" + TaskSeries._ID
-         + "\" ) REFERENCES taskseries ( \"" + TaskSeries._ID + "\" )" + " );" );
-   }
-   
-
-
-   @Override
-   protected void fillProjectionMap()
-   {
-      projectionMap.put( Lists._ID, Lists._ID );
-      projectionMap.put( Lists.NAME, Lists.NAME );
+         + "CONSTRAINT PK_LISTS PRIMARY KEY ( \"" + Lists._ID + "\" );" );
+      
+      // Always create a list Inbox by default. During the first sync the
+      // ID will surely change but it is needed for the triggers below.
+      db.execSQL( "INSERT INTO " + tableName + "( " + Lists._ID + ", "
+         + Lists.NAME + " ) VALUES ( 1, 'Inbox' );" );
+      
+      // Trigger: If a list gets deleted, move all contained tasks to the
+      // Inbox list.
+      db.execSQL( "CREATE TRIGGER " + tableName
+         + "_delete_list AFTER DELETE ON " + tableName
+         + " BEGIN UPDATE taskseries SET " + TaskSeries.LIST_ID
+         + " = ( SELECT " + Lists._ID + " FROM " + tableName + " WHERE "
+         + Lists.NAME + " like 'Inbox' ); END;" );
+      
+      // Trigger: The Inbox list should always exist and cannot be
+      // deleted.
+      db.execSQL( "CREATE TRIGGER "
+         + tableName
+         + "_inbox_must_survive BEFORE DELETE ON "
+         + tableName
+         + " BEGIN SELECT RAISE ( ABORT, 'List Inbox must always exist' ) WHERE EXISTS ( SELECT 1 FROM "
+         + tableName + " WHERE old." + Lists.NAME + " like 'Inbox' ); END;" );
    }
    
 
@@ -158,5 +171,19 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    protected String getDefaultSortOrder()
    {
       return Lists.DEFAULT_SORT_ORDER;
+   }
+   
+
+
+   public HashMap< String, String > getProjectionMap()
+   {
+      return PROJECTION_MAP;
+   }
+   
+
+
+   public HashMap< String, Integer > getColumnIndices()
+   {
+      return COL_INDICES;
    }
 }

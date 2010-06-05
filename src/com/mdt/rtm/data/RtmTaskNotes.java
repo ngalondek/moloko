@@ -57,6 +57,19 @@ public class RtmTaskNotes extends RtmData
    
    
 
+   public RtmTaskNotes()
+   {
+   }
+   
+
+
+   public RtmTaskNotes( List< RtmTaskNote > notes )
+   {
+      this.notes = notes;
+   }
+   
+
+
    public RtmTaskNotes( Element element )
    {
       final List< Element > children = children( element, "note" );
@@ -79,6 +92,13 @@ public class RtmTaskNotes extends RtmData
    public List< RtmTaskNote > getNotes()
    {
       return notes;
+   }
+   
+
+
+   public void setNotes( List< RtmTaskNote > notes )
+   {
+      this.notes = notes;
    }
    
 

@@ -78,4 +78,8 @@ public interface IRtmProviderPart
 
 
    public String[] getProjection();
+   
+
+
+   public HashMap< String, Integer > getColumnIndices();
 }

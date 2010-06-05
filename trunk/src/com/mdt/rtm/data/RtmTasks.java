@@ -100,4 +100,11 @@ public class RtmTasks extends RtmData
    {
       dest.writeTypedList( lists );
    }
+   
+
+
+   public boolean add( RtmTaskList taskList )
+   {
+      return this.lists.add( taskList );
+   }
 }

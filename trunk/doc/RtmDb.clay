@@ -12,7 +12,7 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff7" mandatory="false" name="due">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff6" mandatory="false" name="added">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff6" mandatory="true" name="added">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff5" mandatory="false" name="completed">
@@ -21,8 +21,8 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff4" mandatory="false" name="deleted">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff3" mandatory="false" name="priority">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<column auto-increment="false" column-size="1" decimal-digits="0" default-value="n" id="5122f2:128cb6194ba:-7ff3" mandatory="true" name="priority">
+<data-type name="CHAR" selected-variant-pattern="CHAR(%n)"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="5122f2:128cb6194ba:-7ff2" mandatory="false" name="postponed">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
@@ -46,7 +46,7 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe6" mandatory="false" name="modified">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe5" mandatory="false" name="name">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe5" mandatory="true" name="name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe2" mandatory="false" name="source" remarks="By what API">
@@ -55,22 +55,28 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe0" mandatory="false" name="url">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7bf5" mandatory="true" name="task_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7bc2" mandatory="false" name="location_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7be4" mandatory="true" name="list_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
 </column-list>
 <primary-key id="5122f2:128cb6194ba:-7fed" name="PK_TASKSERIES">
 <primary-key-column name="_id"/>
 </primary-key>
 <foreign-key-list>
-<foreign-key id="5122f2:128cb6194ba:-7f17" name="notes" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_NOTES" referenced-table="notes" referenced-table-schema="Rtm" source-entity-role="taskseries" source-multiplicity="1..*" source-relationship-type="" target-entity-role="note" target-multiplicity="0..*" target-relationship-type="">
-<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
-</foreign-key>
-<foreign-key id="5122f2:128cb6194ba:-7f7e" name="tags" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TAGS" referenced-table="tags" referenced-table-schema="Rtm" source-entity-role="tagged" source-multiplicity="0..*" source-relationship-type="" target-entity-role="tag" target-multiplicity="0..*" target-relationship-type="">
-<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
-</foreign-key>
-<foreign-key id="5122f2:128cb6194ba:-7fc5" name="task" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKS" referenced-table="tasks" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="task" target-multiplicity="1..*" target-relationship-type="">
-<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
+<foreign-key id="163c031:128fe8bf79f:-7fb0" name="list" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LISTS" referenced-table="lists" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="list_id" referenced-key-column-name="_id"/>
 </foreign-key>
 <foreign-key id="190abb9:128ce294477:-7ee4" name="location" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LOCATIONS" referenced-table="locations" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
-<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
+<foreign-key-column column-name="location_id" referenced-key-column-name="_id"/>
+</foreign-key>
+<foreign-key id="5122f2:128cb6194ba:-7fc5" name="task" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKS" referenced-table="tasks" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="task_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
 </table>
@@ -121,11 +127,6 @@
 <primary-key id="190abb9:128ce294477:-7fe7" name="PK_LISTS">
 <primary-key-column name="_id"/>
 </primary-key>
-<foreign-key-list>
-<foreign-key id="190abb9:128ce294477:-7f6c" name="taskseries" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="" target-multiplicity="0..*" target-relationship-type="">
-<foreign-key-column column-name="_id" referenced-key-column-name="_id"/>
-</foreign-key>
-</foreign-key-list>
 </table>
 <table id="190abb9:128ce294477:-7f35" name="locations">
 <column-list>
@@ -155,19 +156,73 @@
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
+<table id="163c031:128fe8bf79f:-7f97" name="tagrefs">
+<column-list>
+<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7c1c" mandatory="true" name="_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f91" mandatory="true" name="taskseries_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f8e" mandatory="true" name="tag_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+</column-list>
+<primary-key id="163c031:128fe8bf79f:-7f96" name="PK_TAGREFS">
+<primary-key-column name="taskseries_id"/>
+<primary-key-column name="tag_id"/>
+<primary-key-column name="_id"/>
+</primary-key>
+<foreign-key-list>
+<foreign-key id="163c031:128fe8bf79f:-7b9c" name="tag" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TAGS" referenced-table="tags" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="tag_id" referenced-key-column-name="_id"/>
+</foreign-key>
+<foreign-key id="163c031:128fe8bf79f:-7c1e" name="taskseries_1" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
+</foreign-key>
+</foreign-key-list>
+</table>
+<table id="163c031:128fe8bf79f:-7bc8" name="noterefs">
+<column-list>
+<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7b63" mandatory="true" name="_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7b6b" mandatory="true" name="taskseries_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7b6a" mandatory="true" name="note_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+</column-list>
+<primary-key id="163c031:128fe8bf79f:-7bc7" name="PK_NOTEREFS">
+<primary-key-column name="taskseries_id"/>
+<primary-key-column name="note_id"/>
+<primary-key-column name="_id"/>
+</primary-key>
+<foreign-key-list>
+<foreign-key id="163c031:128fe8bf79f:-7b22" name="note" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_NOTES" referenced-table="notes" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="note_id" referenced-key-column-name="_id"/>
+</foreign-key>
+<foreign-key id="163c031:128fe8bf79f:-7afc" name="taskseries_2" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
+</foreign-key>
+</foreign-key-list>
+</table>
 </table-list>
 </schema>
 </schema-list>
 </database-model>
 <diagram>
-<table-figure height="150" refid="5122f2:128cb6194ba:-7fff" width="177" x="236" y="437"/>
+<table-figure height="150" refid="5122f2:128cb6194ba:-7fff" width="177" x="249" y="481"/>
 <table-figure refid="5122f2:128cb6194ba:-7fee" x="274" y="222"/>
 <fk-figure refid="5122f2:128cb6194ba:-7fc5">
 <target-terminal x="96" y="4"/>
 </fk-figure>
-<table-figure refid="5122f2:128cb6194ba:-7f9b" x="538" y="174"/>
-<table-figure refid="5122f2:128cb6194ba:-7f59" x="532" y="300"/>
-<table-figure refid="190abb9:128ce294477:-7fe8" x="287" y="65"/>
-<table-figure refid="190abb9:128ce294477:-7f35" x="54" y="215"/>
+<table-figure refid="5122f2:128cb6194ba:-7f9b" x="795" y="275"/>
+<table-figure refid="5122f2:128cb6194ba:-7f59" x="790" y="351"/>
+<table-figure refid="190abb9:128ce294477:-7fe8" x="282" y="70"/>
+<table-figure refid="190abb9:128ce294477:-7f35" x="8" y="235"/>
+<table-figure refid="163c031:128fe8bf79f:-7f97" x="546" y="266"/>
+<table-figure refid="163c031:128fe8bf79f:-7bc8" x="548" y="365"/>
 </diagram>
 </clay-model>

@@ -65,6 +65,17 @@ public class RtmTaskNote extends RtmData
    
    
 
+   public RtmTaskNote( String id, Date created, Date modified, String title, String text )
+   {
+      this.id = id;
+      this.created = created;
+      this.modified = modified;
+      this.title = title;
+      this.text = text;
+   }
+   
+
+
    public RtmTaskNote( Element element )
    {
       id = element.getAttribute( "id" );

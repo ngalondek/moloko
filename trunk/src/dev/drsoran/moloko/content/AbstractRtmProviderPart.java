@@ -1,5 +1,6 @@
 package dev.drsoran.moloko.content;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import android.content.ContentUris;
@@ -33,8 +34,6 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
    
    protected final UriMatcher uriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
    
-   protected final HashMap< String, String > projectionMap = new HashMap< String, String >();
-   
    protected SQLiteOpenHelper dbAccess = null;
    
    
@@ -46,8 +45,6 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
       
       uriMatcher.addURI( Rtm.AUTHORITY, tableName, DIR );
       uriMatcher.addURI( Rtm.AUTHORITY, tableName + "/#", ITEM_ID );
-      
-      fillProjectionMap();
    }
    
 
@@ -80,7 +77,7 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
       
       SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
       qb.setTables( tableName );
-      qb.setProjectionMap( projectionMap );
+      qb.setProjectionMap( getProjectionMap() );
       
       if ( id != null )
       {
@@ -242,16 +239,9 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
    
 
 
-   public HashMap< String, String > getProjectionMap()
-   {
-      return projectionMap;
-   }
-   
-
-
    public String[] getProjection()
    {
-      return (String[]) projectionMap.keySet().toArray();
+      return (String[]) getProjectionMap().keySet().toArray();
    }
    
 
@@ -263,9 +253,17 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
    
 
 
-   protected abstract void fillProjectionMap();
+   protected final static void fillProjectionMap( HashMap< String, String > projectionMap,
+                                                  HashMap< String, Integer > indices )
+   {
+      final Collection< String > keys = indices.keySet();
+      
+      for ( String key : keys )
+      {
+         projectionMap.put( key, key );
+      }
+   }
    
-
 
    protected abstract String getDefaultSortOrder();
    

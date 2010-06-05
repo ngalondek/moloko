@@ -25,16 +25,22 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
+import android.content.ContentProviderOperation;
+import android.content.SyncResult;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+import dev.drsoran.moloko.service.sync.SyncAdapter;
 
 
 /**
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskList extends RtmData
+public class RtmTaskList extends RtmData implements Comparable< RtmTaskList >
 {
+   private static final String TAG = RtmTaskList.class.getSimpleName();
+   
    public static final Parcelable.Creator< RtmTaskList > CREATOR = new Parcelable.Creator< RtmTaskList >()
    {
       
@@ -114,6 +120,13 @@ public class RtmTaskList extends RtmData
    
 
 
+   public boolean add( RtmTaskSeries taskSeries )
+   {
+      return this.series.add( taskSeries );
+   }
+   
+
+
    public int describeContents()
    {
       return 0;
@@ -125,5 +138,36 @@ public class RtmTaskList extends RtmData
    {
       dest.writeString( id );
       dest.writeTypedList( series );
+   }
+   
+
+
+   public boolean computeSyncWith( int direction,
+                                   RtmTaskList other,
+                                   ArrayList< ContentProviderOperation > operations,
+                                   SyncResult result )
+   {
+      boolean ok = true;
+      
+      switch ( direction )
+      {
+         case SyncAdapter.Direction.IN:
+            // get all
+            break;
+         case SyncAdapter.Direction.OUT:
+            Log.e( TAG, "Unsupported sync direction: OUT" );
+         default :
+            ok = false;
+            break;
+      }
+      
+      return ok;
+   }
+   
+
+
+   public int compareTo( RtmTaskList other )
+   {
+      return this.id.compareTo( other.id );
    }
 }

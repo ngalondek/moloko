@@ -105,6 +105,26 @@ public class RtmTask extends RtmData
    
 
 
+   public static Priority convertPriority( String priority )
+   {
+      switch ( priority.charAt( 0 ) )
+      {
+         case 'n':
+            return Priority.None;
+         case '3':
+            return Priority.Low;
+         case '2':
+            return Priority.Medium;
+         case '1':
+            return Priority.High;
+         default :
+            log.error( "Unrecognized RTM task priority: '" + priority + "'" );
+            return Priority.None;
+      }
+   }
+   
+
+
    public RtmTask( String id, Date due, int hasDueTime, Date added,
       Date completed, Date deleted, Priority priority, int postponed,
       String estimate )

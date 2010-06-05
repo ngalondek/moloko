@@ -1,5 +1,7 @@
 package dev.drsoran.moloko.content;
 
+import java.util.HashMap;
+
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -11,6 +13,23 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
 {
    @SuppressWarnings( "unused" )
    private static final String TAG = RtmLocationsProviderPart.class.getSimpleName();
+   
+   public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
+   
+   public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   
+   static
+   {
+      COL_INDICES.put( Locations._ID, 0 );
+      COL_INDICES.put( Locations.NAME, 1 );
+      COL_INDICES.put( Locations.LONGITUDE, 2 );
+      COL_INDICES.put( Locations.LATITUDE, 3 );
+      COL_INDICES.put( Locations.ADDRESS, 4 );
+      COL_INDICES.put( Locations.VIEWABLE, 5 );
+      COL_INDICES.put( Locations.ZOOM, 6 );
+      
+      AbstractRtmProviderPart.fillProjectionMap( PROJECTION_MAP, COL_INDICES );
+   }
    
    
 
@@ -31,20 +50,6 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
          + Locations.ZOOM + " INTEGER, "
          + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + Locations._ID + "\" )"
          + " );" );
-   }
-   
-
-
-   @Override
-   protected void fillProjectionMap()
-   {
-      projectionMap.put( Locations._ID, Locations._ID );
-      projectionMap.put( Locations.NAME, Locations.NAME );
-      projectionMap.put( Locations.LONGITUDE, Locations.LONGITUDE );
-      projectionMap.put( Locations.LATITUDE, Locations.LATITUDE );
-      projectionMap.put( Locations.ADDRESS, Locations.ADDRESS );
-      projectionMap.put( Locations.VIEWABLE, Locations.VIEWABLE );
-      projectionMap.put( Locations.ZOOM, Locations.ZOOM );
    }
    
 
@@ -77,5 +82,19 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    protected String getDefaultSortOrder()
    {
       return Locations.DEFAULT_SORT_ORDER;
+   }
+   
+
+
+   public HashMap< String, String > getProjectionMap()
+   {
+      return PROJECTION_MAP;
+   }
+   
+
+
+   public HashMap< String, Integer > getColumnIndices()
+   {
+      return COL_INDICES;
    }
 }

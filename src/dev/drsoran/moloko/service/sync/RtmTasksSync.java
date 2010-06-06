@@ -1,28 +1,24 @@
 package dev.drsoran.moloko.service.sync;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.content.ContentValues;
 import android.content.SyncResult;
 import android.os.RemoteException;
 import android.util.Log;
 
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
-import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmTaskList;
+import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
-import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.service.sync.SyncAdapter.Direction;
-import dev.drsoran.provider.Rtm.Lists;
 
 
 public final class RtmTasksSync
@@ -34,7 +30,7 @@ public final class RtmTasksSync
    public static boolean computeSync( ContentProviderClient provider,
                                       ServiceImpl service,
                                       SyncResult syncResult,
-                                      ArrayList< ContentProviderOperation > result )
+                                      ArrayList< ContentProviderOperation > result ) throws RemoteException
    {
       RtmTasks local_Tasks = null;
       RtmTasks server_Tasks = null;
@@ -63,40 +59,39 @@ public final class RtmTasksSync
       
       boolean ok = true;
       
-      // This assumes that the local lists are up-to-date. This means the
-      // two sets below should contain identical RtmTaskList
       final List< RtmTaskList > local_ListsOfTaskLists = local_Tasks.getLists();
       final List< RtmTaskList > server_ListsOfTaskLists = server_Tasks.getLists();
       
-      // We sort the local lists by their list ID. So we can perform a binary search
-      // with the server list IDs.
       Collections.sort( local_ListsOfTaskLists );
       
-      // for each server list
-      for ( Iterator< RtmTaskList > iterator = server_ListsOfTaskLists.iterator(); ok
-         && iterator.hasNext(); )
+      final int length = server_ListsOfTaskLists.size();
+      
+      for ( int i = 0; ok && i < length; i++ )
       {
-         final RtmTaskList server_RtmTaskList = iterator.next();
+         final RtmTaskList server_RtmTaskList = server_ListsOfTaskLists.get( i );
          
-         final int idx = Collections.binarySearch( local_ListsOfTaskLists,
+         RtmTaskList local_RtmTaskList = null;
+         
+         final int pos = Collections.binarySearch( local_ListsOfTaskLists,
                                                    server_RtmTaskList );
          
-         // INSERT: if we do not have the list, add it
-         if ( localRtmList == null )
+         // if not found, create a new, empty list
+         if ( pos < 0 )
          {
-            ok = result.add( RtmListsProviderPart.insertOrReplace( serverRtmList ) );
-            ++syncResult.stats.numInserts;
+            local_RtmTaskList = new RtmTaskList( server_RtmTaskList.getId() );
          }
-         
-         // UPDATE: if we have the list but check if content changed
          else
          {
-            final int numUpdates = localRtmList.computeSyncWith( Direction.IN,
-                                                                 serverRtmList,
-                                                                 result );
-            ok = numUpdates != -1;
-            syncResult.stats.numUpdates += numUpdates;
+            local_RtmTaskList = local_ListsOfTaskLists.get( pos );
          }
+         
+         // Sync lists
+         ok = syncRtmTaskList( provider,
+                               local_RtmTaskList,
+                               server_RtmTaskList,
+                               Direction.IN,
+                               result,
+                               syncResult );
       }
       
       return ok;
@@ -104,17 +99,48 @@ public final class RtmTasksSync
    
 
 
-   private static boolean syncRtmTaskList( RtmTaskList lhs,
+   private static boolean syncRtmTaskList( ContentProviderClient provider,
+                                           RtmTaskList lhs,
                                            RtmTaskList rhs,
                                            int direction,
                                            ArrayList< ContentProviderOperation > operations,
-                                           SyncResult result )
+                                           SyncResult result ) throws RemoteException
    {
       boolean ok = true;
       
       switch ( direction )
       {
          case SyncAdapter.Direction.IN:
+            final List< RtmTaskSeries > lhs_TaskSeriesList = lhs.getSeries();
+            final List< RtmTaskSeries > rhs_TaskSeriesList = rhs.getSeries();
+            
+            // Sort the reference list by their taskseries IDs.
+            Collections.sort( rhs_TaskSeriesList );
+            
+            for ( Iterator< RtmTaskSeries > i = lhs_TaskSeriesList.iterator(); ok
+               && i.hasNext(); )
+            {
+               final RtmTaskSeries lhs_RtmTaskSeries = i.next();
+               
+               final int idx = Collections.binarySearch( rhs_TaskSeriesList,
+                                                         lhs_RtmTaskSeries );
+               
+               // INSERT: if we do not have the taskseries in the lhs list
+               if ( idx < 0 )
+               {
+                  ok = operations.addAll( RtmTaskSeriesProviderPart.insertTaskSeries( provider,
+                                                                                      lhs.getId(),
+                                                                                      lhs_RtmTaskSeries ) );
+                  ++result.stats.numInserts;
+               }
+               
+               // UPDATE: if we have the taskseries in the lhs list check if content changed
+               else
+               {
+                  // TODO: Implement update check of taskseries
+               }
+            }
+            
             break;
          case SyncAdapter.Direction.OUT:
             Log.e( TAG, "Unsupported sync direction: OUT" );

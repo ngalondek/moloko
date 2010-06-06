@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -42,6 +43,49 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    }
    
    
+
+   public final static ContentProviderOperation insertTask( ContentProviderClient client,
+                                                            RtmTask task ) throws RemoteException
+   {
+      ContentProviderOperation operation = null;
+      
+      // Only insert if not exists
+      boolean ok = !Queries.exists( client, Tasks.CONTENT_URI, task.getId() );
+      
+      // Check mandatory attributes
+      ok = ok && task.getId() != null;
+      
+      if ( ok )
+      {
+         ContentValues values = new ContentValues();
+         
+         values.put( Tasks._ID, task.getId() );
+         
+         if ( task.getDue() != null )
+            values.put( Tasks.DUE_DATE, task.getDue().getTime() );
+         if ( task.getAdded() != null )
+            values.put( Tasks.ADDED_DATE, task.getAdded().getTime() );
+         if ( task.getCompleted() != null )
+            values.put( Tasks.COMPLETED_DATE, task.getCompleted().getTime() );
+         if ( task.getDeleted() != null )
+            values.put( Tasks.DELETED_DATE, task.getDeleted().getTime() );
+         if ( task.getDeleted() != null )
+            values.put( Tasks.DELETED_DATE, task.getDeleted().getTime() );
+         values.put( Tasks.PRIORITY,
+                     RtmTask.convertPriority( task.getPriority() ) );
+         values.put( Tasks.POSTPONED, task.getPostponed() );
+         if ( task.getEstimate() != null )
+            values.put( Tasks.ESTIMATE, task.getEstimate() );
+         
+         operation = ContentProviderOperation.newInsert( Tasks.CONTENT_URI )
+                                             .withValues( values )
+                                             .build();
+      }
+      
+      return operation;
+   }
+   
+
 
    public final static RtmTask getTask( ContentProviderClient client, String id ) throws RemoteException
    {

@@ -124,17 +124,12 @@ public final class RtmListSync
       boolean ok = true;
       
       final String lhsId = lhs.getId();
-      final String rhsId = rhs.getId();
       
       switch ( direction )
       {
          case SyncAdapter.Direction.IN:
             final ContentValues values = new ContentValues();
             
-            if ( !lhsId.equals( rhsId ) )
-            {
-               values.put( Lists._ID, rhsId );
-            }
             if ( !lhs.getName().equals( rhs.getName() ) )
             {
                values.put( Lists.NAME, rhs.getName() );

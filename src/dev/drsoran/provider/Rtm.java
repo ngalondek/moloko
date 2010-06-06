@@ -434,9 +434,9 @@ public class Rtm
       /**
        * The task's priority
        * <P>
-       * Type: INTEGER
+       * Type: CHAR(1)
        * </P>
-       * <LI>0 - none</LI> <LI>1 - high</LI> <LI>2 - medium</LI> <LI>3 - low</LI>
+       * <LI>'n' - none</LI> <LI>'1' - high</LI> <LI>'2' - medium</LI> <LI>'3' - low</LI>
        */
       public final static String PRIORITY = "priority";
       

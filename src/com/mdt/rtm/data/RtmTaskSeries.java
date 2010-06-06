@@ -34,7 +34,8 @@ import android.os.Parcelable;
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskSeries extends RtmData
+public class RtmTaskSeries extends RtmData implements
+         Comparable< RtmTaskSeries >
 {
    
    private static final Logger log = Logger.getLogger( "TaskSeries" );
@@ -288,5 +289,12 @@ public class RtmTaskSeries extends RtmData
       dest.writeString( locationId );
       dest.writeString( url );
       dest.writeStringList( tags );
+   }
+   
+
+
+   public int compareTo( RtmTaskSeries another )
+   {
+      return this.id.compareTo( another.id );
    }
 }

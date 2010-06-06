@@ -2,11 +2,17 @@ package dev.drsoran.moloko.content;
 
 import java.util.HashMap;
 
+import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.os.RemoteException;
+
+import com.mdt.rtm.data.RtmTaskNote;
+
 import dev.drsoran.provider.Rtm.Notes;
 
 
@@ -31,6 +37,42 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    }
    
    
+
+   public final static ContentProviderOperation insertNote( ContentProviderClient client,
+                                                            RtmTaskNote note ) throws RemoteException
+   {
+      ContentProviderOperation operation = null;
+      
+      // Only insert if not exists
+      boolean ok = !Queries.exists( client, Notes.CONTENT_URI, note.getId() );
+      
+      // Check mandatory attributes
+      ok = ok && note.getId() != null;
+      ok = ok && note.getTitle() != null;
+      ok = ok && note.getText() != null;
+      
+      if ( ok )
+      {
+         ContentValues values = new ContentValues();
+         
+         values.put( Notes._ID, note.getId() );
+         
+         if ( note.getCreated() != null )
+            values.put( Notes.CREATED_DATE, note.getCreated().getTime() );
+         if ( note.getModified() != null )
+            values.put( Notes.MODIFIED_DATE, note.getModified().getTime() );
+         values.put( Notes.TITLE, note.getTitle() );
+         values.put( Notes.TEXT, note.getText() );
+         
+         operation = ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                             .withValues( values )
+                                             .build();
+      }
+      
+      return operation;
+   }
+   
+
 
    public RtmNotesProviderPart( SQLiteOpenHelper dbAccess )
    {

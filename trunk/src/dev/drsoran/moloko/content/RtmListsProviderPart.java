@@ -73,14 +73,21 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
 
    public final static ContentProviderOperation insertOrReplace( RtmList list )
    {
-      ContentValues values = new ContentValues();
+      ContentProviderOperation operation = null;
       
-      values.put( Rtm.Lists._ID, list.getId() );
-      values.put( Rtm.Lists.NAME, list.getName() );
+      if ( list.getId() != null && list.getName() != null )
+      {
+         ContentValues values = new ContentValues();
+         
+         values.put( Rtm.Lists._ID, list.getId() );
+         values.put( Rtm.Lists.NAME, list.getName() );
+         
+         operation = ContentProviderOperation.newInsert( Rtm.Lists.CONTENT_URI )
+                                             .withValues( values )
+                                             .build();
+      }
       
-      return ContentProviderOperation.newInsert( Rtm.Lists.CONTENT_URI )
-                                     .withValues( values )
-                                     .build();
+      return operation;
    }
    
 
@@ -116,12 +123,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + tableName + " ( " + Lists._ID
          + " INTEGER NOT NULL, " + Lists.NAME + " TEXT, "
-         + "CONSTRAINT PK_LISTS PRIMARY KEY ( \"" + Lists._ID + "\" );" );
-      
-      // Always create a list Inbox by default. During the first sync the
-      // ID will surely change but it is needed for the triggers below.
-      db.execSQL( "INSERT INTO " + tableName + "( " + Lists._ID + ", "
-         + Lists.NAME + " ) VALUES ( 1, 'Inbox' );" );
+         + "CONSTRAINT PK_LISTS PRIMARY KEY ( \"" + Lists._ID + "\" ) );" );
       
       // Trigger: If a list gets deleted, move all contained tasks to the
       // Inbox list.

@@ -2,10 +2,14 @@ package dev.drsoran.moloko.content;
 
 import java.util.HashMap;
 
+import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.os.RemoteException;
 import dev.drsoran.provider.Rtm.Tags;
 
 
@@ -27,6 +31,42 @@ public class RtmTagsProviderPart extends AbstractRtmProviderPart
    }
    
    
+
+   public final static ContentProviderOperation insertTag( ContentProviderClient client,
+                                                           String tag ) throws RemoteException
+   {
+      ContentProviderOperation operation = null;
+      
+      if ( tag != null )
+      {
+         operation = ContentProviderOperation.newInsert( Tags.CONTENT_URI )
+                                             .withValue( Tags.TAG, tag )
+                                             .build();
+      }
+      
+      return operation;
+   }
+   
+
+
+   public final static String getMatchingTagId( ContentProviderClient client,
+                                                String tag ) throws RemoteException
+   {
+      String id = null;
+      
+      final Cursor c = client.query( Tags.CONTENT_URI, null, Tags.TAG
+         + " like " + tag, null, null );
+      
+      if ( c != null )
+      {
+         id = c.getString( COL_INDICES.get( Tags._ID ) );
+         c.close();
+      }
+      
+      return id;
+   }
+   
+
 
    public RtmTagsProviderPart( SQLiteOpenHelper dbAccess )
    {

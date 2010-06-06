@@ -182,14 +182,24 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             operations.clear();
          }
          
+         ok = ok && syncResult.madeSomeProgress();
+         
+         // TODO: Sync locations here.
+         
          // Sync RtmTasks
          ok = ok
             && RtmTasksSync.computeSync( provider,
                                          serviceImpl,
                                          syncResult,
                                          operations );
+         
+         ok = ok && syncResult.madeSomeProgress();
+         
          if ( ok )
+         {
             provider.applyBatch( operations );
+            operations.clear();
+         }
          
          ok = ok && syncResult.madeSomeProgress();
       }

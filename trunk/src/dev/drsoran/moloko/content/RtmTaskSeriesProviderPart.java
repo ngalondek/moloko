@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -233,6 +234,140 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          c.close();
       
       return tasksLists;
+   }
+   
+
+
+   public final static List< ContentProviderOperation > insertTaskSeries( ContentProviderClient client,
+                                                                          String listId,
+                                                                          RtmTaskSeries taskSeries ) throws RemoteException
+   {
+      ArrayList< ContentProviderOperation > operations = null;
+      
+      final String taskSeriesId = taskSeries.getId();
+      
+      boolean ok = taskSeriesId != null;
+      
+      // Only insert if does not exists
+      ok = ok && !Queries.exists( client, TaskSeries.CONTENT_URI, taskSeriesId );
+      
+      // Check mandatory values
+      ok = ok && taskSeries.getName() != null;
+      ok = ok && taskSeries.getTask() != null;
+      ok = ok && listId != null;
+      
+      if ( ok )
+      {
+         operations = new ArrayList< ContentProviderOperation >();
+         
+         // Insert a new RtmTask
+         {
+            final ContentProviderOperation inserTaskOp = RtmTasksProviderPart.insertTask( client,
+                                                                                          taskSeries.getTask() );
+            ok = inserTaskOp != null;
+            ok = ok && operations.add( inserTaskOp );
+         }
+         
+         // TODO: Handle tags
+         /*
+          * Check for tags if ( ok ) { final List< String > tags = taskSeries.getTags();
+          * 
+          * if ( tags != null && tags.size() > 0 ) { for ( final String tag : tags ) { // Check if we already have the
+          * tag final String tagId = RtmTagsProviderPart.getMatchingTagId( client, tag );
+          * 
+          * ArrayList< ContentProviderOperation > tagOperations = new ArrayList< ContentProviderOperation >();
+          * 
+          * // if not found, create a new tag if ( tagId == null ) { final ContentProviderOperation tagOperation =
+          * RtmTagsProviderPart.insertTag( client, tag ); ok = tagOperation != null; ok = ok && tagOperations.add(
+          * tagOperation );
+          * 
+          * }
+          * 
+          * // link to taskseries if ( ok ) { final ContentProviderOperation tagOperation =
+          * TagRefsProviderPart.addTagToTaskSeries( client, taskSeriesId, tagId ); ok = tagOperation != null; ok = ok &&
+          * tagOperations.add( tagOperation ); }
+          * 
+          * ok = ok && operations.addAll( tagOperations ); } } }
+          */
+
+         // Check for notes
+         if ( ok )
+         {
+            final RtmTaskNotes notes = taskSeries.getNotes();
+            
+            if ( notes != null )
+            {
+               final List< RtmTaskNote > notesList = notes.getNotes();
+               
+               if ( notesList != null && notesList.size() > 0 )
+               {
+                  for ( RtmTaskNote rtmTaskNote : notesList )
+                  {
+                     ArrayList< ContentProviderOperation > noteOperations = new ArrayList< ContentProviderOperation >();
+                     
+                     // Check is we already have such a note
+                     final Cursor c = Queries.getItem( client,
+                                                       Notes.CONTENT_URI,
+                                                       rtmTaskNote.getId() );
+                     
+                     // If not, create a new note
+                     if ( c == null )
+                     {
+                        final ContentProviderOperation noteOperation = RtmNotesProviderPart.insertNote( client,
+                                                                                                        rtmTaskNote );
+                        
+                        ok = noteOperation != null;
+                        ok = ok && noteOperations.add( noteOperation );
+                     }
+                     
+                     // link note to new taskseries
+                     if ( ok )
+                     {
+                        final ContentProviderOperation noteOperation = NoteRefsProviderPart.addNoteToTaskSeries( client,
+                                                                                                                 taskSeriesId,
+                                                                                                                 rtmTaskNote.getId() );
+                        ok = noteOperation != null;
+                        ok = ok && noteOperations.add( noteOperation );
+                     }
+                     
+                     if ( c != null )
+                        c.close();
+                     
+                     ok = ok && operations.addAll( noteOperations );
+                  }
+               }
+            }
+         }
+         
+         // Insert new taskseries
+         if ( ok )
+         {
+            final ContentValues values = new ContentValues();
+            values.put( TaskSeries._ID, taskSeries.getId() );
+            
+            if ( taskSeries.getCreated() != null )
+               values.put( TaskSeries.CREATED_DATE, taskSeries.getCreated()
+                                                              .getTime() );
+            if ( taskSeries.getModified() != null )
+               values.put( TaskSeries.MODIFIED_DATE, taskSeries.getModified()
+                                                               .getTime() );
+            values.put( TaskSeries.NAME, taskSeries.getName() );
+            if ( taskSeries.getSource() != null )
+               values.put( TaskSeries.SOURCE, taskSeries.getSource() );
+            if ( taskSeries.getURL() != null )
+               values.put( TaskSeries.URL, taskSeries.getURL() );
+            values.put( TaskSeries.TASK_ID, taskSeries.getTask().getId() );
+            if ( taskSeries.getLocationId() != null )
+               values.put( TaskSeries.LOCATION_ID, taskSeries.getLocationId() );
+            values.put( TaskSeries.LIST_ID, listId );
+            
+            ok = operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
+                                                         .withValues( values )
+                                                         .build() );
+         }
+      }
+      
+      return operations;
    }
    
 

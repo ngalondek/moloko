@@ -20,14 +20,16 @@ public class RtmTagsProviderPart extends AbstractRtmProviderPart
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
+   public final static String[] PROJECTION =
+   { Tags._ID, Tags.TAG };
+   
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    static
    {
-      COL_INDICES.put( Tags._ID, 0 );
-      COL_INDICES.put( Tags.TAG, 1 );
-      
-      AbstractRtmProviderPart.fillProjectionMap( PROJECTION_MAP, COL_INDICES );
+      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                       PROJECTION_MAP,
+                                                       COL_INDICES );
    }
    
    
@@ -50,17 +52,23 @@ public class RtmTagsProviderPart extends AbstractRtmProviderPart
 
 
    public final static String getMatchingTagId( ContentProviderClient client,
-                                                String tag ) throws RemoteException
+                                                String tag )
    {
       String id = null;
       
-      final Cursor c = client.query( Tags.CONTENT_URI, null, Tags.TAG
-         + " like " + tag, null, null );
-      
-      if ( c != null )
+      try
       {
-         id = c.getString( COL_INDICES.get( Tags._ID ) );
+         final Cursor c = client.query( Tags.CONTENT_URI, PROJECTION, Tags.TAG
+            + " like " + tag, null, null );
+         
+         if ( c.moveToFirst() )         
+            id = c.getString( COL_INDICES.get( Tags._ID ) );
+         
          c.close();
+      }
+      catch ( RemoteException e )
+      {
+         id = null;
       }
       
       return id;
@@ -126,5 +134,12 @@ public class RtmTagsProviderPart extends AbstractRtmProviderPart
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
+   }
+   
+
+
+   public String[] getProjection()
+   {
+      return PROJECTION;
    }
 }

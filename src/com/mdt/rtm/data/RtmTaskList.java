@@ -120,9 +120,9 @@ public class RtmTaskList extends RtmData implements Comparable< RtmTaskList >
    
 
 
-   public boolean add( RtmTaskSeries taskSeries )
+   public void add( RtmTaskSeries taskSeries )
    {
-      return this.series.add( taskSeries );
+      this.series.add( taskSeries );
    }
    
 

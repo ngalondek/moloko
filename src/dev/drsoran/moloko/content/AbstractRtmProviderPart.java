@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.content;
 
-import java.util.Collection;
 import java.util.HashMap;
 
 import android.content.ContentUris;
@@ -239,13 +238,6 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
    
 
 
-   public String[] getProjection()
-   {
-      return (String[]) getProjectionMap().keySet().toArray();
-   }
-   
-
-
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
       return initialValues;
@@ -253,17 +245,19 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
    
 
 
-   protected final static void fillProjectionMap( HashMap< String, String > projectionMap,
-                                                  HashMap< String, Integer > indices )
+   protected final static void initProjectionDependent( String[] projection,
+                                                        HashMap< String, String > projectionMap,
+                                                        HashMap< String, Integer > columnIndices )
    {
-      final Collection< String > keys = indices.keySet();
-      
-      for ( String key : keys )
+      for ( int i = 0; i < projection.length; i++ )
       {
-         projectionMap.put( key, key );
+         final String column = projection[ i ];
+         projectionMap.put( column, column );
+         columnIndices.put( column, i );
       }
    }
    
+
 
    protected abstract String getDefaultSortOrder();
    

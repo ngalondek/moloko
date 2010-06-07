@@ -28,43 +28,54 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
+   public final static String[] PROJECTION =
+   { Lists._ID, Lists.NAME };
+   
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    static
    {
-      COL_INDICES.put( Lists._ID, 0 );
-      COL_INDICES.put( Lists.NAME, 1 );
-      
-      AbstractRtmProviderPart.fillProjectionMap( PROJECTION_MAP, COL_INDICES );
+      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                       PROJECTION_MAP,
+                                                       COL_INDICES );
    }
    
    
 
-   public final static RtmLists getAllLists( ContentProviderClient client ) throws RemoteException
+   public final static RtmLists getAllLists( ContentProviderClient client )
    {
       RtmLists lists = null;
       
-      final Cursor c = client.query( Rtm.Lists.CONTENT_URI,
-                                     null,
-                                     null,
-                                     null,
-                                     null );
-      
-      boolean ok = c != null;
-      
-      if ( ok )
-         lists = new RtmLists();
-      
-      for ( ok = ok && c.moveToFirst(); ok && !c.isAfterLast(); ok = ok
-         && c.moveToNext() )
+      try
       {
-         final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
-                                           c.getString( COL_INDICES.get( Lists.NAME ) ) );
-         lists.add( list );
-      }
-      
-      if ( c != null )
+         final Cursor c = client.query( Rtm.Lists.CONTENT_URI,
+                                        PROJECTION,
+                                        null,
+                                        null,
+                                        null );
+         
+         lists = new RtmLists();
+         
+         boolean ok = true;
+         
+         if ( c.getCount() > 0 )
+         {
+            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            {
+               final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
+                                                 c.getString( COL_INDICES.get( Lists.NAME ) ) );
+               lists.add( list );
+            }
+         }
+         if ( !ok )
+            lists = null;
+         
          c.close();
+      }
+      catch ( RemoteException e )
+      {
+         lists = null;
+      }
       
       return lists;
    }
@@ -187,5 +198,12 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
+   }
+   
+
+
+   public String[] getProjection()
+   {
+      return PROJECTION;
    }
 }

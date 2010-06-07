@@ -10,6 +10,11 @@ import android.provider.BaseColumns;
 
 public final class Queries
 {
+   public final static String[] PROJECTION_ID =
+   { BaseColumns._ID };
+   
+   
+
    public final static Uri contentUriWithId( Uri contentUri, String id )
    {
       return ContentUris.withAppendedId( contentUri, Long.parseLong( id ) );
@@ -19,34 +24,29 @@ public final class Queries
 
    public final static boolean exists( ContentProviderClient client,
                                        Uri contentUri,
-                                       String id )
+                                       String id ) throws RemoteException
    {
-      final Cursor c = getItem( client, contentUri, id );
+      final Cursor c = getItem( client, PROJECTION_ID, contentUri, id );
       
-      if ( c != null )
-         c.close();
+      final boolean exists = c.getCount() > 0;
       
-      return c != null;
+      c.close();
+      
+      return exists;
    }
    
 
 
    public final static Cursor getItem( ContentProviderClient client,
+                                       String[] projection,
                                        Uri contentUri,
-                                       String id )
+                                       String id ) throws RemoteException
    {
-      Cursor c;
-      try
-      {
-         c = client.query( contentUriWithId( contentUri, id ), new String[]
-         { BaseColumns._ID }, null, null, null );
-      }
-      catch ( RemoteException e )
-      {
-         c = null;
-      }
-      
-      return c;
+      return client.query( contentUriWithId( contentUri, id ),
+                           projection,
+                           null,
+                           null,
+                           null );
    }
    
 

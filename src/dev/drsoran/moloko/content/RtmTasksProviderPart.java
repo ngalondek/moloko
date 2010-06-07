@@ -26,20 +26,18 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
+   public final static String[] PROJECTION =
+   { Tasks._ID, Tasks.DUE_DATE, Tasks.ADDED_DATE, Tasks.COMPLETED_DATE,
+    Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED, Tasks.ESTIMATE };
+   
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    static
    {
-      COL_INDICES.put( Tasks._ID, 0 );
-      COL_INDICES.put( Tasks.DUE_DATE, 1 );
-      COL_INDICES.put( Tasks.ADDED_DATE, 2 );
-      COL_INDICES.put( Tasks.COMPLETED_DATE, 3 );
-      COL_INDICES.put( Tasks.DELETED_DATE, 4 );
-      COL_INDICES.put( Tasks.PRIORITY, 5 );
-      COL_INDICES.put( Tasks.POSTPONED, 6 );
-      COL_INDICES.put( Tasks.ESTIMATE, 7 );
       
-      AbstractRtmProviderPart.fillProjectionMap( PROJECTION_MAP, COL_INDICES );
+      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                       PROJECTION_MAP,
+                                                       COL_INDICES );
    }
    
    
@@ -93,11 +91,12 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       
       // We query all TaskSeries rows and sort them by their list ID.
       // So we have all lists with their tasks together.
-      final Cursor c = Queries.getItem( client, Rtm.Tasks.CONTENT_URI, id );
+      final Cursor c = Queries.getItem( client,
+                                        PROJECTION,
+                                        Rtm.Tasks.CONTENT_URI,
+                                        id );
       
-      boolean ok = c != null && !c.isAfterLast();
-      
-      if ( ok )
+      if ( c.moveToFirst() )
       {
          Date due = null;
          Date completed = null;
@@ -122,8 +121,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
                                                    COL_INDICES.get( Tasks.ESTIMATE ) ) );
       }
       
-      if ( c != null )
-         c.close();
+      c.close();
       
       return task;
    }
@@ -208,5 +206,12 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
+   }
+   
+
+
+   public String[] getProjection()
+   {
+      return PROJECTION;
    }
 }

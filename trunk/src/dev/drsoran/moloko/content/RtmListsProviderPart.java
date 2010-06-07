@@ -82,20 +82,40 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ContentProviderOperation insertOrReplace( RtmList list )
+   public final static ContentValues getContentValues( RtmList list,
+                                                       boolean withId )
+   {
+      ContentValues values = new ContentValues();
+      
+      if ( withId )
+         values.put( Rtm.Lists._ID, list.getId() );
+      
+      values.put( Rtm.Lists.NAME, list.getName() );
+      
+      return values;
+   }
+   
+
+
+   public final static ContentProviderOperation insert( ContentProviderClient client,
+                                                        RtmList list )
    {
       ContentProviderOperation operation = null;
       
-      if ( list.getId() != null && list.getName() != null )
+      try
       {
-         ContentValues values = new ContentValues();
-         
-         values.put( Rtm.Lists._ID, list.getId() );
-         values.put( Rtm.Lists.NAME, list.getName() );
-         
-         operation = ContentProviderOperation.newInsert( Rtm.Lists.CONTENT_URI )
-                                             .withValues( values )
-                                             .build();
+         if ( list.getId() != null && list.getName() != null
+            && !Queries.exists( client, Lists.CONTENT_URI, list.getId() ) )
+         {
+            operation = ContentProviderOperation.newInsert( Rtm.Lists.CONTENT_URI )
+                                                .withValues( getContentValues( list,
+                                                                               true ) )
+                                                .build();
+         }
+      }
+      catch ( RemoteException e )
+      {
+         operation = null;
       }
       
       return operation;

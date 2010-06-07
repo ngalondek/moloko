@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.service.sync;
 
-import java.sql.SQLData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -21,7 +20,6 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
-import dev.drsoran.moloko.service.sync.SyncAdapter.Direction;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -191,7 +189,7 @@ public final class RtmTasksSync
       if ( rhs.getDue() != null )
          values.put( Tasks.DUE_DATE, rhs.getDue().getTime() );
       else
-         values.put( Tasks.DUE_DATE, "" );
+         values.put( Tasks.DUE_DATE, "null" );
       
       values.put( Tasks.ADDED_DATE, rhs.getAdded().getTime() );
       

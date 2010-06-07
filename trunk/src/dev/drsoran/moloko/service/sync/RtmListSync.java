@@ -73,8 +73,15 @@ public final class RtmListSync
          // INSERT: if we do not have the list, add it
          if ( local_RtmList == null )
          {
-            result.add( RtmListsProviderPart.insertOrReplace( server_RtmList ) );
-            ++syncResult.stats.numInserts;
+            final ContentProviderOperation insertOperation = RtmListsProviderPart.insert( provider,
+                                                                                          server_RtmList );
+            
+            ok = insertOperation != null;
+            if ( ok )
+            {
+               result.add( insertOperation );
+               ++syncResult.stats.numInserts;
+            }
          }
          
          // UPDATE: if we have the list but check if content changed

@@ -38,6 +38,32 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    
    
 
+   public final static ContentValues getContentValues( RtmTaskNote note,
+                                                       boolean withId )
+   {
+      ContentValues values = new ContentValues();
+      
+      if ( withId )
+         values.put( Notes._ID, note.getId() );
+      
+      if ( note.getCreated() != null )
+         values.put( Notes.CREATED_DATE, note.getCreated().getTime() );
+      else
+         values.putNull( Notes.CREATED_DATE );
+      
+      if ( note.getModified() != null )
+         values.put( Notes.MODIFIED_DATE, note.getModified().getTime() );
+      else
+         values.putNull( Notes.MODIFIED_DATE );
+      
+      values.put( Notes.TITLE, note.getTitle() );
+      values.put( Notes.TEXT, note.getText() );
+      
+      return values;
+   }
+   
+
+
    public final static ContentProviderOperation insertNote( ContentProviderClient client,
                                                             RtmTaskNote note ) throws RemoteException
    {
@@ -53,19 +79,9 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
       
       if ( ok )
       {
-         ContentValues values = new ContentValues();
-         
-         values.put( Notes._ID, note.getId() );
-         
-         if ( note.getCreated() != null )
-            values.put( Notes.CREATED_DATE, note.getCreated().getTime() );
-         if ( note.getModified() != null )
-            values.put( Notes.MODIFIED_DATE, note.getModified().getTime() );
-         values.put( Notes.TITLE, note.getTitle() );
-         values.put( Notes.TEXT, note.getText() );
-         
          operation = ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                             .withValues( values )
+                                             .withValues( getContentValues( note,
+                                                                            true ) )
                                              .build();
       }
       

@@ -42,6 +42,52 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
    
 
+   public final static ContentValues getContentValues( RtmTask task,
+                                                       boolean withId )
+   {
+      final ContentValues values = new ContentValues();
+      
+      if ( withId )
+         values.put( Tasks._ID, task.getId() );
+      
+      if ( task.getDue() != null )
+         values.put( Tasks.DUE_DATE, task.getDue().getTime() );
+      else
+         values.putNull( Tasks.DUE_DATE );
+      
+      if ( task.getAdded() != null )
+         values.put( Tasks.ADDED_DATE, task.getAdded().getTime() );
+      else
+         values.putNull( Tasks.ADDED_DATE );
+      
+      if ( task.getCompleted() != null )
+         values.put( Tasks.COMPLETED_DATE, task.getCompleted().getTime() );
+      else
+         values.putNull( Tasks.COMPLETED_DATE );
+      
+      if ( task.getDeleted() != null )
+         values.put( Tasks.DELETED_DATE, task.getDeleted().getTime() );
+      else
+         values.putNull( Tasks.DELETED_DATE );
+      
+      if ( task.getDeleted() != null )
+         values.put( Tasks.DELETED_DATE, task.getDeleted().getTime() );
+      else
+         values.putNull( Tasks.DELETED_DATE );
+      
+      values.put( Tasks.PRIORITY, RtmTask.convertPriority( task.getPriority() ) );
+      values.put( Tasks.POSTPONED, task.getPostponed() );
+      
+      if ( task.getEstimate() != null )
+         values.put( Tasks.ESTIMATE, task.getEstimate() );
+      else
+         values.putNull( Tasks.ESTIMATE );
+      
+      return values;
+   }
+   
+
+
    public final static ContentProviderOperation insertTask( ContentProviderClient client,
                                                             RtmTask task ) throws RemoteException
    {
@@ -55,28 +101,9 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       
       if ( ok )
       {
-         ContentValues values = new ContentValues();
-         
-         values.put( Tasks._ID, task.getId() );
-         
-         if ( task.getDue() != null )
-            values.put( Tasks.DUE_DATE, task.getDue().getTime() );
-         if ( task.getAdded() != null )
-            values.put( Tasks.ADDED_DATE, task.getAdded().getTime() );
-         if ( task.getCompleted() != null )
-            values.put( Tasks.COMPLETED_DATE, task.getCompleted().getTime() );
-         if ( task.getDeleted() != null )
-            values.put( Tasks.DELETED_DATE, task.getDeleted().getTime() );
-         if ( task.getDeleted() != null )
-            values.put( Tasks.DELETED_DATE, task.getDeleted().getTime() );
-         values.put( Tasks.PRIORITY,
-                     RtmTask.convertPriority( task.getPriority() ) );
-         values.put( Tasks.POSTPONED, task.getPostponed() );
-         if ( task.getEstimate() != null )
-            values.put( Tasks.ESTIMATE, task.getEstimate() );
-         
          operation = ContentProviderOperation.newInsert( Tasks.CONTENT_URI )
-                                             .withValues( values )
+                                             .withValues( getContentValues( task,
+                                                                            true ) )
                                              .build();
       }
       

@@ -56,6 +56,52 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
    
 
+   public final static ContentValues getContentValues( RtmTaskSeries taskSeries,
+                                                       String listId,
+                                                       boolean withId )
+   {
+      final ContentValues values = new ContentValues();
+      
+      if ( withId )
+         values.put( TaskSeries._ID, taskSeries.getId() );
+      
+      if ( taskSeries.getCreated() != null )
+         values.put( TaskSeries.CREATED_DATE, taskSeries.getCreated().getTime() );
+      else
+         values.putNull( TaskSeries.CREATED_DATE );
+      
+      if ( taskSeries.getModified() != null )
+         values.put( TaskSeries.MODIFIED_DATE, taskSeries.getModified()
+                                                         .getTime() );
+      else
+         values.putNull( TaskSeries.MODIFIED_DATE );
+      
+      values.put( TaskSeries.NAME, taskSeries.getName() );
+      
+      if ( taskSeries.getSource() != null )
+         values.put( TaskSeries.SOURCE, taskSeries.getSource() );
+      else
+         values.putNull( TaskSeries.SOURCE );
+      
+      if ( taskSeries.getURL() != null )
+         values.put( TaskSeries.URL, taskSeries.getURL() );
+      else
+         values.putNull( TaskSeries.URL );
+      
+      values.put( TaskSeries.TASK_ID, taskSeries.getTask().getId() );
+      
+      if ( taskSeries.getLocationId() != null )
+         values.put( TaskSeries.LOCATION_ID, taskSeries.getLocationId() );
+      else
+         values.putNull( TaskSeries.LOCATION_ID );
+      
+      values.put( TaskSeries.LIST_ID, listId );
+      
+      return values;
+   }
+   
+
+
    public final static RtmTasks getAllTaskSeries( ContentProviderClient client )
    {
       RtmTasks tasksLists = null;
@@ -80,21 +126,19 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
             
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
+               final String currentTaskListId = c.getString( COL_INDICES.get( TaskSeries.LIST_ID ) );
+               
+               // Check if we have reached a new task list
+               if ( taskList == null
+                  || !taskList.getId().equals( currentTaskListId ) )
                {
-                  final String currentTaskListId = c.getString( COL_INDICES.get( TaskSeries.LIST_ID ) );
-                  
-                  // Check if we have reached a new task list
-                  if ( taskList == null
-                     || !taskList.getId().equals( currentTaskListId ) )
+                  // store current task list and create a new one
+                  if ( taskList != null )
                   {
-                     // store current task list and create a new one
-                     if ( taskList != null )
-                     {
-                        tasksLists.add( taskList );
-                     }
-                     
-                     taskList = new RtmTaskList( currentTaskListId );
+                     tasksLists.add( taskList );
                   }
+                  
+                  taskList = new RtmTaskList( currentTaskListId );
                }
                
                RtmTask task = null;
@@ -354,27 +398,10 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          // Insert new taskseries
          if ( ok )
          {
-            final ContentValues values = new ContentValues();
-            values.put( TaskSeries._ID, taskSeries.getId() );
-            
-            if ( taskSeries.getCreated() != null )
-               values.put( TaskSeries.CREATED_DATE, taskSeries.getCreated()
-                                                              .getTime() );
-            if ( taskSeries.getModified() != null )
-               values.put( TaskSeries.MODIFIED_DATE, taskSeries.getModified()
-                                                               .getTime() );
-            values.put( TaskSeries.NAME, taskSeries.getName() );
-            if ( taskSeries.getSource() != null )
-               values.put( TaskSeries.SOURCE, taskSeries.getSource() );
-            if ( taskSeries.getURL() != null )
-               values.put( TaskSeries.URL, taskSeries.getURL() );
-            values.put( TaskSeries.TASK_ID, taskSeries.getTask().getId() );
-            if ( taskSeries.getLocationId() != null )
-               values.put( TaskSeries.LOCATION_ID, taskSeries.getLocationId() );
-            values.put( TaskSeries.LIST_ID, listId );
-            
             operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
-                                                    .withValues( values )
+                                                    .withValues( getContentValues( taskSeries,
+                                                                                   listId,
+                                                                                   true ) )
                                                     .build() );
          }
       }

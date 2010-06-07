@@ -170,26 +170,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          Log.i( TAG, "Syncing RtmLists " + ( ok ? "ok" : "failed" ) );
          
-         // We have to apply the list change here.
-         // For the Tasks in the next step we need up-to-date lists.
-         // If we would use the previous lists we cannot handle cases
-         // like:
-         // - server has new list and moved known tasks to
-         // it.
-         if ( ok )
-         {
-            provider.applyBatch( operations );
-            operations.clear();
-         }
-         
          // TODO: Sync locations here.
          
          // Sync RtmTasks
          ok = ok
-            && RtmTasksSync.computeSync( provider,
-                                         serviceImpl,
-                                         syncResult,
-                                         operations );
+            && RtmTasksSync.in_computeSync( provider,
+                                            serviceImpl,
+                                            syncResult,
+                                            operations );
          
          Log.i( TAG, "Syncing RtmTasks " + ( ok ? "ok" : "failed" ) );
          

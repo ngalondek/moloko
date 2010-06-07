@@ -16,19 +16,17 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
+   public final static String[] PROJECTION =
+   { Locations._ID, Locations.NAME, Locations.LONGITUDE, Locations.LATITUDE,
+    Locations.ADDRESS, Locations.VIEWABLE, Locations.ZOOM };
+   
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    static
    {
-      COL_INDICES.put( Locations._ID, 0 );
-      COL_INDICES.put( Locations.NAME, 1 );
-      COL_INDICES.put( Locations.LONGITUDE, 2 );
-      COL_INDICES.put( Locations.LATITUDE, 3 );
-      COL_INDICES.put( Locations.ADDRESS, 4 );
-      COL_INDICES.put( Locations.VIEWABLE, 5 );
-      COL_INDICES.put( Locations.ZOOM, 6 );
-      
-      AbstractRtmProviderPart.fillProjectionMap( PROJECTION_MAP, COL_INDICES );
+      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                       PROJECTION_MAP,
+                                                       COL_INDICES );
    }
    
    
@@ -96,5 +94,12 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
+   }
+   
+
+
+   public String[] getProjection()
+   {
+      return PROJECTION;
    }
 }

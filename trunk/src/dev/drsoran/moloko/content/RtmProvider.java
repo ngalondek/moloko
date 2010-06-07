@@ -34,7 +34,6 @@ public class RtmProvider extends ContentProvider
 
       public void onCreate( SQLiteDatabase db )
       {
-         
          for ( int i = 0; i < parts.length; i++ )
          {
             try
@@ -46,7 +45,6 @@ public class RtmProvider extends ContentProvider
                // TODO: handle exception
             }
          }
-         
       }
       
 

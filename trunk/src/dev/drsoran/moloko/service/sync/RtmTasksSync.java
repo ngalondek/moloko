@@ -32,20 +32,17 @@ public final class RtmTasksSync
                                       SyncResult syncResult,
                                       ArrayList< ContentProviderOperation > result ) throws RemoteException
    {
-      RtmTasks local_Tasks = null;
-      RtmTasks server_Tasks = null;
-      
       // Get all lists from local database
-      try
-      {
-         local_Tasks = RtmTaskSeriesProviderPart.getAllTaskSeries( provider );
-      }
-      catch ( RemoteException e )
+      final RtmTasks local_Tasks = RtmTaskSeriesProviderPart.getAllTaskSeries( provider );
+      
+      if ( local_Tasks == null )
       {
          syncResult.databaseError = true;
-         Log.e( TAG, "Getting local lists failed.", e );
+         Log.e( TAG, "Getting local tasks failed." );
          return false;
       }
+      
+      RtmTasks server_Tasks = null;
       
       try
       {
@@ -59,8 +56,12 @@ public final class RtmTasksSync
       
       boolean ok = true;
       
-      final List< RtmTaskList > local_ListsOfTaskLists = local_Tasks.getLists();
       final List< RtmTaskList > server_ListsOfTaskLists = server_Tasks.getLists();
+      
+      // Here we have to clone the list cause the returned list can not be modified nor
+      // sorted.
+      final ArrayList< RtmTaskList > local_ListsOfTaskLists = new ArrayList< RtmTaskList >();
+      local_ListsOfTaskLists.addAll( local_Tasks.getLists() );
       
       Collections.sort( local_ListsOfTaskLists );
       
@@ -111,26 +112,36 @@ public final class RtmTasksSync
       switch ( direction )
       {
          case SyncAdapter.Direction.IN:
-            final List< RtmTaskSeries > lhs_TaskSeriesList = lhs.getSeries();
+
             final List< RtmTaskSeries > rhs_TaskSeriesList = rhs.getSeries();
             
-            // Sort the reference list by their taskseries IDs.
-            Collections.sort( rhs_TaskSeriesList );
+            // Here we have to clone the list cause the returned list can not be modified nor
+            // sorted.
+            final ArrayList< RtmTaskSeries > lhs_TaskSeriesList = new ArrayList< RtmTaskSeries >();
+            lhs_TaskSeriesList.addAll( lhs.getSeries() );
             
-            for ( Iterator< RtmTaskSeries > i = lhs_TaskSeriesList.iterator(); ok
+            // Sort the reference list by their taskseries IDs.
+            Collections.sort( lhs_TaskSeriesList );
+            
+            // For each element from the reference list
+            for ( Iterator< RtmTaskSeries > i = rhs_TaskSeriesList.iterator(); ok
                && i.hasNext(); )
             {
-               final RtmTaskSeries lhs_RtmTaskSeries = i.next();
+               final RtmTaskSeries rhs_RtmTaskSeries = i.next();
                
-               final int idx = Collections.binarySearch( rhs_TaskSeriesList,
-                                                         lhs_RtmTaskSeries );
+               final int idx = Collections.binarySearch( lhs_TaskSeriesList,
+                                                         rhs_RtmTaskSeries );
                
                // INSERT: if we do not have the taskseries in the lhs list
                if ( idx < 0 )
                {
-                  ok = operations.addAll( RtmTaskSeriesProviderPart.insertTaskSeries( provider,
-                                                                                      lhs.getId(),
-                                                                                      lhs_RtmTaskSeries ) );
+                  final List< ContentProviderOperation > insertOperations = RtmTaskSeriesProviderPart.insertTaskSeries( provider,
+                                                                                                                        lhs.getId(),
+                                                                                                                        rhs_RtmTaskSeries );
+                  ok = insertOperations != null;
+                  if ( ok )
+                     operations.addAll( insertOperations );
+                  
                   ++result.stats.numInserts;
                }
                

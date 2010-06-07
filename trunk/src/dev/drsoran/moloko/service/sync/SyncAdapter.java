@@ -168,7 +168,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                        syncResult,
                                        operations );
          
-         ok = ok && syncResult.madeSomeProgress();
+         Log.i( TAG, "Syncing RtmLists " + ( ok ? "ok" : "failed" ) );
          
          // We have to apply the list change here.
          // For the Tasks in the next step we need up-to-date lists.
@@ -182,8 +182,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             operations.clear();
          }
          
-         ok = ok && syncResult.madeSomeProgress();
-         
          // TODO: Sync locations here.
          
          // Sync RtmTasks
@@ -193,15 +191,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                          syncResult,
                                          operations );
          
-         ok = ok && syncResult.madeSomeProgress();
+         Log.i( TAG, "Syncing RtmTasks " + ( ok ? "ok" : "failed" ) );
          
          if ( ok )
          {
             provider.applyBatch( operations );
             operations.clear();
          }
-         
-         ok = ok && syncResult.madeSomeProgress();
       }
       catch ( RemoteException e )
       {

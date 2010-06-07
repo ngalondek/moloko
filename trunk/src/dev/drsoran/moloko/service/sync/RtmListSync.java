@@ -9,7 +9,6 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.SyncResult;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.mdt.rtm.ServiceException;
@@ -33,20 +32,17 @@ public final class RtmListSync
                                       SyncResult syncResult,
                                       ArrayList< ContentProviderOperation > result )
    {
-      RtmLists local_ListsOfLists = null;
-      RtmLists server_ListOfLists = null;
-      
       // Get all lists from local database
-      try
-      {
-         local_ListsOfLists = RtmListsProviderPart.getAllLists( provider );
-      }
-      catch ( RemoteException e )
+      final RtmLists local_ListsOfLists = RtmListsProviderPart.getAllLists( provider );
+      
+      if ( local_ListsOfLists == null )
       {
          syncResult.databaseError = true;
-         Log.e( TAG, "Getting local lists failed.", e );
+         Log.e( TAG, "Getting local lists failed." );
          return false;
       }
+      
+      RtmLists server_ListOfLists = null;
       
       try
       {
@@ -77,7 +73,7 @@ public final class RtmListSync
          // INSERT: if we do not have the list, add it
          if ( local_RtmList == null )
          {
-            ok = result.add( RtmListsProviderPart.insertOrReplace( server_RtmList ) );
+            result.add( RtmListsProviderPart.insertOrReplace( server_RtmList ) );
             ++syncResult.stats.numInserts;
          }
          
@@ -105,7 +101,7 @@ public final class RtmListSync
          
          if ( server_RtmList == null )
          {
-            ok = result.add( RtmListsProviderPart.deleteList( local_RtmList.getId() ) );
+            result.add( RtmListsProviderPart.deleteList( local_RtmList.getId() ) );
             ++syncResult.stats.numDeletes;
          }
       }
@@ -137,10 +133,8 @@ public final class RtmListSync
             
             if ( values.size() > 0 )
             {
-               ok = operations.add( RtmListsProviderPart.updateList( lhsId,
-                                                                     values ) );
-               if ( ok )
-                  result.stats.numUpdates += values.size();
+               operations.add( RtmListsProviderPart.updateList( lhsId, values ) );
+               result.stats.numUpdates += values.size();
             }
             break;
          case SyncAdapter.Direction.OUT:

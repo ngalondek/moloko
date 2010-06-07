@@ -103,8 +103,8 @@ public class RtmTasks extends RtmData
    
 
 
-   public boolean add( RtmTaskList taskList )
+   public void add( RtmTaskList taskList )
    {
-      return this.lists.add( taskList );
+      this.lists.add( taskList );
    }
 }

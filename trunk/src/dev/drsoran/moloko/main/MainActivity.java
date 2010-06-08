@@ -1,12 +1,11 @@
 package dev.drsoran.moloko.main;
 
-import java.util.Collection;
-import java.util.List;
-
-import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.CursorJoiner;
+import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,27 +14,22 @@ import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
 
 import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmList;
-import com.mdt.rtm.data.RtmLists;
-import com.mdt.rtm.data.RtmTaskList;
-import com.mdt.rtm.data.RtmTaskSeries;
-import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.prefs.AccountPreferencesActivity;
-import dev.drsoran.moloko.service.async.AsyncRtmService;
-import dev.drsoran.moloko.util.ResultCallback;
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public class MainActivity extends ListActivity
 {
    private final static String TAG = MainActivity.class.getSimpleName();
    
-   private final static String[] PROJECTION = new String[]
-   { Tasks._ID, Tasks.COMPLETED_DATE };
+   private final static String[] PROJECTION_TASKSERIES =
+   { TaskSeries._ID, TaskSeries.NAME, TaskSeries.LIST_ID };
    
-   private AsyncRtmService asyncRtmService = null;
+   private final static String[] PROJECTION_LIST =
+   { Lists._ID, Lists.NAME };
    
    
 
@@ -46,19 +40,65 @@ public class MainActivity extends ListActivity
       super.onCreate( savedInstanceState );
       setContentView( R.layout.main_activity );
       
-      final Cursor cursor = managedQuery( Tasks.CONTENT_URI,
-                                          PROJECTION,
-                                          null,
-                                          null,
-                                          Tasks.DEFAULT_SORT_ORDER );
+      final ContentResolver contentResolver = getContentResolver();
       
-      SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
-                                                             R.layout.main_activity_list_tasks_task,
-                                                             cursor,
-                                                             new String[]
-                                                             { Tasks.COMPLETED_DATE },
-                                                             new int[]
-                                                             { R.id.main_list_tasks_task_desc } );
+      final Cursor cursorTaskSeries = contentResolver.query( TaskSeries.CONTENT_URI,
+                                                             PROJECTION_TASKSERIES,
+                                                             null,
+                                                             null,
+                                                             TaskSeries.LIST_ID );
+      
+      final Cursor cursorLists = contentResolver.query( Lists.CONTENT_URI,
+                                                        PROJECTION_LIST,
+                                                        null,
+                                                        null,
+                                                        Lists._ID );
+      
+      final CursorJoiner cursorJoiner = new CursorJoiner( cursorTaskSeries,
+                                                          new String[]
+                                                          { TaskSeries.LIST_ID },
+                                                          cursorLists,
+                                                          new String[]
+                                                          { Lists._ID } );
+      
+      final MatrixCursor matrixCursor = new MatrixCursor( new String[]
+                                                          { TaskSeries._ID,
+                                                           "ts_name",
+                                                           "li_name" },
+                                                          cursorTaskSeries.getCount() );
+      
+      for ( CursorJoiner.Result joinResult : cursorJoiner )
+      {
+         switch ( joinResult )
+         {
+            case BOTH:
+               final String taskseriesId = cursorTaskSeries.getString( 0 );
+               final String taskseriesName = cursorTaskSeries.getString( 1 );
+               final String listName = cursorLists.getString( 1 );
+               
+               matrixCursor.addRow( new String[]
+               { taskseriesId, taskseriesName, listName } );
+            default :
+               break;
+         }
+      }
+      
+      cursorTaskSeries.close();
+      cursorLists.close();
+      
+      startManagingCursor( matrixCursor );
+      
+      final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
+                                                                   R.layout.main_activity_list_tasks_task,
+                                                                   matrixCursor,
+                                                                   new String[]
+                                                                   {
+                                                                    "ts_name",
+                                                                    "li_name" },
+                                                                   new int[]
+                                                                   {
+                                                                    R.id.main_list_tasks_task_desc,
+                                                                    R.id.main_list_tasks_task_list_name } );
       
       setListAdapter( adapter );
    }
@@ -109,80 +149,10 @@ public class MainActivity extends ListActivity
       switch ( item.getItemId() )
       {
          case R.id.main_menu_opt_sync:
-//            asyncRtmService = new AsyncRtmService( this,
-//                                                   AccountPreferencesActivity.getRtmApplicationInfo( this ),
-//                                                   AccountPreferencesActivity.getRtmPermission( this ) );
-            
-            asyncRtmService.lists().getList( new ResultCallback< RtmLists >()
-            {
-               public void run()
-               {
-                  syncAll( result, exception );
-               }
-            } );
-            
             return true;
             
          default :
             return false;
-      }
-   }
-   
-
-
-   private void syncAll( RtmLists listsOfList, Exception exception )
-   {
-      if ( exception != null )
-      {
-         new AlertDialog.Builder( this ).setTitle( R.string.err_error )
-                                        .setMessage( "Sync fehlegeschlagen. "
-                                           + exception.getMessage() )
-                                        .show();
-      }
-      else
-      {
-         Collection< RtmList > lists = listsOfList.getLists().values();
-         
-         for ( RtmList rtmList : lists )
-         {
-            
-            
-//            try
-//            {
-//               final RtmTasks tasks = asyncRtmService.sync()
-//                                                     .tasks_getList( rtmList.getId(),
-//                                                                     null,
-//                                                                     null );
-//               syncTasks( tasks );
-//            }
-//            catch ( RemoteException e )
-//            {
-//               new AlertDialog.Builder( this ).setTitle( R.string.err_error )
-//                                              .setMessage( "Sync fehlegeschlagen. "
-//                                                 + e.getMessage() )
-//                                              .show();
-//               continue;
-//            }
-         }
-      }
-      
-      asyncRtmService = null;
-   }
-   
-
-
-   private void syncTasks( RtmTasks tasks )
-   {
-      final List< RtmTaskList > listsOfLists = tasks.getLists();
-      
-      for ( RtmTaskList rtmTaskList : listsOfLists )
-      {
-         final List< RtmTaskSeries > listOfTaskSeries = rtmTaskList.getSeries();
-         
-         for ( RtmTaskSeries rtmTaskSeries : listOfTaskSeries )
-         {
-            
-         }
       }
    }
    

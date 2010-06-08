@@ -132,13 +132,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                if ( taskList == null
                   || !taskList.getId().equals( currentTaskListId ) )
                {
-                  // store current task list and create a new one
-                  if ( taskList != null )
-                  {
-                     tasksLists.add( taskList );
-                  }
-                  
                   taskList = new RtmTaskList( currentTaskListId );
+                  tasksLists.add( taskList );
                }
                
                RtmTask task = null;

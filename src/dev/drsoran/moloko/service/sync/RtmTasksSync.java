@@ -19,7 +19,10 @@ import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
+import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
+import dev.drsoran.moloko.content.RtmTasksProviderPart;
+import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -148,6 +151,7 @@ public final class RtmTasksSync
             ok = in_syncRtmTaskSeries( provider,
                                        lhs_RtmTaskSeries,
                                        rhs_RtmTaskSeries,
+                                       lhs.getId(),
                                        updateOperations,
                                        result );
             
@@ -164,13 +168,41 @@ public final class RtmTasksSync
    private static boolean in_syncRtmTaskSeries( ContentProviderClient provider,
                                                 RtmTaskSeries lhs,
                                                 RtmTaskSeries rhs,
+                                                String listId,
                                                 ArrayList< ContentProviderOperation > operations,
                                                 SyncResult result ) throws RemoteException
    {
-      boolean ok = in_SyncRtmTask( provider,
-                                   lhs.getTask(),
-                                   rhs.getTask(),
-                                   operations );
+      boolean ok = lhs.getId().equals( rhs.getId() );
+      
+      if ( ok )
+      {
+         ok = in_SyncRtmTask( provider,
+                              lhs.getTask(),
+                              rhs.getTask(),
+                              operations );
+         
+         if ( ok )
+         {
+            ++result.stats.numUpdates;
+            
+            // Replace the content of the lhs taskseries with the content of the rhs taskseries.
+            final ContentValues rhs_Values = RtmTaskSeriesProviderPart.getContentValues( rhs,
+                                                                                         listId,
+                                                                                         false );
+            ok = rhs_Values != null;
+            
+            if ( ok && rhs_Values.size() > 0 )
+               operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                             lhs.getId() ) )
+                                                       .withValues( rhs_Values )
+                                                       .build() );
+         }
+      }
+      else
+      {
+         Log.e( TAG, "Tried to update RtmTaskSeries with different IDs. lhs = "
+            + lhs.getId() + ", rhs = " + rhs.getId() );
+      }
       
       return ok;
    }
@@ -182,21 +214,27 @@ public final class RtmTasksSync
                                           RtmTask rhs,
                                           ArrayList< ContentProviderOperation > operations ) throws RemoteException
    {
-      boolean ok = true;
+      boolean ok = lhs.getId().equals( rhs.getId() );
       
-      ContentValues values = new ContentValues();
-      
-      if ( rhs.getDue() != null )
-         values.put( Tasks.DUE_DATE, rhs.getDue().getTime() );
+      if ( ok )
+      {
+         // Replace the content of the lhs task with the content of the rhs task.
+         final ContentValues rhs_Values = RtmTasksProviderPart.getContentValues( rhs,
+                                                                                 false );
+         
+         ok = rhs_Values != null;
+         
+         if ( ok && rhs_Values.size() > 0 )
+            operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Tasks.CONTENT_URI,
+                                                                                          lhs.getId() ) )
+                                                    .withValues( rhs_Values )
+                                                    .build() );
+      }
       else
-         values.put( Tasks.DUE_DATE, "null" );
-      
-      values.put( Tasks.ADDED_DATE, rhs.getAdded().getTime() );
-      
-      if ( values.size() > 0 )
-         operations.add( ContentProviderOperation.newUpdate( Tasks.CONTENT_URI )
-                                                 .withValues( values )
-                                                 .build() );
+      {
+         Log.e( TAG, "Tried to update RtmTask with different IDs. lhs = "
+            + lhs.getId() + ", rhs = " + rhs.getId() );
+      }
       
       return ok;
    }

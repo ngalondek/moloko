@@ -30,7 +30,7 @@ import dev.drsoran.provider.Rtm.NoteRefs;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.provider.Rtm.RawTasks;
 
 
 public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
@@ -428,7 +428,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + "CONSTRAINT location FOREIGN KEY ( " + TaskSeries.LOCATION_ID
          + " ) REFERENCES locations ( \"" + Locations._ID + "\" ),"
          + "CONSTRAINT task FOREIGN KEY ( " + TaskSeries.TASK_ID
-         + " ) REFERENCES tasks ( \"" + Tasks._ID + "\" ) );" );
+         + " ) REFERENCES tasks ( \"" + RawTasks._ID + "\" ) );" );
    }
    
 

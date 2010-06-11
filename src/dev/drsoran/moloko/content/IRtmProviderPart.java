@@ -65,10 +65,6 @@ public interface IRtmProviderPart
    
 
 
-   public String getIdSegement( Uri uri );
-   
-
-
    public String getType( Uri uri );
    
 

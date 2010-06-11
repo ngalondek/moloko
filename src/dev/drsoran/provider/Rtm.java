@@ -9,7 +9,19 @@ public class Rtm
    public static final String AUTHORITY = "dev.drsoran.provider.Rtm";
    
    
-   public static final class Lists implements BaseColumns
+   protected static interface ListColumns
+   {
+      /**
+       * The name of the list
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String NAME = "list_name";
+   }
+   
+
+   public static final class Lists implements BaseColumns, ListColumns
    {
       /**
        * The content:// style URL for this table
@@ -28,21 +40,49 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.list";
       
       /**
-       * The name of the list
+       * The default sort order for this table
+       */
+      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
+   }
+   
+
+   protected static interface NoteColumns
+   {
+      /**
+       * The created date of the note
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String CREATED_DATE = "note_created";
+      
+      /**
+       * The modified date of the note
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String MODIFIED_DATE = "note_modified";
+      
+      /**
+       * The title of the note
        * <P>
        * Type: STRING
        * </P>
        */
-      public final static String NAME = "name";
+      public final static String TITLE = "note_title";
       
       /**
-       * The default sort order for this table
+       * The text of the note
+       * <P>
+       * Type: STRING
+       * </P>
        */
-      public final static String DEFAULT_SORT_ORDER = NAME + " DESC";
+      public final static String TEXT = "note_text";
    }
    
 
-   public static final class Notes implements BaseColumns
+   public static final class Notes implements BaseColumns, NoteColumns
    {
       /**
        * The content:// style URL for this table
@@ -61,41 +101,9 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.note";
       
       /**
-       * The created date of the note
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String CREATED_DATE = "created";
-      
-      /**
-       * The modified date of the note
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String MODIFIED_DATE = "modified";
-      
-      /**
-       * The title of the note
-       * <P>
-       * Type: STRING
-       * </P>
-       */
-      public final static String TITLE = "title";
-      
-      /**
-       * The text of the note
-       * <P>
-       * Type: STRING
-       * </P>
-       */
-      public final static String TEXT = "text";
-      
-      /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = CREATED_DATE + " DESC";
+      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
 
@@ -140,7 +148,64 @@ public class Rtm
    }
    
 
-   public static final class Locations implements BaseColumns
+   protected static interface LocationColumns
+   {
+      /**
+       * The name of the location
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String NAME = "location_name";
+      
+      /**
+       * The longitude of the location
+       * <P>
+       * Type: FLOAT
+       * </P>
+       */
+      public final static String LONGITUDE = "location_longitude";
+      
+      /**
+       * The latitude of the location
+       * <P>
+       * Type: FLOAT
+       * </P>
+       */
+      public final static String LATITUDE = "location_latitude";
+      
+      /**
+       * The address of the location
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String ADDRESS = "location_address";
+      
+      /**
+       * Is the location viewable
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * 
+       * <UL>
+       * <LI>0 - no</LI>
+       * <LI>!= 0 - yes</LI>
+       * </UL>
+       */
+      public final static String VIEWABLE = "location_viewable";
+      
+      /**
+       * The zoom of the location
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String ZOOM = "location_zoom";
+   }
+   
+
+   public static final class Locations implements BaseColumns, LocationColumns
    {
       /**
        * The content:// style URL for this table
@@ -159,62 +224,9 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.location";
       
       /**
-       * The name of the location
-       * <P>
-       * Type: STRING
-       * </P>
-       */
-      public final static String NAME = "name";
-      
-      /**
-       * The longitude of the location
-       * <P>
-       * Type: FLOAT
-       * </P>
-       */
-      public final static String LONGITUDE = "longitude";
-      
-      /**
-       * The latitude of the location
-       * <P>
-       * Type: FLOAT
-       * </P>
-       */
-      public final static String LATITUDE = "latitude";
-      
-      /**
-       * The address of the location
-       * <P>
-       * Type: STRING
-       * </P>
-       */
-      public final static String ADDRESS = "address";
-      
-      /**
-       * Is the location viewable
-       * <P>
-       * Type: INTEGER
-       * </P>
-       * 
-       * <UL>
-       * <LI>0 - no</LI>
-       * <LI>!= 0 - yes</LI>
-       * </UL>
-       */
-      public final static String VIEWABLE = "viewable";
-      
-      /**
-       * The zoom of the location
-       * <P>
-       * Type: INTEGER
-       * </P>
-       */
-      public final static String ZOOM = "zoom";
-      
-      /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = NAME + " DESC";
+      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
 
@@ -292,7 +304,76 @@ public class Rtm
    }
    
 
-   public static final class TaskSeries implements BaseColumns
+   protected static interface TaskSeriesColumns
+   {
+      /**
+       * The created date of the taskseries
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String CREATED_DATE = "taskseries_created";
+      
+      /**
+       * The modified date of the taskseries
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String MODIFIED_DATE = "taskseries_modified";
+      
+      /**
+       * The name of the taskseries
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String NAME = "taskseries_name";
+      
+      /**
+       * The source that entered the taskseries
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String SOURCE = "taskseries_source";
+      
+      /**
+       * A URL attached to the taskseries
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String URL = "taskseries_url";
+      
+      /**
+       * The ID of the task of this taskseries.
+       * <P>
+       * Type: INTEGER (foreign key to table tasks _ID field)
+       * </P>
+       */
+      public final static String TASK_ID = "taskseries_task_id";
+      
+      /**
+       * The ID of the location of this taskseries.
+       * <P>
+       * Type: INTEGER (foreign key to table locations _ID field)
+       * </P>
+       */
+      public final static String LOCATION_ID = "taskseries_location_id";
+      
+      /**
+       * The ID of the list this taskseries is in.
+       * <P>
+       * Type: INTEGER (foreign key to table lists _ID field)
+       * </P>
+       */
+      public final static String LIST_ID = "taskseries_list_id";
+   }
+   
+
+   public static final class TaskSeries implements BaseColumns,
+            TaskSeriesColumns
    {
       /**
        * The content:// style URL for this table
@@ -311,77 +392,100 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.taskseries";
       
       /**
-       * The created date of the taskseries
+       * The default sort order for this table
+       */
+      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
+   }
+   
+
+   protected static interface RawTaskColumns
+   {
+      /**
+       * The due date of the task
        * <P>
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String CREATED_DATE = "created";
+      public final static String DUE_DATE = "task_due";
       
       /**
-       * The modified date of the taskseries
+       * The date when the task was added
        * <P>
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String MODIFIED_DATE = "modified";
+      public final static String ADDED_DATE = "task_added";
       
       /**
-       * The name of the taskseries
+       * The date when the task has been completed
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String COMPLETED_DATE = "task_completed";
+      
+      /**
+       * The date when the task was deleted
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String DELETED_DATE = "task_deleted";
+      
+      /**
+       * The task's priority
+       * <P>
+       * Type: CHAR(1)
+       * </P>
+       * <LI>'n' - none</LI> <LI>'1' - high</LI> <LI>'2' - medium</LI> <LI>'3' - low</LI>
+       */
+      public final static String PRIORITY = "task_priority";
+      
+      /**
+       * Indicates if the task is postponed
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
+       */
+      public final static String POSTPONED = "task_postponed";
+      
+      /**
        * <P>
        * Type: STRING
        * </P>
        */
-      public final static String NAME = "name";
+      public final static String ESTIMATE = "task_estimate";
+   }
+   
+
+   public static final class RawTasks implements BaseColumns, RawTaskColumns
+   {
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/raw_tasks" );
       
       /**
-       * The source that entered the taskseries
-       * <P>
-       * Type: STRING
-       * </P>
+       * The MIME type of {@link #CONTENT_URI} providing a directory of raw tasks.
        */
-      public final static String SOURCE = "source";
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.raw_task";
       
       /**
-       * A URL attached to the taskseries
-       * <P>
-       * Type: STRING
-       * </P>
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single raw task.
        */
-      public final static String URL = "url";
-      
-      /**
-       * The ID of the task of this taskseries.
-       * <P>
-       * Type: INTEGER (foreign key to table tasks _ID field)
-       * </P>
-       */
-      public final static String TASK_ID = "task_id";
-      
-      /**
-       * The ID of the location of this taskseries.
-       * <P>
-       * Type: INTEGER (foreign key to table locations _ID field)
-       * </P>
-       */
-      public final static String LOCATION_ID = "location_id";
-      
-      /**
-       * The ID of the list this taskseries is in.
-       * <P>
-       * Type: INTEGER (foreign key to table lists _ID field)
-       * </P>
-       */
-      public final static String LIST_ID = "list_id";
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.raw_task";
       
       /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = CREATED_DATE + " DESC";
+      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
 
-   public static final class Tasks implements BaseColumns
+   public static final class Tasks implements BaseColumns, ListColumns,
+            TaskSeriesColumns, RawTaskColumns
    {
       /**
        * The content:// style URL for this table
@@ -400,66 +504,8 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.task";
       
       /**
-       * The due date of the task
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String DUE_DATE = "due";
-      
-      /**
-       * The date when the task was added
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String ADDED_DATE = "added";
-      
-      /**
-       * The date when the task has been completed
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String COMPLETED_DATE = "completed";
-      
-      /**
-       * The date when the task was deleted
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String DELETED_DATE = "deleted";
-      
-      /**
-       * The task's priority
-       * <P>
-       * Type: CHAR(1)
-       * </P>
-       * <LI>'n' - none</LI> <LI>'1' - high</LI> <LI>'2' - medium</LI> <LI>'3' - low</LI>
-       */
-      public final static String PRIORITY = "priority";
-      
-      /**
-       * Indicates if the task is postponed
-       * <P>
-       * Type: INTEGER
-       * </P>
-       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
-       */
-      public final static String POSTPONED = "postponed";
-      
-      /**
-       * <P>
-       * Type: STRING
-       * </P>
-       */
-      public final static String ESTIMATE = "estimate";
-      
-      /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = DUE_DATE + " DESC";
+      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
-   
 }

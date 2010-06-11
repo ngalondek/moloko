@@ -23,7 +23,7 @@ import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.provider.Rtm.TaskSeries;
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.provider.Rtm.RawTasks;
 
 
 public final class RtmTasksSync
@@ -225,7 +225,7 @@ public final class RtmTasksSync
          ok = rhs_Values != null;
          
          if ( ok && rhs_Values.size() > 0 )
-            operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Tasks.CONTENT_URI,
+            operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           lhs.getId() ) )
                                                     .withValues( rhs_Values )
                                                     .build() );

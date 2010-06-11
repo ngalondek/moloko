@@ -231,13 +231,6 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
    
 
 
-   public String getIdSegement( Uri uri )
-   {
-      return uri.getPathSegments().get( 1 );
-   }
-   
-
-
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
       return initialValues;

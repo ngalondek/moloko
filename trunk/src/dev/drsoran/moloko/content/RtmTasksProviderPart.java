@@ -16,7 +16,7 @@ import android.os.RemoteException;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.provider.Rtm;
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.provider.Rtm.RawTasks;
 
 
 public class RtmTasksProviderPart extends AbstractRtmProviderPart
@@ -27,14 +27,14 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Tasks._ID, Tasks.DUE_DATE, Tasks.ADDED_DATE, Tasks.COMPLETED_DATE,
-    Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED, Tasks.ESTIMATE };
+   { RawTasks._ID, RawTasks.DUE_DATE, RawTasks.ADDED_DATE,
+    RawTasks.COMPLETED_DATE, RawTasks.DELETED_DATE, RawTasks.PRIORITY,
+    RawTasks.POSTPONED, RawTasks.ESTIMATE };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    static
    {
-      
       AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
                                                        PROJECTION_MAP,
                                                        COL_INDICES );
@@ -48,40 +48,41 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       final ContentValues values = new ContentValues();
       
       if ( withId )
-         values.put( Tasks._ID, task.getId() );
+         values.put( RawTasks._ID, task.getId() );
       
       if ( task.getDue() != null )
-         values.put( Tasks.DUE_DATE, task.getDue().getTime() );
+         values.put( RawTasks.DUE_DATE, task.getDue().getTime() );
       else
-         values.putNull( Tasks.DUE_DATE );
+         values.putNull( RawTasks.DUE_DATE );
       
       if ( task.getAdded() != null )
-         values.put( Tasks.ADDED_DATE, task.getAdded().getTime() );
+         values.put( RawTasks.ADDED_DATE, task.getAdded().getTime() );
       else
-         values.putNull( Tasks.ADDED_DATE );
+         values.putNull( RawTasks.ADDED_DATE );
       
       if ( task.getCompleted() != null )
-         values.put( Tasks.COMPLETED_DATE, task.getCompleted().getTime() );
+         values.put( RawTasks.COMPLETED_DATE, task.getCompleted().getTime() );
       else
-         values.putNull( Tasks.COMPLETED_DATE );
+         values.putNull( RawTasks.COMPLETED_DATE );
       
       if ( task.getDeleted() != null )
-         values.put( Tasks.DELETED_DATE, task.getDeleted().getTime() );
+         values.put( RawTasks.DELETED_DATE, task.getDeleted().getTime() );
       else
-         values.putNull( Tasks.DELETED_DATE );
+         values.putNull( RawTasks.DELETED_DATE );
       
       if ( task.getDeleted() != null )
-         values.put( Tasks.DELETED_DATE, task.getDeleted().getTime() );
+         values.put( RawTasks.DELETED_DATE, task.getDeleted().getTime() );
       else
-         values.putNull( Tasks.DELETED_DATE );
+         values.putNull( RawTasks.DELETED_DATE );
       
-      values.put( Tasks.PRIORITY, RtmTask.convertPriority( task.getPriority() ) );
-      values.put( Tasks.POSTPONED, task.getPostponed() );
+      values.put( RawTasks.PRIORITY,
+                  RtmTask.convertPriority( task.getPriority() ) );
+      values.put( RawTasks.POSTPONED, task.getPostponed() );
       
       if ( task.getEstimate() != null )
-         values.put( Tasks.ESTIMATE, task.getEstimate() );
+         values.put( RawTasks.ESTIMATE, task.getEstimate() );
       else
-         values.putNull( Tasks.ESTIMATE );
+         values.putNull( RawTasks.ESTIMATE );
       
       return values;
    }
@@ -94,14 +95,14 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       ContentProviderOperation operation = null;
       
       // Only insert if not exists
-      boolean ok = !Queries.exists( client, Tasks.CONTENT_URI, task.getId() );
+      boolean ok = !Queries.exists( client, RawTasks.CONTENT_URI, task.getId() );
       
       // Check mandatory attributes
       ok = ok && task.getId() != null;
       
       if ( ok )
       {
-         operation = ContentProviderOperation.newInsert( Tasks.CONTENT_URI )
+         operation = ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
                                              .withValues( getContentValues( task,
                                                                             true ) )
                                              .build();
@@ -120,7 +121,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       // So we have all lists with their tasks together.
       final Cursor c = Queries.getItem( client,
                                         PROJECTION,
-                                        Rtm.Tasks.CONTENT_URI,
+                                        Rtm.RawTasks.CONTENT_URI,
                                         id );
       
       if ( c.moveToFirst() )
@@ -129,23 +130,23 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          Date completed = null;
          Date deleted = null;
          
-         if ( !c.isNull( COL_INDICES.get( Tasks.DUE_DATE ) ) )
-            due = new Date( c.getLong( COL_INDICES.get( Tasks.DUE_DATE ) ) );
-         if ( !c.isNull( COL_INDICES.get( Tasks.COMPLETED_DATE ) ) )
-            completed = new Date( c.getLong( COL_INDICES.get( Tasks.COMPLETED_DATE ) ) );
-         if ( !c.isNull( COL_INDICES.get( Tasks.DELETED_DATE ) ) )
-            deleted = new Date( c.getLong( COL_INDICES.get( Tasks.DELETED_DATE ) ) );
+         if ( !c.isNull( COL_INDICES.get( RawTasks.DUE_DATE ) ) )
+            due = new Date( c.getLong( COL_INDICES.get( RawTasks.DUE_DATE ) ) );
+         if ( !c.isNull( COL_INDICES.get( RawTasks.COMPLETED_DATE ) ) )
+            completed = new Date( c.getLong( COL_INDICES.get( RawTasks.COMPLETED_DATE ) ) );
+         if ( !c.isNull( COL_INDICES.get( RawTasks.DELETED_DATE ) ) )
+            deleted = new Date( c.getLong( COL_INDICES.get( RawTasks.DELETED_DATE ) ) );
          
-         task = new RtmTask( c.getString( COL_INDICES.get( Tasks._ID ) ),
+         task = new RtmTask( c.getString( COL_INDICES.get( RawTasks._ID ) ),
                              due,
                              due != null ? 1 : 0,
-                             new Date( c.getLong( COL_INDICES.get( Tasks.ADDED_DATE ) ) ),
+                             new Date( c.getLong( COL_INDICES.get( RawTasks.ADDED_DATE ) ) ),
                              completed,
                              deleted,
-                             RtmTask.convertPriority( c.getString( COL_INDICES.get( Tasks.PRIORITY ) ) ),
-                             c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ),
+                             RtmTask.convertPriority( c.getString( COL_INDICES.get( RawTasks.PRIORITY ) ) ),
+                             c.getInt( COL_INDICES.get( RawTasks.POSTPONED ) ),
                              Queries.getOptString( c,
-                                                   COL_INDICES.get( Tasks.ESTIMATE ) ) );
+                                                   COL_INDICES.get( RawTasks.ESTIMATE ) ) );
       }
       
       c.close();
@@ -164,13 +165,14 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE " + tableName + " ( " + Tasks._ID
-         + " INTEGER NOT NULL, " + Tasks.DUE_DATE + " INTEGER, "
-         + Tasks.ADDED_DATE + " INTEGER NOT NULL, " + Tasks.COMPLETED_DATE
-         + " INTEGER, " + Tasks.DELETED_DATE + " INTEGER, " + Tasks.PRIORITY
-         + " CHAR(1) NOT NULL DEFAULT 'n', " + Tasks.POSTPONED
-         + " INTEGER DEFAULT 0, " + Tasks.ESTIMATE + " TEXT, "
-         + "CONSTRAINT PK_TASKS PRIMARY KEY ( \"" + Tasks._ID + "\" )" + " );" );
+      db.execSQL( "CREATE TABLE " + tableName + " ( " + RawTasks._ID
+         + " INTEGER NOT NULL, " + RawTasks.DUE_DATE + " INTEGER, "
+         + RawTasks.ADDED_DATE + " INTEGER NOT NULL, "
+         + RawTasks.COMPLETED_DATE + " INTEGER, " + RawTasks.DELETED_DATE
+         + " INTEGER, " + RawTasks.PRIORITY + " CHAR(1) NOT NULL DEFAULT 'n', "
+         + RawTasks.POSTPONED + " INTEGER DEFAULT 0, " + RawTasks.ESTIMATE
+         + " TEXT, " + "CONSTRAINT PK_TASKS PRIMARY KEY ( \"" + RawTasks._ID
+         + "\" )" + " );" );
    }
    
 
@@ -179,11 +181,11 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
       // Make sure that the fields are all set
-      if ( initialValues.containsKey( Tasks.ADDED_DATE ) == false )
+      if ( initialValues.containsKey( RawTasks.ADDED_DATE ) == false )
       {
          final Long now = Long.valueOf( System.currentTimeMillis() );
          
-         initialValues.put( Tasks.ADDED_DATE, now );
+         initialValues.put( RawTasks.ADDED_DATE, now );
       }
       
       return initialValues;
@@ -194,7 +196,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    @Override
    protected String getContentItemType()
    {
-      return Tasks.CONTENT_ITEM_TYPE;
+      return RawTasks.CONTENT_ITEM_TYPE;
    }
    
 
@@ -202,7 +204,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    @Override
    protected String getContentType()
    {
-      return Tasks.CONTENT_TYPE;
+      return RawTasks.CONTENT_TYPE;
    }
    
 
@@ -210,7 +212,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    @Override
    protected Uri getContentUri()
    {
-      return Tasks.CONTENT_URI;
+      return RawTasks.CONTENT_URI;
    }
    
 
@@ -218,7 +220,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    @Override
    protected String getDefaultSortOrder()
    {
-      return Tasks.DEFAULT_SORT_ORDER;
+      return RawTasks.DEFAULT_SORT_ORDER;
    }
    
 

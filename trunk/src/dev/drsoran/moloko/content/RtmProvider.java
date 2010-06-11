@@ -1,6 +1,7 @@
 package dev.drsoran.moloko.content;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
@@ -119,7 +120,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          case IRtmProviderPart.MATCH_ITEM_TYPE:
-            cursor = matchType.part.query( matchType.part.getIdSegement( uri ),
+            cursor = matchType.part.query( Long.toString( ContentUris.parseId( uri ) ),
                                            projection,
                                            selection,
                                            selectionArgs,
@@ -193,7 +194,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          case IRtmProviderPart.MATCH_ITEM_TYPE:
-            numDeleted = matchType.part.delete( matchType.part.getIdSegement( uri ),
+            numDeleted = matchType.part.delete( Long.toString( ContentUris.parseId( uri ) ),
                                                 where,
                                                 whereArgs );
             break;
@@ -234,7 +235,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          case IRtmProviderPart.MATCH_ITEM_TYPE:
-            numUpdated = matchType.part.update( matchType.part.getIdSegement( uri ),
+            numUpdated = matchType.part.update( Long.toString( ContentUris.parseId( uri ) ),
                                                 values,
                                                 where,
                                                 whereArgs );

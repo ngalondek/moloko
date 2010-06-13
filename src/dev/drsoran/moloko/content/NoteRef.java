@@ -1,7 +1,21 @@
 package dev.drsoran.moloko.content;
 
+import java.util.Comparator;
+
+
 public class NoteRef
 {
+   private static final class LessNoteIdComperator implements
+            Comparator< NoteRef >
+   {
+      public int compare( NoteRef object1, NoteRef object2 )
+      {
+         return object1.noteId.compareTo( object2.noteId );
+      }
+   }
+   
+   public final static LessNoteIdComperator LESS_NOTE_ID = new LessNoteIdComperator();
+   
    private final String id;
    
    private final String taskseriesId;

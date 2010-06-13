@@ -123,17 +123,6 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ContentProviderOperation updateList( String listId,
-                                                            ContentValues values )
-   {
-      return ContentProviderOperation.newUpdate( ContentUris.withAppendedId( Rtm.Lists.CONTENT_URI,
-                                                                             Long.parseLong( listId ) ) )
-                                     .withValues( values )
-                                     .build();
-   }
-   
-
-
    public final static ContentProviderOperation deleteList( String listId )
    {
       return ContentProviderOperation.newDelete( ContentUris.withAppendedId( Rtm.Lists.CONTENT_URI,

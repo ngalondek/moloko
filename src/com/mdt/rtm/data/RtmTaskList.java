@@ -21,6 +21,7 @@ package com.mdt.rtm.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -37,8 +38,18 @@ import dev.drsoran.moloko.service.sync.SyncAdapter;
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskList extends RtmData implements Comparable< RtmTaskList >
+public class RtmTaskList extends RtmData
 {
+   private static final class LessIdComperator implements
+            Comparator< RtmTaskList >
+   {
+      public int compare( RtmTaskList object1, RtmTaskList object2 )
+      {
+         return object1.id.compareTo( object2.id );
+      }
+      
+   }
+   
    private static final String TAG = RtmTaskList.class.getSimpleName();
    
    public static final Parcelable.Creator< RtmTaskList > CREATOR = new Parcelable.Creator< RtmTaskList >()
@@ -57,6 +68,8 @@ public class RtmTaskList extends RtmData implements Comparable< RtmTaskList >
       }
       
    };
+   
+   public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private final String id;
    
@@ -164,10 +177,4 @@ public class RtmTaskList extends RtmData implements Comparable< RtmTaskList >
       return ok;
    }
    
-
-
-   public int compareTo( RtmTaskList other )
-   {
-      return this.id.compareTo( other.id );
-   }
 }

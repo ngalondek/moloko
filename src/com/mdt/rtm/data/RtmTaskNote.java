@@ -19,6 +19,7 @@
  */
 package com.mdt.rtm.data;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import org.w3c.dom.Element;
@@ -36,6 +37,17 @@ import android.os.Parcelable;
  */
 public class RtmTaskNote extends RtmData
 {
+   private static final class LessIdComperator implements
+            Comparator< RtmTaskNote >
+   {
+      
+      public int compare( RtmTaskNote object1, RtmTaskNote object2 )
+      {
+         return object1.id.compareTo( object2.id );
+      }
+      
+   }
+   
    public static final Parcelable.Creator< RtmTaskNote > CREATOR = new Parcelable.Creator< RtmTaskNote >()
    {
       
@@ -52,6 +64,8 @@ public class RtmTaskNote extends RtmData
       }
       
    };
+   
+   public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private String id;
    

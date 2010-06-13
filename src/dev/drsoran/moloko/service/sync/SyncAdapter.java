@@ -164,10 +164,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       try
       {
          // Sync RtmList
-         ok = RtmListSync.computeSync( provider,
-                                       serviceImpl,
-                                       syncResult,
-                                       operations );
+         ok = RtmListSync.in_computeSync( provider,
+                                          serviceImpl,
+                                          syncResult,
+                                          operations );
          
          Log.i( TAG, "Syncing RtmLists " + ( ok ? "ok" : "failed" ) );
          

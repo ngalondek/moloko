@@ -110,7 +110,8 @@ public class Authenticator extends AbstractAccountAuthenticator
          final String permission = accountManager.getUserData( account,
                                                                Constants.FEAT_PERMISSION );
          
-         final boolean missingCredential = apiKey == null || sharedSecret == null || permission == null;
+         final boolean missingCredential = apiKey == null
+            || sharedSecret == null || permission == null;
          
          boolean authTokenExpired = authToken == null;
          

@@ -1,11 +1,8 @@
 package dev.drsoran.moloko.main;
 
 import android.app.ListActivity;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.CursorJoiner;
-import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,19 +14,15 @@ import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.prefs.AccountPreferencesActivity;
-import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class MainActivity extends ListActivity
 {
    private final static String TAG = MainActivity.class.getSimpleName();
    
-   private final static String[] PROJECTION_TASKSERIES =
-   { TaskSeries._ID, TaskSeries.NAME, TaskSeries.LIST_ID };
-   
-   private final static String[] PROJECTION_LIST =
-   { Lists._ID, Lists.NAME };
+   private final static String[] PROJECTION =
+   { Tasks._ID, Tasks.TASKSERIES_NAME, Tasks.LIST_NAME, Tasks.LOCATION_ID };
    
    
 
@@ -40,67 +33,6 @@ public class MainActivity extends ListActivity
       super.onCreate( savedInstanceState );
       setContentView( R.layout.main_activity );
       
-      final ContentResolver contentResolver = getContentResolver();
-      
-      final Cursor cursorTaskSeries = contentResolver.query( TaskSeries.CONTENT_URI,
-                                                             PROJECTION_TASKSERIES,
-                                                             null,
-                                                             null,
-                                                             TaskSeries.LIST_ID );
-      
-      final Cursor cursorLists = contentResolver.query( Lists.CONTENT_URI,
-                                                        PROJECTION_LIST,
-                                                        null,
-                                                        null,
-                                                        Lists._ID );
-      
-      final CursorJoiner cursorJoiner = new CursorJoiner( cursorTaskSeries,
-                                                          new String[]
-                                                          { TaskSeries.LIST_ID },
-                                                          cursorLists,
-                                                          new String[]
-                                                          { Lists._ID } );
-      
-      final MatrixCursor matrixCursor = new MatrixCursor( new String[]
-                                                          { TaskSeries._ID,
-                                                           "ts_name",
-                                                           "li_name" },
-                                                          cursorTaskSeries.getCount() );
-      
-      for ( CursorJoiner.Result joinResult : cursorJoiner )
-      {
-         switch ( joinResult )
-         {
-            case BOTH:
-               final String taskseriesId = cursorTaskSeries.getString( 0 );
-               final String taskseriesName = cursorTaskSeries.getString( 1 );
-               final String listName = cursorLists.getString( 1 );
-               
-               matrixCursor.addRow( new String[]
-               { taskseriesId, taskseriesName, listName } );
-            default :
-               break;
-         }
-      }
-      
-      cursorTaskSeries.close();
-      cursorLists.close();
-      
-      startManagingCursor( matrixCursor );
-      
-      final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
-                                                                   R.layout.main_activity_list_tasks_task,
-                                                                   matrixCursor,
-                                                                   new String[]
-                                                                   {
-                                                                    "ts_name",
-                                                                    "li_name" },
-                                                                   new int[]
-                                                                   {
-                                                                    R.id.main_list_tasks_task_desc,
-                                                                    R.id.main_list_tasks_task_list_name } );
-      
-      setListAdapter( adapter );
    }
    
 
@@ -109,6 +41,8 @@ public class MainActivity extends ListActivity
    protected void onResume()
    {
       super.onResume();
+      
+      refresh();
    }
    
 
@@ -149,6 +83,7 @@ public class MainActivity extends ListActivity
       switch ( item.getItemId() )
       {
          case R.id.main_menu_opt_sync:
+            refresh();
             return true;
             
          default :
@@ -182,4 +117,31 @@ public class MainActivity extends ListActivity
       return ok;
    }
    
+
+
+   private final void refresh()
+   {
+      final Cursor c = managedQuery( Tasks.CONTENT_URI,
+                                     PROJECTION,
+                                     null,
+                                     null,
+                                     null );
+      
+      if ( c != null )
+      {
+         final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
+                                                                      R.layout.main_activity_list_tasks_task,
+                                                                      c,
+                                                                      new String[]
+                                                                      {
+                                                                       Tasks.TASKSERIES_NAME,
+                                                                       Tasks.LIST_NAME },
+                                                                      new int[]
+                                                                      {
+                                                                       R.id.main_list_tasks_task_desc,
+                                                                       R.id.main_list_tasks_task_list_name } );
+         
+         setListAdapter( adapter );
+      }
+   }
 }

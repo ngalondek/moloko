@@ -114,14 +114,14 @@ public class NoteRefsProviderPart extends AbstractRtmProviderPart
 
    public NoteRefsProviderPart( SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, "noterefs" );
+      super( dbAccess, NoteRefs.PATH );
    }
    
 
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE " + tableName + " ( " + NoteRefs._ID
+      db.execSQL( "CREATE TABLE " + path + " ( " + NoteRefs._ID
          + " INTEGER NOT NULL, " + NoteRefs.TASKSERIES_ID
          + " INTEGER NOT NULL, " + NoteRefs.NOTE_ID + " INTEGER NOT NULL, "
          + "CONSTRAINT PK_NOTEREFS PRIMARY KEY ( " + NoteRefs.TASKSERIES_ID

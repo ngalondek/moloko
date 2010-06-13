@@ -158,21 +158,21 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
 
    public RtmTasksProviderPart( SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, "tasks" );
+      super( dbAccess, RawTasks.PATH );
    }
    
 
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE " + tableName + " ( " + RawTasks._ID
+      db.execSQL( "CREATE TABLE " + path + " ( " + RawTasks._ID
          + " INTEGER NOT NULL, " + RawTasks.DUE_DATE + " INTEGER, "
          + RawTasks.ADDED_DATE + " INTEGER NOT NULL, "
          + RawTasks.COMPLETED_DATE + " INTEGER, " + RawTasks.DELETED_DATE
          + " INTEGER, " + RawTasks.PRIORITY + " CHAR(1) NOT NULL DEFAULT 'n', "
          + RawTasks.POSTPONED + " INTEGER DEFAULT 0, " + RawTasks.ESTIMATE
-         + " TEXT, " + "CONSTRAINT PK_TASKS PRIMARY KEY ( \"" + RawTasks._ID
-         + "\" )" + " );" );
+         + " NOTE_TEXT, " + "CONSTRAINT PK_TASKS PRIMARY KEY ( \""
+         + RawTasks._ID + "\" )" + " );" );
    }
    
 

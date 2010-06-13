@@ -121,7 +121,7 @@ public class TagRefsProviderPart extends AbstractRtmProviderPart
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE " + tableName + " ( " + TagRefs._ID
+      db.execSQL( "CREATE TABLE " + path + " ( " + TagRefs._ID
          + " INTEGER NOT NULL, " + TagRefs.TASKSERIES_ID
          + " INTEGER NOT NULL, " + TagRefs.TAG_ID + " INTEGER NOT NULL, "
          + "CONSTRAINT PK_TAGREFS PRIMARY KEY ( " + TagRefs.TASKSERIES_ID

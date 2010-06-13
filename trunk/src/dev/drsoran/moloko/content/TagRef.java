@@ -23,7 +23,7 @@ public class TagRef
    {
       return id;
    }
-
+   
 
 
    public String getTaskseriesId()
@@ -36,5 +36,5 @@ public class TagRef
    public String getTagId()
    {
       return tagId;
-   }  
+   }
 }

@@ -20,6 +20,7 @@
 package com.mdt.rtm.data;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -34,9 +35,15 @@ import android.os.Parcelable;
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskSeries extends RtmData implements
-         Comparable< RtmTaskSeries >
+public class RtmTaskSeries extends RtmData
 {
+   private static final class LessIdComperator implements Comparator< RtmTaskSeries >
+   {
+      public int compare( RtmTaskSeries object1, RtmTaskSeries object2 )
+      {
+         return object1.id.compareTo( object2.id );
+      }
+   }
    
    private static final Logger log = Logger.getLogger( "TaskSeries" );
    
@@ -80,6 +87,8 @@ public class RtmTaskSeries extends RtmData implements
       }
       return null;
    }
+   
+   public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private final String id;
    
@@ -291,10 +300,4 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeStringList( tags );
    }
    
-
-
-   public int compareTo( RtmTaskSeries another )
-   {
-      return this.id.compareTo( another.id );
-   }
 }

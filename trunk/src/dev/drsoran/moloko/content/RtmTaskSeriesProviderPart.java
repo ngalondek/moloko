@@ -194,7 +194,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                   // Get all notes this taskseries references
                   final List< NoteRef > noteRefs = NoteRefsProviderPart.getNoteRefs( client,
                                                                                      taskSeriesId );
-                  // If the taskseries has no tags, we get an empty list, but not null
+                  // If the taskseries has no notes, we get an empty list, but not null
                   ok = noteRefs != null;
                   
                   if ( ok && noteRefs.size() > 0 )

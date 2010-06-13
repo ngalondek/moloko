@@ -16,6 +16,7 @@ import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 
+import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.service.sync.SyncAdapter.Direction;
 import dev.drsoran.provider.Rtm.Lists;
@@ -27,10 +28,10 @@ public final class RtmListSync
    
    
 
-   public static boolean computeSync( ContentProviderClient provider,
-                                      ServiceImpl service,
-                                      SyncResult syncResult,
-                                      ArrayList< ContentProviderOperation > result )
+   public static boolean in_computeSync( ContentProviderClient provider,
+                                         ServiceImpl service,
+                                         SyncResult syncResult,
+                                         ArrayList< ContentProviderOperation > result )
    {
       // Get all lists from local database
       final RtmLists local_ListsOfLists = RtmListsProviderPart.getAllLists( provider );
@@ -87,11 +88,11 @@ public final class RtmListSync
          // UPDATE: if we have the list but check if content changed
          else
          {
-            ok = syncRtmLists( local_RtmList,
-                               server_RtmList,
-                               Direction.IN,
-                               result,
-                               syncResult );
+            ok = in_syncRtmLists( local_RtmList,
+                                  server_RtmList,
+                                  Direction.IN,
+                                  result,
+                                  syncResult );
          }
       }
       
@@ -118,37 +119,24 @@ public final class RtmListSync
    
 
 
-   private static boolean syncRtmLists( RtmList lhs,
-                                        RtmList rhs,
-                                        int direction,
-                                        ArrayList< ContentProviderOperation > operations,
-                                        SyncResult result )
+   private static boolean in_syncRtmLists( RtmList lhs,
+                                           RtmList rhs,
+                                           int direction,
+                                           ArrayList< ContentProviderOperation > operations,
+                                           SyncResult result )
    {
-      boolean ok = true;
+      boolean ok = lhs.getId().equals( rhs.getId() );
       
-      final String lhsId = lhs.getId();
-      
-      switch ( direction )
+      if ( ok )
       {
-         case SyncAdapter.Direction.IN:
-            final ContentValues values = new ContentValues();
-            
-            if ( !lhs.getName().equals( rhs.getName() ) )
-            {
-               values.put( Lists.LIST_NAME, rhs.getName() );
-            }
-            
-            if ( values.size() > 0 )
-            {
-               operations.add( RtmListsProviderPart.updateList( lhsId, values ) );
-               result.stats.numUpdates += values.size();
-            }
-            break;
-         case SyncAdapter.Direction.OUT:
-            Log.e( TAG, "Unsupported sync direction: OUT" );
-         default :
-            ok = false;
-            break;
+         final ContentValues contentValues = RtmListsProviderPart.getContentValues( rhs,
+                                                                                    false );
+         
+         operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                       lhs.getId() ) )
+                                                 .withValues( contentValues )
+                                                 .build() );
+         ++result.stats.numUpdates;
       }
       
       return ok;

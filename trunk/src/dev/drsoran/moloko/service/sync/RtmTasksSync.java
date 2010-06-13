@@ -68,7 +68,7 @@ public final class RtmTasksSync
       final ArrayList< RtmTaskList > local_ListsOfTaskLists = new ArrayList< RtmTaskList >();
       local_ListsOfTaskLists.addAll( local_Tasks.getLists() );
       
-      Collections.sort( local_ListsOfTaskLists );
+      Collections.sort( local_ListsOfTaskLists, RtmTaskList.LESS_ID );
       
       final int length = server_ListsOfTaskLists.size();
       
@@ -79,7 +79,8 @@ public final class RtmTasksSync
          RtmTaskList local_RtmTaskList = null;
          
          final int pos = Collections.binarySearch( local_ListsOfTaskLists,
-                                                   server_RtmTaskList );
+                                                   server_RtmTaskList,
+                                                   RtmTaskList.LESS_ID );
          
          // if not found, create a new, empty list
          if ( pos < 0 )
@@ -120,7 +121,7 @@ public final class RtmTasksSync
       lhs_TaskSeriesList.addAll( lhs.getSeries() );
       
       // Sort the reference list by their taskseries IDs.
-      Collections.sort( lhs_TaskSeriesList );
+      Collections.sort( lhs_TaskSeriesList, RtmTaskSeries.LESS_ID );
       
       // For each element from the reference list
       for ( Iterator< RtmTaskSeries > i = rhs_TaskSeriesList.iterator(); ok
@@ -129,7 +130,8 @@ public final class RtmTasksSync
          final RtmTaskSeries rhs_RtmTaskSeries = i.next();
          
          final int idx = Collections.binarySearch( lhs_TaskSeriesList,
-                                                   rhs_RtmTaskSeries );
+                                                   rhs_RtmTaskSeries,
+                                                   RtmTaskSeries.LESS_ID );
          
          // INSERT: if we do not have the taskseries in the lhs list
          if ( idx < 0 )
@@ -183,8 +185,6 @@ public final class RtmTasksSync
          
          if ( ok )
          {
-            ++result.stats.numUpdates;
-            
             // Replace the content of the lhs taskseries with the content of the rhs taskseries.
             final ContentValues rhs_Values = RtmTaskSeriesProviderPart.getContentValues( rhs,
                                                                                          listId,
@@ -192,10 +192,14 @@ public final class RtmTasksSync
             ok = rhs_Values != null;
             
             if ( ok && rhs_Values.size() > 0 )
+            {
+               ++result.stats.numUpdates;
+               
                operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                              lhs.getId() ) )
                                                        .withValues( rhs_Values )
                                                        .build() );
+            }
          }
       }
       else

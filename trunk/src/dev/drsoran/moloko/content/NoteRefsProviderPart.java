@@ -2,7 +2,6 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
@@ -70,8 +69,8 @@ public class NoteRefsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static List< NoteRef > getNoteRefs( ContentProviderClient client,
-                                                    String taskSeriesId )
+   public final static ArrayList< NoteRef > getNoteRefs( ContentProviderClient client,
+                                                         String taskSeriesId )
    {
       ArrayList< NoteRef > noteRefs = null;
       

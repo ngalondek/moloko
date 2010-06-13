@@ -114,4 +114,12 @@ public class RtmTaskNotes extends RtmData
    {
       dest.writeTypedList( notes );
    }
+   
+
+
+   public int compareTo( RtmTaskNote another )
+   {
+      // TODO Auto-generated method stub
+      return 0;
+   }
 }

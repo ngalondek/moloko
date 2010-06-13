@@ -4,7 +4,7 @@
 <schema-list>
 <schema id="5122f2:128cb6194ba:-7ffd" name="Rtm">
 <table-list>
-<table alias="tasks" id="5122f2:128cb6194ba:-7fff" name="tasks">
+<table id="5122f2:128cb6194ba:-7fff" name="rawtasks">
 <column-list>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff8" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
@@ -31,7 +31,7 @@
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
-<primary-key id="5122f2:128cb6194ba:-7ffe" name="PK_TASKS">
+<primary-key id="5122f2:128cb6194ba:-7ffe" name="PK_RAWTASKS">
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
@@ -40,13 +40,13 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fea" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe7" mandatory="true" name="created">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe7" mandatory="true" name="taskseries_created">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe6" mandatory="false" name="modified">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe6" mandatory="false" name="taskseries_modified">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe5" mandatory="true" name="name">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe5" mandatory="true" name="taskseries_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe2" mandatory="false" name="source" remarks="By what API">
@@ -55,7 +55,7 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe0" mandatory="false" name="url">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7bf5" mandatory="true" name="task_id">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7bf5" mandatory="true" name="raw_task_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7bc2" mandatory="false" name="location_id">
@@ -75,8 +75,8 @@
 <foreign-key id="190abb9:128ce294477:-7ee4" name="location" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LOCATIONS" referenced-table="locations" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
 <foreign-key-column column-name="location_id" referenced-key-column-name="_id"/>
 </foreign-key>
-<foreign-key id="5122f2:128cb6194ba:-7fc5" name="task" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKS" referenced-table="tasks" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
-<foreign-key-column column-name="task_id" referenced-key-column-name="_id"/>
+<foreign-key id="5122f2:128cb6194ba:-7fc5" name="task" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_RAWTASKS" referenced-table="rawtasks" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="1" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="raw_task_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
 </table>
@@ -98,16 +98,16 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f55" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f54" mandatory="true" name="created">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f54" mandatory="true" name="note_created">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f53" mandatory="false" name="modified">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f53" mandatory="false" name="note_modified">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f52" mandatory="true" name="title">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f52" mandatory="true" name="note_title">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f51" mandatory="true" name="text">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f51" mandatory="true" name="note_text">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
@@ -120,7 +120,7 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe2" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe1" mandatory="true" name="name">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe1" mandatory="true" name="list_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
@@ -133,7 +133,7 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2b" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2a" mandatory="true" name="name">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2a" mandatory="true" name="location_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f29" mandatory="true" name="longitude">
@@ -214,7 +214,7 @@
 </database-model>
 <diagram>
 <table-figure height="150" refid="5122f2:128cb6194ba:-7fff" width="177" x="249" y="481"/>
-<table-figure refid="5122f2:128cb6194ba:-7fee" x="274" y="222"/>
+<table-figure refid="5122f2:128cb6194ba:-7fee" x="253" y="222"/>
 <fk-figure refid="5122f2:128cb6194ba:-7fc5">
 <target-terminal x="96" y="4"/>
 </fk-figure>

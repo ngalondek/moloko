@@ -24,8 +24,8 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Notes._ID, Notes.CREATED_DATE, Notes.MODIFIED_DATE, Notes.TITLE,
-    Notes.TEXT };
+   { Notes._ID, Notes.NOTE_CREATED_DATE, Notes.NOTE_MODIFIED_DATE,
+    Notes.NOTE_TITLE, Notes.NOTE_TEXT };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -47,17 +47,17 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          values.put( Notes._ID, note.getId() );
       
       if ( note.getCreated() != null )
-         values.put( Notes.CREATED_DATE, note.getCreated().getTime() );
+         values.put( Notes.NOTE_CREATED_DATE, note.getCreated().getTime() );
       else
-         values.putNull( Notes.CREATED_DATE );
+         values.putNull( Notes.NOTE_CREATED_DATE );
       
       if ( note.getModified() != null )
-         values.put( Notes.MODIFIED_DATE, note.getModified().getTime() );
+         values.put( Notes.NOTE_MODIFIED_DATE, note.getModified().getTime() );
       else
-         values.putNull( Notes.MODIFIED_DATE );
+         values.putNull( Notes.NOTE_MODIFIED_DATE );
       
-      values.put( Notes.TITLE, note.getTitle() );
-      values.put( Notes.TEXT, note.getText() );
+      values.put( Notes.NOTE_TITLE, note.getTitle() );
+      values.put( Notes.NOTE_TEXT, note.getText() );
       
       return values;
    }
@@ -92,18 +92,19 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
 
    public RtmNotesProviderPart( SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, "notes" );
+      super( dbAccess, Notes.PATH );
    }
    
 
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE " + tableName + " ( " + Notes._ID
-         + " INTEGER NOT NULL, " + Notes.CREATED_DATE + " INTEGER NOT NULL, "
-         + Notes.MODIFIED_DATE + " INTEGER, " + Notes.TITLE
-         + " TEXT NOT NULL, " + Notes.TEXT + " TEXT NOT NULL, "
-         + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID + "\" )" + " );" );
+      db.execSQL( "CREATE TABLE " + path + " ( " + Notes._ID
+         + " INTEGER NOT NULL, " + Notes.NOTE_CREATED_DATE
+         + " INTEGER NOT NULL, " + Notes.NOTE_MODIFIED_DATE + " INTEGER, "
+         + Notes.NOTE_TITLE + " NOTE_TEXT NOT NULL, " + Notes.NOTE_TEXT
+         + " NOTE_TEXT NOT NULL, " + "CONSTRAINT PK_NOTES PRIMARY KEY ( \""
+         + Notes._ID + "\" )" + " );" );
    }
    
 
@@ -111,10 +112,10 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    @Override
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
-      if ( !initialValues.containsKey( Notes.CREATED_DATE ) )
+      if ( !initialValues.containsKey( Notes.NOTE_CREATED_DATE ) )
       {
          final Long now = Long.valueOf( System.currentTimeMillis() );
-         initialValues.put( Notes.CREATED_DATE, now );
+         initialValues.put( Notes.NOTE_CREATED_DATE, now );
       }
       
       return initialValues;

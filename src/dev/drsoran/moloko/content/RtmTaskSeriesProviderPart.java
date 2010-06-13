@@ -41,9 +41,10 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { TaskSeries._ID, TaskSeries.CREATED_DATE, TaskSeries.MODIFIED_DATE,
-    TaskSeries.NAME, TaskSeries.SOURCE, TaskSeries.URL, TaskSeries.TASK_ID,
-    TaskSeries.LOCATION_ID, TaskSeries.LIST_ID };
+   { TaskSeries._ID, TaskSeries.TASKSERIES_CREATED_DATE,
+    TaskSeries.MODIFIED_DATE, TaskSeries.TASKSERIES_NAME, TaskSeries.SOURCE,
+    TaskSeries.URL, TaskSeries.RAW_TASK_ID, TaskSeries.LOCATION_ID,
+    TaskSeries.LIST_ID };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -66,9 +67,10 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          values.put( TaskSeries._ID, taskSeries.getId() );
       
       if ( taskSeries.getCreated() != null )
-         values.put( TaskSeries.CREATED_DATE, taskSeries.getCreated().getTime() );
+         values.put( TaskSeries.TASKSERIES_CREATED_DATE,
+                     taskSeries.getCreated().getTime() );
       else
-         values.putNull( TaskSeries.CREATED_DATE );
+         values.putNull( TaskSeries.TASKSERIES_CREATED_DATE );
       
       if ( taskSeries.getModified() != null )
          values.put( TaskSeries.MODIFIED_DATE, taskSeries.getModified()
@@ -76,7 +78,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       else
          values.putNull( TaskSeries.MODIFIED_DATE );
       
-      values.put( TaskSeries.NAME, taskSeries.getName() );
+      values.put( TaskSeries.TASKSERIES_NAME, taskSeries.getName() );
       
       if ( taskSeries.getSource() != null )
          values.put( TaskSeries.SOURCE, taskSeries.getSource() );
@@ -88,7 +90,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       else
          values.putNull( TaskSeries.URL );
       
-      values.put( TaskSeries.TASK_ID, taskSeries.getTask().getId() );
+      values.put( TaskSeries.RAW_TASK_ID, taskSeries.getTask().getId() );
       
       if ( taskSeries.getLocationId() != null )
          values.put( TaskSeries.LOCATION_ID, taskSeries.getLocationId() );
@@ -141,7 +143,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                if ( ok )
                {
                   task = RtmTasksProviderPart.getTask( client,
-                                                       c.getString( COL_INDICES.get( TaskSeries.TASK_ID ) ) );
+                                                       c.getString( COL_INDICES.get( TaskSeries.RAW_TASK_ID ) ) );
                   ok = task != null;
                }
                
@@ -214,14 +216,14 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                         {
                            Date modified = null;
                            
-                           if ( !c.isNull( RtmNotesProviderPart.COL_INDICES.get( Notes.MODIFIED_DATE ) ) )
-                              modified = new Date( c.getLong( RtmNotesProviderPart.COL_INDICES.get( Notes.MODIFIED_DATE ) ) );
+                           if ( !c.isNull( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ) )
+                              modified = new Date( c.getLong( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ) );
                            
                            notesList.add( new RtmTaskNote( c.getString( RtmNotesProviderPart.COL_INDICES.get( Notes._ID ) ),
-                                                           new Date( c.getLong( RtmNotesProviderPart.COL_INDICES.get( Notes.CREATED_DATE ) ) ),
+                                                           new Date( c.getLong( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
                                                            modified,
-                                                           c.getString( RtmNotesProviderPart.COL_INDICES.get( Notes.TITLE ) ),
-                                                           c.getString( RtmNotesProviderPart.COL_INDICES.get( Notes.TEXT ) ) ) );
+                                                           c.getString( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_TITLE ) ),
+                                                           c.getString( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_TEXT ) ) ) );
                         }
                         
                         if ( noteCursor != null )
@@ -254,9 +256,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                   
                   // add the current task series to the task list.
                   final RtmTaskSeries taskSeries = new RtmTaskSeries( taskSeriesId,
-                                                                      new Date( c.getLong( COL_INDICES.get( TaskSeries.CREATED_DATE ) ) ),
+                                                                      new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
                                                                       modifiedDate,
-                                                                      c.getString( COL_INDICES.get( TaskSeries.NAME ) ),
+                                                                      c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
                                                                       Queries.getOptString( c,
                                                                                             COL_INDICES.get( TaskSeries.SOURCE ) ),
                                                                       task,
@@ -408,27 +410,28 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
 
    public RtmTaskSeriesProviderPart( SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, "taskseries" );
+      super( dbAccess, TaskSeries.PATH );
    }
    
 
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE " + tableName + " ( " + TaskSeries._ID
-         + " INTEGER NOT NULL, " + TaskSeries.CREATED_DATE
+      db.execSQL( "CREATE TABLE " + path + " ( " + TaskSeries._ID
+         + " INTEGER NOT NULL, " + TaskSeries.TASKSERIES_CREATED_DATE
          + " INTEGER NOT NULL, " + TaskSeries.MODIFIED_DATE + " INTEGER, "
-         + TaskSeries.NAME + " TEXT NOT NULL, " + TaskSeries.SOURCE + " TEXT, "
-         + TaskSeries.URL + " TEXT, " + TaskSeries.TASK_ID
-         + " INTEGER NOT NULL, " + TaskSeries.LOCATION_ID + " INTEGER, "
-         + TaskSeries.LIST_ID + " INTEGER NOT NULL, "
-         + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + TaskSeries._ID
-         + "\" ), " + "CONSTRAINT list FOREIGN KEY ( " + TaskSeries.LIST_ID
-         + " ) REFERENCES lists ( \"" + Lists._ID + "\" ), "
-         + "CONSTRAINT location FOREIGN KEY ( " + TaskSeries.LOCATION_ID
-         + " ) REFERENCES locations ( \"" + Locations._ID + "\" ),"
-         + "CONSTRAINT task FOREIGN KEY ( " + TaskSeries.TASK_ID
-         + " ) REFERENCES tasks ( \"" + RawTasks._ID + "\" ) );" );
+         + TaskSeries.TASKSERIES_NAME + " NOTE_TEXT NOT NULL, "
+         + TaskSeries.SOURCE + " NOTE_TEXT, " + TaskSeries.URL + " NOTE_TEXT, "
+         + TaskSeries.RAW_TASK_ID + " INTEGER NOT NULL, "
+         + TaskSeries.LOCATION_ID + " INTEGER, " + TaskSeries.LIST_ID
+         + " INTEGER NOT NULL, " + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \""
+         + TaskSeries._ID + "\" ), " + "CONSTRAINT list FOREIGN KEY ( "
+         + TaskSeries.LIST_ID + " ) REFERENCES lists ( \"" + Lists._ID
+         + "\" ), " + "CONSTRAINT location FOREIGN KEY ( "
+         + TaskSeries.LOCATION_ID + " ) REFERENCES locations ( \""
+         + Locations._ID + "\" )," + "CONSTRAINT task FOREIGN KEY ( "
+         + TaskSeries.RAW_TASK_ID + " ) REFERENCES tasks ( \"" + RawTasks._ID
+         + "\" ) );" );
    }
    
 
@@ -436,10 +439,10 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    @Override
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
-      if ( !initialValues.containsKey( TaskSeries.CREATED_DATE ) )
+      if ( !initialValues.containsKey( TaskSeries.TASKSERIES_CREATED_DATE ) )
       {
          final Long now = Long.valueOf( System.currentTimeMillis() );
-         initialValues.put( TaskSeries.CREATED_DATE, now );
+         initialValues.put( TaskSeries.TASKSERIES_CREATED_DATE, now );
       }
       
       return initialValues;

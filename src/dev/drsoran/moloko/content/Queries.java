@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
+import android.text.TextUtils;
 
 
 public final class Queries
@@ -14,6 +15,27 @@ public final class Queries
    { BaseColumns._ID };
    
    
+
+   public final static String bindAll( String selection, String[] selectionArgs )
+   {
+      String result = selection;
+      
+      for ( int i = 0; i < selectionArgs.length; i++ )
+      {
+         result = result.replaceFirst( "\\?", selectionArgs[ i ] );
+      }
+      
+      return result.toString();
+   }
+   
+
+
+   public final static String toCommaList( String[] values )
+   {
+      return TextUtils.join( ",", values );
+   }
+   
+
 
    public final static Uri contentUriWithId( Uri contentUri, String id )
    {

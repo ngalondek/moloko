@@ -123,7 +123,7 @@ public class ApplicationInfo implements Parcelable
       dest.writeString( name );
       dest.writeString( authToken );
    }
-
+   
 
 
    public int describeContents()

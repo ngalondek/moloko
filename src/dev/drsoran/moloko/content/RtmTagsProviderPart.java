@@ -61,7 +61,7 @@ public class RtmTagsProviderPart extends AbstractRtmProviderPart
          final Cursor c = client.query( Tags.CONTENT_URI, PROJECTION, Tags.TAG
             + " like " + tag, null, null );
          
-         if ( c.moveToFirst() )         
+         if ( c.moveToFirst() )
             id = c.getString( COL_INDICES.get( Tags._ID ) );
          
          c.close();
@@ -85,9 +85,9 @@ public class RtmTagsProviderPart extends AbstractRtmProviderPart
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE " + tableName + " ( " + Tags._ID
+      db.execSQL( "CREATE TABLE " + path + " ( " + Tags._ID
          + " INTEGER NOT NULL CONSTRAINT PK_TAGS PRIMARY KEY AUTOINCREMENT, "
-         + Tags.TAG + " TEXT NOT NULL );" );
+         + Tags.TAG + " NOTE_TEXT NOT NULL );" );
    }
    
 

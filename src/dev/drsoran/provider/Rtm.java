@@ -17,17 +17,19 @@ public class Rtm
        * Type: STRING
        * </P>
        */
-      public final static String NAME = "list_name";
+      public final static String LIST_NAME = "list_name";
    }
    
 
    public static final class Lists implements BaseColumns, ListColumns
    {
+      public final static String PATH = "lists";
+      
       /**
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/lists" );
+         + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of lists.
@@ -54,7 +56,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String CREATED_DATE = "note_created";
+      public final static String NOTE_CREATED_DATE = "note_created";
       
       /**
        * The modified date of the note
@@ -62,7 +64,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String MODIFIED_DATE = "note_modified";
+      public final static String NOTE_MODIFIED_DATE = "note_modified";
       
       /**
        * The title of the note
@@ -70,7 +72,7 @@ public class Rtm
        * Type: STRING
        * </P>
        */
-      public final static String TITLE = "note_title";
+      public final static String NOTE_TITLE = "note_title";
       
       /**
        * The text of the note
@@ -78,17 +80,19 @@ public class Rtm
        * Type: STRING
        * </P>
        */
-      public final static String TEXT = "note_text";
+      public final static String NOTE_TEXT = "note_text";
    }
    
 
    public static final class Notes implements BaseColumns, NoteColumns
    {
+      public final static String PATH = "notes";
+      
       /**
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/notes" );
+         + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of notes.
@@ -109,11 +113,13 @@ public class Rtm
 
    public static final class NoteRefs implements BaseColumns
    {
+      public final static String PATH = "noterefs";
+      
       /**
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/noterefs" );
+         + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of note references.
@@ -156,7 +162,7 @@ public class Rtm
        * Type: STRING
        * </P>
        */
-      public final static String NAME = "location_name";
+      public final static String LOCATION_NAME = "location_name";
       
       /**
        * The longitude of the location
@@ -164,7 +170,7 @@ public class Rtm
        * Type: FLOAT
        * </P>
        */
-      public final static String LONGITUDE = "location_longitude";
+      public final static String LONGITUDE = "longitude";
       
       /**
        * The latitude of the location
@@ -172,7 +178,7 @@ public class Rtm
        * Type: FLOAT
        * </P>
        */
-      public final static String LATITUDE = "location_latitude";
+      public final static String LATITUDE = "latitude";
       
       /**
        * The address of the location
@@ -180,7 +186,7 @@ public class Rtm
        * Type: STRING
        * </P>
        */
-      public final static String ADDRESS = "location_address";
+      public final static String ADDRESS = "address";
       
       /**
        * Is the location viewable
@@ -193,7 +199,7 @@ public class Rtm
        * <LI>!= 0 - yes</LI>
        * </UL>
        */
-      public final static String VIEWABLE = "location_viewable";
+      public final static String VIEWABLE = "viewable";
       
       /**
        * The zoom of the location
@@ -201,17 +207,19 @@ public class Rtm
        * Type: INTEGER
        * </P>
        */
-      public final static String ZOOM = "location_zoom";
+      public final static String ZOOM = "zoom";
    }
    
 
    public static final class Locations implements BaseColumns, LocationColumns
    {
+      public final static String PATH = "locations";
+      
       /**
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/locations" );
+         + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of locations.
@@ -312,7 +320,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String CREATED_DATE = "taskseries_created";
+      public final static String TASKSERIES_CREATED_DATE = "taskseries_created";
       
       /**
        * The modified date of the taskseries
@@ -328,7 +336,7 @@ public class Rtm
        * Type: STRING
        * </P>
        */
-      public final static String NAME = "taskseries_name";
+      public final static String TASKSERIES_NAME = "taskseries_name";
       
       /**
        * The source that entered the taskseries
@@ -336,7 +344,7 @@ public class Rtm
        * Type: STRING
        * </P>
        */
-      public final static String SOURCE = "taskseries_source";
+      public final static String SOURCE = "source";
       
       /**
        * A URL attached to the taskseries
@@ -344,7 +352,7 @@ public class Rtm
        * Type: STRING
        * </P>
        */
-      public final static String URL = "taskseries_url";
+      public final static String URL = "url";
       
       /**
        * The ID of the task of this taskseries.
@@ -352,7 +360,7 @@ public class Rtm
        * Type: INTEGER (foreign key to table tasks _ID field)
        * </P>
        */
-      public final static String TASK_ID = "taskseries_task_id";
+      public final static String RAW_TASK_ID = "raw_task_id";
       
       /**
        * The ID of the location of this taskseries.
@@ -360,7 +368,7 @@ public class Rtm
        * Type: INTEGER (foreign key to table locations _ID field)
        * </P>
        */
-      public final static String LOCATION_ID = "taskseries_location_id";
+      public final static String LOCATION_ID = "location_id";
       
       /**
        * The ID of the list this taskseries is in.
@@ -368,18 +376,20 @@ public class Rtm
        * Type: INTEGER (foreign key to table lists _ID field)
        * </P>
        */
-      public final static String LIST_ID = "taskseries_list_id";
+      public final static String LIST_ID = "list_id";
    }
    
 
    public static final class TaskSeries implements BaseColumns,
             TaskSeriesColumns
    {
+      public final static String PATH = "taskseries";
+      
       /**
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/taskseries" );
+         + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of taskseries.
@@ -406,7 +416,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String DUE_DATE = "task_due";
+      public final static String DUE_DATE = "due";
       
       /**
        * The date when the task was added
@@ -414,7 +424,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String ADDED_DATE = "task_added";
+      public final static String ADDED_DATE = "added";
       
       /**
        * The date when the task has been completed
@@ -422,7 +432,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String COMPLETED_DATE = "task_completed";
+      public final static String COMPLETED_DATE = "completed";
       
       /**
        * The date when the task was deleted
@@ -430,7 +440,7 @@ public class Rtm
        * Type: INTEGER(long)
        * </P>
        */
-      public final static String DELETED_DATE = "task_deleted";
+      public final static String DELETED_DATE = "deleted";
       
       /**
        * The task's priority
@@ -439,7 +449,7 @@ public class Rtm
        * </P>
        * <LI>'n' - none</LI> <LI>'1' - high</LI> <LI>'2' - medium</LI> <LI>'3' - low</LI>
        */
-      public final static String PRIORITY = "task_priority";
+      public final static String PRIORITY = "priority";
       
       /**
        * Indicates if the task is postponed
@@ -448,34 +458,36 @@ public class Rtm
        * </P>
        * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
        */
-      public final static String POSTPONED = "task_postponed";
+      public final static String POSTPONED = "postponed";
       
       /**
        * <P>
        * Type: STRING
        * </P>
        */
-      public final static String ESTIMATE = "task_estimate";
+      public final static String ESTIMATE = "estimate";
    }
    
 
    public static final class RawTasks implements BaseColumns, RawTaskColumns
    {
+      public final static String PATH = "rawtasks";
+      
       /**
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/raw_tasks" );
+         + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of raw tasks.
        */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.raw_task";
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.rawtask";
       
       /**
        * The MIME type of a {@link #CONTENT_URI} sub-directory of a single raw task.
        */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.raw_task";
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.rawtask";
       
       /**
        * The default sort order for this table
@@ -485,13 +497,15 @@ public class Rtm
    
 
    public static final class Tasks implements BaseColumns, ListColumns,
-            TaskSeriesColumns, RawTaskColumns
+            TaskSeriesColumns, RawTaskColumns, LocationColumns
    {
+      public final static String PATH = "tasks";
+      
       /**
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/tasks" );
+         + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of tasks.

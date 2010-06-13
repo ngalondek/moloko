@@ -135,7 +135,7 @@ public final class RtmListSync
             
             if ( !lhs.getName().equals( rhs.getName() ) )
             {
-               values.put( Lists.NAME, rhs.getName() );
+               values.put( Lists.LIST_NAME, rhs.getName() );
             }
             
             if ( values.size() > 0 )

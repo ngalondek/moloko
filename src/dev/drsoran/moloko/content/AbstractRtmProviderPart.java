@@ -1,57 +1,36 @@
 package dev.drsoran.moloko.content;
 
-import java.util.HashMap;
-
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.UriMatcher;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.provider.Rtm;
 
 
-public abstract class AbstractRtmProviderPart implements IRtmProviderPart
+public abstract class AbstractRtmProviderPart extends AbstractProviderPart
+         implements IRtmProviderPart
 {
    
    @SuppressWarnings( "unused" )
    private static final String TAG = RtmTasksProviderPart.class.getSimpleName();
    
-   protected static final String ITEM_ID_EQUALS = BaseColumns._ID + "=";
-   
-   protected final String tableName;
-   
-   protected static final int DIR = 1;
-   
-   protected static final int ITEM_ID = 2;
-   
-   protected final UriMatcher uriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
-   
-   protected SQLiteOpenHelper dbAccess = null;
-   
    
 
    public AbstractRtmProviderPart( SQLiteOpenHelper dbAccess, String tableName )
    {
-      this.dbAccess = dbAccess;
-      this.tableName = tableName;
-      
-      uriMatcher.addURI( Rtm.AUTHORITY, tableName, DIR );
-      uriMatcher.addURI( Rtm.AUTHORITY, tableName + "/#", ITEM_ID );
+      super( dbAccess, tableName );
    }
    
 
 
    public void upgrade( SQLiteDatabase db, int oldVersion, int newVersion ) throws SQLException
    {
-      Log.w( tableName, "Upgrading database from version " + oldVersion
-         + " to " + newVersion + ", which will destroy all old data" );
+      Log.w( path, "Upgrading database from version " + oldVersion + " to "
+         + newVersion + ", which will destroy all old data" );
       
       drop( db );
       create( db );
@@ -61,47 +40,7 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
 
    public void drop( SQLiteDatabase db )
    {
-      db.execSQL( "DROP TABLE IF EXISTS " + tableName );
-   }
-   
-
-
-   public Cursor query( String id,
-                        String[] projection,
-                        String selection,
-                        String[] selectionArgs,
-                        String sortOrder )
-   {
-      Cursor cursor = null;
-      
-      SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-      qb.setTables( tableName );
-      qb.setProjectionMap( getProjectionMap() );
-      
-      if ( id != null )
-      {
-         qb.appendWhere( ITEM_ID_EQUALS + id );
-      }
-      
-      // If no sort order is specified use the default
-      String orderBy = getDefaultSortOrder();
-      
-      if ( !TextUtils.isEmpty( sortOrder ) )
-      {
-         orderBy = sortOrder;
-      }
-      
-      // Get the database and run the query
-      final SQLiteDatabase db = dbAccess.getReadableDatabase();
-      cursor = qb.query( db,
-                         projection,
-                         selection,
-                         selectionArgs,
-                         null,
-                         null,
-                         orderBy );
-      
-      return cursor;
+      db.execSQL( "DROP TABLE IF EXISTS " + path );
    }
    
 
@@ -115,9 +54,7 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
          initialValues = getInitialValues( initialValues );
          
          final SQLiteDatabase db = dbAccess.getWritableDatabase();
-         final long rowId = db.insert( tableName,
-                                       BaseColumns._ID,
-                                       initialValues );
+         final long rowId = db.insert( path, BaseColumns._ID, initialValues );
          
          if ( rowId > 0 )
          {
@@ -141,7 +78,7 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
       
       if ( id == null )
       {
-         count = db.update( tableName, values, where, whereArgs );
+         count = db.update( path, values, where, whereArgs );
       }
       else
       {
@@ -152,7 +89,7 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
             sb.append( " AND (" ).append( where ).append( ')' );
          }
          
-         count = db.update( tableName, values, sb.toString(), whereArgs );
+         count = db.update( path, values, sb.toString(), whereArgs );
       }
       
       return count;
@@ -168,7 +105,7 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
       
       if ( id == null )
       {
-         count = db.delete( tableName, where, whereArgs );
+         count = db.delete( path, where, whereArgs );
       }
       else
       {
@@ -179,7 +116,7 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
             sb.append( " AND (" ).append( where ).append( ')' );
          }
          
-         count = db.delete( tableName, sb.toString(), whereArgs );
+         count = db.delete( path, sb.toString(), whereArgs );
       }
       
       return count;
@@ -189,44 +126,7 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
 
    public String getTableName()
    {
-      return tableName;
-   }
-   
-
-
-   public UriMatcher getUriMatcher()
-   {
-      return uriMatcher;
-   }
-   
-
-
-   public int matchUri( Uri uri )
-   {
-      switch ( uriMatcher.match( uri ) )
-      {
-         case DIR:
-            return MATCH_TYPE;
-         case ITEM_ID:
-            return MATCH_ITEM_TYPE;
-         default :
-            return UriMatcher.NO_MATCH;
-      }
-   }
-   
-
-
-   public String getType( Uri uri )
-   {
-      switch ( uriMatcher.match( uri ) )
-      {
-         case DIR:
-            return getContentType();
-         case ITEM_ID:
-            return getContentItemType();
-         default :
-            return null;
-      }
+      return path;
    }
    
 
@@ -235,34 +135,4 @@ public abstract class AbstractRtmProviderPart implements IRtmProviderPart
    {
       return initialValues;
    }
-   
-
-
-   protected final static void initProjectionDependent( String[] projection,
-                                                        HashMap< String, String > projectionMap,
-                                                        HashMap< String, Integer > columnIndices )
-   {
-      for ( int i = 0; i < projection.length; i++ )
-      {
-         final String column = projection[ i ];
-         projectionMap.put( column, column );
-         columnIndices.put( column, i );
-      }
-   }
-   
-
-
-   protected abstract String getDefaultSortOrder();
-   
-
-
-   protected abstract Uri getContentUri();
-   
-
-
-   protected abstract String getContentType();
-   
-
-
-   protected abstract String getContentItemType();
 }

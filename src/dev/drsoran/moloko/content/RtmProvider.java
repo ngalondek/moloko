@@ -1,5 +1,8 @@
 package dev.drsoran.moloko.content;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -21,7 +24,9 @@ public class RtmProvider extends ContentProvider
    
    private final static int DATABASE_VERSION = 1;
    
-   private static IRtmProviderPart parts[] = new IRtmProviderPart[] {};
+   private final static ArrayList< IProviderPart > parts = new ArrayList< IProviderPart >();
+   
+   private final static ArrayList< IRtmProviderPart > mutableParts = new ArrayList< IRtmProviderPart >();
    
    
    private static class RtmProviderOpenHelper extends SQLiteOpenHelper
@@ -35,11 +40,13 @@ public class RtmProvider extends ContentProvider
 
       public void onCreate( SQLiteDatabase db )
       {
-         for ( int i = 0; i < parts.length; i++ )
+         final int size = mutableParts.size();
+         
+         for ( int i = 0; i < size; i++ )
          {
             try
             {
-               parts[ i ].create( db );
+               mutableParts.get( i ).create( db );
             }
             catch ( SQLException e )
             {
@@ -52,11 +59,13 @@ public class RtmProvider extends ContentProvider
 
       public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
       {
-         for ( int i = 0; i < parts.length; i++ )
+         final int size = mutableParts.size();
+         
+         for ( int i = 0; i < size; i++ )
          {
             try
             {
-               parts[ i ].upgrade( db, oldVersion, newVersion );
+               mutableParts.get( i ).upgrade( db, oldVersion, newVersion );
             }
             catch ( SQLException e )
             {
@@ -67,9 +76,9 @@ public class RtmProvider extends ContentProvider
    }
    
 
-   private final static class MatchType
+   private final static class MatchType< T extends IProviderPart >
    {
-      public IRtmProviderPart part = null;
+      public T part = null;
       
       public int type = UriMatcher.NO_MATCH;
    }
@@ -83,7 +92,7 @@ public class RtmProvider extends ContentProvider
    {
       dbHelper = new RtmProviderOpenHelper( getContext() );
       
-      parts = new IRtmProviderPart[]
+      mutableParts.addAll( Arrays.asList( new IRtmProviderPart[]
       { new RtmTasksProviderPart( dbHelper ),
        new RtmTaskSeriesProviderPart( dbHelper ),
        new RtmListsProviderPart( dbHelper ),
@@ -91,7 +100,11 @@ public class RtmProvider extends ContentProvider
        new TagRefsProviderPart( dbHelper ),
        new RtmNotesProviderPart( dbHelper ),
        new NoteRefsProviderPart( dbHelper ),
-       new RtmLocationsProviderPart( dbHelper ) };
+       new RtmLocationsProviderPart( dbHelper ) } ) );
+      
+      parts.addAll( mutableParts );
+      parts.addAll( Arrays.asList( new IProviderPart[]
+      { new TasksProviderPart( dbHelper ) } ) );
       
       return true;
    }
@@ -107,7 +120,7 @@ public class RtmProvider extends ContentProvider
    {
       Cursor cursor = null;
       
-      final MatchType matchType = matchUriToPart( uri );
+      final MatchType< IProviderPart > matchType = matchUriToPart( parts, uri );
       
       switch ( matchType.type )
       {
@@ -142,10 +155,12 @@ public class RtmProvider extends ContentProvider
    {
       String type = null;
       
+      final int size = parts.size();
+      
       // Find the DB part that can handle the URI.
-      for ( int i = 0; i < parts.length && type == null; i++ )
+      for ( int i = 0; i < size && type == null; i++ )
       {
-         type = parts[ i ].getType( uri );
+         type = parts.get( i ).getType( uri );
       }
       
       return type;
@@ -158,7 +173,8 @@ public class RtmProvider extends ContentProvider
    {
       Uri resUri = null;
       
-      final MatchType matchType = matchUriToPart( uri );
+      final MatchType< IRtmProviderPart > matchType = matchUriToPart( mutableParts,
+                                                                      uri );
       
       if ( matchType != null )
       {
@@ -185,7 +201,8 @@ public class RtmProvider extends ContentProvider
    {
       int numDeleted = 0;
       
-      final MatchType matchType = matchUriToPart( uri );
+      final MatchType< IRtmProviderPart > matchType = matchUriToPart( mutableParts,
+                                                                      uri );
       
       switch ( matchType.type )
       {
@@ -226,7 +243,8 @@ public class RtmProvider extends ContentProvider
    {
       int numUpdated = 0;
       
-      final MatchType matchType = matchUriToPart( uri );
+      final MatchType< IRtmProviderPart > matchType = matchUriToPart( mutableParts,
+                                                                      uri );
       
       switch ( matchType.type )
       {
@@ -260,20 +278,22 @@ public class RtmProvider extends ContentProvider
    
 
 
-   private MatchType matchUriToPart( Uri uri )
+   private < T extends IProviderPart > MatchType< T > matchUriToPart( ArrayList< T > parts,
+                                                                      Uri uri )
    {
-      MatchType matchType = new MatchType();
+      MatchType< T > matchType = new MatchType< T >();
+      
+      final int size = parts.size();
       
       // Find the DB part that can handle the URI.
-      for ( int i = 0; i < parts.length
-         && matchType.type == UriMatcher.NO_MATCH; i++ )
+      for ( int i = 0; i < size && matchType.type == UriMatcher.NO_MATCH; i++ )
       {
-         final IRtmProviderPart part = parts[ i ];
+         final T part = parts.get( i );
          final int type = part.matchUri( uri );
          
          if ( type != UriMatcher.NO_MATCH )
          {
-            matchType = new MatchType();
+            matchType = new MatchType< T >();
             matchType.part = part;
             matchType.type = type;
          }

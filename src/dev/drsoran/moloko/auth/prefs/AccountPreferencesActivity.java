@@ -82,9 +82,9 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
          permValue = RtmAuth.Perms.nothing.toString();
       }
       
-//      asyncService = new AsyncRtmService( this,
-//                                          getRtmApplicationInfo( this ),
-//                                          RtmAuth.Perms.valueOf( permValue ) );
+      // asyncService = new AsyncRtmService( this,
+      // getRtmApplicationInfo( this ),
+      // RtmAuth.Perms.valueOf( permValue ) );
    }
    
 
@@ -318,39 +318,39 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
-//      switch ( requestCode )
-//      {
-//         case RtmWebLoginActivity.ReqType.OPEN_URL:
-//            switch ( resultCode )
-//            {
-//               case RtmWebLoginActivity.ReturnCode.SUCCESS:
-//                  cancelOperationHandle = asyncService.auth()
-//                                                      .completeAuthorization( new ResultCallback< String >( data.getExtras() )
-//                                                      {
-//                                                         public void run()
-//                                                         {
-//                                                            if ( exception == null )
-//                                                               onAuthTokenReceived( result,
-//                                                                                    extraData.getString( getString( R.string.auth_pref_permission_key ) ) );
-//                                                            else
-//                                                               activateDialog( DlgType.ALERT,
-//                                                                               getString( R.string.err_error ),
-//                                                                               getErrorMessageWithException( exception ) );
-//                                                         }
-//                                                      } );
-//                  break;
-//               default :
-//                  activateDialog( DlgType.ALERT,
-//                                  getString( R.string.err_error ),
-//                                  getString( R.string.auth_pref_err_rtmWebAccess ) );
-//                  break;
-//            }
-//            break;
-//         
-//         default :
-//            super.onActivityResult( requestCode, resultCode, data );
-//            break;
-//      }
+      // switch ( requestCode )
+      // {
+      // case RtmWebLoginActivity.ReqType.OPEN_URL:
+      // switch ( resultCode )
+      // {
+      // case RtmWebLoginActivity.ReturnCode.SUCCESS:
+      // cancelOperationHandle = asyncService.auth()
+      // .completeAuthorization( new ResultCallback< String >( data.getExtras() )
+      // {
+      // public void run()
+      // {
+      // if ( exception == null )
+      // onAuthTokenReceived( result,
+      // extraData.getString( getString( R.string.auth_pref_permission_key ) ) );
+      // else
+      // activateDialog( DlgType.ALERT,
+      // getString( R.string.err_error ),
+      // getErrorMessageWithException( exception ) );
+      // }
+      // } );
+      // break;
+      // default :
+      // activateDialog( DlgType.ALERT,
+      // getString( R.string.err_error ),
+      // getString( R.string.auth_pref_err_rtmWebAccess ) );
+      // break;
+      // }
+      // break;
+      //         
+      // default :
+      // super.onActivityResult( requestCode, resultCode, data );
+      // break;
+      // }
    }
    
 
@@ -423,12 +423,12 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
       
       if ( loginUrl != null )
       {
-//         final Intent intent = new Intent( android.content.Intent.ACTION_VIEW,
-//                                           Uri.parse( loginUrl ),
-//                                           AccountPreferencesActivity.this,
-//                                           RtmWebLoginActivity.class );
-//         intent.putExtras( bundle );
-//         startActivityForResult( intent, RtmWebLoginActivity.ReqType.OPEN_URL );
+         // final Intent intent = new Intent( android.content.Intent.ACTION_VIEW,
+         // Uri.parse( loginUrl ),
+         // AccountPreferencesActivity.this,
+         // RtmWebLoginActivity.class );
+         // intent.putExtras( bundle );
+         // startActivityForResult( intent, RtmWebLoginActivity.ReqType.OPEN_URL );
       }
       else
       {
@@ -533,19 +533,19 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
    {
       if ( asyncService != null )
       {
-//         try
-//         {
-//            asyncService.updateService( getRtmApplicationInfo( this ),
-//                                        RtmAuth.Perms.valueOf( permissionLevel ) );
-//         }
-//         catch ( RemoteException e )
-//         {
-//            activateDialog( DlgType.ALERT,
-//                            getString( R.string.err_error ),
-//                            getString( R.string.auth_pref_dlg_update_svc_failed,
-//                                       AsyncRtmService.getExceptionCause( e ) ) );
-//            return false;
-//         }
+         // try
+         // {
+         // asyncService.updateService( getRtmApplicationInfo( this ),
+         // RtmAuth.Perms.valueOf( permissionLevel ) );
+         // }
+         // catch ( RemoteException e )
+         // {
+         // activateDialog( DlgType.ALERT,
+         // getString( R.string.err_error ),
+         // getString( R.string.auth_pref_dlg_update_svc_failed,
+         // AsyncRtmService.getExceptionCause( e ) ) );
+         // return false;
+         // }
       }
       
       // Set new selected permission level

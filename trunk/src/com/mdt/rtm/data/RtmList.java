@@ -19,13 +19,19 @@
  */
 package com.mdt.rtm.data;
 
+import java.util.Comparator;
+
 import org.w3c.dom.Element;
 
+import android.content.ContentProviderClient;
 import android.os.Parcel;
 import android.os.Parcelable;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
+import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 
 
-public class RtmList extends RtmData
+public class RtmList extends RtmData implements
+         IContentProviderSyncable< RtmList >
 {
    public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
    {
@@ -43,6 +49,18 @@ public class RtmList extends RtmData
       }
       
    };
+   
+   
+   private static final class LessIdComperator implements Comparator< RtmList >
+   {
+      public int compare( RtmList object1, RtmList object2 )
+      {
+         return object1.id.compareTo( object2.id );
+      }
+      
+   }
+   
+   public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private String id;
    
@@ -99,5 +117,30 @@ public class RtmList extends RtmData
    {
       dest.writeString( id );
       dest.writeString( name );
+   }
+   
+
+
+   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider )
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+
+
+   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider )
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+
+
+   public ISyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                RtmList update )
+   {
+      // TODO Auto-generated method stub
+      return null;
    }
 }

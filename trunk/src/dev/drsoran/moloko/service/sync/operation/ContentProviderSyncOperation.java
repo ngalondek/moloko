@@ -36,7 +36,6 @@ public class ContentProviderSyncOperation implements ISyncOperation
    
 
 
-   @Override
    public boolean execute( SyncResult result )
    {
       boolean ok = true;

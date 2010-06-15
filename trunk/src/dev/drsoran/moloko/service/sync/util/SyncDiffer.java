@@ -36,15 +36,15 @@ public class SyncDiffer
          {
             operations.add( target.computeUpdateOperation( pos, refElement ) );
          }
-         
-         // DELETE: Get all elements which have not been touched during the diff.
-         // These elements are no in the reference list.
-         final ArrayList< T > untouchedElements = target.getUntouchedElements();
-         
-         for ( T tgtElement : untouchedElements )
-         {
-            operations.add( target.computeDeleteOperation( tgtElement ) );
-         }
+      }
+      
+      // DELETE: Get all elements which have not been touched during the diff.
+      // These elements are no in the reference list.
+      final ArrayList< T > untouchedElements = target.getUntouchedElements();
+      
+      for ( T tgtElement : untouchedElements )
+      {
+         operations.add( target.computeDeleteOperation( tgtElement ) );
       }
       
       return operations;

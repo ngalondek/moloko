@@ -59,7 +59,8 @@ public final class RtmListSync
                                                                       .values();
       
       final ContentProviderSyncableList< RtmList > local_SyncList = new ContentProviderSyncableList< RtmList >( provider,
-                                                                                                                local_RtmLists );
+                                                                                                                local_RtmLists,
+                                                                                                                RtmList.LESS_ID );
       
       final ArrayList< ISyncOperation > syncOperations = SyncDiffer.diff( server_RtmLists,
                                                                           local_SyncList );

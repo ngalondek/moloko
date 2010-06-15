@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -82,7 +83,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                               SyncResult syncResult )
    {
       // TODO: Remove debug wait
-      // Debug.waitForDebugger();
+      Debug.waitForDebugger();
       
       String authToken = null;
       

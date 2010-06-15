@@ -152,10 +152,12 @@ public class RtmList extends RtmData implements
    public ISyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
                                                                 RtmList update )
    {
+      assert( update.id == this.id );
+      
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,
                                                                                                              id ) )
-                                                                       .withValues( RtmListsProviderPart.getContentValues( this,
+                                                                       .withValues( RtmListsProviderPart.getContentValues( update,
                                                                                                                            false ) )
                                                                        .build(),
                                                ContentProviderSyncOperation.OP_UPDATE );

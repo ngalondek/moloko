@@ -182,5 +182,5 @@ public abstract class SyncableList< T >
 
 
    protected abstract ISyncOperation internalComputeUpdateOperation( T old,
-                                                                     T updateElement );
+                                                                    T updateElement );
 }

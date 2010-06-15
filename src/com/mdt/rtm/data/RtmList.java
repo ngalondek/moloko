@@ -24,10 +24,15 @@ import java.util.Comparator;
 import org.w3c.dom.Element;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.os.Parcel;
 import android.os.Parcelable;
+import dev.drsoran.moloko.content.Queries;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.provider.Rtm.Lists;
 
 
 public class RtmList extends RtmData implements
@@ -121,18 +126,25 @@ public class RtmList extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider )
+   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider )
    {
-      // TODO Auto-generated method stub
-      return null;
+      return new ContentProviderSyncOperation( provider,
+                                               ContentProviderOperation.newInsert( Lists.CONTENT_URI )
+                                                                       .withValues( RtmListsProviderPart.getContentValues( this,
+                                                                                                                           true ) )
+                                                                       .build(),
+                                               ContentProviderSyncOperation.OP_INSERT );
    }
    
 
 
-   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider )
+   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider )
    {
-      // TODO Auto-generated method stub
-      return null;
+      return new ContentProviderSyncOperation( provider,
+                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                                             id ) )
+                                                                       .build(),
+                                               ContentProviderSyncOperation.OP_DELETE );
    }
    
 
@@ -140,7 +152,12 @@ public class RtmList extends RtmData implements
    public ISyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
                                                                 RtmList update )
    {
-      // TODO Auto-generated method stub
-      return null;
+      return new ContentProviderSyncOperation( provider,
+                                               ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                                             id ) )
+                                                                       .withValues( RtmListsProviderPart.getContentValues( this,
+                                                                                                                           false ) )
+                                                                       .build(),
+                                               ContentProviderSyncOperation.OP_UPDATE );
    }
 }

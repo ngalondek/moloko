@@ -2,6 +2,7 @@ package dev.drsoran.moloko.service.sync;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
@@ -52,8 +53,6 @@ public final class RtmListSync
          return false;
       }
       
-      boolean ok = true;
-      
       final Collection< RtmList > local_RtmLists = local_ListsOfLists.getLists()
                                                                      .values();
       final Collection< RtmList > server_RtmLists = server_ListOfLists.getLists()
@@ -63,8 +62,15 @@ public final class RtmListSync
                                                                                                                 local_RtmLists );
       
       final ArrayList< ISyncOperation > syncOperations = SyncDiffer.diff( server_RtmLists,
-                                                                          local_SyncList,
-                                                                          syncResult );
+                                                                          local_SyncList );
+      
+      boolean ok = true;
+      
+      for ( Iterator< ISyncOperation > i = syncOperations.iterator(); ok
+         && i.hasNext(); )
+      {
+         ok = i.next().execute( syncResult );
+      }
       
       return ok;
    }

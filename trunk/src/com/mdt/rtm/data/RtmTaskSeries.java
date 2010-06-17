@@ -27,17 +27,25 @@ import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 
+import android.content.ContentProviderClient;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.RemoteException;
+import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
+import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 
 
 /**
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskSeries extends RtmData
+public class RtmTaskSeries extends RtmData implements
+         IContentProviderSyncable< RtmTaskSeries >
 {
-   private static final class LessIdComperator implements Comparator< RtmTaskSeries >
+   private static final class LessIdComperator implements
+            Comparator< RtmTaskSeries >
    {
       public int compare( RtmTaskSeries object1, RtmTaskSeries object2 )
       {
@@ -298,6 +306,50 @@ public class RtmTaskSeries extends RtmData
       dest.writeString( locationId );
       dest.writeString( url );
       dest.writeStringList( tags );
+   }
+   
+
+
+   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                Object... params )
+   {
+      ISyncOperation operation = null;
+      
+      try
+      {
+         operation = new ContentProviderSyncOperation( provider,
+                                                       RtmTaskSeriesProviderPart.insertTaskSeries( provider,
+                                                                                                   (String) params[ 0 ],
+                                                                                                   this ),
+                                                       ContentProviderSyncOperation.OP_INSERT );
+      }
+      catch ( NullPointerException e )
+      {
+      }
+      catch ( RemoteException e )
+      {
+      }
+      
+      return operation;
+   }
+   
+
+
+   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                Object... params )
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+
+
+   public ISyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                RtmTaskSeries update,
+                                                                Object... params )
+   {
+      // TODO Auto-generated method stub
+      return null;
    }
    
 }

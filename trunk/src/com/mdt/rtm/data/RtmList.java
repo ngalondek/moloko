@@ -126,7 +126,8 @@ public class RtmList extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider )
+   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                Object... params )
    {
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newInsert( Lists.CONTENT_URI )
@@ -138,7 +139,8 @@ public class RtmList extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider )
+   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                Object... params )
    {
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
@@ -150,9 +152,10 @@ public class RtmList extends RtmData implements
 
 
    public ISyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                RtmList update )
+                                                                RtmList update,
+                                                                Object... params )
    {
-      assert( update.id == this.id );
+      assert ( update.id == this.id );
       
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,

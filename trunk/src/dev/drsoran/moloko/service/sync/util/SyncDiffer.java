@@ -16,6 +16,8 @@ public class SyncDiffer
       if ( reference == null || target == null )
          throw new NullPointerException();
       
+      boolean ok = true;
+      
       ArrayList< ISyncOperation > operations = new ArrayList< ISyncOperation >();
       
       // for each element of the reference list
@@ -25,17 +27,22 @@ public class SyncDiffer
          
          final int pos = target.find( refElement );
          
+         ISyncOperation operation = null;
+         
          // INSERT: The reference element is not contained in the target list.
          if ( pos == -1 )
          {
-            operations.add( target.computeInsertOperation( refElement ) );
+            operation = target.computeInsertOperation( refElement );
          }
          
          // UPDATE: The reference element is contained in the target list.
          else
          {
-            operations.add( target.computeUpdateOperation( pos, refElement ) );
+            operation = target.computeUpdateOperation( pos, refElement );
          }
+         
+         ok = operation != null;
+         operations.add( operation );
       }
       
       // DELETE: Get all elements which have not been touched during the diff.
@@ -44,8 +51,14 @@ public class SyncDiffer
       
       for ( T tgtElement : untouchedElements )
       {
-         operations.add( target.computeDeleteOperation( tgtElement ) );
+         final ISyncOperation operation = target.computeDeleteOperation( tgtElement );
+         
+         ok = operation != null;
+         operations.add( operation );
       }
+      
+      if ( !ok )
+         operations = null;
       
       return operations;
    }

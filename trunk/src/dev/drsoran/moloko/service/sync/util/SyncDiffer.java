@@ -5,40 +5,40 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import dev.drsoran.moloko.service.sync.lists.SyncableList;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 
 
 public class SyncDiffer
 {
-   public static < T, S > ArrayList< ISyncOperation > diff( Collection< T > reference,
-                                                            SyncableList< T > target ) throws NullPointerException
+   public static < O, T > ArrayList< O > diff( Collection< T > reference,
+                                               SyncableList< O, T > target,
+                                               Object... params ) throws NullPointerException
    {
       if ( reference == null || target == null )
          throw new NullPointerException();
       
       boolean ok = true;
       
-      ArrayList< ISyncOperation > operations = new ArrayList< ISyncOperation >();
+      ArrayList< O > operations = new ArrayList< O >();
       
       // for each element of the reference list
-      for ( Iterator< T > iterator = reference.iterator(); iterator.hasNext(); )
+      for ( Iterator< T > iterator = reference.iterator(); ok && iterator.hasNext(); )
       {
          final T refElement = iterator.next();
          
          final int pos = target.find( refElement );
          
-         ISyncOperation operation = null;
+         O operation = null;
          
          // INSERT: The reference element is not contained in the target list.
          if ( pos == -1 )
          {
-            operation = target.computeInsertOperation( refElement );
+            operation = target.computeInsertOperation( refElement, params );
          }
          
          // UPDATE: The reference element is contained in the target list.
          else
          {
-            operation = target.computeUpdateOperation( pos, refElement );
+            operation = target.computeUpdateOperation( pos, refElement, params );
          }
          
          ok = operation != null;
@@ -51,7 +51,7 @@ public class SyncDiffer
       
       for ( T tgtElement : untouchedElements )
       {
-         final ISyncOperation operation = target.computeDeleteOperation( tgtElement );
+         final O operation = target.computeDeleteOperation( tgtElement, params );
          
          ok = operation != null;
          operations.add( operation );

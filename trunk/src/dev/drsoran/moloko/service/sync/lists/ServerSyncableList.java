@@ -8,9 +8,9 @@ import com.mdt.rtm.Service;
 import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 
-
+// TODO: Replace ISyncOperation parameter by more special one.
 public class ServerSyncableList< T extends IServerSyncable< T > > extends
-         SyncableList< T >
+         SyncableList< ISyncOperation, T >
 {
    
    private final Service service;
@@ -44,25 +44,27 @@ public class ServerSyncableList< T extends IServerSyncable< T > > extends
 
 
    @Override
-   public ISyncOperation computeInsertOperation( T newElement )
+   public ISyncOperation computeInsertOperation( T newElement, Object... params )
    {
-      return newElement.computeServerInsertOperation( service );
+      return newElement.computeServerInsertOperation( service, params );
    }
    
 
 
    @Override
-   public ISyncOperation computeDeleteOperation( T elementToDelete )
+   public ISyncOperation computeDeleteOperation( T elementToDelete,
+                                                 Object... params )
    {
-      return elementToDelete.computeServerDeleteOperation( service );
+      return elementToDelete.computeServerDeleteOperation( service, params );
    }
    
 
 
    @Override
    protected ISyncOperation internalComputeUpdateOperation( T old,
-                                                            T updateElement )
+                                                            T updateElement,
+                                                            Object... params )
    {
-      return old.computeServerUpdateOperation( service, updateElement );
+      return old.computeServerUpdateOperation( service, updateElement, params );
    }
 }

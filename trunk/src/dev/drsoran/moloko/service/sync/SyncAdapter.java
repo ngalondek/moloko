@@ -29,6 +29,7 @@ import com.mdt.rtm.ServiceInternalException;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 import dev.drsoran.moloko.service.RtmServiceConstants;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 
 
 /**
@@ -160,7 +161,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    {
       boolean ok = true;
       
-      final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
+      final ArrayList< ContentProviderSyncOperation > operations = new ArrayList< ContentProviderSyncOperation >();
       
       try
       {
@@ -185,20 +186,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          if ( ok )
          {
-            provider.applyBatch( operations );
+            final ArrayList< ContentProviderOperation > batch = new ArrayList< ContentProviderOperation >();
+            
+            for ( ContentProviderSyncOperation contentProviderSyncOperation : operations )
+            {
+               final int count = contentProviderSyncOperation.getBatch( batch );
+               ContentProviderSyncOperation.updateSyncResult( syncResult,
+                                                              contentProviderSyncOperation.getOperationType(),
+                                                              count );
+            }
+            
+            provider.applyBatch( batch );
             operations.clear();
          }
       }
       catch ( RemoteException e )
       {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
+         ++syncResult.stats.numIoExceptions;
          ok = false;
       }
       catch ( OperationApplicationException e )
       {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
          syncResult.databaseError = true;
          ok = false;
       }

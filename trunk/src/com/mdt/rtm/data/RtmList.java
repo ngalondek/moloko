@@ -30,7 +30,6 @@ import android.os.Parcelable;
 import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.provider.Rtm.Lists;
 
@@ -126,8 +125,8 @@ public class RtmList extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                              Object... params )
    {
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newInsert( Lists.CONTENT_URI )
@@ -139,8 +138,8 @@ public class RtmList extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                              Object... params )
    {
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
@@ -151,9 +150,9 @@ public class RtmList extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                RtmList update,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                              RtmList update,
+                                                                              Object... params )
    {
       assert ( update.id == this.id );
       

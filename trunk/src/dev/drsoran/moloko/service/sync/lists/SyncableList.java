@@ -7,11 +7,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 import dev.drsoran.moloko.service.sync.util.PropertyAdapter;
 
 
-public abstract class SyncableList< T >
+public abstract class SyncableList< O, T >
 {
    private static final long serialVersionUID = 5137594788305624736L;
    
@@ -164,23 +163,27 @@ public abstract class SyncableList< T >
    
 
 
-   public abstract ISyncOperation computeInsertOperation( T newElement );
+   public abstract O computeInsertOperation( T newElement, Object... params );
    
 
 
-   public ISyncOperation computeUpdateOperation( int pos, T updateElement )
+   public O computeUpdateOperation( int pos, T updateElement, Object... params )
    {
       touchedElements[ pos ] = true;
       
-      return internalComputeUpdateOperation( impl.get( pos ), updateElement );
+      return internalComputeUpdateOperation( impl.get( pos ),
+                                             updateElement,
+                                             params );
    }
    
 
 
-   public abstract ISyncOperation computeDeleteOperation( T elementToDelete );
+   public abstract O computeDeleteOperation( T elementToDelete,
+                                             Object... params );
    
 
 
-   protected abstract ISyncOperation internalComputeUpdateOperation( T old,
-                                                                    T updateElement );
+   protected abstract O internalComputeUpdateOperation( T old,
+                                                        T updateElement,
+                                                        Object... params );
 }

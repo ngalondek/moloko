@@ -18,13 +18,35 @@ public class ContentProviderSyncOperation implements ISyncOperation
    
    public final static int OP_DELETE = 2;
    
-   private final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
+   private final ArrayList< ContentProviderOperation > operations;
    
-   private final ContentProviderClient provider;
+   protected final int operationType;
    
-   private final int operationType;
+   protected final ContentProviderClient provider;
    
    
+
+   protected ContentProviderSyncOperation()
+   {
+      this.provider = null;
+      this.operations = null;
+      this.operationType = 0;
+   }
+   
+
+
+   public ContentProviderSyncOperation( ContentProviderClient provider,
+      int operationType ) throws NullPointerException
+   {
+      if ( provider == null )
+         throw new NullPointerException();
+      
+      this.operations = new ArrayList< ContentProviderOperation >();
+      this.provider = provider;
+      this.operationType = operationType;
+   }
+   
+
 
    public ContentProviderSyncOperation( ContentProviderClient provider,
       ContentProviderOperation operation, int operationType )
@@ -33,6 +55,7 @@ public class ContentProviderSyncOperation implements ISyncOperation
       if ( operation == null || provider == null )
          throw new NullPointerException();
       
+      this.operations = new ArrayList< ContentProviderOperation >( 1 );
       this.provider = provider;
       this.operations.add( operation );
       this.operationType = operationType;
@@ -47,8 +70,8 @@ public class ContentProviderSyncOperation implements ISyncOperation
       if ( operations == null || provider == null )
          throw new NullPointerException();
       
+      this.operations = new ArrayList< ContentProviderOperation >( operations );
       this.provider = provider;
-      this.operations.addAll( operations );
       this.operationType = operationType;
    }
    
@@ -59,7 +82,17 @@ public class ContentProviderSyncOperation implements ISyncOperation
       if ( operation == null )
          throw new NullPointerException();
       
-      operations.add( operation );
+      this.operations.add( operation );
+   }
+   
+
+
+   public void addAll( Collection< ContentProviderOperation > operations ) throws NullPointerException
+   {
+      if ( operations == null )
+         throw new NullPointerException();
+      
+      this.operations.addAll( operations );
    }
    
 
@@ -71,22 +104,7 @@ public class ContentProviderSyncOperation implements ISyncOperation
       try
       {
          provider.applyBatch( operations );
-         
-         switch ( operationType )
-         {
-            case OP_INSERT:
-               ++result.stats.numInserts;
-               break;
-            case OP_UPDATE:
-               ++result.stats.numUpdates;
-               break;
-            case OP_DELETE:
-               ++result.stats.numDeletes;
-               break;
-            default :
-               ok = false;
-               break;
-         }
+         updateSyncResult( result, operationType, operations.isEmpty() ? 0 : 1 );
       }
       catch ( OperationApplicationException e )
       {
@@ -100,5 +118,42 @@ public class ContentProviderSyncOperation implements ISyncOperation
       }
       
       return ok;
+   }
+   
+
+
+   public int getBatch( ArrayList< ContentProviderOperation > batch )
+   {
+      batch.addAll( operations );
+      return operations.size();
+   }
+   
+
+
+   public int getOperationType()
+   {
+      return operationType;
+   }
+   
+
+
+   public final static void updateSyncResult( SyncResult result,
+                                              int operationType,
+                                              int count )
+   {
+      switch ( operationType )
+      {
+         case OP_INSERT:
+            result.stats.numInserts += count;
+            break;
+         case OP_UPDATE:
+            result.stats.numUpdates += count;
+            break;
+         case OP_DELETE:
+            result.stats.numDeletes += count;
+            break;
+         default :
+            break;
+      }
    }
 }

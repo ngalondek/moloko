@@ -287,9 +287,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static List< ContentProviderOperation > insertTaskSeries( ContentProviderClient client,
-                                                                          String listId,
-                                                                          RtmTaskSeries taskSeries ) throws RemoteException
+   public final static ArrayList< ContentProviderOperation > insertTaskSeries( ContentProviderClient client,
+                                                                               String listId,
+                                                                               RtmTaskSeries taskSeries ) throws RemoteException
    {
       ArrayList< ContentProviderOperation > operations = null;
       
@@ -432,6 +432,15 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + Locations._ID + "\" )," + "CONSTRAINT task FOREIGN KEY ( "
          + TaskSeries.RAW_TASK_ID + " ) REFERENCES tasks ( \"" + RawTasks._ID
          + "\" ) );" );
+      
+      // Trigger: If a taskseries gets deleted, we also delete all raw tasks
+      // and note refs referenced by this taskseries
+      db.execSQL( "CREATE TRIGGER " + path
+         + "_delete_taskseries AFTER DELETE ON " + path
+         + " FOR EACH ROW BEGIN DELETE " + RawTasks.PATH + " WHERE "
+         + RawTasks.PATH + "._id = old." + TaskSeries._ID + "; DELETE "
+         + NoteRefs.PATH + " WHERE " + NoteRefs.TASKSERIES_ID + " = old."
+         + TaskSeries._ID + " END;" );
    }
    
 

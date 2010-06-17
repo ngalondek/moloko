@@ -28,13 +28,17 @@ import java.util.logging.Logger;
 import org.w3c.dom.Element;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
+import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 /**
@@ -310,24 +314,27 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                              Object... params )
    {
-      ISyncOperation operation = null;
+      ContentProviderSyncOperation operation = null;
       
-      try
+      if ( params.length == 1 && params[ 0 ] instanceof String )
       {
-         operation = new ContentProviderSyncOperation( provider,
-                                                       RtmTaskSeriesProviderPart.insertTaskSeries( provider,
-                                                                                                   (String) params[ 0 ],
-                                                                                                   this ),
-                                                       ContentProviderSyncOperation.OP_INSERT );
-      }
-      catch ( NullPointerException e )
-      {
-      }
-      catch ( RemoteException e )
-      {
+         try
+         {
+            operation = new ContentProviderSyncOperation( provider,
+                                                          RtmTaskSeriesProviderPart.insertTaskSeries( provider,
+                                                                                                      (String) params[ 0 ],
+                                                                                                      this ),
+                                                          ContentProviderSyncOperation.OP_INSERT );
+         }
+         catch ( NullPointerException e )
+         {
+         }
+         catch ( RemoteException e )
+         {
+         }
       }
       
       return operation;
@@ -335,21 +342,50 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                              Object... params )
    {
-      // TODO Auto-generated method stub
-      return null;
+      return new ContentProviderSyncOperation( provider,
+                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                                             id ) )
+                                                                       .build(),
+                                               ContentProviderSyncOperation.OP_DELETE );
    }
    
 
 
-   public ISyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                RtmTaskSeries update,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                              RtmTaskSeries update,
+                                                                              Object... params )
    {
-      // TODO Auto-generated method stub
-      return null;
+      ContentProviderSyncOperation operation = null;
+      
+      boolean ok = params.length == 1 && params[ 0 ] instanceof String
+         && update.id.equals( id ) && update.task.getId().equals( task.getId() );
+      
+      if ( ok )
+      {
+         operation = new ContentProviderSyncOperation( provider,
+                                                       ContentProviderSyncOperation.OP_UPDATE );
+         
+         // Update task
+         operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                      task.getId() ) )
+                                                .withValues( RtmTasksProviderPart.getContentValues( update.task,
+                                                                                                    false ) )
+                                                .build() );
+         
+         // Update notes
+         
+         // Update taskseries
+         operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                      id ) )
+                                                .withValues( RtmTaskSeriesProviderPart.getContentValues( update,
+                                                                                                         (String) params[ 0 ],
+                                                                                                         false ) )
+                                                .build() );
+      }
+      
+      return operation;
    }
-   
 }

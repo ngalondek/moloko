@@ -35,8 +35,8 @@ import android.os.Parcelable;
 import android.util.Log;
 import dev.drsoran.moloko.service.sync.SyncAdapter;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.CompositeSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
+import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 
@@ -187,10 +187,11 @@ public class RtmTaskList extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                              Object... params )
    {
-      CompositeSyncOperation operation = new CompositeSyncOperation();
+      CompositeContentProviderSyncOperation operation = new CompositeContentProviderSyncOperation( provider,
+                                                                                                   ContentProviderSyncOperation.OP_INSERT );
       
       boolean ok = true;
       
@@ -200,8 +201,8 @@ public class RtmTaskList extends RtmData implements
       {
          final RtmTaskSeries taskSeries = i.next();
          
-         final ISyncOperation taskSeriesOperation = taskSeries.computeContentProviderInsertOperation( provider,
-                                                                                                      id );
+         final ContentProviderSyncOperation taskSeriesOperation = taskSeries.computeContentProviderInsertOperation( provider,
+                                                                                                                    id );
          ok = taskSeriesOperation != null;
          operation.add( taskSeriesOperation );
       }
@@ -214,8 +215,8 @@ public class RtmTaskList extends RtmData implements
    
 
 
-   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                              Object... params )
    {
       // RtmTaskList is no entity in our DB, so deletion would mean deleting all taskseries.
       // But if deleting a list means moving all taskseries to the 'Inbox' list. So nothing
@@ -223,39 +224,47 @@ public class RtmTaskList extends RtmData implements
       //
       // TODO: Think about behavior if sync direction is from client to server, aka
       // IServerSyncable.
-      return ISyncOperation.NOP_SYNCOPERATION;
+      return new ContentProviderSyncOperation( provider,
+                                               ContentProviderSyncOperation.OP_DELETE );
    }
    
 
 
-   public ISyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                RtmTaskList update,
-                                                                Object... params )
+   public ContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                              RtmTaskList update,
+                                                                              Object... params )
    {
-      boolean ok = true;
-      
       // Here booth parties have the same list. We run a sync.
-      CompositeSyncOperation operation = new CompositeSyncOperation();
+      CompositeContentProviderSyncOperation operation = null;
       
-      // Sync taskseries
-      final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( provider,
-                                                                                                                            series,
-                                                                                                                            RtmTaskSeries.LESS_ID );
-      
-      final ArrayList< ISyncOperation > syncOperations = SyncDiffer.diff( update.series,
-                                                                          local_SyncList );
-      
-      ok = syncOperations != null;
+      boolean ok = id.equals( update.id );
       
       if ( ok )
       {
-         for ( ISyncOperation iSyncOperation : syncOperations )
+         operation = new CompositeContentProviderSyncOperation( provider,
+                                                                ContentProviderSyncOperation.OP_UPDATE );
+         
+         // Sync taskseries
+         final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( provider,
+                                                                                                                               series,
+                                                                                                                               RtmTaskSeries.LESS_ID );
+         
+         final ArrayList< ContentProviderSyncOperation > syncOperations = SyncDiffer.diff( update.series,
+                                                                                           local_SyncList,
+                                                                                           id );
+         
+         ok = syncOperations != null;
+         
+         if ( ok )
          {
-            operation.add( iSyncOperation );
+            for ( ContentProviderSyncOperation iSyncOperation : syncOperations )
+            {
+               operation.add( iSyncOperation );
+            }
          }
+         else
+            operation = null;
       }
-      else
-         operation = null;
       
       return operation;
    }

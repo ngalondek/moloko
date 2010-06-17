@@ -1,9 +1,13 @@
 package dev.drsoran.moloko.service.sync.operation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
+import android.os.RemoteException;
 
 
 public class ContentProviderSyncOperation implements ISyncOperation
@@ -14,7 +18,7 @@ public class ContentProviderSyncOperation implements ISyncOperation
    
    public final static int OP_DELETE = 2;
    
-   private final ContentProviderOperation operation;
+   private final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
    
    private final ContentProviderClient provider;
    
@@ -30,8 +34,32 @@ public class ContentProviderSyncOperation implements ISyncOperation
          throw new NullPointerException();
       
       this.provider = provider;
-      this.operation = operation;
+      this.operations.add( operation );
       this.operationType = operationType;
+   }
+   
+
+
+   public ContentProviderSyncOperation( ContentProviderClient provider,
+      Collection< ContentProviderOperation > operations, int operationType )
+      throws NullPointerException
+   {
+      if ( operations == null || provider == null )
+         throw new NullPointerException();
+      
+      this.provider = provider;
+      this.operations.addAll( operations );
+      this.operationType = operationType;
+   }
+   
+
+
+   public void add( ContentProviderOperation operation ) throws NullPointerException
+   {
+      if ( operation == null )
+         throw new NullPointerException();
+      
+      operations.add( operation );
    }
    
 
@@ -42,7 +70,7 @@ public class ContentProviderSyncOperation implements ISyncOperation
       
       try
       {
-         operation.apply( provider.getLocalContentProvider(), null, 0 );
+         provider.applyBatch( operations );
          
          switch ( operationType )
          {
@@ -65,6 +93,12 @@ public class ContentProviderSyncOperation implements ISyncOperation
          ++result.stats.numIoExceptions;
          ok = false;
       }
+      catch ( RemoteException e )
+      {
+         ++result.stats.numIoExceptions;
+         ok = false;
+      }
+      
       return ok;
    }
 }

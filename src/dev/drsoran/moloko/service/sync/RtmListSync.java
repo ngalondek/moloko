@@ -65,12 +65,16 @@ public final class RtmListSync
       final ArrayList< ISyncOperation > syncOperations = SyncDiffer.diff( server_RtmLists,
                                                                           local_SyncList );
       
-      boolean ok = true;
+      boolean ok = syncOperations != null;
       
-      for ( Iterator< ISyncOperation > i = syncOperations.iterator(); ok
-         && i.hasNext(); )
+      if ( ok )
       {
-         ok = i.next().execute( syncResult );
+         for ( Iterator< ISyncOperation > i = syncOperations.iterator(); ok
+            && i.hasNext(); )
+         {
+            // TODO: Do not execute, get all operations and store them
+            ok = i.next().execute( syncResult );
+         }
       }
       
       return ok;

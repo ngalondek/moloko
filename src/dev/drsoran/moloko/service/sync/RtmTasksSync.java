@@ -22,8 +22,11 @@ import com.mdt.rtm.data.RtmTasks;
 import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
-import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
+import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public final class RtmTasksSync
@@ -35,7 +38,7 @@ public final class RtmTasksSync
    public static boolean in_computeSync( ContentProviderClient provider,
                                          ServiceImpl service,
                                          SyncResult syncResult,
-                                         ArrayList< ContentProviderOperation > result ) throws RemoteException
+                                         ArrayList< ContentProviderOperation > operations ) throws RemoteException
    {
       // Get all lists from local database
       final RtmTasks local_Tasks = RtmTaskSeriesProviderPart.getAllTaskSeries( provider );
@@ -61,43 +64,24 @@ public final class RtmTasksSync
       
       boolean ok = true;
       
-      final List< RtmTaskList > server_ListsOfTaskLists = server_Tasks.getLists();
+      // Sync task lists
+      final ContentProviderSyncableList< RtmTaskList > local_SyncList = new ContentProviderSyncableList< RtmTaskList >( provider,
+                                                                                                                        local_Tasks.getLists(),
+                                                                                                                        RtmTaskList.LESS_ID );
       
-      // Here we have to clone the list cause the returned list can not be modified nor
-      // sorted.
-      final ArrayList< RtmTaskList > local_ListsOfTaskLists = new ArrayList< RtmTaskList >();
-      local_ListsOfTaskLists.addAll( local_Tasks.getLists() );
+      final ArrayList< ISyncOperation > syncOperations = SyncDiffer.diff( server_Tasks.getLists(),
+                                                                          local_SyncList );
       
-      Collections.sort( local_ListsOfTaskLists, RtmTaskList.LESS_ID );
+      ok = syncOperations != null;
       
-      final int length = server_ListsOfTaskLists.size();
-      
-      for ( int i = 0; ok && i < length; i++ )
+      if ( ok )
       {
-         final RtmTaskList server_RtmTaskList = server_ListsOfTaskLists.get( i );
-         
-         RtmTaskList local_RtmTaskList = null;
-         
-         final int pos = Collections.binarySearch( local_ListsOfTaskLists,
-                                                   server_RtmTaskList,
-                                                   RtmTaskList.LESS_ID );
-         
-         // if not found, create a new, empty list
-         if ( pos < 0 )
+         for ( Iterator< ISyncOperation > sop = syncOperations.iterator(); ok
+            && sop.hasNext(); )
          {
-            local_RtmTaskList = new RtmTaskList( server_RtmTaskList.getId() );
+            // TODO: Do not execute, get all operations and store them
+            ok = sop.next().execute( syncResult );
          }
-         else
-         {
-            local_RtmTaskList = local_ListsOfTaskLists.get( pos );
-         }
-         
-         // Sync lists
-         ok = in_syncRtmTaskList( provider,
-                                  local_RtmTaskList,
-                                  server_RtmTaskList,
-                                  result,
-                                  syncResult );
       }
       
       return ok;

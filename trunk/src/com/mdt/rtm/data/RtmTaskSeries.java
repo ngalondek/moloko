@@ -345,6 +345,11 @@ public class RtmTaskSeries extends RtmData implements
    public ContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
                                                                               Object... params )
    {
+      // Referenced parts like RawTasks and Notes are deleted by a DB trigger.
+      // @see RtmTaskSeriesPart::onCreate
+      //
+      // These deletions have not to be counted cause they are implementation
+      // details that all belong to a taskseries.
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newDelete( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                              id ) )
@@ -365,6 +370,13 @@ public class RtmTaskSeries extends RtmData implements
       
       if ( ok )
       {
+         // Update notes
+         
+         
+      }      
+      
+      if ( ok )
+      {
          operation = new ContentProviderSyncOperation( provider,
                                                        ContentProviderSyncOperation.OP_UPDATE );
          
@@ -374,8 +386,6 @@ public class RtmTaskSeries extends RtmData implements
                                                 .withValues( RtmTasksProviderPart.getContentValues( update.task,
                                                                                                     false ) )
                                                 .build() );
-         
-         // Update notes
          
          // Update taskseries
          operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,

@@ -51,6 +51,14 @@ public class Rtm
    protected static interface NoteColumns
    {
       /**
+       * The ID of the taskseries referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table taskseries _ID field)
+       * </P>
+       */
+      public final static String TASKSERIES_ID = "taskseries_id";
+      
+      /**
        * The created date of the note
        * <P>
        * Type: INTEGER(long)
@@ -108,49 +116,6 @@ public class Rtm
        * The default sort order for this table
        */
       public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
-   }
-   
-
-   public static final class NoteRefs implements BaseColumns
-   {
-      public final static String PATH = "noterefs";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of note references.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.noteref";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single note reference.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.noteref";
-      
-      /**
-       * The ID of the taskseries referenced.
-       * <P>
-       * Type: INTEGER (foreign key to table taskseries _ID field)
-       * </P>
-       */
-      public final static String TASKSERIES_ID = "taskseries_id";
-      
-      /**
-       * The ID of the note referenced.
-       * <P>
-       * Type: INTEGER (foreign key to table tag _ID field)
-       * </P>
-       */
-      public final static String NOTE_ID = "note_id";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = null;
    }
    
 

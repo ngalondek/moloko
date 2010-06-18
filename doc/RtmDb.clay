@@ -98,6 +98,9 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f55" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="11fb115:12949b0b028:-7fcb" mandatory="true" name="taskseries_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f54" mandatory="true" name="note_created">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
@@ -114,6 +117,11 @@
 <primary-key id="5122f2:128cb6194ba:-7f58" name="PK_NOTES">
 <primary-key-column name="_id"/>
 </primary-key>
+<foreign-key-list>
+<foreign-key id="11fb115:12949b0b028:-7f74" name="taskseries_ref" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
+</foreign-key>
+</foreign-key-list>
 </table>
 <table id="190abb9:128ce294477:-7fe8" name="lists">
 <column-list>
@@ -182,32 +190,6 @@
 </foreign-key>
 </foreign-key-list>
 </table>
-<table id="163c031:128fe8bf79f:-7bc8" name="noterefs">
-<column-list>
-<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7b63" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7b6b" mandatory="true" name="taskseries_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7b6a" mandatory="true" name="note_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-</column-list>
-<primary-key id="163c031:128fe8bf79f:-7bc7" name="PK_NOTEREFS">
-<primary-key-column name="taskseries_id"/>
-<primary-key-column name="note_id"/>
-<primary-key-column name="_id"/>
-</primary-key>
-<foreign-key-list>
-<foreign-key id="163c031:128fe8bf79f:-7b22" name="note" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_NOTES" referenced-table="notes" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
-<foreign-key-column column-name="note_id" referenced-key-column-name="_id"/>
-</foreign-key>
-<foreign-key id="163c031:128fe8bf79f:-7afc" name="taskseries_2" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
-<foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
-</foreign-key>
-</foreign-key-list>
-</table>
 </table-list>
 </schema>
 </schema-list>
@@ -219,10 +201,9 @@
 <target-terminal x="96" y="4"/>
 </fk-figure>
 <table-figure refid="5122f2:128cb6194ba:-7f9b" x="795" y="275"/>
-<table-figure refid="5122f2:128cb6194ba:-7f59" x="790" y="351"/>
+<table-figure refid="5122f2:128cb6194ba:-7f59" x="541" y="374"/>
 <table-figure refid="190abb9:128ce294477:-7fe8" x="282" y="70"/>
 <table-figure refid="190abb9:128ce294477:-7f35" x="8" y="235"/>
 <table-figure refid="163c031:128fe8bf79f:-7f97" x="546" y="266"/>
-<table-figure refid="163c031:128fe8bf79f:-7bc8" x="548" y="365"/>
 </diagram>
 </clay-model>

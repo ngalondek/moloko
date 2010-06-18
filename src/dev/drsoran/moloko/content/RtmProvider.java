@@ -99,7 +99,6 @@ public class RtmProvider extends ContentProvider
        new RtmTagsProviderPart( dbHelper ),
        new TagRefsProviderPart( dbHelper ),
        new RtmNotesProviderPart( dbHelper ),
-       new NoteRefsProviderPart( dbHelper ),
        new RtmLocationsProviderPart( dbHelper ) } ) );
       
       parts.addAll( mutableParts );

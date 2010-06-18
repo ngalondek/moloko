@@ -26,11 +26,10 @@ import com.mdt.rtm.data.RtmTasks;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
-import dev.drsoran.provider.Rtm.NoteRefs;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
-import dev.drsoran.provider.Rtm.RawTasks;
 
 
 public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
@@ -192,49 +191,11 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                if ( ok )
                {
                   // Get all notes this taskseries references
-                  final List< NoteRef > noteRefs = NoteRefsProviderPart.getNoteRefs( client,
-                                                                                     taskSeriesId );
-                  // If the taskseries has no notes, we get an empty list, but not null
-                  ok = noteRefs != null;
+                  notes = RtmNotesProviderPart.getAllNotes( client,
+                                                            taskSeriesId );
                   
-                  if ( ok && noteRefs.size() > 0 )
-                  {
-                     final ArrayList< RtmTaskNote > notesList = new ArrayList< RtmTaskNote >();
-                     
-                     for ( Iterator< NoteRef > i = noteRefs.iterator(); ok
-                        && i.hasNext(); )
-                     {
-                        final NoteRef noteRef = i.next();
-                        final Cursor noteCursor = Queries.getItem( client,
-                                                                   RtmNotesProviderPart.PROJECTION,
-                                                                   NoteRefs.CONTENT_URI,
-                                                                   noteRef.getNoteId() );
-                        
-                        ok = noteCursor != null;
-                        
-                        if ( ok )
-                        {
-                           Date modified = null;
-                           
-                           if ( !c.isNull( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ) )
-                              modified = new Date( c.getLong( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ) );
-                           
-                           notesList.add( new RtmTaskNote( c.getString( RtmNotesProviderPart.COL_INDICES.get( Notes._ID ) ),
-                                                           new Date( c.getLong( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
-                                                           modified,
-                                                           c.getString( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_TITLE ) ),
-                                                           c.getString( RtmNotesProviderPart.COL_INDICES.get( Notes.NOTE_TEXT ) ) ) );
-                        }
-                        
-                        if ( noteCursor != null )
-                           noteCursor.close();
-                     }
-                     
-                     if ( ok )
-                     {
-                        notes = new RtmTaskNotes( notesList );
-                     }
-                  }
+                  // If the taskseries has no notes, we get an empty list, but not null
+                  ok = notes != null;
                }
                
                if ( ok )
@@ -353,40 +314,13 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                {
                   for ( RtmTaskNote rtmTaskNote : notesList )
                   {
-                     ArrayList< ContentProviderOperation > noteOperations = new ArrayList< ContentProviderOperation >();
+                     final ContentProviderOperation noteOperation = RtmNotesProviderPart.insertNote( client,
+                                                                                                     rtmTaskNote,
+                                                                                                     taskSeriesId );
                      
-                     // Check is we already have such a note
-                     final Cursor c = Queries.getItem( client,
-                                                       RtmNotesProviderPart.PROJECTION,
-                                                       Notes.CONTENT_URI,
-                                                       rtmTaskNote.getId() );
-                     
-                     // If not, create a new note
-                     if ( c == null )
-                     {
-                        final ContentProviderOperation noteOperation = RtmNotesProviderPart.insertNote( client,
-                                                                                                        rtmTaskNote );
-                        
-                        ok = noteOperation != null;
-                        if ( ok )
-                           noteOperations.add( noteOperation );
-                     }
-                     
-                     // link note to new taskseries
+                     ok = noteOperation != null;
                      if ( ok )
-                     {
-                        final ContentProviderOperation noteOperation = NoteRefsProviderPart.addNoteToTaskSeries( client,
-                                                                                                                 taskSeriesId,
-                                                                                                                 rtmTaskNote.getId() );
-                        ok = noteOperation != null;
-                        if ( ok )
-                           noteOperations.add( noteOperation );
-                     }
-                     
-                     if ( c != null )
-                        c.close();
-                     
-                     ok = ok && operations.addAll( noteOperations );
+                        operations.add( noteOperation );
                   }
                }
             }
@@ -434,12 +368,12 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + "\" ) );" );
       
       // Trigger: If a taskseries gets deleted, we also delete all raw tasks
-      // and note refs referenced by this taskseries
+      // and notes referenced by this taskseries
       db.execSQL( "CREATE TRIGGER " + path
          + "_delete_taskseries AFTER DELETE ON " + path
          + " FOR EACH ROW BEGIN DELETE " + RawTasks.PATH + " WHERE "
          + RawTasks.PATH + "._id = old." + TaskSeries._ID + "; DELETE "
-         + NoteRefs.PATH + " WHERE " + NoteRefs.TASKSERIES_ID + " = old."
+         + Notes.PATH + " WHERE " + Notes.TASKSERIES_ID + " = old."
          + TaskSeries._ID + " END;" );
    }
    

@@ -11,9 +11,9 @@ import android.os.RemoteException;
 
 
 public class CompositeContentProviderSyncOperation extends
-         ContentProviderSyncOperation
+         AbstractContentProviderSyncOperation
 {
-   private final ArrayList< ContentProviderSyncOperation > operations = new ArrayList< ContentProviderSyncOperation >();
+   private final ArrayList< IContentProviderSyncOperation > operations;
    
    
 
@@ -22,27 +22,52 @@ public class CompositeContentProviderSyncOperation extends
       throws NullPointerException
    {
       super( provider, operationType );
+      
+      this.operations = new ArrayList< IContentProviderSyncOperation >();
    }
    
 
 
    public CompositeContentProviderSyncOperation(
       ContentProviderClient provider,
-      ArrayList< ContentProviderSyncOperation > operations, int operationType )
+      ArrayList< IContentProviderSyncOperation > operations, int operationType )
       throws NullPointerException
    {
       super( provider, operationType );
-      this.operations.addAll( operations );
+      
+      this.operations = new ArrayList< IContentProviderSyncOperation >( operations );
    }
    
 
 
-   public void add( ContentProviderSyncOperation operation ) throws NullPointerException
+   public void add( IContentProviderSyncOperation operation ) throws NullPointerException
    {
       if ( operation == null )
          throw new NullPointerException();
       
       operations.add( operation );
+   }
+   
+
+
+   public void addAll( ArrayList< IContentProviderSyncOperation > operations ) throws NullPointerException
+   {
+      if ( operations == null )
+         throw new NullPointerException();
+      
+      this.operations.addAll( operations );
+   }
+   
+
+
+   public void add( ContentProviderOperation operation ) throws NullPointerException
+   {
+      if ( operation == null )
+         throw new NullPointerException();
+      
+      operations.add( new ContentProviderSyncOperation( provider,
+                                                        operation,
+                                                        operationType ) );
    }
    
 
@@ -76,12 +101,11 @@ public class CompositeContentProviderSyncOperation extends
    
 
 
-   @Override
    public int getBatch( ArrayList< ContentProviderOperation > batch )
    {
       int num = 0;
       
-      for ( Iterator< ContentProviderSyncOperation > i = operations.iterator(); i.hasNext(); )
+      for ( Iterator< IContentProviderSyncOperation > i = operations.iterator(); i.hasNext(); )
       {
          num += i.next().getBatch( batch );
       }

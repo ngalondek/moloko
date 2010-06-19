@@ -14,7 +14,7 @@ import com.mdt.rtm.data.RtmLists;
 
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 
 
@@ -27,7 +27,7 @@ public final class RtmListSync
    public static boolean in_computeSync( ContentProviderClient provider,
                                          ServiceImpl service,
                                          SyncResult syncResult,
-                                         ArrayList< ContentProviderSyncOperation > result )
+                                         ArrayList< IContentProviderSyncOperation > result )
    {
       // Get all lists from local database
       final RtmLists local_ListsOfLists = RtmListsProviderPart.getAllLists( provider );
@@ -60,8 +60,8 @@ public final class RtmListSync
                                                                                                                 local_RtmLists,
                                                                                                                 RtmList.LESS_ID );
       
-      final ArrayList< ContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_RtmLists,
-                                                                                        local_SyncList );
+      final ArrayList< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_RtmLists,
+                                                                                         local_SyncList );
       
       boolean ok = syncOperations != null;
       

@@ -10,40 +10,21 @@ import android.content.SyncResult;
 import android.os.RemoteException;
 
 
-public class ContentProviderSyncOperation implements ISyncOperation
+public class ContentProviderSyncOperation extends AbstractContentProviderSyncOperation
 {
-   public final static int OP_INSERT = 0;
-   
-   public final static int OP_UPDATE = 1;
-   
-   public final static int OP_DELETE = 2;
-   
    private final ArrayList< ContentProviderOperation > operations;
    
-   protected final int operationType;
    
-   protected final ContentProviderClient provider;
-   
-   
-
-   protected ContentProviderSyncOperation()
-   {
-      this.provider = null;
-      this.operations = null;
-      this.operationType = 0;
-   }
-   
-
 
    public ContentProviderSyncOperation( ContentProviderClient provider,
       int operationType ) throws NullPointerException
    {
+      super( provider, operationType );
+      
       if ( provider == null )
          throw new NullPointerException();
       
       this.operations = new ArrayList< ContentProviderOperation >();
-      this.provider = provider;
-      this.operationType = operationType;
    }
    
 
@@ -52,13 +33,10 @@ public class ContentProviderSyncOperation implements ISyncOperation
       ContentProviderOperation operation, int operationType )
       throws NullPointerException
    {
-      if ( operation == null || provider == null )
-         throw new NullPointerException();
+      super( provider, operationType );
       
       this.operations = new ArrayList< ContentProviderOperation >( 1 );
-      this.provider = provider;
       this.operations.add( operation );
-      this.operationType = operationType;
    }
    
 
@@ -67,12 +45,9 @@ public class ContentProviderSyncOperation implements ISyncOperation
       Collection< ContentProviderOperation > operations, int operationType )
       throws NullPointerException
    {
-      if ( operations == null || provider == null )
-         throw new NullPointerException();
+      super( provider, operationType );
       
       this.operations = new ArrayList< ContentProviderOperation >( operations );
-      this.provider = provider;
-      this.operationType = operationType;
    }
    
 
@@ -133,27 +108,5 @@ public class ContentProviderSyncOperation implements ISyncOperation
    public int getOperationType()
    {
       return operationType;
-   }
-   
-
-
-   public final static void updateSyncResult( SyncResult result,
-                                              int operationType,
-                                              int count )
-   {
-      switch ( operationType )
-      {
-         case OP_INSERT:
-            result.stats.numInserts += count;
-            break;
-         case OP_UPDATE:
-            result.stats.numUpdates += count;
-            break;
-         case OP_DELETE:
-            result.stats.numDeletes += count;
-            break;
-         default :
-            break;
-      }
    }
 }

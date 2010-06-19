@@ -32,11 +32,19 @@ import android.content.ContentProviderOperation;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.util.Log;
 import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
+import dev.drsoran.moloko.content.Tag;
+import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
+import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.service.sync.util.ParamChecker;
+import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -48,6 +56,9 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 public class RtmTaskSeries extends RtmData implements
          IContentProviderSyncable< RtmTaskSeries >
 {
+   private final static String TAG = RtmTaskSeries.class.getSimpleName();
+   
+   
    private static final class LessIdComperator implements
             Comparator< RtmTaskSeries >
    {
@@ -56,8 +67,6 @@ public class RtmTaskSeries extends RtmData implements
          return object1.id.compareTo( object2.id );
       }
    }
-   
-   private static final Logger log = Logger.getLogger( "TaskSeries" );
    
    public static final Parcelable.Creator< RtmTaskSeries > CREATOR = new Parcelable.Creator< RtmTaskSeries >()
    {
@@ -99,6 +108,8 @@ public class RtmTaskSeries extends RtmData implements
       }
       return null;
    }
+   
+   private static final Logger log = Logger.getLogger( "TaskSeries" );
    
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
@@ -269,6 +280,25 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
+   public ArrayList< Tag > getTagObjects()
+   {
+      ArrayList< Tag > tags = new ArrayList< Tag >( this.tags != null
+                                                                     ? this.tags.size()
+                                                                     : 0 );
+      
+      if ( this.tags != null && this.tags.size() > 0 )
+      {
+         for ( String tagStr : this.tags )
+         {
+            tags.add( new Tag( id, tagStr ) );
+         }
+      }
+      
+      return tags;
+   }
+   
+
+
    public String getLocationId()
    {
       return locationId;
@@ -314,12 +344,18 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public ContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                              Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                               Object... params )
    {
       ContentProviderSyncOperation operation = null;
       
-      if ( params.length == 1 && params[ 0 ] instanceof String )
+      final boolean ok = ParamChecker.checkParams( TAG,
+                                                   "ContentProvider insert failed. ",
+                                                   new Class[]
+                                                   { String.class },
+                                                   params );
+      
+      if ( ok )
       {
          try
          {
@@ -327,13 +363,15 @@ public class RtmTaskSeries extends RtmData implements
                                                           RtmTaskSeriesProviderPart.insertTaskSeries( provider,
                                                                                                       (String) params[ 0 ],
                                                                                                       this ),
-                                                          ContentProviderSyncOperation.OP_INSERT );
+                                                          IContentProviderSyncOperation.Op.INSERT );
          }
          catch ( NullPointerException e )
          {
+            Log.e( TAG, "ContentProvider insert failed. ", e );
          }
          catch ( RemoteException e )
          {
+            Log.e( TAG, "ContentProvider insert failed. ", e );
          }
       }
       
@@ -342,11 +380,11 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public ContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                              Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                               Object... params )
    {
       // Referenced parts like RawTasks and Notes are deleted by a DB trigger.
-      // @see RtmTaskSeriesPart::onCreate
+      // @see RtmTaskSeriesPart::create
       //
       // These deletions have not to be counted cause they are implementation
       // details that all belong to a taskseries.
@@ -354,46 +392,114 @@ public class RtmTaskSeries extends RtmData implements
                                                ContentProviderOperation.newDelete( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                              id ) )
                                                                        .build(),
-                                               ContentProviderSyncOperation.OP_DELETE );
+                                               IContentProviderSyncOperation.Op.DELETE );
    }
    
 
 
-   public ContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                              RtmTaskSeries update,
-                                                                              Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                               RtmTaskSeries update,
+                                                                               Object... params )
    {
-      ContentProviderSyncOperation operation = null;
+      CompositeContentProviderSyncOperation operation = null;
       
-      boolean ok = params.length == 1 && params[ 0 ] instanceof String
-         && update.id.equals( id ) && update.task.getId().equals( task.getId() );
+      boolean ok = ParamChecker.checkParams( TAG,
+                                             "ContentProvider update failed. ",
+                                             new Class[]
+                                             { String.class },
+                                             params );
+      
+      if ( ok && !update.id.equals( id ) )
+      {
+         ok = false;
+         Log.e( TAG,
+                "ContentProvider update failed. Different RtmTaskSeries IDs." );
+      }
+      
+      if ( ok && !update.task.getId().equals( task.getId() ) )
+      {
+         ok = false;
+         Log.e( TAG, "ContentProvider update failed. Different RtmTask IDs." );
+      }
       
       if ( ok )
       {
          // Update notes
+         final ContentProviderSyncableList< RtmTaskNote > syncList = new ContentProviderSyncableList< RtmTaskNote >( provider,
+                                                                                                                     notes.getNotes(),
+                                                                                                                     RtmTaskNote.LESS_ID );
          
+         final ArrayList< IContentProviderSyncOperation > operations = SyncDiffer.diff( update.notes.getNotes(),
+                                                                                        syncList,
+                                                                                        id );
          
-      }      
+         ok = operations != null;
+         
+         if ( ok )
+         {
+            operation = new CompositeContentProviderSyncOperation( provider,
+                                                                   operations,
+                                                                   IContentProviderSyncOperation.Op.UPDATE );
+            
+            // Update tags
+            if ( ok )
+            {
+               final IContentProviderSyncOperation tagOperation = updateTags( provider,
+                                                                              update );
+               ok = tagOperation != null;
+               if ( ok )
+                  operation.add( tagOperation );
+            }
+            
+            if ( ok )
+            {
+               // Update task
+               operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                            task.getId() ) )
+                                                      .withValues( RtmTasksProviderPart.getContentValues( update.task,
+                                                                                                          false ) )
+                                                      .build() );
+               
+               // Update taskseries
+               operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                            id ) )
+                                                      .withValues( RtmTaskSeriesProviderPart.getContentValues( update,
+                                                                                                               (String) params[ 0 ],
+                                                                                                               false ) )
+                                                      .build() );
+            }
+         }
+      }
       
-      if ( ok )
+      if ( !ok )
+         operation = null;
+      
+      return operation;
+   }
+   
+
+
+   private IContentProviderSyncOperation updateTags( ContentProviderClient provider,
+                                                     RtmTaskSeries update )
+   {
+      CompositeContentProviderSyncOperation operation = null;
+      
+      final ArrayList< Tag > tags = TagsProviderPart.getAllTags( provider, id );
+      
+      if ( tags != null )
       {
-         operation = new ContentProviderSyncOperation( provider,
-                                                       ContentProviderSyncOperation.OP_UPDATE );
+         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( provider,
+                                                                                                     tags );
          
-         // Update task
-         operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                      task.getId() ) )
-                                                .withValues( RtmTasksProviderPart.getContentValues( update.task,
-                                                                                                    false ) )
-                                                .build() );
+         final ArrayList< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( update.getTagObjects(),
+                                                                                            syncList );
          
-         // Update taskseries
-         operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                      id ) )
-                                                .withValues( RtmTaskSeriesProviderPart.getContentValues( update,
-                                                                                                         (String) params[ 0 ],
-                                                                                                         false ) )
-                                                .build() );
+         if ( syncOperations != null )
+         {
+            operation = new CompositeContentProviderSyncOperation( provider,
+                                                                   syncOperations,
+                                                                   IContentProviderSyncOperation.Op.UPDATE );
+         }
       }
       
       return operation;

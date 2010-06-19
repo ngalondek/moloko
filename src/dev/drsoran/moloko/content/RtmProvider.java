@@ -96,8 +96,7 @@ public class RtmProvider extends ContentProvider
       { new RtmTasksProviderPart( dbHelper ),
        new RtmTaskSeriesProviderPart( dbHelper ),
        new RtmListsProviderPart( dbHelper ),
-       new RtmTagsProviderPart( dbHelper ),
-       new TagRefsProviderPart( dbHelper ),
+       new TagsProviderPart( dbHelper ),
        new RtmNotesProviderPart( dbHelper ),
        new RtmLocationsProviderPart( dbHelper ) } ) );
       

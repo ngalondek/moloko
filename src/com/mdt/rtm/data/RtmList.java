@@ -27,9 +27,11 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.provider.Rtm.Lists;
 
@@ -37,6 +39,8 @@ import dev.drsoran.provider.Rtm.Lists;
 public class RtmList extends RtmData implements
          IContentProviderSyncable< RtmList >
 {
+   private final static String TAG = RtmList.class.getSimpleName();
+   
    public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
    {
       
@@ -125,43 +129,52 @@ public class RtmList extends RtmData implements
    
 
 
-   public ContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                              Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                               Object... params )
    {
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newInsert( Lists.CONTENT_URI )
                                                                        .withValues( RtmListsProviderPart.getContentValues( this,
                                                                                                                            true ) )
                                                                        .build(),
-                                               ContentProviderSyncOperation.OP_INSERT );
+                                               IContentProviderSyncOperation.Op.INSERT );
    }
    
 
 
-   public ContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                              Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                               Object... params )
    {
       return new ContentProviderSyncOperation( provider,
                                                ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
                                                                                                              id ) )
                                                                        .build(),
-                                               ContentProviderSyncOperation.OP_DELETE );
+                                               IContentProviderSyncOperation.Op.DELETE );
    }
    
 
 
-   public ContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                              RtmList update,
-                                                                              Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                               RtmList update,
+                                                                               Object... params )
    {
-      assert ( update.id == this.id );
+      IContentProviderSyncOperation operation = null;
       
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .withValues( RtmListsProviderPart.getContentValues( update,
-                                                                                                                           false ) )
-                                                                       .build(),
-                                               ContentProviderSyncOperation.OP_UPDATE );
+      if ( this.id.equals( update.id ) )
+      {
+         operation = new ContentProviderSyncOperation( provider,
+                                                       ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                                                     id ) )
+                                                                               .withValues( RtmListsProviderPart.getContentValues( update,
+                                                                                                                                   false ) )
+                                                                               .build(),
+                                                       IContentProviderSyncOperation.Op.UPDATE );
+      }
+      else
+      {
+         Log.e( TAG, "ContentProvider update failed. Different RtmList IDs." );
+      }
+      
+      return operation;
    }
 }

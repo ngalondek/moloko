@@ -49,7 +49,8 @@ public class TasksProviderPart extends AbstractProviderPart
                                                       new String[]
                                                       {
                                                        TaskSeries.PATH + "."
-                                                          + TaskSeries._ID + " AS _id",
+                                                          + TaskSeries._ID
+                                                          + " AS _id",
                                                        Tasks.LIST_ID,
                                                        Tasks.LIST_NAME,
                                                        Tasks.TASKSERIES_CREATED_DATE,

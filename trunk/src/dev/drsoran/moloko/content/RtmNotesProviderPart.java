@@ -56,17 +56,19 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          if ( withId )
             values.put( Notes._ID, note.getId() );
          
-         if ( note.getCreated() != null )
-            values.put( Notes.NOTE_CREATED_DATE, note.getCreated().getTime() );
-         else
-            values.putNull( Notes.NOTE_CREATED_DATE );
+         values.put( Notes.TASKSERIES_ID, taskSeriesId );
+         values.put( Notes.NOTE_CREATED_DATE, note.getCreated().getTime() );
          
          if ( note.getModified() != null )
             values.put( Notes.NOTE_MODIFIED_DATE, note.getModified().getTime() );
          else
             values.putNull( Notes.NOTE_MODIFIED_DATE );
          
-         values.put( Notes.NOTE_TITLE, note.getTitle() );
+         if ( note.getTitle() != null )            
+            values.put( Notes.NOTE_TITLE, note.getTitle() );
+         else
+            values.putNull( Notes.NOTE_TITLE);
+         
          values.put( Notes.NOTE_TEXT, note.getText() );
       }
       
@@ -106,7 +108,8 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                final RtmTaskNote taskNote = new RtmTaskNote( c.getString( COL_INDICES.get( Notes._ID ) ),
                                                              new Date( c.getLong( COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
                                                              modified,
-                                                             c.getString( COL_INDICES.get( Notes.NOTE_TITLE ) ),
+                                                             Queries.getOptString( c,
+                                                                                   COL_INDICES.get( Notes.NOTE_TITLE ) ),
                                                              c.getString( COL_INDICES.get( Notes.NOTE_TEXT ) ) );
                taskNotes.add( taskNote );
             }
@@ -135,7 +138,6 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
       // Check mandatory attributes
       ok = ok && note.getId() != null;
       ok = ok && taskSeriesId != null;
-      ok = ok && note.getTitle() != null;
       ok = ok && note.getText() != null;
       
       if ( ok )
@@ -165,10 +167,11 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          + " INTEGER NOT NULL, " + Notes.TASKSERIES_ID + " INTEGER NOT NULL, "
          + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
          + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_TITLE
-         + " NOTE_TEXT NOT NULL, " + Notes.NOTE_TEXT + " NOTE_TEXT NOT NULL, "
+         + " TEXT, " + Notes.NOTE_TEXT + " TEXT NOT NULL, "
          + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID + "\" ), "
          + "CONSTRAINT taskseries_ref FOREIGN KEY ( " + Notes.TASKSERIES_ID
-         + " ) REFERENCES " + TaskSeries.PATH + " ( " + TaskSeries._ID + " );" );
+         + " ) REFERENCES " + TaskSeries.PATH + " ( " + TaskSeries._ID
+         + " ) );" );
    }
    
 

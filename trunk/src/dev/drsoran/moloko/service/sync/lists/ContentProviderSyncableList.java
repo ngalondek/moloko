@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.Comparator;
 
 import android.content.ContentProviderClient;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 
 
 public class ContentProviderSyncableList< T extends IContentProviderSyncable< T > >
-         extends SyncableList< ContentProviderSyncOperation, T >
+         extends SyncableList< IContentProviderSyncOperation, T >
 {
    private final ContentProviderClient provider;
    
@@ -43,7 +43,8 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
 
 
    @Override
-   public ContentProviderSyncOperation computeInsertOperation( T newElement, Object... params )
+   public IContentProviderSyncOperation computeInsertOperation( T newElement,
+                                                                Object... params )
    {
       return newElement.computeContentProviderInsertOperation( provider, params );
    }
@@ -51,8 +52,8 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
 
 
    @Override
-   public ContentProviderSyncOperation computeDeleteOperation( T elementToDelete,
-                                                 Object... params )
+   public IContentProviderSyncOperation computeDeleteOperation( T elementToDelete,
+                                                                Object... params )
    {
       return elementToDelete.computeContentProviderDeleteOperation( provider,
                                                                     params );
@@ -61,9 +62,9 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
 
 
    @Override
-   protected ContentProviderSyncOperation internalComputeUpdateOperation( T old,
-                                                            T updateElement,
-                                                            Object... params )
+   protected IContentProviderSyncOperation internalComputeUpdateOperation( T old,
+                                                                           T updateElement,
+                                                                           Object... params )
    {
       return old.computeContentProviderUpdateOperation( provider,
                                                         updateElement,

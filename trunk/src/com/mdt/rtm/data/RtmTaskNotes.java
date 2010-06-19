@@ -24,10 +24,6 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-
-import android.content.ContentProviderClient;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -38,8 +34,7 @@ import android.os.Parcelable;
  * @author Edouard Mercier
  * @since 2008.04.22
  */
-public class RtmTaskNotes extends RtmData implements
-         IContentProviderSyncable< RtmTaskNotes >
+public class RtmTaskNotes extends RtmData
 {
    public static final Parcelable.Creator< RtmTaskNotes > CREATOR = new Parcelable.Creator< RtmTaskNotes >()
    {
@@ -118,33 +113,5 @@ public class RtmTaskNotes extends RtmData implements
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeTypedList( notes );
-   }
-   
-
-
-   public ContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                              Object... params )
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-   
-
-
-   public ContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                              Object... params )
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-   
-
-
-   public ContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                              RtmTaskNotes update,
-                                                                              Object... params )
-   {
-      // TODO Auto-generated method stub
-      return null;
    }
 }

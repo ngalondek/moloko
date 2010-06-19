@@ -3,7 +3,6 @@ package dev.drsoran.moloko.content;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentProviderClient;
@@ -157,31 +156,17 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                
                if ( ok )
                {
-                  // Get all tags this taskseries references
-                  final List< TagRef > tagRefs = TagRefsProviderPart.getTagRefs( client,
+                  final ArrayList< Tag > tagImpls = TagsProviderPart.getAllTags( client,
                                                                                  taskSeriesId );
-                  // If the taskseries has no tags, we get an empty list, but not null
-                  ok = tagRefs != null;
+                  ok = tagImpls != null;
                   
-                  if ( ok && tagRefs.size() > 0 )
+                  if ( ok )
                   {
-                     tags = new ArrayList< String >();
+                     tags = new ArrayList< String >( tagImpls.size() );
                      
-                     for ( Iterator< TagRef > i = tagRefs.iterator(); ok
-                        && i.hasNext(); )
+                     for ( Tag tag : tagImpls )
                      {
-                        final TagRef tagRef = i.next();
-                        final Cursor tagCursor = Queries.getItem( client,
-                                                                  RtmTagsProviderPart.PROJECTION,
-                                                                  Tags.CONTENT_URI,
-                                                                  tagRef.getTagId() );
-                        
-                        ok = tagCursor != null;
-                        if ( ok )
-                           tags.add( c.getString( RtmTagsProviderPart.COL_INDICES.get( Tags.TAG ) ) );
-                        
-                        if ( tagCursor != null )
-                           tagCursor.close();
+                        tags.add( tag.getTag() );
                      }
                   }
                }
@@ -279,28 +264,28 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                operations.add( inserTaskOp );
          }
          
-         // TODO: Handle tags
-         /*
-          * Check for tags if ( ok ) { final List< String > tags = taskSeries.getTags();
-          * 
-          * if ( tags != null && tags.size() > 0 ) { for ( final String tag : tags ) { // Check if we already have the
-          * tag final String tagId = RtmTagsProviderPart.getMatchingTagId( client, tag );
-          * 
-          * ArrayList< ContentProviderOperation > tagOperations = new ArrayList< ContentProviderOperation >();
-          * 
-          * // if not found, create a new tag if ( tagId == null ) { final ContentProviderOperation tagOperation =
-          * RtmTagsProviderPart.insertTag( client, tag ); ok = tagOperation != null; ok = ok && tagOperations.add(
-          * tagOperation );
-          * 
-          * }
-          * 
-          * // link to taskseries if ( ok ) { final ContentProviderOperation tagOperation =
-          * TagRefsProviderPart.addTagToTaskSeries( client, taskSeriesId, tagId ); ok = tagOperation != null; ok = ok &&
-          * tagOperations.add( tagOperation ); }
-          * 
-          * ok = ok && operations.addAll( tagOperations ); } } }
-          */
-
+         // Check for tags
+         if ( ok )
+         {
+            final List< String > tags = taskSeries.getTags();
+            
+            if ( tags != null && tags.size() > 0 )
+            {
+               for ( String tag : tags )
+               {
+                  final ContentProviderOperation tagOperation = ContentProviderOperation.newInsert( Tags.CONTENT_URI )
+                                                                                        .withValues( TagsProviderPart.getContentValues( new Tag( null,
+                                                                                                                                                 taskSeriesId,
+                                                                                                                                                 tag ),
+                                                                                                                                        true ) )
+                                                                                        .build();
+                  ok = tagOperation != null;
+                  if ( ok )
+                     operations.add( tagOperation );
+               }
+            }
+         }
+         
          // Check for notes
          if ( ok )
          {
@@ -367,14 +352,18 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + TaskSeries.RAW_TASK_ID + " ) REFERENCES tasks ( \"" + RawTasks._ID
          + "\" ) );" );
       
-      // Trigger: If a taskseries gets deleted, we also delete all raw tasks
-      // and notes referenced by this taskseries
+      // Triggers: If a taskseries gets deleted, we also delete:
+      // - all raw tasks
+      // - all referenced notes
+      // - all referenced tags
+      
       db.execSQL( "CREATE TRIGGER " + path
          + "_delete_taskseries AFTER DELETE ON " + path
-         + " FOR EACH ROW BEGIN DELETE " + RawTasks.PATH + " WHERE "
-         + RawTasks.PATH + "._id = old." + TaskSeries._ID + "; DELETE "
+         + " FOR EACH ROW BEGIN DELETE FROM " + RawTasks.PATH + " WHERE "
+         + RawTasks.PATH + "._id = old." + TaskSeries._ID + "; DELETE FROM "
          + Notes.PATH + " WHERE " + Notes.TASKSERIES_ID + " = old."
-         + TaskSeries._ID + " END;" );
+         + TaskSeries._ID + ";" + " DELETE FROM " + Tags.PATH + " WHERE "
+         + Tags.TASKSERIES_ID + " = old." + TaskSeries._ID + ";" + " END;" );
    }
    
 

@@ -203,13 +203,35 @@ public class Rtm
    }
    
 
-   public static final class Tags implements BaseColumns
+   protected static interface TagColumns
    {
+      /**
+       * The ID of the taskseries referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table taskseries _ID field)
+       * </P>
+       */
+      public final static String TASKSERIES_ID = "taskseries_id";
+      
+      /**
+       * The tag itself
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String TAG = "tag";
+   }
+   
+
+   public static final class Tags implements BaseColumns, TagColumns
+   {
+      public final static String PATH = "tags";
+      
       /**
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/tags" );
+         + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of tags.
@@ -222,58 +244,9 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.tag";
       
       /**
-       * The tag itself
-       * <P>
-       * Type: STRING
-       * </P>
-       */
-      public final static String TAG = "tag";
-      
-      /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = TAG + " DESC";
-   }
-   
-
-   public static final class TagRefs implements BaseColumns
-   {
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/tagrefs" );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of tag references.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.tagref";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single tag reference.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.tagref";
-      
-      /**
-       * The ID of the taskseries referenced.
-       * <P>
-       * Type: INTEGER (foreign key to table taskseries _ID field)
-       * </P>
-       */
-      public final static String TASKSERIES_ID = "taskseries_id";
-      
-      /**
-       * The ID of the tag referenced.
-       * <P>
-       * Type: INTEGER (foreign key to table tag _ID field)
-       * </P>
-       */
-      public final static String TAG_ID = "tag_id";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = null;
+      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
    }
    
 

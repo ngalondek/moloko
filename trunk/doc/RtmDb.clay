@@ -80,19 +80,6 @@
 </foreign-key>
 </foreign-key-list>
 </table>
-<table id="5122f2:128cb6194ba:-7f9b" name="tags">
-<column-list>
-<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f94" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f91" mandatory="true" name="tag">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
-</column-list>
-<primary-key id="5122f2:128cb6194ba:-7f9a" name="PK_TAGS">
-<primary-key-column name="_id"/>
-</primary-key>
-</table>
 <table id="5122f2:128cb6194ba:-7f59" name="notes">
 <column-list>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f55" mandatory="true" name="_id">
@@ -107,7 +94,7 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f53" mandatory="false" name="note_modified">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f52" mandatory="true" name="note_title">
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f52" mandatory="false" name="note_title">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f51" mandatory="true" name="note_text">
@@ -164,7 +151,7 @@
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
-<table id="163c031:128fe8bf79f:-7f97" name="tagrefs">
+<table id="163c031:128fe8bf79f:-7f97" name="tags">
 <column-list>
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7c1c" mandatory="true" name="_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
@@ -172,19 +159,14 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f91" mandatory="true" name="taskseries_id">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f8e" mandatory="true" name="tag_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f8e" mandatory="true" name="tag">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
-<primary-key id="163c031:128fe8bf79f:-7f96" name="PK_TAGREFS">
-<primary-key-column name="taskseries_id"/>
-<primary-key-column name="tag_id"/>
+<primary-key id="163c031:128fe8bf79f:-7f96" name="PK_TAGS">
 <primary-key-column name="_id"/>
 </primary-key>
 <foreign-key-list>
-<foreign-key id="163c031:128fe8bf79f:-7b9c" name="tag" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TAGS" referenced-table="tags" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
-<foreign-key-column column-name="tag_id" referenced-key-column-name="_id"/>
-</foreign-key>
 <foreign-key id="163c031:128fe8bf79f:-7c1e" name="taskseries_1" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
 <foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
 </foreign-key>
@@ -200,10 +182,9 @@
 <fk-figure refid="5122f2:128cb6194ba:-7fc5">
 <target-terminal x="96" y="4"/>
 </fk-figure>
-<table-figure refid="5122f2:128cb6194ba:-7f9b" x="795" y="275"/>
 <table-figure refid="5122f2:128cb6194ba:-7f59" x="541" y="374"/>
 <table-figure refid="190abb9:128ce294477:-7fe8" x="282" y="70"/>
 <table-figure refid="190abb9:128ce294477:-7f35" x="8" y="235"/>
-<table-figure refid="163c031:128fe8bf79f:-7f97" x="546" y="266"/>
+<table-figure refid="163c031:128fe8bf79f:-7f97" x="550" y="165"/>
 </diagram>
 </clay-model>

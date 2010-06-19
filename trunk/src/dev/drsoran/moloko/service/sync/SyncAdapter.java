@@ -30,6 +30,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 
 
 /**
@@ -118,11 +119,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                if ( computeOperationsBatch( provider, syncResult ) )
                {
                   lastUpdated = new Date();
-                  Log.i( TAG, "Sync succeded." + syncResult.toDebugString() );
+                  Log.i( TAG, "Sync succeded." );
                }
                else
                {
-                  Log.e( TAG, "Sync failed." + syncResult.toDebugString() );
+                  Log.e( TAG, "Sync failed." );
                   clearSyncResult( syncResult );
                }
             }
@@ -161,7 +162,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    {
       boolean ok = true;
       
-      final ArrayList< ContentProviderSyncOperation > operations = new ArrayList< ContentProviderSyncOperation >();
+      final ArrayList< IContentProviderSyncOperation > operations = new ArrayList< IContentProviderSyncOperation >();
       
       try
       {
@@ -188,7 +189,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          {
             final ArrayList< ContentProviderOperation > batch = new ArrayList< ContentProviderOperation >();
             
-            for ( ContentProviderSyncOperation contentProviderSyncOperation : operations )
+            for ( IContentProviderSyncOperation contentProviderSyncOperation : operations )
             {
                final int count = contentProviderSyncOperation.getBatch( batch );
                ContentProviderSyncOperation.updateSyncResult( syncResult,

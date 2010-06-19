@@ -25,8 +25,17 @@ import java.util.Date;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.os.Parcel;
 import android.os.Parcelable;
+import dev.drsoran.moloko.content.Queries;
+import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.service.sync.util.ParamChecker;
+import dev.drsoran.provider.Rtm.Notes;
 
 
 /**
@@ -35,9 +44,13 @@ import android.os.Parcelable;
  * @author Edouard Mercier
  * @since 2008.04.22
  */
-public class RtmTaskNote extends RtmData
+public class RtmTaskNote extends RtmData implements
+         IContentProviderSyncable< RtmTaskNote >
 {
-   private static final class LessIdComperator implements
+   private final static String TAG = RtmTaskNote.class.getSimpleName();
+   
+   
+   private final static class LessIdComperator implements
             Comparator< RtmTaskNote >
    {
       
@@ -167,4 +180,76 @@ public class RtmTaskNote extends RtmData
       dest.writeString( title );
       dest.writeString( text );
    }
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                               Object... params )
+   {
+      ContentProviderSyncOperation operation = null;
+      
+      final boolean ok = ParamChecker.checkParams( TAG,
+                                                   "ContentProvider insert failed. ",
+                                                   new Class[]
+                                                   { String.class },
+                                                   params );
+      
+      if ( ok )
+      {
+         final String taskSeriesId = (String) params[ 0 ];
+         
+         new ContentProviderSyncOperation( provider,
+                                           ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                                                   .withValues( RtmNotesProviderPart.getContentValues( this,
+                                                                                                                       taskSeriesId,
+                                                                                                                       true ) )
+                                                                   .build(),
+                                           IContentProviderSyncOperation.Op.INSERT );
+      }
+      
+      return operation;
+   }
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                               Object... params )
+   {
+      return new ContentProviderSyncOperation( provider,
+                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                             id ) )
+                                                                       .build(),
+                                               IContentProviderSyncOperation.Op.DELETE );
+   }
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                               RtmTaskNote update,
+                                                                               Object... params )
+   {
+      ContentProviderSyncOperation operation = null;
+      
+      final boolean ok = ParamChecker.checkParams( TAG,
+                                                   "ContentProvider update failed. ",
+                                                   new Class[]
+                                                   { String.class },
+                                                   params );
+      
+      if ( ok )
+      {
+         final String taskSeriesId = (String) params[ 0 ];
+         
+         operation = new ContentProviderSyncOperation( provider,
+                                                       ContentProviderOperation.newUpdate( Notes.CONTENT_URI )
+                                                                               .withValues( RtmNotesProviderPart.getContentValues( update,
+                                                                                                                                   taskSeriesId,
+                                                                                                                                   false ) )
+                                                                               .build(),
+                                                       IContentProviderSyncOperation.Op.UPDATE );
+      }
+      
+      return operation;
+   }
+   
 }

@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -23,7 +24,6 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public class RtmListsProviderPart extends AbstractRtmProviderPart
 {
-   @SuppressWarnings( "unused" )
    private static final String TAG = RtmListsProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
@@ -74,6 +74,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
+         Log.e( TAG, "Query lists failed. ", e );
          lists = null;
       }
       

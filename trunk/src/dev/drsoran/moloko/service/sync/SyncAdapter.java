@@ -85,7 +85,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                               SyncResult syncResult )
    {
       // TODO: Remove debug wait
-      Debug.waitForDebugger();
+      // Debug.waitForDebugger();
       
       String authToken = null;
       

@@ -57,6 +57,9 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        Tasks.MODIFIED_DATE,
                                                        Tasks.TASKSERIES_NAME,
                                                        Tasks.SOURCE, Tasks.URL,
+                                                       Tasks.DUE_DATE,
+                                                       Tasks.ADDED_DATE,
+                                                       Tasks.COMPLETED_DATE,
                                                        Tasks.DELETED_DATE,
                                                        Tasks.PRIORITY,
                                                        Tasks.POSTPONED,
@@ -101,10 +104,11 @@ public class TasksProviderPart extends AbstractProviderPart
       final List< String > projectionList = Arrays.asList( projection );
       
       boolean withLocation = false;
+      boolean withTags = false;
       int idColumnIdx = -1;
       
       for ( int i = 0; i < projection.length
-         && ( idColumnIdx == -1 || !withLocation ); i++ )
+         && ( idColumnIdx == -1 || !withLocation || !withTags ); i++ )
       {
          final String column = projection[ i ];
          

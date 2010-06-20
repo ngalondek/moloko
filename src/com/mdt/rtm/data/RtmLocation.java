@@ -19,10 +19,21 @@
  */
 package com.mdt.rtm.data;
 
+import java.util.Comparator;
+
 import org.w3c.dom.Element;
 
+import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+import dev.drsoran.moloko.content.Queries;
+import dev.drsoran.moloko.content.RtmLocationsProviderPart;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.provider.Rtm.Locations;
 
 
 /**
@@ -31,8 +42,11 @@ import android.os.Parcelable;
  * @author Edouard Mercier
  * @since 2008.05.22
  */
-public class RtmLocation extends RtmData
+public class RtmLocation extends RtmData implements
+         IContentProviderSyncable< RtmLocation >
 {
+   private final static String TAG = RtmLocation.class.getSimpleName();
+   
    public static final Parcelable.Creator< RtmLocation > CREATOR = new Parcelable.Creator< RtmLocation >()
    {
       
@@ -50,6 +64,19 @@ public class RtmLocation extends RtmData
       
    };
    
+   
+   private static final class LessIdComperator implements
+            Comparator< RtmLocation >
+   {
+      public int compare( RtmLocation object1, RtmLocation object2 )
+      {
+         return object1.id.compareTo( object2.id );
+      }
+      
+   }
+   
+   public final static LessIdComperator LESS_ID = new LessIdComperator();
+   
    public final String id;
    
    public final String name;
@@ -65,6 +92,20 @@ public class RtmLocation extends RtmData
    public int zoom;
    
    
+
+   public RtmLocation( String id, String name, float lon, float lat,
+      String address, boolean viewable, int zoom )
+   {
+      this.id = id;
+      this.name = name;
+      this.longitude = lon;
+      this.latitude = lat;
+      this.address = address;
+      this.viewable = viewable;
+      this.zoom = zoom;
+   }
+   
+
 
    public RtmLocation( Element element )
    {
@@ -110,5 +151,57 @@ public class RtmLocation extends RtmData
       dest.writeString( address );
       dest.writeInt( viewable ? 1 : 0 );
       dest.writeInt( zoom );
+   }
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                               Object... params )
+   {
+      return new ContentProviderSyncOperation( provider,
+                                               ContentProviderOperation.newInsert( Locations.CONTENT_URI )
+                                                                       .withValues( RtmLocationsProviderPart.getContentValues( this,
+                                                                                                                               true ) )
+                                                                       .build(),
+                                               IContentProviderSyncOperation.Op.INSERT );
+   }
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                               Object... params )
+   {
+      return new ContentProviderSyncOperation( provider,
+                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( Locations.CONTENT_URI,
+                                                                                                             id ) )
+                                                                       .build(),
+                                               IContentProviderSyncOperation.Op.DELETE );
+   }
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
+                                                                               RtmLocation update,
+                                                                               Object... params )
+   {
+      IContentProviderSyncOperation operation = null;
+      
+      if ( this.id.equals( update.id ) )
+      {
+         operation = new ContentProviderSyncOperation( provider,
+                                                       ContentProviderOperation.newUpdate( Queries.contentUriWithId( Locations.CONTENT_URI,
+                                                                                                                     id ) )
+                                                                               .withValues( RtmLocationsProviderPart.getContentValues( update,
+                                                                                                                                       false ) )
+                                                                               .build(),
+                                                       IContentProviderSyncOperation.Op.UPDATE );
+      }
+      else
+      {
+         Log.e( TAG,
+                "ContentProvider update failed. Different RtmLocation IDs." );
+      }
+      
+      return operation;
    }
 }

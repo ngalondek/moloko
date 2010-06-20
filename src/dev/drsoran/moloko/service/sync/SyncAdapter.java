@@ -116,14 +116,38 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                                    context.getString( R.string.app_name ),
                                                                    authToken ) );
                
-               if ( computeOperationsBatch( provider, syncResult ) )
+               final ArrayList< IContentProviderSyncOperation > batch = new ArrayList< IContentProviderSyncOperation >();
+               
+               if ( computeOperationsBatch( provider, syncResult, batch ) )
                {
+                  final ArrayList< ContentProviderOperation > contentProviderOperationsBatch = new ArrayList< ContentProviderOperation >();
+                  
+                  for ( IContentProviderSyncOperation contentProviderSyncOperation : batch )
+                  {
+                     final int count = contentProviderSyncOperation.getBatch( contentProviderOperationsBatch );
+                     ContentProviderSyncOperation.updateSyncResult( syncResult,
+                                                                    contentProviderSyncOperation.getOperationType(),
+                                                                    count );
+                  }
+                  
+                  provider.applyBatch( contentProviderOperationsBatch );
+                  
                   lastUpdated = new Date();
-                  Log.i( TAG, "Sync succeded." );
+                  Log.i( TAG, "Applying sync operations batch succeded." );
                }
                else
                {
-                  Log.e( TAG, "Sync failed." );
+                  if ( syncResult.stats.numAuthExceptions > 0 )
+                  {
+                     Log.e( TAG,
+                            syncResult.stats.numAuthExceptions
+                               + " authentication exceptions. Invalidating auth token." );
+                     
+                     accountManager.invalidateAuthToken( Constants.ACCOUNT_TYPE,
+                                                         authToken );
+                  }
+                  
+                  Log.e( TAG, "Applying sync operations batch failed." );
                   clearSyncResult( syncResult );
                }
             }
@@ -153,64 +177,55 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          syncResult.stats.numIoExceptions++;
          Log.e( TAG, "ServiceInternalException", e );
       }
+      catch ( RemoteException e )
+      {
+         syncResult.stats.numIoExceptions++;
+         Log.e( TAG, "RemoteException", e );
+      }
+      catch ( OperationApplicationException e )
+      {
+         syncResult.stats.numIoExceptions++;
+         syncResult.databaseError = true;
+         Log.e( TAG, "OperationApplicationException", e );
+      }
    }
    
 
 
    private boolean computeOperationsBatch( ContentProviderClient provider,
-                                           SyncResult syncResult )
+                                           SyncResult syncResult,
+                                           ArrayList< IContentProviderSyncOperation > batch )
    {
       boolean ok = true;
       
-      final ArrayList< IContentProviderSyncOperation > operations = new ArrayList< IContentProviderSyncOperation >();
+      // Sync RtmList
+      ok = RtmListsSync.in_computeSync( provider,
+                                        serviceImpl,
+                                        syncResult,
+                                        batch );
       
-      try
-      {
-         // Sync RtmList
-         ok = RtmListSync.in_computeSync( provider,
-                                          serviceImpl,
-                                          syncResult,
-                                          operations );
-         
-         Log.i( TAG, "Syncing RtmLists " + ( ok ? "ok" : "failed" ) );
-         
-         // TODO: Sync locations here.
-         
-         // Sync RtmTasks
-         ok = ok
-            && RtmTasksSync.in_computeSync( provider,
-                                            serviceImpl,
-                                            syncResult,
-                                            operations );
-         
-         Log.i( TAG, "Syncing RtmTasks " + ( ok ? "ok" : "failed" ) );
-         
-         if ( ok )
-         {
-            final ArrayList< ContentProviderOperation > batch = new ArrayList< ContentProviderOperation >();
-            
-            for ( IContentProviderSyncOperation contentProviderSyncOperation : operations )
-            {
-               final int count = contentProviderSyncOperation.getBatch( batch );
-               ContentProviderSyncOperation.updateSyncResult( syncResult,
-                                                              contentProviderSyncOperation.getOperationType(),
-                                                              count );
-            }
-            
-            provider.applyBatch( batch );
-            operations.clear();
-         }
-      }
-      catch ( RemoteException e )
-      {
-         ++syncResult.stats.numIoExceptions;
-         ok = false;
-      }
-      catch ( OperationApplicationException e )
-      {
-         syncResult.databaseError = true;
-         ok = false;
-      }
+      Log.i( TAG, "Compute RtmLists sync " + ( ok ? "ok" : "failed" ) );
+      
+      // Sync RtmTasks
+      ok = ok
+         && RtmTasksSync.in_computeSync( provider,
+                                         serviceImpl,
+                                         syncResult,
+                                         batch );
+      
+      Log.i( TAG, "Compute RtmTasks sync " + ( ok ? "ok" : "failed" ) );
+      
+      // Sync locations
+      ok = ok
+         && RtmLocationsSync.in_computeSync( provider,
+                                             serviceImpl,
+                                             syncResult,
+                                             batch );
+      
+      Log.i( TAG, "Compute RtmLocations sync " + ( ok ? "ok" : "failed" ) );
+      
+      if ( !ok )
+         batch.clear();
       
       return ok;
    }

@@ -13,14 +13,15 @@ import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 
 import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 
 
-public final class RtmListSync
+public final class RtmListsSync
 {
-   private final static String TAG = RtmListSync.class.getSimpleName();
+   private final static String TAG = RtmListsSync.class.getSimpleName();
    
    
 
@@ -48,6 +49,18 @@ public final class RtmListSync
       catch ( ServiceException e )
       {
          Log.e( TAG, "Getting server lists failed.", e );
+         
+         switch ( e.responseCode )
+         {
+            case RtmServiceConstants.RtmErrorCodes.LOGIN_FAILED:
+            case RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY:
+               ++syncResult.stats.numAuthExceptions;
+            case RtmServiceConstants.RtmErrorCodes.SERVICE_UNAVAILABLE:
+               ++syncResult.stats.numIoExceptions;
+            default :
+               ++syncResult.stats.numParseExceptions;
+         }
+         
          return false;
       }
       

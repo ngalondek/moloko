@@ -1,6 +1,7 @@
 package dev.drsoran.moloko.service.sync;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.SyncResult;
@@ -8,19 +9,18 @@ import android.util.Log;
 
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
-import com.mdt.rtm.data.RtmTaskList;
-import com.mdt.rtm.data.RtmTasks;
+import com.mdt.rtm.data.RtmLocation;
 
-import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
+import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 
 
-public final class RtmTasksSync
+public final class RtmLocationsSync
 {
-   private final static String TAG = RtmTasksSync.class.getSimpleName();
+   private final static String TAG = RtmLocationsSync.class.getSimpleName();
    
    
 
@@ -29,21 +29,21 @@ public final class RtmTasksSync
                                          SyncResult syncResult,
                                          ArrayList< IContentProviderSyncOperation > operations )
    {
-      // Get all lists from local database
-      final RtmTasks local_Tasks = RtmTaskSeriesProviderPart.getAllTaskSeries( provider );
+      // Get all locations from local database
+      final ArrayList< RtmLocation > local_Locations = RtmLocationsProviderPart.getAllLocations( provider );
       
-      if ( local_Tasks == null )
+      if ( local_Locations == null )
       {
          syncResult.databaseError = true;
-         Log.e( TAG, "Getting local tasks failed." );
+         Log.e( TAG, "Getting local locations failed." );
          return false;
       }
       
-      RtmTasks server_Tasks = null;
+      List< RtmLocation > server_Locations = null;
       
       try
       {
-         server_Tasks = service.tasks_getList( null, null, null );
+         server_Locations = service.locations_getList();
       }
       catch ( ServiceException e )
       {
@@ -65,12 +65,12 @@ public final class RtmTasksSync
       
       boolean ok = true;
       
-      // Sync task lists
-      final ContentProviderSyncableList< RtmTaskList > local_SyncList = new ContentProviderSyncableList< RtmTaskList >( provider,
-                                                                                                                        local_Tasks.getLists(),
-                                                                                                                        RtmTaskList.LESS_ID );
+      // Sync location lists
+      final ContentProviderSyncableList< RtmLocation > local_SyncList = new ContentProviderSyncableList< RtmLocation >( provider,
+                                                                                                                        local_Locations,
+                                                                                                                        RtmLocation.LESS_ID );
       
-      final ArrayList< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Tasks.getLists(),
+      final ArrayList< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Locations,
                                                                                          local_SyncList );
       
       ok = syncOperations != null;
@@ -82,5 +82,4 @@ public final class RtmTasksSync
       
       return ok;
    }
-   
 }

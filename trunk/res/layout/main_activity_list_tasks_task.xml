@@ -1,63 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:id="@+id/main_list_tasks_task"
-   android:layout_width="fill_parent"
-   android:layout_height="wrap_content"
-   android:background="@android:color/white" > 
-         
-   <Button
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/main_list_tasks_task"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:background="@android:color/white" >
+	
+	<Button
       android:id="@+id/main_list_tasks_task_priority"
       android:background="@android:color/black"
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_height="fill_parent"
+      android:layout_marginTop="1px"
+      android:layout_marginBottom="1px"
       android:minWidth="5px"
       android:maxWidth="5px"
-      android:enabled="false"
+      android:enabled="false"      
       android:focusable="false"
       android:text=""/>
-      
-   <CheckBox 
-   	android:id="@+id/main_list_tasks_task_check"
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
-      android:layout_toRightOf="@+id/main_list_tasks_task_priority"           
-      android:text=""/>
-      
-   <TextView
-      android:id="@+id/main_list_tasks_task_desc"
-      android:textAppearance="?android:attr/textAppearanceMedium"
-      android:textColor="@android:color/black"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="TaskSeries.task_desc"
-      android:paddingTop="10px"
-      android:paddingLeft="10px"
-      android:layout_toRightOf="@id/main_list_tasks_task_check"/>
-      
-	<TextView
-		android:id="@+id/main_list_tasks_task_list_name"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textStyle="bold"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="TaskSeries.list.name"
-      android:layout_toRightOf="@id/main_list_tasks_task_check"
-      android:layout_below="@id/main_list_tasks_task_desc"
-      android:layout_alignLeft="@id/main_list_tasks_task_desc"
-      android:paddingTop="10px"
-      android:paddingLeft="10px" />
-      
-   <TextView
-      android:id="@+id/main_list_tasks_task_due_date"
-      android:textAppearance="?android:attr/textAppearanceSmall"
-      android:textColor="@android:color/black"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:text="due_date"      
-      android:paddingRight="3px"
-      android:layout_alignBaseline="@id/main_list_tasks_task_list_name"
-      android:layout_toRightOf="@+id/main_list_tasks_task_list_name"
-      android:gravity="right" />  
 
-</RelativeLayout>
+	<RelativeLayout
+	   xmlns:android="http://schemas.android.com/apk/res/android"
+	   android:layout_width="fill_parent"
+	   android:layout_height="wrap_content">
+	   
+	   <CheckBox 
+          android:id="@+id/main_list_tasks_task_check"
+	      android:layout_height="wrap_content"
+	      android:layout_width="wrap_content"
+	      android:layout_toRightOf="@+id/main_list_tasks_task_priority"           
+	      android:text=""/>
+	      
+	   <TextView
+	      android:id="@+id/main_list_tasks_task_desc"
+	      style="@style/TaskDescriptionText.Normal"	     
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content"
+	      android:text="TaskSeries.task_desc"
+	      android:paddingTop="10px"
+	      android:paddingLeft="10px"
+	      android:layout_toRightOf="@id/main_list_tasks_task_check"/>
+	      
+		<TextView
+	      android:id="@+id/main_list_tasks_task_list_name"
+	      style="@style/TaskListName"
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content"
+	      android:text="TaskSeries.list.name"
+	      android:layout_toRightOf="@id/main_list_tasks_task_check"
+	      android:layout_below="@id/main_list_tasks_task_desc"
+	      android:layout_alignLeft="@id/main_list_tasks_task_desc"
+	      android:paddingTop="10px"
+	      android:paddingLeft="10px" />
+	      
+	   <TextView
+	      android:id="@+id/main_list_tasks_task_due_date"
+	      style="@style/TaskDueDate"
+	      android:layout_width="fill_parent"
+	      android:layout_height="wrap_content"
+	      android:text="due_date"      
+	      android:paddingRight="3px"
+	      android:layout_alignBaseline="@id/main_list_tasks_task_list_name"
+	      android:layout_toRightOf="@+id/main_list_tasks_task_list_name"
+	      android:gravity="right" />  	
+	</RelativeLayout>
+</LinearLayout>

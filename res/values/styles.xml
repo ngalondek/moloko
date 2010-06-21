@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style
+		name="TaskDescriptionText.Normal"
+		parent="@android:style/TextAppearance.Medium">
+		<item
+			name="android:textColor">@android:color/black</item> 
+	</style>	
+	
+	<style
+		name="TaskListName"
+		parent="@android:style/TextAppearance.Small">
+		<item
+			name="android:textStyle">bold</item>
+	</style>
+	
+	<style
+		name="TaskDueDate"
+		parent="@android:style/TextAppearance.Small">
+		<item
+			name="android:textColor">@android:color/black</item>
+	</style>
+	
+</resources>

@@ -1,24 +1,16 @@
 package dev.drsoran.moloko.main;
 
-import java.util.Date;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.SimpleCursorAdapter.ViewBinder;
 
 import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.prefs.AccountPreferencesActivity;
@@ -31,57 +23,7 @@ public class MainActivity extends ListActivity
    
    private final static String[] PROJECTION =
    { Tasks._ID, Tasks.TASKSERIES_NAME, Tasks.LIST_NAME, Tasks.DUE_DATE,
-    Tasks.PRIORITY };
-   
-   
-   private final class TaskViewBinder implements ViewBinder
-   {
-      public boolean setViewValue( View view, Cursor cursor, int columnIndex )
-      {
-         switch ( columnIndex )
-         {
-            // +1 due to _id
-            case 3:
-               // due date
-               final TextView dueField = (TextView) view;
-               
-               if ( !cursor.isNull( columnIndex ) )
-                  dueField.setText( DateFormat.getDateFormat( MainActivity.this )
-                                              .format( new Date( cursor.getLong( columnIndex ) ) ) );
-               
-               else
-                  dueField.setText( "" );
-               
-               return true;
-               
-            case 4:
-               // priority
-               
-               final Button prioBar = (Button) view;
-               
-               switch ( RtmTask.convertPriority( cursor.getString( columnIndex ) ) )
-               {
-                  case High:
-                     prioBar.setBackgroundResource( R.color.priority_1 );
-                     return true;
-                  case Medium:
-                     prioBar.setBackgroundResource( R.color.priority_2 );
-                     return true;
-                  case Low:
-                     prioBar.setBackgroundResource( R.color.priority_3 );
-                     return true;
-                  case None:
-                  default :
-                     prioBar.setBackgroundResource( R.color.priority_none );
-                     return true;
-               }
-               
-            default :
-               // SimpleCursorAdapter will bind
-               return false;
-         }
-      }
-   }
+    Tasks.PRIORITY, Tasks.COMPLETED_DATE };
    
    
 
@@ -195,15 +137,17 @@ public class MainActivity extends ListActivity
                                                                        Tasks.TASKSERIES_NAME,
                                                                        Tasks.LIST_NAME,
                                                                        Tasks.DUE_DATE,
-                                                                       Tasks.PRIORITY },
+                                                                       Tasks.PRIORITY,
+                                                                       Tasks.COMPLETED_DATE },
                                                                       new int[]
                                                                       {
                                                                        R.id.main_list_tasks_task_desc,
                                                                        R.id.main_list_tasks_task_list_name,
                                                                        R.id.main_list_tasks_task_due_date,
-                                                                       R.id.main_list_tasks_task_priority } );
+                                                                       R.id.main_list_tasks_task_priority,
+                                                                       R.id.main_list_tasks_task_check } );
          
-         adapter.setViewBinder( new TaskViewBinder() );
+         adapter.setViewBinder( new TaskListItemViewBinder( this ) );
          
          setListAdapter( adapter );
       }

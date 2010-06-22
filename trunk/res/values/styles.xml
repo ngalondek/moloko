@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<style
+		name="TaskList"
+		parent="@android:style/Widget.ListView">
+		<item
+			name="android:listSelector">@drawable/main_tasklist_sel_bgnd</item>
+	</style>
+	
+	<style
+		name="TaskListItem" >
+		<item
+			name="android:background">@drawable/main_tasklist</item>
+	</style>
+	
+		
+	<style
 		name="TaskDescriptionText.Normal"
 		parent="@android:style/TextAppearance.Medium">
 		<item

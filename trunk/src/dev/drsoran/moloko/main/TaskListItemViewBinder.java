@@ -1,9 +1,8 @@
 package dev.drsoran.moloko.main;
 
-import java.util.Calendar;
 import java.util.Date;
 
-import android.content.Context;
+import android.app.ListActivity;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.text.SpannableString;
@@ -22,11 +21,11 @@ import dev.drsoran.moloko.R;
 
 public final class TaskListItemViewBinder implements ViewBinder
 {
-   private final Context context;
+   private final ListActivity context;
    
    
 
-   public TaskListItemViewBinder( Context context ) throws NullPointerException
+   public TaskListItemViewBinder( ListActivity context ) throws NullPointerException
    {
       if ( context == null )
          throw new NullPointerException();
@@ -38,9 +37,9 @@ public final class TaskListItemViewBinder implements ViewBinder
 
    public boolean setViewValue( View view, Cursor cursor, int columnIndex )
    {
-      // TODO: Make these magic numbers constants.
       switch ( columnIndex )
       {
+         // TODO: Make these magic numbers constants.
          // +1 due to _id
          case 1:
             boolean handled = false;
@@ -64,7 +63,7 @@ public final class TaskListItemViewBinder implements ViewBinder
                }
                
                // Make underline if overdue
-               else if ( Calendar.getInstance().after( dueDate ) )
+               else if ( now.after( dueDate ) )
                {
                   final TextView taskDesc = (TextView) view;
                   final SpannableString content = new SpannableString( cursor.getString( columnIndex ) );

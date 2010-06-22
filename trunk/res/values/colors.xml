@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="priority_none">#FFFFFF</color>
+	<color name="priority_none">@android:color/transparent</color>
 	<color name="priority_1">#EA5200</color>
 	<color name="priority_2">#0060BF</color>
 	<color name="priority_3">#359AFF</color>

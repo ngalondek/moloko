@@ -2,13 +2,13 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/main_list_tasks_task"
+	style="@style/TaskListItem"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:background="@android:color/white" >
+	android:layout_height="wrap_content" >
 	
 	<Button
       android:id="@+id/main_list_tasks_task_priority"
-      android:background="@android:color/black"
+      android:background="@android:color/transparent"
       android:layout_width="wrap_content"
       android:layout_height="fill_parent"
       android:layout_marginTop="1px"
@@ -64,4 +64,5 @@
 	      android:layout_toRightOf="@+id/main_list_tasks_task_list_name"
 	      android:gravity="right" />  	
 	</RelativeLayout>
+
 </LinearLayout>

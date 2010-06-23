@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<style
-		name="TaskList"
+		name="TasksList"
 		parent="@android:style/Widget.ListView">
 		<item
 			name="android:listSelector">@drawable/taskslist_listitem_sel_bgnd</item>
 	</style>
 	
 	<style
-		name="TaskListItem" >
+		name="TasksListItem" >
 		<item
 			name="android:background">@drawable/taskslist_listitem</item>
 	</style>
 	
 		
 	<style
-		name="TaskDescriptionText.Normal"
+		name="TasksListItem.DescriptionText.Normal"
 		parent="@android:style/TextAppearance.Medium">
 		<item
 			name="android:textColor">@android:color/black</item> 
 	</style>	
 	
 	<style
-		name="TaskListName"
+		name="TasksListItem.ListName"
 		parent="@android:style/TextAppearance.Small">
 		<item
 			name="android:textStyle">bold</item>
 	</style>
 	
 	<style
-		name="TaskDueDate"
+		name="TasksListItem.DueDate"
 		parent="@android:style/TextAppearance.Small">
 		<item
 			name="android:textColor">@android:color/black</item>

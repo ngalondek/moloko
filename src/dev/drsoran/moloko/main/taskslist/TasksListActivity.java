@@ -1,4 +1,6 @@
-package dev.drsoran.moloko.main;
+package dev.drsoran.moloko.main.taskslist;
+
+import java.util.HashMap;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -17,13 +19,17 @@ import dev.drsoran.moloko.auth.prefs.AccountPreferencesActivity;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-public class MainActivity extends ListActivity
+public class TasksListActivity extends ListActivity
 {
-   private final static String TAG = MainActivity.class.getSimpleName();
+   private final static String TAG = TasksListActivity.class.getSimpleName();
    
    private final static String[] PROJECTION =
    { Tasks._ID, Tasks.TASKSERIES_NAME, Tasks.LIST_NAME, Tasks.DUE_DATE,
     Tasks.PRIORITY, Tasks.COMPLETED_DATE };
+   
+   private final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   
+   
    
    
 
@@ -32,7 +38,7 @@ public class MainActivity extends ListActivity
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      setContentView( R.layout.main_activity );
+      setContentView( R.layout.taskslist_activity );
    }
    
 
@@ -59,7 +65,7 @@ public class MainActivity extends ListActivity
    public boolean onCreateOptionsMenu( Menu menu )
    {
       MenuInflater inflater = getMenuInflater();
-      inflater.inflate( R.menu.main_menu_options, menu );
+      inflater.inflate( R.menu.taskslist_menu_options, menu );
       
       return addOptionsMenuIntents( menu );
    }
@@ -69,7 +75,7 @@ public class MainActivity extends ListActivity
    @Override
    public boolean onPrepareOptionsMenu( Menu menu )
    {
-      MenuItem syncItem = (MenuItem) menu.findItem( R.id.main_menu_opt_sync );
+      MenuItem syncItem = (MenuItem) menu.findItem( R.id.taskslist_menu_opt_sync );
       syncItem.setEnabled( AccountPreferencesActivity.getRtmPermission( this ) != RtmAuth.Perms.nothing );
       
       return true;
@@ -82,7 +88,7 @@ public class MainActivity extends ListActivity
    {
       switch ( item.getItemId() )
       {
-         case R.id.main_menu_opt_sync:
+         case R.id.taskslist_menu_opt_sync:
             refresh();
             return true;
             
@@ -99,7 +105,7 @@ public class MainActivity extends ListActivity
       
       if ( ok )
       {
-         MenuItem item = menu.findItem( R.id.main_menu_opt_prefs );
+         MenuItem item = menu.findItem( R.id.taskslist_menu_opt_prefs );
          
          ok = item != null;
          
@@ -125,27 +131,22 @@ public class MainActivity extends ListActivity
                                      PROJECTION,
                                      null,
                                      null,
-                                     null );
+                                     Tasks.PRIORITY + " ASC" );
       
       if ( c != null )
       {
          final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
-                                                                      R.layout.main_activity_list_tasks_task,
+                                                                      R.layout.taskslist_activity_listitem,
                                                                       c,
-                                                                      new String[]
-                                                                      {
-                                                                       Tasks.TASKSERIES_NAME,
-                                                                       Tasks.LIST_NAME,
-                                                                       Tasks.DUE_DATE,
-                                                                       Tasks.PRIORITY,
-                                                                       Tasks.COMPLETED_DATE },
+                                                                      (String[]) COL_INDICES.keySet()
+                                                                                            .toArray(),
                                                                       new int[]
                                                                       {
-                                                                       R.id.main_list_tasks_task_desc,
-                                                                       R.id.main_list_tasks_task_list_name,
-                                                                       R.id.main_list_tasks_task_due_date,
-                                                                       R.id.main_list_tasks_task_priority,
-                                                                       R.id.main_list_tasks_task_check } );
+                                                                       R.id.taskslist_listitem_desc,
+                                                                       R.id.taskslist_listitem_list_name,
+                                                                       R.id.taskslist_listitem_due_date,
+                                                                       R.id.taskslist_listitem_priority,
+                                                                       R.id.taskslist_listitem_check } );
          
          adapter.setViewBinder( new TaskListItemViewBinder( this ) );
          

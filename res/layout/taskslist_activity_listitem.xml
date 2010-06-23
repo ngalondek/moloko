@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/main_list_tasks_task"
+	android:id="@+id/taskslist_listitem"
 	style="@style/TaskListItem"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content" >
 	
 	<Button
-      android:id="@+id/main_list_tasks_task_priority"
+      android:id="@+id/taskslist_listitem_priority"
       android:background="@android:color/transparent"
       android:layout_width="wrap_content"
       android:layout_height="fill_parent"
@@ -25,43 +25,43 @@
 	   android:layout_height="wrap_content">
 	   
 	   <CheckBox 
-          android:id="@+id/main_list_tasks_task_check"
+          android:id="@+id/taskslist_listitem_check"
 	      android:layout_height="wrap_content"
 	      android:layout_width="wrap_content"
-	      android:layout_toRightOf="@+id/main_list_tasks_task_priority"           
+	      android:layout_toRightOf="@id/taskslist_listitem_priority"           
 	      android:text=""/>
 	      
 	   <TextView
-	      android:id="@+id/main_list_tasks_task_desc"
+	      android:id="@+id/taskslist_listitem_desc"
 	      style="@style/TaskDescriptionText.Normal"	     
 	      android:layout_width="wrap_content"
 	      android:layout_height="wrap_content"
 	      android:text="TaskSeries.task_desc"
 	      android:paddingTop="10px"
 	      android:paddingLeft="10px"
-	      android:layout_toRightOf="@id/main_list_tasks_task_check"/>
+	      android:layout_toRightOf="@id/taskslist_listitem_check"/>
 	      
 		<TextView
-	      android:id="@+id/main_list_tasks_task_list_name"
+	      android:id="@+id/taskslist_listitem_list_name"
 	      style="@style/TaskListName"
 	      android:layout_width="wrap_content"
 	      android:layout_height="wrap_content"
 	      android:text="TaskSeries.list.name"
-	      android:layout_toRightOf="@id/main_list_tasks_task_check"
-	      android:layout_below="@id/main_list_tasks_task_desc"
-	      android:layout_alignLeft="@id/main_list_tasks_task_desc"
+	      android:layout_toRightOf="@id/taskslist_listitem_check"
+	      android:layout_below="@id/taskslist_listitem_desc"
+	      android:layout_alignLeft="@id/taskslist_listitem_desc"
 	      android:paddingTop="10px"
 	      android:paddingLeft="10px" />
 	      
 	   <TextView
-	      android:id="@+id/main_list_tasks_task_due_date"
+	      android:id="@+id/taskslist_listitem_due_date"
 	      style="@style/TaskDueDate"
 	      android:layout_width="fill_parent"
 	      android:layout_height="wrap_content"
 	      android:text="due_date"      
 	      android:paddingRight="3px"
-	      android:layout_alignBaseline="@id/main_list_tasks_task_list_name"
-	      android:layout_toRightOf="@+id/main_list_tasks_task_list_name"
+	      android:layout_alignBaseline="@id/taskslist_listitem_list_name"
+	      android:layout_toRightOf="@id/taskslist_listitem_list_name"
 	      android:gravity="right" />  	
 	</RelativeLayout>
 

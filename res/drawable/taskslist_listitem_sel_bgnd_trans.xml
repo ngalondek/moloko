@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <transition xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
-		android:drawable="@drawable/main_tasklist_sel_bgnd_disabled" />
+		android:drawable="@drawable/taskslist_listitem_sel_bgnd_disabled" />
 	<item
-		android:drawable="@drawable/main_tasklist_sel_bgnd_disabled" />
+		android:drawable="@drawable/taskslist_listitem_sel_bgnd_disabled" />
 </transition>

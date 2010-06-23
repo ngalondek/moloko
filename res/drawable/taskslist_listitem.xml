@@ -2,8 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:state_window_focused="true"
-		android:drawable="@drawable/main_tasklist_active" />
+		android:drawable="@drawable/taskslist_listitem_active" />
 	<item
 		android:state_window_focused="false"
-		android:drawable="@drawable/main_tasklist_inactive" />
+		android:drawable="@drawable/taskslist_listitem_inactive" />
 </selector>

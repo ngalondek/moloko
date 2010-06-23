@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-   <item android:id="@+id/main_menu_opt_sync" android:title="@string/main_menu_opt_sync_title"></item>
-	<item android:id="@+id/main_menu_opt_prefs" android:title="@string/main_menu_opt_prefs_title"></item>	
-</menu>

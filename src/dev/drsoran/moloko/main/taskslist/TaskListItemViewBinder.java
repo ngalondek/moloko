@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.main;
+package dev.drsoran.moloko.main.taskslist;
 
 import java.util.Date;
 

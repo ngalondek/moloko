@@ -4,13 +4,13 @@
 		name="TaskList"
 		parent="@android:style/Widget.ListView">
 		<item
-			name="android:listSelector">@drawable/main_tasklist_sel_bgnd</item>
+			name="android:listSelector">@drawable/taskslist_listitem_sel_bgnd</item>
 	</style>
 	
 	<style
 		name="TaskListItem" >
 		<item
-			name="android:background">@drawable/main_tasklist</item>
+			name="android:background">@drawable/taskslist_listitem</item>
 	</style>
 	
 		

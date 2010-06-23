@@ -11,20 +11,20 @@
 		android:state_focused="true" 
 		android:state_enabled="false"
 		android:state_pressed="true"
-		android:drawable="@drawable/main_tasklist_sel_bgnd_disabled" />		
+		android:drawable="@drawable/taskslist_listitem_sel_bgnd_disabled" />		
 	<item
 		android:state_focused="true"
 		android:state_enabled="false"
-		android:drawable="@drawable/main_tasklist_sel_bgnd_disabled" />
+		android:drawable="@drawable/taskslist_listitem_sel_bgnd_disabled" />
 	<item
 		android:state_focused="true"
 		android:state_pressed="true"
-		android:drawable="@drawable/main_tasklist_sel_bgnd_trans" />
+		android:drawable="@drawable/taskslist_listitem_sel_bgnd_trans" />
 	<item
 		android:state_focused="false"
 		android:state_pressed="true"
-		android:drawable="@drawable/main_tasklist_sel_bgnd_trans" />
+		android:drawable="@drawable/taskslist_listitem_sel_bgnd_trans" />
 	<item
 		android:state_focused="true"
-		android:drawable="@drawable/main_tasklist_sel_bgnd_focused" />
+		android:drawable="@drawable/taskslist_listitem_sel_bgnd_focused" />
 </selector>

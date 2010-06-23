@@ -19,7 +19,7 @@
       <!-- Activities -->
 		<activity
 		   android:label="@string/app_name"
-		   android:name=".main.MainActivity">
+		   android:name=".main.taskslist.TasksListActivity">
 			<intent-filter>
 				<action
 				  android:name="android.intent.action.MAIN" />

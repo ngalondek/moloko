@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Moloko</string>
-	<string name="app_preferences">Einstellungen</string>	
+	<string name="app_preferences">Einstellungen</string>
+	<string name="app_tasklists">Listen</string>	
 	<string name="svc_rtm">Moloko.RtmService</string>
 	<string name="svc_auth">Moloko.AuthService</string>
 	<string name="svc_rtm_process">:Moloko</string>
@@ -23,6 +24,7 @@
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
+   <string name="phr_today">Heute</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -33,11 +35,14 @@
 	<!-- Global buttons -->
 	<string name="btn_ok">OK</string>
 	<string name="btn_continue">Weiter</string>
+	
+	<!-- TaskLists activity -->
+     <!-- Menus -->
+     <string name="tasklists_ctxmenu_listitem_open">Öffne %1$s</string>
 
-	<!-- TasksLists activity -->
+	<!-- TasksList activity -->
 	  <!-- Menus -->
-	  <string name="taskslist_menu_opt_sync_title">Aktualisieren</string>
-	  <string name="taskslist_menu_opt_prefs_title">@string/app_preferences</string>
+	  <string name="taskslist_menu_opt_lists_title">@string/app_tasklists</string>
 
    <!-- Authenticator activity -->
    <string name="auth_username_label">Benutzername</string>

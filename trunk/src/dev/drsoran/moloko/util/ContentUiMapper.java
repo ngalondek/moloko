@@ -5,30 +5,32 @@ import java.util.HashMap;
 
 public final class ContentUiMapper
 {
-   public final String[] PROJECTION;
+   public String[] PROJECTION;
    
-   public final String[] UI_COLUMNS;
+   public String[] UI_COLUMNS;
    
-   public final HashMap< String, Integer > UI_COL_INDICES;
+   public HashMap< String, Integer > UI_COL_INDICES;
    
-   public final int[] RESSOURCE_IDS;
+   public int[] RESSOURCE_IDS;
    
    
 
-   public ContentUiMapper( String[] projection, int[] resIds )
+   public ContentUiMapper( String[] projection, String[] uiColumns, int[] resIds )
    {
       PROJECTION = projection;
       RESSOURCE_IDS = resIds;
       UI_COL_INDICES = new HashMap< String, Integer >();
-      UI_COLUMNS = new String[ projection.length - 1 ];
+      UI_COLUMNS = uiColumns;
       
-      // 1 cause if query from a ContentProvider the first
-      // projection item has to be _ID. We do not include this
-      // into UI but have to start from 1.
-      for ( int i = 1; i < projection.length; i++ )
+      // this id the difference from the projection to the
+      // UI elements. It may happen that we have to query
+      // more information as we display. These additionally
+      // information has to come before the UI indices.
+      final int diff = projection.length - uiColumns.length;
+      
+      for ( int i = 0; i < uiColumns.length; i++ )
       {
-         UI_COL_INDICES.put( projection[ i ], i );
-         UI_COLUMNS[ i - 1 ] = projection[ i ];
+         UI_COL_INDICES.put( uiColumns[ i ], i + diff );
       }
    }
 }

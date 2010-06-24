@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-    	android:id="@+id/taskslist_menu_opt_sync"
-    	android:title="@string/taskslist_menu_opt_sync_title"></item>
-	<item
-		android:id="@+id/taskslist_menu_opt_prefs"
-		android:title="@string/taskslist_menu_opt_prefs_title"></item>	
+   <item
+    	android:id="@+id/taskslist_menu_opt_lists"
+    	android:title="@string/taskslist_menu_opt_lists_title"></item>
 </menu>

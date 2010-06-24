@@ -1,13 +1,11 @@
 package dev.drsoran.moloko.main.taskslist;
 
-import java.util.Date;
-
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.text.SpannableString;
-import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.text.format.Time;
 import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +28,8 @@ public final class TaskListItemViewBinder implements ViewBinder
    
    private final int DUE_DATE;
    
+   private final int HAS_DUE_TIME;
+   
    private final int PRIORITY;
    
    private final int COMPLETED;
@@ -45,6 +45,7 @@ public final class TaskListItemViewBinder implements ViewBinder
       this.context = context;
       this.DESCRIPTION = mapper.UI_COL_INDICES.get( Tasks.TASKSERIES_NAME );
       this.DUE_DATE = mapper.UI_COL_INDICES.get( Tasks.DUE_DATE );
+      this.HAS_DUE_TIME = 1;
       this.PRIORITY = mapper.UI_COL_INDICES.get( Tasks.PRIORITY );
       this.COMPLETED = mapper.UI_COL_INDICES.get( Tasks.COMPLETED_DATE );
    }
@@ -53,6 +54,8 @@ public final class TaskListItemViewBinder implements ViewBinder
 
    public boolean setViewValue( View view, Cursor cursor, int columnIndex )
    {
+      final Time now = new Time();
+      now.set( System.currentTimeMillis() );
       
       if ( columnIndex == DESCRIPTION )
       {
@@ -61,10 +64,10 @@ public final class TaskListItemViewBinder implements ViewBinder
          // description
          if ( !cursor.isNull( DUE_DATE ) )
          {
-            final long dueDateMs = cursor.getLong( DUE_DATE );
+            final long dueDateMillis = cursor.getLong( DUE_DATE );
             
             // Make bold of the task is today
-            if ( DateUtils.isToday( dueDateMs ) )
+            if ( DateUtils.isToday( dueDateMillis ) )
             {
                final TextView taskDesc = (TextView) view;
                taskDesc.setTypeface( Typeface.DEFAULT_BOLD );
@@ -76,9 +79,10 @@ public final class TaskListItemViewBinder implements ViewBinder
             // Make underline if overdue
             else
             {
-               final Date dueDate = new Date( dueDateMs );
+               final Time dueTime = new Time();
+               dueTime.set( dueDateMillis );
                
-               if ( new Date().after( dueDate ) )
+               if ( now.after( dueTime ) )
                {
                   final TextView taskDesc = (TextView) view;
                   final SpannableString content = new SpannableString( cursor.getString( columnIndex ) );
@@ -99,13 +103,50 @@ public final class TaskListItemViewBinder implements ViewBinder
          // due date
          final TextView dueField = (TextView) view;
          
+         String dueText = null;
+         
+         // if has a due date
          if ( !cursor.isNull( columnIndex ) )
          {
-            dueField.setText( DateFormat.getDateFormat( context )
-                                        .format( new Date( cursor.getLong( columnIndex ) ) ) );
+            final long dueMillis = cursor.getLong( columnIndex );
+            final boolean hasDueTime = cursor.getInt( HAS_DUE_TIME ) != 0;
+            
+            if ( DateUtils.isToday( dueMillis ) )
+            {
+               if ( hasDueTime )
+                  dueText = DateUtils.formatDateTime( context,
+                                                      dueMillis,
+                                                      DateUtils.FORMAT_SHOW_TIME );
+               else
+                  dueText = context.getString( R.string.phr_today );
+            }
+            else
+            {
+               final Time dueTime = new Time();
+               dueTime.set( dueMillis );
+               
+               // If in the same week
+               if ( now.year == dueTime.year
+                  && now.getWeekNumber() == dueTime.getWeekNumber() )
+               {
+                  dueText = DateUtils.getRelativeTimeSpanString( dueMillis,
+                                                                 System.currentTimeMillis(),
+                                                                 DateUtils.WEEK_IN_MILLIS,
+                                                                 DateUtils.FORMAT_SHOW_WEEKDAY )
+                                     .toString();
+               }
+               else
+               {
+                  dueText = DateUtils.formatDateTime( context,
+                                                      dueMillis,
+                                                      DateUtils.FORMAT_SHOW_DATE );
+               }
+            }
          }
          else
-            dueField.setText( "" );
+            dueText = "";
+         
+         dueField.setText( dueText );
          
          return true;
       }
@@ -146,5 +187,4 @@ public final class TaskListItemViewBinder implements ViewBinder
          // SimpleCursorAdapter will bind
          return false;
    }
-   
 }

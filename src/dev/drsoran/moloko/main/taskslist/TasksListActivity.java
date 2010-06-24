@@ -9,11 +9,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
-
-import com.mdt.rtm.data.RtmAuth;
-
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.auth.prefs.AccountPreferencesActivity;
+import dev.drsoran.moloko.main.lists.TaskListsActivity;
 import dev.drsoran.moloko.util.ContentUiMapper;
 import dev.drsoran.provider.Rtm.Tasks;
 
@@ -25,6 +22,14 @@ public class TasksListActivity extends ListActivity
    private final static ContentUiMapper contentUiMapper = new ContentUiMapper( new String[]
                                                                                {
                                                                                 Tasks._ID,
+                                                                                Tasks.HAS_DUE_TIME,
+                                                                                Tasks.TASKSERIES_NAME,
+                                                                                Tasks.LIST_NAME,
+                                                                                Tasks.DUE_DATE,
+                                                                                Tasks.PRIORITY,
+                                                                                Tasks.COMPLETED_DATE },
+                                                                               new String[]
+                                                                               {
                                                                                 Tasks.TASKSERIES_NAME,
                                                                                 Tasks.LIST_NAME,
                                                                                 Tasks.DUE_DATE,
@@ -38,14 +43,25 @@ public class TasksListActivity extends ListActivity
                                                                                 R.id.taskslist_listitem_priority,
                                                                                 R.id.taskslist_listitem_check } );
    
+   static
+   {
+      assert ( contentUiMapper.UI_COLUMNS.length == contentUiMapper.RESSOURCE_IDS.length );
+   }
+   
+   private final Bundle configuration = new Bundle();
+   
    
 
-   /** Called when the activity is first created. */
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       setContentView( R.layout.taskslist_activity );
+      
+      final Intent intent = getIntent();
+      
+      if ( intent.getExtras() != null )
+         configuration.putAll( intent.getExtras() );
    }
    
 
@@ -79,46 +95,19 @@ public class TasksListActivity extends ListActivity
    
 
 
-   @Override
-   public boolean onPrepareOptionsMenu( Menu menu )
-   {
-      MenuItem syncItem = (MenuItem) menu.findItem( R.id.taskslist_menu_opt_sync );
-      syncItem.setEnabled( AccountPreferencesActivity.getRtmPermission( this ) != RtmAuth.Perms.nothing );
-      
-      return true;
-   }
-   
-
-
-   @Override
-   public boolean onOptionsItemSelected( MenuItem item )
-   {
-      switch ( item.getItemId() )
-      {
-         case R.id.taskslist_menu_opt_sync:
-            refresh();
-            return true;
-            
-         default :
-            return false;
-      }
-   }
-   
-
-
    private final boolean addOptionsMenuIntents( Menu menu )
    {
       boolean ok = true;
       
       if ( ok )
       {
-         MenuItem item = menu.findItem( R.id.taskslist_menu_opt_prefs );
+         MenuItem item = menu.findItem( R.id.taskslist_menu_opt_lists );
          
          ok = item != null;
          
          if ( ok )
          {
-            item.setIntent( new Intent( this, AccountPreferencesActivity.class ) );
+            item.setIntent( new Intent( this, TaskListsActivity.class ) );
          }
          else
          {
@@ -134,9 +123,15 @@ public class TasksListActivity extends ListActivity
 
    private final void refresh()
    {
+      String selection = null;
+      
+      if ( configuration.containsKey( Tasks.LIST_NAME ) )
+         selection = Tasks.LIST_NAME + " = '"
+            + configuration.getString( Tasks.LIST_NAME ) + "'";
+      
       final Cursor c = managedQuery( Tasks.CONTENT_URI,
                                      contentUiMapper.PROJECTION,
-                                     null,
+                                     selection,
                                      null,
                                      Tasks.PRIORITY + " ASC" );
       
@@ -149,7 +144,8 @@ public class TasksListActivity extends ListActivity
                                                                       contentUiMapper.UI_COLUMNS,
                                                                       contentUiMapper.RESSOURCE_IDS );
          
-         adapter.setViewBinder( new TaskListItemViewBinder( this, contentUiMapper ) );
+         adapter.setViewBinder( new TaskListItemViewBinder( this,
+                                                            contentUiMapper ) );
          
          setListAdapter( adapter );
       }

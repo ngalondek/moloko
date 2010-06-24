@@ -12,6 +12,9 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff7" mandatory="false" name="due">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="37b91e:12968a49c0d:-7fee" mandatory="true" name="has_due_time">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff6" mandatory="true" name="added">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>

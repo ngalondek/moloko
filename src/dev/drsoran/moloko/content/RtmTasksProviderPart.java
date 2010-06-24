@@ -27,9 +27,9 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { RawTasks._ID, RawTasks.DUE_DATE, RawTasks.ADDED_DATE,
-    RawTasks.COMPLETED_DATE, RawTasks.DELETED_DATE, RawTasks.PRIORITY,
-    RawTasks.POSTPONED, RawTasks.ESTIMATE };
+   { RawTasks._ID, RawTasks.DUE_DATE, RawTasks.HAS_DUE_TIME,
+    RawTasks.ADDED_DATE, RawTasks.COMPLETED_DATE, RawTasks.DELETED_DATE,
+    RawTasks.PRIORITY, RawTasks.POSTPONED, RawTasks.ESTIMATE };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -54,6 +54,8 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          values.put( RawTasks.DUE_DATE, task.getDue().getTime() );
       else
          values.putNull( RawTasks.DUE_DATE );
+      
+      values.put( RawTasks.HAS_DUE_TIME, task.getHasDueTime() );
       
       if ( task.getAdded() != null )
          values.put( RawTasks.ADDED_DATE, task.getAdded().getTime() );
@@ -139,7 +141,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          
          task = new RtmTask( c.getString( COL_INDICES.get( RawTasks._ID ) ),
                              due,
-                             due != null ? 1 : 0,
+                             c.getInt( COL_INDICES.get( RawTasks.HAS_DUE_TIME ) ),
                              new Date( c.getLong( COL_INDICES.get( RawTasks.ADDED_DATE ) ) ),
                              completed,
                              deleted,
@@ -167,6 +169,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + RawTasks._ID
          + " INTEGER NOT NULL, " + RawTasks.DUE_DATE + " INTEGER, "
+         + RawTasks.HAS_DUE_TIME + " INTEGER NOT NULL DEFAULT 0, "
          + RawTasks.ADDED_DATE + " INTEGER NOT NULL, "
          + RawTasks.COMPLETED_DATE + " INTEGER, " + RawTasks.DELETED_DATE
          + " INTEGER, " + RawTasks.PRIORITY + " CHAR(1) NOT NULL DEFAULT 'n', "

@@ -357,6 +357,14 @@ public class Rtm
       public final static String DUE_DATE = "due";
       
       /**
+       * Indicates if the task has an explicit due time and not only a due date
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String HAS_DUE_TIME = "has_due_time";
+      
+      /**
        * The date when the task was added
        * <P>
        * Type: INTEGER(long)

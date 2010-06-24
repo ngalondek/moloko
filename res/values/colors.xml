@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<color name="tasklists_listitem_numtasks_bgnd_fill">#FFE0E0E0</color>
+	<color name="tasklists_listitem_numtasks_bgnd_stroke">#FFC4C4C4</color>
 	<color name="priority_none">@android:color/transparent</color>
-	<color name="priority_1">#EA5200</color>
-	<color name="priority_2">#0060BF</color>
-	<color name="priority_3">#359AFF</color>
+	<color name="priority_1">#FFEA5200</color>
+	<color name="priority_2">#FF0060BF</color>
+	<color name="priority_3">#FF359AFF</color>	
 </resources>

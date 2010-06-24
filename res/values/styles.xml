@@ -1,33 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<!-- ********* -->
+	<!-- TaskLists -->
+	<style
+		name="TaskListsItem" >
+		<item
+			name="android:background">@android:color/white</item>
+	</style>
+	<style
+		name="TaskListsItem.ListName.Normal"
+		parent="@android:style/TextAppearance.Medium">
+		<item
+			name="android:textColor">@android:color/black</item> 
+		<item
+			name="android:textStyle">bold</item>
+	</style>
+	<style
+		name="TaskListsItem.NumTasks.Normal"
+		parent="@android:style/TextAppearance.Medium">
+		<item
+			name="android:textColor">@android:color/black</item>
+	</style>
+
+	<!-- ********* -->
+	<!-- TasksList -->
 	<style
 		name="TasksList"
 		parent="@android:style/Widget.ListView">
 		<item
 			name="android:listSelector">@drawable/taskslist_listitem_sel_bgnd</item>
-	</style>
-	
+	</style>	
 	<style
 		name="TasksListItem" >
 		<item
 			name="android:background">@drawable/taskslist_listitem</item>
-	</style>
-	
-		
+	</style>			
 	<style
 		name="TasksListItem.DescriptionText.Normal"
 		parent="@android:style/TextAppearance.Medium">
 		<item
 			name="android:textColor">@android:color/black</item> 
-	</style>	
-	
+	</style>		
 	<style
 		name="TasksListItem.ListName"
 		parent="@android:style/TextAppearance.Small">
 		<item
 			name="android:textStyle">bold</item>
-	</style>
-	
+	</style>	
 	<style
 		name="TasksListItem.DueDate"
 		parent="@android:style/TextAppearance.Small">

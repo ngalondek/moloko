@@ -11,10 +11,10 @@
       android:background="@android:color/transparent"
       android:layout_width="wrap_content"
       android:layout_height="fill_parent"
-      android:layout_marginTop="1px"
-      android:layout_marginBottom="1px"
-      android:minWidth="5px"
-      android:maxWidth="5px"
+      android:layout_marginTop="1sp"
+      android:layout_marginBottom="1sp"
+      android:minWidth="5sp"
+      android:maxWidth="5sp"
       android:enabled="false"      
       android:focusable="false"
       android:text=""/>
@@ -37,8 +37,8 @@
 	      android:layout_width="wrap_content"
 	      android:layout_height="wrap_content"
 	      android:text="TaskSeries.task_desc"
-	      android:paddingTop="10px"
-	      android:paddingLeft="10px"
+	      android:paddingTop="10sp"
+	      android:paddingLeft="10sp"
 	      android:layout_toRightOf="@id/taskslist_listitem_check"/>
 	      
 		<TextView
@@ -50,8 +50,8 @@
 	      android:layout_toRightOf="@id/taskslist_listitem_check"
 	      android:layout_below="@id/taskslist_listitem_desc"
 	      android:layout_alignLeft="@id/taskslist_listitem_desc"
-	      android:paddingTop="10px"
-	      android:paddingLeft="10px" />
+	      android:paddingTop="10sp"
+	      android:paddingLeft="10sp" />
 	      
 	   <TextView
 	      android:id="@+id/taskslist_listitem_due_date"
@@ -59,10 +59,9 @@
 	      android:layout_width="fill_parent"
 	      android:layout_height="wrap_content"
 	      android:text="due_date"      
-	      android:paddingRight="3px"
+	      android:paddingRight="3sp"
 	      android:layout_alignBaseline="@id/taskslist_listitem_list_name"
 	      android:layout_toRightOf="@id/taskslist_listitem_list_name"
 	      android:gravity="right" />  	
 	</RelativeLayout>
-
 </LinearLayout>

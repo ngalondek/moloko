@@ -101,9 +101,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
          if ( prefs != null )
          {
             apiKeyEdit.setText( prefs.getString( getString( R.string.auth_pref_api_key_key ),
-                                                 "" ) );
+                                                 "4070cf4b39d83778df99e7b988539cb7" ) );
             sharedSecrectEdit.setText( prefs.getString( getString( R.string.auth_pref_api_shared_secret_key ),
-                                                        "" ) );
+                                                        "8d263cfe92b542fa" ) );
          }
       }
       

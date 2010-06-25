@@ -20,6 +20,7 @@ import com.mdt.rtm.data.RtmLists;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class RtmListsProviderPart extends AbstractRtmProviderPart
@@ -29,7 +30,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Lists._ID, Lists.LIST_NAME };
+   { Lists._ID, Lists.LIST_NAME, Lists.LIST_DELETED, Lists.LOCKED, Lists.ARCHIVED,
+    Lists.POSITION, Lists.SMART, Lists.FILTER };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -60,10 +62,20 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          
          if ( c.getCount() > 0 )
          {
+            RtmSmartFilter filter = null;
+            
+            if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
+               filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
+            
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
                final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
-                                                 c.getString( COL_INDICES.get( Lists.LIST_NAME ) ) );
+                                                 c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
+                                                 c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),
+                                                 c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
+                                                 c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
+                                                 c.getInt( COL_INDICES.get( Lists.POSITION ) ),
+                                                 filter );
                lists.add( list );
             }
          }
@@ -91,7 +103,24 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       if ( withId )
          values.put( Rtm.Lists._ID, list.getId() );
       
-      values.put( Rtm.Lists.LIST_NAME, list.getName() );
+      values.put( Lists.LIST_NAME, list.getName() );
+      values.put( Lists.LIST_DELETED, list.getDeleted() );
+      values.put( Lists.LOCKED, list.getLocked() );
+      values.put( Lists.ARCHIVED, list.getArchived() );
+      values.put( Lists.POSITION, list.getPosition() );
+      
+      final RtmSmartFilter filter = list.getSmartFilter();
+      
+      if ( filter != null )
+      {
+         values.put( Lists.SMART, 1 );
+         values.put( Lists.FILTER, filter.getFilterString() );
+      }
+      else
+      {
+         values.put( Lists.SMART, 0 );
+         values.putNull( Lists.FILTER );
+      }
       
       return values;
    }
@@ -143,7 +172,12 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Lists._ID
-         + " INTEGER NOT NULL, " + Lists.LIST_NAME + " NOTE_TEXT, "
+         + " INTEGER NOT NULL, " + Lists.LIST_NAME + " TEXT NOT NULL, "
+         + Lists.LIST_DELETED + " INTEGER NOT NULL DEFAULT 0, " + Lists.LOCKED
+         + " INTEGER NOT NULL DEFAULT 0, " + Lists.ARCHIVED
+         + " INTEGER NOT NULL DEFAULT 0, " + Lists.POSITION
+         + " INTEGER NOT NULL DEFAULT 0, " + Lists.SMART
+         + " INTEGER NOT NULL DEFAULT 0, " + Lists.FILTER + " TEXT, "
          + "CONSTRAINT PK_LISTS PRIMARY KEY ( \"" + Lists._ID + "\" ) );" );
       
       // Trigger: If a list gets deleted, move all contained tasks to the
@@ -153,14 +187,14 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          + " = ( SELECT " + Lists._ID + " FROM " + path + " WHERE "
          + Lists.LIST_NAME + " like 'Inbox' ); END;" );
       
-      // Trigger: The Inbox list should always exist and cannot be
+      // Trigger: A locked list should always exist and cannot be
       // deleted.
       db.execSQL( "CREATE TRIGGER "
          + path
-         + "_inbox_must_survive BEFORE DELETE ON "
+         + "_locked_must_survive BEFORE DELETE ON "
          + path
-         + " BEGIN SELECT RAISE ( ABORT, 'List Inbox must always exist' ) WHERE EXISTS ( SELECT 1 FROM "
-         + path + " WHERE old." + Lists.LIST_NAME + " like 'Inbox' ); END;" );
+         + " BEGIN SELECT RAISE ( ABORT, 'A locked list must always exist' ) WHERE EXISTS ( SELECT 1 FROM "
+         + path + " WHERE old." + Lists.LOCKED + " != 0 ); END;" );
    }
    
 

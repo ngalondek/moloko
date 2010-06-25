@@ -19,7 +19,7 @@
       <!-- Activities -->
 	  <activity
          android:label="@string/app_name"
-		   android:name=".main.taskslist.TasksListActivity">
+		   android:name=".activities.TasksListActivity">
 		   <intent-filter>
          <action
 				  android:name="android.intent.action.MAIN" />
@@ -38,7 +38,7 @@
       </activity>
       <activity
          android:label="@string/app_tasklists"
-         android:name=".main.lists.TaskListsActivity">         
+         android:name=".activities.TaskListsActivity">         
          <intent-filter>
             <!-- Show all lists of tasks -->
             <action

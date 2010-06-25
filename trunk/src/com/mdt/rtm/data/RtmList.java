@@ -34,6 +34,7 @@ import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class RtmList extends RtmData implements
@@ -70,32 +71,68 @@ public class RtmList extends RtmData implements
    
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
-   private String id;
+   private final String id;
    
-   private String name;
+   private final String name;
+   
+   private final int deleted;
+   
+   private final int locked;
+   
+   private final int archived;
+   
+   private final int position;
+   
+   private final RtmSmartFilter smartFilter;
    
    
 
-   public RtmList( String id, String name )
+   public RtmList( String id, String name, int deleted, int locked,
+      int archived, int position, RtmSmartFilter smartFilter )
    {
       this.id = id;
       this.name = name;
+      this.deleted = deleted;
+      this.locked = locked;
+      this.archived = archived;
+      this.position = position;
+      this.smartFilter = smartFilter;
    }
    
 
 
    public RtmList( Element elt )
    {
-      id = elt.getAttribute( "id" );
-      name = elt.getAttribute( "name" );
+      this.id = elt.getAttribute( "id" );
+      this.name = elt.getAttribute( "name" );
+      this.deleted = Integer.parseInt( elt.getAttribute( "deleted" ) );
+      this.locked = Integer.parseInt( elt.getAttribute( "locked" ) );
+      this.archived = Integer.parseInt( elt.getAttribute( "archived" ) );
+      this.position = Integer.parseInt( elt.getAttribute( "position" ) );
+      
+      final Element filter = child( elt, "filter" );
+      
+      if ( filter != null )
+      {
+         this.smartFilter = new RtmSmartFilter( filter );
+      }
+      else
+      {
+         this.smartFilter = null;
+      }
    }
    
 
 
    public RtmList( Parcel source )
    {
-      id = source.readString();
-      name = source.readString();
+      this.id = source.readString();
+      this.name = source.readString();
+      this.deleted = source.readInt();
+      this.locked = source.readInt();
+      this.archived = source.readInt();
+      this.position = source.readInt();
+      this.smartFilter = source.readParcelable( null );
    }
    
 
@@ -114,6 +151,41 @@ public class RtmList extends RtmData implements
    
 
 
+   public int getDeleted()
+   {
+      return deleted;
+   }
+   
+
+
+   public int getLocked()
+   {
+      return locked;
+   }
+   
+
+
+   public int getArchived()
+   {
+      return archived;
+   }
+   
+
+
+   public int getPosition()
+   {
+      return position;
+   }
+   
+
+
+   public RtmSmartFilter getSmartFilter()
+   {
+      return smartFilter;
+   }
+   
+
+
    public int describeContents()
    {
       return 0;
@@ -125,6 +197,11 @@ public class RtmList extends RtmData implements
    {
       dest.writeString( id );
       dest.writeString( name );
+      dest.writeInt( deleted );
+      dest.writeInt( locked );
+      dest.writeInt( archived );
+      dest.writeInt( position );
+      dest.writeParcelable( smartFilter, 0 );
    }
    
 

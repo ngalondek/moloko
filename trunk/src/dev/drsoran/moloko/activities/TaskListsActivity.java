@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.main.lists;
+package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -9,7 +9,7 @@ public class Rtm
    public static final String AUTHORITY = "dev.drsoran.provider.Rtm";
    
    
-   protected static interface ListColumns
+   protected static interface ListBaseColumns
    {
       /**
        * The name of the list
@@ -18,6 +18,62 @@ public class Rtm
        * </P>
        */
       public final static String LIST_NAME = "list_name";
+   }
+   
+
+   protected static interface ListColumns extends ListBaseColumns
+   {
+      /**
+       * Indicates if the list is deleted.
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
+       */
+      public final static String LIST_DELETED = "list_deleted";
+      
+      /**
+       * Indicates if the list is locked.
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
+       */
+      public final static String LOCKED = "locked";
+      
+      /**
+       * Indicates if the list is archived.
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
+       */
+      public final static String ARCHIVED = "archived";
+      
+      /**
+       * Determines the list ordering
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String POSITION = "position";
+      
+      /**
+       * Indicates if the list is a smart list
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
+       */
+      public final static String SMART = "smart";
+      
+      /**
+       * The smart filer for this list
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String FILTER = "filter";
    }
    
 
@@ -442,7 +498,7 @@ public class Rtm
    }
    
 
-   public static final class Tasks implements BaseColumns, ListColumns,
+   public static final class Tasks implements BaseColumns, ListBaseColumns,
             TaskSeriesColumns, RawTaskColumns, LocationColumns
    {
       public final static String PATH = "tasks";

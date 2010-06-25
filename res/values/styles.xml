@@ -46,6 +46,10 @@
 		parent="@android:style/TextAppearance.Small">
 		<item
 			name="android:textStyle">bold</item>
+	   <item
+         name="android:textColor">@color/taskslist_listitem_listname_text</item>
+      <item
+         name="android:background">@android:color/transparent</item>
 	</style>	
 	<style
 		name="TasksListItem.DueDate"

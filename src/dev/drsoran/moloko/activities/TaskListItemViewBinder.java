@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.main.taskslist;
+package dev.drsoran.moloko.activities;
 
 import android.app.ListActivity;
 import android.database.Cursor;
@@ -8,6 +8,7 @@ import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -22,9 +23,13 @@ import dev.drsoran.provider.Rtm.Tasks;
 
 public final class TaskListItemViewBinder implements ViewBinder
 {
+   public final static int NO_CLICKABLE_LIST_NAME = 0x1;
+   
    private final ListActivity context;
    
    private final int DESCRIPTION;
+   
+   private final int LIST_NAME;
    
    private final int DUE_DATE;
    
@@ -34,20 +39,24 @@ public final class TaskListItemViewBinder implements ViewBinder
    
    private final int COMPLETED;
    
+   private final int flags;
+   
    
 
-   public TaskListItemViewBinder( ListActivity context, ContentUiMapper mapper )
-      throws NullPointerException
+   public TaskListItemViewBinder( ListActivity context, ContentUiMapper mapper,
+      int flags ) throws NullPointerException
    {
       if ( context == null || mapper == null )
          throw new NullPointerException();
       
       this.context = context;
       this.DESCRIPTION = mapper.UI_COL_INDICES.get( Tasks.TASKSERIES_NAME );
+      this.LIST_NAME = mapper.UI_COL_INDICES.get( Tasks.LIST_NAME );
       this.DUE_DATE = mapper.UI_COL_INDICES.get( Tasks.DUE_DATE );
       this.HAS_DUE_TIME = 1;
       this.PRIORITY = mapper.UI_COL_INDICES.get( Tasks.PRIORITY );
       this.COMPLETED = mapper.UI_COL_INDICES.get( Tasks.COMPLETED_DATE );
+      this.flags = flags;
    }
    
 
@@ -76,7 +85,7 @@ public final class TaskListItemViewBinder implements ViewBinder
                handled = true;
             }
             
-            // Make underline if overdue
+            // Make underline and bold if overdue
             else
             {
                final Time dueTime = new Time();
@@ -88,6 +97,7 @@ public final class TaskListItemViewBinder implements ViewBinder
                   final SpannableString content = new SpannableString( cursor.getString( columnIndex ) );
                   
                   content.setSpan( new UnderlineSpan(), 0, content.length(), 0 );
+                  taskDesc.setTypeface( Typeface.DEFAULT_BOLD );
                   taskDesc.setText( content );
                   
                   handled = true;
@@ -96,6 +106,17 @@ public final class TaskListItemViewBinder implements ViewBinder
          }
          
          return handled;
+      }
+      
+      else if ( columnIndex == LIST_NAME
+         && ( flags & NO_CLICKABLE_LIST_NAME ) == 0 )
+      {
+         // list name
+         final Button listNameBtn = (Button) view;
+         listNameBtn.setText( cursor.getString( columnIndex ) );
+         listNameBtn.setOnClickListener( (OnClickListener) context );
+         
+         return true;
       }
       
       else if ( columnIndex == DUE_DATE )
@@ -111,13 +132,16 @@ public final class TaskListItemViewBinder implements ViewBinder
             final long dueMillis = cursor.getLong( columnIndex );
             final boolean hasDueTime = cursor.getInt( HAS_DUE_TIME ) != 0;
             
+            // Today
             if ( DateUtils.isToday( dueMillis ) )
             {
+               // If it has a time, we show the time
                if ( hasDueTime )
                   dueText = DateUtils.formatDateTime( context,
                                                       dueMillis,
                                                       DateUtils.FORMAT_SHOW_TIME );
                else
+                  // We only show the 'Today' phrase
                   dueText = context.getString( R.string.phr_today );
             }
             else
@@ -125,18 +149,36 @@ public final class TaskListItemViewBinder implements ViewBinder
                final Time dueTime = new Time();
                dueTime.set( dueMillis );
                
-               // If in the same week
-               if ( now.year == dueTime.year
-                  && now.getWeekNumber() == dueTime.getWeekNumber() )
+               // If it is the same year
+               if ( dueTime.year == now.year )
                {
-                  dueText = DateUtils.getRelativeTimeSpanString( dueMillis,
-                                                                 System.currentTimeMillis(),
-                                                                 DateUtils.WEEK_IN_MILLIS,
-                                                                 DateUtils.FORMAT_SHOW_WEEKDAY )
-                                     .toString();
+                  // If the same week and in the future
+                  if ( now.getWeekNumber() == dueTime.getWeekNumber()
+                     && dueTime.after( now ) )
+                  {
+                     // we only show the week day
+                     dueText = DateUtils.getRelativeTimeSpanString( dueMillis,
+                                                                    System.currentTimeMillis(),
+                                                                    DateUtils.WEEK_IN_MILLIS,
+                                                                    DateUtils.FORMAT_SHOW_WEEKDAY )
+                                        .toString();
+                  }
+                  
+                  // Not the same week or same week but in the past
+                  else
+                  {
+                     // we show the date but w/o year
+                     dueText = DateUtils.formatDateTime( context,
+                                                         dueMillis,
+                                                         DateUtils.FORMAT_SHOW_DATE
+                                                            | DateUtils.FORMAT_NO_YEAR );
+                  }
                }
+               
+               // Not the same year
                else
                {
+                  // we show the full date with year
                   dueText = DateUtils.formatDateTime( context,
                                                       dueMillis,
                                                       DateUtils.FORMAT_SHOW_DATE );

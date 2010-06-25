@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.main.taskslist;
+package dev.drsoran.moloko.activities;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -8,14 +8,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.main.lists.TaskListsActivity;
 import dev.drsoran.moloko.util.ContentUiMapper;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-public class TasksListActivity extends ListActivity
+public class TasksListActivity extends ListActivity implements OnClickListener
 {
    private final static String TAG = TasksListActivity.class.getSimpleName();
    
@@ -38,7 +40,7 @@ public class TasksListActivity extends ListActivity
                                                                                new int[]
                                                                                {
                                                                                 R.id.taskslist_listitem_desc,
-                                                                                R.id.taskslist_listitem_list_name,
+                                                                                R.id.taskslist_listitem_btn_list_name,
                                                                                 R.id.taskslist_listitem_due_date,
                                                                                 R.id.taskslist_listitem_priority,
                                                                                 R.id.taskslist_listitem_check } );
@@ -95,6 +97,24 @@ public class TasksListActivity extends ListActivity
    
 
 
+   @Override
+   public void onClick( View v )
+   {
+      // List name has been clicked
+      if ( v.getId() == R.id.taskslist_listitem_btn_list_name )
+      {
+         final Button listNameBtn = (Button) v;
+         
+         final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                           Tasks.CONTENT_URI );
+         intent.putExtra( Tasks.LIST_NAME, listNameBtn.getText() );
+         
+         startActivity( intent );
+      }
+   }
+   
+
+
    private final boolean addOptionsMenuIntents( Menu menu )
    {
       boolean ok = true;
@@ -125,7 +145,9 @@ public class TasksListActivity extends ListActivity
    {
       String selection = null;
       
-      if ( configuration.containsKey( Tasks.LIST_NAME ) )
+      boolean hasListName = configuration.containsKey( Tasks.LIST_NAME );
+      
+      if ( hasListName )
          selection = Tasks.LIST_NAME + " = '"
             + configuration.getString( Tasks.LIST_NAME ) + "'";
       
@@ -133,7 +155,8 @@ public class TasksListActivity extends ListActivity
                                      contentUiMapper.PROJECTION,
                                      selection,
                                      null,
-                                     Tasks.PRIORITY + " ASC" );
+                                     Tasks.PRIORITY + ", "
+                                        + Tasks.TASKSERIES_NAME );
       
       // TODO: Handle null cursor. Show error?
       if ( c != null )
@@ -144,10 +167,20 @@ public class TasksListActivity extends ListActivity
                                                                       contentUiMapper.UI_COLUMNS,
                                                                       contentUiMapper.RESSOURCE_IDS );
          
+         int flags = 0x0;
+         
+         if ( hasListName )
+            // If we have been started with a concrete list name, then
+            // we do not need to click it. Otherwise we would call the
+            // same list again.
+            flags |= TaskListItemViewBinder.NO_CLICKABLE_LIST_NAME;
+         
          adapter.setViewBinder( new TaskListItemViewBinder( this,
-                                                            contentUiMapper ) );
+                                                            contentUiMapper,
+                                                            flags ) );
          
          setListAdapter( adapter );
       }
    }
+   
 }

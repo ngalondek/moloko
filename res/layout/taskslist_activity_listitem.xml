@@ -25,7 +25,7 @@
 	   android:layout_height="wrap_content">
 	   
 	   <CheckBox 
-          android:id="@+id/taskslist_listitem_check"
+         android:id="@+id/taskslist_listitem_check"
 	      android:layout_height="wrap_content"
 	      android:layout_width="wrap_content"
 	      android:layout_toRightOf="@id/taskslist_listitem_priority"           
@@ -36,32 +36,31 @@
 	      style="@style/TasksListItem.DescriptionText.Normal"	     
 	      android:layout_width="wrap_content"
 	      android:layout_height="wrap_content"
-	      android:text="TaskSeries.task_desc"
-	      android:paddingTop="10sp"
-	      android:paddingLeft="10sp"
-	      android:layout_toRightOf="@id/taskslist_listitem_check"/>
-	      
-		<TextView
-	      android:id="@+id/taskslist_listitem_list_name"
+	      android:layout_toRightOf="@id/taskslist_listitem_check"
+	      android:layout_marginTop="7sp"
+	      android:layout_marginLeft="10sp"
+	      android:text="task_desc"/>
+
+		<Button
+	      android:id="@+id/taskslist_listitem_btn_list_name"
 	      style="@style/TasksListItem.ListName"
 	      android:layout_width="wrap_content"
-	      android:layout_height="wrap_content"
-	      android:text="TaskSeries.list.name"
+	      android:layout_height="wrap_content"	      
 	      android:layout_toRightOf="@id/taskslist_listitem_check"
 	      android:layout_below="@id/taskslist_listitem_desc"
 	      android:layout_alignLeft="@id/taskslist_listitem_desc"
-	      android:paddingTop="10sp"
-	      android:paddingLeft="10sp" />
+	      android:layout_marginTop="10sp"
+	      android:text="list_name"/>
 	      
 	   <TextView
 	      android:id="@+id/taskslist_listitem_due_date"
 	      style="@style/TasksListItem.DueDate"
 	      android:layout_width="fill_parent"
 	      android:layout_height="wrap_content"
-	      android:text="due_date"      
-	      android:paddingRight="3sp"
-	      android:layout_alignBaseline="@id/taskslist_listitem_list_name"
-	      android:layout_toRightOf="@id/taskslist_listitem_list_name"
+	      android:layout_alignBaseline="@id/taskslist_listitem_btn_list_name"
+         android:layout_toRightOf="@id/taskslist_listitem_btn_list_name"         
+	      android:text="due_date"   
+	      android:paddingRight="5sp"
 	      android:gravity="right" />  	
 	</RelativeLayout>
 </LinearLayout>

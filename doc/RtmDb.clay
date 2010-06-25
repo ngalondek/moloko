@@ -121,6 +121,24 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe1" mandatory="true" name="list_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="1181493:1296ebc05fe:-7fee" mandatory="true" name="list_deleted">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="1181493:1296ebc05fe:-7fed" mandatory="true" name="locked">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="1181493:1296ebc05fe:-7fec" mandatory="true" name="archived">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="1181493:1296ebc05fe:-7feb" mandatory="true" name="position">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="1181493:1296ebc05fe:-7fea" mandatory="true" name="smart">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="1181493:1296ebc05fe:-7fe9" mandatory="false" name="filter">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
 </column-list>
 <primary-key id="190abb9:128ce294477:-7fe7" name="PK_LISTS">
 <primary-key-column name="_id"/>
@@ -186,7 +204,7 @@
 <target-terminal x="96" y="4"/>
 </fk-figure>
 <table-figure refid="5122f2:128cb6194ba:-7f59" x="541" y="374"/>
-<table-figure refid="190abb9:128ce294477:-7fe8" x="282" y="70"/>
+<table-figure refid="190abb9:128ce294477:-7fe8" x="281" y="18"/>
 <table-figure refid="190abb9:128ce294477:-7f35" x="8" y="235"/>
 <table-figure refid="163c031:128fe8bf79f:-7f97" x="550" y="165"/>
 </diagram>

@@ -95,14 +95,14 @@ public class RtmProvider extends ContentProvider
       mutableParts.addAll( Arrays.asList( new IRtmProviderPart[]
       { new RtmTasksProviderPart( dbHelper ),
        new RtmTaskSeriesProviderPart( dbHelper ),
-       new RtmListsProviderPart( dbHelper ),
-       new TagsProviderPart( dbHelper ),
+       new RtmListsProviderPart( dbHelper ), new TagsProviderPart( dbHelper ),
        new RtmNotesProviderPart( dbHelper ),
        new RtmLocationsProviderPart( dbHelper ) } ) );
       
       parts.addAll( mutableParts );
       parts.addAll( Arrays.asList( new IProviderPart[]
-      { new TasksProviderPart( dbHelper ) } ) );
+      { new TasksProviderPart( dbHelper ),
+       new ListOverviewsProviderPart( dbHelper ) } ) );
       
       return true;
    }

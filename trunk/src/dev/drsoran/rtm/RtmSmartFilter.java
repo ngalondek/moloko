@@ -71,7 +71,6 @@ public class RtmSmartFilter extends RtmData
    
 
 
-   @Override
    public int describeContents()
    {
       return 0;
@@ -79,7 +78,6 @@ public class RtmSmartFilter extends RtmData
    
 
 
-   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( filter );

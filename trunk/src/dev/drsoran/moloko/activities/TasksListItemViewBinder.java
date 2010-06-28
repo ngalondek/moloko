@@ -21,7 +21,7 @@ import dev.drsoran.moloko.util.ContentUiMapper;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
-public final class TaskListItemViewBinder implements ViewBinder
+public final class TasksListItemViewBinder implements ViewBinder
 {
    public final static int NO_CLICKABLE_LIST_NAME = 0x1;
    
@@ -43,7 +43,7 @@ public final class TaskListItemViewBinder implements ViewBinder
    
    
 
-   public TaskListItemViewBinder( ListActivity context, ContentUiMapper mapper,
+   public TasksListItemViewBinder( ListActivity context, ContentUiMapper mapper,
       int flags ) throws NullPointerException
    {
       if ( context == null || mapper == null )

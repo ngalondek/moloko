@@ -104,6 +104,36 @@ public class Rtm
    }
    
 
+   public static final class ListOverviews implements BaseColumns, ListColumns
+   {
+      public final static String PATH = "list_overviews";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing a directory of list overviews.
+       */
+      public final static String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.list_overview";
+      
+      /**
+       * The number of tasks in the list
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String TASKS_COUNT = "tasks_count";
+      
+      /**
+       * The default sort order for this table
+       */
+      public final static String DEFAULT_SORT_ORDER = POSITION + ", " + LIST_NAME;
+   }
+   
+
    protected static interface NoteColumns
    {
       /**

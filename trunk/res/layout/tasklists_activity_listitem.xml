@@ -25,6 +25,6 @@
        android:layout_marginLeft="5sp"
        android:layout_marginRight="5sp"
        android:layout_centerVertical="true"
-       android:text="1"
+       android:text="num_tasks"
        android:gravity="center"/>	
 </LinearLayout>

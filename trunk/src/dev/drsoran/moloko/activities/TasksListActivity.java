@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.ContentUiMapper;
+import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -97,7 +98,6 @@ public class TasksListActivity extends ListActivity implements OnClickListener
    
 
 
-   @Override
    public void onClick( View v )
    {
       // List name has been clicked
@@ -127,7 +127,8 @@ public class TasksListActivity extends ListActivity implements OnClickListener
          
          if ( ok )
          {
-            item.setIntent( new Intent( this, TaskListsActivity.class ) );
+            item.setIntent( new Intent( Intent.ACTION_VIEW,
+                                        ListOverviews.CONTENT_URI ) );
          }
          else
          {
@@ -173,11 +174,11 @@ public class TasksListActivity extends ListActivity implements OnClickListener
             // If we have been started with a concrete list name, then
             // we do not need to click it. Otherwise we would call the
             // same list again.
-            flags |= TaskListItemViewBinder.NO_CLICKABLE_LIST_NAME;
+            flags |= TasksListItemViewBinder.NO_CLICKABLE_LIST_NAME;
          
-         adapter.setViewBinder( new TaskListItemViewBinder( this,
-                                                            contentUiMapper,
-                                                            flags ) );
+         adapter.setViewBinder( new TasksListItemViewBinder( this,
+                                                             contentUiMapper,
+                                                             flags ) );
          
          setListAdapter( adapter );
       }

@@ -2,6 +2,8 @@
 <resources>
 	<color name="tasklists_listitem_numtasks_bgnd_fill">#FFE0E0E0</color>
 	<color name="tasklists_listitem_numtasks_bgnd_stroke">#FFC4C4C4</color>
+	<color name="tasklists_listitem_numtasks_bgnd_smart_fill">#FF81B4EB</color>
+   <color name="tasklists_listitem_numtasks_bgnd_smart_stroke">#FF8185EB</color>
 	
 	<color name="taskslist_listitem_listname_text">#FFC9C9C9</color>
    

@@ -1,26 +1,21 @@
 package dev.drsoran.moloko.activities;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.CursorJoiner;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
-import android.widget.SimpleAdapter;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
-import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.moloko.util.ContentUiMapper;
+import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -30,18 +25,27 @@ public class TaskListsActivity extends ListActivity implements
    @SuppressWarnings( "unused" )
    private final static String TAG = TaskListsActivity.class.getSimpleName();
    
-   private final static String TASKS_COUNT = "tasks_count";
-   
-   private final static String[] PROJECTION_LISTS =
-   { Lists._ID, Lists.LIST_NAME };
-   
-   private final static String[] PROJECTION_TASKSERIES =
-   { TaskSeries._ID, TaskSeries.LIST_ID };
-   
-   private final static int[] RESSOURCE_IDS =
-   { R.id.tasklists_listitem_list_name, R.id.tasklists_listitem_num_tasks };
+   private final static ContentUiMapper contentUiMapper = new ContentUiMapper( new String[]
+                                                                               {
+                                                                                ListOverviews._ID,
+                                                                                ListOverviews.SMART,
+                                                                                ListOverviews.LIST_NAME,
+                                                                                ListOverviews.TASKS_COUNT },
+                                                                               new String[]
+                                                                               {
+                                                                                ListOverviews.LIST_NAME,
+                                                                                ListOverviews.TASKS_COUNT },
+                                                                               new int[]
+                                                                               {
+                                                                                R.id.tasklists_listitem_list_name,
+                                                                                R.id.tasklists_listitem_num_tasks } );
    
    private final int CTX_MENU_OPEN_LIST = 0;
+   
+   static
+   {
+      assert ( contentUiMapper.UI_COLUMNS.length == contentUiMapper.RESSOURCE_IDS.length );
+   }
    
    
 
@@ -102,7 +106,6 @@ public class TaskListsActivity extends ListActivity implements
    
 
 
-   @Override
    public void onItemClick( AdapterView< ? > parent,
                             View view,
                             int pos,
@@ -125,82 +128,26 @@ public class TaskListsActivity extends ListActivity implements
 
    private void queryLists()
    {
-      final Cursor listsCursor = getContentResolver().query( Lists.CONTENT_URI,
-                                                             PROJECTION_LISTS,
-                                                             null,
-                                                             null,
-                                                             Lists.DEFAULT_SORT_ORDER );
+      final Cursor c = managedQuery( ListOverviews.CONTENT_URI,
+                                     contentUiMapper.PROJECTION,
+                                     null,
+                                     null,
+                                     ListOverviews.DEFAULT_SORT_ORDER );
       
-      final Cursor taskSeriesCursor = getContentResolver().query( TaskSeries.CONTENT_URI,
-                                                                  PROJECTION_TASKSERIES,
-                                                                  null,
-                                                                  null,
-                                                                  TaskSeries.LIST_ID
-                                                                     + " ASC" );
-      
-      final CursorJoiner joiner = new CursorJoiner( listsCursor, new String[]
-      { Lists._ID }, taskSeriesCursor, new String[]
-      { TaskSeries.LIST_ID } );
-      
-      final HashMap< String, Integer > listItemsWithCount = new HashMap< String, Integer >();
-      String listName = null;
-      
-      for ( CursorJoiner.Result res : joiner )
+      // TODO: Handle null cursor. Show error?
+      if ( c != null )
       {
-         Integer count = null;
+         final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
+                                                                      R.layout.tasklists_activity_listitem,
+                                                                      c,
+                                                                      contentUiMapper.UI_COLUMNS,
+                                                                      contentUiMapper.RESSOURCE_IDS );
          
-         switch ( res )
-         {
-            case LEFT:
-               listName = listsCursor.getString( 1 );
-               count = new Integer( -1 );
-               break;
-            
-            case BOTH:
-               listName = listsCursor.getString( 1 );
-               count = listItemsWithCount.get( listName );
-               
-               if ( count == null )
-                  count = new Integer( 0 );
-               break;
-            
-            case RIGHT:
-               count = listItemsWithCount.get( listName );
-               
-               if ( count == null )
-                  count = new Integer( -1 );
-               break;
-         }
+         adapter.setViewBinder( new TaskListsItemViewBinder( this,
+                                                             contentUiMapper ) );
          
-         listItemsWithCount.put( listName, count + 1 );
+         setListAdapter( adapter );
       }
-      
-      final ArrayList< HashMap< String, String > > listItems = new ArrayList< HashMap< String, String > >();
-      
-      final Set< String > keys = listItemsWithCount.keySet();
-      
-      for ( String key : keys )
-      {
-         final HashMap< String, String > listItem = new HashMap< String, String >();
-         
-         listItem.put( Lists.LIST_NAME, key );
-         listItem.put( TASKS_COUNT, listItemsWithCount.get( key ).toString() );
-         
-         listItems.add( listItem );
-      }
-      
-      listsCursor.close();
-      taskSeriesCursor.close();
-      
-      final SimpleAdapter simpleAdapter = new SimpleAdapter( this,
-                                                             listItems,
-                                                             R.layout.tasklists_activity_listitem,
-                                                             new String[]
-                                                             { Lists.LIST_NAME,
-                                                              TASKS_COUNT },
-                                                             RESSOURCE_IDS );
-      
-      setListAdapter( simpleAdapter );
    }
    
 

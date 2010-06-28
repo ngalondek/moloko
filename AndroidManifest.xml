@@ -38,11 +38,17 @@
       </activity>
       <activity
          android:label="@string/app_tasklists"
-         android:name=".activities.TaskListsActivity">         
+         android:name=".activities.TaskListsActivity">
          <intent-filter>
-            <!-- Show all lists of tasks -->
+            <!-- Show an overview of task lists -->
             <action
                android:name="android.intent.action.VIEW" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.list_overview" />
+         </intent-filter>         
+         <intent-filter>
             <!-- Show all lists of tasks and let the user
                  pick one list. Returns the URI back.-->
             <action

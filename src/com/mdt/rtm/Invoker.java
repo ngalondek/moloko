@@ -56,6 +56,7 @@ import org.apache.http.protocol.RequestContent;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
+import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -306,7 +307,7 @@ public class Invoker
          // THINK: this method is deprecated, but the only way to get the body as a string, without consuming
          // the body input stream: the HttpMethodBase issues a warning but does not let you call the
          // "setResponseStream()" method!
-         final String responseBodyAsString = "";// EntityUtils.toString(response.getEntity());
+         final String responseBodyAsString = "";//EntityUtils.toString(response.getEntity());
          log.info( "  Invocation response:\r\n" + responseBodyAsString );
          final Document responseDoc = builder.parse( response.getEntity()
                                                              .getContent() );

@@ -33,34 +33,34 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpClientConnection;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.HttpGet;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpExecutionContext;
 import org.apache.http.protocol.HttpRequestExecutor;
 import org.apache.http.protocol.RequestConnControl;
 import org.apache.http.protocol.RequestContent;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
-import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import android.util.Log;
 
 
 /**
@@ -70,8 +70,7 @@ import org.xml.sax.SAXException;
  */
 public class Invoker
 {
-   
-   private static final Log log = LogFactory.getLog( "Invoker" );
+   private static final String TAG = Invoker.class.getSimpleName();
    
    private static final DocumentBuilder builder;
    static
@@ -87,7 +86,7 @@ public class Invoker
       }
       catch ( Exception exception )
       {
-         log.error( "Unable to construct a document builder", exception );
+         Log.e( TAG, "Unable to construct a document builder", exception );
          aBuilder = null;
       }
       builder = aBuilder;
@@ -139,8 +138,8 @@ public class Invoker
    {
       this.serviceRelativeUri = serviceRelativeUri;
       host = new HttpHost( serverHostName, serverPortNumber );
-      context = new HttpExecutionContext( null );
-      context.setAttribute( HttpExecutionContext.HTTP_TARGET_HOST, host );
+      context = new BasicHttpContext( null );
+      context.setAttribute( ExecutionContext.HTTP_TARGET_HOST, host );
       globalHttpParams = new BasicHttpParams();
       HttpProtocolParams.setVersion( globalHttpParams, HttpVersion.HTTP_1_1 );
       HttpProtocolParams.setContentCharset( globalHttpParams, ENCODING );
@@ -210,7 +209,7 @@ public class Invoker
                                                                                                 .append( "' on port number " )
                                                                                                 .append( host.getPort() )
                                                                                                 .append( ": cannot execute query" );
-         log.error( message, exception );
+         Log.e( TAG, message.toString(), exception );
          throw new ServiceInternalException( message.toString() );
       }
    }
@@ -236,7 +235,7 @@ public class Invoker
          catch ( Exception exception )
          {
             final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
-            log.error( message, exception );
+            Log.e( TAG, message.toString(), exception );
             throw new ServiceInternalException( message.toString() );
          }
       }
@@ -266,7 +265,7 @@ public class Invoker
          }
       }
       
-      log.debug( "Invoker running at " + new Date() );
+      Log.d( TAG, "Invoker running at " + new Date() );
       
       // We prepare the network socket-based connection
       prepareConnection();
@@ -293,22 +292,22 @@ public class Invoker
       Element result;
       try
       {
-         log.info( "Executing the method:" + methodUri );
+         Log.i( TAG, "Executing the method:" + methodUri );
          httpExecutor.preProcess( request, httpProcessor, context );
          response = httpExecutor.execute( request, connection, context );
          final int statusCode = response.getStatusLine().getStatusCode();
          if ( statusCode != HttpStatus.SC_OK )
          {
-            log.error( "Method failed: " + response.getStatusLine() );
+            Log.e( TAG, "Method failed: " + response.getStatusLine() );
             throw new ServiceInternalException( "method failed: "
                + response.getStatusLine() );
          }
          
-         // THINK: this method is deprecated, but the only way to get the body as a string, without consuming
+         // THINK: this method is depreciated, but the only way to get the body as a string, without consuming
          // the body input stream: the HttpMethodBase issues a warning but does not let you call the
          // "setResponseStream()" method!
-         final String responseBodyAsString = "";//EntityUtils.toString(response.getEntity());
-         log.info( "  Invocation response:\r\n" + responseBodyAsString );
+         final String responseBodyAsString = "";// EntityUtils.toString(response.getEntity());
+         Log.i( TAG, "  Invocation response:\r\n" + responseBodyAsString );
          final Document responseDoc = builder.parse( response.getEntity()
                                                              .getContent() );
          final Element wrapperElt = responseDoc.getDocumentElement();
@@ -401,10 +400,12 @@ public class Invoker
             }
             catch ( IOException exception )
             {
-               log.warn( new StringBuffer( "Could not close properly the socket connection to '" ).append( connection.getRemoteAddress() )
-                                                                                                  .append( "' on port " )
-                                                                                                  .append( connection.getRemotePort() ),
-                         exception );
+               Log.w( TAG,
+                      new StringBuffer( "Could not close properly the socket connection to '" ).append( connection.getRemoteAddress() )
+                                                                                               .append( "' on port " )
+                                                                                               .append( connection.getRemotePort() )
+                                                                                               .toString(),
+                      exception );
             }
          }
       }

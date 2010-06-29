@@ -21,12 +21,11 @@ package com.mdt.rtm.data;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 
 /**
@@ -35,6 +34,8 @@ import android.os.Parcelable;
  */
 public class RtmTask extends RtmData
 {
+   private static final String TAG = RtmTask.class.getSimpleName();
+   
    public static final Parcelable.Creator< RtmTask > CREATOR = new Parcelable.Creator< RtmTask >()
    {
       
@@ -51,8 +52,6 @@ public class RtmTask extends RtmData
       }
       
    };
-   
-   private static final Log log = LogFactory.getLog( "RtmTask" );
    
    private final String id;
    
@@ -97,7 +96,7 @@ public class RtmTask extends RtmData
             return new String( new char[]
             { '1' } );
          default :
-            log.error( "Unrecognized RTM task priority: '" + priority + "'" );
+            Log.e( TAG, "Unrecognized RTM task priority: '" + priority + "'" );
             return new String( new char[]
             { 'n' } );
       }
@@ -118,7 +117,7 @@ public class RtmTask extends RtmData
          case '1':
             return Priority.High;
          default :
-            log.error( "Unrecognized RTM task priority: '" + priority + "'" );
+            Log.e( TAG, "Unrecognized RTM task priority: '" + priority + "'" );
             return Priority.None;
       }
    }

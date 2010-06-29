@@ -63,12 +63,12 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          if ( c.getCount() > 0 )
          {
             RtmSmartFilter filter = null;
-            
-            if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
-               filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
-            
+
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
+               if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
+                  filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
+               
                final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
                                                  c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
                                                  c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),

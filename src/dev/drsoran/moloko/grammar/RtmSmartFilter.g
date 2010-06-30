@@ -8,28 +8,28 @@ options
 /* Parser rules */
 
 smartfilter
-	: operator ( operator )*
+	: operator ( OP_LOG_BIN operator )*
 	;
 	
 operator
-	: OP_LIST STRING
+	: OP_LIST
 	| OP_PRIORITY ( PRIORITY1 | PRIORITY2 | PRIORITY3 | PRIORITYN )
-	| OP_STATUS	  ( STATUS_COMPLETED | STATUS_INCOMPLETE )
+	| OP_STATUS ( STATUS_COMPLETED | STATUS_INCOMPLETE )
 	;
 
 
 
 /* Lexer rules */
 
-OP_LIST 		: 'list:';
+OP_LIST 		: 'list:' ( STRING | Q_STRING );
 
 OP_PRIORITY : 'priority:';
 
-	PRIORITY1 : '1';
+	PRIORITY1 : '1' | 'high';
 	
-	PRIORITY2 : '2';
+	PRIORITY2 : '2' | 'normal';
 	
-	PRIORITY3 : '3';
+	PRIORITY3 : '3' | 'low';
 	
 	PRIORITYN : 'none';
 
@@ -38,9 +38,13 @@ OP_STATUS 	: 'status:';
 	STATUS_COMPLETED  : 'completed';
 	
 	STATUS_INCOMPLETE : 'incomplete';
+	
+OP_LOG_BIN	: AND | OR;
 
+fragment
 AND 			: 'AND';
 
+fragment
 OR 			: 'OR';
 
 NOT 			: 'NOT';
@@ -59,17 +63,16 @@ FLOAT
     |   ('0'..'9')+ EXPONENT
     ;
 
-WS  :   ( '\t'
+WS  :   ( ' '
+		  | '\t'
         | '\r'
         | '\n'
         ) {$channel=HIDDEN;}
     ;
 
-STRING
-    :  '"' ~('\\'|'"')* '"'
-    |  ('a'..'z'| 'A'..'Z' | '0'..'9')+
-    ;
+Q_STRING : '"' ~('"')* '"';
+
+STRING : ~('"')+;
 
 fragment
 EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
-

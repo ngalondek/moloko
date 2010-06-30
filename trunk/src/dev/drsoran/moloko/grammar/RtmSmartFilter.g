@@ -3,27 +3,53 @@ grammar RtmSmartFilter;
 options
 {
    language=java;
+   output=AST;
 }
+
 
 /* Parser rules */
 
 smartfilter
-	: operator ( OP_LOG_BIN operator )*
+	: andExpression ( OR andExpression )* EOF
+	| '(' smartfilter ')'
+	;
+	
+andExpression
+	: unaryExpression ( AND unaryExpression )*
+	;
+
+unaryExpression
+	: NOT? expression
+	;
+	
+expression
+	: operator
 	;
 	
 operator
-	: OP_LIST
-	| OP_PRIORITY ( PRIORITY1 | PRIORITY2 | PRIORITY3 | PRIORITYN )
-	| OP_STATUS ( STATUS_COMPLETED | STATUS_INCOMPLETE )
+	: op_list
+	| op_priority
+   | op_status
 	;
 
+op_list
+	: OP_LIST
+	;
 
-
+op_priority
+	: OP_PRIORITY
+	;
+	
+op_status
+	: OP_STATUS
+	;
+	
+	
 /* Lexer rules */
 
-OP_LIST 		: 'list:' ( STRING | Q_STRING );
+OP_LIST : 'list:' ( STRING | Q_STRING );
 
-OP_PRIORITY : 'priority:';
+OP_PRIORITY : 'priority:' ( PRIORITY1 | PRIORITY2 | PRIORITY3 | PRIORITYN );
 
 	PRIORITY1 : '1' | 'high';
 	
@@ -33,25 +59,21 @@ OP_PRIORITY : 'priority:';
 	
 	PRIORITYN : 'none';
 
-OP_STATUS 	: 'status:';
+OP_STATUS : 'status:' ( STATUS_COMPLETED | STATUS_INCOMPLETE );
 
 	STATUS_COMPLETED  : 'completed';
 	
 	STATUS_INCOMPLETE : 'incomplete';
 	
-OP_LOG_BIN	: AND | OR;
+AND   : 'AND';
 
-fragment
-AND 			: 'AND';
+OR    : 'OR';
 
-fragment
-OR 			: 'OR';
+NOT 	: 'NOT';
 
-NOT 			: 'NOT';
+TRUE  : 'true';
 
-TRUE 			: 'true';
-
-FALSE 		: 'false';
+FALSE	: 'false';
 
 
 
@@ -72,7 +94,7 @@ WS  :   ( ' '
 
 Q_STRING : '"' ~('"')* '"';
 
-STRING : ~('"')+;
+STRING : ~('"' | ' ' | '(' | ')')+;
 
 fragment
 EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;

@@ -4,7 +4,6 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +19,7 @@ import dev.drsoran.provider.Rtm.Tasks;
 
 public class TasksListActivity extends ListActivity implements OnClickListener
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = TasksListActivity.class.getSimpleName();
    
    private final static ContentUiMapper contentUiMapper = new ContentUiMapper( new String[]
@@ -130,10 +130,18 @@ public class TasksListActivity extends ListActivity implements OnClickListener
             item.setIntent( new Intent( Intent.ACTION_VIEW,
                                         ListOverviews.CONTENT_URI ) );
          }
-         else
+      }
+      
+      if ( ok )
+      {
+         MenuItem item = menu.findItem( R.id.taskslist_menu_opt_smart_filter_test );
+         
+         ok = item != null;
+         
+         if ( ok )
          {
-            Log.e( TAG, getString( R.string.log_e_resource_not_found )
-               + ": taskslist_menu_opt_prefs" );
+            item.setIntent( new Intent( this,
+                                        RtmSmartFilterTestActivity.class ) );
          }
       }
       

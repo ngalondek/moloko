@@ -4,4 +4,7 @@
    <item
     	android:id="@+id/taskslist_menu_opt_lists"
     	android:title="@string/taskslist_menu_opt_lists_title"></item>
+   <item
+      android:id="@+id/taskslist_menu_opt_smart_filter_test"
+      android:title="RTM smart filter test"></item>
 </menu>

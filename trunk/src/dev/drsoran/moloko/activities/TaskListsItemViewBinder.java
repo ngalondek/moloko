@@ -7,7 +7,6 @@ import android.widget.TextView;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.ContentUiMapper;
-import dev.drsoran.provider.Rtm.ListOverviews;
 
 
 public final class TaskListsItemViewBinder implements ViewBinder

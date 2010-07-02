@@ -72,6 +72,11 @@
           android:name=".auth.RtmWebLoginActivity"
           android:label="@string/rtm_full"
           android:excludeFromRecents="true"/>
+          
+      <activity
+          android:name=".activities.RtmSmartFilterTestActivity"
+          android:label="Test RTM smart filter"
+          android:excludeFromRecents="true"/>
 		
 		<!-- Services -->	       
 		<service

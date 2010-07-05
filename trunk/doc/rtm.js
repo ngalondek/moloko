@@ -3286,11 +3286,11 @@ rg.reNow = /\bnow\b/i;
 rg.tom = /(today|tod|tomorrow|tom|tonight|ton|tmr|yesterday)/i;
 if (typeof is_safari == "undefined" || !is_safari)
 {
-   rg.zero = /([0-9]{1,4})(?:\-|\/|\.|\u5e74|\u6708|\u65e5)([0-9]{1,2})(?:\-|\/|\.|\u5e74|\u6708|\u65e5)*([0-9]{1,4})*/i
+   rg.fullDate = /([0-9]{1,4})(?:\-|\/|\.|\u5e74|\u6708|\u65e5)([0-9]{1,2})(?:\-|\/|\.|\u5e74|\u6708|\u65e5)*([0-9]{1,4})*/i
 }
 else
 {
-   rg.zero = new RegExp("([0-9]{1,4})(?:\\-|\\/|\\.|\u5E74|\u6708|\u65E5)([0-9]{1,2})(?:\\-|\\/|\\.|\u5E74|\u6708|\u65E5)*([0-9]{1,4})*", "i")
+   rg.fullDate = new RegExp("([0-9]{1,4})(?:\\-|\\/|\\.|\u5E74|\u6708|\u65E5)([0-9]{1,2})(?:\\-|\\/|\\.|\u5E74|\u6708|\u65E5)*([0-9]{1,4})*", "i")
 }
 rg.one = /(on)?\s*(([0-9]*)(?:st|th|rd|nd)*(?:\s|of|\-a|\-|,|\.)*(january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec)(?:\s|\-|\.)*([0-9]*))/i;
 rg.upcomingFormat = /(on)?\s*((january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec)(?:\s|,|\.|\-)*([0-9]+)(?:st|th|rd|nd)*(?:\s|,|\.|\-a|\-)*([0-9]*))/i;
@@ -3368,7 +3368,7 @@ rg.prototype.parseDueDate = function (J)
       AZ = rg.endofFormat.exec(J);
       if (!A2)
       {
-         H = rg.zero.exec(J)
+         H = rg.fullDate.exec(J)
       }
       BD = rg.one.exec(J);
       if (!BD)

@@ -3300,15 +3300,15 @@ rg.endofFormat = /end\s*of\s*(?:the)*\s*(week|w|month|m)/i;
 rg.dateBased = /(on)?\s*([0-9]+)(?:st|th|rd|nd)/i;
 if (typeof is_safari == "undefined" || !is_safari)
 {
-   rg.four = /(@|at|,)?\s*([0-9]+)(?::|\.|\u0020\u0068\u0020|\u6642|h)([0-9]+)(?:\u5206)?\s*(am|a|pm|p|\u4e0a|\u4e0b|\u5348\u524d|\u5348\u5f8c|\uc624\uc804|\uc624\ud6c4)?/i;
-   rg.five = /(@|at)?\s*([0-9]{3,4})\s*(a|p|\u4e0a|\u4e0b|\u5348\u524d|\u5348\u5f8c|\uc624\uc804|\uc624\ud6c4)?/i;
-   rg.six = /(@|at)?\s*([0-9]{1,2})\s*(a|p|\u4e0a|\u4e0b|\u5348\u524d|\u5348\u5f8c|\uc624\uc804|\uc624\ud6c4)?/i
+   rg.time_sep = /(@|at|,)?\s*([0-9]+)(?::|\.|\u0020\u0068\u0020|\u6642|h)([0-9]+)(?:\u5206)?\s*(am|a|pm|p|\u4e0a|\u4e0b|\u5348\u524d|\u5348\u5f8c|\uc624\uc804|\uc624\ud6c4)?/i;
+   rg.time_hhmm = /(@|at)?\s*([0-9]{3,4})\s*(a|p|\u4e0a|\u4e0b|\u5348\u524d|\u5348\u5f8c|\uc624\uc804|\uc624\ud6c4)?/i;
+   rg.time_hh = /(@|at)?\s*([0-9]{1,2})\s*(a|p|\u4e0a|\u4e0b|\u5348\u524d|\u5348\u5f8c|\uc624\uc804|\uc624\ud6c4)?/i
 }
 else
 {
-   rg.four = new RegExp("(@|at|,)?\\s*([0-9]+)(?::|.| h |\u6642|h)([0-9]+)(?:\u5206)?\\s*(am|a|pm|p|\u4E0A|\u4E0B|\u5348\u524D|\u5348\u5F8C|\uC624\uC804|\uC624\uD6C4)?", "i");
-   rg.five = new RegExp("(@|at)?\\s*([0-9]{3,4})\\s*(a|p|\u4E0A|\u4E0B|\u5348\u524D|\u5348\u5F8C|\uC624\uC804|\uC624\uD6C4)?", "i");
-   rg.six = new RegExp("(@|at)?\\s*([0-9]{1,2})\\s*(a|p|\u4E0A|\u4E0B|\u5348\u524D|\u5348\u5F8C|\uC624\uC804|\uC624\uD6C4)?", "i")
+   rg.time_sep = new RegExp("(@|at|,)?\\s*([0-9]+)(?::|.| h |\u6642|h)([0-9]+)(?:\u5206)?\\s*(am|a|pm|p|\u4E0A|\u4E0B|\u5348\u524D|\u5348\u5F8C|\uC624\uC804|\uC624\uD6C4)?", "i");
+   rg.time_hhmm = new RegExp("(@|at)?\\s*([0-9]{3,4})\\s*(a|p|\u4E0A|\u4E0B|\u5348\u524D|\u5348\u5F8C|\uC624\uC804|\uC624\uD6C4)?", "i");
+   rg.time_hh = new RegExp("(@|at)?\\s*([0-9]{1,2})\\s*(a|p|\u4E0A|\u4E0B|\u5348\u524D|\u5348\u5F8C|\uC624\uC804|\uC624\uD6C4)?", "i")
 }
 rg.rtmformat = new RegExp("_RTM_:(year=(\\d+))?(?:,)?(month=(\\d+))?(?:,)?(date=(\\d+))?");
 rg._r_a = / a /i;
@@ -3385,9 +3385,9 @@ rg.prototype.parseDueDate = function (J)
    var A9 = this.parseTimeSpec(J, true);
    var Ae = A9 !== null ? A9[1] : null;
    A9 = A9 !== null ? A9[0] : null;
-   var Av = rg.four.exec(J);
-   var A4 = rg.five.exec(J);
-   var An = rg.six.exec(J);
+   var Av = rg.time_sep.exec(J);
+   var A4 = rg.time_hhmm.exec(J);
+   var An = rg.time_hh.exec(J);
    var A6 = false;
    var O = false;
    if (!A5 && (!Ak && (!H && (!BD && (!A1 && (!Ap && (!BE && (!A2 && (!AB && (!AZ && (!Av && (!A4 && (!An && !A9)))))))))))))
@@ -3490,9 +3490,9 @@ rg.prototype.parseDueDate = function (J)
    A9 = this.parseTimeSpec(J, true);
    Ae = A9 !== null ? A9[1] : null;
    A9 = A9 !== null ? A9[0] : null;
-   Av = rg.four.exec(J);
-   A4 = rg.five.exec(J);
-   An = rg.six.exec(J);
+   Av = rg.time_sep.exec(J);
+   A4 = rg.time_hhmm.exec(J);
+   An = rg.time_hh.exec(J);
    var BG = null;
    var A0 = null;
    var A7 = null;

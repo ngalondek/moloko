@@ -21,8 +21,6 @@ options
 
 @members
 {	
-	private final static long DAY_MILLIS    = 24 * HOUR_MILLIS;
-	
 	private final static SimpleDateFormat FULL_DATE_PARSER = new SimpleDateFormat( "dd.MM.yyyy" );
 		
 		
@@ -67,9 +65,9 @@ fullDate [boolean dayFirst] returns [long millis]
 						 	  }
 					  	  }
 	  					
-		| 				  pt1=INT DATE_SEP
+		  | 			  pt1=INT DATE_SEP
 	  	  				  pt2=INT DATE_SEP
-	  	  				  pt3=INT )
+	  	  				  pt3=INT
 	  	  				  {
 	  	  				    // year first
 						 	 if ( $pt1.getText().length() > 2 )
@@ -87,10 +85,9 @@ fullDate [boolean dayFirst] returns [long millis]
 						 	  									  $pt3.getText() );
 						 	  }
 	  	  				  }
-	;	
+		)
+		;	
 
-fragment
-NUMBER    : '0' .. '9';
 
 NOW		 : 'now';
 
@@ -104,7 +101,7 @@ YESTERDAY : 'yesterday';
 
 DATE_SEP  : ':' | '-' | '/' | '.' | '\u5E74' | '\u6708' | '\u65E5';
 
-INT 	    : NUMBER+;
+INT 	    : '0'..'9'+;
 
 WS  		 : ( ' '
           |   '\t'

@@ -3292,6 +3292,7 @@ else
 {
    rg.fullDate = new RegExp("([0-9]{1,4})(?:\\-|\\/|\\.|\u5E74|\u6708|\u65E5)([0-9]{1,2})(?:\\-|\\/|\\.|\u5E74|\u6708|\u65E5)*([0-9]{1,4})*", "i")
 }
+
 rg.one = /(on)?\s*(([0-9]*)(?:st|th|rd|nd)*(?:\s|of|\-a|\-|,|\.)*(january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec)(?:\s|\-|\.)*([0-9]*))/i;
 rg.upcomingFormat = /(on)?\s*((january|jan|february|feb|march|mar|april|apr|may|june|jun|july|jul|august|aug|september|sept|sep|october|oct|november|nov|december|dec)(?:\s|,|\.|\-)*([0-9]+)(?:st|th|rd|nd)*(?:\s|,|\.|\-a|\-)*([0-9]*))/i;
 rg.two = /(on)?\s*((next)?\s*(monday|mon|tuesday|tue|wednesday|wed|thursday|thu|friday|fri|saturday|sat|sunday|sun))/i;

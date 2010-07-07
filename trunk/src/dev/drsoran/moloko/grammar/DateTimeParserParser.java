@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g 2010-07-06 02:30:37
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g 2010-07-07 08:46:52
 
 	package dev.drsoran.moloko.grammar;
 	
@@ -12,7 +12,9 @@ import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
-public class DateTimeParserParser extends Parser {
+import org.antlr.runtime.debug.*;
+import java.io.IOException;
+public class DateTimeParserParser extends DebugParser {
     public static final String[] tokenNames = new String[] {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "INT", "DATE_SEP", "NOW", "TODAY", "TOMORROW", "TONIGHT", "YESTERDAY", "WS"
     };
@@ -29,15 +31,38 @@ public class DateTimeParserParser extends Parser {
     // delegates
     // delegators
 
-
+    public static final String[] ruleNames = new String[] {
+        "invalidRule", "fullDate", "doNotCall"
+    };
+     
+        public int ruleLevel = 0;
+        public int getRuleLevel() { return ruleLevel; }
+        public void incRuleLevel() { ruleLevel++; }
+        public void decRuleLevel() { ruleLevel--; }
         public DateTimeParserParser(TokenStream input) {
-            this(input, new RecognizerSharedState());
+            this(input, DebugEventSocketProxy.DEFAULT_DEBUGGER_PORT, new RecognizerSharedState());
         }
-        public DateTimeParserParser(TokenStream input, RecognizerSharedState state) {
+        public DateTimeParserParser(TokenStream input, int port, RecognizerSharedState state) {
             super(input, state);
-             
+            DebugEventSocketProxy proxy =
+                new DebugEventSocketProxy(this, port, null);
+            setDebugListener(proxy);
+            try {
+                proxy.handshake();
+            }
+            catch (IOException ioe) {
+                reportError(ioe);
+            }
         }
-        
+    public DateTimeParserParser(TokenStream input, DebugEventListener dbg) {
+        super(input, dbg, new RecognizerSharedState());
+
+    }
+    protected boolean evalPredicate(boolean result, String predicate) {
+        dbg.semanticPredicate(result, predicate);
+        return result;
+    }
+
 
     public String[] getTokenNames() { return DateTimeParserParser.tokenNames; }
     public String getGrammarFileName() { return "D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g"; }
@@ -67,8 +92,15 @@ public class DateTimeParserParser extends Parser {
     // $ANTLR start "doNotCall"
     // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g:44:1: doNotCall : ;
     public final void doNotCall() throws RecognitionException {
+        try { dbg.enterRule(getGrammarFileName(), "doNotCall");
+        if ( getRuleLevel()==0 ) {dbg.commence();}
+        incRuleLevel();
+        dbg.location(44, 1);
+
         try {
             // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g:44:11: ()
+            dbg.enterAlt(1);
+
             // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g:44:13: 
             {
             }
@@ -76,6 +108,15 @@ public class DateTimeParserParser extends Parser {
         }
         finally {
         }
+        dbg.location(44, 13);
+
+        }
+        finally {
+            dbg.exitRule(getGrammarFileName(), "doNotCall");
+            decRuleLevel();
+            if ( getRuleLevel()==0 ) {dbg.terminate();}
+        }
+
         return ;
     }
     // $ANTLR end "doNotCall"
@@ -90,12 +131,23 @@ public class DateTimeParserParser extends Parser {
         Token pt2=null;
         Token pt3=null;
 
+        try { dbg.enterRule(getGrammarFileName(), "fullDate");
+        if ( getRuleLevel()==0 ) {dbg.commence();}
+        incRuleLevel();
+        dbg.location(46, 1);
+
         try {
             // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g:47:2: ( ({...}?pt1= INT DATE_SEP pt2= INT DATE_SEP pt3= INT | pt1= INT DATE_SEP pt2= INT DATE_SEP pt3= INT ) )
+            dbg.enterAlt(1);
+
             // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g:47:4: ({...}?pt1= INT DATE_SEP pt2= INT DATE_SEP pt3= INT | pt1= INT DATE_SEP pt2= INT DATE_SEP pt3= INT )
             {
+            dbg.location(47,4);
             // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g:47:4: ({...}?pt1= INT DATE_SEP pt2= INT DATE_SEP pt3= INT | pt1= INT DATE_SEP pt2= INT DATE_SEP pt3= INT )
             int alt1=2;
+            try { dbg.enterSubRule(1);
+            try { dbg.enterDecision(1);
+
             int LA1_0 = input.LA(1);
 
             if ( (LA1_0==INT) ) {
@@ -113,7 +165,7 @@ public class DateTimeParserParser extends Parser {
                             if ( (LA1_4==INT) ) {
                                 int LA1_5 = input.LA(6);
 
-                                if ( ((dayFirst)) ) {
+                                if ( (evalPredicate(dayFirst,"$dayFirst")) ) {
                                     alt1=1;
                                 }
                                 else if ( (true) ) {
@@ -123,6 +175,7 @@ public class DateTimeParserParser extends Parser {
                                     NoViableAltException nvae =
                                         new NoViableAltException("", 1, 5, input);
 
+                                    dbg.recognitionException(nvae);
                                     throw nvae;
                                 }
                             }
@@ -130,6 +183,7 @@ public class DateTimeParserParser extends Parser {
                                 NoViableAltException nvae =
                                     new NoViableAltException("", 1, 4, input);
 
+                                dbg.recognitionException(nvae);
                                 throw nvae;
                             }
                         }
@@ -137,6 +191,7 @@ public class DateTimeParserParser extends Parser {
                             NoViableAltException nvae =
                                 new NoViableAltException("", 1, 3, input);
 
+                            dbg.recognitionException(nvae);
                             throw nvae;
                         }
                     }
@@ -144,6 +199,7 @@ public class DateTimeParserParser extends Parser {
                         NoViableAltException nvae =
                             new NoViableAltException("", 1, 2, input);
 
+                        dbg.recognitionException(nvae);
                         throw nvae;
                     }
                 }
@@ -151,6 +207,7 @@ public class DateTimeParserParser extends Parser {
                     NoViableAltException nvae =
                         new NoViableAltException("", 1, 1, input);
 
+                    dbg.recognitionException(nvae);
                     throw nvae;
                 }
             }
@@ -158,20 +215,32 @@ public class DateTimeParserParser extends Parser {
                 NoViableAltException nvae =
                     new NoViableAltException("", 1, 0, input);
 
+                dbg.recognitionException(nvae);
                 throw nvae;
             }
+            } finally {dbg.exitDecision(1);}
+
             switch (alt1) {
                 case 1 :
+                    dbg.enterAlt(1);
+
                     // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g:47:6: {...}?pt1= INT DATE_SEP pt2= INT DATE_SEP pt3= INT
                     {
-                    if ( !((dayFirst)) ) {
+                    dbg.location(47,6);
+                    if ( !(evalPredicate(dayFirst,"$dayFirst")) ) {
                         throw new FailedPredicateException(input, "fullDate", "$dayFirst");
                     }
+                    dbg.location(47,22);
                     pt1=(Token)match(input,INT,FOLLOW_INT_in_fullDate63); 
+                    dbg.location(47,27);
                     match(input,DATE_SEP,FOLLOW_DATE_SEP_in_fullDate65); 
+                    dbg.location(48,14);
                     pt2=(Token)match(input,INT,FOLLOW_INT_in_fullDate79); 
+                    dbg.location(48,19);
                     match(input,DATE_SEP,FOLLOW_DATE_SEP_in_fullDate81); 
+                    dbg.location(49,14);
                     pt3=(Token)match(input,INT,FOLLOW_INT_in_fullDate95); 
+                    dbg.location(50,9);
 
                     						 	 // year first
                     						 	 if ( pt1.getText().length() > 2 )
@@ -193,13 +262,21 @@ public class DateTimeParserParser extends Parser {
                     }
                     break;
                 case 2 :
+                    dbg.enterAlt(2);
+
                     // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeParser.g:68:12: pt1= INT DATE_SEP pt2= INT DATE_SEP pt3= INT
                     {
+                    dbg.location(68,15);
                     pt1=(Token)match(input,INT,FOLLOW_INT_in_fullDate129); 
+                    dbg.location(68,20);
                     match(input,DATE_SEP,FOLLOW_DATE_SEP_in_fullDate131); 
+                    dbg.location(69,16);
                     pt2=(Token)match(input,INT,FOLLOW_INT_in_fullDate147); 
+                    dbg.location(69,21);
                     match(input,DATE_SEP,FOLLOW_DATE_SEP_in_fullDate149); 
+                    dbg.location(70,16);
                     pt3=(Token)match(input,INT,FOLLOW_INT_in_fullDate165); 
+                    dbg.location(71,13);
 
                     	  	  				    // year first
                     						 	 if ( pt1.getText().length() > 2 )
@@ -222,6 +299,7 @@ public class DateTimeParserParser extends Parser {
                     break;
 
             }
+            } finally {dbg.exitSubRule(1);}
 
 
             }
@@ -233,6 +311,15 @@ public class DateTimeParserParser extends Parser {
         }
         finally {
         }
+        dbg.location(89, 3);
+
+        }
+        finally {
+            dbg.exitRule(getGrammarFileName(), "fullDate");
+            decRuleLevel();
+            if ( getRuleLevel()==0 ) {dbg.terminate();}
+        }
+
         return millis;
     }
     // $ANTLR end "fullDate"

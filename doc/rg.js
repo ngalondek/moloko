@@ -1196,8 +1196,8 @@ rg.prototype.parseDueDate = function (input)
       BA = input.indexOf(matchRTMformat[0]);
       Au = matchRTMformat[0].length;
       var BF = BA + matchRTMformat[0].length;
-      var Aq = input.length;
-      input = input.substring(BF, Aq);
+      var input_len = input.length;
+      input = input.substring(BF, input_len);
       AE = AI;
       BI = matchRTMformat[0]
    }
@@ -1208,8 +1208,8 @@ rg.prototype.parseDueDate = function (input)
          BA = input.indexOf(matchFullDate[0]);
          Au = matchFullDate[0].length;
          var BF = BA + matchFullDate[0].length;
-         var Aq = input.length;
-         input = input.substring(BF, Aq);
+         var input_len = input.length;
+         input = input.substring(BF, input_len);
          AE = AH;
          BI = matchFullDate[0]
       }
@@ -1220,8 +1220,8 @@ rg.prototype.parseDueDate = function (input)
             BA = input.indexOf(matchOn_Xst_of_M_Y[0]);
             Au = matchOn_Xst_of_M_Y[0].length;
             var BF = BA + matchOn_Xst_of_M_Y[0].length;
-            var Aq = input.length;
-            input = input.substring(BF, Aq);
+            var input_len = input.length;
+            input = input.substring(BF, input_len);
             AE = AG;
             BI = matchOn_Xst_of_M_Y[0]
          }
@@ -1232,8 +1232,8 @@ rg.prototype.parseDueDate = function (input)
                BA = input.indexOf(matchIn_X_YMWD[0]);
                Au = matchIn_X_YMWD[0].length;
                var BF = BA + matchIn_X_YMWD[0].length;
-               var Aq = input.length;
-               input = input.substring(BF, Aq);
+               var input_len = input.length;
+               input = input.substring(BF, input_len);
                AE = matchEnd_of_WM;
                BI = matchIn_X_YMWD[0]
             }
@@ -1244,8 +1244,8 @@ rg.prototype.parseDueDate = function (input)
                   BA = input.indexOf(matchOn_Xst[0]);
                   Au = matchOn_Xst[0].length;
                   var BF = BA + matchOn_Xst[0].length;
-                  var Aq = input.length;
-                  input = input.substring(BF, Aq);
+                  var input_len = input.length;
+                  input = input.substring(BF, input_len);
                   AE = Ay;
                   BI = matchOn_Xst[0]
                }
@@ -1256,8 +1256,8 @@ rg.prototype.parseDueDate = function (input)
                      BA = input.indexOf(matchOn_M_Xst_Y[0]);
                      Au = matchOn_M_Xst_Y[0].length;
                      var BF = BA + matchOn_M_Xst_Y[0].length;
-                     var Aq = input.length;
-                     input = input.substring(BF, Aq);
+                     var input_len = input.length;
+                     input = input.substring(BF, input_len);
                      AE = Aw;
                      BI = matchOn_M_Xst_Y[0]
                   }
@@ -1268,8 +1268,8 @@ rg.prototype.parseDueDate = function (input)
                         BA = input.indexOf(matchEnd_of_WM[0]);
                         Au = matchEnd_of_WM[0].length;
                         var BF = BA + matchEnd_of_WM[0].length;
-                        var Aq = input.length;
-                        input = input.substring(BF, Aq);
+                        var input_len = input.length;
+                        input = input.substring(BF, input_len);
                         AE = Ah;
                         BI = matchEnd_of_WM[0]
                      }

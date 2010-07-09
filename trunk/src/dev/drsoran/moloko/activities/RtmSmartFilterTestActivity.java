@@ -1,12 +1,19 @@
 package dev.drsoran.moloko.activities;
 
+import java.util.Calendar;
+
 import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.TimeSpecLexer;
+import dev.drsoran.moloko.grammar.TimeSpecParser;
 
 
 public class RtmSmartFilterTestActivity extends Activity
@@ -36,17 +43,20 @@ public class RtmSmartFilterTestActivity extends Activity
       //      
       // Log.d( TAG, lexer.getResult() );
       
-//      final DateTimeParserLexer lexer = new DateTimeParserLexer( input );
-//      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-//      final DateTimeParserParser parser = new DateTimeParserParser( antlrTokens );
-//      
-//      try
-//      {
-//         Log.d( TAG, "millis: " + parser.timespec() );
-//      }
-//      catch ( RecognitionException e )
-//      {
-//         Log.e( TAG, "PArsing failed.", e );
-//      }
+      final TimeSpecLexer lexer = new TimeSpecLexer( input );
+      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
+      final TimeSpecParser parser = new TimeSpecParser( antlrTokens );
+      
+      try
+      {
+         final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+         parser.parseDateTime( cal );
+         Log.d( TAG, "Millis: " + cal.getTimeInMillis() );
+         Log.d( TAG, "Text  : " + cal.getTime() );
+      }
+      catch ( RecognitionException e )
+      {
+         Log.e( TAG, "Parsing failed.", e );
+      }
    }
 }

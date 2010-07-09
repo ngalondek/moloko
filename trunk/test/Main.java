@@ -1,10 +1,4 @@
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -22,35 +16,60 @@ public class Main
     */
    public static void main( String[] args )
    {
-      // ANTLRStringStream input = new ANTLRStringStream( "status:incomplete AND postponed:\">2\"" );
-      // RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
-      //      
-      // System.out.println( lexer.getResult() );
-      
+//      SimpleDateFormat sdf = new SimpleDateFormat( "yyy" );
+//      
 //      try
 //      {
-//         System.out.println( new Date( new SimpleDateFormat( "dd.MMM.yyyy",
-//                                                             Locale.ENGLISH ).parse( "1.July.2010" )
-//                                                                             .getTime() ) );
-         
-//         Calendar c = Calendar.getInstance( Locale.ENGLISH );
-//         
-//         SimpleDateFormat df = new SimpleDateFormat( "EE", Locale.ENGLISH );
-//         df.getCalendar().setTime( df.parse( "thu" ) );
-//         df.getCalendar().set( Calendar.YEAR, c.get( Calendar.YEAR ) );
-//         df.getCalendar().set( Calendar.WEEK_OF_YEAR, c.get( Calendar.WEEK_OF_YEAR ) );
-//         
-//         if ( df.getCalendar().before( c ) )
-//            df.getCalendar().roll( Calendar.WEEK_OF_YEAR, true );
-//         
-//         System.out.println( df.getCalendar().getTime() );
+//         sdf.parse( "106" );
 //      }
 //      catch ( ParseException e1 )
 //      {
 //         // TODO Auto-generated catch block
 //         e1.printStackTrace();
 //      }
-
+//      
+//      System.out.println( sdf.getCalendar().getTime() );
+      
+      {
+         final TimeSpecLexer tsl = new TimeSpecLexer( new ANTLRStringStream( "today" ) );
+         final CommonTokenStream antlrTokens = new CommonTokenStream( tsl );
+         final TimeSpecParser parser = new TimeSpecParser( antlrTokens );
+         
+         try
+         {
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_natural: " + cal.getTimeInMillis() );
+            System.out.println( "date_natural: " + cal.getTime() );
+            System.out.println( "date_natural has time: " + cal.isSet( Calendar.HOUR_OF_DAY ) );
+         }
+         catch ( RecognitionException e )
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
+      
+      {
+         final TimeSpecLexer tsl = new TimeSpecLexer( new ANTLRStringStream( "tomorrow@9" ) );
+         final CommonTokenStream antlrTokens = new CommonTokenStream( tsl );
+         final TimeSpecParser parser = new TimeSpecParser( antlrTokens );
+         
+         try
+         {
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_natural_w_time: " + cal.getTimeInMillis() );
+            System.out.println( "date_natural_w_time: " + cal.getTime() );
+            System.out.println( "date_natural_w_time has time: " + cal.isSet( Calendar.HOUR_OF_DAY ) );
+         }
+         catch ( RecognitionException e )
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
+      
       {
          final TimeSpecLexer tsl = new TimeSpecLexer( new ANTLRStringStream( "end of month" ) );
          final CommonTokenStream antlrTokens = new CommonTokenStream( tsl );
@@ -58,9 +77,11 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( "date_end_of_the_MW: " + res );
-            System.out.println( "date_end_of_the_MW: " + new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_end_of_the_MW: " + cal.getTimeInMillis() );
+            System.out.println( "date_end_of_the_MW: " + cal.getTime() );
+            System.out.println( "date_end_of_the_MW has time: " + cal.isSet( Calendar.HOUR_OF_DAY ) );
          }
          catch ( RecognitionException e )
          {
@@ -76,9 +97,11 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( "date_in_X_YMWD: " + res );
-            System.out.println( "date_in_X_YMWD: " + new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_in_X_YMWD: " + cal.getTimeInMillis() );
+            System.out.println( "date_in_X_YMWD: " + cal.getTime() );
+            System.out.println( "date_in_X_YMWD has time: " + cal.isSet( Calendar.HOUR_OF_DAY ) );
          }
          catch ( RecognitionException e )
          {
@@ -94,9 +117,10 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( "date_weekday: " + res );
-            System.out.println( "date_weekday: " + new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_weekday: " + cal.getTimeInMillis() );
+            System.out.println( "date_weekday: " + cal.getTime() );
          }
          catch ( RecognitionException e )
          {
@@ -112,9 +136,48 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( "date_M_Xst: " + res );
-            System.out.println( "date_M_Xst: " + new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_M_Xst: " + cal.getTimeInMillis() );
+            System.out.println( "date_M_Xst: " + cal.getTime() );
+         }
+         catch ( RecognitionException e )
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
+      
+      {
+         final TimeSpecLexer tsl = new TimeSpecLexer( new ANTLRStringStream( "on 21st" ) );
+         final CommonTokenStream antlrTokens = new CommonTokenStream( tsl );
+         final TimeSpecParser parser = new TimeSpecParser( antlrTokens );
+         
+         try
+         {
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_on_Xst: " + cal.getTimeInMillis() );
+            System.out.println( "date_on_Xst: " + cal.getTime() );
+         }
+         catch ( RecognitionException e )
+         {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
+      
+      {
+         final TimeSpecLexer tsl = new TimeSpecLexer( new ANTLRStringStream( "on 21st of feb 6" ) );
+         final CommonTokenStream antlrTokens = new CommonTokenStream( tsl );
+         final TimeSpecParser parser = new TimeSpecParser( antlrTokens );
+         
+         try
+         {
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_on_Xst_M_year_short: " + cal.getTimeInMillis() );
+            System.out.println( "date_on_Xst_M_year_short: " + cal.getTime() );
          }
          catch ( RecognitionException e )
          {
@@ -130,9 +193,10 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( "date_Xst_of_M: " + res );
-            System.out.println( "date_Xst_of_M: " + new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "date_Xst_of_MY: " + cal.getTimeInMillis() );
+            System.out.println( "date_Xst_of_MY: " + cal.getTime() );
          }
          catch ( RecognitionException e )
          {
@@ -148,9 +212,10 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( "full_date: " + res );
-            System.out.println( "full_date: " + new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "full_date: " + cal.getTimeInMillis() );
+            System.out.println( "full_date: " + cal.getTime() );
          }
          catch ( RecognitionException e )
          {
@@ -166,9 +231,10 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( "full_date_time: " + res );
-            System.out.println( "full_date_time: " + new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "full_date_time: " + cal.getTimeInMillis() );
+            System.out.println( "full_date_time: " + cal.getTime() );
          }
          catch ( RecognitionException e )
          {
@@ -184,7 +250,10 @@ public class Main
          
          try
          {
-            System.out.println( "1.5h: " + parser.parseDateTime() );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "1.5h: " + cal.getTimeInMillis() );
+            System.out.println( "1.5h: " + cal.getTime() );
          }
          catch ( RecognitionException e )
          {
@@ -200,9 +269,10 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( res );
-            System.out.println( new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "time_point_in_timespec_@: " + cal.getTimeInMillis() );
+            System.out.println( "time_point_in_timespec_@: " + cal.getTime() );
          }
          catch ( RecognitionException e )
          {
@@ -218,43 +288,16 @@ public class Main
          
          try
          {
-            final long res = parser.parseDateTime();
-            System.out.println( res );
-            System.out.println( new Date( res ) );
+            final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+            parser.parseDateTime( cal );
+            System.out.println( "time_point_in_timespec_lit: " + cal.getTimeInMillis() );
+            System.out.println( "time_point_in_timespec_lit: " + cal.getTime() );
          }
          catch ( RecognitionException e )
          {
             // TODO Auto-generated catch block
             e.printStackTrace();
          }
-      }
-      
-      // {
-      // final DateTimeParserLexer lexer = new DateTimeParserLexer( new ANTLRStringStream( "2010-11-2" ) );
-      // final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      // final DateTimeParserParser parser = new DateTimeParserParser( antlrTokens );
-      //         
-      // try
-      // {
-      // final long res = parser.fullDate( true );
-      // System.out.println( res );
-      // System.out.println( new Date( res ) );
-      // }
-      // catch ( RecognitionException e )
-      // {
-      // // TODO Auto-generated catch block
-      // e.printStackTrace();
-      // }
-      // }
-      
-      {
-         // Calendar c = Calendar.getInstance();
-         // c.setTimeInMillis( System.currentTimeMillis() );
-         // c.set( Calendar.HOUR_OF_DAY, 23 );
-         // c.set( Calendar.MINUTE, 59 );
-         // c.set( Calendar.SECOND, 59 );
-         //         
-         // System.out.println( c.getTime().getTime() );
-      }
+      }     
    }
 }

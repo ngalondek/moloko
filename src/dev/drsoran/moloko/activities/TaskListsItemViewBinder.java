@@ -7,6 +7,8 @@ import android.widget.TextView;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.ContentUiMapper;
+import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public final class TaskListsItemViewBinder implements ViewBinder
@@ -17,6 +19,8 @@ public final class TaskListsItemViewBinder implements ViewBinder
    private final int TASK_COUNT;
    
    private final int SMART;
+   
+   private final int FILTER;
    
    
 
@@ -30,6 +34,8 @@ public final class TaskListsItemViewBinder implements ViewBinder
       
       // TODO: Remove this magic number and replace by PROJECTION COL_INDICES.
       this.SMART = 6;
+      this.FILTER = 7;
+      
       this.context = context;
    }
    
@@ -40,7 +46,20 @@ public final class TaskListsItemViewBinder implements ViewBinder
       if ( columnIndex == TASK_COUNT && cursor.getInt( SMART ) != 0 )
       {
          final TextView numTasks = (TextView) view;
-         numTasks.setText( cursor.getString( TASK_COUNT ) );
+         
+         final RtmSmartFilter filter = new RtmSmartFilter( cursor.getString( FILTER ) );
+         
+         final Cursor smartListTasks = context.getContentResolver()
+                                              .query( Tasks.CONTENT_URI,
+                                                      new String[]
+                                                      { Tasks._ID },
+                                                      filter.getEvaluatedFilterString(),
+                                                      null,
+                                                      null );
+         
+         numTasks.setText( Integer.toString( smartListTasks.getCount() ) );
+         smartListTasks.close();
+         
          numTasks.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart );
          
          return true;

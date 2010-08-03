@@ -1,12 +1,16 @@
 package dev.drsoran.rtm;
 
+import org.antlr.runtime.RecognitionException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import com.mdt.rtm.data.RtmData;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.mdt.rtm.data.RtmData;
+
+import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
 
 public class RtmSmartFilter extends RtmData
@@ -33,11 +37,14 @@ public class RtmSmartFilter extends RtmData
    
    private final String filter;
    
+   private String evalFilter;
+   
    
 
    public RtmSmartFilter( String filter )
    {
-      this.filter = filter;
+      this.filter = filter.replaceAll( "\\(|\\)", "" );
+      this.evalFilter = null;
    }
    
 
@@ -47,19 +54,22 @@ public class RtmSmartFilter extends RtmData
       if ( elt.getChildNodes().getLength() > 0 )
       {
          final Text innerText = (Text) elt.getChildNodes().item( 0 );
-         filter = innerText.getData();
+         filter = innerText.getData().replaceAll( "\\(|\\)", "" );
       }
       else
       {
          filter = "";
       }
+      
+      this.evalFilter = null;
    }
    
 
 
    public RtmSmartFilter( Parcel source )
    {
-      filter = source.readString();
+      this.filter = source.readString();
+      this.evalFilter = source.readString();
    }
    
 
@@ -67,6 +77,34 @@ public class RtmSmartFilter extends RtmData
    public String getFilterString()
    {
       return filter;
+   }
+   
+
+
+   public String getEvaluatedFilterString()
+   {
+      if ( evalFilter == null )
+      {
+         if ( filter != null )
+         {
+            final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
+            final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
+            
+            try
+            {
+               evalFilter = lexer.getResult();
+            }
+            catch ( RecognitionException e )
+            {
+            }
+         }
+         else
+         {
+            evalFilter = "true";
+         }
+      }
+      
+      return evalFilter;
    }
    
 
@@ -81,6 +119,7 @@ public class RtmSmartFilter extends RtmData
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( filter );
+      dest.writeString( evalFilter );
    }
    
 }

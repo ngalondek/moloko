@@ -15,6 +15,19 @@
       android:id="@+id/rtmsmartfilter_btn_filter"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:text="Go"
-      android:onClick="onGo"/>   
+      android:text="Filter"
+      android:onClick="onFilter"/>
+      
+   <EditText
+      android:id="@+id/rtmsmartfilter_timespec_edit"
+      android:text=""     
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content" android:hint="Enter time spec"/>
+      
+   <Button
+      android:id="@+id/rtmsmartfilter_timespec_btn"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:text="Time"
+      android:onClick="onTimeSpec"/>   
 </LinearLayout>

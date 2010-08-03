@@ -3,6 +3,10 @@ grammar TimeSpec;
 /*
    TODO:
     - missing time separators: \u0020\u0068\u0020|\u6642|h
+   
+   LIMITATIONS:
+    - '.' is only allowed for dates not times
+    - ':' is only allowed for times not dates
 */
 options
 {
@@ -172,15 +176,15 @@ options
       {
          if ( len < 3 )
          {
-            sdf = new SimpleDateFormat( "hh" );
+            sdf = new SimpleDateFormat( "HH" );
          }
          else if ( len > 3 )
          {
-            sdf = new SimpleDateFormat( "hhmm" );
+            sdf = new SimpleDateFormat( "HHmm" );
          }
          else
          {
-            sdf = new SimpleDateFormat( "hmm" );
+            sdf = new SimpleDateFormat( "Hmm" );
          }
 
          sdf.parse( pit );
@@ -218,13 +222,12 @@ options
 /** RULES **/
 
 
-parseDateTime [Calendar cal]
+parseDateTime [Calendar cal, boolean dayFirst]
    @init
    {
       boolean hasTime = false;
-   }
-   : (  date_spec[ $cal ] (time_spec[ $cal ] { hasTime = true; })?
-      | time_spec[ $cal ]                    { hasTime = true; } )
+   }     
+   : date_spec[$cal, $dayFirst] (time_spec[ $cal ] { hasTime = true; })?
    {
       if ( !hasTime )
       {
@@ -235,9 +238,13 @@ parseDateTime [Calendar cal]
       }
    }
    ;
+   catch [NoViableAltException nve]
+   {
+      throw new RecognitionException();
+   }
 
-date_spec [Calendar cal]
-   : (   date_full         [$cal, true]
+date_spec [Calendar cal, boolean dayFirst]
+   : (   date_full         [$cal, $dayFirst]
        | date_on           [$cal]
        | date_in_X_YMWD    [$cal]
        | date_end_of_the_MW[$cal]
@@ -245,8 +252,8 @@ date_spec [Calendar cal]
    ;
 
 date_full [Calendar cal, boolean dayFirst]
-   : ( {$dayFirst}? pt1=INT ( DOT | COLON | MINUS | DATE_SEP )
-                    pt2=INT ( DOT | COLON | MINUS | DATE_SEP )
+   : ( {$dayFirst}? pt1=INT ( DOT | MINUS | DATE_SEP )
+                    pt2=INT ( DOT | MINUS | DATE_SEP )
                     pt3=INT
                     {
                       // year first
@@ -270,8 +277,8 @@ date_full [Calendar cal, boolean dayFirst]
                        }
                     }
 
-        |           pt1=INT ( DOT | COLON | MINUS | DATE_SEP )
-                    pt2=INT ( DOT | COLON | MINUS | DATE_SEP )
+        |           pt1=INT ( DOT | MINUS | DATE_SEP )
+                    pt2=INT ( DOT | MINUS | DATE_SEP )
                     pt3=INT
                     {
                       // year first
@@ -439,9 +446,9 @@ time_spec [Calendar cal]
           {
              cal.set( Calendar.HOUR_OF_DAY, Integer.parseInt( $h.text ) );
           }
-        (   time_floatspec    [$cal      ]
-          | time_separatorspec[$cal, true] /* only colon */
-          | time_naturalspec  [$cal,     ])
+        (   time_floatspec    [$cal]
+          | time_separatorspec[$cal]
+          | time_naturalspec  [$cal])
       | AT? time_point_in_timespec[$cal])
    ;
    catch[ NumberFormatException nfe ]
@@ -461,18 +468,13 @@ time_floatspec [Calendar cal ]
       throw new RecognitionException();
    }
 
-time_separatorspec [Calendar cal, boolean onlyColon]
+time_separatorspec [Calendar cal]
    @init
    {
       cal.set( Calendar.SECOND, 0 );
    }
-   : ( // Here we need a syntactic predicate otherwise we cannot
-       // distingish 'floatspec'and 'point_in_timespec' with '.'
-       {$onlyColon}? COLON      m=INT { cal.set( Calendar.MINUTE, Integer.parseInt( $m.text ) ); }
-                    (COLON      s=INT { cal.set( Calendar.SECOND, Integer.parseInt( $s.text ) ); })?
-       |
-                    (COLON|DOT) m=INT { cal.set( Calendar.MINUTE, Integer.parseInt( $m.text ) ); }
-                   ((COLON|DOT) s=INT { cal.set( Calendar.SECOND, Integer.parseInt( $s.text ) ); })?)
+   :  COLON m=INT { cal.set( Calendar.MINUTE, Integer.parseInt( $m.text ) ); }
+     (COLON s=INT { cal.set( Calendar.SECOND, Integer.parseInt( $s.text ) ); })?
    ;
    catch[ NumberFormatException nfe ]
    {
@@ -543,14 +545,14 @@ time_point_in_timespec [Calendar cal]
       {
          setCalendarTime( cal, $v.text );
       }
-      (time_separatorspec[$cal, false] /* colon and dot */)?
+      (time_separatorspec[$cal])?
       (am_pm_spec[$cal])?)
    ;
 
 am_pm_spec [Calendar cal]
    // missing: \u4e0a|\u4e0b | \u5348\u524d|\u5348\u5f8c|\uc624\uc804|\uc624\ud6c4
-   : 'A'('M')?
-   | 'P'('M')?
+   : 'a'('m')?
+   | 'p'('m')?
    {
       cal.add( Calendar.HOUR_OF_DAY, 12 );
    }

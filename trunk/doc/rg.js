@@ -1007,22 +1007,22 @@ rg.prototype.parseTime = function (B)
    }
    return [E, D]
 };
-rg.prototype.parseDueRange = function (F, J)
+rg.prototype.parseDueRange = function (input, J)
 {
-   var Q = "1",
+   var amount = "1",
       R = "of",
       U = "today";
-   var H = F;
-   F = F.trim();
+   var H = input;
+   input = input.trim();
    if (this.useCache && this.rangeCache[H])
    {
       return this.rangeCache[H]
    }
-   if (F.length == 0)
+   if (input.length == 0)
    {
       return this.useCache ? (this.rangeCache[H] = null) : null
    }
-   var E = F.split(/\bof\b/i);
+   var E = input.split(/\bof\b/i);
    var I, O;
    if (E.length == 1)
    {
@@ -1050,7 +1050,7 @@ rg.prototype.parseDueRange = function (F, J)
       return this.useCache ? (this.rangeCache[H] = null) : null
    }
    D = new Date(D[0]);
-   I = I.replace(/a /, Q).split(/\s+/);
+   I = I.replace(/a /, amount).split(/\s+/);
    if (I.length == 1)
    {
       return this.useCache ? (this.rangeCache[H] = null) : null

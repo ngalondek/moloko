@@ -201,7 +201,7 @@ public class RtmList extends RtmData implements
       dest.writeInt( locked );
       dest.writeInt( archived );
       dest.writeInt( position );
-      dest.writeParcelable( smartFilter, 0 );
+      dest.writeParcelable( smartFilter, flags );
    }
    
 

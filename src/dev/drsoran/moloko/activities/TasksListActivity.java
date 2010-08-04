@@ -14,6 +14,7 @@ import android.widget.SimpleCursorAdapter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.ContentUiMapper;
 import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -46,11 +47,6 @@ public class TasksListActivity extends ListActivity implements OnClickListener
                                                                                 R.id.taskslist_listitem_priority,
                                                                                 R.id.taskslist_listitem_check } );
    
-   static
-   {
-      assert ( contentUiMapper.UI_COLUMNS.length == contentUiMapper.RESSOURCE_IDS.length );
-   }
-   
    private final Bundle configuration = new Bundle();
    
    
@@ -63,8 +59,12 @@ public class TasksListActivity extends ListActivity implements OnClickListener
       
       final Intent intent = getIntent();
       
+      // Intent extras have precedence before
+      // stored values.
       if ( intent.getExtras() != null )
          configuration.putAll( intent.getExtras() );
+      else if ( savedInstanceState != null )
+         configuration.putAll( savedInstanceState );
    }
    
 
@@ -73,16 +73,16 @@ public class TasksListActivity extends ListActivity implements OnClickListener
    protected void onResume()
    {
       super.onResume();
-      
       refresh();
    }
    
 
 
    @Override
-   protected void onPause()
+   protected void onSaveInstanceState( Bundle outState )
    {
-      super.onPause();
+      super.onSaveInstanceState( outState );
+      outState.putAll( configuration );
    }
    
 
@@ -140,8 +140,7 @@ public class TasksListActivity extends ListActivity implements OnClickListener
          
          if ( ok )
          {
-            item.setIntent( new Intent( this,
-                                        RtmSmartFilterTestActivity.class ) );
+            item.setIntent( new Intent( this, RtmSmartFilterTestActivity.class ) );
          }
       }
       
@@ -152,17 +151,29 @@ public class TasksListActivity extends ListActivity implements OnClickListener
 
    private final void refresh()
    {
-      String selection = null;
+      StringBuffer selection = new StringBuffer();
       
-      boolean hasListName = configuration.containsKey( Tasks.LIST_NAME );
+      final String listName = configuration.getString( Tasks.LIST_NAME );
+      final String smartFilter = configuration.getString( Lists.FILTER );
       
-      if ( hasListName )
-         selection = Tasks.LIST_NAME + " = '"
-            + configuration.getString( Tasks.LIST_NAME ) + "'";
+      // The smart filter has precedence
+      if ( smartFilter != null )
+      {
+         selection.append( smartFilter );
+      }
+      else if ( listName != null )
+      {
+         selection.append( Tasks.LIST_NAME )
+                  .append( " = '" )
+                  .append( listName )
+                  .append( "'" );
+      }
       
       final Cursor c = managedQuery( Tasks.CONTENT_URI,
-                                     contentUiMapper.PROJECTION,
-                                     selection,
+                                     contentUiMapper.getProjectionArray(),
+                                     ( selection.length() > 0 )
+                                                               ? selection.toString()
+                                                               : null,
                                      null,
                                      Tasks.PRIORITY + ", "
                                         + Tasks.TASKSERIES_NAME );
@@ -173,15 +184,16 @@ public class TasksListActivity extends ListActivity implements OnClickListener
          final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
                                                                       R.layout.taskslist_activity_listitem,
                                                                       c,
-                                                                      contentUiMapper.UI_COLUMNS,
+                                                                      contentUiMapper.getUiColumnsArray(),
                                                                       contentUiMapper.RESSOURCE_IDS );
          
          int flags = 0x0;
          
-         if ( hasListName )
-            // If we have been started with a concrete list name, then
-            // we do not need to click it. Otherwise we would call the
-            // same list again.
+         // If we have been started with a concrete list name, then
+         // we do not need to click it. Otherwise we would call the
+         // same list again. But this only applies to non smart
+         // lists
+         if ( listName != null && smartFilter == null )
             flags |= TasksListItemViewBinder.NO_CLICKABLE_LIST_NAME;
          
          adapter.setViewBinder( new TasksListItemViewBinder( this,
@@ -189,7 +201,21 @@ public class TasksListActivity extends ListActivity implements OnClickListener
                                                              flags ) );
          
          setListAdapter( adapter );
+         
+         if ( smartFilter != null )
+         {
+            setTitle( getString( R.string.taskslist_titlebar_listname_smart,
+                                 listName ) );
+         }
+         else if ( listName != null )
+         {
+            setTitle( getString( R.string.taskslist_titlebar_listname, listName ) );
+         }
+         else
+         {
+            setTitle( getString( R.string.taskslist_titlebar_listname,
+                                 getString( R.string.app_name ) ) );
+         }
       }
    }
-   
 }

@@ -25,12 +25,13 @@ public class TasksProviderPart extends AbstractProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Tasks._ID, Tasks.LIST_ID, Tasks.LIST_NAME, Tasks.TASKSERIES_CREATED_DATE,
-    Tasks.MODIFIED_DATE, Tasks.TASKSERIES_NAME, Tasks.SOURCE, Tasks.URL,
-    Tasks.RAW_TASK_ID, Tasks.DUE_DATE, Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE,
-    Tasks.COMPLETED_DATE, Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED,
-    Tasks.ESTIMATE, Tasks.LOCATION_ID, Tasks.LOCATION_NAME, Tasks.LONGITUDE,
-    Tasks.LATITUDE, Tasks.ADDRESS, Tasks.VIEWABLE, Tasks.ZOOM };
+   { Tasks._ID, Tasks.LIST_ID, Tasks.LIST_NAME, Tasks.SMART,
+    Tasks.TASKSERIES_CREATED_DATE, Tasks.MODIFIED_DATE, Tasks.TASKSERIES_NAME,
+    Tasks.SOURCE, Tasks.URL, Tasks.RAW_TASK_ID, Tasks.DUE_DATE,
+    Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE, Tasks.COMPLETED_DATE,
+    Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED, Tasks.ESTIMATE,
+    Tasks.LOCATION_ID, Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE,
+    Tasks.ADDRESS, Tasks.VIEWABLE, Tasks.ZOOM };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -53,6 +54,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                           + " AS _id",
                                                        Tasks.LIST_ID,
                                                        Tasks.LIST_NAME,
+                                                       Tasks.SMART,
                                                        Tasks.TASKSERIES_CREATED_DATE,
                                                        Tasks.MODIFIED_DATE,
                                                        Tasks.TASKSERIES_NAME,

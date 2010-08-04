@@ -2,19 +2,23 @@ package dev.drsoran.moloko.activities;
 
 import android.app.ListActivity;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.ContentUiMapper;
+import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public final class TaskListsItemViewBinder implements ViewBinder
 {
-   @SuppressWarnings( "unused" )
    private final ListActivity context;
+   
+   private final int LIST_NAME;
    
    private final int TASK_COUNT;
    
@@ -30,11 +34,10 @@ public final class TaskListsItemViewBinder implements ViewBinder
       if ( context == null || mapper == null )
          throw new NullPointerException();
       
-      this.TASK_COUNT = 8;// mapper.UI_COL_INDICES.get( ListOverviews.TASKS_COUNT );
-      
-      // TODO: Remove this magic number and replace by PROJECTION COL_INDICES.
-      this.SMART = 6;
-      this.FILTER = 7;
+      this.LIST_NAME = mapper.getProjectionColumnIndex( ListOverviews.LIST_NAME );
+      this.TASK_COUNT = mapper.getProjectionColumnIndex( ListOverviews.TASKS_COUNT );
+      this.SMART = mapper.getProjectionColumnIndex( ListOverviews.SMART );
+      this.FILTER = mapper.getProjectionColumnIndex( ListOverviews.FILTER );
       
       this.context = context;
    }
@@ -43,24 +46,65 @@ public final class TaskListsItemViewBinder implements ViewBinder
 
    public boolean setViewValue( View view, Cursor cursor, int columnIndex )
    {
-      if ( columnIndex == TASK_COUNT && cursor.getInt( SMART ) != 0 )
+      Bundle listProperties = (Bundle) view.getRootView().getTag();
+      
+      if ( listProperties == null )
+      {
+         listProperties = new Bundle();
+         view.getRootView().setTag( listProperties );
+      }
+      
+      if ( columnIndex == LIST_NAME )
+      {
+         final String listName = cursor.getString( LIST_NAME );
+         
+         listProperties.putString( ListOverviews.LIST_NAME, listName );
+         
+         final TextView listNameView = (TextView) view;
+         listNameView.setText( listName );
+         
+         return true;
+      }
+      else if ( columnIndex == TASK_COUNT && cursor.getInt( SMART ) != 0 )
       {
          final TextView numTasks = (TextView) view;
          
-         final RtmSmartFilter filter = new RtmSmartFilter( cursor.getString( FILTER ) );
+         final String evalFilter = RtmSmartFilter.evaluate( cursor.getString( FILTER ) );
          
-         final Cursor smartListTasks = context.getContentResolver()
-                                              .query( Tasks.CONTENT_URI,
-                                                      new String[]
-                                                      { Tasks._ID },
-                                                      filter.getEvaluatedFilterString(),
-                                                      null,
-                                                      null );
+         boolean badFilter = evalFilter == null;
          
-         numTasks.setText( Integer.toString( smartListTasks.getCount() ) );
-         smartListTasks.close();
+         if ( !badFilter )
+         {
+            try
+            {
+               final Cursor smartListTasks = context.getContentResolver()
+                                                    .query( Tasks.CONTENT_URI,
+                                                            new String[]
+                                                            { Tasks._ID },
+                                                            evalFilter,
+                                                            null,
+                                                            null );
+               
+               numTasks.setText( Integer.toString( smartListTasks.getCount() ) );
+               smartListTasks.close();
+               
+               numTasks.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart );
+               
+               listProperties.putString( ListOverviews.FILTER, evalFilter );
+            }
+            catch ( SQLiteException e )
+            {
+               badFilter = true;
+            }
+         }
          
-         numTasks.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart );
+         if ( badFilter )
+         {
+            numTasks.setText( "?" );
+            numTasks.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart_fail );
+            
+            listProperties.putString( ListOverviews.FILTER, null );
+         }
          
          return true;
       }

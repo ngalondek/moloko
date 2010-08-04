@@ -10,12 +10,12 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.ContentUiMapper;
 import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -29,6 +29,7 @@ public class TaskListsActivity extends ListActivity implements
                                                                                {
                                                                                 ListOverviews._ID,
                                                                                 ListOverviews.SMART,
+                                                                                ListOverviews.FILTER,
                                                                                 ListOverviews.LIST_NAME,
                                                                                 ListOverviews.TASKS_COUNT },
                                                                                new String[]
@@ -41,11 +42,6 @@ public class TaskListsActivity extends ListActivity implements
                                                                                 R.id.tasklists_listitem_num_tasks } );
    
    private final int CTX_MENU_OPEN_LIST = 0;
-   
-   static
-   {
-      assert ( contentUiMapper.UI_COLUMNS.length == contentUiMapper.RESSOURCE_IDS.length );
-   }
    
    
 
@@ -64,8 +60,8 @@ public class TaskListsActivity extends ListActivity implements
    @Override
    protected void onResume()
    {
-      queryLists();
       super.onResume();
+      queryLists();
    }
    
 
@@ -83,7 +79,7 @@ public class TaskListsActivity extends ListActivity implements
                 CTX_MENU_OPEN_LIST,
                 0,
                 getString( R.string.tasklists_ctxmenu_listitem_open,
-                           getListName( info.targetView ) ) );
+                           getListProperties( info.targetView ).getString( ListOverviews.LIST_NAME ) ) );
    }
    
 
@@ -96,7 +92,7 @@ public class TaskListsActivity extends ListActivity implements
       switch ( item.getItemId() )
       {
          case CTX_MENU_OPEN_LIST:
-            openList( getListName( info.targetView ) );
+            openList( getListProperties( info.targetView ) );
             return true;
             
          default :
@@ -111,15 +107,32 @@ public class TaskListsActivity extends ListActivity implements
                             int pos,
                             long rowId )
    {
-      openList( getListName( view ) );
+      openList( getListProperties( view ) );
    }
    
 
 
-   private void openList( String listname )
+   private void openList( Bundle properties )
    {
+      String filter = null;
+      
+      if ( properties.containsKey( ListOverviews.FILTER ) )
+      {
+         filter = properties.getString( ListOverviews.FILTER );
+         
+         // Check if the smart filter could be parsed. Otherwise
+         // it is null and we do not fire the intent.
+         if ( filter == null )
+            return;
+      }
+      
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      intent.putExtra( Tasks.LIST_NAME, listname );
+      
+      intent.putExtra( Tasks.LIST_NAME,
+                       properties.getString( ListOverviews.LIST_NAME ) );
+      
+      if ( filter != null )
+         intent.putExtra( Lists.FILTER, filter );
       
       startActivity( intent );
    }
@@ -129,7 +142,7 @@ public class TaskListsActivity extends ListActivity implements
    private void queryLists()
    {
       final Cursor c = managedQuery( ListOverviews.CONTENT_URI,
-                                     contentUiMapper.PROJECTION,
+                                     contentUiMapper.getProjectionArray(),
                                      null,
                                      null,
                                      ListOverviews.DEFAULT_SORT_ORDER );
@@ -140,7 +153,7 @@ public class TaskListsActivity extends ListActivity implements
          final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
                                                                       R.layout.tasklists_activity_listitem,
                                                                       c,
-                                                                      contentUiMapper.UI_COLUMNS,
+                                                                      contentUiMapper.getUiColumnsArray(),
                                                                       contentUiMapper.RESSOURCE_IDS );
          
          adapter.setViewBinder( new TaskListsItemViewBinder( this,
@@ -152,17 +165,8 @@ public class TaskListsActivity extends ListActivity implements
    
 
 
-   private final static String getListName( View parent )
+   private final static Bundle getListProperties( View parent )
    {
-      String listname = "";
-      
-      final View view = parent.findViewById( R.id.tasklists_listitem_list_name );
-      
-      if ( view instanceof TextView )
-      {
-         listname = ( (TextView) view ).getText().toString();
-      }
-      
-      return listname;
+      return (Bundle) parent.getTag();
    }
 }

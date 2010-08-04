@@ -43,19 +43,19 @@ public final class TasksListItemViewBinder implements ViewBinder
    
    
 
-   public TasksListItemViewBinder( ListActivity context, ContentUiMapper mapper,
-      int flags ) throws NullPointerException
+   public TasksListItemViewBinder( ListActivity context,
+      ContentUiMapper mapper, int flags ) throws NullPointerException
    {
       if ( context == null || mapper == null )
          throw new NullPointerException();
       
       this.context = context;
-      this.DESCRIPTION = mapper.UI_COL_INDICES.get( Tasks.TASKSERIES_NAME );
-      this.LIST_NAME = mapper.UI_COL_INDICES.get( Tasks.LIST_NAME );
-      this.DUE_DATE = mapper.UI_COL_INDICES.get( Tasks.DUE_DATE );
-      this.HAS_DUE_TIME = 1;
-      this.PRIORITY = mapper.UI_COL_INDICES.get( Tasks.PRIORITY );
-      this.COMPLETED = mapper.UI_COL_INDICES.get( Tasks.COMPLETED_DATE );
+      this.DESCRIPTION = mapper.getProjectionColumnIndex( Tasks.TASKSERIES_NAME );
+      this.LIST_NAME = mapper.getProjectionColumnIndex( Tasks.LIST_NAME );
+      this.DUE_DATE = mapper.getProjectionColumnIndex( Tasks.DUE_DATE );
+      this.HAS_DUE_TIME = mapper.getProjectionColumnIndex( Tasks.HAS_DUE_TIME );
+      this.PRIORITY = mapper.getProjectionColumnIndex( Tasks.PRIORITY );
+      this.COMPLETED = mapper.getProjectionColumnIndex( Tasks.COMPLETED_DATE );
       this.flags = flags;
    }
    

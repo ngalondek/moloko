@@ -56,7 +56,10 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                         String[] selectionArgs,
                         String sortOrder )
    {
-      final StringBuilder stringBuilder = new StringBuilder( query );
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
+                                                                        .append( " FROM (" )
+                                                                        .append( query )
+                                                                        .append( ")" );
       
       if ( !TextUtils.isEmpty( selection ) )
       {

@@ -238,6 +238,11 @@ OP_DUE_AFTER : 'dueafter:' ( s=STRING | s=Q_STRING )
 					{
 						differsTimeParam( Tasks.DUE_DATE, $s.getText(), false );
 					};
+					
+OP_DUE_BEFORE : 'duebefore:' ( s=STRING | s=Q_STRING )
+					{
+						differsTimeParam( Tasks.DUE_DATE, $s.getText(), true );
+					};
 
 // OP_DUE_WITHIN
 

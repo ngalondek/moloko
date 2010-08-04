@@ -87,21 +87,32 @@ public class RtmSmartFilter extends RtmData
       {
          if ( filter != null )
          {
-            final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
-            final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
-            
-            try
-            {
-               evalFilter = lexer.getResult();
-            }
-            catch ( RecognitionException e )
-            {
-            }
+            evalFilter = evaluate( filter );
          }
          else
          {
             evalFilter = "true";
          }
+      }
+      
+      return evalFilter;
+   }
+   
+
+
+   public static final String evaluate( String filter )
+   {
+      String evalFilter = null;
+      
+      final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
+      final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
+      
+      try
+      {
+         evalFilter = lexer.getResult();
+      }
+      catch ( RecognitionException e )
+      {
       }
       
       return evalFilter;

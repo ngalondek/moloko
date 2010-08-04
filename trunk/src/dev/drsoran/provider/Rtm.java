@@ -18,6 +18,15 @@ public class Rtm
        * </P>
        */
       public final static String LIST_NAME = "list_name";
+      
+      /**
+       * Indicates if the list is a smart list
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
+       */
+      public final static String SMART = "smart";
    }
    
 
@@ -57,15 +66,6 @@ public class Rtm
        * </P>
        */
       public final static String POSITION = "position";
-      
-      /**
-       * Indicates if the list is a smart list
-       * <P>
-       * Type: INTEGER
-       * </P>
-       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
-       */
-      public final static String SMART = "smart";
       
       /**
        * The smart filer for this list
@@ -130,7 +130,8 @@ public class Rtm
       /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = POSITION + ", " + LIST_NAME;
+      public final static String DEFAULT_SORT_ORDER = POSITION + ", "
+         + LIST_NAME;
    }
    
 

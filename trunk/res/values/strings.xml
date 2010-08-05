@@ -25,12 +25,14 @@
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
    <string name="phr_today">Heute</string>
+   <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
    <string name="err_success">Erfolg</string>
-   <string name="err_canceled">Abgebrochen</string>
+   <string name="err_canceled">Abgebrochen</string>   
    <string name="err_saving_preferences">Fehler beim Speichern der Einstellungen</string>
+   <string name="err_not_connected">Keine Verbindung</string>
    
 	<!-- Global buttons -->
 	<string name="btn_ok">OK</string>
@@ -57,6 +59,7 @@
       <string name="auth_err_with_cause">Fehler beim Erstellen des Kontos. Grund: %1$s</string>
       <string name="auth_err_cause_inv_auth_token">Ungüliges AuthToken empfangen</string>
       <string name="auth_err_cause_scurity">Sicherheitsverletzung. </string>
+      <string name="auth_err_cause_inv_login_url">Ungültige Login-URL empfangen</string>
       
 	<!-- AccountPreferences activity -->
 	<string name="auth_pref_login_username_key">pref_login_username</string>

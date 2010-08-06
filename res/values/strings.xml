@@ -21,6 +21,7 @@
 	<string name="key_api_key">api_key</string>
 	<string name="key_shared_secret">shared_secret</string>
 	<string name="key_permission">permission</string>
+	<string name="key_sync_inverval">sync_interval</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
@@ -44,73 +45,65 @@
 
 	<!-- TasksList activity -->
 	  <string name="taskslist_titlebar_listname">%1$s</string>
-	  <string name="taskslist_titlebar_listname_smart">Smart list %1$s</string>
 	  <!-- Menus -->
 	  <string name="taskslist_menu_opt_lists_title">@string/app_tasklists</string>
 
    <!-- Authenticator activity -->
    <string name="auth_username_label">Benutzername</string>
    <string name="auth_password_label">Passwort</string>
+   <string name="auth_api_key_label">API key</string>
+   <string name="auth_api_shared_secret_label">Shared secret</string>
+   <string name="auth_permission_label">Berechtigung</string>
    <string name="auth_missing_credential">Wichtige Kontoangaben fehlen. Bitte ergänzen.</string>
    <string name="auth_expired_auth_token">Die Zugriffsberechtigung wurde von Remember The Milk für %1$s nicht bestätigt. Bitte neu beantragen.</string>
+   <string name="auth_perm_no">Keine</string>
+   <string name="auth_perm_read">Lesen</string>
+   <string name="auth_perm_write">Lesen und Schreiben</string>
+   <string name="auth_perm_delete">Lesen, Schreiben und Löschen</string>
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene \'%1$s\'</string>
       <!-- Errors -->
       <string name="auth_err_with_cause">Fehler beim Erstellen des Kontos. Grund: %1$s</string>
-      <string name="auth_err_cause_inv_auth_token">Ungüliges AuthToken empfangen</string>
+      <string name="auth_err_cause_inv_auth_token">Ungüliges Auth-Token empfangen</string>
       <string name="auth_err_cause_scurity">Sicherheitsverletzung. </string>
       <string name="auth_err_cause_inv_login_url">Ungültige Login-URL empfangen</string>
       
-	<!-- AccountPreferences activity -->
-	<string name="auth_pref_login_username_key">pref_login_username</string>
-	<string name="auth_pref_login_username_summary">RTM Benutzername</string>
-	<string name="auth_pref_login_pass_key">pref_login_pass</string>	
-	<string name="auth_pref_login_pass_summary">RTM Passwort</string>
-	<string name="auth_pref_cat_rtm_title">RTM Zugriff</string>
-	<string name="auth_pref_scr_api_credentials_title">API Referenzen</string>
-	<string name="auth_pref_scr_api_credentials_summary">Milk API Akkreditierungsangaben</string>
-	<string name="auth_pref_api_key_key">pref_api_key</string>
-	<string name="auth_pref_api_key_title">API key</string>
-	<string name="auth_pref_api_shared_secret_key">pref_api_shared_secret</string>
-	<string name="auth_pref_api_shared_secret_title">Shared secret</string>
-	<string name="auth_pref_permission_key">pref_permission</string>
-	<string name="auth_pref_permission_title">Berechtigung</string>
-	<string name="auth_pref_permission_summary">Legt die Zugriffsebene für die RTM Daten fest
-	</string>
-	<string name="auth_pref_perm_no">Keine</string>
-	<string name="auth_pref_perm_read">Lesen</string>
-	<string name="auth_pref_perm_write">Lesen und Schreiben</string>
-	<string name="auth_pref_perm_delete">Lesen, Schreiben und Löschen</string>
+	<!-- AccountPreferences + activity -->
+	<string name="auth_pref_title">Allgemeine Einstellungen</string>
+	<string name="auth_pref_account_tilte">Kontoeinstellungen</string>
+	<string name="auth_pref_account_summary">Synchronisierung, RTM-Zugriffsebene, usw.</string>
+	<string name="auth_pref_sync_interval_title">Synchronisierungsintervall</string>
+	<string name="auth_pref_sync_interval_summary">Legt die Häufigkeit des Datenabgleichs mit dem RTM Server fest</string>
+	<string name="auth_pref_perm_summary">Legt die Zugriffsebene für die RTM Daten fest</string>
 	<string name="auth_pref_perm_has">%1$s</string>
-	<string name="auth_pref_perm_has_since">%1$s seit dem %2$s</string>
-	<string name="auth_pref_perm_has_not">Diese Anwendung hat keine Zugangsberechtigung</string>
-     <!-- Dialogs -->
-	  <string name="auth_pref_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene \'%1$s\'</string>
-	  <string name="auth_pref_dlg_check_auth_token">Überprüfe Zugriffsebene %1$s</string>
-	  <string name="auth_pref_dlg_check_auth_token_finished">Zugriffsebene %1$s für Benutzer %2$s bestätigt</string>
-	  <string name="auth_pref_dlg_check_auth_token_invalid">Zugriff nicht bestätigt. Bitte neu beantragen</string>
-	  <string name="auth_pref_dlg_update_svc_failed">Update der Zugriffsdaten fehlgeschlagen. Grund: %1$s</string>
-	  <string name="auth_pref_dlg_finsihed">Zugriff der Ebene %1$s gewährt</string>
-	  <string name="auth_pref_dlg_error">Zugriff nicht gewährt. Grund: %1$s</string>
-	  <!-- Errors -->	  
-     <string name="auth_pref_err_conn_lost">Verbinding zum Dienst ist unerwartet abgebrochen</string>
-     <string name="auth_pref_err_rtmWebAccess">RTM Webzugriff ist fehlgeschlagen</string>
-     <string name="auth_pref_err_invalid_auth_token">Ungültiges Auth-Token</string>
-     <string name="auth_pref_err_check_auth_token_failed">Überprüfung konnte nicht durchgeführt werden</string>
-	  <!-- Menus -->
-	  <string name="auth_pref_ctxmenu_perm_check_auth_token">Überprüfe Gültigkeit</string>
+   <string name="auth_pref_perm_has_since">%1$s seit dem %2$s</string>
+   <string name="auth_pref_perm_has_not">Diese Anwendung hat keine Zugangsberechtigung</string>
+      <!-- Dialogs -->
+	   <string name="auth_pref_dlg_check_auth_token">Überprüfe Zugriffsebene %1$s</string>
+	   <string name="auth_pref_dlg_check_auth_token_finished">Zugriffsebene %1$s für Benutzer %2$s bestätigt</string>
+	   <string name="auth_pref_dlg_check_auth_token_invalid">Zugriff nicht bestätigt. Bitte neu beantragen</string>
+	   <string name="auth_pref_dlg_update_svc_failed">Update der Zugriffsdaten fehlgeschlagen. Grund: %1$s</string>
+	   <string name="auth_pref_dlg_finsihed">Zugriff der Ebene %1$s gewährt</string>
+	   <string name="auth_pref_dlg_error">Zugriff nicht gewährt. Grund: %1$s</string>
+	   <!-- Errors -->	  
+      <string name="auth_pref_err_conn_lost">Verbinding zum Dienst ist unerwartet abgebrochen</string>
+      <string name="auth_pref_err_rtmWebAccess">RTM Webzugriff ist fehlgeschlagen</string>
+      <string name="auth_pref_err_invalid_auth_token">Ungültiges Auth-Token</string>
+      <string name="auth_pref_err_check_auth_token_failed">Überprüfung konnte nicht durchgeführt werden</string>
+	   <!-- Menus -->
+	   <string name="auth_pref_ctxmenu_perm_check_auth_token">Überprüfe Gültigkeit</string>
 	  	  
 	<!-- RTM service status messages -->
 	<string name="rtmSvc_state_unknown">Unbekannt</string>
 	<string name="rtmSvc_state_internal_error">Interner Service Fehler</string>
 	<string name="rtmSvc_state_connected">Verbunden</string>
 	<string name="rtmSvc_state_disconnected">Getrennt</string>
-	  <!-- Auth -->
-	  <string name="rtmSvc_auth_get_url_start">Empfange Anmelde-URL</string>
-	  <string name="rtmSvc_auth_get_url_fin">Anmelde-URL empfangen</string>
-	  <string name="rtmSvc_auth_get_token_start">Empfange Authentifiezierungs-Token</string>
-	  <string name="rtmSvc_auth_get_token_fin">Authentifiezierungs-Token empfangen</string>
-	  <string name="rtmSvc_auth_failed">Authentifizierung fehlgeschlagen</string>
+      <!-- Auth -->
+	   <string name="rtmSvc_auth_get_url_start">Empfange Anmelde-URL</string>
+	   <string name="rtmSvc_auth_get_url_fin">Anmelde-URL empfangen</string>
+	   <string name="rtmSvc_auth_get_token_start">Empfange Authentifiezierungs-Token</string>
+	   <string name="rtmSvc_auth_get_token_fin">Authentifiezierungs-Token empfangen</string>
+	   <string name="rtmSvc_auth_failed">Authentifizierung fehlgeschlagen</string>
 
 	<!-- Log messages -->
 	<string name="log_e_resource_not_found">Resource not found</string>

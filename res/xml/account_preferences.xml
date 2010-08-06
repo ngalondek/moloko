@@ -1,28 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-     xmlns:android="http://schemas.android.com/apk/res/android"
-	  android:orderingFromXml="true">
-	  
-	<PreferenceCategory
-	     android:title="@string/auth_pref_cat_rtm_title">
-		<PreferenceScreen
-		    android:orderingFromXml="true"
-			 android:title="@string/auth_pref_scr_api_credentials_title"
-			 android:summary="@string/auth_pref_scr_api_credentials_summary">
-			<EditTextPreference
-			   android:key="@string/auth_pref_api_key_key"
-				android:title="@string/auth_pref_api_key_title" />
-			<EditTextPreference
-			   android:key="@string/auth_pref_api_shared_secret_key"
-				android:title="@string/auth_pref_api_shared_secret_title" />
-		</PreferenceScreen>
-
-		<dev.drsoran.moloko.auth.prefs.RtmPermissionPreference 
-			android:title="@string/auth_pref_permission_title"
-			android:key="@string/auth_pref_permission_key" 
-			android:entries="@array/rtm_permissions"
-			android:entryValues="@array/rtm_permissions_values"
-			android:dependency="@string/auth_pref_api_key_key"/>
-	</PreferenceCategory>
-
+   xmlns:android="http://schemas.android.com/apk/res/android">
+   
+   <PreferenceCategory
+      android:title="@string/auth_pref_title">
+      
+	   <PreferenceScreen
+	      android:title="@string/auth_pref_account_tilte"
+	      android:summary="@string/auth_pref_account_summary">
+	      <intent
+            android:action="android.intent.action.MAIN"
+	         android:targetPackage="dev.drsoran.moloko"
+	         android:targetClass="dev.drsoran.moloko.auth.prefs.AccountPreferencesActivity"/>
+	   </PreferenceScreen>
+   </PreferenceCategory>
 </PreferenceScreen>

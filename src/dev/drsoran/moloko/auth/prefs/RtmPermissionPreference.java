@@ -55,7 +55,7 @@ public class RtmPermissionPreference extends ListPreference implements
          if ( hasAuthToken )
          {
             final String permission = getPermissionEntry( resources,
-                                                          prefs.getString( resources.getString( R.string.auth_pref_permission_key ),
+                                                          prefs.getString( resources.getString( R.string.key_permission ),
                                                                            null ) );
             
             final long sinceDate = prefs.getLong( resources.getString( R.string.key_authToken_date ),
@@ -129,7 +129,7 @@ public class RtmPermissionPreference extends ListPreference implements
       
       if ( key.equals( res.getString( R.string.key_authToken ) )
          || key.equals( res.getString( R.string.key_authToken_date ) )
-         || key.equals( res.getString( R.string.auth_pref_permission_key ) ) )
+         || key.equals( res.getString( R.string.key_permission ) ) )
       {
          notifyChanged();
       }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:orderingFromXml="true">
+   
+   <PreferenceCategory
+      android:title="@string/auth_pref_title">
+      
+	   <PreferenceScreen
+	      android:orderingFromXml="true"
+	      android:title="@string/auth_pref_sync_interval_title">
+	   
+	      <EditTextPreference
+	         android:key="@string/key_sync_inverval"
+	         android:title="@string/auth_pref_sync_interval_title"
+	         android:summary="@string/auth_pref_sync_interval_summary" />
+	   </PreferenceScreen>
+   </PreferenceCategory>
+         
+	   <!-- 
+		<dev.drsoran.moloko.auth.prefs.RtmPermissionPreference 
+			android:title="@string/auth_pref_permission_title"
+			android:key="@string/auth_pref_permission_key" 
+			android:entries="@array/rtm_permissions"
+			android:entryValues="@array/rtm_permissions_values"
+			android:dependency="@string/auth_pref_api_key_key"/>
+		-->
+</PreferenceScreen>

@@ -108,12 +108,11 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
       
       if ( prefs != null )
       {
-         applicationInfo = new ApplicationInfo( prefs.getString( context.getString( R.string.auth_pref_api_key_key ),
+         applicationInfo = new ApplicationInfo( prefs.getString( context.getString( R.string.key_api_key ),
                                                                  null ),
-                                                prefs.getString( context.getString( R.string.auth_pref_api_shared_secret_key ),
+                                                prefs.getString( context.getString( R.string.key_shared_secret ),
                                                                  null ),
-                                                prefs.getString( context.getString( R.string.auth_pref_login_username_key ),
-                                                                 null ),
+                                                null,
                                                 prefs.getString( context.getString( R.string.key_authToken ),
                                                                  null ) );
       }
@@ -131,7 +130,7 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
       
       if ( prefs != null )
       {
-         perms = RtmAuth.Perms.valueOf( prefs.getString( context.getString( R.string.auth_pref_permission_key ),
+         perms = RtmAuth.Perms.valueOf( prefs.getString( context.getString( R.string.key_permission ),
                                                          RtmAuth.Perms.nothing.toString() ) );
       }
       
@@ -379,7 +378,7 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
             // We store the requested permission level in a bundle so that
             // subsequent calls have access to it.
             final Bundle bundle = new Bundle();
-            bundle.putString( getString( R.string.auth_pref_permission_key ),
+            bundle.putString( getString( R.string.key_permission ),
                               newPermissionValue );
             
             final String newPermissionRequest = RtmPermissionPreference.getPermissionEntry( getResources(),
@@ -387,7 +386,7 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
             
             activateDialog( DlgType.PROGRESS,
                             getString( R.string.phr_please_wait ),
-                            getString( R.string.auth_pref_dlg_get_auth_token,
+                            getString( R.string.auth_dlg_get_auth_token,
                                        newPermissionRequest ) );
             
             cancelOperationHandle = asyncService.auth()
@@ -510,7 +509,7 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
                                                               .edit();
       
       // set permission to nothing
-      prefsEditor.putString( getString( R.string.auth_pref_permission_key ),
+      prefsEditor.putString( getString( R.string.key_permission ),
                              permissionLevelNone );
       
       // remove auth token
@@ -552,7 +551,7 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
       SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences( this )
                                                               .edit();
       
-      prefsEditor.putString( getString( R.string.auth_pref_permission_key ),
+      prefsEditor.putString( getString( R.string.key_permission ),
                              permissionLevel );
       
       // set auth token
@@ -585,7 +584,7 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
    {
       RtmPermissionPreference listPreference = null;
       
-      Preference permPref = findPreference( getString( R.string.auth_pref_permission_key ) );
+      Preference permPref = findPreference( getString( R.string.key_permission ) );
       
       if ( permPref instanceof ListPreference )
       {

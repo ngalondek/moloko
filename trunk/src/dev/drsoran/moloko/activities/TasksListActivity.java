@@ -202,12 +202,7 @@ public class TasksListActivity extends ListActivity implements OnClickListener
          
          setListAdapter( adapter );
          
-         if ( smartFilter != null )
-         {
-            setTitle( getString( R.string.taskslist_titlebar_listname_smart,
-                                 listName ) );
-         }
-         else if ( listName != null )
+         if ( listName != null )
          {
             setTitle( getString( R.string.taskslist_titlebar_listname, listName ) );
          }

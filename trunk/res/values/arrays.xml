@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string-array name="rtm_permissions">		
-		<item>@string/auth_pref_perm_read</item>
-		<item>@string/auth_pref_perm_write</item>
-		<item>@string/auth_pref_perm_delete</item>
+		<item>@string/auth_perm_read</item>
+		<item>@string/auth_perm_write</item>
+		<item>@string/auth_perm_delete</item>
 	</string-array>
 
 	<string-array name="rtm_permissions_values">

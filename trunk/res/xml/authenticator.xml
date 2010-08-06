@@ -4,8 +4,10 @@
 	-->
 	<!-- for the Account Manager. -->
 
-<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
-	                    android:accountType="dev.drsoran.moloko"
-	                    android:icon="@drawable/rtm"
-	                    android:smallIcon="@drawable/rtm"
-	                    android:label="@string/rtm_full" />
+<account-authenticator
+   xmlns:android="http://schemas.android.com/apk/res/android"
+	android:accountType="dev.drsoran.moloko"
+	android:icon="@drawable/rtm"
+	android:smallIcon="@drawable/rtm"
+	android:label="@string/rtm_full"
+	android:accountPreferences="@xml/account_preferences" />

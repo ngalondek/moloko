@@ -5,13 +5,9 @@
    <PreferenceCategory
       android:title="@string/auth_pref_title">
       
-	   <PreferenceScreen
-	      android:title="@string/auth_pref_account_tilte"
-	      android:summary="@string/auth_pref_account_summary">
-	      <intent
-            android:action="android.intent.action.MAIN"
-	         android:targetPackage="dev.drsoran.moloko"
-	         android:targetClass="dev.drsoran.moloko.auth.prefs.AccountPreferencesActivity"/>
-	   </PreferenceScreen>
+	   <EditTextPreference
+            android:key="@string/key_sync_inverval"
+            android:title="@string/auth_pref_sync_interval_title"
+            android:summary="@string/auth_pref_sync_interval_summary" />
    </PreferenceCategory>
 </PreferenceScreen>

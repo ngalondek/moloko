@@ -59,10 +59,16 @@
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.list" />
          </intent-filter>
       </activity>
+      
+      <!--  Deactivated
       <activity
 		    android:label="@string/app_preferences"
-		    android:name=".auth.prefs.AccountPreferencesActivity"/>
-          
+		    android:name=".auth.prefs.AccountPreferencesActivity"
+		    android:excludeFromRecents="true">
+      </activity>
+      
+       -->
+                 
       <activity
           android:name=".auth.AuthenticatorActivity"
           android:label="@string/rtm_full"
@@ -78,15 +84,7 @@
           android:label="Test RTM smart filter"
           android:excludeFromRecents="true"/>
 		
-		<!-- Services -->	       
-		<service
-		    android:name=".service.RtmService"
-		    android:exported="false">
-			<intent-filter>
-				<action
-				  android:name="dev.drsoran.moloko.service.IRtmService"/>
-			</intent-filter>					
-		</service>
+		<!-- Services -->
 		
       <service
          android:name=".auth.AuthenticationService"
@@ -101,16 +99,16 @@
       </service>
       
       <service
-            android:name=".service.sync.SyncService"
-            android:exported="true">
-            <intent-filter>
-                <action
-                    android:name="android.content.SyncAdapter" />
-            </intent-filter>
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
-        </service>
+         android:name=".service.sync.SyncService"
+         android:exported="true">
+         <intent-filter>
+            <action
+               android:name="android.content.SyncAdapter" />
+         </intent-filter>
+         <meta-data
+             android:name="android.content.SyncAdapter"
+             android:resource="@xml/syncadapter" />
+      </service>
    </application>
 
    <uses-permission

@@ -17,6 +17,8 @@ RTM features of:
     * notes
 
 RTM smart search syntax operators. Also used for smart lists:
+See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
+
 || *opearator* || *parameter* ||
 || list: || string ||
 || name || string ||
@@ -24,18 +26,18 @@ RTM smart search syntax operators. Also used for smart lists:
 || status: || completed | incomplete ||
 || location: || string ||
 || isLocated: || true | false ||
-|| due: || string ||
-|| dueAfter: || string ||
-|| dueBefore: || string ||
-|| completed: || string ||
-|| completedAfter: || string ||
-|| completedBefore: || string ||
-|| added: || string ||
-|| addedAfter: || string ||
-|| addedBefore: || string ||
+|| due: || _date string_ ||
+|| dueAfter: || _date string_ ||
+|| dueBefore: || _date string_ ||
+|| completed: || _date string_ ||
+|| completedAfter: || _date string_ ||
+|| completedBefore: || _date string_ ||
+|| added: || _date string_ ||
+|| addedAfter: || _date string_ ||
+|| addedBefore: || _date string_ ||
 || postponed: || string ||
 
- 
+ * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
 
 === TODO ===
 
@@ -44,8 +46,13 @@ RTM smart search syntax operators. Also used for smart lists:
  * tags are not part of the ContentProvider returned Task
  * add tags to task list item
  * add notes indicator to task list item
+ * RTM date format:
+   * missing separator \u0020\u0068\u0020|\u6642|h
+   * '.' is only allowed for dates not times
+   * ':' is only allowed for times not dates
 
 Unsupported RTM smart search syntax operators. Also used for smart lists:
+See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
  * tag:
  * tag_contains:
  * is_tagged:  

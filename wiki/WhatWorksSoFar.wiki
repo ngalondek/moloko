@@ -4,6 +4,61 @@
 
 This is a collection of features which are supported and what is todo.
 
-=== What works ===
+=== What works (% finished)===
+
+  * Account creation and background synchronization from RTM to Moloko (90%)
+  * Database and ContentProvider (70%)
+
+RTM features of:
+    * lists (including smart lists)
+    * locations
+    * tasks
+    * tags
+    * notes
+
+RTM smart search syntax operators. Also used for smart lists:
+|| *opearator* || *parameter* ||
+|| list: || string ||
+|| name || string ||
+|| priority: || string ||
+|| status: || completed | incomplete ||
+|| location: || string ||
+|| isLocated: || true | false ||
+|| due: || string ||
+|| dueAfter: || string ||
+|| dueBefore: || string ||
+|| completed: || string ||
+|| completedAfter: || string ||
+|| completedBefore: || string ||
+|| added: || string ||
+|| addedAfter: || string ||
+|| addedBefore: || string ||
+|| postponed: || string ||
+
+ 
 
 === TODO ===
+
+ * handle reoccurred tasks
+ * account settings
+ * tags are not part of the ContentProvider returned Task
+ * add tags to task list item
+ * add notes indicator to task list item
+
+Unsupported RTM smart search syntax operators. Also used for smart lists:
+ * tag:
+ * tag_contains:
+ * is_tagged:  
+ * locationWithin:
+ * isRepeating:
+ * noteContains:
+ * hasNotes:
+ * completedWithin:
+ * addedWithin:
+ * timeEstimate:
+ * isShared:
+ * sharedWith
+ * isReceived:
+ * to:
+ * from:
+ * includeArchived

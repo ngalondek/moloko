@@ -54,8 +54,8 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 Unsupported RTM smart search syntax operators. Also used for smart lists:
 See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
  * tag:
- * tag_contains:
- * is_tagged:  
+ * tagContains:
+ * isTagged:  
  * locationWithin:
  * isRepeating:
  * noteContains:

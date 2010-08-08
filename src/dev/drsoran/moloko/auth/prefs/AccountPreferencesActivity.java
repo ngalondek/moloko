@@ -1,7 +1,5 @@
 package dev.drsoran.moloko.auth.prefs;
 
-import java.util.concurrent.Future;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -26,9 +24,6 @@ import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.service.RtmServiceConstants;
-import dev.drsoran.moloko.service.async.AsyncRtmService;
-import dev.drsoran.moloko.util.ResultCallback;
 
 
 public class AccountPreferencesActivity extends PreferenceActivity implements
@@ -40,7 +35,7 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
    
    public ProgressDialog PROGRESS_DLG = null;
    
-   public AlertDialog ALERT_DLG = null;
+   public AlertDialog ALERT_DLG = null;      
    
    
    private final class DlgType
@@ -50,38 +45,33 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
       public static final int ALERT = 1;
    }
    
-   private AsyncRtmService asyncService = null;
-   
    private int activeDlgId = -1;
    
-   private Future< ? > cancelOperationHandle = null;
    
-   
-
    @Override
    protected void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
-      addPreferencesFromResource( R.xml.account_preferences );
+      addPreferencesFromResource( R.xml.account_preferences_activity );
       
-      ListPreference permPref = getPermissionList();
-      
-      if ( permPref != null )
-      {
-         permPref.setOnPreferenceChangeListener( this );
-      }
-      
-      registerForContextMenu( getListView() );
-      
-      String permValue = getPermissionList().getValue();
-      
-      // if the value is null we do not have preferences yet.
-      if ( permValue == null )
-      {
-         permValue = RtmAuth.Perms.nothing.toString();
-      }
-      
+//      ListPreference permPref = getPermissionList();
+//      
+//      if ( permPref != null )
+//      {
+//         permPref.setOnPreferenceChangeListener( this );
+//      }
+//      
+//      registerForContextMenu( getListView() );
+//      
+//      String permValue = getPermissionList().getValue();
+//      
+//      // if the value is null we do not have preferences yet.
+//      if ( permValue == null )
+//      {
+//         permValue = RtmAuth.Perms.nothing.toString();
+//      }
+//      
       // asyncService = new AsyncRtmService( this,
       // getRtmApplicationInfo( this ),
       // RtmAuth.Perms.valueOf( permValue ) );
@@ -93,9 +83,6 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
    protected void onDestroy()
    {
       super.onDestroy();
-      
-      asyncService.shutdown();
-      asyncService = null;
    }
    
 
@@ -170,32 +157,32 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
             
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
             
-            cancelOperationHandle = asyncService.auth()
-                                                .checkAuthToken( prefs.getString( getString( R.string.key_authToken ),
-                                                                                  "" ),
-                                                                 new ResultCallback< RtmAuth >()
-                                                                 {
-                                                                    public void run()
-                                                                    {
-                                                                       if ( exception == null )
-                                                                       {
-                                                                          onCheckAuthToken( result,
-                                                                                            true );
-                                                                       }
-                                                                       else if ( exception != null
-                                                                          && ( AsyncRtmService.getExceptionCode( exception ) == RtmServiceConstants.RtmErrorCodes.INVALID_AUTH_TOKEN || AsyncRtmService.getExceptionCode( exception ) == RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY ) )
-                                                                       {
-                                                                          onCheckAuthToken( null,
-                                                                                            false );
-                                                                       }
-                                                                       else
-                                                                       {
-                                                                          activateDialog( DlgType.ALERT,
-                                                                                          getString( R.string.err_error ),
-                                                                                          getErrorMessageWithException( exception ) );
-                                                                       }
-                                                                    }
-                                                                 } );
+//            cancelOperationHandle = asyncService.auth()
+//                                                .checkAuthToken( prefs.getString( getString( R.string.key_authToken ),
+//                                                                                  "" ),
+//                                                                 new ResultCallback< RtmAuth >()
+//                                                                 {
+//                                                                    public void run()
+//                                                                    {
+//                                                                       if ( exception == null )
+//                                                                       {
+//                                                                          onCheckAuthToken( result,
+//                                                                                            true );
+//                                                                       }
+//                                                                       else if ( exception != null
+//                                                                          && ( AsyncRtmService.getExceptionCode( exception ) == RtmServiceConstants.RtmErrorCodes.INVALID_AUTH_TOKEN || AsyncRtmService.getExceptionCode( exception ) == RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY ) )
+//                                                                       {
+//                                                                          onCheckAuthToken( null,
+//                                                                                            false );
+//                                                                       }
+//                                                                       else
+//                                                                       {
+//                                                                          activateDialog( DlgType.ALERT,
+//                                                                                          getString( R.string.err_error ),
+//                                                                                          getErrorMessageWithException( exception ) );
+//                                                                       }
+//                                                                    }
+//                                                                 } );
             return true;
          default :
             return super.onContextItemSelected( item );
@@ -267,19 +254,19 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
 
    public void onCancel( DialogInterface dialog )
    {
-      if ( cancelOperationHandle != null )
-      {
-         if ( cancelOperationHandle.cancel( true ) )
-         {
-            Log.d( TAG, "Operation cancelled." );
-         }
-         else
-         {
-            Log.d( TAG, "Failed to cancel operation." );
-         }
-      }
-      
-      cancelOperationHandle = null;
+//      if ( cancelOperationHandle != null )
+//      {
+//         if ( cancelOperationHandle.cancel( true ) )
+//         {
+//            Log.d( TAG, "Operation cancelled." );
+//         }
+//         else
+//         {
+//            Log.d( TAG, "Failed to cancel operation." );
+//         }
+//      }
+//      
+//      cancelOperationHandle = null;
    }
    
 
@@ -389,25 +376,25 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
                             getString( R.string.auth_dlg_get_auth_token,
                                        newPermissionRequest ) );
             
-            cancelOperationHandle = asyncService.auth()
-                                                .beginAuthorization( RtmAuth.Perms.valueOf( newPermissionValue ),
-                                                                     new ResultCallback< String >( bundle )
-                                                                     {
-                                                                        public void run()
-                                                                        {
-                                                                           if ( exception == null )
-                                                                           {
-                                                                              onLoginUrlReceived( result,
-                                                                                                  bundle );
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                              activateDialog( DlgType.ALERT,
-                                                                                              getString( R.string.err_error ),
-                                                                                              getErrorMessageWithException( exception ) );
-                                                                           }
-                                                                        }
-                                                                     } );
+//            cancelOperationHandle = asyncService.auth()
+//                                                .beginAuthorization( RtmAuth.Perms.valueOf( newPermissionValue ),
+//                                                                     new ResultCallback< String >( bundle )
+//                                                                     {
+//                                                                        public void run()
+//                                                                        {
+//                                                                           if ( exception == null )
+//                                                                           {
+//                                                                              onLoginUrlReceived( result,
+//                                                                                                  bundle );
+//                                                                           }
+//                                                                           else
+//                                                                           {
+//                                                                              activateDialog( DlgType.ALERT,
+//                                                                                              getString( R.string.err_error ),
+//                                                                                              getErrorMessageWithException( exception ) );
+//                                                                           }
+//                                                                        }
+//                                                                     } );
          }
       }
       
@@ -530,22 +517,22 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
    private boolean commitNewPermissionLevel( final String authToken,
                                              final String permissionLevel )
    {
-      if ( asyncService != null )
-      {
-         // try
-         // {
-         // asyncService.updateService( getRtmApplicationInfo( this ),
-         // RtmAuth.Perms.valueOf( permissionLevel ) );
-         // }
-         // catch ( RemoteException e )
-         // {
-         // activateDialog( DlgType.ALERT,
-         // getString( R.string.err_error ),
-         // getString( R.string.auth_pref_dlg_update_svc_failed,
-         // AsyncRtmService.getExceptionCause( e ) ) );
-         // return false;
-         // }
-      }
+//      if ( asyncService != null )
+//      {
+//         // try
+//         // {
+//         // asyncService.updateService( getRtmApplicationInfo( this ),
+//         // RtmAuth.Perms.valueOf( permissionLevel ) );
+//         // }
+//         // catch ( RemoteException e )
+//         // {
+//         // activateDialog( DlgType.ALERT,
+//         // getString( R.string.err_error ),
+//         // getString( R.string.auth_pref_dlg_update_svc_failed,
+//         // AsyncRtmService.getExceptionCause( e ) ) );
+//         // return false;
+//         // }
+//      }
       
       // Set new selected permission level
       SharedPreferences.Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences( this )
@@ -598,8 +585,9 @@ public class AccountPreferencesActivity extends PreferenceActivity implements
 
    private String getErrorMessageWithException( final Exception e )
    {
-      return getString( R.string.auth_pref_dlg_error,
-                        AsyncRtmService.getExceptionCause( e ) );
+      return null;
+//      return getString( R.string.auth_pref_dlg_error,
+//                        AsyncRtmService.getExceptionCause( e ) );
       
    }
    

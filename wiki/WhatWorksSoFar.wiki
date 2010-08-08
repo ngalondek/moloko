@@ -36,6 +36,7 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 || addedAfter: || _date string_ ||
 || addedBefore: || _date string_ ||
 || postponed: || string ||
+|| AND, OR, NOT, (, ) || operator ||
 
  * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
 

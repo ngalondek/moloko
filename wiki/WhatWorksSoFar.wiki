@@ -1,9 +1,9 @@
 #What works and what needs to be done
 
-= Introduction =
+== Introduction ==
 
 This is a collection of features which are supported and what is todo.
 
-= What works =
+=== What works ===
 
-= TODO =
+=== TODO ===

@@ -25,7 +25,7 @@ public class TasksProviderPart extends AbstractProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Tasks._ID, Tasks.LIST_ID, Tasks.LIST_NAME, Tasks.SMART,
+   { Tasks._ID, Tasks.LIST_ID, Tasks.LIST_NAME, Tasks.IS_SMART_LIST,
     Tasks.TASKSERIES_CREATED_DATE, Tasks.MODIFIED_DATE, Tasks.TASKSERIES_NAME,
     Tasks.SOURCE, Tasks.URL, Tasks.RAW_TASK_ID, Tasks.DUE_DATE,
     Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE, Tasks.COMPLETED_DATE,
@@ -54,7 +54,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                           + " AS _id",
                                                        Tasks.LIST_ID,
                                                        Tasks.LIST_NAME,
-                                                       Tasks.SMART,
+                                                       Tasks.IS_SMART_LIST,
                                                        Tasks.TASKSERIES_CREATED_DATE,
                                                        Tasks.MODIFIED_DATE,
                                                        Tasks.TASKSERIES_NAME,

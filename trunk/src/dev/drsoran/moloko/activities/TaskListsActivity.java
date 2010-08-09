@@ -28,7 +28,7 @@ public class TaskListsActivity extends ListActivity implements
    private final static ContentUiMapper contentUiMapper = new ContentUiMapper( new String[]
                                                                                {
                                                                                 ListOverviews._ID,
-                                                                                ListOverviews.SMART,
+                                                                                ListOverviews.IS_SMART_LIST,
                                                                                 ListOverviews.FILTER,
                                                                                 ListOverviews.LIST_NAME,
                                                                                 ListOverviews.TASKS_COUNT },

@@ -22,7 +22,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    public final static String[] PROJECTION =
    { ListOverviews._ID, ListOverviews.LIST_NAME, ListOverviews.LIST_DELETED,
     ListOverviews.LOCKED, ListOverviews.ARCHIVED, ListOverviews.POSITION,
-    ListOverviews.SMART, ListOverviews.FILTER, ListOverviews.TASKS_COUNT };
+    ListOverviews.IS_SMART_LIST, ListOverviews.FILTER, ListOverviews.TASKS_COUNT };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    

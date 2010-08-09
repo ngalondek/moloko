@@ -36,7 +36,7 @@ public final class TaskListsItemViewBinder implements ViewBinder
       
       this.LIST_NAME = mapper.getProjectionColumnIndex( ListOverviews.LIST_NAME );
       this.TASK_COUNT = mapper.getProjectionColumnIndex( ListOverviews.TASKS_COUNT );
-      this.SMART = mapper.getProjectionColumnIndex( ListOverviews.SMART );
+      this.SMART = mapper.getProjectionColumnIndex( ListOverviews.IS_SMART_LIST );
       this.FILTER = mapper.getProjectionColumnIndex( ListOverviews.FILTER );
       
       this.context = context;

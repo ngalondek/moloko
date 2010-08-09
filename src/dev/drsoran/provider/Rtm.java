@@ -26,7 +26,7 @@ public class Rtm
        * </P>
        * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
        */
-      public final static String SMART = "smart";
+      public final static String IS_SMART_LIST = "smart";
    }
    
 

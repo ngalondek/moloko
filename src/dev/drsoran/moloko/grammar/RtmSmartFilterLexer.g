@@ -10,6 +10,7 @@ options
 	package dev.drsoran.moloko.grammar;
 	
 	import dev.drsoran.provider.Rtm.Tasks;
+	import dev.drsoran.provider.Rtm.Tags;
 	
 	import java.util.Calendar;
 
@@ -24,6 +25,10 @@ options
 
 @members
 {
+   private final static String TAGS_QUERY_PREFIX
+   	= "(SELECT "  + Tags.TASKSERIES_ID + " FROM " + Tags.PATH
+   	  + " WHERE " + Tags.TASKSERIES_ID + " = " + Tasks.PATH + "." + Tasks._ID;
+   
 	private final StringBuffer result = new StringBuffer();
 
 
@@ -88,6 +93,15 @@ options
 		result.append( " = '" );
 		result.append( unquotify( param ) );
 		result.append( "'" );
+	}
+
+
+
+	private void containsStringParam( String param )
+	{
+		result.append( " like '\%" );
+		result.append( unquotify( param ) );
+		result.append( "\%'" );
 	}
 
 
@@ -187,11 +201,39 @@ OP_STATUS 	:  'status:'
 						}						
 				   );
 				   
-// OP_TAG
+OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
+				  {
+				     result.append( TAGS_QUERY_PREFIX )
+				           .append( " AND " )
+				           .append( Tags.TAG );
+					  equalsStringParam( $s.getText() );
+					  result.append( ")" );
+				  };
 
-// OP_TAG_CONTAINS
+OP_TAG_CONTAINS : 'tagContains:' ( s=STRING | s=Q_STRING )
+					   {
+					     result.append( TAGS_QUERY_PREFIX )
+					           .append( " AND " )
+					           .append( Tags.TAG );
+						  containsStringParam( $s.getText() );
+						  result.append( ")" );
+				      };
 
-// OP_IS_TAGGED
+OP_IS_TAGGED    : 'isTagged:'
+						(
+							TRUE
+							{
+							   result.append( TAGS_QUERY_PREFIX );
+								result.append( ")" );	
+							}
+							|
+							FALSE
+							{
+							   result.append( " NOT EXISTS " );
+							   result.append( TAGS_QUERY_PREFIX );
+								result.append( ")" );	
+							}
+						); 
 
 OP_LOCATION : 'location:' ( s=STRING | s=Q_STRING )
 					{

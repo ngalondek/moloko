@@ -31,7 +31,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
    public final static String[] PROJECTION =
    { Lists._ID, Lists.LIST_NAME, Lists.LIST_DELETED, Lists.LOCKED, Lists.ARCHIVED,
-    Lists.POSITION, Lists.SMART, Lists.FILTER };
+    Lists.POSITION, Lists.IS_SMART_LIST, Lists.FILTER };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -113,12 +113,12 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       
       if ( filter != null )
       {
-         values.put( Lists.SMART, 1 );
+         values.put( Lists.IS_SMART_LIST, 1 );
          values.put( Lists.FILTER, filter.getFilterString() );
       }
       else
       {
-         values.put( Lists.SMART, 0 );
+         values.put( Lists.IS_SMART_LIST, 0 );
          values.putNull( Lists.FILTER );
       }
       
@@ -176,7 +176,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          + Lists.LIST_DELETED + " INTEGER NOT NULL DEFAULT 0, " + Lists.LOCKED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.ARCHIVED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.POSITION
-         + " INTEGER NOT NULL DEFAULT 0, " + Lists.SMART
+         + " INTEGER NOT NULL DEFAULT 0, " + Lists.IS_SMART_LIST
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.FILTER + " TEXT, "
          + "CONSTRAINT PK_LISTS PRIMARY KEY ( \"" + Lists._ID + "\" ) );" );
       

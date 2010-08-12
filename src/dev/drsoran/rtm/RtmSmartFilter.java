@@ -104,6 +104,13 @@ public class RtmSmartFilter extends RtmData
    {
       String evalFilter = null;
       
+      // Check if there was no operator used. If so it has the
+      // same meaning as operator name:
+      if ( !filter.contains( ":" ) )
+      {
+         filter = RtmSmartFilterLexer.OP_DEFAULT + filter;
+      }
+      
       final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
       final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
       

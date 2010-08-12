@@ -43,9 +43,12 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 
  * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
 
+ * Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above.
+
 === TODO ===
- 
- * add task search functionality
+
+ * implement search history
+ * implement search auto completion (low pro)
  * handle reoccurred tasks
  * account settings
  * open new account activity if none exists on startup

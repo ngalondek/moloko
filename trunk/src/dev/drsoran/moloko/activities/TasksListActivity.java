@@ -1,6 +1,7 @@
 package dev.drsoran.moloko.activities;
 
 import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,12 +17,15 @@ import dev.drsoran.moloko.util.ContentUiMapper;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TasksListActivity extends ListActivity implements OnClickListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = TasksListActivity.class.getSimpleName();
+   
+   private final static String SHOW_SEARCH_RESULT = "show_search_result";
    
    private final static ContentUiMapper contentUiMapper = new ContentUiMapper( new String[]
                                                                                {
@@ -55,16 +59,13 @@ public class TasksListActivity extends ListActivity implements OnClickListener
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
       setContentView( R.layout.taskslist_activity );
       
-      final Intent intent = getIntent();
-      
-      // Intent extras have precedence before
-      // stored values.
-      if ( intent.getExtras() != null )
-         configuration.putAll( intent.getExtras() );
-      else if ( savedInstanceState != null )
+      if ( savedInstanceState != null )
          configuration.putAll( savedInstanceState );
+      
+      handleIntent( getIntent() );
    }
    
 
@@ -73,7 +74,17 @@ public class TasksListActivity extends ListActivity implements OnClickListener
    protected void onResume()
    {
       super.onResume();
+      
       refresh();
+   }
+   
+
+
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      setIntent( intent );
+      handleIntent( intent );
    }
    
 
@@ -81,8 +92,21 @@ public class TasksListActivity extends ListActivity implements OnClickListener
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
-      super.onSaveInstanceState( outState );
       outState.putAll( configuration );
+   }
+   
+
+
+   @Override
+   protected void onRestoreInstanceState( Bundle state )
+   {
+      if ( state != null )
+      {
+         configuration.clear();
+         configuration.putAll( state );
+         
+         refresh();
+      }
    }
    
 
@@ -115,7 +139,50 @@ public class TasksListActivity extends ListActivity implements OnClickListener
    
 
 
-   private final boolean addOptionsMenuIntents( Menu menu )
+   private void handleIntent( Intent intent )
+   {
+      boolean needsRefresh = false;
+      
+      if ( Intent.ACTION_SEARCH.equals( intent.getAction() ) )
+      {
+         final String query = intent.getStringExtra( SearchManager.QUERY );
+         
+         // try to evaluate the query
+         final String evalQuery = RtmSmartFilter.evaluate( query );
+         
+         if ( query != null )
+         {
+            configuration.clear();
+            
+            // we put the query string as smart filter cause
+            // smart lists are nothing else than saved searches.
+            configuration.putString( Lists.FILTER, evalQuery );
+            configuration.putString( Tasks.LIST_NAME, query );
+            configuration.putBoolean( SHOW_SEARCH_RESULT, true );
+            
+            needsRefresh = true;
+         }
+      }
+      
+      // Intent extras have precedence before
+      // stored values.
+      else if ( intent.getExtras() != null )
+      {
+         configuration.clear();
+         configuration.putAll( intent.getExtras() );
+         
+         needsRefresh = true;
+      }
+      
+      if ( needsRefresh )
+      {
+         refresh();
+      }
+   }
+   
+
+
+   private boolean addOptionsMenuIntents( Menu menu )
    {
       boolean ok = true;
       
@@ -204,7 +271,12 @@ public class TasksListActivity extends ListActivity implements OnClickListener
          
          if ( listName != null )
          {
-            setTitle( getString( R.string.taskslist_titlebar_listname, listName ) );
+            if ( configuration.getBoolean( SHOW_SEARCH_RESULT ) )
+               setTitle( getString( R.string.taskslist_titlebar_searchresult,
+                                    listName ) );
+            else
+               setTitle( getString( R.string.taskslist_titlebar_listname,
+                                    listName ) );
          }
          else
          {

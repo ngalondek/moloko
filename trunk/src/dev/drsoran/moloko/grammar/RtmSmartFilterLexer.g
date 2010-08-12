@@ -25,7 +25,9 @@ options
 
 @members
 {
-   private final static String TAGS_QUERY_PREFIX
+	public final static String OP_DEFAULT = "name:";
+	
+	private final static String TAGS_QUERY_PREFIX
    	= "(SELECT "  + Tags.TASKSERIES_ID + " FROM " + Tags.PATH
    	  + " WHERE " + Tags.TASKSERIES_ID + " = " + Tasks.PATH + "." + Tasks._ID;
    
@@ -169,6 +171,7 @@ options
       
       return result.toString();
 	}
+
 }
 
 /** Operators **/
@@ -264,7 +267,7 @@ OP_ISLOCATED : 'isLocated:'
 OP_NAME		:  'name:' ( s=STRING | s=Q_STRING )
 					{
 						result.append( Tasks.TASKSERIES_NAME );
-						equalsStringParam( $s.getText() );
+						containsStringParam( $s.getText() );
 					};
 					
 // OP_NOTE_CONTAINS

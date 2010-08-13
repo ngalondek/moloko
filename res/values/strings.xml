@@ -39,17 +39,25 @@
 	<string name="btn_ok">OK</string>
 	<string name="btn_continue">Weiter</string>
 	
+	<!-- Global menu items -->
+	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
+	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>
 	<string name="search_hint">Suche nach Aufgaben</string>
+	
+	<!-- TaskSearchResultActivity -->
+	<string name="tasksearchresult_titlebar">Gesucht nach: \'%1$s\'</string>
+	<string name="tasksearchresult_titlebar_error">Suche nach \'%1$s\' nicht ausführbar. Falsche Syntax?</string>
+	  <!-- Menus -->
+     <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
 	
 	<!-- TaskLists activity -->
      <!-- Menus -->
      <string name="tasklists_ctxmenu_listitem_open">Öffne %1$s</string>
 
 	<!-- TasksList activity -->
-	  <string name="taskslist_titlebar_listname">%1$s</string>
-	  <string name="taskslist_titlebar_searchresult">Gesucht nach: %1$s</string>
+	<string name="taskslist_titlebar_listname">%1$s</string>
 	  <!-- Menus -->
 	  <string name="taskslist_menu_opt_lists_title">@string/app_tasklists</string>
 

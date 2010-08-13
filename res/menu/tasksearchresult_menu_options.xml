@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+   xmlns:android="http://schemas.android.com/apk/res/android">
+   <item 
+      android:id="@+id/tasksearchresults_menu_opt_search_task"
+      android:title="@string/menu_opt_search_task_title"/>
+   <item 
+      android:id="@+id/tasksearchresults_menu_opt_clear_history"
+      android:title="@string/tasksearchresult_menu_opt_clear_history_title"/>
+</menu>

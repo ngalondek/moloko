@@ -98,6 +98,22 @@ public class TasksListActivity extends ListActivity implements OnClickListener
    
 
 
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      // Handle item selection
+      switch ( item.getItemId() )
+      {
+         case R.id.taskslist_menu_opt_search_task:
+            onSearchRequested();
+            return true;
+         default :
+            return super.onOptionsItemSelected( item );
+      }
+   }
+   
+
+
    public void onClick( View v )
    {
       // List name has been clicked

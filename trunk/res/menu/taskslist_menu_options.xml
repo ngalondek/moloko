@@ -3,8 +3,13 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
    <item
     	android:id="@+id/taskslist_menu_opt_lists"
-    	android:title="@string/taskslist_menu_opt_lists_title"></item>
+    	android:title="@string/taskslist_menu_opt_lists_title"/>
+   <item
+      android:id="@+id/taskslist_menu_opt_search_task"
+      android:title="@string/menu_opt_search_task_title"/>
+      
+   <!-- TODO: Remove this -->
    <item
       android:id="@+id/taskslist_menu_opt_smart_filter_test"
-      android:title="RTM smart filter test"></item>
+      android:title="RTM smart filter test"/>
 </menu>

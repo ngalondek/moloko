@@ -43,18 +43,17 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 
  * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
 
- * Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above.
+Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.
 
 === TODO ===
 
- * implement search history
+ * tags are not part of the ContentProvider returned Task
+ * add tags to task list item
+ * add notes indicator to task list item
  * implement search auto completion (low pro)
  * handle reoccurred tasks
  * account settings
  * open new account activity if none exists on startup
- * tags are not part of the ContentProvider returned Task
- * add tags to task list item
- * add notes indicator to task list item
  * RTM date format:
    * missing separator \u0020\u0068\u0020|\u6642|h
    * '.' is only allowed for dates not times

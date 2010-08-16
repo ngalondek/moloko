@@ -62,13 +62,20 @@
 	      android:paddingRight="5sp"
 	      android:gravity="right" />
 
-	  <ViewStub
-	     android:id="@+id/taskslist_listitem_tags_stub"
-	     android:layout_alignBaseline="@id/taskslist_listitem_btn_list_name"
-	     android:layout_toLeftOf="@id/taskslist_listitem_due_date"
-	     android:layout_height="wrap_content"
-	     android:layout_width="wrap_content"
-	     android:layout="@layout/taskslist_listitem_tags_layout" />
-	     
+	   <HorizontalScrollView
+	      android:layout_height="wrap_content"
+         android:layout_width="fill_parent"
+	      android:layout_below="@id/taskslist_listitem_btn_list_name"
+	      android:layout_alignLeft="@id/taskslist_listitem_btn_list_name"
+	      android:scrollbarStyle="outsideOverlay"
+	      android:fadeScrollbars="true">
+	      <LinearLayout
+	         android:id="@+id/taskslist_listitem_tags"
+	         android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:paddingTop="5sp"
+            android:paddingBottom="7sp"/>
+	   </HorizontalScrollView>
+	      	     
    </RelativeLayout>
 </LinearLayout>

@@ -27,13 +27,11 @@
 	<style
 		name="TasksList"
 		parent="@android:style/Widget.ListView">
-		<item
-			name="android:listSelector">@drawable/taskslist_listitem_sel_bgnd</item>
 	</style>	
 	<style
 		name="TasksListItem" >
 		<item
-			name="android:background">@drawable/taskslist_listitem</item>
+			name="android:background">@android:color/white</item>
 	</style>			
 	<style
 		name="TasksListItem.DescriptionText.Normal"

@@ -6,6 +6,8 @@
    <color name="tasklists_listitem_numtasks_bgnd_smart_stroke">#FF8185EB</color>
    <color name="tasklists_listitem_numtasks_bgnd_smart_fill_fail">#FFEB8181</color>
    <color name="tasklists_listitem_numtasks_bgnd_smart_fail_stroke">#FFD17575</color>
+   
+   <color name="tasklists_listitem_tag_bgnd_fill">@color/priority_3</color>
 	
 	<color name="taskslist_listitem_listname_text">#FFC9C9C9</color>
    

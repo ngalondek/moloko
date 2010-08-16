@@ -12,7 +12,6 @@ import android.text.format.Time;
 import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -128,8 +127,10 @@ public final class TasksListItemViewBinder implements ViewBinder
          if ( ( flags & NO_CLICKABLE_LIST_NAME ) == 0 )
             listNameBtn.setOnClickListener( (OnClickListener) context );
          
+         final String taskSeriesId = cursor.getString( _ID );
+         
          // tags
-         createTagButtons( view.getRootView(), cursor.getString( _ID ) );
+         createTagButtons( view.getRootView(), taskSeriesId );
          
          // notes
          
@@ -251,34 +252,38 @@ public final class TasksListItemViewBinder implements ViewBinder
 
    private final void createTagButtons( View view, String taskSeriesId )
    {
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Tags.CONTENT_URI );
+      // get the tags ViewStub
+      final ViewGroup tagsContainer = (ViewGroup) view.findViewById( R.id.taskslist_listitem_tags );
       
-      if ( client != null )
+      // check if not yet processed.
+      if ( tagsContainer.getTag() == null )
       {
-         final ArrayList< Tag > tags = TagsProviderPart.getAllTags( client,
-                                                                    taskSeriesId );
+         final ContentProviderClient client = context.getContentResolver()
+                                                     .acquireContentProviderClient( Tags.CONTENT_URI );
          
-         if ( tags != null && tags.size() > 0 )
+         if ( client != null )
          {
-            // get the tags ViewStub from the
-            final ViewStub tagsStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_tags_stub );
+            final ArrayList< Tag > tags = TagsProviderPart.getAllTags( client,
+                                                                       taskSeriesId );
             
-            final ViewGroup tagsLayout = (ViewGroup) tagsStub.inflate();
-            
-            for ( Tag tag : tags )
+            if ( tags != null && tags.size() > 0 )
             {
-               final Button tagButton = (Button) context.getLayoutInflater()
-                                                        .inflate( R.layout.taskslist_listitem_tag_button,
-                                                                  null );
-               
-               if ( tagButton != null )
+               for ( Tag tag : tags )
                {
-                  tagButton.setText( tag.getTag() );
-                  tagsLayout.addView( tagButton );
+                  final Button tagButton = (Button) context.getLayoutInflater()
+                                                           .inflate( R.layout.taskslist_listitem_tag_button,
+                                                                     null );
+                  
+                  if ( tagButton != null )
+                  {
+                     tagButton.setText( tag.getTag() );
+                     tagsContainer.addView( tagButton );
+                  }
                }
             }
          }
+         
+         tagsContainer.setTag( "processed" );
       }
    }
 }

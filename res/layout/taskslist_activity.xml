@@ -6,9 +6,9 @@
 	android:layout_height="fill_parent">
 
    <ListView
-		android:id="@+id/android:list"
-		style="@style/TasksList"
-   		android:layout_width="fill_parent"
-        android:layout_height="0sp"
-        android:layout_weight="1"/>
+	  android:id="@+id/android:list"
+	  style="@style/TasksList"
+     android:layout_width="fill_parent"
+     android:layout_height="0sp"
+     android:layout_weight="1"/>
 </LinearLayout>

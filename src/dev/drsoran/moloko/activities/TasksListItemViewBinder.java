@@ -1,6 +1,9 @@
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
+
 import android.app.ListActivity;
+import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.text.SpannableString;
@@ -8,6 +11,8 @@ import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,7 +22,10 @@ import android.widget.SimpleCursorAdapter.ViewBinder;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Tag;
+import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.util.ContentUiMapper;
+import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -27,9 +35,11 @@ public final class TasksListItemViewBinder implements ViewBinder
    
    private final ListActivity context;
    
+   private final int _ID;
+   
    private final int DESCRIPTION;
    
-   private final int LIST_NAME;
+   private final int LIST_NAME_AND_TAGS_AND_NOTES;
    
    private final int DUE_DATE;
    
@@ -50,8 +60,9 @@ public final class TasksListItemViewBinder implements ViewBinder
          throw new NullPointerException();
       
       this.context = context;
+      this._ID = mapper.getProjectionColumnIndex( Tasks._ID );
       this.DESCRIPTION = mapper.getProjectionColumnIndex( Tasks.TASKSERIES_NAME );
-      this.LIST_NAME = mapper.getProjectionColumnIndex( Tasks.LIST_NAME );
+      this.LIST_NAME_AND_TAGS_AND_NOTES = mapper.getProjectionColumnIndex( Tasks.LIST_NAME );
       this.DUE_DATE = mapper.getProjectionColumnIndex( Tasks.DUE_DATE );
       this.HAS_DUE_TIME = mapper.getProjectionColumnIndex( Tasks.HAS_DUE_TIME );
       this.PRIORITY = mapper.getProjectionColumnIndex( Tasks.PRIORITY );
@@ -108,13 +119,19 @@ public final class TasksListItemViewBinder implements ViewBinder
          return handled;
       }
       
-      else if ( columnIndex == LIST_NAME
-         && ( flags & NO_CLICKABLE_LIST_NAME ) == 0 )
+      else if ( columnIndex == LIST_NAME_AND_TAGS_AND_NOTES )
       {
          // list name
          final Button listNameBtn = (Button) view;
          listNameBtn.setText( cursor.getString( columnIndex ) );
-         listNameBtn.setOnClickListener( (OnClickListener) context );
+         
+         if ( ( flags & NO_CLICKABLE_LIST_NAME ) == 0 )
+            listNameBtn.setOnClickListener( (OnClickListener) context );
+         
+         // tags
+         createTagButtons( view.getRootView(), cursor.getString( _ID ) );
+         
+         // notes
          
          return true;
       }
@@ -228,5 +245,40 @@ public final class TasksListItemViewBinder implements ViewBinder
       else
          // SimpleCursorAdapter will bind
          return false;
+   }
+   
+
+
+   private final void createTagButtons( View view, String taskSeriesId )
+   {
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( Tags.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final ArrayList< Tag > tags = TagsProviderPart.getAllTags( client,
+                                                                    taskSeriesId );
+         
+         if ( tags != null && tags.size() > 0 )
+         {
+            // get the tags ViewStub from the
+            final ViewStub tagsStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_tags_stub );
+            
+            final ViewGroup tagsLayout = (ViewGroup) tagsStub.inflate();
+            
+            for ( Tag tag : tags )
+            {
+               final Button tagButton = (Button) context.getLayoutInflater()
+                                                        .inflate( R.layout.taskslist_listitem_tag_button,
+                                                                  null );
+               
+               if ( tagButton != null )
+               {
+                  tagButton.setText( tag.getTag() );
+                  tagsLayout.addView( tagButton );
+               }
+            }
+         }
+      }
    }
 }

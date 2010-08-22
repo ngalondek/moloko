@@ -72,11 +72,6 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       else
          values.putNull( RawTasks.DELETED_DATE );
       
-      if ( task.getDeleted() != null )
-         values.put( RawTasks.DELETED_DATE, task.getDeleted().getTime() );
-      else
-         values.putNull( RawTasks.DELETED_DATE );
-      
       values.put( RawTasks.PRIORITY,
                   RtmTask.convertPriority( task.getPriority() ) );
       values.put( RawTasks.POSTPONED, task.getPostponed() );

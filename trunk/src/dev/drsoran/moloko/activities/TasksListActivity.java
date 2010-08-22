@@ -1,8 +1,10 @@
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
+
 import android.app.ListActivity;
+import android.content.ContentProviderClient;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,42 +12,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.SimpleCursorAdapter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.ContentUiMapper;
+import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.Task;
 
 
 public class TasksListActivity extends ListActivity implements OnClickListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = TasksListActivity.class.getSimpleName();
-   
-   private final static ContentUiMapper contentUiMapper = new ContentUiMapper( new String[]
-                                                                               {
-                                                                                Tasks._ID,
-                                                                                Tasks.HAS_DUE_TIME,
-                                                                                Tasks.TASKSERIES_NAME,
-                                                                                Tasks.LIST_NAME,
-                                                                                Tasks.DUE_DATE,
-                                                                                Tasks.PRIORITY,
-                                                                                Tasks.COMPLETED_DATE },
-                                                                               new String[]
-                                                                               {
-                                                                                Tasks.TASKSERIES_NAME,
-                                                                                Tasks.LIST_NAME,
-                                                                                Tasks.DUE_DATE,
-                                                                                Tasks.PRIORITY,
-                                                                                Tasks.COMPLETED_DATE },
-                                                                               new int[]
-                                                                               {
-                                                                                R.id.taskslist_listitem_desc,
-                                                                                R.id.taskslist_listitem_btn_list_name,
-                                                                                R.id.taskslist_listitem_due_date,
-                                                                                R.id.taskslist_listitem_priority,
-                                                                                R.id.taskslist_listitem_check } );
    
    private final Bundle configuration = new Bundle();
    
@@ -167,65 +145,63 @@ public class TasksListActivity extends ListActivity implements OnClickListener
 
    private final void refresh()
    {
-      StringBuffer selection = new StringBuffer();
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
       
-      final String listName = configuration.getString( Tasks.LIST_NAME );
-      final String smartFilter = configuration.getString( Lists.FILTER );
-      
-      // The smart filter has precedence
-      if ( smartFilter != null )
+      if ( client != null )
       {
-         selection.append( smartFilter );
-      }
-      else if ( listName != null )
-      {
-         selection.append( Tasks.LIST_NAME )
-                  .append( " = '" )
-                  .append( listName )
-                  .append( "'" );
-      }
-      
-      final Cursor c = managedQuery( Tasks.CONTENT_URI,
-                                     contentUiMapper.getProjectionArray(),
-                                     ( selection.length() > 0 )
-                                                               ? selection.toString()
-                                                               : null,
-                                     null,
-                                     Tasks.PRIORITY + ", "
-                                        + Tasks.TASKSERIES_NAME );
-      
-      // TODO: Handle null cursor. Show error?
-      if ( c != null )
-      {
-         final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
-                                                                      R.layout.taskslist_activity_listitem,
-                                                                      c,
-                                                                      contentUiMapper.getUiColumnsArray(),
-                                                                      contentUiMapper.RESSOURCE_IDS );
+         StringBuffer selection = new StringBuffer();
          
-         int flags = 0x0;
+         final String listName = configuration.getString( Tasks.LIST_NAME );
+         final String smartFilter = configuration.getString( Lists.FILTER );
          
-         // If we have been started with a concrete list name, then
-         // we do not need to click it. Otherwise we would call the
-         // same list again. But this only applies to non smart
-         // lists
-         if ( listName != null && smartFilter == null )
-            flags |= TasksListItemViewBinder.NO_CLICKABLE_LIST_NAME;
-         
-         adapter.setViewBinder( new TasksListItemViewBinder( this,
-                                                             contentUiMapper,
-                                                             flags ) );
-         
-         setListAdapter( adapter );
-         
-         if ( listName != null )
+         // The smart filter has precedence
+         if ( smartFilter != null )
          {
-            setTitle( getString( R.string.taskslist_titlebar_listname, listName ) );
+            selection.append( smartFilter );
          }
-         else
+         else if ( listName != null )
          {
-            setTitle( getString( R.string.taskslist_titlebar_listname,
-                                 getString( R.string.app_name ) ) );
+            selection.append( Tasks.LIST_NAME )
+                     .append( " = '" )
+                     .append( listName )
+                     .append( "'" );
+         }
+         
+         final ArrayList< Task > tasks = TasksProviderPart.getsTasks( client,
+                                                                      ( selection.length() > 0 )
+                                                                                                ? selection.toString()
+                                                                                                : null,
+                                                                      Tasks.PRIORITY
+                                                                         + ", "
+                                                                         + Tasks.TASKSERIES_NAME );
+         
+         // TODO: Handle null. Show error?
+         if ( tasks != null )
+         {
+            int flags = 0x0;
+            
+            // If we have been started with a concrete list name, then
+            // we do not need to click it. Otherwise we would call the
+            // same list again. But this only applies to non smart
+            // lists
+            if ( listName != null && smartFilter == null )
+               flags |= TasksListItemViewBinder.NO_CLICKABLE_LIST_NAME;
+            
+            setListAdapter( new TasksListAdapter( this,
+                                                  R.layout.taskslist_activity_listitem,
+                                                  tasks,
+                                                  flags ) );
+            
+            if ( listName != null )
+            {
+               setTitle( getString( R.string.taskslist_titlebar_listname,
+                                    listName ) );
+            }
+            else
+            {
+               setTitle( getString( R.string.taskslist_titlebar_listname,
+                                    getString( R.string.app_name ) ) );
+            }
          }
       }
    }

@@ -46,12 +46,12 @@ public final class TaskListsItemViewBinder implements ViewBinder
 
    public boolean setViewValue( View view, Cursor cursor, int columnIndex )
    {
-      Bundle listProperties = (Bundle) view.getRootView().getTag();
+      Bundle listProperties = (Bundle) ( (View) view.getParent() ).getTag();
       
       if ( listProperties == null )
       {
          listProperties = new Bundle();
-         view.getRootView().setTag( listProperties );
+         ( (View) view.getParent() ).setTag( listProperties );
       }
       
       if ( columnIndex == LIST_NAME )
@@ -65,45 +65,52 @@ public final class TaskListsItemViewBinder implements ViewBinder
          
          return true;
       }
-      else if ( columnIndex == TASK_COUNT && cursor.getInt( SMART ) != 0 )
+      else if ( columnIndex == TASK_COUNT )
       {
          final TextView numTasks = (TextView) view;
          
-         final String evalFilter = RtmSmartFilter.evaluate( cursor.getString( FILTER ) );
-         
-         boolean badFilter = evalFilter == null;
-         
-         if ( !badFilter )
+         if ( cursor.getInt( SMART ) != 0 )
          {
-            try
+            final String evalFilter = RtmSmartFilter.evaluate( cursor.getString( FILTER ) );
+            
+            boolean badFilter = evalFilter == null;
+            
+            if ( !badFilter )
             {
-               final Cursor smartListTasks = context.getContentResolver()
-                                                    .query( Tasks.CONTENT_URI,
-                                                            new String[]
-                                                            { Tasks._ID },
-                                                            evalFilter,
-                                                            null,
-                                                            null );
-               
-               numTasks.setText( Integer.toString( smartListTasks.getCount() ) );
-               smartListTasks.close();
-               
-               numTasks.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart );
-               
-               listProperties.putString( ListOverviews.FILTER, evalFilter );
+               try
+               {
+                  final Cursor smartListTasks = context.getContentResolver()
+                                                       .query( Tasks.CONTENT_URI,
+                                                               new String[]
+                                                               { Tasks._ID },
+                                                               evalFilter,
+                                                               null,
+                                                               null );
+                  
+                  numTasks.setText( Integer.toString( smartListTasks.getCount() ) );
+                  smartListTasks.close();
+                  
+                  numTasks.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart );
+                  
+                  listProperties.putString( ListOverviews.FILTER, evalFilter );
+               }
+               catch ( SQLiteException e )
+               {
+                  badFilter = true;
+               }
             }
-            catch ( SQLiteException e )
+            
+            if ( badFilter )
             {
-               badFilter = true;
+               numTasks.setText( "?" );
+               numTasks.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart_fail );
+               
+               listProperties.putString( ListOverviews.FILTER, null );
             }
          }
-         
-         if ( badFilter )
+         else
          {
-            numTasks.setText( "?" );
-            numTasks.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart_fail );
-            
-            listProperties.putString( ListOverviews.FILTER, null );
+            numTasks.setText( cursor.getString( TASK_COUNT ) );
          }
          
          return true;
@@ -111,6 +118,6 @@ public final class TaskListsItemViewBinder implements ViewBinder
       
       else
          // SimpleCursorAdapter will bind
-         return false;
+         return true;
    }
 }

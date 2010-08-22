@@ -1,19 +1,18 @@
 package dev.drsoran.moloko.activities;
 
 import android.app.ListActivity;
+import android.content.ContentProviderClient;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.ContentUiMapper;
+import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -24,22 +23,6 @@ public class TaskListsActivity extends ListActivity implements
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = TaskListsActivity.class.getSimpleName();
-   
-   private final static ContentUiMapper contentUiMapper = new ContentUiMapper( new String[]
-                                                                               {
-                                                                                ListOverviews._ID,
-                                                                                ListOverviews.IS_SMART_LIST,
-                                                                                ListOverviews.FILTER,
-                                                                                ListOverviews.LIST_NAME,
-                                                                                ListOverviews.TASKS_COUNT },
-                                                                               new String[]
-                                                                               {
-                                                                                ListOverviews.LIST_NAME,
-                                                                                ListOverviews.TASKS_COUNT },
-                                                                               new int[]
-                                                                               {
-                                                                                R.id.tasklists_listitem_list_name,
-                                                                                R.id.tasklists_listitem_num_tasks } );
    
    private final int CTX_MENU_OPEN_LIST = 0;
    
@@ -141,25 +124,13 @@ public class TaskListsActivity extends ListActivity implements
 
    private void queryLists()
    {
-      final Cursor c = managedQuery( ListOverviews.CONTENT_URI,
-                                     contentUiMapper.getProjectionArray(),
-                                     null,
-                                     null,
-                                     ListOverviews.DEFAULT_SORT_ORDER );
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( ListOverviews.CONTENT_URI );
       
-      // TODO: Handle null cursor. Show error?
-      if ( c != null )
+      if ( client != null )
       {
-         final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
-                                                                      R.layout.tasklists_activity_listitem,
-                                                                      c,
-                                                                      contentUiMapper.getUiColumnsArray(),
-                                                                      contentUiMapper.RESSOURCE_IDS );
-         
-         adapter.setViewBinder( new TaskListsItemViewBinder( this,
-                                                             contentUiMapper ) );
-         
-         setListAdapter( adapter );
+         setListAdapter( new TaskListsAdapter( this,
+                                               R.layout.tasklists_activity_listitem,
+                                               ListOverviewsProviderPart.getListsOverview( client ) ) );
       }
    }
    

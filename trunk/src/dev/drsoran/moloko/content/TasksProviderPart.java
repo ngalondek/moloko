@@ -1,25 +1,34 @@
 package dev.drsoran.moloko.content;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.mdt.rtm.data.RtmTask;
+
+import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.Task;
 
 
 public class TasksProviderPart extends AbstractProviderPart
 {
-   @SuppressWarnings( "unused" )
    private static final String TAG = TasksProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
@@ -59,6 +68,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        Tasks.MODIFIED_DATE,
                                                        Tasks.TASKSERIES_NAME,
                                                        Tasks.SOURCE, Tasks.URL,
+                                                       Tasks.RAW_TASK_ID,
                                                        Tasks.DUE_DATE,
                                                        Tasks.HAS_DUE_TIME,
                                                        Tasks.ADDED_DATE,
@@ -88,6 +98,88 @@ public class TasksProviderPart extends AbstractProviderPart
    }
    
    
+
+   public final static ArrayList< Task > getsTasks( ContentProviderClient client,
+                                                    String selection,
+                                                    String order )
+   {
+      ArrayList< Task > tasks = null;
+      
+      try
+      {
+         final Cursor c = client.query( Rtm.Tasks.CONTENT_URI,
+                                        PROJECTION,
+                                        selection,
+                                        null,
+                                        order );
+         
+         tasks = new ArrayList< Task >();
+         
+         boolean ok = true;
+         
+         if ( c.getCount() > 0 )
+         {
+            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            {
+               final Task task = new Task( c.getString( COL_INDICES.get( Tasks._ID ) ),
+                                           c.getString( COL_INDICES.get( Tasks.LIST_NAME ) ),
+                                           c.getInt( COL_INDICES.get( Tasks.IS_SMART_LIST ) ) != 0,
+                                           new Date( c.getLong( COL_INDICES.get( Tasks.COMPLETED_DATE ) ) ),
+                                           Queries.getOptDate( c,
+                                                               COL_INDICES.get( Tasks.MODIFIED_DATE ) ),
+                                           c.getString( COL_INDICES.get( Tasks.TASKSERIES_NAME ) ),
+                                           c.getString( COL_INDICES.get( Tasks.SOURCE ) ),
+                                           c.getString( COL_INDICES.get( Tasks.URL ) ),
+                                           Queries.getOptString( c,
+                                                                 COL_INDICES.get( Tasks.LOCATION_ID ) ),
+                                           c.getString( COL_INDICES.get( Tasks.LIST_ID ) ),
+                                           Queries.getOptDate( c,
+                                                               COL_INDICES.get( Tasks.DUE_DATE ) ),
+                                           c.getInt( COL_INDICES.get( Tasks.HAS_DUE_TIME ) ) != 0,
+                                           new Date( c.getLong( COL_INDICES.get( Tasks.ADDED_DATE ) ) ),
+                                           Queries.getOptDate( c,
+                                                               COL_INDICES.get( Tasks.COMPLETED_DATE ) ),
+                                           Queries.getOptDate( c,
+                                                               COL_INDICES.get( Tasks.DELETED_DATE ) ),
+                                           RtmTask.convertPriority( c.getString( COL_INDICES.get( Tasks.PRIORITY ) ) ),
+                                           c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ) != 0,
+                                           c.getString( COL_INDICES.get( Tasks.ESTIMATE ) ),
+                                           Queries.getOptString( c,
+                                                                 COL_INDICES.get( Tasks.LOCATION_NAME ) ),
+                                           Queries.getOptFloat( c,
+                                                                COL_INDICES.get( Tasks.LONGITUDE ),
+                                                                0.0f ),
+                                           Queries.getOptFloat( c,
+                                                                COL_INDICES.get( Tasks.LATITUDE ),
+                                                                0.0f ),
+                                           Queries.getOptString( c,
+                                                                 COL_INDICES.get( Tasks.ADDRESS ) ),
+                                           Queries.getOptBool( c,
+                                                               COL_INDICES.get( Tasks.VIEWABLE ),
+                                                               false ),
+                                           Queries.getOptInt( c,
+                                                              COL_INDICES.get( Tasks.ZOOM ),
+                                                              -1 ) );
+               
+               tasks.add( task );
+            }
+         }
+         
+         if ( !ok )
+            tasks = null;
+         
+         c.close();
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query tasks failed. ", e );
+         tasks = null;
+      }
+      
+      return tasks;
+   }
+   
+
 
    public TasksProviderPart( SQLiteOpenHelper dbAccess )
    {

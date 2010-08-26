@@ -99,7 +99,7 @@ public class TasksProviderPart extends AbstractProviderPart
    
    
 
-   public final static ArrayList< Task > getsTasks( ContentProviderClient client,
+   public final static ArrayList< Task > getTasks( ContentProviderClient client,
                                                     String selection,
                                                     String order )
    {

@@ -23,13 +23,70 @@ options
 	import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 }
 
+
 @members
 {
-	public final static String OP_DEFAULT = "name:";
+	// BEGIN TOKEN LITERALS
+	
+	public final static String OP_LIST_LIT = "list:";
+	
+	public final static String OP_PRIORITY_LIT = "priority:";
+	
+	public final static String OP_STATUS_LIT = "status:";	
+	
+	public final static String OP_TAG_LIT = "tag:";
+
+	public final static String OP_TAG_CONTAINS_LIT = "tagcontains:";
+	
+	public final static String OP_IS_TAGGED_LIT = "istagged:";
+	
+	public final static String OP_LOCATION_LIT = "location:";	
+	
+	public final static String OP_LOCATION_WITHIN_LIT = "locationwithin:";
+	
+	public final static String OP_IS_LOCATED_LIT = "islocated:";
+	
+	public final static String OP_IS_REPEATING_LIT = "isrepeating:";
+	
+	public final static String OP_NAME_LIT = "name:";
+	
+	public final static String OP_NOTE_CONTAINS_LIT = "notecontains:";
+	
+	public final static String OP_HAS_NOTES_LIT = "hasnotes:";
+	
+	public final static String OP_DUE_LIT = "due:";
+	
+	public final static String OP_DUE_AFTER_LIT = "dueafter:";
+		
+	public final static String OP_DUE_BEFORE_LIT = "duebefore:";
+	
+	public final static String OP_DUE_WITHIN_LIT = "duewithin:";
+	
+	public final static String OP_COMPLETED_LIT = "completed:";
+	
+	public final static String OP_COMPLETED_BEFORE_LIT = "completedbefore:";
+	
+	public final static String OP_COMPLETED_AFTER_LIT = "completedafter:";
+	
+	public final static String OP_COMPLETED_WITHIN_LIT = "completedwithin:";
+	
+	public final static String OP_ADDED_LIT = "added:";
+	
+	public final static String OP_ADDED_BEFORE_LIT = "addedbefore:";
+	
+	public final static String OP_ADDED_AFTER_LIT = "addedafter:";
+	
+	public final static String OP_ADDED_WITHIN_LIT = "addedwithin:";
+	
+	public final static String OP_TIME_ESTIMATE_LIT = "timeestimate:";
+	
+	public final static String OP_POSTPONED_LIT = "postponed:";
+	
+	// END TOKEN LITERALS
 	
 	private final static String TAGS_QUERY_PREFIX
    	= "(SELECT "  + Tags.TASKSERIES_ID + " FROM " + Tags.PATH
-   	  + " WHERE " + Tags.TASKSERIES_ID + " = " + Tasks.PATH + "." + Tasks._ID;
+   	  + " WHERE " + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks._ID;
    
 	private final StringBuffer result = new StringBuffer();
 
@@ -174,6 +231,7 @@ options
 
 }
 
+
 /** Operators **/
 
 OP_LIST     :  'list:' ( s=STRING | s=Q_STRING )
@@ -213,7 +271,7 @@ OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
 					  result.append( ")" );
 				  };
 
-OP_TAG_CONTAINS : 'tagContains:' ( s=STRING | s=Q_STRING )
+OP_TAG_CONTAINS : 'tagcontains:' ( s=STRING | s=Q_STRING )
 					   {
 					     result.append( TAGS_QUERY_PREFIX )
 					           .append( " AND " )
@@ -222,7 +280,7 @@ OP_TAG_CONTAINS : 'tagContains:' ( s=STRING | s=Q_STRING )
 						  result.append( ")" );
 				      };
 
-OP_IS_TAGGED    : 'isTagged:'
+OP_IS_TAGGED    : 'istagged:'
 						(
 							TRUE
 							{
@@ -358,10 +416,8 @@ OP_POSTPONED : 'postponed:'
 
 /** other tokens **/
 
-fragment
 TRUE			: 'true';
 
-fragment
 FALSE			: 'false';
 
 L_PARENTH   : '('

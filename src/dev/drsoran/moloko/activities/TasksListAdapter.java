@@ -1,7 +1,9 @@
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentProviderClient;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.SpannableString;
@@ -12,19 +14,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.rtm.Task;
 
 
 public class TasksListAdapter extends ArrayAdapter< Task >
 {
    private final static String TAG = TasksListAdapter.class.getName();
-   
-   public final static int NO_CLICKABLE_LIST_NAME = 0x1;
    
    private final Context context;
    
@@ -57,13 +60,13 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    public View getView( int position, View convertView, ViewGroup parent )
    {
       final View view = inflater.inflate( resourceId, parent, false );
-      
       final View priority = view.findViewById( R.id.taskslist_listitem_priority );
       
       TextView description;
       TextView listName;
       TextView dueDate;
       CheckBox completed;
+      ViewStub tagsStub;
       
       try
       {
@@ -71,6 +74,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
          listName = (TextView) view.findViewById( R.id.taskslist_listitem_btn_list_name );
          dueDate = (TextView) view.findViewById( R.id.taskslist_listitem_due_date );
          completed = (CheckBox) view.findViewById( R.id.taskslist_listitem_check );
+         tagsStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_tags_stub );
       }
       catch ( ClassCastException e )
       {
@@ -80,7 +84,33 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       
       final Task task = getItem( position );
       
-      description.setText( task.getName() );
+      setDescription( description, task );
+      
+      setListName( listName, task );
+      
+      setDueDate( dueDate, task );
+      
+      setPriority( priority, task );
+      
+      // If we couldn't find the stub by ID it is already
+      // inflated and it's ID has been replaced.
+      //
+      // If the visibility has been set to GONE the task
+      // has no tags.
+      if ( tagsStub != null && tagsStub.getVisibility() != View.GONE )
+         setTags( tagsStub, task );
+      
+      // Completed
+      completed.setChecked( task.getCompleted() != null );
+      
+      return view;
+   }
+   
+
+
+   private final void setDescription( TextView view, Task task )
+   {
+      view.setText( task.getName() );
       
       // description
       if ( task.getDue() != null )
@@ -90,8 +120,8 @@ public class TasksListAdapter extends ArrayAdapter< Task >
          // Make bold if the task is today
          if ( DateUtils.isToday( dueDateMillis ) )
          {
-            description.setTypeface( Typeface.DEFAULT_BOLD );
-            description.setText( task.getName() );
+            view.setTypeface( Typeface.DEFAULT_BOLD );
+            view.setText( task.getName() );
          }
          
          // Make underline and bold if overdue
@@ -105,19 +135,33 @@ public class TasksListAdapter extends ArrayAdapter< Task >
                final SpannableString content = new SpannableString( task.getName() );
                
                content.setSpan( new UnderlineSpan(), 0, content.length(), 0 );
-               description.setTypeface( Typeface.DEFAULT_BOLD );
-               description.setText( content );
+               view.setTypeface( Typeface.DEFAULT_BOLD );
+               view.setText( content );
             }
          }
       }
-      
-      // list name
-      listName.setText( task.getListName() );
-      
-      if ( ( flags & NO_CLICKABLE_LIST_NAME ) == 0 )
-         listName.setOnClickListener( (OnClickListener) context );
-      
-      // due date
+   }
+   
+
+
+   private final void setListName( TextView view, Task task )
+   {
+      if ( ( flags & AbstractTasksListActivity.NO_CLICKABLE_LIST_NAME ) == 0 )
+      {
+         view.setText( task.getListName() );
+         view.setOnClickListener( (OnClickListener) context );
+      }
+      else
+      {
+         // TODO: Perhaps this should be controlled by an extra flag.
+         view.setVisibility( View.GONE );
+      }
+   }
+   
+
+
+   private final void setDueDate( TextView view, Task task )
+   {
       // if has a due date
       if ( task.getDue() != null )
       {
@@ -179,32 +223,88 @@ public class TasksListAdapter extends ArrayAdapter< Task >
             }
          }
          
-         dueDate.setText( dueText );
+         view.setText( dueText );
       }
-      else
-         dueDate.setVisibility( View.GONE );
       
-      // priority
+      // has no due date
+      else
+         view.setVisibility( View.GONE );
+   }
+   
+
+
+   private final void setPriority( View view, Task task )
+   {
       switch ( task.getPriority() )
       {
          case High:
-            priority.setBackgroundResource( R.color.priority_1 );
+            view.setBackgroundResource( R.color.priority_1 );
             break;
          case Medium:
-            priority.setBackgroundResource( R.color.priority_2 );
+            view.setBackgroundResource( R.color.priority_2 );
             break;
          case Low:
-            priority.setBackgroundResource( R.color.priority_3 );
+            view.setBackgroundResource( R.color.priority_3 );
             break;
          case None:
          default :
-            priority.setBackgroundResource( R.color.priority_none );
+            view.setBackgroundResource( R.color.priority_none );
             break;
       }
+   }
+   
+
+
+   private void setTags( ViewStub tagsStub, Task task )
+   {
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( Tags.CONTENT_URI );
       
-      // Completed
-      completed.setChecked( task.getCompleted() != null );
-      
-      return view;
+      if ( client != null )
+      {
+         final ArrayList< String > tags = TagsProviderPart.getAllTagTexts( client,
+                                                                           task.getId() );
+         
+         if ( tags != null )
+         {
+            // If the task has no tags
+            if ( tags.size() == 0 )
+            {
+               tagsStub.setVisibility( View.GONE );
+            }
+            
+            // inflate the stub and add tags
+            else
+            {
+               ViewGroup tagsContainer;
+               
+               try
+               {
+                  tagsContainer = (ViewGroup) ( (ViewGroup) tagsStub.inflate() ).getChildAt( 0 );
+                  
+                  if ( tagsContainer == null )
+                  {
+                     throw new Exception();
+                  }
+                  
+                  for ( String tagText : tags )
+                  {
+                     final TextView tagView = (TextView) View.inflate( context,
+                                                                       R.layout.taskslist_listitem_tag_button,
+                                                                       null );
+                     
+                     tagView.setText( tagText );
+                     tagsContainer.addView( tagView );
+                     
+                     tagView.setOnClickListener( (OnClickListener) context );
+                  }
+               }
+               catch ( Exception e )
+               {
+                  Log.e( TAG, "Invalid layout spec.", e );
+               }
+            }
+         }
+      }
    }
 }

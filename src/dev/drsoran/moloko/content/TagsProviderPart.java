@@ -73,7 +73,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
                                            Tags.TASKSERIES_ID + " = "
                                               + taskSeriesId,
                                            null,
-                                           null );
+                                           Tags.TAG + " ASC " );
             
             tags = new ArrayList< Tag >( c.getCount() );
             
@@ -86,6 +86,53 @@ public class TagsProviderPart extends AbstractRtmProviderPart
                   tags.add( new Tag( c.getString( COL_INDICES.get( Tags._ID ) ),
                                      c.getString( COL_INDICES.get( Tags.TASKSERIES_ID ) ),
                                      c.getString( COL_INDICES.get( Tags.TAG ) ) ) );
+               }
+            }
+            
+            if ( !ok )
+               tags = null;
+            
+            c.close();
+         }
+         catch ( RemoteException e )
+         {
+            tags = null;
+         }
+      }
+      
+      return tags;
+   }
+   
+
+
+   public final static ArrayList< String > getAllTagTexts( ContentProviderClient client,
+                                                           String taskSeriesId )
+   {
+      ArrayList< String > tags = null;
+      
+      if ( taskSeriesId != null )
+      {
+         try
+         {
+            final String[] projection =
+            { Tags._ID, Tags.TAG };
+            
+            final Cursor c = client.query( Tags.CONTENT_URI,
+                                           projection,
+                                           Tags.TASKSERIES_ID + " = "
+                                              + taskSeriesId,
+                                           null,
+                                           null );
+            
+            tags = new ArrayList< String >( c.getCount() );
+            
+            boolean ok = true;
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  tags.add( c.getString( 1 ) );
                }
             }
             

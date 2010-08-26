@@ -2,30 +2,25 @@ package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
 
-import android.app.ListActivity;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
-public class TasksListActivity extends ListActivity implements OnClickListener
+public class TasksListActivity extends AbstractTasksListActivity
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = TasksListActivity.class.getSimpleName();
-   
-   private final Bundle configuration = new Bundle();
    
    
 
@@ -43,24 +38,6 @@ public class TasksListActivity extends ListActivity implements OnClickListener
          configuration.putAll( intent.getExtras() );
       else if ( savedInstanceState != null )
          configuration.putAll( savedInstanceState );
-   }
-   
-
-
-   @Override
-   protected void onResume()
-   {
-      super.onResume();
-      refresh();
-   }
-   
-
-
-   @Override
-   protected void onSaveInstanceState( Bundle outState )
-   {
-      super.onSaveInstanceState( outState );
-      outState.putAll( configuration );
    }
    
 
@@ -92,18 +69,56 @@ public class TasksListActivity extends ListActivity implements OnClickListener
    
 
 
-   public void onClick( View v )
+   protected void refresh()
    {
-      // List name has been clicked
-      if ( v.getId() == R.id.taskslist_listitem_btn_list_name )
+      final String title = configuration.getString( TITLE );
+      
+      if ( title != null )
       {
-         final Button listNameBtn = (Button) v;
+         setTitle( title );
+      }
+      else
+      {
+         setTitle( getString( R.string.taskslist_titlebar,
+                              getString( R.string.app_name ) ) );
+      }
+      
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final String smartFilter = configuration.getString( Lists.FILTER );
          
-         final Intent intent = new Intent( Intent.ACTION_VIEW,
-                                           Tasks.CONTENT_URI );
-         intent.putExtra( Tasks.LIST_NAME, listNameBtn.getText() );
+         String evaluatedFilter = null;
          
-         startActivity( intent );
+         if ( smartFilter != null )
+         {
+            // try to evaluate the filter
+            evaluatedFilter = RtmSmartFilter.evaluate( smartFilter );
+            
+            if ( evaluatedFilter == null )
+            {
+               // RETURN: evaluation failed
+               return;
+            }
+         }
+         
+         final ArrayList< Task > tasks = TasksProviderPart.getTasks( client,
+                                                                     evaluatedFilter,
+                                                                     Tasks.PRIORITY
+                                                                        + ", "
+                                                                        + Tasks.TASKSERIES_NAME );
+         
+         // TODO: Handle null. Show error?
+         if ( tasks != null )
+         {
+            final int flags = configuration.getInt( FLAGS );
+            
+            setListAdapter( new TasksListAdapter( this,
+                                                  R.layout.taskslist_activity_listitem,
+                                                  tasks,
+                                                  flags ) );
+         }
       }
    }
    
@@ -141,68 +156,4 @@ public class TasksListActivity extends ListActivity implements OnClickListener
       return ok;
    }
    
-
-
-   private final void refresh()
-   {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         StringBuffer selection = new StringBuffer();
-         
-         final String listName = configuration.getString( Tasks.LIST_NAME );
-         final String smartFilter = configuration.getString( Lists.FILTER );
-         
-         // The smart filter has precedence
-         if ( smartFilter != null )
-         {
-            selection.append( smartFilter );
-         }
-         else if ( listName != null )
-         {
-            selection.append( Tasks.LIST_NAME )
-                     .append( " = '" )
-                     .append( listName )
-                     .append( "'" );
-         }
-         
-         final ArrayList< Task > tasks = TasksProviderPart.getsTasks( client,
-                                                                      ( selection.length() > 0 )
-                                                                                                ? selection.toString()
-                                                                                                : null,
-                                                                      Tasks.PRIORITY
-                                                                         + ", "
-                                                                         + Tasks.TASKSERIES_NAME );
-         
-         // TODO: Handle null. Show error?
-         if ( tasks != null )
-         {
-            int flags = 0x0;
-            
-            // If we have been started with a concrete list name, then
-            // we do not need to click it. Otherwise we would call the
-            // same list again. But this only applies to non smart
-            // lists
-            if ( listName != null && smartFilter == null )
-               flags |= TasksListItemViewBinder.NO_CLICKABLE_LIST_NAME;
-            
-            setListAdapter( new TasksListAdapter( this,
-                                                  R.layout.taskslist_activity_listitem,
-                                                  tasks,
-                                                  flags ) );
-            
-            if ( listName != null )
-            {
-               setTitle( getString( R.string.taskslist_titlebar_listname,
-                                    listName ) );
-            }
-            else
-            {
-               setTitle( getString( R.string.taskslist_titlebar_listname,
-                                    getString( R.string.app_name ) ) );
-            }
-         }
-      }
-   }
 }

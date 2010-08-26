@@ -57,7 +57,8 @@
      <string name="tasklists_ctxmenu_listitem_open">Öffne %1$s</string>
 
 	<!-- TasksList activity -->
-	<string name="taskslist_titlebar_listname">%1$s</string>
+	<string name="taskslist_titlebar">%1$s</string>
+	<string name="taskslist_titlebar_tag">Tag:\'%1$s\'</string>
 	  <!-- Menus -->
 	  <string name="taskslist_menu_opt_lists_title">@string/app_tasklists</string>
 

@@ -6,6 +6,7 @@ import org.w3c.dom.Text;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmData;
 
@@ -108,7 +109,7 @@ public class RtmSmartFilter extends RtmData
       // same meaning as operator name:
       if ( !filter.contains( ":" ) )
       {
-         filter = RtmSmartFilterLexer.OP_DEFAULT + filter;
+         filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
       }
       
       final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
@@ -121,6 +122,10 @@ public class RtmSmartFilter extends RtmData
       catch ( RecognitionException e )
       {
       }
+      
+      // An empty string is an evaluation error.
+      if ( TextUtils.isEmpty( evalFilter ) )
+         evalFilter = null;
       
       return evalFilter;
    }

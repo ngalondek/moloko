@@ -47,8 +47,6 @@ Support for Android integrated search dialog. Allows searching for tasks using s
 
 === TODO ===
 
- * tags are not part of the ContentProvider returned Task
- * add tags to task list item
  * add notes indicator to task list item
  * implement search auto completion (low pro)
  * handle reoccurred tasks

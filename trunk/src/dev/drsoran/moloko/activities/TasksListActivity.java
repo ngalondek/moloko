@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.provider.Rtm.ListOverviews;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
@@ -87,11 +86,11 @@ public class TasksListActivity extends AbstractTasksListActivity
       
       if ( client != null )
       {
-         final String smartFilter = configuration.getString( Lists.FILTER );
+         final String smartFilter = configuration.getString( FILTER );
          
-         String evaluatedFilter = null;
+         String evaluatedFilter = configuration.getString( FILTER_EVALUATED );
          
-         if ( smartFilter != null )
+         if ( smartFilter != null && evaluatedFilter == null )
          {
             // try to evaluate the filter
             evaluatedFilter = RtmSmartFilter.evaluate( smartFilter );
@@ -112,12 +111,10 @@ public class TasksListActivity extends AbstractTasksListActivity
          // TODO: Handle null. Show error?
          if ( tasks != null )
          {
-            final int flags = configuration.getInt( FLAGS );
-            
             setListAdapter( new TasksListAdapter( this,
                                                   R.layout.taskslist_activity_listitem,
                                                   tasks,
-                                                  flags ) );
+                                                  configuration.getBundle( ADAPTER_CONFIG ) ) );
          }
       }
    }

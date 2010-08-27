@@ -47,7 +47,7 @@
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
 	<!-- TaskSearchResultActivity -->
-	<string name="tasksearchresult_titlebar">Gesucht nach: \'%1$s\'</string>
+	<string name="tasksearchresult_titlebar">Suche: \'%1$s\'</string>
 	<string name="tasksearchresult_titlebar_error">Suche nach \'%1$s\' nicht ausführbar. Falsche Syntax?</string>
 	  <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>

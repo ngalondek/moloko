@@ -21,13 +21,20 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
    public static final String FILTER = "filter";
    
-   public static final String FLAGS = "flags";
+   public static final String FILTER_EVALUATED = "filter_eval";
+   
+   public static final String ADAPTER_CONFIG = "adapter_config";
    
    /**
     * If we have a concrete list name, then we do not need to click it. Otherwise we would call the same list again. But
     * this only applies to non smart lists
     */
-   public static final int NO_CLICKABLE_LIST_NAME = 0x1;
+   public static final String HIDE_LIST_NAME = "hide_list_name";
+   
+   /**
+    * If a tag has been clicked then it makes no sense to show it in the result again.
+    */
+   public static final String HIDE_TAG_EQUALS = "hide_tag_equals";
    
    protected final Bundle configuration = new Bundle();
    
@@ -93,7 +100,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          + listNameCtrl.getText() );
       intent.putExtra( TITLE, getString( R.string.taskslist_titlebar,
                                          listNameCtrl.getText() ) );
-      intent.putExtra( FLAGS, NO_CLICKABLE_LIST_NAME );
+      
+      final Bundle config = new Bundle();
+      config.putBoolean( HIDE_LIST_NAME, true );
+      
+      intent.putExtra( ADAPTER_CONFIG, config );
       
       startActivity( intent );
    }
@@ -109,6 +120,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          + tagCtrl.getText() );
       intent.putExtra( TITLE, getString( R.string.taskslist_titlebar_tag,
                                          tagCtrl.getText() ) );
+      
+      final Bundle config = new Bundle();
+      config.putString( HIDE_TAG_EQUALS, tagCtrl.getText().toString() );
+      
+      intent.putExtra( ADAPTER_CONFIG, config );
       
       startActivity( intent );
    }

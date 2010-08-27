@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.format.DateUtils;
 import android.text.format.Time;
@@ -35,21 +36,22 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
    private final LayoutInflater inflater;
    
-   private final int flags;
+   private final Bundle configuration;
    
    private final Time now = new Time();
    
    
 
    public TasksListAdapter( Context context, int resourceId,
-      List< Task > lists, int flags )
+      List< Task > lists, Bundle configuration )
    {
       super( context, 0, lists );
       
       this.context = context;
       this.resourceId = resourceId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-      this.flags = flags;
+      this.configuration = ( configuration == null ) ? new Bundle()
+                                                    : configuration;
       
       now.setToNow();
    }
@@ -146,7 +148,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
 
    private final void setListName( TextView view, Task task )
    {
-      if ( ( flags & AbstractTasksListActivity.NO_CLICKABLE_LIST_NAME ) == 0 )
+      if ( !configuration.getBoolean( AbstractTasksListActivity.HIDE_LIST_NAME ) )
       {
          view.setText( task.getListName() );
          view.setOnClickListener( (OnClickListener) context );
@@ -287,16 +289,23 @@ public class TasksListAdapter extends ArrayAdapter< Task >
                      throw new Exception();
                   }
                   
+                  // Check if we should leave out a tag
+                  final String tagToHide = configuration.getString( AbstractTasksListActivity.HIDE_TAG_EQUALS );
+                  
                   for ( String tagText : tags )
                   {
-                     final TextView tagView = (TextView) View.inflate( context,
-                                                                       R.layout.taskslist_listitem_tag_button,
-                                                                       null );
-                     
-                     tagView.setText( tagText );
-                     tagsContainer.addView( tagView );
-                     
-                     tagView.setOnClickListener( (OnClickListener) context );
+                     if ( tagToHide == null
+                        || !tagText.equalsIgnoreCase( tagToHide ) )
+                     {
+                        final TextView tagView = (TextView) View.inflate( context,
+                                                                          R.layout.taskslist_listitem_tag_button,
+                                                                          null );
+                        
+                        tagView.setText( tagText );
+                        tagsContainer.addView( tagView );
+                        
+                        tagView.setOnClickListener( (OnClickListener) context );
+                     }
                   }
                }
                catch ( Exception e )

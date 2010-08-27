@@ -14,7 +14,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.provider.Rtm.ListOverviews;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -111,11 +110,12 @@ public class TaskListsActivity extends ListActivity implements
       
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
       
-      intent.putExtra( Tasks.LIST_NAME,
-                       properties.getString( ListOverviews.LIST_NAME ) );
+      intent.putExtra( AbstractTasksListActivity.TITLE,
+                       getString( R.string.taskslist_titlebar,
+                                  properties.getString( ListOverviews.LIST_NAME ) ) );
       
       if ( filter != null )
-         intent.putExtra( Lists.FILTER, filter );
+         intent.putExtra( AbstractTasksListActivity.FILTER_EVALUATED, filter );
       
       startActivity( intent );
    }

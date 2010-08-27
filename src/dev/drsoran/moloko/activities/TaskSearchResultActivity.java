@@ -92,7 +92,9 @@ public class TaskSearchResultActivity extends TasksListActivity
             
             // we put the query string as smart filter cause
             // smart lists are nothing else than saved searches.
-            configuration.putString( FILTER, evalQuery );
+            //
+            // Tag the filter as already evaluated.
+            configuration.putString( FILTER_EVALUATED, evalQuery );
             configuration.putString( TITLE,
                                      getString( R.string.tasksearchresult_titlebar,
                                                 query ) );

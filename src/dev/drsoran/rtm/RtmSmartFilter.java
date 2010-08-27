@@ -86,13 +86,13 @@ public class RtmSmartFilter extends RtmData
    {
       if ( evalFilter == null )
       {
-         if ( filter != null )
+         if ( filter != null && filter.length() > 0 )
          {
             evalFilter = evaluate( filter );
          }
          else
          {
-            evalFilter = "true";
+            evalFilter = "1";
          }
       }
       
@@ -105,22 +105,29 @@ public class RtmSmartFilter extends RtmData
    {
       String evalFilter = null;
       
+      // a 0-length filter == "true"
+      if ( filter != null && filter.length() == 0 )
+      {
+         evalFilter = "1";
+      }
+      
       // Check if there was no operator used. If so it has the
       // same meaning as operator name:
-      if ( !filter.contains( ":" ) )
+      else
       {
-         filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
-      }
-      
-      final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
-      final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
-      
-      try
-      {
-         evalFilter = lexer.getResult();
-      }
-      catch ( RecognitionException e )
-      {
+         if ( !filter.contains( ":" ) )
+            filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
+         
+         final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
+         final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
+         
+         try
+         {
+            evalFilter = lexer.getResult();
+         }
+         catch ( RecognitionException e )
+         {
+         }
       }
       
       // An empty string is an evaluation error.

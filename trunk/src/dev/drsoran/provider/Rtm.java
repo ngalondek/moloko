@@ -135,16 +135,8 @@ public class Rtm
    }
    
 
-   protected static interface NoteColumns
+   protected static interface NoteBaseColumns
    {
-      /**
-       * The ID of the taskseries referenced.
-       * <P>
-       * Type: INTEGER (foreign key to table taskseries _ID field)
-       * </P>
-       */
-      public final static String TASKSERIES_ID = "taskseries_id";
-      
       /**
        * The created date of the note
        * <P>
@@ -176,6 +168,18 @@ public class Rtm
        * </P>
        */
       public final static String NOTE_TEXT = "note_text";
+   }
+   
+
+   protected static interface NoteColumns extends NoteBaseColumns
+   {
+      /**
+       * The ID of the taskseries referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table taskseries _ID field)
+       * </P>
+       */
+      public final static String TASKSERIES_ID = "taskseries_id";
    }
    
 
@@ -551,8 +555,29 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.task";
       
       /**
+       * A {@link TAGS_DELIMITER} separated list of all tags
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String TAGS = "tags";
+      
+      /**
+       * The number of notes the tag has attached
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String NUM_NOTES = "num_notes";
+      
+      /**
        * The default sort order for this table
        */
       public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
+      
+      /**
+       * The delimiter used to separate a list of tags.
+       */
+      public final static String TAGS_DELIMITER = ",";
    }
 }

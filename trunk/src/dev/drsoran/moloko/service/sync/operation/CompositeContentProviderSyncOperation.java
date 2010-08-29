@@ -107,7 +107,8 @@ public class CompositeContentProviderSyncOperation extends
       
       for ( Iterator< IContentProviderSyncOperation > i = operations.iterator(); i.hasNext(); )
       {
-         num += i.next().getBatch( batch );
+         final IContentProviderSyncOperation operation = i.next();
+         num += operation.getBatch( batch );
       }
       
       return num;

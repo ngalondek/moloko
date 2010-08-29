@@ -6,10 +6,9 @@
 	<solid
 		android:color="@color/tasklists_listitem_tag_bgnd_fill"/>
 	<padding
-		android:left="2sp"
-		android:right="2sp"
-		android:top="2sp"
+		android:left="20sp"
+		android:right="20sp"
 		android:bottom="2sp"/>		
 	<corners
-		android:radius="3sp"/>		
+		android:radius="2sp"/>		
 </shape>

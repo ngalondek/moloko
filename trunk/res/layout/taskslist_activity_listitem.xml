@@ -4,7 +4,8 @@
 	android:id="@+id/taskslist_listitem"
 	style="@style/TasksListItem"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content">
+	android:layout_height="wrap_content"
+	android:minHeight="70sp">
 	
 	<Button
       android:id="@+id/taskslist_listitem_priority"
@@ -23,55 +24,69 @@
 	   android:layout_width="fill_parent"
 	   android:layout_height="wrap_content">
 	   
-	   <CheckBox 
+	   <ImageButton 
          android:id="@+id/taskslist_listitem_check"
-	      android:layout_height="wrap_content"
-	      android:layout_width="wrap_content"
-	      android:layout_toRightOf="@id/taskslist_listitem_priority"           
-	      android:text="" />
-	      
-	   <TextView
-	      android:id="@+id/taskslist_listitem_desc"
-	      style="@style/TasksListItem.DescriptionText.Normal"	     
-	      android:layout_width="wrap_content"
-	      android:layout_height="wrap_content"
-	      android:layout_toRightOf="@id/taskslist_listitem_check"
+	      android:layout_height="24sp"
+	      android:layout_width="24sp"
+	      android:layout_toRightOf="@id/taskslist_listitem_priority"
 	      android:layout_marginTop="7sp"
 	      android:layout_marginLeft="10sp"
-	      android:text="task_desc" />
-
-		<Button
-	      android:id="@+id/taskslist_listitem_btn_list_name"
-	      style="@style/TasksListItem.ListName"
-	      android:layout_width="wrap_content"
-	      android:layout_height="wrap_content"	      
-	      android:layout_below="@id/taskslist_listitem_desc"
-	      android:layout_alignLeft="@id/taskslist_listitem_desc"
-	      android:layout_marginTop="10sp"
-	      android:text="list_name" />
+	      android:scaleType="fitXY"
+	      android:background="@drawable/not_checked" />
 	      
-	   <TextView
-	      android:id="@+id/taskslist_listitem_due_date"
-	      style="@style/TasksListItem.DueDate"
-	      android:layout_width="wrap_content"
-	      android:layout_height="wrap_content"
-	      android:layout_alignBaseline="@id/taskslist_listitem_btn_list_name"
+      <TextView
+         android:id="@+id/taskslist_listitem_desc"
+         style="@style/TasksListItem.DescriptionText.Normal"        
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_toRightOf="@id/taskslist_listitem_check"
+         android:layout_marginTop="7sp"
+         android:layout_marginLeft="10sp"
+         android:text="task_desc" />
+
+<!--  	      
+	   <ImageButton
+         android:id="@+id/taskslist_listitem_note"
+         android:layout_width="24sp"
+         android:layout_height="24sp"
+         android:layout_below="@id/taskslist_listitem_check"
+         android:layout_alignLeft="@id/taskslist_listitem_check"
+         android:scaleType="fitXY"
+         android:background="@drawable/icon_note" />
+-->
+   
+      <Button
+         android:id="@+id/taskslist_listitem_btn_list_name"
+         style="@style/TasksListItem.ListName"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
          android:layout_below="@id/taskslist_listitem_desc"
-         android:layout_alignParentRight="true"
-	      android:text="due_date"   
-	      android:paddingRight="5sp"
-	      android:gravity="right" />
+         android:layout_alignLeft="@id/taskslist_listitem_desc"
+         android:layout_marginTop="10sp"
+         android:text="list_name" />
 
-	   <ViewStub
-	      android:id="@+id/taskslist_listitem_tags_stub"
-	      android:layout="@layout/taskslist_listitem_tags_layout"
-	      android:inflatedId="@+id/taskslist_listitem_tags"
-	      android:layout_height="wrap_content"
+      <TextView
+         android:id="@+id/taskslist_listitem_due_date"
+         style="@style/TasksListItem.DueDate"
          android:layout_width="fill_parent"
-	      android:layout_below="@id/taskslist_listitem_btn_list_name"
-	      android:layout_alignLeft="@id/taskslist_listitem_btn_list_name"
-	      android:scrollbarStyle="outsideOverlay"
-	      android:fadeScrollbars="true"/>
-
+         android:layout_height="wrap_content"
+         android:layout_below="@id/taskslist_listitem_desc"
+         android:layout_toRightOf="@id/taskslist_listitem_btn_list_name"
+         android:layout_marginTop="10sp"
+         android:layout_marginRight="5sp"         
+         android:text="due_date"
+         android:maxLines="1"
+         android:gravity="right" />
+         
+		<ViewStub
+         android:id="@+id/taskslist_listitem_tags_stub"
+         android:layout="@layout/taskslist_listitem_tags_layout"
+         android:inflatedId="@+id/taskslist_listitem_tags"
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_below="@id/taskslist_listitem_btn_list_name"
+         android:layout_alignParentLeft="true"
+         android:layout_marginTop="10sp" />	
+		      
    </RelativeLayout>
 </LinearLayout>

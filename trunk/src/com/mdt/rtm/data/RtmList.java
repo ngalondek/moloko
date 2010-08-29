@@ -243,7 +243,7 @@ public class RtmList extends RtmData implements
                                                        ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,
                                                                                                                      id ) )
                                                                                .withValues( RtmListsProviderPart.getContentValues( update,
-                                                                                                                                   false ) )
+                                                                                                                                   true ) )
                                                                                .build(),
                                                        IContentProviderSyncOperation.Op.UPDATE );
       }

@@ -192,7 +192,7 @@ public class RtmLocation extends RtmData implements
                                                        ContentProviderOperation.newUpdate( Queries.contentUriWithId( Locations.CONTENT_URI,
                                                                                                                      id ) )
                                                                                .withValues( RtmLocationsProviderPart.getContentValues( update,
-                                                                                                                                       false ) )
+                                                                                                                                       true ) )
                                                                                .build(),
                                                        IContentProviderSyncOperation.Op.UPDATE );
       }

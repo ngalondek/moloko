@@ -1,9 +1,7 @@
 package dev.drsoran.moloko.activities;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import android.content.ContentProviderClient;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -18,11 +16,8 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.rtm.Task;
 
 
@@ -67,7 +62,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       TextView description;
       TextView listName;
       TextView dueDate;
-      CheckBox completed;
+      View completed;
       ViewStub tagsStub;
       
       try
@@ -75,7 +70,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
          description = (TextView) view.findViewById( R.id.taskslist_listitem_desc );
          listName = (TextView) view.findViewById( R.id.taskslist_listitem_btn_list_name );
          dueDate = (TextView) view.findViewById( R.id.taskslist_listitem_due_date );
-         completed = (CheckBox) view.findViewById( R.id.taskslist_listitem_check );
+         completed = view.findViewById( R.id.taskslist_listitem_check );
          tagsStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_tags_stub );
       }
       catch ( ClassCastException e )
@@ -102,8 +97,11 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       if ( tagsStub != null && tagsStub.getVisibility() != View.GONE )
          setTags( tagsStub, task );
       
+      if ( task.getNumberOfNotes() > 0 )
+         setNotes( task );
+      
       // Completed
-      completed.setChecked( task.getCompleted() != null );
+      setCompleted( completed, task );
       
       return view;
    }
@@ -148,15 +146,11 @@ public class TasksListAdapter extends ArrayAdapter< Task >
 
    private final void setListName( TextView view, Task task )
    {
-      if ( !configuration.getBoolean( AbstractTasksListActivity.HIDE_LIST_NAME ) )
+      view.setText( task.getListName() );
+      
+      if ( !configuration.getBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME ) )
       {
-         view.setText( task.getListName() );
          view.setOnClickListener( (OnClickListener) context );
-      }
-      else
-      {
-         // TODO: Perhaps this should be controlled by an extra flag.
-         view.setVisibility( View.GONE );
       }
    }
    
@@ -259,61 +253,66 @@ public class TasksListAdapter extends ArrayAdapter< Task >
 
    private void setTags( ViewStub tagsStub, Task task )
    {
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Tags.CONTENT_URI );
-      
-      if ( client != null )
+      // If the task has no tags
+      if ( task.getTags().size() == 0 )
       {
-         final ArrayList< String > tags = TagsProviderPart.getAllTagTexts( client,
-                                                                           task.getId() );
+         tagsStub.setVisibility( View.GONE );
+      }
+      
+      // inflate the stub and add tags
+      else
+      {
+         ViewGroup tagsContainer;
          
-         if ( tags != null )
+         try
          {
-            // If the task has no tags
-            if ( tags.size() == 0 )
+            tagsContainer = (ViewGroup) ( (ViewGroup) tagsStub.inflate() ).findViewById( R.id.taskslist_listitem_tags_layout_tag_container );
+            
+            if ( tagsContainer == null )
             {
-               tagsStub.setVisibility( View.GONE );
+               throw new Exception();
             }
             
-            // inflate the stub and add tags
-            else
+            // Check if we should leave out a tag
+            final String tagToHide = configuration.getString( AbstractTasksListActivity.HIDE_TAG_EQUALS );
+            
+            final List< String > tags = task.getTags();
+            
+            for ( String tagText : tags )
             {
-               ViewGroup tagsContainer;
-               
-               try
+               if ( tagToHide == null || !tagText.equalsIgnoreCase( tagToHide ) )
                {
-                  tagsContainer = (ViewGroup) ( (ViewGroup) tagsStub.inflate() ).getChildAt( 0 );
+                  final TextView tagView = (TextView) View.inflate( context,
+                                                                    R.layout.taskslist_listitem_tag_button,
+                                                                    null );
+                  tagView.setText( tagText );
+                  tagsContainer.addView( tagView );
                   
-                  if ( tagsContainer == null )
-                  {
-                     throw new Exception();
-                  }
-                  
-                  // Check if we should leave out a tag
-                  final String tagToHide = configuration.getString( AbstractTasksListActivity.HIDE_TAG_EQUALS );
-                  
-                  for ( String tagText : tags )
-                  {
-                     if ( tagToHide == null
-                        || !tagText.equalsIgnoreCase( tagToHide ) )
-                     {
-                        final TextView tagView = (TextView) View.inflate( context,
-                                                                          R.layout.taskslist_listitem_tag_button,
-                                                                          null );
-                        
-                        tagView.setText( tagText );
-                        tagsContainer.addView( tagView );
-                        
-                        tagView.setOnClickListener( (OnClickListener) context );
-                     }
-                  }
-               }
-               catch ( Exception e )
-               {
-                  Log.e( TAG, "Invalid layout spec.", e );
+                  tagView.setOnClickListener( (OnClickListener) context );
                }
             }
          }
+         catch ( Exception e )
+         {
+            Log.e( TAG, "Invalid layout spec.", e );
+         }
       }
    }
+   
+
+
+   private void setNotes( Task task )
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+
+
+   private void setCompleted( View view, Task task )
+   {
+      if ( task.getCompleted() != null )
+         view.setBackgroundResource( R.drawable.checked );
+   }
+   
 }

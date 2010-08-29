@@ -1,8 +1,16 @@
 package dev.drsoran.rtm;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask.Priority;
+
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class Task
@@ -55,6 +63,10 @@ public class Task
    
    final private int zoom;
    
+   final private ArrayList< String > tags;
+   
+   final private int numNotes;
+   
    
 
    public Task( String id, String listName, boolean isSmartList, Date created,
@@ -62,7 +74,7 @@ public class Task
       String listId, Date due, boolean hasDueTime, Date added, Date completed,
       Date deleted, Priority priority, boolean posponed, String estimate,
       String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom )
+      boolean isViewable, int zoom, String tags, int numNotes )
    {
       this.id = id;
       this.listName = listName;
@@ -88,6 +100,25 @@ public class Task
       this.address = address;
       this.isViewable = isViewable;
       this.zoom = zoom;
+      
+      if ( !TextUtils.isEmpty( tags ) )
+      {
+         this.tags = new ArrayList< String >();
+         
+         final StringTokenizer tokenizer = new StringTokenizer( tags,
+                                                                Tasks.TAGS_DELIMITER );
+         
+         while ( tokenizer.hasMoreTokens() )
+         {
+            this.tags.add( tokenizer.nextToken() );
+         }
+      }
+      else
+      {
+         this.tags = null;
+      }
+      
+      this.numNotes = numNotes;
    }
    
 
@@ -258,4 +289,20 @@ public class Task
       return zoom;
    }
    
+
+
+   public List< String > getTags()
+   {
+      if ( tags != null )
+         return Collections.unmodifiableList( tags );
+      else
+         return Collections.emptyList();
+   }
+   
+
+
+   public int getNumberOfNotes()
+   {
+      return numNotes;
+   }
 }

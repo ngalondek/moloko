@@ -198,13 +198,13 @@ public class RtmTaskNote extends RtmData implements
       {
          final String taskSeriesId = (String) params[ 0 ];
          
-         new ContentProviderSyncOperation( provider,
-                                           ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                                                   .withValues( RtmNotesProviderPart.getContentValues( this,
-                                                                                                                       taskSeriesId,
-                                                                                                                       true ) )
-                                                                   .build(),
-                                           IContentProviderSyncOperation.Op.INSERT );
+         operation = new ContentProviderSyncOperation( provider,
+                                                       ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                                                               .withValues( RtmNotesProviderPart.getContentValues( this,
+                                                                                                                                   taskSeriesId,
+                                                                                                                                   true ) )
+                                                                               .build(),
+                                                       IContentProviderSyncOperation.Op.INSERT );
       }
       
       return operation;
@@ -241,10 +241,11 @@ public class RtmTaskNote extends RtmData implements
          final String taskSeriesId = (String) params[ 0 ];
          
          operation = new ContentProviderSyncOperation( provider,
-                                                       ContentProviderOperation.newUpdate( Notes.CONTENT_URI )
+                                                       ContentProviderOperation.newUpdate( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                                     id ) )
                                                                                .withValues( RtmNotesProviderPart.getContentValues( update,
                                                                                                                                    taskSeriesId,
-                                                                                                                                   false ) )
+                                                                                                                                   true ) )
                                                                                .build(),
                                                        IContentProviderSyncOperation.Op.UPDATE );
       }

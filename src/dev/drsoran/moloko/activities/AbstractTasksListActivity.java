@@ -29,7 +29,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
     * If we have a concrete list name, then we do not need to click it. Otherwise we would call the same list again. But
     * this only applies to non smart lists
     */
-   public static final String HIDE_LIST_NAME = "hide_list_name";
+   public static final String DISABLE_LIST_NAME = "disable_list_name";
    
    /**
     * If a tag has been clicked then it makes no sense to show it in the result again.
@@ -102,7 +102,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                          listNameCtrl.getText() ) );
       
       final Bundle config = new Bundle();
-      config.putBoolean( HIDE_LIST_NAME, true );
+      config.putBoolean( DISABLE_LIST_NAME, true );
       
       intent.putExtra( ADAPTER_CONFIG, config );
       

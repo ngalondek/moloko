@@ -21,7 +21,8 @@ public class SyncDiffer
       ArrayList< O > operations = new ArrayList< O >();
       
       // for each element of the reference list
-      for ( Iterator< T > iterator = reference.iterator(); ok && iterator.hasNext(); )
+      for ( Iterator< T > iterator = reference.iterator(); ok
+         && iterator.hasNext(); )
       {
          final T refElement = iterator.next();
          
@@ -45,16 +46,20 @@ public class SyncDiffer
          operations.add( operation );
       }
       
-      // DELETE: Get all elements which have not been touched during the diff.
-      // These elements are no in the reference list.
-      final ArrayList< T > untouchedElements = target.getUntouchedElements();
-      
-      for ( T tgtElement : untouchedElements )
+      if ( ok )
       {
-         final O operation = target.computeDeleteOperation( tgtElement, params );
+         // DELETE: Get all elements which have not been touched during the diff.
+         // These elements are no in the reference list.
+         final ArrayList< T > untouchedElements = target.getUntouchedElements();
          
-         ok = operation != null;
-         operations.add( operation );
+         for ( T tgtElement : untouchedElements )
+         {
+            final O operation = target.computeDeleteOperation( tgtElement,
+                                                               params );
+            
+            ok = operation != null;
+            operations.add( operation );
+         }
       }
       
       if ( !ok )

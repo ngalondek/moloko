@@ -6,4 +6,6 @@
 	android:background="@drawable/tasklists_listitem_tag_bgnd"     
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:text="tag" />
+	android:layout_marginRight="5sp"
+	android:maxLines="1"
+	android:text="tag"/>

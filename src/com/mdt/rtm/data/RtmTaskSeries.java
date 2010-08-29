@@ -457,7 +457,7 @@ public class RtmTaskSeries extends RtmData implements
                operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                             task.getId() ) )
                                                       .withValues( RtmTasksProviderPart.getContentValues( update.task,
-                                                                                                          false ) )
+                                                                                                          true ) )
                                                       .build() );
                
                // Update taskseries
@@ -465,7 +465,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                                             id ) )
                                                       .withValues( RtmTaskSeriesProviderPart.getContentValues( update,
                                                                                                                (String) params[ 0 ],
-                                                                                                               false ) )
+                                                                                                               true ) )
                                                       .build() );
             }
          }

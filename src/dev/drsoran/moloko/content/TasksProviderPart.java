@@ -21,7 +21,9 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
+import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -40,11 +42,15 @@ public class TasksProviderPart extends AbstractProviderPart
     Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE, Tasks.COMPLETED_DATE,
     Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED, Tasks.ESTIMATE,
     Tasks.LOCATION_ID, Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE,
-    Tasks.ADDRESS, Tasks.VIEWABLE, Tasks.ZOOM };
+    Tasks.ADDRESS, Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.NUM_NOTES };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    private final static String subQuery;
+   
+   private final static String tagsSubQuery;
+   
+   private final static String numNotesSubQuery;
    
    static
    {
@@ -52,10 +58,15 @@ public class TasksProviderPart extends AbstractProviderPart
                                                     PROJECTION_MAP,
                                                     COL_INDICES );
       
-      subQuery = SQLiteQueryBuilder.buildQueryString( false, // not distinct
+      subQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                      false,
+                                                      
+                                                      // tables
                                                       TaskSeries.PATH + ","
                                                          + Lists.PATH + ","
                                                          + RawTasks.PATH,
+                                                      
+                                                      // columns
                                                       new String[]
                                                       {
                                                        TaskSeries.PATH + "."
@@ -78,6 +89,8 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        Tasks.POSTPONED,
                                                        Tasks.ESTIMATE,
                                                        Tasks.LOCATION_ID },
+                                                      
+                                                      // where
                                                       TaskSeries.PATH
                                                          + "."
                                                          + TaskSeries.LIST_ID
@@ -95,13 +108,74 @@ public class TasksProviderPart extends AbstractProviderPart
                                                       null,
                                                       null,
                                                       null );
+      
+      tagsSubQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                          false,
+                                                          
+                                                          // tables
+                                                          TaskSeries.PATH + ","
+                                                             + Tags.PATH,
+                                                          
+                                                          // columns
+                                                          new String[]
+                                                          {
+                                                           TaskSeries.PATH
+                                                              + "."
+                                                              + TaskSeries._ID,
+                                                           Tags.TASKSERIES_ID,
+                                                           "group_concat("
+                                                              + Tags.TAG
+                                                              + ",\""
+                                                              + Tasks.TAGS_DELIMITER
+                                                              + "\") AS "
+                                                              + Tasks.TAGS },
+                                                          
+                                                          // where
+                                                          TaskSeries.PATH
+                                                             + "."
+                                                             + TaskSeries._ID
+                                                             + "="
+                                                             + Tags.PATH
+                                                             + "."
+                                                             + Tags.TASKSERIES_ID,
+                                                          
+                                                          // group by
+                                                          TaskSeries.PATH + "."
+                                                             + TaskSeries._ID,
+                                                          null,
+                                                          null,
+                                                          null );
+      
+      numNotesSubQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                              false,
+                                                              
+                                                              // tables
+                                                              Notes.PATH,
+                                                              
+                                                              // columns
+                                                              new String[]
+                                                              { "count("
+                                                                 + Notes.TASKSERIES_ID
+                                                                 + ")" },
+                                                              
+                                                              // where
+                                                              "subQuery."
+                                                                 + TaskSeries._ID
+                                                                 + "="
+                                                                 + Notes.PATH
+                                                                 + "."
+                                                                 + Notes.TASKSERIES_ID,
+                                                              null,
+                                                              null,
+                                                              null,
+                                                              null );
    }
    
    
 
    public final static ArrayList< Task > getTasks( ContentProviderClient client,
-                                                    String selection,
-                                                    String order )
+                                                   String selection,
+                                                   String order )
    {
       ArrayList< Task > tasks = null;
       
@@ -159,7 +233,10 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                false ),
                                            Queries.getOptInt( c,
                                                               COL_INDICES.get( Tasks.ZOOM ),
-                                                              -1 ) );
+                                                              -1 ),
+                                           Queries.getOptString( c,
+                                                                 COL_INDICES.get( Tasks.TAGS ) ),
+                                           c.getInt( COL_INDICES.get( Tasks.NUM_NOTES ) ) );
                
                tasks.add( task );
             }
@@ -198,38 +275,38 @@ public class TasksProviderPart extends AbstractProviderPart
       
       final List< String > projectionList = Arrays.asList( projection );
       
-      boolean withLocation = false;
-      boolean withTags = false;
-      int idColumnIdx = -1;
+      boolean projectionContainsId = false;
+      boolean replacedNumNotes = false;
       
       for ( int i = 0; i < projection.length
-         && ( idColumnIdx == -1 || !withLocation || !withTags ); i++ )
+         && ( !projectionContainsId || !replacedNumNotes ); i++ )
       {
          final String column = projection[ i ];
          
-         if ( idColumnIdx == -1 && column.equals( Tasks._ID ) )
+         // In case of a join with the locations table the _id gets ambiguous. So
+         // we have to qualify it.
+         if ( column.equals( Tasks._ID ) )
          {
-            idColumnIdx = i;
+            projectionList.set( i,
+                                new StringBuilder( "subQuery." ).append( TaskSeries._ID )
+                                                                .append( " AS " )
+                                                                .append( Tasks._ID )
+                                                                .toString() );
+            projectionContainsId = true;
          }
-         else if ( !withLocation
-            && ( column.equals( Tasks.LOCATION_ID )
-               || column.equals( Tasks.LOCATION_NAME )
-               || column.equals( Tasks.LONGITUDE )
-               || column.equals( Tasks.LATITUDE )
-               || column.equals( Tasks.ADDRESS )
-               || column.equals( Tasks.VIEWABLE ) || column.equals( Tasks.ZOOM ) ) )
-            withLocation = true;
-      }
-      
-      // In case of a join with the locations table the _id gets ambiguous. So
-      // we have to qualify it.
-      if ( idColumnIdx != -1 && withLocation )
-      {
-         projectionList.set( idColumnIdx,
-                             new StringBuilder( "subQuery." ).append( TaskSeries._ID )
-                                                             .append( " AS " )
-                                                             .append( Tasks._ID )
-                                                             .toString() );
+         
+         // We have to replace the num_notes column by the numNotesSubQuery
+         // expression.
+         if ( column.equals( Tasks.NUM_NOTES ) )
+         {
+            projectionList.set( i,
+                                new StringBuilder( "(" ).append( numNotesSubQuery )
+                                                        .append( ")" )
+                                                        .append( " AS " )
+                                                        .append( Tasks.NUM_NOTES )
+                                                        .toString() );
+            replacedNumNotes = true;
+         }
       }
       
       final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
@@ -237,18 +314,27 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                         .append( subQuery )
                                                                         .append( ") AS subQuery" );
       
-      if ( withLocation )
-         stringBuilder.append( " LEFT OUTER JOIN " )
-                      .append( Locations.PATH )
-                      .append( " ON " )
-                      .append( Locations.PATH )
-                      .append( "." )
-                      .append( Locations._ID )
-                      .append( " = subQuery." )
-                      .append( TaskSeries.LOCATION_ID );
+      // Add locations columns
+      stringBuilder.append( " LEFT OUTER JOIN " )
+                   .append( Locations.PATH )
+                   .append( " ON " )
+                   .append( Locations.PATH )
+                   .append( "." )
+                   .append( Locations._ID )
+                   .append( " = subQuery." )
+                   .append( TaskSeries.LOCATION_ID );
+      
+      // Add tags columns
+      stringBuilder.append( " LEFT OUTER JOIN " )
+                   .append( "(" )
+                   .append( tagsSubQuery )
+                   .append( ") AS tagsSubQuery ON tagsSubQuery." )
+                   .append( Tags.TASKSERIES_ID )
+                   .append( " = subQuery." )
+                   .append( TaskSeries._ID );
       
       // Only if the ID is given in the projection we can use it
-      if ( id != null && idColumnIdx != -1 )
+      if ( id != null && projectionContainsId )
       {
          stringBuilder.append( " WHERE subQuery." )
                       .append( TaskSeries._ID )

@@ -125,17 +125,16 @@ options
 
 
 
-	private static final String unquotify( String input )
+	public static final String unquotify( String input )
 	{
 		return input.replaceAll( "(\"|')", "" );
 	}
 
 
 	
-	@SuppressWarnings( "unused" )
-	private static final String quotify( String input )
+	public static final String quotify( String input )
 	{
-		return new StringBuffer( "'").append( input ).append( "'").toString();
+		return new StringBuffer( "\"").append( input ).append( "\"").toString();
 	}
 
 

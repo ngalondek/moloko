@@ -2,6 +2,7 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
+import android.content.ContentProviderClient;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -17,7 +18,13 @@ import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.mdt.rtm.data.RtmTaskNote;
+import com.mdt.rtm.data.RtmTaskNotes;
+
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.rtm.Task;
 
 
@@ -64,6 +71,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       TextView dueDate;
       View completed;
       ViewStub tagsStub;
+      ViewStub notesStub;
       
       try
       {
@@ -72,6 +80,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
          dueDate = (TextView) view.findViewById( R.id.taskslist_listitem_due_date );
          completed = view.findViewById( R.id.taskslist_listitem_check );
          tagsStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_tags_stub );
+         notesStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_notes_stub );
       }
       catch ( ClassCastException e )
       {
@@ -91,14 +100,13 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       
       // If we couldn't find the stub by ID it is already
       // inflated and it's ID has been replaced.
-      //
-      // If the visibility has been set to GONE the task
-      // has no tags.
-      if ( tagsStub != null && tagsStub.getVisibility() != View.GONE )
+      if ( tagsStub != null )
          setTags( tagsStub, task );
       
-      if ( task.getNumberOfNotes() > 0 )
-         setNotes( task );
+      // If we couldn't find the stub by ID it is already
+      // inflated and it's ID has been replaced.
+      if ( notesStub != null )
+         setNotes( notesStub, task );
       
       // Completed
       setCompleted( completed, task );
@@ -262,11 +270,9 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       // inflate the stub and add tags
       else
       {
-         ViewGroup tagsContainer;
-         
          try
          {
-            tagsContainer = (ViewGroup) ( (ViewGroup) tagsStub.inflate() ).findViewById( R.id.taskslist_listitem_tags_layout_tag_container );
+            final ViewGroup tagsContainer = (ViewGroup) ( (ViewGroup) tagsStub.inflate() ).findViewById( R.id.taskslist_listitem_tags_layout_tag_container );
             
             if ( tagsContainer == null )
             {
@@ -301,10 +307,56 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
 
 
-   private void setNotes( Task task )
+   private void setNotes( ViewStub notesStub, Task task )
    {
-      // TODO Auto-generated method stub
       
+      // If the task has no notes
+      if ( task.getNumberOfNotes() == 0 )
+      {
+         notesStub.setVisibility( View.GONE );
+      }
+      
+      // inflate the stub and add notes
+      else
+      {
+         final ContentProviderClient client = context.getContentResolver()
+                                                     .acquireContentProviderClient( Notes.CONTENT_URI );
+         if ( client != null )
+         {
+            try
+            {
+               final ViewGroup notesContainer = (ViewGroup) ( (ViewGroup) notesStub.inflate() ).findViewById( R.id.taskslist_listitem_notes_layout_note_container );
+               
+               if ( notesContainer == null )
+               {
+                  throw new Exception();
+               }
+               
+               final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
+                                                                               task.getId() );
+               
+               if ( rtmNotes != null )
+               {
+                  final List< RtmTaskNote > notes = rtmNotes.getNotes();
+                  
+                  for ( RtmTaskNote note : notes )
+                  {
+                     final TextView tagView = (TextView) View.inflate( context,
+                                                                       R.layout.taskslist_listitem_note_button,
+                                                                       null );
+                     tagView.setText( note.getText() );
+                     notesContainer.addView( tagView );
+                     
+                     tagView.setOnClickListener( (OnClickListener) context );
+                  }
+               }
+            }
+            catch ( Exception e )
+            {
+               Log.e( TAG, "Invalid layout spec.", e );
+            }
+         }
+      }
    }
    
 

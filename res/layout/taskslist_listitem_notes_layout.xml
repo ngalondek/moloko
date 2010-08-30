@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_height="fill_parent"
+   android:layout_width="fill_parent" >
+   
+   <ImageView
+      android:src="@drawable/icon_note"
+      android:layout_height="24sp"
+      android:layout_width="24sp"
+      android:layout_marginLeft="10sp" />
+      
+   <LinearLayout
+      android:id="@+id/taskslist_listitem_notes_layout_note_container"
+      android:orientation="vertical"
+      android:layout_height="wrap_content"
+      android:layout_width="fill_parent"
+      android:layout_marginLeft="10sp" />
+
+</LinearLayout>

@@ -10,6 +10,8 @@
    <color name="tasklists_listitem_tag_bgnd_fill">@color/priority_3</color>
 	
 	<color name="taskslist_listitem_listname_text">#FFC9C9C9</color>
+	
+	<color name="taskslist_listitem_note_bubble_fill">@android:color/black</color>
    
 	<color name="priority_none">@android:color/transparent</color>
 	<color name="priority_1">#FFEA5200</color>

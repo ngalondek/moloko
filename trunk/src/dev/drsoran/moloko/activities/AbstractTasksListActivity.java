@@ -40,6 +40,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
    
 
+   public final static Bundle createAdapterConfig()
+   {
+      return new Bundle();
+   }
+   
+
+
    @Override
    protected void onResume()
    {
@@ -81,7 +88,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          case R.id.taskslist_listitem_btn_list_name:
             onListNameClicked( v );
             break;
-         case R.id.taskslist_listitem_btn_tag:
+         case R.id.taskslist_listitem_tags_layout_btn_tag:
             onTagClicked( v );
             break;
          default :
@@ -97,7 +104,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
       intent.putExtra( FILTER, RtmSmartFilterLexer.OP_LIST_LIT
-         + listNameCtrl.getText() );
+         + RtmSmartFilterLexer.quotify( listNameCtrl.getText().toString() ) );
       intent.putExtra( TITLE, getString( R.string.taskslist_titlebar,
                                          listNameCtrl.getText() ) );
       

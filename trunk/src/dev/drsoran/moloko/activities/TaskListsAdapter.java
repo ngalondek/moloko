@@ -20,7 +20,7 @@ public class TaskListsAdapter extends ArrayAdapter< RtmListWithTaskCount >
 {
    private final static String TAG = TaskListsAdapter.class.getName();
    
-   //private final Context context;
+   // private final Context context;
    
    private final int resourceId;
    
@@ -33,7 +33,7 @@ public class TaskListsAdapter extends ArrayAdapter< RtmListWithTaskCount >
    {
       super( context, 0, lists );
       
-      //this.context = context;
+      // this.context = context;
       this.resourceId = resourceId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
    }

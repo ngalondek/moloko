@@ -13,8 +13,10 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
+import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TaskListsActivity extends ListActivity implements
@@ -96,6 +98,13 @@ public class TaskListsActivity extends ListActivity implements
 
    private void openList( Bundle properties )
    {
+      final String listName = properties.getString( ListOverviews.LIST_NAME );
+      
+      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
+      
+      intent.putExtra( AbstractTasksListActivity.TITLE,
+                       getString( R.string.taskslist_titlebar, listName ) );
+      
       String filter = null;
       
       if ( properties.containsKey( ListOverviews.FILTER ) )
@@ -108,11 +117,21 @@ public class TaskListsActivity extends ListActivity implements
             return;
       }
       
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      
-      intent.putExtra( AbstractTasksListActivity.TITLE,
-                       getString( R.string.taskslist_titlebar,
-                                  properties.getString( ListOverviews.LIST_NAME ) ) );
+      // We use the list name as "list:" filter
+      else
+      {
+         filter = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_LIST_LIT
+            + RtmSmartFilterLexer.quotify( listName ) );
+         
+         assert ( filter != null );
+         
+         // We have a non-smart list. So we disable clicking the list name
+         // cause we no tasks from different lists in the result.
+         final Bundle config = new Bundle();
+         config.putBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME, true );
+         
+         intent.putExtra( AbstractTasksListActivity.ADAPTER_CONFIG, config );
+      }
       
       if ( filter != null )
          intent.putExtra( AbstractTasksListActivity.FILTER_EVALUATED, filter );

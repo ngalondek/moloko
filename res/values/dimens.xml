@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <dimen
+      name="app_titlebar_height">40sp</dimen>
+   <dimen
+      name="app_titlebar_btn_width">@dimen/app_titlebar_height</dimen>   
+   <dimen
+      name="taskslist_listitem_row_space">10sp</dimen>
+   <dimen
+      name="taskslist_listitem_col_space">44sp</dimen>
+   <dimen
+      name="taskslist_listitem_widget_space_sml">5sp</dimen>
+   <dimen
+      name="taskslist_listitem_widget_space_lrg">10sp</dimen>
+</resources>

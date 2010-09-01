@@ -19,6 +19,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
    public static final String TITLE = "title";
    
+   public static final String TITLE_ICON = "title_icon";
+   
    public static final String FILTER = "filter";
    
    public static final String FILTER_EVALUATED = "filter_eval";
@@ -107,6 +109,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          + RtmSmartFilterLexer.quotify( listNameCtrl.getText().toString() ) );
       intent.putExtra( TITLE, getString( R.string.taskslist_titlebar,
                                          listNameCtrl.getText() ) );
+      intent.putExtra( TITLE_ICON, R.drawable.icon_list_white );
       
       final Bundle config = new Bundle();
       config.putBoolean( DISABLE_LIST_NAME, true );
@@ -125,8 +128,9 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
       intent.putExtra( FILTER, RtmSmartFilterLexer.OP_TAG_LIT
          + tagCtrl.getText() );
-      intent.putExtra( TITLE, getString( R.string.taskslist_titlebar_tag,
+      intent.putExtra( TITLE, getString( R.string.taskslist_titlebar,
                                          tagCtrl.getText() ) );
+      intent.putExtra( TITLE_ICON, R.drawable.icon_tag_white );
       
       final Bundle config = new Bundle();
       config.putString( HIDE_TAG_EQUALS, tagCtrl.getText().toString() );

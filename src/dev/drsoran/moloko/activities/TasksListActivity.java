@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -72,14 +73,16 @@ public class TasksListActivity extends AbstractTasksListActivity
    {
       final String title = configuration.getString( TITLE );
       
+      final int titleIconId = configuration.getInt( TITLE_ICON, -1 );
+      
       if ( title != null )
       {
-         setTitle( title );
+         UIUtils.setTitle( this, title, titleIconId );
       }
       else
       {
-         setTitle( getString( R.string.taskslist_titlebar,
-                              getString( R.string.app_name ) ) );
+         UIUtils.setTitle( this, getString( R.string.taskslist_titlebar,
+                                            getString( R.string.app_name ) ) );
       }
       
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );

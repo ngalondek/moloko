@@ -14,6 +14,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -36,6 +37,9 @@ public class TaskListsActivity extends ListActivity implements
       
       setContentView( R.layout.tasklists_activity );
       registerForContextMenu( getListView() );
+      
+      UIUtils.setTitle( this, R.string.app_tasklists );
+      
       getListView().setOnItemClickListener( this );
    }
    
@@ -103,7 +107,9 @@ public class TaskListsActivity extends ListActivity implements
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
       
       intent.putExtra( AbstractTasksListActivity.TITLE,
-                       getString( R.string.taskslist_titlebar, listName ) );
+                       getString( R.string.taskslist_titlebar, listName ) );      
+      intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
+                       R.drawable.icon_list_white );
       
       String filter = null;
       

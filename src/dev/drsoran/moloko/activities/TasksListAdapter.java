@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
@@ -69,7 +70,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       TextView description;
       TextView listName;
       TextView dueDate;
-      View completed;
+      CheckBox completed;
       ViewStub tagsStub;
       ViewStub notesStub;
       
@@ -78,7 +79,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
          description = (TextView) view.findViewById( R.id.taskslist_listitem_desc );
          listName = (TextView) view.findViewById( R.id.taskslist_listitem_btn_list_name );
          dueDate = (TextView) view.findViewById( R.id.taskslist_listitem_due_date );
-         completed = view.findViewById( R.id.taskslist_listitem_check );
+         completed = (CheckBox) view.findViewById( R.id.taskslist_listitem_check );
          tagsStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_tags_stub );
          notesStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_notes_stub );
       }
@@ -272,7 +273,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       {
          try
          {
-            final ViewGroup tagsContainer = (ViewGroup) ( (ViewGroup) tagsStub.inflate() ).findViewById( R.id.taskslist_listitem_tags_layout_tag_container );
+            final ViewGroup tagsContainer = (ViewGroup) tagsStub.inflate();
             
             if ( tagsContainer == null )
             {
@@ -325,7 +326,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
          {
             try
             {
-               final ViewGroup notesContainer = (ViewGroup) ( (ViewGroup) notesStub.inflate() ).findViewById( R.id.taskslist_listitem_notes_layout_note_container );
+               final ViewGroup notesContainer = (ViewGroup) notesStub.inflate();
                
                if ( notesContainer == null )
                {
@@ -361,10 +362,8 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
 
 
-   private void setCompleted( View view, Task task )
+   private void setCompleted( CheckBox view, Task task )
    {
-      if ( task.getCompleted() != null )
-         view.setBackgroundResource( R.drawable.checked );
+      view.setChecked( task.getCompleted() != null );
    }
-   
 }

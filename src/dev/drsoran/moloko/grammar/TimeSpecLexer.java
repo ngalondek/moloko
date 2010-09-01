@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g 2010-08-03 13:33:29
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g 2010-09-01 12:23:13
 
    package dev.drsoran.moloko.grammar;
 
@@ -61,15 +61,15 @@ public class TimeSpecLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g"; }
+    public String getGrammarFileName() { return "F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g"; }
 
     // $ANTLR start "T__39"
     public final void mT__39() throws RecognitionException {
         try {
             int _type = T__39;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:11:7: ( '-a' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:11:9: '-a'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:11:7: ( '-a' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:11:9: '-a'
             {
             match("-a"); 
 
@@ -89,8 +89,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = T__40;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:12:7: ( 'a' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:12:9: 'a'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:12:7: ( 'a' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:12:9: 'a'
             {
             match('a'); 
 
@@ -109,8 +109,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = T__41;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:13:7: ( 'm' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:13:9: 'm'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:13:7: ( 'm' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:13:9: 'm'
             {
             match('m'); 
 
@@ -129,8 +129,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = T__42;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:14:7: ( 'p' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:14:9: 'p'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:14:7: ( 'p' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:14:9: 'p'
             {
             match('p'); 
 
@@ -149,8 +149,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = NEVER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:561:11: ( 'never' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:561:13: 'never'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:561:11: ( 'never' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:561:13: 'never'
             {
             match("never"); 
 
@@ -170,7 +170,7 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = TODAY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:563:11: ( 'today' | 'tod' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:563:11: ( 'today' | 'tod' )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -211,7 +211,7 @@ public class TimeSpecLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:563:13: 'today'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:563:13: 'today'
                     {
                     match("today"); 
 
@@ -219,7 +219,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:563:23: 'tod'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:563:23: 'tod'
                     {
                     match("tod"); 
 
@@ -241,7 +241,7 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = TOMORROW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:565:11: ( 'tomorrow' | 'tom' | 'tmr' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:565:11: ( 'tomorrow' | 'tom' | 'tmr' )
             int alt2=3;
             int LA2_0 = input.LA(1);
 
@@ -285,7 +285,7 @@ public class TimeSpecLexer extends Lexer {
             }
             switch (alt2) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:565:13: 'tomorrow'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:565:13: 'tomorrow'
                     {
                     match("tomorrow"); 
 
@@ -293,7 +293,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:565:26: 'tom'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:565:26: 'tom'
                     {
                     match("tom"); 
 
@@ -301,7 +301,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:565:34: 'tmr'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:565:34: 'tmr'
                     {
                     match("tmr"); 
 
@@ -323,8 +323,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = YESTERDAY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:567:11: ( 'yesterday' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:567:13: 'yesterday'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:567:11: ( 'yesterday' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:567:13: 'yesterday'
             {
             match("yesterday"); 
 
@@ -344,7 +344,7 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = AT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:569:11: ( '@' | 'at' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:569:11: ( '@' | 'at' )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -362,14 +362,14 @@ public class TimeSpecLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:569:13: '@'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:569:13: '@'
                     {
                     match('@'); 
 
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:569:19: 'at'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:569:19: 'at'
                     {
                     match("at"); 
 
@@ -391,8 +391,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = ON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:571:11: ( 'on' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:571:13: 'on'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:571:11: ( 'on' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:571:13: 'on'
             {
             match("on"); 
 
@@ -412,8 +412,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = IN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:573:11: ( 'in' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:573:13: 'in'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:573:11: ( 'in' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:573:13: 'in'
             {
             match("in"); 
 
@@ -433,8 +433,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = OF;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:575:11: ( 'of' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:575:13: 'of'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:575:11: ( 'of' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:575:13: 'of'
             {
             match("of"); 
 
@@ -454,8 +454,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = NEXT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:577:11: ( 'next' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:577:13: 'next'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:577:11: ( 'next' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:577:13: 'next'
             {
             match("next"); 
 
@@ -475,8 +475,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:579:11: ( 'and' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:579:13: 'and'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:579:11: ( 'and' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:579:13: 'and'
             {
             match("and"); 
 
@@ -496,8 +496,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = END;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:581:11: ( 'end' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:581:13: 'end'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:581:11: ( 'end' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:581:13: 'end'
             {
             match("end"); 
 
@@ -517,8 +517,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = THE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:583:11: ( 'the' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:583:13: 'the'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:583:11: ( 'the' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:583:13: 'the'
             {
             match("the"); 
 
@@ -538,7 +538,7 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = STs;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:11: ( 'st' | 'th' | 'rd' | 'nd' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:11: ( 'st' | 'th' | 'rd' | 'nd' )
             int alt4=4;
             switch ( input.LA(1) ) {
             case 's':
@@ -570,7 +570,7 @@ public class TimeSpecLexer extends Lexer {
 
             switch (alt4) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:13: 'st'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:13: 'st'
                     {
                     match("st"); 
 
@@ -578,7 +578,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:20: 'th'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:20: 'th'
                     {
                     match("th"); 
 
@@ -586,7 +586,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:27: 'rd'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:27: 'rd'
                     {
                     match("rd"); 
 
@@ -594,7 +594,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:34: 'nd'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:585:34: 'nd'
                     {
                     match("nd"); 
 
@@ -616,8 +616,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = NOW;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:587:11: ( 'now' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:587:13: 'now'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:587:11: ( 'now' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:587:13: 'now'
             {
             match("now"); 
 
@@ -637,7 +637,7 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = TONIGHT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:589:11: ( 'tonight' | 'ton' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:589:11: ( 'tonight' | 'ton' )
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -678,7 +678,7 @@ public class TimeSpecLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:589:13: 'tonight'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:589:13: 'tonight'
                     {
                     match("tonight"); 
 
@@ -686,7 +686,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:589:25: 'ton'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:589:25: 'ton'
                     {
                     match("ton"); 
 
@@ -708,8 +708,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = MIDNIGHT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:591:11: ( 'midnight' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:591:13: 'midnight'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:591:11: ( 'midnight' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:591:13: 'midnight'
             {
             match("midnight"); 
 
@@ -729,8 +729,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = MIDDAY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:593:11: ( 'midday' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:593:13: 'midday'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:593:11: ( 'midday' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:593:13: 'midday'
             {
             match("midday"); 
 
@@ -750,8 +750,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = NOON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:595:11: ( 'noon' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:595:13: 'noon'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:595:11: ( 'noon' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:595:13: 'noon'
             {
             match("noon"); 
 
@@ -771,12 +771,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = YEARS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:11: ( 'years' | 'year' | 'yrs' | 'yr' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:11: ( 'years' | 'year' | 'yrs' | 'yr' )
             int alt6=4;
             alt6 = dfa6.predict(input);
             switch (alt6) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:13: 'years'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:13: 'years'
                     {
                     match("years"); 
 
@@ -784,7 +784,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:23: 'year'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:23: 'year'
                     {
                     match("year"); 
 
@@ -792,7 +792,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:32: 'yrs'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:32: 'yrs'
                     {
                     match("yrs"); 
 
@@ -800,7 +800,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:40: 'yr'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:597:40: 'yr'
                     {
                     match("yr"); 
 
@@ -822,12 +822,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = MONTHS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:11: ( 'months' | 'month' | 'mons' | 'mon' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:11: ( 'months' | 'month' | 'mons' | 'mon' )
             int alt7=4;
             alt7 = dfa7.predict(input);
             switch (alt7) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:13: 'months'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:13: 'months'
                     {
                     match("months"); 
 
@@ -835,7 +835,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:24: 'month'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:24: 'month'
                     {
                     match("month"); 
 
@@ -843,7 +843,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:34: 'mons'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:34: 'mons'
                     {
                     match("mons"); 
 
@@ -851,7 +851,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:43: 'mon'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:599:43: 'mon'
                     {
                     match("mon"); 
 
@@ -873,12 +873,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = WEEKS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:11: ( 'weeks' | 'week' | 'wks' | 'wk' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:11: ( 'weeks' | 'week' | 'wks' | 'wk' )
             int alt8=4;
             alt8 = dfa8.predict(input);
             switch (alt8) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:13: 'weeks'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:13: 'weeks'
                     {
                     match("weeks"); 
 
@@ -886,7 +886,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:23: 'week'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:23: 'week'
                     {
                     match("week"); 
 
@@ -894,7 +894,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:32: 'wks'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:32: 'wks'
                     {
                     match("wks"); 
 
@@ -902,7 +902,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:40: 'wk'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:601:40: 'wk'
                     {
                     match("wk"); 
 
@@ -924,7 +924,7 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = DAYS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:603:11: ( 'days' | 'day' | 'd' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:603:11: ( 'days' | 'day' | 'd' )
             int alt9=3;
             int LA9_0 = input.LA(1);
 
@@ -961,7 +961,7 @@ public class TimeSpecLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:603:13: 'days'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:603:13: 'days'
                     {
                     match("days"); 
 
@@ -969,7 +969,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:603:22: 'day'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:603:22: 'day'
                     {
                     match("day"); 
 
@@ -977,7 +977,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:603:30: 'd'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:603:30: 'd'
                     {
                     match('d'); 
 
@@ -998,12 +998,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = HOURS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:11: ( 'hours' | 'hour' | 'hrs' | 'hr' | 'h' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:11: ( 'hours' | 'hour' | 'hrs' | 'hr' | 'h' )
             int alt10=5;
             alt10 = dfa10.predict(input);
             switch (alt10) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:13: 'hours'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:13: 'hours'
                     {
                     match("hours"); 
 
@@ -1011,7 +1011,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:23: 'hour'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:23: 'hour'
                     {
                     match("hour"); 
 
@@ -1019,7 +1019,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:32: 'hrs'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:32: 'hrs'
                     {
                     match("hrs"); 
 
@@ -1027,7 +1027,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:40: 'hr'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:40: 'hr'
                     {
                     match("hr"); 
 
@@ -1035,7 +1035,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:47: 'h'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:605:47: 'h'
                     {
                     match('h'); 
 
@@ -1056,12 +1056,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = MINUTES;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:11: ( 'minutes' | 'minute' | 'mins' | 'min' | 'm' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:11: ( 'minutes' | 'minute' | 'mins' | 'min' | 'm' )
             int alt11=5;
             alt11 = dfa11.predict(input);
             switch (alt11) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:13: 'minutes'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:13: 'minutes'
                     {
                     match("minutes"); 
 
@@ -1069,7 +1069,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:25: 'minute'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:25: 'minute'
                     {
                     match("minute"); 
 
@@ -1077,7 +1077,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:36: 'mins'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:36: 'mins'
                     {
                     match("mins"); 
 
@@ -1085,7 +1085,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:45: 'min'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:45: 'min'
                     {
                     match("min"); 
 
@@ -1093,7 +1093,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:53: 'm'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:607:53: 'm'
                     {
                     match('m'); 
 
@@ -1114,12 +1114,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = SECONDS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:11: ( 'seconds' | 'second' | 'secs' | 'sec' | 's' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:11: ( 'seconds' | 'second' | 'secs' | 'sec' | 's' )
             int alt12=5;
             alt12 = dfa12.predict(input);
             switch (alt12) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:13: 'seconds'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:13: 'seconds'
                     {
                     match("seconds"); 
 
@@ -1127,7 +1127,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:25: 'second'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:25: 'second'
                     {
                     match("second"); 
 
@@ -1135,7 +1135,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:36: 'secs'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:36: 'secs'
                     {
                     match("secs"); 
 
@@ -1143,7 +1143,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:45: 'sec'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:45: 'sec'
                     {
                     match("sec"); 
 
@@ -1151,7 +1151,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:53: 's'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:609:53: 's'
                     {
                     match('s'); 
 
@@ -1172,12 +1172,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = MONTH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:11: ( 'january' | 'jan' | 'february' | 'feb' | 'march' | 'mar' | 'april' | 'apr' | 'may' | 'june' | 'jun' | 'july' | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'november' | 'nov' | 'december' | 'dec' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:11: ( 'january' | 'jan' | 'february' | 'feb' | 'march' | 'mar' | 'april' | 'apr' | 'may' | 'june' | 'jun' | 'july' | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'november' | 'nov' | 'december' | 'dec' )
             int alt13=24;
             alt13 = dfa13.predict(input);
             switch (alt13) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:13: 'january'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:13: 'january'
                     {
                     match("january"); 
 
@@ -1185,7 +1185,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:27: 'jan'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:27: 'jan'
                     {
                     match("jan"); 
 
@@ -1193,7 +1193,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:36: 'february'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:36: 'february'
                     {
                     match("february"); 
 
@@ -1201,7 +1201,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:49: 'feb'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:49: 'feb'
                     {
                     match("feb"); 
 
@@ -1209,7 +1209,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:61: 'march'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:61: 'march'
                     {
                     match("march"); 
 
@@ -1217,7 +1217,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 6 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:71: 'mar'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:71: 'mar'
                     {
                     match("mar"); 
 
@@ -1225,7 +1225,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 7 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:84: 'april'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:84: 'april'
                     {
                     match("april"); 
 
@@ -1233,7 +1233,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 8 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:94: 'apr'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:611:94: 'apr'
                     {
                     match("apr"); 
 
@@ -1241,7 +1241,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 9 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:13: 'may'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:13: 'may'
                     {
                     match("may"); 
 
@@ -1249,7 +1249,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 10 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:27: 'june'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:27: 'june'
                     {
                     match("june"); 
 
@@ -1257,7 +1257,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 11 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:36: 'jun'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:36: 'jun'
                     {
                     match("jun"); 
 
@@ -1265,7 +1265,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 12 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:49: 'july'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:49: 'july'
                     {
                     match("july"); 
 
@@ -1273,7 +1273,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 13 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:61: 'jul'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:61: 'jul'
                     {
                     match("jul"); 
 
@@ -1281,7 +1281,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 14 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:71: 'august'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:71: 'august'
                     {
                     match("august"); 
 
@@ -1289,7 +1289,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 15 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:84: 'aug'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:612:84: 'aug'
                     {
                     match("aug"); 
 
@@ -1297,7 +1297,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 16 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:13: 'september'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:13: 'september'
                     {
                     match("september"); 
 
@@ -1305,7 +1305,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 17 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:27: 'sept'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:27: 'sept'
                     {
                     match("sept"); 
 
@@ -1313,7 +1313,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 18 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:36: 'sep'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:36: 'sep'
                     {
                     match("sep"); 
 
@@ -1321,7 +1321,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 19 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:49: 'october'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:49: 'october'
                     {
                     match("october"); 
 
@@ -1329,7 +1329,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 20 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:61: 'oct'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:61: 'oct'
                     {
                     match("oct"); 
 
@@ -1337,7 +1337,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 21 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:71: 'november'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:71: 'november'
                     {
                     match("november"); 
 
@@ -1345,7 +1345,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 22 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:84: 'nov'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:613:84: 'nov'
                     {
                     match("nov"); 
 
@@ -1353,7 +1353,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 23 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:614:13: 'december'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:614:13: 'december'
                     {
                     match("december"); 
 
@@ -1361,7 +1361,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 24 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:614:27: 'dec'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:614:27: 'dec'
                     {
                     match("dec"); 
 
@@ -1383,12 +1383,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = WEEKDAY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:11: ( 'monday' | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' | 'thursday' | 'thu' | 'friday' | 'fri' | 'saturday' | 'sat' | 'sunday' | 'sun' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:11: ( 'monday' | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' | 'thursday' | 'thu' | 'friday' | 'fri' | 'saturday' | 'sat' | 'sunday' | 'sun' )
             int alt14=14;
             alt14 = dfa14.predict(input);
             switch (alt14) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:13: 'monday'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:13: 'monday'
                     {
                     match("monday"); 
 
@@ -1396,7 +1396,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:26: 'mon'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:26: 'mon'
                     {
                     match("mon"); 
 
@@ -1404,7 +1404,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:34: 'tuesday'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:34: 'tuesday'
                     {
                     match("tuesday"); 
 
@@ -1412,7 +1412,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:46: 'tue'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:46: 'tue'
                     {
                     match("tue"); 
 
@@ -1420,7 +1420,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:54: 'wednesday'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:54: 'wednesday'
                     {
                     match("wednesday"); 
 
@@ -1428,7 +1428,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 6 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:68: 'wed'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:616:68: 'wed'
                     {
                     match("wed"); 
 
@@ -1436,7 +1436,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 7 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:13: 'thursday'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:13: 'thursday'
                     {
                     match("thursday"); 
 
@@ -1444,7 +1444,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 8 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:26: 'thu'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:26: 'thu'
                     {
                     match("thu"); 
 
@@ -1452,7 +1452,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 9 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:34: 'friday'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:34: 'friday'
                     {
                     match("friday"); 
 
@@ -1460,7 +1460,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 10 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:46: 'fri'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:46: 'fri'
                     {
                     match("fri"); 
 
@@ -1468,7 +1468,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 11 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:54: 'saturday'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:54: 'saturday'
                     {
                     match("saturday"); 
 
@@ -1476,7 +1476,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 12 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:68: 'sat'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:617:68: 'sat'
                     {
                     match("sat"); 
 
@@ -1484,7 +1484,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 13 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:618:13: 'sunday'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:618:13: 'sunday'
                     {
                     match("sunday"); 
 
@@ -1492,7 +1492,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 14 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:618:26: 'sun'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:618:26: 'sun'
                     {
                     match("sun"); 
 
@@ -1514,8 +1514,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = DATE_SEP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:620:11: ( '/' | '\\u5E74' | '\\u6708' | '\\u65E5' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:620:11: ( '/' | '\\u5E74' | '\\u6708' | '\\u65E5' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:
             {
             if ( input.LA(1)=='/'||input.LA(1)=='\u5E74'||input.LA(1)=='\u65E5'||input.LA(1)=='\u6708' ) {
                 input.consume();
@@ -1542,8 +1542,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = DOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:622:11: ( '.' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:622:13: '.'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:622:11: ( '.' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:622:13: '.'
             {
             match('.'); 
 
@@ -1562,8 +1562,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:624:11: ( ':' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:624:13: ':'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:624:11: ( ':' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:624:13: ':'
             {
             match(':'); 
 
@@ -1582,8 +1582,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:626:11: ( '-' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:626:13: '-'
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:626:11: ( '-' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:626:13: '-'
             {
             match('-'); 
 
@@ -1602,8 +1602,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:628:11: ( ',' )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:628:13: ','
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:628:11: ( ',' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:628:13: ','
             {
             match(','); 
 
@@ -1622,10 +1622,10 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:630:11: ( ( '0' .. '9' )+ )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:630:13: ( '0' .. '9' )+
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:630:11: ( ( '0' .. '9' )+ )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:630:13: ( '0' .. '9' )+
             {
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:630:13: ( '0' .. '9' )+
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:630:13: ( '0' .. '9' )+
             int cnt15=0;
             loop15:
             do {
@@ -1639,7 +1639,7 @@ public class TimeSpecLexer extends Lexer {
 
                 switch (alt15) {
             	case 1 :
-            	    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:630:13: '0' .. '9'
+            	    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:630:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1671,12 +1671,12 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = NUM_STR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:11: ( 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:11: ( 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' )
             int alt16=9;
             alt16 = dfa16.predict(input);
             switch (alt16) {
                 case 1 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:13: 'one'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:13: 'one'
                     {
                     match("one"); 
 
@@ -1684,7 +1684,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:21: 'two'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:21: 'two'
                     {
                     match("two"); 
 
@@ -1692,7 +1692,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:29: 'three'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:29: 'three'
                     {
                     match("three"); 
 
@@ -1700,7 +1700,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:39: 'four'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:39: 'four'
                     {
                     match("four"); 
 
@@ -1708,7 +1708,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:48: 'six'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:48: 'six'
                     {
                     match("six"); 
 
@@ -1716,7 +1716,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 6 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:56: 'seven'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:56: 'seven'
                     {
                     match("seven"); 
 
@@ -1724,7 +1724,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 7 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:66: 'eight'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:66: 'eight'
                     {
                     match("eight"); 
 
@@ -1732,7 +1732,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 8 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:76: 'nine'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:76: 'nine'
                     {
                     match("nine"); 
 
@@ -1740,7 +1740,7 @@ public class TimeSpecLexer extends Lexer {
                     }
                     break;
                 case 9 :
-                    // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:85: 'ten'
+                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:632:85: 'ten'
                     {
                     match("ten"); 
 
@@ -1762,8 +1762,8 @@ public class TimeSpecLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:634:11: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-            // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:634:13: ( ' ' | '\\t' | '\\r' | '\\n' )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:634:11: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:634:13: ( ' ' | '\\t' | '\\r' | '\\n' )
             {
             if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
                 input.consume();
@@ -1787,278 +1787,278 @@ public class TimeSpecLexer extends Lexer {
     // $ANTLR end "WS"
 
     public void mTokens() throws RecognitionException {
-        // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:8: ( T__39 | T__40 | T__41 | T__42 | NEVER | TODAY | TOMORROW | YESTERDAY | AT | ON | IN | OF | NEXT | AND | END | THE | STs | NOW | TONIGHT | MIDNIGHT | MIDDAY | NOON | YEARS | MONTHS | WEEKS | DAYS | HOURS | MINUTES | SECONDS | MONTH | WEEKDAY | DATE_SEP | DOT | COLON | MINUS | COMMA | INT | NUM_STR | WS )
+        // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:8: ( T__39 | T__40 | T__41 | T__42 | NEVER | TODAY | TOMORROW | YESTERDAY | AT | ON | IN | OF | NEXT | AND | END | THE | STs | NOW | TONIGHT | MIDNIGHT | MIDDAY | NOON | YEARS | MONTHS | WEEKS | DAYS | HOURS | MINUTES | SECONDS | MONTH | WEEKDAY | DATE_SEP | DOT | COLON | MINUS | COMMA | INT | NUM_STR | WS )
         int alt17=39;
         alt17 = dfa17.predict(input);
         switch (alt17) {
             case 1 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:10: T__39
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:10: T__39
                 {
                 mT__39(); 
 
                 }
                 break;
             case 2 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:16: T__40
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:16: T__40
                 {
                 mT__40(); 
 
                 }
                 break;
             case 3 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:22: T__41
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:22: T__41
                 {
                 mT__41(); 
 
                 }
                 break;
             case 4 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:28: T__42
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:28: T__42
                 {
                 mT__42(); 
 
                 }
                 break;
             case 5 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:34: NEVER
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:34: NEVER
                 {
                 mNEVER(); 
 
                 }
                 break;
             case 6 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:40: TODAY
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:40: TODAY
                 {
                 mTODAY(); 
 
                 }
                 break;
             case 7 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:46: TOMORROW
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:46: TOMORROW
                 {
                 mTOMORROW(); 
 
                 }
                 break;
             case 8 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:55: YESTERDAY
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:55: YESTERDAY
                 {
                 mYESTERDAY(); 
 
                 }
                 break;
             case 9 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:65: AT
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:65: AT
                 {
                 mAT(); 
 
                 }
                 break;
             case 10 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:68: ON
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:68: ON
                 {
                 mON(); 
 
                 }
                 break;
             case 11 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:71: IN
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:71: IN
                 {
                 mIN(); 
 
                 }
                 break;
             case 12 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:74: OF
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:74: OF
                 {
                 mOF(); 
 
                 }
                 break;
             case 13 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:77: NEXT
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:77: NEXT
                 {
                 mNEXT(); 
 
                 }
                 break;
             case 14 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:82: AND
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:82: AND
                 {
                 mAND(); 
 
                 }
                 break;
             case 15 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:86: END
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:86: END
                 {
                 mEND(); 
 
                 }
                 break;
             case 16 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:90: THE
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:90: THE
                 {
                 mTHE(); 
 
                 }
                 break;
             case 17 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:94: STs
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:94: STs
                 {
                 mSTs(); 
 
                 }
                 break;
             case 18 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:98: NOW
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:98: NOW
                 {
                 mNOW(); 
 
                 }
                 break;
             case 19 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:102: TONIGHT
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:102: TONIGHT
                 {
                 mTONIGHT(); 
 
                 }
                 break;
             case 20 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:110: MIDNIGHT
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:110: MIDNIGHT
                 {
                 mMIDNIGHT(); 
 
                 }
                 break;
             case 21 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:119: MIDDAY
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:119: MIDDAY
                 {
                 mMIDDAY(); 
 
                 }
                 break;
             case 22 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:126: NOON
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:126: NOON
                 {
                 mNOON(); 
 
                 }
                 break;
             case 23 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:131: YEARS
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:131: YEARS
                 {
                 mYEARS(); 
 
                 }
                 break;
             case 24 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:137: MONTHS
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:137: MONTHS
                 {
                 mMONTHS(); 
 
                 }
                 break;
             case 25 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:144: WEEKS
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:144: WEEKS
                 {
                 mWEEKS(); 
 
                 }
                 break;
             case 26 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:150: DAYS
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:150: DAYS
                 {
                 mDAYS(); 
 
                 }
                 break;
             case 27 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:155: HOURS
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:155: HOURS
                 {
                 mHOURS(); 
 
                 }
                 break;
             case 28 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:161: MINUTES
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:161: MINUTES
                 {
                 mMINUTES(); 
 
                 }
                 break;
             case 29 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:169: SECONDS
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:169: SECONDS
                 {
                 mSECONDS(); 
 
                 }
                 break;
             case 30 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:177: MONTH
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:177: MONTH
                 {
                 mMONTH(); 
 
                 }
                 break;
             case 31 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:183: WEEKDAY
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:183: WEEKDAY
                 {
                 mWEEKDAY(); 
 
                 }
                 break;
             case 32 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:191: DATE_SEP
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:191: DATE_SEP
                 {
                 mDATE_SEP(); 
 
                 }
                 break;
             case 33 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:200: DOT
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:200: DOT
                 {
                 mDOT(); 
 
                 }
                 break;
             case 34 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:204: COLON
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:204: COLON
                 {
                 mCOLON(); 
 
                 }
                 break;
             case 35 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:210: MINUS
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:210: MINUS
                 {
                 mMINUS(); 
 
                 }
                 break;
             case 36 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:216: COMMA
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:216: COMMA
                 {
                 mCOMMA(); 
 
                 }
                 break;
             case 37 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:222: INT
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:222: INT
                 {
                 mINT(); 
 
                 }
                 break;
             case 38 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:226: NUM_STR
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:226: NUM_STR
                 {
                 mNUM_STR(); 
 
                 }
                 break;
             case 39 :
-                // D:\\Projects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:234: WS
+                // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g:1:234: WS
                 {
                 mWS(); 
 

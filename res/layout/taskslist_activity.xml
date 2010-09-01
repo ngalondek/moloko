@@ -5,10 +5,13 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
+   <include layout="@layout/app_titlebar"/>
+
    <ListView
 	  android:id="@+id/android:list"
-	  style="@style/TasksList"
+	  style="@style/TasksList_TaskList"
      android:layout_width="fill_parent"
      android:layout_height="0sp"
-     android:layout_weight="1"/>
+     android:layout_weight="1" />
+
 </LinearLayout>

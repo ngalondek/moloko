@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -112,8 +113,10 @@ public class TaskSearchResultActivity extends TasksListActivity
    {
       if ( configuration.containsKey( QUERY_NOT_EVALUABLE ) )
       {
-         setTitle( getString( R.string.tasksearchresult_titlebar_error,
-                              configuration.getString( QUERY_NOT_EVALUABLE ) ) );
+         UIUtils.setTitle( this,
+                           getString( R.string.tasksearchresult_titlebar_error,
+                                      configuration.getString( QUERY_NOT_EVALUABLE ),
+                                      R.drawable.icon_sad_face_white ) );
       }
       else
       {

@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="tasklists_listitem_numtasks_bgnd_fill">#FFE0E0E0</color>
-	<color name="tasklists_listitem_numtasks_bgnd_stroke">#FFC4C4C4</color>
-	<color name="tasklists_listitem_numtasks_bgnd_smart_fill">#FF81B4EB</color>
+   <color name="app_titlebar_bgnd_start">#FF148AFF</color>
+   <color name="app_titlebar_bgnd_end">@color/priority_3</color>
+   <color name="app_titlebar_text">@android:color/white</color>
+   <color name="app_titlebar_separator">#FF87C3FF</color>
+
+   <color name="tasklists_lists_bgnd">@android:color/white</color>
+   <color name="tasklists_listitem_listname">@android:color/black</color>
+   <color name="tasklists_listitem_numtasks_text">@android:color/black</color>
+   <color name="tasklists_listitem_numtasks_bgnd_fill">#FFE0E0E0</color>
+   <color name="tasklists_listitem_numtasks_bgnd_stroke">#FFC4C4C4</color>
+   <color name="tasklists_listitem_numtasks_bgnd_smart_fill">#FF81B4EB</color>
    <color name="tasklists_listitem_numtasks_bgnd_smart_stroke">#FF8185EB</color>
    <color name="tasklists_listitem_numtasks_bgnd_smart_fill_fail">#FFEB8181</color>
-   <color name="tasklists_listitem_numtasks_bgnd_smart_fail_stroke">#FFD17575</color>
-   
-   <color name="tasklists_listitem_tag_bgnd_fill">@color/priority_3</color>
-	
-	<color name="taskslist_listitem_listname_text">#FFC9C9C9</color>
-	
+   <color name="tasklists_listitem_numtasks_bgnd_smart_fail_stroke">#FFD17575</color>      
+
+   <color name="taskslist_tasklist_bgnd">@android:color/white</color>
+   <color name="taskslist_listitem_desc_text">@android:color/black</color>
+   <color name="taskslist_listitem_due_date">@android:color/black</color>
+	<color name="taskslist_listitem_listname_text_normal">#FFC9C9C9</color>
+	<color name="taskslist_listitem_listname_text_pressed">@android:color/black</color>
+	<color name="taskslist_listitem_listname_text_bgnd">@android:color/transparent</color>
+	<color name="taskslist_listitem_tag_text">@android:color/white</color>
+	<color name="taskslist_listitem_tag_bgnd_normal_fill">@color/priority_3</color>
+   <color name="taskslist_listitem_tag_bgnd_pressed_fill">@color/priority_2</color>   
+	<color name="taskslist_listitem_note_text_normal">@color/taskslist_listitem_tag_bgnd_normal_fill</color>	
+	<color name="taskslist_listitem_note_text_pressed">@color/taskslist_listitem_tag_bgnd_pressed_fill</color>
+	<color name="taskslist_listitem_note_text_bgnd">@android:color/transparent</color>
 	<color name="taskslist_listitem_note_bubble_fill">@android:color/black</color>
    
 	<color name="priority_none">@android:color/transparent</color>

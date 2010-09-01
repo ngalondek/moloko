@@ -4,10 +4,13 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
+	
+	<include layout="@layout/app_titlebar"/>
 
    <ListView
 		android:id="@+id/android:list"
-		style="@android:style/Widget.ListView"
+		style="@style/TaskLists_Lists"
    	android:layout_width="fill_parent"
-      android:layout_height="fill_parent" />
+      android:layout_height="0sp"
+      android:layout_weight="1" />
 </LinearLayout>

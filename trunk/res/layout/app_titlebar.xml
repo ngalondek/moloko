@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   style="@style/App_TitleBar"
+   android:layout_width="fill_parent"
+   android:layout_height="@dimen/app_titlebar_height">
+   
+   <TextView
+      android:id="@+id/app_titlebar_text"
+      style="@style/App_TitleBar_Text"
+      android:layout_height="fill_parent"
+      android:layout_width="0sp"
+      android:layout_weight="1"
+      android:layout_alignParentLeft="true"      
+      android:text="Text"      
+      android:gravity="left|center"
+      android:singleLine="true"
+      android:ellipsize="end"
+      android:paddingLeft="5sp"
+      android:drawableLeft="@null"
+      android:drawablePadding="5sp" />
+      
+   <ImageView
+      style="@style/App_TitleBar_Separator"
+      android:layout_width="1sp"
+      android:layout_height="fill_parent" />
+   
+   <ImageView
+      android:id="@+id/app_titlebar_btn_search"
+      android:layout_height="fill_parent"
+      android:layout_width="@dimen/app_titlebar_btn_width"
+      android:src="@drawable/icon_search_white"
+      android:scaleType="centerInside" />      
+
+</LinearLayout>

@@ -337,11 +337,11 @@ date_on_M_Xst [Calendar cal]
          parseTextMonth( cal, $m.text );
        }
     (MINUS | COMMA | DOT)?
-     d=INT
+    (d=INT
        {
          cal.set( Calendar.DAY_OF_MONTH, Integer.parseInt( $d.text ) );
        }
-    STs? (MINUS | DOT)? ('-a' | MINUS | COMMA | DOT)?
+       (STs | '-a' | MINUS | COMMA | DOT)+)?
     (y=INT
        {
           parseYear( cal, $y.text );

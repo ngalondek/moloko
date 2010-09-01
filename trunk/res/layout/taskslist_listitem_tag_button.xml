@@ -2,8 +2,9 @@
  <Button
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:id="@+id/taskslist_listitem_tags_layout_btn_tag"
-	style="@style/TasksListItem.Tag"  
+	style="@style/TasksList_ListItem_Tag"  
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	android:layout_marginRight="5sp"
-	android:text="tag" />
+	android:text="tag"
+	android:focusable="false" />

@@ -2,13 +2,12 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/tasklists_listitem"
-	style="@style/TaskListsItem"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content">
 	
 	<TextView
 	   android:id="@+id/tasklists_listitem_list_name"
-	   style="@style/TaskListsItem.ListName.Normal"	     
+	   style="@style/TaskLists_ListItem_ListName"	     
 	   android:layout_width="wrap_content"
 	   android:layout_height="wrap_content"
 	   android:layout_centerVertical="true"
@@ -18,7 +17,7 @@
 	      
     <TextView
        android:id="@+id/tasklists_listitem_num_tasks"
-       style="@style/TaskListsItem.NumTasks.Normal"
+       style="@style/TaskLists_ListItem_NumTasks_Text"
        android:background="@drawable/tasklists_listitem_numtasks_bgnd"     
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"

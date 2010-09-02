@@ -27,6 +27,9 @@
    <string name="phr_please_wait">Bitte warten</string>
    <string name="phr_today">Heute</string>
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
+   <string name="phr_open_with_name">Öffne %1$s</string>
+   <string name="phr_close">Schliessen</string>
+   <string name="phr_ok">OK</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -52,14 +55,14 @@
 	  <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
 	
-	<!-- TaskLists activity -->
-     <!-- Menus -->
-     <string name="tasklists_ctxmenu_listitem_open">Öffne %1$s</string>
-
 	<!-- TasksList activity -->
 	<string name="taskslist_titlebar">%1$s</string>
 	  <!-- Menus -->
 	  <string name="taskslist_menu_opt_lists_title">@string/app_tasklists</string>
+	  <string name="taskslist_listitem_ctx_open_task">Öffne Aufgabe</string>
+	  <string name="taskslist_listitem_ctx_set_task_completed">Setze als erledigt</string>
+	  <string name="taskslist_listitem_ctx_set_task_incomplete">Setze als nicht erledigt</string>
+	  <string name="taskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>	  
 
    <!-- Authenticator activity -->
    <string name="auth_username_label">Benutzername</string>

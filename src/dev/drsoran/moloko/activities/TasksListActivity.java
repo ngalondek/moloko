@@ -28,7 +28,6 @@ public class TasksListActivity extends AbstractTasksListActivity
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      setContentView( R.layout.taskslist_activity );
       
       final Intent intent = getIntent();
       
@@ -59,9 +58,6 @@ public class TasksListActivity extends AbstractTasksListActivity
       // Handle item selection
       switch ( item.getItemId() )
       {
-         case R.id.taskslist_menu_opt_search_task:
-            onSearchRequested();
-            return true;
          default :
             return super.onOptionsItemSelected( item );
       }

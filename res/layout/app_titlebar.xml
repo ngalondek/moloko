@@ -25,11 +25,13 @@
       android:layout_width="1sp"
       android:layout_height="fill_parent" />
    
-   <ImageView
+   <ImageButton
       android:id="@+id/app_titlebar_btn_search"
+      style="@style/App_TitleBar_Btn"
       android:layout_height="fill_parent"
       android:layout_width="@dimen/app_titlebar_btn_width"
       android:src="@drawable/icon_search_white"
-      android:scaleType="centerInside" />      
+      android:scaleType="centerInside"
+      android:onClick="onTitleBarSearchClicked" />      
 
 </LinearLayout>

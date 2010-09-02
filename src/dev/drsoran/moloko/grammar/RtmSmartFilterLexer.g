@@ -82,6 +82,20 @@ options
 	
 	public final static String OP_POSTPONED_LIT = "postponed:";
 	
+	public final static String	TRUE_LIT = "true";
+
+	public final static String FALSE_LIT = "false";
+
+	public final static String L_PARENTH_LIT = "(";
+					
+	public final static String R_PARENTH_LIT = ")";
+
+	public final static String AND_LIT = "and";
+
+	public final static String OR_LIT = "or";
+
+	public final static String NOT_LIT = "not";
+	
 	// END TOKEN LITERALS
 	
 	private final static String TAGS_QUERY_PREFIX

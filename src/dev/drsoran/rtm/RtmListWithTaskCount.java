@@ -88,6 +88,20 @@ public class RtmListWithTaskCount
    
 
 
+   public boolean hasSmartFilter()
+   {
+      return impl.getSmartFilter() != null;
+   }
+   
+
+
+   public boolean isSmartFilterValid()
+   {
+      return !hasSmartFilter() || taskCount > -1;
+   }
+   
+
+
    public int getTaskCount()
    {
       return taskCount;

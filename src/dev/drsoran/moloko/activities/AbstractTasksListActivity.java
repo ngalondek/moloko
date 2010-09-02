@@ -1,14 +1,27 @@
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.util.MultiChoiceDialog;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListActivity extends ListActivity implements
@@ -38,9 +51,30 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
     */
    public static final String HIDE_TAG_EQUALS = "hide_tag_equals";
    
+   private final int CTX_MENU_TOGGLE_TASK_COMPLETED = 0;
+   
+   private final int CTX_MENU_OPEN_TASK = 1;
+   
+   private final int CTX_MENU_OPEN_LIST = 2;
+   
+   private final int CTX_MENU_TAGS = 3;
+   
+   private final int CTX_MENU_NOTES = 4;
+   
    protected final Bundle configuration = new Bundle();
    
    
+
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      setContentView( R.layout.taskslist_activity );
+      
+      registerForContextMenu( getListView() );
+   }
+   
+
 
    public final static Bundle createAdapterConfig()
    {
@@ -83,24 +117,117 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   public void onClick( View v )
+   @Override
+   public void onCreateContextMenu( ContextMenu menu,
+                                    View v,
+                                    ContextMenuInfo menuInfo )
    {
-      switch ( v.getId() )
+      super.onCreateContextMenu( menu, v, menuInfo );
+      
+      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+      
+      final Task task = getTask( info.position );
+      
+      menu.add( Menu.NONE,
+                CTX_MENU_TOGGLE_TASK_COMPLETED,
+                Menu.NONE,
+                ( task.getCompleted() == null )
+                                               ? getString( R.string.taskslist_listitem_ctx_set_task_completed )
+                                               : getString( R.string.taskslist_listitem_ctx_set_task_incomplete ) );
+      menu.add( Menu.NONE,
+                CTX_MENU_OPEN_TASK,
+                Menu.NONE,
+                getString( R.string.phr_open_with_name, task.getName() ) )
+          .setTitleCondensed( getString( R.string.taskslist_listitem_ctx_open_task ) );
+      
+      menu.add( Menu.NONE,
+                CTX_MENU_OPEN_LIST,
+                Menu.NONE,
+                getString( R.string.taskslist_listitem_ctx_open_list,
+                           task.getListName() ) );
+      
+      final int tagsCount = task.getTags().size();
+      if ( tagsCount > 0 )
       {
-         case R.id.taskslist_listitem_btn_list_name:
-            onListNameClicked( v );
-            break;
-         case R.id.taskslist_listitem_tags_layout_btn_tag:
-            onTagClicked( v );
-            break;
+         menu.add( Menu.NONE,
+                   CTX_MENU_TAGS,
+                   Menu.NONE,
+                   getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
+                                                     tagsCount ) );
+      }
+      
+      final int notesCount = task.getNumberOfNotes();
+      if ( notesCount > 0 )
+         menu.add( Menu.NONE,
+                   CTX_MENU_NOTES,
+                   Menu.NONE,
+                   getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_notes,
+                                                     notesCount ) );
+   }
+   
+
+
+   @Override
+   public boolean onContextItemSelected( MenuItem item )
+   {
+      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+      
+      switch ( item.getItemId() )
+      {
+         case CTX_MENU_TOGGLE_TASK_COMPLETED:
+            onCompletedClicked( info.targetView.findViewById( R.id.taskslist_listitem_check ) );
+            return true;
+            
+         case CTX_MENU_OPEN_TASK:
+            return true;
+            
+         case CTX_MENU_OPEN_LIST:
+            onListNameClicked( info.targetView.findViewById( R.id.taskslist_listitem_btn_list_name ) );
+            return true;
+            
+         case CTX_MENU_TAGS:
+            final List< String > tags = getTask( info.position ).getTags();
+            
+            if ( tags.size() == 1 )
+               onTagClicked( tags.get( 0 ) );
+            else
+               openMultipleTags( tags );
+            
+            return true;
+         case CTX_MENU_NOTES:
+            return true;
+            
          default :
-            break;
+            return super.onContextItemSelected( item );
       }
    }
    
 
 
-   protected void onListNameClicked( View view )
+   public void onTitleBarSearchClicked( View view )
+   {
+      onSearchRequested();
+   }
+   
+
+
+   public void onCompletedClicked( View view )
+   {
+      final CheckBox checkBox = (CheckBox) view;
+      
+      if ( checkBox.isChecked() )
+      {
+         
+      }
+      else
+      {
+         
+      }
+   }
+   
+
+
+   public void onListNameClicked( View view )
    {
       final TextView listNameCtrl = (TextView) view;
       
@@ -121,19 +248,24 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   protected void onTagClicked( View view )
+   public void onTagClicked( View view )
    {
       final TextView tagCtrl = (TextView) view;
       
+      onTagClicked( tagCtrl.getText() );
+   }
+   
+
+
+   public void onTagClicked( CharSequence tag )
+   {
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      intent.putExtra( FILTER, RtmSmartFilterLexer.OP_TAG_LIT
-         + tagCtrl.getText() );
-      intent.putExtra( TITLE, getString( R.string.taskslist_titlebar,
-                                         tagCtrl.getText() ) );
+      intent.putExtra( FILTER, RtmSmartFilterLexer.OP_TAG_LIT + tag );
+      intent.putExtra( TITLE, getString( R.string.taskslist_titlebar, tag ) );
       intent.putExtra( TITLE_ICON, R.drawable.icon_tag_white );
       
       final Bundle config = new Bundle();
-      config.putString( HIDE_TAG_EQUALS, tagCtrl.getText().toString() );
+      config.putString( HIDE_TAG_EQUALS, tag.toString() );
       
       intent.putExtra( ADAPTER_CONFIG, config );
       
@@ -142,5 +274,92 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
+   public void openMultipleTags( List< String > tags )
+   {
+      final ArrayList< CharSequence > tmp = new ArrayList< CharSequence >();
+      
+      for ( String tag : tags )
+      {
+         tmp.add( tag );
+      }
+      
+      new MultiChoiceDialog( this, tmp, this ).show();
+   }
+   
+
+
+   public void onNoteClicked( View view )
+   {
+      
+   }
+   
+
+
+   public void onClick( DialogInterface dialog, int which )
+   {
+      if ( dialog instanceof MultiChoiceDialog )
+      {
+         MultiChoiceDialog tagsChoice = (MultiChoiceDialog) dialog;
+         
+         final CharSequence[] tags = tagsChoice.getItems();
+         final boolean[] states = tagsChoice.getStates();
+         
+         final ArrayList< String > chosenTags = new ArrayList< String >();
+         
+         // filter out the chosen tags
+         for ( int i = 0; i < states.length; i++ )
+         {
+            if ( states[ i ] )
+            {
+               chosenTags.add( tags[ i ].toString() );
+            }
+         }
+         
+         final int chosenTagsSize = chosenTags.size();
+         
+         if ( chosenTagsSize == 1 )
+         {
+            onTagClicked( chosenTags.get( 0 ) );
+         }
+         else if ( chosenTagsSize > 1 )
+         {
+            final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                              Tasks.CONTENT_URI );
+            intent.putExtra( TITLE_ICON, R.drawable.icon_tag_white );
+            
+            final StringBuffer filter = new StringBuffer();
+
+            for ( int i = 0; i < chosenTagsSize; ++i )
+            {
+               final String chosenTag = chosenTags.get( i );
+               
+               filter.append( RtmSmartFilterLexer.OP_TAG_LIT )
+                     .append( chosenTag );
+               
+               // not last element
+               if ( i < chosenTagsSize - 1 )
+               {
+                  filter.append( " " ).append( RtmSmartFilterLexer.AND_LIT ).append( " " );
+               }
+            }
+            
+            intent.putExtra( FILTER, filter.toString() );
+            intent.putExtra( TITLE, getString( R.string.taskslist_titlebar,
+                                               TextUtils.join( ", ", chosenTags ) ) );
+            
+            startActivity( intent );
+         }
+      }
+   }
+   
+
+
    abstract protected void refresh();
+   
+
+
+   protected final Task getTask( int pos )
+   {
+      return (Task) getListAdapter().getItem( pos );
+   }
 }

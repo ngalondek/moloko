@@ -22,6 +22,10 @@
    <style name="App_TitleBar_Separator">
       <item name="android:background">@color/app_titlebar_separator</item>
    </style>
+   
+   <style name="App_TitleBar_Btn">
+      <item name="android:background">@drawable/app_titlebar_btn_bgnd</item>
+   </style>
 
 
 	<!-- ********* -->
@@ -52,6 +56,7 @@
 	
 	<style name="TasksList_ListItem_Checked" >
       <item name="android:button">@drawable/taskslist_listitem_checked_mark</item>
+      <item name="android:scaleType">fitXY</item>
    </style>
    
 	<style name="TasksList_ListItem_DescriptionText" parent="@android:style/TextAppearance.Medium">

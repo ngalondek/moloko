@@ -7,4 +7,5 @@
 	android:layout_height="wrap_content"
 	android:layout_marginRight="5sp"
 	android:text="tag"
-	android:focusable="false" />
+	android:focusable="false"
+	android:onClick="onTagClicked" />

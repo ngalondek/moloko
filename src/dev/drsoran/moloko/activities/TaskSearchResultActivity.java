@@ -27,8 +27,6 @@ public class TaskSearchResultActivity extends TasksListActivity
    {
       super.onCreate( savedInstanceState );
       
-      setContentView( R.layout.taskslist_activity );
-      
       if ( savedInstanceState != null )
          configuration.putAll( savedInstanceState );
       

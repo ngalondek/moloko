@@ -5,6 +5,7 @@ import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -17,6 +18,7 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -63,11 +65,11 @@ public class TaskListsActivity extends ListActivity implements
       
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
       
-      menu.add( 0,
+      menu.add( Menu.NONE,
                 CTX_MENU_OPEN_LIST,
-                0,
-                getString( R.string.tasklists_ctxmenu_listitem_open,
-                           getListProperties( info.targetView ).getString( ListOverviews.LIST_NAME ) ) );
+                Menu.NONE,
+                getString( R.string.phr_open_with_name,
+                           getRtmList( info.position ).getName() ) );
    }
    
 
@@ -80,7 +82,7 @@ public class TaskListsActivity extends ListActivity implements
       switch ( item.getItemId() )
       {
          case CTX_MENU_OPEN_LIST:
-            openList( getListProperties( info.targetView ) );
+            openList( getRtmList( info.position ) );
             return true;
             
          default :
@@ -95,54 +97,51 @@ public class TaskListsActivity extends ListActivity implements
                             int pos,
                             long rowId )
    {
-      openList( getListProperties( view ) );
+      openList( getRtmList( pos ) );
    }
    
 
 
-   private void openList( Bundle properties )
+   private void openList( RtmListWithTaskCount rtmList )
    {
-      final String listName = properties.getString( ListOverviews.LIST_NAME );
-      
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      
-      intent.putExtra( AbstractTasksListActivity.TITLE,
-                       getString( R.string.taskslist_titlebar, listName ) );      
-      intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                       R.drawable.icon_list_white );
-      
-      String filter = null;
-      
-      if ( properties.containsKey( ListOverviews.FILTER ) )
+      // Check if the smart filter could be parsed. Otherwise
+      // we do not fire the intent.
+      if ( rtmList.isSmartFilterValid() )
       {
-         filter = properties.getString( ListOverviews.FILTER );
+         final String listName = rtmList.getName();
          
-         // Check if the smart filter could be parsed. Otherwise
-         // it is null and we do not fire the intent.
+         final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                           Tasks.CONTENT_URI );
+         
+         intent.putExtra( AbstractTasksListActivity.TITLE,
+                          getString( R.string.taskslist_titlebar, listName ) );
+         intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
+                          R.drawable.icon_list_white );
+         
+         RtmSmartFilter filter = rtmList.getSmartFilter();
+         
+         // If we have no smart filter we use the list name as "list:" filter
          if ( filter == null )
-            return;
+         {
+            filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_LIST_LIT
+               + RtmSmartFilterLexer.quotify( listName ) );
+            
+            assert ( filter.getEvaluatedFilterString() != null );
+            
+            // We have a non-smart list. So we disable clicking the list name
+            // cause we have no tasks from different lists in the result.
+            final Bundle config = new Bundle();
+            config.putBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME,
+                               true );
+            
+            intent.putExtra( AbstractTasksListActivity.ADAPTER_CONFIG, config );
+         }
+         
+         intent.putExtra( AbstractTasksListActivity.FILTER_EVALUATED,
+                          filter.getEvaluatedFilterString() );
+         
+         startActivity( intent );
       }
-      
-      // We use the list name as "list:" filter
-      else
-      {
-         filter = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_LIST_LIT
-            + RtmSmartFilterLexer.quotify( listName ) );
-         
-         assert ( filter != null );
-         
-         // We have a non-smart list. So we disable clicking the list name
-         // cause we no tasks from different lists in the result.
-         final Bundle config = new Bundle();
-         config.putBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME, true );
-         
-         intent.putExtra( AbstractTasksListActivity.ADAPTER_CONFIG, config );
-      }
-      
-      if ( filter != null )
-         intent.putExtra( AbstractTasksListActivity.FILTER_EVALUATED, filter );
-      
-      startActivity( intent );
    }
    
 
@@ -161,8 +160,8 @@ public class TaskListsActivity extends ListActivity implements
    
 
 
-   private final static Bundle getListProperties( View parent )
+   private final RtmListWithTaskCount getRtmList( int pos )
    {
-      return (Bundle) parent.getTag();
+      return (RtmListWithTaskCount) getListAdapter().getItem( pos );
    }
 }

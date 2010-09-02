@@ -9,4 +9,5 @@
    android:drawablePadding="5sp"
    android:gravity="left"
    android:text="note"
-   android:focusable="false" />
+   android:focusable="false"
+   android:onClick="onNoteClicked" />

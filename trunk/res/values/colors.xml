@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <color name="app_titlebar_bgnd_start">#FF148AFF</color>
-   <color name="app_titlebar_bgnd_end">@color/priority_3</color>
+   <color name="app_titlebar_bgnd_start">@color/priority_3</color>
+   <color name="app_titlebar_bgnd_end">#FF0078F0</color>
    <color name="app_titlebar_text">@android:color/white</color>
    <color name="app_titlebar_separator">#FF87C3FF</color>
+   <color name="app_titlebar_btn_bgnd_normal">@android:color/transparent</color>
+   <color name="app_titlebar_btn_bgnd_pressed">@color/priority_2</color>
 
    <color name="tasklists_lists_bgnd">@android:color/white</color>
    <color name="tasklists_listitem_listname">@android:color/black</color>

@@ -30,13 +30,14 @@
 		   <CheckBox 
 	         android:id="@+id/taskslist_listitem_check"
 	         style="@style/TasksList_ListItem_Checked"
-		      android:layout_height="24sp"
+		      android:layout_height="50sp"
 		      android:layout_width="24sp"
 		      android:layout_toRightOf="@id/taskslist_listitem_priority"
 		      android:layout_marginTop="@dimen/taskslist_listitem_row_space"
 		      android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
-		      android:scaleType="fitXY"
-		      android:focusable="false" />
+		      android:focusable="false"
+		      android:gravity="top"
+		      android:onClick="onCompletedClicked" />
 		      
 	      <TextView
 	         android:id="@+id/taskslist_listitem_desc"
@@ -58,7 +59,8 @@
 	         android:layout_alignLeft="@id/taskslist_listitem_desc"
 	         android:layout_marginTop="@dimen/taskslist_listitem_row_space"
 	         android:text="list_name"
-            android:focusable="false" />
+            android:focusable="false"
+            android:onClick="onListNameClicked" />
 	
 	      <TextView
 	         android:id="@+id/taskslist_listitem_due_date"
@@ -72,7 +74,8 @@
 	         android:text="due_date"
 	         android:singleLine="true"
 	         android:gravity="right"
-	         android:focusable="false" />			      
+	         android:focusable="false" />
+	         			      
 	   </RelativeLayout>
 	   
 	   <ViewStub

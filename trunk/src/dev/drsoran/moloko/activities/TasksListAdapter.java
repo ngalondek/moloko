@@ -6,6 +6,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.text.SpannableString;
 import android.text.format.DateUtils;
 import android.text.format.Time;
@@ -15,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -46,9 +46,9 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
 
    public TasksListAdapter( Context context, int resourceId,
-      List< Task > lists, Bundle configuration )
+      List< Task > tasks, Bundle configuration )
    {
-      super( context, 0, lists );
+      super( context, 0, tasks );
       
       this.context = context;
       this.resourceId = resourceId;
@@ -107,7 +107,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       // If we couldn't find the stub by ID it is already
       // inflated and it's ID has been replaced.
       if ( notesStub != null )
-         setNotes( notesStub, task );
+         setNotes( view, notesStub, task );
       
       // Completed
       setCompleted( completed, task );
@@ -157,9 +157,9 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    {
       view.setText( task.getListName() );
       
-      if ( !configuration.getBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME ) )
+      if ( configuration.getBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME ) )
       {
-         view.setOnClickListener( (OnClickListener) context );
+         view.setEnabled( false );
       }
    }
    
@@ -294,8 +294,6 @@ public class TasksListAdapter extends ArrayAdapter< Task >
                                                                     null );
                   tagView.setText( tagText );
                   tagsContainer.addView( tagView );
-                  
-                  tagView.setOnClickListener( (OnClickListener) context );
                }
             }
          }
@@ -308,9 +306,9 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
 
 
-   private void setNotes( ViewStub notesStub, Task task )
+   @SuppressWarnings( "unchecked" )
+   private void setNotes( View listItem, ViewStub notesStub, Task task )
    {
-      
       // If the task has no notes
       if ( task.getNumberOfNotes() == 0 )
       {
@@ -320,9 +318,33 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       // inflate the stub and add notes
       else
       {
-         final ContentProviderClient client = context.getContentResolver()
-                                                     .acquireContentProviderClient( Notes.CONTENT_URI );
-         if ( client != null )
+         List< RtmTaskNote > notes = (List< RtmTaskNote >) listItem.getTag();
+         
+         if ( notes == null )
+         {
+            final ContentProviderClient client = context.getContentResolver()
+                                                        .acquireContentProviderClient( Notes.CONTENT_URI );
+            
+            if ( client != null )
+            {
+               try
+               {
+                  final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
+                                                                                  task.getId() );
+                  if ( rtmNotes != null )
+                  {
+                     notes = rtmNotes.getNotes();
+                  }
+               }
+               catch ( RemoteException e )
+               {
+                  Log.e( TAG, "Unable to retrieve notes from DB for task ID "
+                     + task.getId(), e );
+               }
+            }
+         }
+         
+         if ( notes != null )
          {
             try
             {
@@ -333,24 +355,16 @@ public class TasksListAdapter extends ArrayAdapter< Task >
                   throw new Exception();
                }
                
-               final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                               task.getId() );
-               
-               if ( rtmNotes != null )
+               for ( RtmTaskNote note : notes )
                {
-                  final List< RtmTaskNote > notes = rtmNotes.getNotes();
-                  
-                  for ( RtmTaskNote note : notes )
-                  {
-                     final TextView tagView = (TextView) View.inflate( context,
-                                                                       R.layout.taskslist_listitem_note_button,
-                                                                       null );
-                     tagView.setText( note.getText() );
-                     notesContainer.addView( tagView );
-                     
-                     tagView.setOnClickListener( (OnClickListener) context );
-                  }
+                  final TextView tagView = (TextView) View.inflate( context,
+                                                                    R.layout.taskslist_listitem_note_button,
+                                                                    null );
+                  tagView.setText( note.getText() );
+                  notesContainer.addView( tagView );
                }
+               
+               listItem.setTag( notes );
             }
             catch ( Exception e )
             {
@@ -358,6 +372,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
             }
          }
       }
+      
    }
    
 
@@ -366,4 +381,5 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    {
       view.setChecked( task.getCompleted() != null );
    }
+   
 }

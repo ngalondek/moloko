@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <!-- TasksList activity -->
+      <!-- Menus -->
+      <plurals name="taskslist_listitem_ctx_notes">
+         <item quantity="one">Öffne Notiz</item>
+         <item quantity="other">Öffne Notizen</item>
+      </plurals>
+      <plurals name="taskslist_listitem_ctx_tags">
+         <item quantity="one">Alle Aufgaben mit Tag</item>
+         <item quantity="other">Alle Aufgaben mit Tags...</item>
+      </plurals>
+</resources>

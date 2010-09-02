@@ -3,7 +3,6 @@ package dev.drsoran.moloko.activities;
 import java.util.List;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.provider.Rtm.ListOverviews;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
@@ -65,12 +62,16 @@ public class TaskListsAdapter extends ArrayAdapter< RtmListWithTaskCount >
       final int numTasks = rtmList.getTaskCount();
       
       listName.setText( listNameStr );
+      
       tasksCount.setText( String.valueOf( numTasks ) );
       
-      if ( rtmList.getSmartFilter() != null )
+      // If we have a smart filter we check if it could
+      // be evaluated. If so add the filter to show in list
+      // as name. Otherwise mark it explicitly with null
+      // as bad filter
+      if ( rtmList.hasSmartFilter() )
       {
-         // check if the RTM smart filter could be evaluated
-         if ( numTasks != -1 )
+         if ( rtmList.isSmartFilterValid() )
          {
             tasksCount.setBackgroundResource( R.drawable.tasklists_listitem_numtasks_bgnd_smart );
          }
@@ -81,29 +82,6 @@ public class TaskListsAdapter extends ArrayAdapter< RtmListWithTaskCount >
          }
       }
       
-      Bundle listProperties = (Bundle) view.getTag();
-      
-      if ( listProperties == null )
-      {
-         listProperties = new Bundle();
-         ( (View) view ).setTag( listProperties );
-         
-         listProperties.putString( Lists.LIST_NAME, listNameStr );
-         
-         // If we have a smart filter we check if it could
-         // be evaluated. If so add the filter to show in list
-         // as name. Otherwise mark it explicitly with null
-         // as bad filter.
-         if ( rtmList.getSmartFilter() != null )
-            if ( numTasks != -1 )
-               listProperties.putString( ListOverviews.FILTER,
-                                         rtmList.getSmartFilter()
-                                                .getEvaluatedFilterString() );
-            else
-               listProperties.putString( ListOverviews.FILTER, null );
-      }
-      
       return view;
    }
-   
 }

@@ -9,6 +9,12 @@ import dev.drsoran.moloko.R;
 
 public final class UIUtils
 {
+   public final static String OBJ_INST = "obj_inst";
+   
+   public final static String OBJ_TYPE = "obj_type";
+   
+   
+
    public final static void setTitle( Activity activity, String text )
    {
       final View titleBarText = activity.findViewById( R.id.app_titlebar_text );

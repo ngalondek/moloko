@@ -2,7 +2,8 @@
 <resources>
 	<string name="app_name">Moloko</string>
 	<string name="app_preferences">Einstellungen</string>
-	<string name="app_tasklists">Listen</string>	
+	<string name="app_tasklists">Listen</string>
+	<string name="app_task">Aufgabe</string>	
 	<string name="svc_rtm">Moloko.RtmService</string>
 	<string name="svc_auth">Moloko.AuthService</string>
 	<string name="svc_rtm_process">:Moloko</string>
@@ -63,6 +64,9 @@
 	  <string name="taskslist_listitem_ctx_set_task_completed">Setze als erledigt</string>
 	  <string name="taskslist_listitem_ctx_set_task_incomplete">Setze als nicht erledigt</string>
 	  <string name="taskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>	  
+	  <!-- Dialogs -->
+	  <string name="taskslist_dlg_show_tags_and">und</string>
+	  <string name="taskslist_dlg_show_tags_or">oder</string>
 
    <!-- Authenticator activity -->
    <string name="auth_username_label">Benutzername</string>

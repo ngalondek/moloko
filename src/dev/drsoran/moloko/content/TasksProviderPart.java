@@ -173,6 +173,44 @@ public class TasksProviderPart extends AbstractProviderPart
    
    
 
+   public final static Task getTask( ContentProviderClient client, String id )
+   {
+      Task task = null;
+      
+      try
+      {
+         final Cursor c = client.query( Queries.contentUriWithId( Rtm.Tasks.CONTENT_URI,
+                                                                  id ),
+                                        PROJECTION,
+                                        null,
+                                        null,
+                                        null );
+         
+         boolean ok = c.getCount() > 0 && c.moveToFirst();
+         
+         if ( ok )
+         {
+            task = createTask( c );
+            
+            ok = task != null;
+         }
+         
+         if ( !ok )
+            task = null;
+         
+         c.close();
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query tasks failed. ", e );
+         task = null;
+      }
+      
+      return task;
+   }
+   
+
+
    public final static ArrayList< Task > getTasks( ContentProviderClient client,
                                                    String selection,
                                                    String order )
@@ -195,50 +233,12 @@ public class TasksProviderPart extends AbstractProviderPart
          {
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
-               final Task task = new Task( c.getString( COL_INDICES.get( Tasks._ID ) ),
-                                           c.getString( COL_INDICES.get( Tasks.LIST_NAME ) ),
-                                           c.getInt( COL_INDICES.get( Tasks.IS_SMART_LIST ) ) != 0,
-                                           new Date( c.getLong( COL_INDICES.get( Tasks.COMPLETED_DATE ) ) ),
-                                           Queries.getOptDate( c,
-                                                               COL_INDICES.get( Tasks.MODIFIED_DATE ) ),
-                                           c.getString( COL_INDICES.get( Tasks.TASKSERIES_NAME ) ),
-                                           c.getString( COL_INDICES.get( Tasks.SOURCE ) ),
-                                           c.getString( COL_INDICES.get( Tasks.URL ) ),
-                                           Queries.getOptString( c,
-                                                                 COL_INDICES.get( Tasks.LOCATION_ID ) ),
-                                           c.getString( COL_INDICES.get( Tasks.LIST_ID ) ),
-                                           Queries.getOptDate( c,
-                                                               COL_INDICES.get( Tasks.DUE_DATE ) ),
-                                           c.getInt( COL_INDICES.get( Tasks.HAS_DUE_TIME ) ) != 0,
-                                           new Date( c.getLong( COL_INDICES.get( Tasks.ADDED_DATE ) ) ),
-                                           Queries.getOptDate( c,
-                                                               COL_INDICES.get( Tasks.COMPLETED_DATE ) ),
-                                           Queries.getOptDate( c,
-                                                               COL_INDICES.get( Tasks.DELETED_DATE ) ),
-                                           RtmTask.convertPriority( c.getString( COL_INDICES.get( Tasks.PRIORITY ) ) ),
-                                           c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ) != 0,
-                                           c.getString( COL_INDICES.get( Tasks.ESTIMATE ) ),
-                                           Queries.getOptString( c,
-                                                                 COL_INDICES.get( Tasks.LOCATION_NAME ) ),
-                                           Queries.getOptFloat( c,
-                                                                COL_INDICES.get( Tasks.LONGITUDE ),
-                                                                0.0f ),
-                                           Queries.getOptFloat( c,
-                                                                COL_INDICES.get( Tasks.LATITUDE ),
-                                                                0.0f ),
-                                           Queries.getOptString( c,
-                                                                 COL_INDICES.get( Tasks.ADDRESS ) ),
-                                           Queries.getOptBool( c,
-                                                               COL_INDICES.get( Tasks.VIEWABLE ),
-                                                               false ),
-                                           Queries.getOptInt( c,
-                                                              COL_INDICES.get( Tasks.ZOOM ),
-                                                              -1 ),
-                                           Queries.getOptString( c,
-                                                                 COL_INDICES.get( Tasks.TAGS ) ),
-                                           c.getInt( COL_INDICES.get( Tasks.NUM_NOTES ) ) );
+               final Task task = createTask( c );
                
-               tasks.add( task );
+               ok = task != null;
+               
+               if ( ok )
+                  tasks.add( task );
             }
          }
          
@@ -285,7 +285,7 @@ public class TasksProviderPart extends AbstractProviderPart
          
          // In case of a join with the locations table the _id gets ambiguous. So
          // we have to qualify it.
-         if ( column.equals( Tasks._ID ) )
+         if ( column.endsWith( Tasks._ID ) )
          {
             projectionList.set( i,
                                 new StringBuilder( "subQuery." ).append( TaskSeries._ID )
@@ -343,7 +343,7 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       else
       {
-         // TODO: Throw exception in this case
+         // TODO: Throw exception in this case otherwise we get a list of all tasks and no error
       }
       
       if ( !TextUtils.isEmpty( selection ) )
@@ -423,4 +423,46 @@ public class TasksProviderPart extends AbstractProviderPart
       return PROJECTION_MAP;
    }
    
+
+
+   private final static Task createTask( Cursor c )
+   {
+      return new Task( c.getString( COL_INDICES.get( Tasks._ID ) ),
+                       c.getString( COL_INDICES.get( Tasks.LIST_NAME ) ),
+                       c.getInt( COL_INDICES.get( Tasks.IS_SMART_LIST ) ) != 0,
+                       new Date( c.getLong( COL_INDICES.get( Tasks.TASKSERIES_CREATED_DATE ) ) ),
+                       Queries.getOptDate( c,
+                                           COL_INDICES.get( Tasks.MODIFIED_DATE ) ),
+                       c.getString( COL_INDICES.get( Tasks.TASKSERIES_NAME ) ),
+                       c.getString( COL_INDICES.get( Tasks.SOURCE ) ),
+                       c.getString( COL_INDICES.get( Tasks.URL ) ),
+                       Queries.getOptString( c,
+                                             COL_INDICES.get( Tasks.LOCATION_ID ) ),
+                       c.getString( COL_INDICES.get( Tasks.LIST_ID ) ),
+                       Queries.getOptDate( c, COL_INDICES.get( Tasks.DUE_DATE ) ),
+                       c.getInt( COL_INDICES.get( Tasks.HAS_DUE_TIME ) ) != 0,
+                       new Date( c.getLong( COL_INDICES.get( Tasks.ADDED_DATE ) ) ),
+                       Queries.getOptDate( c,
+                                           COL_INDICES.get( Tasks.COMPLETED_DATE ) ),
+                       Queries.getOptDate( c,
+                                           COL_INDICES.get( Tasks.DELETED_DATE ) ),
+                       RtmTask.convertPriority( c.getString( COL_INDICES.get( Tasks.PRIORITY ) ) ),
+                       c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ) != 0,
+                       c.getString( COL_INDICES.get( Tasks.ESTIMATE ) ),
+                       Queries.getOptString( c,
+                                             COL_INDICES.get( Tasks.LOCATION_NAME ) ),
+                       Queries.getOptFloat( c,
+                                            COL_INDICES.get( Tasks.LONGITUDE ),
+                                            0.0f ),
+                       Queries.getOptFloat( c,
+                                            COL_INDICES.get( Tasks.LATITUDE ),
+                                            0.0f ),
+                       Queries.getOptString( c, COL_INDICES.get( Tasks.ADDRESS ) ),
+                       Queries.getOptBool( c,
+                                           COL_INDICES.get( Tasks.VIEWABLE ),
+                                           false ),
+                       Queries.getOptInt( c, COL_INDICES.get( Tasks.ZOOM ), -1 ),
+                       Queries.getOptString( c, COL_INDICES.get( Tasks.TAGS ) ),
+                       c.getInt( COL_INDICES.get( Tasks.NUM_NOTES ) ) );
+   }
 }

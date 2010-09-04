@@ -4,18 +4,16 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.text.SpannableString;
 import android.text.format.DateUtils;
 import android.text.format.Time;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -25,6 +23,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.rtm.Task;
 
@@ -71,7 +70,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       TextView listName;
       TextView dueDate;
       CheckBox completed;
-      ViewStub tagsStub;
+      ViewGroup tagsLayout;
       ViewStub notesStub;
       
       try
@@ -80,7 +79,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
          listName = (TextView) view.findViewById( R.id.taskslist_listitem_btn_list_name );
          dueDate = (TextView) view.findViewById( R.id.taskslist_listitem_due_date );
          completed = (CheckBox) view.findViewById( R.id.taskslist_listitem_check );
-         tagsStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_tags_stub );
+         tagsLayout = (ViewGroup) view.findViewById( R.id.taskslist_listitem_tags );
          notesStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_notes_stub );
       }
       catch ( ClassCastException e )
@@ -91,18 +90,19 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       
       final Task task = getItem( position );
       
-      setDescription( description, task );
+      UIUtils.setTaskDescription( description, task, now );
       
       setListName( listName, task );
       
       setDueDate( dueDate, task );
       
-      setPriority( priority, task );
+      UIUtils.setPriorityColor( priority, task );
       
-      // If we couldn't find the stub by ID it is already
-      // inflated and it's ID has been replaced.
-      if ( tagsStub != null )
-         setTags( tagsStub, task );
+      UIUtils.inflateTags( context,
+                           tagsLayout,
+                           task,
+                           configuration,
+                           (OnClickListener) context );
       
       // If we couldn't find the stub by ID it is already
       // inflated and it's ID has been replaced.
@@ -113,42 +113,6 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       setCompleted( completed, task );
       
       return view;
-   }
-   
-
-
-   private final void setDescription( TextView view, Task task )
-   {
-      view.setText( task.getName() );
-      
-      // description
-      if ( task.getDue() != null )
-      {
-         final long dueDateMillis = task.getDue().getTime();
-         
-         // Make bold if the task is today
-         if ( DateUtils.isToday( dueDateMillis ) )
-         {
-            view.setTypeface( Typeface.DEFAULT_BOLD );
-            view.setText( task.getName() );
-         }
-         
-         // Make underline and bold if overdue
-         else
-         {
-            final Time dueTime = new Time();
-            dueTime.set( task.getDue().getTime() );
-            
-            if ( now.after( dueTime ) )
-            {
-               final SpannableString content = new SpannableString( task.getName() );
-               
-               content.setSpan( new UnderlineSpan(), 0, content.length(), 0 );
-               view.setTypeface( Typeface.DEFAULT_BOLD );
-               view.setText( content );
-            }
-         }
-      }
    }
    
 
@@ -234,74 +198,6 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       // has no due date
       else
          view.setVisibility( View.GONE );
-   }
-   
-
-
-   private final void setPriority( View view, Task task )
-   {
-      switch ( task.getPriority() )
-      {
-         case High:
-            view.setBackgroundResource( R.color.priority_1 );
-            break;
-         case Medium:
-            view.setBackgroundResource( R.color.priority_2 );
-            break;
-         case Low:
-            view.setBackgroundResource( R.color.priority_3 );
-            break;
-         case None:
-         default :
-            view.setBackgroundResource( R.color.priority_none );
-            break;
-      }
-   }
-   
-
-
-   private void setTags( ViewStub tagsStub, Task task )
-   {
-      // If the task has no tags
-      if ( task.getTags().size() == 0 )
-      {
-         tagsStub.setVisibility( View.GONE );
-      }
-      
-      // inflate the stub and add tags
-      else
-      {
-         try
-         {
-            final ViewGroup tagsContainer = (ViewGroup) tagsStub.inflate();
-            
-            if ( tagsContainer == null )
-            {
-               throw new Exception();
-            }
-            
-            // Check if we should leave out a tag
-            final String tagToHide = configuration.getString( AbstractTasksListActivity.HIDE_TAG_EQUALS );
-            
-            final List< String > tags = task.getTags();
-            
-            for ( String tagText : tags )
-            {
-               if ( tagToHide == null || !tagText.equalsIgnoreCase( tagToHide ) )
-               {
-                  final TextView tagView = (TextView) View.inflate( context,
-                                                                    R.layout.taskslist_listitem_tag_button,
-                                                                    null );
-                  tagView.setText( tagText );
-                  tagsContainer.addView( tagView );
-               }
-            }
-         }
-         catch ( Exception e )
-         {
-            Log.e( TAG, "Invalid layout spec.", e );
-         }
-      }
    }
    
 

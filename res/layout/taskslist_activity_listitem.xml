@@ -4,7 +4,9 @@
 	android:id="@+id/taskslist_listitem"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:minHeight="70sp">
+	android:minHeight="70sp"
+	android:longClickable="true"
+	android:onClick="onTaskClicked" >
 	
 	<Button
       android:id="@+id/taskslist_listitem_priority"
@@ -21,7 +23,9 @@
    <LinearLayout
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical">
+      android:orientation="vertical"
+      android:paddingTop="@dimen/taskslist_listitem_row_space"
+      android:paddingBottom="@dimen/taskslist_listitem_row_space">
       
 		<RelativeLayout
 		   android:layout_width="fill_parent"
@@ -33,7 +37,6 @@
 		      android:layout_height="50sp"
 		      android:layout_width="24sp"
 		      android:layout_toRightOf="@id/taskslist_listitem_priority"
-		      android:layout_marginTop="@dimen/taskslist_listitem_row_space"
 		      android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
 		      android:focusable="false"
 		      android:gravity="top"
@@ -57,7 +60,7 @@
 	         android:layout_height="wrap_content"
 	         android:layout_below="@id/taskslist_listitem_desc"
 	         android:layout_alignLeft="@id/taskslist_listitem_desc"
-	         android:layout_marginTop="@dimen/taskslist_listitem_row_space"
+	         android:layout_marginTop="3sp"
 	         android:text="list_name"
             android:focusable="false"
             android:onClick="onListNameClicked" />
@@ -69,23 +72,21 @@
 	         android:layout_height="wrap_content"
 	         android:layout_below="@id/taskslist_listitem_desc"
 	         android:layout_toRightOf="@id/taskslist_listitem_btn_list_name"
-	         android:layout_marginTop="@dimen/taskslist_listitem_row_space"
+            android:layout_alignTop="@id/taskslist_listitem_btn_list_name"
 	         android:layout_marginRight="@dimen/taskslist_listitem_widget_space_sml"        
 	         android:text="due_date"
 	         android:singleLine="true"
 	         android:gravity="right"
 	         android:focusable="false" />
-	         			      
 	   </RelativeLayout>
 	   
-	   <ViewStub
-         android:id="@+id/taskslist_listitem_tags_stub"
-         android:layout="@layout/taskslist_listitem_tags_layout"
-         android:inflatedId="@+id/taskslist_listitem_tags"
+	   <dev.drsoran.moloko.util.WrappingLayout
+	      android:id="@+id/taskslist_listitem_tags"
          android:layout_height="wrap_content"
-         android:layout_width="fill_parent" />
-         
-     <ViewStub
+         android:layout_width="fill_parent"
+         android:layout_marginLeft="@dimen/taskslist_listitem_col_space" />
+
+      <ViewStub
          android:id="@+id/taskslist_listitem_notes_stub"
          android:layout="@layout/taskslist_listitem_notes_layout"
          android:inflatedId="@+id/taskslist_listitem_notes"

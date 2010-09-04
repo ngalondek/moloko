@@ -11,6 +11,15 @@
       <item name="android:windowContentOverlay">@null</item>
    </style>
    
+   <style name="Theme.Moloko.Task" parent="@style/Theme">
+      <item name="android:windowTitleBackgroundStyle">@style/App_Default_Title_Bgnd</item>
+      <item name="android:windowContentOverlay">@null</item>
+   </style>
+   
+   <style name="App_Default_Title_Bgnd">
+      <item name="android:background">@color/app_default_title_bgnd</item>
+   </style>
+   
    <style name="App_TitleBar">
      <item name="android:background">@drawable/app_titlebar_bgnd</item>
    </style>
@@ -26,6 +35,35 @@
    <style name="App_TitleBar_Btn">
       <item name="android:background">@drawable/app_titlebar_btn_bgnd</item>
    </style>
+   
+   <style name="App_Tag">
+      <item name="android:textColor">@color/app_tag_text</item>
+      <item name="android:background">@drawable/app_tag_bgnd</item>
+      <item name="android:singleLine">true</item>
+      <item name="android:textSize">11sp</item>
+      <item name="android:textStyle">bold</item>
+   </style>
+   
+
+   <!-- ********* -->
+   <!-- Task      -->
+   
+   <style name="Task">
+      <item name="android:background">@color/task_bgnd</item>
+   </style>
+   
+   <style name="Task_Overview">
+      <item name="android:background">@drawable/task_overview_bgnd</item>
+   </style>
+   
+   <style name="Task_Overview_CreatedDate" parent="@style/TasksList_ListItem_ListName">
+      <item name="android:textStyle">normal</item>
+      <item name="android:textSize">12sp</item>
+   </style>
+   
+   <style name="Task_Overview_DescriptionText" parent="@style/TasksList_ListItem_DescriptionText" />
+   
+   <style name="Task_Overview_ListName" parent="@style/TasksList_ListItem_ListName" />
 
 
 	<!-- ********* -->
@@ -43,7 +81,6 @@
 	<style name="TaskLists_ListItem_NumTasks_Text" parent="@android:style/TextAppearance.Medium">
 		<item name="android:textColor">@color/tasklists_listitem_numtasks_text</item>
 	</style>
-
 
 
 	<!-- ********* -->
@@ -72,13 +109,7 @@
 	<style name="TasksList_ListItem_DueDate" parent="@android:style/TextAppearance.Small">
 		<item name="android:textColor">@color/taskslist_listitem_due_date</item>
 	</style>
-	
-	<style name="TasksList_ListItem_Tag" parent="@android:style/TextAppearance.Small">
-      <item name="android:textColor">@color/taskslist_listitem_tag_text</item>
-      <item name="android:background">@drawable/taskslist_listitem_tag_bgnd</item>
-      <item name="android:singleLine">true</item>
-   </style>
-   
+		
    <style name="TasksList_ListItem_Note" parent="@android:style/TextAppearance.Small">
       <item name="android:textColor">@drawable/taskslist_listitem_note_text</item>
       <item name="android:background">@color/taskslist_listitem_note_text_bgnd</item>

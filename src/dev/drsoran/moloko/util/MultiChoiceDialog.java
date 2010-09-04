@@ -3,7 +3,6 @@ package dev.drsoran.moloko.util;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -11,9 +10,11 @@ import android.content.DialogInterface.OnMultiChoiceClickListener;
 import dev.drsoran.moloko.R;
 
 
-public class MultiChoiceDialog extends Dialog implements
+public class MultiChoiceDialog implements DialogInterface,
          OnMultiChoiceClickListener, OnClickListener
 {
+   private final Context context;
+   
    private final AlertDialog impl;
    
    private final CharSequence items[];
@@ -25,9 +26,9 @@ public class MultiChoiceDialog extends Dialog implements
    
 
    public MultiChoiceDialog( Context context, List< CharSequence > items,
-      OnClickListener closeListener )
+      OnClickListener onClickListener )
    {
-      super( context );
+      this.context = context;
       
       this.items = new CharSequence[ items.size() ];
       items.toArray( this.items );
@@ -38,9 +39,9 @@ public class MultiChoiceDialog extends Dialog implements
                                                                           this.states,
                                                                           this )
                                                     .create();
-      this.closeListener = closeListener;
+      this.closeListener = onClickListener;
       
-      setCloseButtonText( context.getString( R.string.phr_ok ) );
+      setButtonText( this.context.getString( R.string.phr_ok ) );
    }
    
 
@@ -60,10 +61,25 @@ public class MultiChoiceDialog extends Dialog implements
    
 
 
-   public MultiChoiceDialog setCloseButtonText( CharSequence text )
+   public MultiChoiceDialog setTitle( CharSequence text )
+   {
+      impl.setTitle( text );
+      return this;
+   }
+   
+
+
+   public MultiChoiceDialog setButtonText( CharSequence text )
    {
       impl.setButton( text, this );
-      
+      return this;
+   }
+   
+
+
+   public MultiChoiceDialog setButton2Text( CharSequence text )
+   {
+      impl.setButton2( text, this );
       return this;
    }
    
@@ -96,6 +112,20 @@ public class MultiChoiceDialog extends Dialog implements
       {
          this.closeListener.onClick( this, which );
       }
+   }
+   
+
+
+   public void cancel()
+   {
+      impl.cancel();
+   }
+   
+
+
+   public void dismiss()
+   {
+      impl.dismiss();
    }
    
 }

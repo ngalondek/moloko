@@ -3,7 +3,9 @@
    <dimen
       name="app_titlebar_height">40sp</dimen>
    <dimen
-      name="app_titlebar_btn_width">@dimen/app_titlebar_height</dimen>   
+      name="app_titlebar_btn_width">@dimen/app_titlebar_height</dimen>
+   <dimen
+      name="task_overview_corner_radius">3sp</dimen>   
    <dimen
       name="taskslist_listitem_row_space">10sp</dimen>
    <dimen

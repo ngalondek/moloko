@@ -9,9 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
@@ -22,8 +20,7 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class TaskListsActivity extends ListActivity implements
-         OnItemClickListener
+public class TaskListsActivity extends ListActivity
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = TaskListsActivity.class.getSimpleName();
@@ -41,8 +38,6 @@ public class TaskListsActivity extends ListActivity implements
       registerForContextMenu( getListView() );
       
       UIUtils.setTitle( this, R.string.app_tasklists );
-      
-      getListView().setOnItemClickListener( this );
    }
    
 
@@ -92,12 +87,9 @@ public class TaskListsActivity extends ListActivity implements
    
 
 
-   public void onItemClick( AdapterView< ? > parent,
-                            View view,
-                            int pos,
-                            long rowId )
+   public void onListClicked( View view )
    {
-      openList( getRtmList( pos ) );
+      openList( getRtmList( getListView().getPositionForView( view ) ) );
    }
    
 

@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextMenu;
@@ -18,14 +17,16 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListActivity extends ListActivity implements
-         OnClickListener
+         DialogInterface.OnClickListener, View.OnClickListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = AbstractTasksListActivity.class.getSimpleName();
@@ -45,11 +46,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
     * this only applies to non smart lists
     */
    public static final String DISABLE_LIST_NAME = "disable_list_name";
-   
-   /**
-    * If a tag has been clicked then it makes no sense to show it in the result again.
-    */
-   public static final String HIDE_TAG_EQUALS = "hide_tag_equals";
    
    private final int CTX_MENU_TOGGLE_TASK_COMPLETED = 0;
    
@@ -179,6 +175,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             return true;
             
          case CTX_MENU_OPEN_TASK:
+            onTaskClicked( info.targetView );
             return true;
             
          case CTX_MENU_OPEN_LIST:
@@ -207,6 +204,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    public void onTitleBarSearchClicked( View view )
    {
       onSearchRequested();
+   }
+   
+
+
+   public void onTaskClicked( View view )
+   {
+      final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                        Queries.contentUriWithId( Tasks.CONTENT_URI,
+                                                                  getTask( getListView().getPositionForView( view ) ).getId() ) );
+      startActivity( intent );
    }
    
 
@@ -265,7 +272,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       intent.putExtra( TITLE_ICON, R.drawable.icon_tag_white );
       
       final Bundle config = new Bundle();
-      config.putString( HIDE_TAG_EQUALS, tag.toString() );
+      config.putString( UIUtils.DISABLE_TAG_EQUALS, tag.toString() );
       
       intent.putExtra( ADAPTER_CONFIG, config );
       
@@ -283,7 +290,12 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          tmp.add( tag );
       }
       
-      new MultiChoiceDialog( this, tmp, this ).show();
+      new MultiChoiceDialog( this, tmp, this ).setTitle( getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
+                                                                                           tags.size() ) )
+                                              .setIcon( R.drawable.icon_tag_white )
+                                              .setButtonText( getString( R.string.taskslist_dlg_show_tags_and ) )
+                                              .setButton2Text( getString( R.string.taskslist_dlg_show_tags_or ) )
+                                              .show();
    }
    
 
@@ -299,7 +311,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       if ( dialog instanceof MultiChoiceDialog )
       {
-         MultiChoiceDialog tagsChoice = (MultiChoiceDialog) dialog;
+         final MultiChoiceDialog tagsChoice = (MultiChoiceDialog) dialog;
          
          final CharSequence[] tags = tagsChoice.getItems();
          final boolean[] states = tagsChoice.getStates();
@@ -323,12 +335,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          }
          else if ( chosenTagsSize > 1 )
          {
+            final boolean andLink = ( which == DialogInterface.BUTTON1 );
             final Intent intent = new Intent( Intent.ACTION_VIEW,
                                               Tasks.CONTENT_URI );
             intent.putExtra( TITLE_ICON, R.drawable.icon_tag_white );
             
             final StringBuffer filter = new StringBuffer();
-
+            
             for ( int i = 0; i < chosenTagsSize; ++i )
             {
                final String chosenTag = chosenTags.get( i );
@@ -339,16 +352,41 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                // not last element
                if ( i < chosenTagsSize - 1 )
                {
-                  filter.append( " " ).append( RtmSmartFilterLexer.AND_LIT ).append( " " );
+                  if ( andLink )
+                     filter.append( " " )
+                           .append( RtmSmartFilterLexer.AND_LIT )
+                           .append( " " );
+                  else
+                     filter.append( " " )
+                           .append( RtmSmartFilterLexer.OR_LIT )
+                           .append( " " );
                }
             }
             
             intent.putExtra( FILTER, filter.toString() );
-            intent.putExtra( TITLE, getString( R.string.taskslist_titlebar,
-                                               TextUtils.join( ", ", chosenTags ) ) );
+            intent.putExtra( TITLE,
+                             getString( R.string.taskslist_titlebar,
+                                        TextUtils.join( ( andLink )
+                                                                   ? " "
+                                                                      + getString( R.string.taskslist_dlg_show_tags_and )
+                                                                      + " "
+                                                                   : " "
+                                                                      + getString( R.string.taskslist_dlg_show_tags_or )
+                                                                      + " ",
+                                                        chosenTags ) ) );
             
             startActivity( intent );
          }
+      }
+   }
+   
+
+
+   public void onClick( View view )
+   {
+      if ( view.getId() == R.id.tags_layout_btn_tag )
+      {
+         onTagClicked( view );
       }
    }
    

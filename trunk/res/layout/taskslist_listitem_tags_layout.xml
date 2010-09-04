@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<dev.drsoran.moloko.util.WrappingLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:layout_height="wrap_content"
-   android:layout_width="fill_parent"
-   android:paddingTop="@dimen/taskslist_listitem_row_space"
-   android:paddingLeft="@dimen/taskslist_listitem_col_space">
-</dev.drsoran.moloko.util.WrappingLayout>

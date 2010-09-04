@@ -1,17 +1,33 @@
 package dev.drsoran.moloko.util;
 
+import java.util.List;
+
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.format.DateUtils;
+import android.text.format.Time;
+import android.text.style.UnderlineSpan;
+import android.view.InflateException;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.rtm.Task;
 
 
 public final class UIUtils
 {
-   public final static String OBJ_INST = "obj_inst";
+   /**
+    * If a tag has been clicked then it makes no sense to click it in the result again.
+    */
+   public static final String DISABLE_TAG_EQUALS = "disable_tag_equals";
    
-   public final static String OBJ_TYPE = "obj_type";
+   public static final String DISABLE_ALL_TAGS = "disable_all_tags";
    
    
 
@@ -58,5 +74,141 @@ public final class UIUtils
                                                                   null );
          }
       }
+   }
+   
+
+
+   public final static void setTaskDescription( TextView view,
+                                                Task task,
+                                                Time timeBase )
+   {
+      if ( timeBase == null )
+      {
+         timeBase = new Time();
+         timeBase.set( System.currentTimeMillis() );
+      }
+      
+      view.setText( task.getName() );
+      
+      // description
+      if ( task.getDue() != null )
+      {
+         final long dueDateMillis = task.getDue().getTime();
+         
+         // Make bold if the task is today
+         if ( DateUtils.isToday( dueDateMillis ) )
+         {
+            view.setTypeface( Typeface.DEFAULT_BOLD );
+            view.setText( task.getName() );
+         }
+         
+         // Make underline and bold if overdue
+         else
+         {
+            final Time dueTime = new Time();
+            dueTime.set( task.getDue().getTime() );
+            
+            if ( timeBase.after( dueTime ) )
+            {
+               final SpannableString content = new SpannableString( task.getName() );
+               
+               content.setSpan( new UnderlineSpan(), 0, content.length(), 0 );
+               view.setTypeface( Typeface.DEFAULT_BOLD );
+               view.setText( content );
+            }
+         }
+      }
+   }
+   
+
+
+   public final static void inflateTags( Context context,
+                                         ViewGroup container,
+                                         Task task,
+                                         Bundle configuration,
+                                         OnClickListener listener ) throws InflateException
+   {
+      // If the task has no tags
+      if ( task.getTags().size() == 0 )
+      {
+         container.setVisibility( View.GONE );
+      }
+      
+      // inflate the stub and add tags
+      else
+      {
+         try
+         {
+            // Check if we should leave out a tag
+            String tagToDisable = null;
+            boolean disableAllTags = false;
+            
+            if ( configuration != null )
+            {
+               tagToDisable = configuration.getString( DISABLE_TAG_EQUALS );
+               disableAllTags = configuration.getBoolean( DISABLE_ALL_TAGS )
+                  || listener == null;
+            }
+            
+            final List< String > tags = task.getTags();
+            
+            for ( String tagText : tags )
+            {
+               final TextView tagView = (TextView) View.inflate( context,
+                                                                 R.layout.tag_button,
+                                                                 null );
+               tagView.setText( tagText );
+               container.addView( tagView );
+               
+               if ( disableAllTags
+                  || ( tagToDisable != null && tagText.equalsIgnoreCase( tagToDisable ) ) )
+               {
+                  tagView.setEnabled( false );
+               }
+               
+               if ( listener != null )
+                  tagView.setOnClickListener( listener );
+            }
+         }
+         catch ( Exception e )
+         {
+            throw new InflateException( e );
+         }
+      }
+   }
+   
+
+
+   public final static void setPriorityColor( View view, Task task )
+   {
+      switch ( task.getPriority() )
+      {
+         case High:
+            view.setBackgroundResource( R.color.priority_1 );
+            break;
+         case Medium:
+            view.setBackgroundResource( R.color.priority_2 );
+            break;
+         case Low:
+            view.setBackgroundResource( R.color.priority_3 );
+            break;
+         case None:
+         default :
+            view.setBackgroundResource( R.color.priority_none );
+            break;
+      }
+   }
+   
+
+
+   public final static String getFullDateWithTime( Context context,
+                                                   long timeStamp )
+   {
+      // TODO: Consider day-first setting?
+      return DateUtils.formatDateTime( context,
+                                       timeStamp,
+                                       DateUtils.LENGTH_MEDIUM
+                                          | DateUtils.FORMAT_SHOW_DATE
+                                          | DateUtils.FORMAT_SHOW_TIME );
    }
 }

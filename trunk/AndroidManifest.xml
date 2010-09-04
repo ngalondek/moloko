@@ -90,6 +90,26 @@
             android:resource="@xml/searchable"/>
       </activity>
       
+      <activity
+         android:label="@string/app_task"
+         android:name=".activities.TaskActivity"
+         android:theme="@style/Theme.Moloko.Task">
+         <intent-filter>
+            <!-- Show a single task -->
+            <action
+               android:name="android.intent.action.VIEW" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
+         </intent-filter>
+         <intent-filter>
+            <!-- Handle search queries -->
+            <action
+               android:name="android.intent.action.SEARCH" />
+         </intent-filter>
+      </activity>
+      
       <!--  Deactivated
       <activity
 		    android:label="@string/app_preferences"

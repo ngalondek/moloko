@@ -3,17 +3,19 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/tasklists_listitem"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content">
+	android:layout_height="wrap_content"
+	android:onClick="onListClicked"
+	android:longClickable="true" >
 	
 	<TextView
 	   android:id="@+id/tasklists_listitem_list_name"
 	   style="@style/TaskLists_ListItem_ListName"	     
-	   android:layout_width="wrap_content"
+	   android:layout_width="0sp"
 	   android:layout_height="wrap_content"
 	   android:layout_centerVertical="true"
 	   android:layout_weight="1"
 	   android:text="ListName"	   
-	   android:padding="10sp"/>
+	   android:padding="10sp" />
 	      
     <TextView
        android:id="@+id/tasklists_listitem_num_tasks"
@@ -25,5 +27,5 @@
        android:layout_marginRight="5sp"
        android:layout_centerVertical="true"
        android:text="num_tasks"
-       android:gravity="center"/>	
+       android:gravity="center" />	
 </LinearLayout>

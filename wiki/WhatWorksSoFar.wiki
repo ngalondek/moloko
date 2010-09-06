@@ -39,6 +39,8 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 || tag: || string ||
 || tagContains: || string ||
 || isTagged: || true | false ||
+|| noteContains: || string ||
+|| hasNotes: || true | false ||
 || AND, OR, NOT, (, ) || operator ||
 
  * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
@@ -62,8 +64,6 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 
  * locationWithin:
  * isRepeating:
- * noteContains:
- * hasNotes:
  * completedWithin:
  * addedWithin:
  * timeEstimate:

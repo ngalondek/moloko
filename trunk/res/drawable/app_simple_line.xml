@@ -4,5 +4,5 @@
 	android:shape="rectangle" >
 
 	<solid
-		android:color="@color/priority_1" />
+		android:color="@color/app_default_line" />
 </shape>

@@ -9,12 +9,13 @@
    <color name="app_titlebar_btn_bgnd_pressed">@color/priority_2</color>
    <color name="app_tag_text">@android:color/white</color>
    <color name="app_tag_bgnd_normal_fill">@color/priority_3</color>
-   <color name="app_tag_bgnd_pressed_fill">@color/priority_2</color>   
-   
+   <color name="app_tag_bgnd_pressed_fill">@color/priority_2</color>
+   <color name="app_default_line">@android:color/black</color>
 
    <color name="task_bgnd">#FFE8E8E8</color>
    <color name="task_overview_bgnd_fill">@android:color/white</color>
    <color name="task_overview_bgnd_stroke">#FFA6A6A6</color>
+   <color name="task_title_with_text_text">@android:color/black</color>
 
    <color name="tasklists_lists_bgnd">@android:color/white</color>
    <color name="tasklists_listitem_listname">@android:color/black</color>

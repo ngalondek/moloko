@@ -11,6 +11,7 @@ options
 	
 	import dev.drsoran.provider.Rtm.Tasks;
 	import dev.drsoran.provider.Rtm.Tags;
+	import dev.drsoran.provider.Rtm.Notes;
 	
 	import java.util.Calendar;
 
@@ -341,9 +342,34 @@ OP_NAME		:  'name:' ( s=STRING | s=Q_STRING )
 						containsStringParam( $s.getText() );
 					};
 					
-// OP_NOTE_CONTAINS
+OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
+						 {
+						 	 result.append( " (SELECT " )
+				                 .append( Notes.TASKSERIES_ID )
+				                 .append( " FROM " )
+				                 .append( Notes.PATH )
+				                 .append( " WHERE " )
+				                 .append( Notes.TASKSERIES_ID )
+				                 .append( " = subQuery." )
+				                 .append( Tasks._ID )
+				                 .append( " AND " )
+				                 .append( Notes.NOTE_TEXT );
+				           containsStringParam( $s.getText() );
+				           result.append( ")" );
+						 };
 
-// OP_HAS_NOTES
+OP_HAS_NOTES : 'hasnotes:'
+					(
+						TRUE
+						{
+							result.append(" num_notes > 0");	
+						}
+						|
+						FALSE
+						{
+							result.append(" num_notes = 0");
+						}
+					);
 
 OP_DUE      :  'due:' ( s=STRING | s=Q_STRING )
 					{

@@ -50,6 +50,10 @@
 	<string name="search_label">@string/app_name</string>
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
+	<!-- Task activity -->
+	<string name="task_datetime_title_due">Wann</string>
+	<string name="task_datetime_title_estimate">Dauer</string>
+	
 	<!-- TaskSearchResultActivity -->
 	<string name="tasksearchresult_titlebar">%1$s</string>
 	<string name="tasksearchresult_titlebar_error">%1$s falsche Syntax</string>

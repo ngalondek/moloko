@@ -12,42 +12,58 @@
       android:layout_marginRight="8sp">
       
       <LinearLayout
+         android:id="@+id/task_container"
+         android:orientation="vertical"
          android:layout_height="wrap_content"
          android:layout_width="fill_parent"
          android:paddingTop="8sp"
          android:paddingBottom="8sp">
          
          <RelativeLayout
-            style="@style/Task_Overview"
+            style="@style/Task_Section"
             android:layout_height="fill_parent"
             android:layout_width="fill_parent"
             android:paddingBottom="10sp">
          
-            <ImageView
+            <View
                android:id="@+id/task_overview_priority_bar"
                android:layout_alignParentTop="true"
                android:layout_alignParentLeft="true"
                android:layout_alignParentRight="true"
                android:layout_height="@dimen/task_overview_corner_radius"
                android:layout_width="fill_parent"               
-               android:background="@drawable/task_overview_priority_bar" />
+               android:background="@drawable/app_simple_line" />
             
             <TextView
-               android:id="@+id/task_overview_created_date"
-               style="@style/Task_Overview_CreatedDate"
+               android:id="@+id/task_overview_added_date"
+               style="@style/Task_Date"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_marginTop="10sp"
                android:layout_marginRight="5sp"
                android:layout_alignParentRight="true"
                android:text="Created_Date" />
+               
+            <TextView
+               android:id="@+id/task_overview_completed_date"
+               style="@style/Task_Date"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="3sp"
+               android:layout_marginRight="5sp"
+               android:layout_alignParentRight="true"
+               android:layout_below="@id/task_overview_added_date"
+               android:drawableLeft="@drawable/icon_checked_white_small"
+               android:drawablePadding="2sp"
+               android:text="Completed_Date" />
             
 	         <TextView
 	            android:id="@+id/task_overview_desc"
 	            style="@style/Task_Overview_DescriptionText"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
-	            android:layout_below="@id/task_overview_created_date"
+	            android:layout_below="@id/task_overview_completed_date"
+	            android:layout_alignWithParentIfMissing="true"
 	            android:layout_marginLeft="10sp"
 	            android:layout_marginRight="10sp"
 	            android:text="Task_Desc" />
@@ -63,7 +79,7 @@
                android:layout_alignLeft="@id/task_overview_desc"
                android:text="List_Name" />    
                           
-            <dev.drsoran.moloko.util.WrappingLayout
+            <dev.drsoran.moloko.layouts.WrappingLayout
 	            android:id="@+id/task_overview_tags"
 	            android:layout_height="wrap_content"
                android:layout_width="fill_parent"
@@ -71,8 +87,22 @@
 	            android:layout_marginRight="10sp"
 	            android:layout_below="@id/task_overview_list_name"
 	            android:layout_alignLeft="@id/task_overview_list_name" />
-         </RelativeLayout>
-
+	            
+	         <dev.drsoran.moloko.layouts.TitleWithTextLayout
+	            xmlns:twt="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+	            style="@style/Task_TitleWithText"
+	            android:id="@+id/task_dateTime"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="10sp"
+	            android:layout_marginRight="10sp"
+	            android:layout_below="@id/task_overview_tags"
+	            android:layout_alignLeft="@id/task_overview_list_name"
+	            android:layout_alignWithParentIfMissing="true"
+	            twt:titlePaddingTop="10sp"
+	            twt:title="dateTime_title"
+	            twt:text="dateTime_text"/>	            
+         </RelativeLayout>         
       </LinearLayout>
    </ScrollView>
    

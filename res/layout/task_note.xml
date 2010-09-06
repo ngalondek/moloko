@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   style="@style/Task_Section"
+   android:orientation="vertical"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:layout_marginTop="10sp"
+   android:paddingTop="10sp"
+   android:paddingLeft="10sp"
+   android:paddingBottom="10sp" >
+      
+   <TextView
+      android:id="@+id/task_note_created_date"
+      style="@style/Task_Date"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="5sp"
+      android:gravity="right"
+      android:text="Created_Date" />
+         
+   <dev.drsoran.moloko.layouts.TitleWithTextLayout
+      xmlns:twt="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+      style="@style/Task_TitleWithText.Note"
+      android:id="@+id/task_note"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      twt:title="note_title"
+      twt:text="note_text" />
+      
+</LinearLayout>

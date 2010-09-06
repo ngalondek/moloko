@@ -64,23 +64,9 @@
 	         android:text="list_name"
             android:focusable="false"
             android:onClick="onListNameClicked" />
-	
-	      <TextView
-	         android:id="@+id/taskslist_listitem_due_date"
-	         style="@style/TasksList_ListItem_DueDate"
-	         android:layout_width="fill_parent"
-	         android:layout_height="wrap_content"
-	         android:layout_below="@id/taskslist_listitem_desc"
-	         android:layout_toRightOf="@id/taskslist_listitem_btn_list_name"
-            android:layout_alignTop="@id/taskslist_listitem_btn_list_name"
-	         android:layout_marginRight="@dimen/taskslist_listitem_widget_space_sml"        
-	         android:text="due_date"
-	         android:singleLine="true"
-	         android:gravity="right"
-	         android:focusable="false" />
 	   </RelativeLayout>
 	   
-	   <dev.drsoran.moloko.util.WrappingLayout
+	   <dev.drsoran.moloko.layouts.WrappingLayout
 	      android:id="@+id/taskslist_listitem_tags"
          android:layout_height="wrap_content"
          android:layout_width="fill_parent"
@@ -92,6 +78,17 @@
          android:inflatedId="@+id/taskslist_listitem_notes"
          android:layout_height="fill_parent"
          android:layout_width="fill_parent" />
+         
+      <TextView
+         android:id="@+id/taskslist_listitem_due_date"
+         style="@style/TasksList_ListItem_DueDate"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginRight="@dimen/taskslist_listitem_widget_space_sml"        
+         android:text="due_date"
+         android:singleLine="true"
+         android:gravity="right"
+         android:focusable="false" />
 
    </LinearLayout>
 </LinearLayout>

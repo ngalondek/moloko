@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
 import android.util.AttributeSet;

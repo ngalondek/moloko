@@ -285,7 +285,7 @@ public class TasksProviderPart extends AbstractProviderPart
          
          // In case of a join with the locations table the _id gets ambiguous. So
          // we have to qualify it.
-         if ( column.endsWith( Tasks._ID ) )
+         if ( !projectionContainsId && column.endsWith( Tasks._ID ) )
          {
             projectionList.set( i,
                                 new StringBuilder( "subQuery." ).append( TaskSeries._ID )
@@ -297,7 +297,7 @@ public class TasksProviderPart extends AbstractProviderPart
          
          // We have to replace the num_notes column by the numNotesSubQuery
          // expression.
-         if ( column.equals( Tasks.NUM_NOTES ) )
+         if ( !replacedNumNotes && column.equals( Tasks.NUM_NOTES ) )
          {
             projectionList.set( i,
                                 new StringBuilder( "(" ).append( numNotesSubQuery )

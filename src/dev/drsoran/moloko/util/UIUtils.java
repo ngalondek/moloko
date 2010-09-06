@@ -201,14 +201,15 @@ public final class UIUtils
    
 
 
-   public final static String getFullDateWithTime( Context context,
-                                                   long timeStamp )
+   public final static StringBuffer appendAtNewLine( StringBuffer stringBuffer,
+                                                     String string )
    {
-      // TODO: Consider day-first setting?
-      return DateUtils.formatDateTime( context,
-                                       timeStamp,
-                                       DateUtils.LENGTH_MEDIUM
-                                          | DateUtils.FORMAT_SHOW_DATE
-                                          | DateUtils.FORMAT_SHOW_TIME );
+      if ( stringBuffer.length() > 0 )
+         stringBuffer.append( "\n" );
+      
+      stringBuffer.append( string );
+      
+      return stringBuffer;
    }
+   
 }

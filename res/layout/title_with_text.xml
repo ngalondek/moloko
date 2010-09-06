@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+  android:orientation="vertical"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  
+  <View
+     android:id="@+id/title_with_text_top_line"
+     android:layout_height="1sp"
+     android:layout_width="fill_parent"
+     android:background="@drawable/app_simple_line" />
+     
+  <TextView
+     android:id="@+id/title_with_text_title"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:singleLine="true"
+     android:ellipsize="end"
+     android:gravity="left"
+     android:text="title" />
+      
+  <TextView
+     android:id="@+id/title_with_text_text"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"
+     android:gravity="left"
+     android:singleLine="false"
+     android:autoLink="email|web"
+     android:text="text" />
+
+</merge>

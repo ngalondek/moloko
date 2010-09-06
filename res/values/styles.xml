@@ -43,7 +43,7 @@
       <item name="android:textSize">11sp</item>
       <item name="android:textStyle">bold</item>
    </style>
-   
+
 
    <!-- ********* -->
    <!-- Task      -->
@@ -52,11 +52,11 @@
       <item name="android:background">@color/task_bgnd</item>
    </style>
    
-   <style name="Task_Overview">
+   <style name="Task_Section">
       <item name="android:background">@drawable/task_overview_bgnd</item>
    </style>
    
-   <style name="Task_Overview_CreatedDate" parent="@style/TasksList_ListItem_ListName">
+   <style name="Task_Date" parent="@style/TasksList_ListItem_ListName">
       <item name="android:textStyle">normal</item>
       <item name="android:textSize">12sp</item>
    </style>
@@ -64,8 +64,23 @@
    <style name="Task_Overview_DescriptionText" parent="@style/TasksList_ListItem_DescriptionText" />
    
    <style name="Task_Overview_ListName" parent="@style/TasksList_ListItem_ListName" />
-
-
+   
+   <style name="Task_TitleWithText">
+      <item name="showTopLine">true</item>
+      <item name="topLineColor">@color/task_overview_bgnd_stroke</item>
+      <item name="topLineHeight">1sp</item>
+      <item name="titleColor">@color/task_title_with_text_text</item>
+      <item name="titleSize">14sp</item>
+      <item name="titleStyle">bold</item>
+      <item name="textColor">@color/task_title_with_text_text</item>
+      <item name="textSize">14sp</item>
+      <item name="textStyle">normal</item>
+   </style>
+   
+   <style name="Task_TitleWithText.Note">
+      <item name="showTopLine">false</item>
+   </style>
+   
 	<!-- ********* -->
 	<!-- TaskLists -->
 	

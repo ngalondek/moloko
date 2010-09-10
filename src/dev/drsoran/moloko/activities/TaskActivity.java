@@ -150,23 +150,6 @@ public class TaskActivity extends Activity
       }
       else
       {
-         TextView title;
-         TextView text;
-         
-         try
-         {
-            title = (TextView) view.findViewById( R.id.title_with_text_title );
-            text = (TextView) view.findViewById( R.id.title_with_text_text );
-         }
-         catch ( ClassCastException e )
-         {
-            Log.e( TAG, "Invalid layout spec.", e );
-            throw e;
-         }
-         
-         title.setText( ( hasDue ) ? R.string.task_datetime_title_due
-                                  : R.string.task_datetime_title_estimate );
-         
          final StringBuffer textBuffer = new StringBuffer();
          
          if ( hasDue )
@@ -191,7 +174,13 @@ public class TaskActivity extends Activity
             UIUtils.appendAtNewLine( textBuffer, task.getEstimate() );
          }
          
-         text.setText( textBuffer.toString() );
+         // TODO: Handle return value
+         UIUtils.initializeTitleWithTextLayout( view,
+                                                getString( ( hasDue )
+                                                                     ? R.string.task_datetime_title_due
+                                                                     : R.string.task_datetime_title_estimate ),
+                                                textBuffer.toString() );
+         
       }
    }
    
@@ -209,7 +198,6 @@ public class TaskActivity extends Activity
          {
             try
             {
-               
                final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
                                                                                task.getId() );
                if ( rtmNotes != null )
@@ -230,20 +218,22 @@ public class TaskActivity extends Activity
             {
                for ( RtmTaskNote note : notes )
                {
+                  final ViewGroup noteViewLayout = (ViewGroup) LayoutInflater.from( this )
+                                                                             .inflate( R.layout.task_note,
+                                                                                       taskContainer,
+                                                                                       false );
+                  
                   final View noteView = LayoutInflater.from( this )
-                                                      .inflate( R.layout.task_note,
-                                                                taskContainer,
-                                                                false );
-                  
-                  TextView createdDate;
-                  TextView title;
-                  TextView text;
-                  
+                                                      .inflate( R.layout.note,
+                                                                noteViewLayout,
+                                                                true );
                   try
                   {
-                     createdDate = (TextView) noteView.findViewById( R.id.task_note_created_date );
-                     title = (TextView) noteView.findViewById( R.id.title_with_text_title );
-                     text = (TextView) noteView.findViewById( R.id.title_with_text_text );
+                     final TextView createdDate = (TextView) noteView.findViewById( R.id.note_created_date );
+                     createdDate.setText( DateUtils.formatDateTime( this,
+                                                                    note.getCreated()
+                                                                        .getTime(),
+                                                                    FULL_DATE_FLAGS ) );
                   }
                   catch ( ClassCastException e )
                   {
@@ -251,25 +241,26 @@ public class TaskActivity extends Activity
                      throw e;
                   }
                   
-                  createdDate.setText( DateUtils.formatDateTime( this,
-                                                                 note.getCreated()
-                                                                     .getTime(),
-                                                                 FULL_DATE_FLAGS ) );
-                  
-                  if ( TextUtils.isEmpty( note.getTitle() ) )
-                     title.setVisibility( View.GONE );
+                  if ( UIUtils.initializeTitleWithTextLayout( noteView,
+                                                              note.getTitle(),
+                                                              note.getText() ) )
+                  {
+                     taskContainer.addView( noteViewLayout );
+                  }
                   else
-                     title.setText( note.getTitle() );
-                  
-                  text.setText( note.getText() );
-                  
-                  taskContainer.addView( noteView );
+                  {
+                     // TODO: Show error
+                  }
                }
             }
             catch ( InflateException e )
             {
                Log.e( TAG, "Invalid layout spec.", e );
             }
+         }
+         else
+         {
+            // TODO: Show error
          }
       }
    }

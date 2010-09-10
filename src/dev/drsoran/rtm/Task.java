@@ -123,6 +123,51 @@ public class Task
    
 
 
+   public Task( String id, String listName, boolean isSmartList, Date created,
+      Date modified, String name, String source, String url, String locationId,
+      String listId, Date due, boolean hasDueTime, Date added, Date completed,
+      Date deleted, Priority priority, boolean posponed, String estimate,
+      String locationName, float longitude, float latitude, String address,
+      boolean isViewable, int zoom, List< String > tags, int numNotes )
+   {
+      this.id = id;
+      this.listName = listName;
+      this.isSmartList = isSmartList;
+      this.created = created;
+      this.modified = modified;
+      this.name = name;
+      this.source = source;
+      this.url = url;
+      this.locationId = locationId;
+      this.listId = listId;
+      this.due = due;
+      this.hasDueTime = hasDueTime;
+      this.added = added;
+      this.completed = completed;
+      this.deleted = deleted;
+      this.priority = priority;
+      this.posponed = posponed;
+      this.estimate = estimate;
+      this.locationName = locationName;
+      this.longitude = longitude;
+      this.latitude = latitude;
+      this.address = address;
+      this.isViewable = isViewable;
+      this.zoom = zoom;
+      this.numNotes = numNotes;
+      
+      if ( tags != null && tags.size() > 0 )
+      {
+         this.tags = new ArrayList< String >( tags );
+      }
+      else
+      {
+         this.tags = null;
+      }
+   }
+   
+
+
    public String getId()
    {
       return id;

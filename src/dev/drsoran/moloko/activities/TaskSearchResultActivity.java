@@ -20,6 +20,11 @@ public class TaskSearchResultActivity extends TasksListActivity
    
    private final static String QUERY_NOT_EVALUABLE = "query_not_evaluable";
    
+   /**
+    * This prevents the base class TasksListActivity to fill the list with all tasks during onCreate().
+    */
+   private boolean preventSuperFillList = true;
+   
    
 
    @Override
@@ -29,6 +34,8 @@ public class TaskSearchResultActivity extends TasksListActivity
       
       if ( savedInstanceState != null )
          configuration.putAll( savedInstanceState );
+      
+      preventSuperFillList = false;
       
       handleIntent( getIntent() );
    }
@@ -102,12 +109,24 @@ public class TaskSearchResultActivity extends TasksListActivity
          {
             configuration.putString( QUERY_NOT_EVALUABLE, query );
          }
+         
+         if ( shouldFillList() )
+            fillList();
       }
    }
    
 
 
-   protected void refresh()
+   @Override
+   protected boolean shouldFillList()
+   {
+      return !isListFilled() && !preventSuperFillList;
+   }
+   
+
+
+   @Override
+   protected void fillList()
    {
       if ( configuration.containsKey( QUERY_NOT_EVALUABLE ) )
       {
@@ -118,7 +137,7 @@ public class TaskSearchResultActivity extends TasksListActivity
       }
       else
       {
-         super.refresh();
+         super.fillList();
       }
    }
    

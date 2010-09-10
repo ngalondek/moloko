@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   style="@style/Note"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
+   
+   <ScrollView
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent">
+      
+      <LinearLayout      
+         android:orientation="vertical"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent"
+         android:paddingTop="10sp"
+         android:paddingLeft="10sp">
+      
+         <include layout="@layout/note" />    
+      </LinearLayout>
+   </ScrollView>
+   
+   <RelativeLayout
+      style="@style/Note_ButtonBar_Bgnd"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom"
+      android:paddingTop="5sp" >
+      
+      <ImageButton
+         android:id="@+id/note_btn_prev"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentLeft="true"
+         android:src="@drawable/icon_arrow_up_black"
+         android:onClick="onPrevNote" />
+      
+      <Button
+         android:id="@+id/note_btn_close"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerHorizontal="true"
+         android:text="@string/phr_close"
+         android:onClick="onClose" />
+         
+      <ImageButton
+         android:id="@+id/note_btn_next"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentRight="true"
+         android:src="@drawable/icon_arrow_down_black"
+         android:onClick="onNextNote" />
+   </RelativeLayout>
+   
+</FrameLayout>

@@ -3,9 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/tasklists_listitem"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:onClick="onListClicked"
-	android:longClickable="true" >
+	android:layout_height="wrap_content">
 	
 	<TextView
 	   android:id="@+id/tasklists_listitem_list_name"

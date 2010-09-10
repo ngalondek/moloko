@@ -13,6 +13,7 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
@@ -37,6 +38,9 @@ public class TasksListActivity extends AbstractTasksListActivity
          configuration.putAll( intent.getExtras() );
       else if ( savedInstanceState != null )
          configuration.putAll( savedInstanceState );
+      
+      if ( shouldFillList() )
+         fillList();
    }
    
 
@@ -65,7 +69,8 @@ public class TasksListActivity extends AbstractTasksListActivity
    
 
 
-   protected void refresh()
+   @Override
+   protected void fillList()
    {
       final String title = configuration.getString( TITLE );
       
@@ -112,7 +117,7 @@ public class TasksListActivity extends AbstractTasksListActivity
          {
             setListAdapter( new TasksListAdapter( this,
                                                   R.layout.taskslist_activity_listitem,
-                                                  tasks,
+                                                  ListTask.fromTaskList( tasks ),
                                                   configuration.getBundle( ADAPTER_CONFIG ) ) );
          }
       }

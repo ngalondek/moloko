@@ -64,10 +64,10 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          else
             values.putNull( Notes.NOTE_MODIFIED_DATE );
          
-         if ( note.getTitle() != null )            
+         if ( note.getTitle() != null )
             values.put( Notes.NOTE_TITLE, note.getTitle() );
          else
-            values.putNull( Notes.NOTE_TITLE);
+            values.putNull( Notes.NOTE_TITLE );
          
          values.put( Notes.NOTE_TEXT, note.getText() );
       }
@@ -101,16 +101,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
             
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
-               Date modified = null;
-               if ( !c.isNull( COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ) )
-                  modified = new Date( c.getLong( COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ) );
-               
-               final RtmTaskNote taskNote = new RtmTaskNote( c.getString( COL_INDICES.get( Notes._ID ) ),
-                                                             new Date( c.getLong( COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
-                                                             modified,
-                                                             Queries.getOptString( c,
-                                                                                   COL_INDICES.get( Notes.NOTE_TITLE ) ),
-                                                             c.getString( COL_INDICES.get( Notes.NOTE_TEXT ) ) );
+               final RtmTaskNote taskNote = createNote( c );
                taskNotes.add( taskNote );
             }
             
@@ -122,6 +113,37 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
       }
       
       return notes;
+   }
+   
+
+
+   public final static RtmTaskNote getNote( ContentProviderClient client,
+                                            String noteId ) throws RemoteException
+   {
+      RtmTaskNote note = null;
+      
+      boolean ok = noteId != null;
+      
+      if ( ok )
+      {
+         final Cursor c = client.query( Notes.CONTENT_URI,
+                                        PROJECTION,
+                                        Notes._ID + " = " + noteId,
+                                        null,
+                                        null );
+         
+         ok = c != null && c.moveToFirst();
+         
+         if ( ok )
+         {
+            note = createNote( c );
+         }
+         
+         if ( c != null )
+            c.close();
+      }
+      
+      return note;
    }
    
 
@@ -239,5 +261,18 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    public String[] getProjection()
    {
       return PROJECTION;
+   }
+   
+
+
+   private final static RtmTaskNote createNote( Cursor c )
+   {
+      return new RtmTaskNote( c.getString( COL_INDICES.get( Notes._ID ) ),
+                              new Date( c.getLong( COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
+                              Queries.getOptDate( c,
+                                                  COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ),
+                              Queries.getOptString( c,
+                                                    COL_INDICES.get( Notes.NOTE_TITLE ) ),
+                              c.getString( COL_INDICES.get( Notes.NOTE_TEXT ) ) );
    }
 }

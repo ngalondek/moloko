@@ -3,7 +3,8 @@
 	<string name="app_name">Moloko</string>
 	<string name="app_preferences">Einstellungen</string>
 	<string name="app_tasklists">Listen</string>
-	<string name="app_task">Aufgabe</string>	
+	<string name="app_task">Aufgabe</string>
+	<string name="app_note">Notiz</string>	
 	<string name="svc_rtm">Moloko.RtmService</string>
 	<string name="svc_auth">Moloko.AuthService</string>
 	<string name="svc_rtm_process">:Moloko</string>

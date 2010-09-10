@@ -25,10 +25,10 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.rtm.ListTask;
 
 
-public class TasksListAdapter extends ArrayAdapter< Task >
+public class TasksListAdapter extends ArrayAdapter< ListTask >
 {
    private final static String TAG = TasksListAdapter.class.getName();
    
@@ -45,7 +45,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
 
    public TasksListAdapter( Context context, int resourceId,
-      List< Task > tasks, Bundle configuration )
+      List< ListTask > tasks, Bundle configuration )
    {
       super( context, 0, tasks );
       
@@ -88,7 +88,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
          throw e;
       }
       
-      final Task task = getItem( position );
+      final ListTask task = getItem( position );
       
       UIUtils.setTaskDescription( description, task, now );
       
@@ -117,7 +117,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
 
 
-   private final void setListName( TextView view, Task task )
+   private final void setListName( TextView view, ListTask task )
    {
       view.setText( task.getListName() );
       
@@ -129,7 +129,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
 
 
-   private final void setDueDate( TextView view, Task task )
+   private final void setDueDate( TextView view, ListTask task )
    {
       // if has a due date
       if ( task.getDue() != null )
@@ -202,8 +202,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
    
 
 
-   @SuppressWarnings( "unchecked" )
-   private void setNotes( View listItem, ViewStub notesStub, Task task )
+   private void setNotes( View listItem, ViewStub notesStub, ListTask task )
    {
       // If the task has no notes
       if ( task.getNumberOfNotes() == 0 )
@@ -214,9 +213,9 @@ public class TasksListAdapter extends ArrayAdapter< Task >
       // inflate the stub and add notes
       else
       {
-         List< RtmTaskNote > notes = (List< RtmTaskNote >) listItem.getTag();
+         List< RtmTaskNote > notes = task.getNotes();
          
-         if ( notes == null )
+         if ( notes.size() == 0 )
          {
             final ContentProviderClient client = context.getContentResolver()
                                                         .acquireContentProviderClient( Notes.CONTENT_URI );
@@ -230,6 +229,7 @@ public class TasksListAdapter extends ArrayAdapter< Task >
                   if ( rtmNotes != null )
                   {
                      notes = rtmNotes.getNotes();
+                     task.setNotes( notes );
                   }
                }
                catch ( RemoteException e )
@@ -240,40 +240,34 @@ public class TasksListAdapter extends ArrayAdapter< Task >
             }
          }
          
-         if ( notes != null )
+         try
          {
-            try
+            final ViewGroup notesContainer = (ViewGroup) notesStub.inflate();
+            
+            if ( notesContainer == null )
             {
-               final ViewGroup notesContainer = (ViewGroup) notesStub.inflate();
-               
-               if ( notesContainer == null )
-               {
-                  throw new Exception();
-               }
-               
-               for ( RtmTaskNote note : notes )
-               {
-                  final TextView tagView = (TextView) View.inflate( context,
-                                                                    R.layout.taskslist_listitem_note_button,
-                                                                    null );
-                  tagView.setText( note.getText() );
-                  notesContainer.addView( tagView );
-               }
-               
-               listItem.setTag( notes );
+               throw new Exception();
             }
-            catch ( Exception e )
+            
+            for ( RtmTaskNote note : notes )
             {
-               Log.e( TAG, "Invalid layout spec.", e );
+               final TextView tagView = (TextView) View.inflate( context,
+                                                                 R.layout.taskslist_listitem_note_button,
+                                                                 null );
+               tagView.setText( note.getText() );
+               notesContainer.addView( tagView );
             }
          }
+         catch ( Exception e )
+         {
+            Log.e( TAG, "Invalid layout spec.", e );
+         }
       }
-      
    }
    
 
 
-   private void setCompleted( CheckBox view, Task task )
+   private void setCompleted( CheckBox view, ListTask task )
    {
       view.setChecked( task.getCompleted() != null );
    }

@@ -4,9 +4,7 @@
 	android:id="@+id/taskslist_listitem"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:minHeight="70sp"
-	android:longClickable="true"
-	android:onClick="onTaskClicked" >
+	android:minHeight="70sp">
 	
 	<Button
       android:id="@+id/taskslist_listitem_priority"
@@ -38,8 +36,10 @@
 		      android:layout_width="24sp"
 		      android:layout_toRightOf="@id/taskslist_listitem_priority"
 		      android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
-		      android:focusable="false"
 		      android:gravity="top"
+		      android:focusable="false"
+		      android:nextFocusRight="@+id/taskslist_listitem_desc"
+		      android:nextFocusDown="@+id/taskslist_listitem_list_name"
 		      android:onClick="onCompletedClicked" />
 		      
 	      <TextView

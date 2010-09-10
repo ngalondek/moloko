@@ -103,10 +103,23 @@
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>
+      </activity>
+      
+      <activity
+         android:label="@string/app_note"
+         android:name=".activities.NoteActivity"
+         android:theme="@style/Theme.Moloko.Note">
          <intent-filter>
-            <!-- Handle search queries -->
+            <!-- Show a single note -->
+            <!-- Show all notes of a task -->
             <action
-               android:name="android.intent.action.SEARCH" />
+               android:name="android.intent.action.VIEW" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.note" />
          </intent-filter>
       </activity>
       

@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
@@ -38,15 +39,9 @@ public class TaskListsActivity extends ListActivity
       registerForContextMenu( getListView() );
       
       UIUtils.setTitle( this, R.string.app_tasklists );
-   }
-   
-
-
-   @Override
-   protected void onResume()
-   {
-      super.onResume();
-      queryLists();
+      
+      if ( !( getListAdapter() instanceof TaskListsAdapter ) )
+         queryLists();
    }
    
 
@@ -87,9 +82,10 @@ public class TaskListsActivity extends ListActivity
    
 
 
-   public void onListClicked( View view )
+   @Override
+   protected void onListItemClick( ListView l, View v, int position, long id )
    {
-      openList( getRtmList( getListView().getPositionForView( view ) ) );
+      openList( getRtmList( position ) );
    }
    
 

@@ -36,7 +36,7 @@
             
             <TextView
                android:id="@+id/task_overview_added_date"
-               style="@style/Task_Date"
+               style="@style/Task_Date_Text"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_marginTop="10sp"
@@ -46,7 +46,7 @@
                
             <TextView
                android:id="@+id/task_overview_completed_date"
-               style="@style/Task_Date"
+               style="@style/Task_Date_Text"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_marginTop="3sp"

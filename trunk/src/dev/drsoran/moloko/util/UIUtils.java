@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.text.style.UnderlineSpan;
@@ -212,4 +213,45 @@ public final class UIUtils
       return stringBuffer;
    }
    
+
+
+   public final static boolean initializeTitleWithTextLayout( View parent,
+                                                              String title,
+                                                              String text )
+   {
+      boolean ok = parent != null;
+      
+      if ( ok )
+         try
+         {
+            final TextView titleView = (TextView) parent.findViewById( R.id.title_with_text_title );
+            final TextView textView = (TextView) parent.findViewById( R.id.title_with_text_text );
+            
+            if ( TextUtils.isEmpty( title ) )
+            {
+               titleView.setVisibility( View.GONE );
+            }
+            else
+            {
+               titleView.setVisibility( View.VISIBLE );
+               titleView.setText( title );
+            }
+            
+            if ( TextUtils.isEmpty( text ) )
+            {
+               textView.setVisibility( View.GONE );
+            }
+            else
+            {
+               textView.setVisibility( View.VISIBLE );
+               textView.setText( text );
+            }
+         }
+         catch ( ClassCastException e )
+         {
+            ok = false;
+         }
+      
+      return ok;
+   }
 }

@@ -1,6 +1,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -8,27 +9,32 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.mdt.rtm.data.RtmTaskNote;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.rtm.ListTask;
 
 
 public abstract class AbstractTasksListActivity extends ListActivity implements
          DialogInterface.OnClickListener, View.OnClickListener
 {
-   @SuppressWarnings( "unused" )
    private final static String TAG = AbstractTasksListActivity.class.getSimpleName();
    
    public static final String TITLE = "title";
@@ -79,15 +85,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   @Override
-   protected void onResume()
-   {
-      super.onResume();
-      refresh();
-   }
+   // @Override
+   // protected void onResume()
+   // {
+   // super.onResume();
+   // fillList();
+   // }
    
-
-
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -107,7 +111,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          configuration.clear();
          configuration.putAll( state );
          
-         refresh();
+         if ( shouldFillList() )
+            fillList();
       }
    }
    
@@ -122,7 +127,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
       
-      final Task task = getTask( info.position );
+      final ListTask task = getTask( info.position );
       
       menu.add( Menu.NONE,
                 CTX_MENU_TOGGLE_TASK_COMPLETED,
@@ -136,11 +141,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                 getString( R.string.phr_open_with_name, task.getName() ) )
           .setTitleCondensed( getString( R.string.taskslist_listitem_ctx_open_task ) );
       
-      menu.add( Menu.NONE,
-                CTX_MENU_OPEN_LIST,
-                Menu.NONE,
-                getString( R.string.taskslist_listitem_ctx_open_list,
-                           task.getListName() ) );
+      final Bundle adapterConfig = configuration.getBundle( ADAPTER_CONFIG );
+      
+      if ( adapterConfig == null
+         || !adapterConfig.getBoolean( DISABLE_LIST_NAME ) )
+      {
+         menu.add( Menu.NONE,
+                   CTX_MENU_OPEN_LIST,
+                   Menu.NONE,
+                   getString( R.string.taskslist_listitem_ctx_open_list,
+                              task.getListName() ) );
+      }
       
       final int tagsCount = task.getTags().size();
       if ( tagsCount > 0 )
@@ -175,7 +186,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             return true;
             
          case CTX_MENU_OPEN_TASK:
-            onTaskClicked( info.targetView );
+            onTaskClicked( info.position );
             return true;
             
          case CTX_MENU_OPEN_LIST:
@@ -189,14 +200,23 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                onTagClicked( tags.get( 0 ) );
             else
                openMultipleTags( tags );
-            
             return true;
+            
          case CTX_MENU_NOTES:
+            openNotes( info.position, null );
             return true;
             
          default :
             return super.onContextItemSelected( item );
       }
+   }
+   
+
+
+   @Override
+   protected void onListItemClick( ListView l, View v, int position, long id )
+   {
+      onTaskClicked( position );
    }
    
 
@@ -208,12 +228,19 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   public void onTaskClicked( View view )
+   public void onTaskClicked( int pos )
    {
       final Intent intent = new Intent( Intent.ACTION_VIEW,
                                         Queries.contentUriWithId( Tasks.CONTENT_URI,
-                                                                  getTask( getListView().getPositionForView( view ) ).getId() ) );
+                                                                  getTask( pos ).getId() ) );
       startActivity( intent );
+   }
+   
+
+
+   public void onTaskClicked( View view )
+   {
+      onTaskClicked( getListView().getPositionForView( view ) );
    }
    
 
@@ -281,6 +308,30 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
+   public void onNoteClicked( View view )
+   {
+      // get the ID of the note clicked
+      final int pos = getListView().getPositionForView( view );
+      
+      final List< RtmTaskNote > notes = getTask( pos ).getNotes();
+      
+      String id = null;
+      for ( Iterator< RtmTaskNote > i = notes.iterator(); i.hasNext()
+         && id == null; )
+      {
+         final RtmTaskNote rtmTaskNote = i.next();
+         
+         if ( rtmTaskNote.getText().equals( ( (TextView) view ).getText() ) )
+         {
+            id = rtmTaskNote.getId();
+         }
+      }
+      
+      openNotes( pos, id );
+   }
+   
+
+
    public void openMultipleTags( List< String > tags )
    {
       final ArrayList< CharSequence > tmp = new ArrayList< CharSequence >();
@@ -300,9 +351,44 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   public void onNoteClicked( View view )
+   public void openNotes( int position, String startNoteId )
    {
+      final ListTask task = getTask( position );
+      final List< RtmTaskNote > notes = task.getNotes();
       
+      if ( notes.size() > 0 )
+      {
+         // Show only this note, the task has only this one.
+         if ( notes.size() == 1 )
+         {
+            final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                              Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                        notes.get( 0 )
+                                                                             .getId() ) );
+            
+            startActivity( intent );
+         }
+         
+         // Show all notes of the task.
+         else
+         {
+            
+            final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                              Notes.CONTENT_URI );
+            intent.putExtra( Notes.TASKSERIES_ID, task.getId() );
+            
+            // If a startNoteId is given we use this as entry point if
+            // multiple notes are available.
+            if ( startNoteId != null )
+               intent.putExtra( Notes._ID, startNoteId );
+            
+            startActivity( intent );
+         }
+      }
+      else
+      {
+         Log.e( TAG, "Tried to open notes from a task with no notes." );
+      }
    }
    
 
@@ -392,12 +478,26 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   abstract protected void refresh();
+   protected boolean isListFilled()
+   {
+      return getListAdapter() instanceof TasksListAdapter;
+   }
    
 
 
-   protected final Task getTask( int pos )
+   protected boolean shouldFillList()
    {
-      return (Task) getListAdapter().getItem( pos );
+      return !isListFilled();
+   }
+   
+
+
+   abstract protected void fillList();
+   
+
+
+   protected final ListTask getTask( int pos )
+   {
+      return (ListTask) getListAdapter().getItem( pos );
    }
 }

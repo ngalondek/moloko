@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
@@ -24,6 +23,17 @@ public class TaskSearchResultActivity extends TasksListActivity
     * This prevents the base class TasksListActivity to fill the list with all tasks during onCreate().
     */
    private boolean preventSuperFillList = true;
+   
+   
+   protected static class TaskSearchResultOptionsMenu extends
+            TasksListOptionsMenu
+   {
+      protected final static int START_IDX = TasksListOptionsMenu.START_IDX + 1000;
+      
+      public final static int NEW_SEARCH = START_IDX + 0;
+      
+      public final static int CLEAR_HISTORY = START_IDX + 1;
+   }
    
    
 
@@ -54,8 +64,21 @@ public class TaskSearchResultActivity extends TasksListActivity
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      MenuInflater inflater = getMenuInflater();
-      inflater.inflate( R.menu.tasksearchresult_menu_options, menu );
+      super.onCreateOptionsMenu( menu );
+      
+      menu.removeItem( TaskSearchResultOptionsMenu.SHOW_LISTS );
+      
+      menu.add( Menu.NONE,
+                TaskSearchResultOptionsMenu.NEW_SEARCH,
+                Menu.NONE,
+                R.string.menu_opt_search_task_title )
+          .setIcon( R.drawable.icon_search_black );
+      
+      menu.add( Menu.NONE,
+                TaskSearchResultOptionsMenu.CLEAR_HISTORY,
+                Menu.NONE,
+                R.string.tasksearchresult_menu_opt_clear_history_title )
+          .setIcon( R.drawable.icon_delete_black );
       
       return true;
    }
@@ -68,14 +91,40 @@ public class TaskSearchResultActivity extends TasksListActivity
       // Handle item selection
       switch ( item.getItemId() )
       {
-         case R.id.tasksearchresults_menu_opt_search_task:
+         case TaskSearchResultOptionsMenu.NEW_SEARCH:
             onSearchRequested();
             return true;
-         case R.id.tasksearchresults_menu_opt_clear_history:
+         case TaskSearchResultOptionsMenu.CLEAR_HISTORY:
             getRecentSuggestions().clearHistory();
             return true;
          default :
             return super.onOptionsItemSelected( item );
+      }
+   }
+   
+
+
+   @Override
+   protected boolean shouldFillList()
+   {
+      return !preventSuperFillList;
+   }
+   
+
+
+   @Override
+   protected void fillList()
+   {
+      if ( configuration.containsKey( QUERY_NOT_EVALUABLE ) )
+      {
+         UIUtils.setTitle( this,
+                           getString( R.string.tasksearchresult_titlebar_error,
+                                      configuration.getString( QUERY_NOT_EVALUABLE ),
+                                      R.drawable.icon_sad_face_white ) );
+      }
+      else
+      {
+         super.fillList();
       }
    }
    
@@ -112,32 +161,6 @@ public class TaskSearchResultActivity extends TasksListActivity
          
          if ( shouldFillList() )
             fillList();
-      }
-   }
-   
-
-
-   @Override
-   protected boolean shouldFillList()
-   {
-      return !isListFilled() && !preventSuperFillList;
-   }
-   
-
-
-   @Override
-   protected void fillList()
-   {
-      if ( configuration.containsKey( QUERY_NOT_EVALUABLE ) )
-      {
-         UIUtils.setTitle( this,
-                           getString( R.string.tasksearchresult_titlebar_error,
-                                      configuration.getString( QUERY_NOT_EVALUABLE ),
-                                      R.drawable.icon_sad_face_white ) );
-      }
-      else
-      {
-         super.fillList();
       }
    }
    

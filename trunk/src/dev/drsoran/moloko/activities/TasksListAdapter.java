@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
@@ -69,7 +69,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       TextView description;
       TextView listName;
       TextView dueDate;
-      CheckBox completed;
+      ImageView completed;
       ViewGroup tagsLayout;
       ViewStub notesStub;
       
@@ -78,7 +78,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
          description = (TextView) view.findViewById( R.id.taskslist_listitem_desc );
          listName = (TextView) view.findViewById( R.id.taskslist_listitem_btn_list_name );
          dueDate = (TextView) view.findViewById( R.id.taskslist_listitem_due_date );
-         completed = (CheckBox) view.findViewById( R.id.taskslist_listitem_check );
+         completed = (ImageView) view.findViewById( R.id.taskslist_listitem_check );
          tagsLayout = (ViewGroup) view.findViewById( R.id.taskslist_listitem_tags );
          notesStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_notes_stub );
       }
@@ -267,9 +267,9 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
 
 
-   private void setCompleted( CheckBox view, ListTask task )
+   private void setCompleted( ImageView view, ListTask task )
    {
-      view.setChecked( task.getCompleted() != null );
+      view.setEnabled( task.getCompleted() != null );
    }
    
 }

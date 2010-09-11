@@ -3,10 +3,10 @@ package dev.drsoran.moloko.activities;
 import java.util.ArrayList;
 
 import android.content.ContentProviderClient;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -18,10 +18,20 @@ import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
-public class TasksListActivity extends AbstractTasksListActivity
+public class TasksListActivity extends AbstractTasksListActivity implements
+         DialogInterface.OnClickListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = TasksListActivity.class.getSimpleName();
+   
+   
+   protected static class TasksListOptionsMenu extends
+            AbstractTasksListActivity.OptionsMenu
+   {
+      protected final static int START_IDX = AbstractTasksListActivity.OptionsMenu.START_IDX + 1000;
+      
+      public final static int SHOW_LISTS = START_IDX + 0;
+   }
    
    
 
@@ -48,23 +58,15 @@ public class TasksListActivity extends AbstractTasksListActivity
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      MenuInflater inflater = getMenuInflater();
-      inflater.inflate( R.menu.taskslist_menu_options, menu );
+      super.onCreateOptionsMenu( menu );
+      
+      menu.add( Menu.NONE,
+                TasksListOptionsMenu.SHOW_LISTS,
+                Menu.NONE,
+                R.string.taskslist_menu_opt_lists )
+          .setIcon( R.drawable.icon_list_black );
       
       return addOptionsMenuIntents( menu );
-   }
-   
-
-
-   @Override
-   public boolean onOptionsItemSelected( MenuItem item )
-   {
-      // Handle item selection
-      switch ( item.getItemId() )
-      {
-         default :
-            return super.onOptionsItemSelected( item );
-      }
    }
    
 
@@ -108,9 +110,7 @@ public class TasksListActivity extends AbstractTasksListActivity
          
          final ArrayList< Task > tasks = TasksProviderPart.getTasks( client,
                                                                      evaluatedFilter,
-                                                                     Tasks.PRIORITY
-                                                                        + ", "
-                                                                        + Tasks.TASKSERIES_NAME );
+                                                                     getSortOrder() );
          
          // TODO: Handle null. Show error?
          if ( tasks != null )
@@ -131,7 +131,7 @@ public class TasksListActivity extends AbstractTasksListActivity
       
       if ( ok )
       {
-         MenuItem item = menu.findItem( R.id.taskslist_menu_opt_lists );
+         final MenuItem item = menu.findItem( TasksListOptionsMenu.SHOW_LISTS );
          
          ok = item != null;
          
@@ -139,18 +139,6 @@ public class TasksListActivity extends AbstractTasksListActivity
          {
             item.setIntent( new Intent( Intent.ACTION_VIEW,
                                         ListOverviews.CONTENT_URI ) );
-         }
-      }
-      
-      if ( ok )
-      {
-         MenuItem item = menu.findItem( R.id.taskslist_menu_opt_smart_filter_test );
-         
-         ok = item != null;
-         
-         if ( ok )
-         {
-            item.setIntent( new Intent( this, RtmSmartFilterTestActivity.class ) );
          }
       }
       

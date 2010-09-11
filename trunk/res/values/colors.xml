@@ -7,6 +7,7 @@
    <color name="app_titlebar_separator">#FF87C3FF</color>
    <color name="app_titlebar_btn_bgnd_normal">@android:color/transparent</color>
    <color name="app_titlebar_btn_bgnd_pressed">@color/priority_2</color>
+   <color name="app_titlebar_btn_focused">@color/priority_2</color>
    <color name="app_tag_text">@android:color/white</color>
    <color name="app_tag_bgnd_normal_fill">@color/priority_3</color>
    <color name="app_tag_bgnd_pressed_fill">@color/priority_2</color>

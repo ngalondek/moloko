@@ -90,6 +90,13 @@ public class TaskListsActivity extends ListActivity
    
 
 
+   public void onTitleBarSearchClicked( View view )
+   {
+      onSearchRequested();
+   }
+   
+
+
    private void openList( RtmListWithTaskCount rtmList )
    {
       // Check if the smart filter could be parsed. Otherwise

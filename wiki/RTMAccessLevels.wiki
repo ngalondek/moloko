@@ -2,7 +2,7 @@
 
 Overview over which feature can be uses in which access level. See [http://www.rememberthemilk.com/services/api/ RTM API]
 
-||Feature||Read||Read + Write||Read + Write + Delete||
+||||Read||Read + Write||Read + Write + Delete||
 || get contacts || X || X || X ||
 || add contact ||  || X || X ||
 || delete contact ||  ||  || X ||

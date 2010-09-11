@@ -131,7 +131,7 @@
 	</style>
 	
 	<style name="TasksList_ListItem_Checked" >
-      <item name="android:button">@drawable/taskslist_listitem_checked_mark</item>
+      <item name="android:src">@drawable/taskslist_listitem_checked_mark</item>
       <item name="android:scaleType">fitXY</item>
    </style>
    

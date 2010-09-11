@@ -60,19 +60,28 @@
 	<string name="tasksearchresult_titlebar_error">%1$s falsche Syntax</string>
 	  <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
+     
+	<!-- AbstractTasksList -->
+	  <!-- Menus -->
+	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
+	  <string name="abstaskslist_listitem_ctx_open_task">Öffne Aufgabe</string>
+     <string name="abstaskslist_listitem_ctx_rename_task">Aufgabe umbenennen</string>
+     <string name="abstaskslist_listitem_ctx_set_task_completed">Setze als erledigt</string>
+     <string name="abstaskslist_listitem_ctx_set_task_incomplete">Setze als nicht erledigt</string>
+     <string name="abstaskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>
+     <!-- Dialogs -->
+     <string name="abstaskslist_dlg_show_tags_and">und</string>
+     <string name="abstaskslist_dlg_show_tags_or">oder</string>
+     <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
+     <string name="abstaskslist_dlg_sort_alpha">Aufgabenbezeichnung</string>
+     <string name="abstaskslist_dlg_sort_prio">Priorität</string>
+     <string name="abstaskslist_dlg_sort_due_date">Fälligkeitsdatum</string>	  
 	
 	<!-- TasksList activity -->
 	<string name="taskslist_titlebar">%1$s</string>
 	  <!-- Menus -->
-	  <string name="taskslist_menu_opt_lists_title">@string/app_tasklists</string>
-	  <string name="taskslist_listitem_ctx_open_task">Öffne Aufgabe</string>
-	  <string name="taskslist_listitem_ctx_set_task_completed">Setze als erledigt</string>
-	  <string name="taskslist_listitem_ctx_set_task_incomplete">Setze als nicht erledigt</string>
-	  <string name="taskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>	  
-	  <!-- Dialogs -->
-	  <string name="taskslist_dlg_show_tags_and">und</string>
-	  <string name="taskslist_dlg_show_tags_or">oder</string>
-
+	  <string name="taskslist_menu_opt_lists">@string/app_tasklists</string>
+	  
    <!-- Authenticator activity -->
    <string name="auth_username_label">Benutzername</string>
    <string name="auth_password_label">Passwort</string>

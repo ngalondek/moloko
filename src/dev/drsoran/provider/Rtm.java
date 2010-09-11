@@ -571,9 +571,26 @@ public class Rtm
       public final static String NUM_NOTES = "num_notes";
       
       /**
+       * Sorts result tasks by their priority
+       */
+      public final static String SORT_PRIORITY = PRIORITY + ", "
+         + TASKSERIES_NAME;
+      
+      /**
+       * Sorts result tasks by their due date
+       */
+      public final static String SORT_DUE_DATE = "COALESCE(" + DUE_DATE
+         + ",'-1'), " + TASKSERIES_NAME;
+      
+      /**
+       * Sorts result tasks by their name
+       */
+      public final static String SORT_TASK_NAME = TASKSERIES_NAME;
+      
+      /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
+      public final static String DEFAULT_SORT_ORDER = SORT_PRIORITY;
       
       /**
        * The delimiter used to separate a list of tags.

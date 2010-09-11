@@ -1,0 +1,50 @@
+= Introduction =
+
+Overview over which feature can be uses in which access level. See [http://www.rememberthemilk.com/services/api/ RTM API]
+
+||Feature||Read||Read + Write||Read + Write + Delete||
+|| get contacts || X || X || X ||
+|| add contact ||  || X || X ||
+|| delete contact ||  ||  || X ||
+||||||||||
+|| get groups || X || X || X ||
+|| add group ||  || X || X ||
+|| add contact to group ||  || X || X ||
+|| delete group ||  ||  || X ||
+|| remove contact from group ||  ||  || X ||
+||||||||||
+|| get lists || X || X || X ||
+|| add list ||  || X || X ||
+|| archive list ||  || X || X ||
+|| unarchive list ||  || X || X ||
+|| add contact to group ||  || X || X ||
+|| set default list ||  || X || X ||
+|| set list name ||  || X || X ||
+|| delete list ||  ||  || X ||
+||||||||||
+|| get tasks || X || X || X ||
+|| set task name || X || X || X ||
+|| add task ||  || X || X ||
+|| set task tags ||  || X || X ||
+|| add tags to task ||  || X || X ||
+|| complete task ||  || X || X ||
+|| uncomplete task ||  || X || X ||
+|| postpone task ||  || X || X ||
+|| set task due date ||  || X || X ||
+|| set task estimate ||  || X || X ||
+|| set task location ||  || X || X ||
+|| set task priority ||  || X || X ||
+|| move task priority ||  || X || X ||
+|| set task reccurence ||  || X || X ||
+|| set task URL ||  || X || X ||
+
+
+|| delete task||  ||  || X ||
+|| move task||  ||  || X ||
+|| remove tags from task||  ||  || X ||
+
+||||||||||
+|| get locations || X || X || X ||
+||||||||||
+|| get settings || X || X || X ||
+

@@ -92,14 +92,17 @@ public class RtmProvider extends ContentProvider
    {
       dbHelper = new RtmProviderOpenHelper( getContext() );
       
+      // These parts allow modification in the local DB.
       mutableParts.addAll( Arrays.asList( new IRtmProviderPart[]
       { new RtmTasksProviderPart( dbHelper ),
        new RtmTaskSeriesProviderPart( dbHelper ),
        new RtmListsProviderPart( dbHelper ), new TagsProviderPart( dbHelper ),
        new RtmNotesProviderPart( dbHelper ),
-       new RtmLocationsProviderPart( dbHelper ) } ) );
-      
+       new RtmLocationsProviderPart( dbHelper ),
+       new RtmSettingsProviderPart( dbHelper ) } ) );
       parts.addAll( mutableParts );
+      
+      // These parts are immutable and allow no insert, update, deletion
       parts.addAll( Arrays.asList( new IProviderPart[]
       { new TasksProviderPart( dbHelper ),
        new ListOverviewsProviderPart( dbHelper ) } ) );

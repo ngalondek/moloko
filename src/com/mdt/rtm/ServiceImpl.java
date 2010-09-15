@@ -42,6 +42,8 @@ import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.rtm.RtmSettings;
+
 
 /**
  * A major part of the RTM API implementation is here.
@@ -391,9 +393,15 @@ public class ServiceImpl implements Service
    
 
 
-   public void settings_getList()
+   public RtmSettings settings_getList() throws ServiceException
    {
-      throw new UnsupportedOperationException( "Not supported yet." );
+      Element response = invoker.invoke( new Param( "method",
+                                                    "rtm.settings.getList" ),
+                                         new Param( "auth_token",
+                                                    currentAuthToken ),
+                                         new Param( "api_key",
+                                                    applicationInfo.getApiKey() ) );
+      return new RtmSettings( response );
    }
    
 

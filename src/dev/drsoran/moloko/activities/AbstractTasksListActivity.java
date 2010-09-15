@@ -65,7 +65,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       protected final static int START_IDX = 0;
       
-      public final static int SORT = START_IDX;
+      private final static int MENU_ORDER_STATIC = 10000;
+      
+      public final static int MENU_ORDER = MENU_ORDER_STATIC - 1;
+      
+      public final static int SORT = START_IDX + 1;
+      
+      public final static int SETTINGS = START_IDX + 2;
    }
    
 
@@ -142,10 +148,25 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    public boolean onCreateOptionsMenu( Menu menu )
    {
       menu.add( Menu.NONE,
-                OptionsMenu.SORT,
-                Menu.NONE,
-                R.string.abstaskslist_menu_opt_sort )
-          .setIcon( R.drawable.icon_sort_black );
+                OptionsMenu.SETTINGS,
+                OptionsMenu.MENU_ORDER_STATIC,
+                R.string.phr_settings )
+          .setIcon( R.drawable.icon_settings_black );
+      
+      return addOptionsMenuIntents( menu );
+   }
+   
+
+
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      addOptionalMenuItem( menu,
+                           OptionsMenu.SORT,
+                           getString( R.string.abstaskslist_menu_opt_sort ),
+                           OptionsMenu.MENU_ORDER,
+                           R.drawable.icon_sort_black,
+                           getListAdapter().getCount() > 1 );
       
       return true;
    }
@@ -600,6 +621,24 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
+   private boolean addOptionsMenuIntents( Menu menu )
+   {
+      boolean ok = true;
+      
+      final MenuItem item = menu.findItem( OptionsMenu.SETTINGS );
+      
+      ok = item != null;
+      
+      if ( ok )
+      {
+         item.setIntent( new Intent( this, MolokoPreferencesActivity.class ) );
+      }
+      
+      return ok;
+   }
+   
+
+
    protected final ListTask getTask( int pos )
    {
       return (ListTask) getListAdapter().getItem( pos );
@@ -649,5 +688,32 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    private boolean isSameSortOrderLikeCurrent( int idx )
    {
       return configuration.getInt( SORT_ORDER_IDX, -1 ) == idx;
+   }
+   
+
+
+   protected void addOptionalMenuItem( Menu menu,
+                                       int id,
+                                       String title,
+                                       int order,
+                                       int iconId,
+                                       boolean show )
+   {
+      if ( show )
+      {
+         MenuItem item = menu.findItem( id );
+         
+         if ( item == null )
+         {
+            item = menu.add( Menu.NONE, id, order, title );
+            
+            if ( iconId != -1 )
+               item.setIcon( iconId );
+         }
+      }
+      else
+      {
+         menu.removeItem( id );
+      }
    }
 }

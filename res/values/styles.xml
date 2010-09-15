@@ -1,159 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-   <!-- ********* -->
-   <!-- Application -->
-   
-   <style name="Theme" parent="android:Theme"></style>
-   
-   <style name="Theme.Moloko" parent="android:style/Theme.Light">
-      <item name="android:windowNoTitle">true</item>
-      <item name="android:windowContentOverlay">@null</item>
-   </style>
-   
-   <style name="Theme.Moloko.Task" parent="@style/Theme">
-      <item name="android:windowTitleBackgroundStyle">@style/App_Default_Title_Bgnd</item>
-      <item name="android:windowContentOverlay">@null</item>
-   </style>
-   
-   <style name="Theme.Moloko.Note" parent="Theme.Moloko.Task" />
-   
-   <style name="App_Default_Title_Bgnd">
-      <item name="android:background">@color/app_default_title_bgnd</item>
-   </style>
-   
-   <style name="App_TitleBar">
-     <item name="android:background">@drawable/app_titlebar_bgnd</item>
-   </style>
+	<!-- ********* -->
+	<!-- Application -->
 
-   <style name="App_TitleBar_Text" parent="@android:style/TextAppearance.WindowTitle">
-      <item name="android:textColor">@color/app_titlebar_text</item>
-   </style>
-   
-   <style name="App_TitleBar_Separator">
-      <item name="android:background">@color/app_titlebar_separator</item>
-   </style>
-   
-   <style name="App_TitleBar_Btn">
-      <item name="android:background">@drawable/app_titlebar_btn_bgnd</item>
-   </style>
-   
-   <style name="App_Tag">
-      <item name="android:textColor">@color/app_tag_text</item>
-      <item name="android:background">@drawable/app_tag_bgnd</item>
-      <item name="android:singleLine">true</item>
-      <item name="android:textSize">11sp</item>
-      <item name="android:textStyle">bold</item>
-   </style>
-   
-   <style name="App_Note_Created_Date_Text" parent="@android:style/TextAppearance.Small">
-      <item name="android:textColor">@color/app_note_created_date_text</item>
-      <item name="android:textStyle">normal</item>
-      <item name="android:textSize">12sp</item>
-   </style>
-   
-   <style name="App_Note_TitleWithText">
-      <item name="topLineColor">@color/task_overview_bgnd_stroke</item>
-      <item name="topLineHeight">1sp</item>
-      <item name="titleColor">@color/task_title_with_text_text</item>
-      <item name="titleSize">14sp</item>
-      <item name="titleStyle">bold</item>
-      <item name="textColor">@color/task_title_with_text_text</item>
-      <item name="textSize">14sp</item>
-      <item name="textStyle">normal</item>
-      <item name="showTopLine">false</item>
-   </style>
+	<style name="Theme" parent="android:Theme"></style>
+
+	<style name="Theme.Moloko" parent="android:style/Theme.Light">
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowContentOverlay">@null</item>
+	</style>
+
+	<style name="Theme.Moloko.Task" parent="@style/Theme">
+		<item name="android:windowTitleBackgroundStyle">@style/App_Default_Title_Bgnd</item>
+		<item name="android:windowContentOverlay">@null</item>
+	</style>
+
+	<style name="Theme.Moloko.Note" parent="Theme.Moloko.Task" />
+
+	<style name="Theme.Moloko.Preferences" parent="Theme">
+		<item name="android:windowTitleBackgroundStyle">@style/App_Default_Title_Bgnd</item>
+	</style>
+
+	<style name="App_Default_Title_Bgnd">
+		<item name="android:background">@color/app_default_title_bgnd</item>
+		<item name="android:paddingLeft">5sp</item>
+	</style>
+
+	<style name="App_TitleBar">
+		<item name="android:background">@drawable/app_titlebar_bgnd</item>
+	</style>
+
+	<style name="App_TitleBar_Text" parent="@android:style/TextAppearance.WindowTitle">
+		<item name="android:textColor">@color/app_titlebar_text</item>
+	</style>
+
+	<style name="App_TitleBar_Separator">
+		<item name="android:background">@color/app_titlebar_separator</item>
+	</style>
+
+	<style name="App_TitleBar_Btn">
+		<item name="android:background">@drawable/app_titlebar_btn_bgnd</item>
+	</style>
+
+	<style name="App_Tag">
+		<item name="android:textColor">@color/app_tag_text</item>
+		<item name="android:background">@drawable/app_tag_bgnd</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:textSize">11sp</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="App_Note_Created_Date_Text" parent="@android:style/TextAppearance.Small">
+		<item name="android:textColor">@color/app_note_created_date_text</item>
+		<item name="android:textStyle">normal</item>
+		<item name="android:textSize">12sp</item>
+	</style>
+
+	<style name="App_Note_TitleWithText">
+		<item name="topLineColor">@color/task_overview_bgnd_stroke</item>
+		<item name="topLineHeight">1sp</item>
+		<item name="titleColor">@color/task_title_with_text_text</item>
+		<item name="titleSize">14sp</item>
+		<item name="titleStyle">bold</item>
+		<item name="textColor">@color/task_title_with_text_text</item>
+		<item name="textSize">14sp</item>
+		<item name="textStyle">normal</item>
+		<item name="showTopLine">false</item>
+	</style>
 
 
-   <!-- ********* -->
-   <!-- Task      -->
-   
-   <style name="Task">
-      <item name="android:background">@color/task_bgnd</item>
-   </style>
-   
-   <style name="Task_Section">
-      <item name="android:background">@drawable/task_overview_bgnd</item>
-   </style>
-   
-   <style name="Task_Overview_DescriptionText" parent="@style/TasksList_ListItem_DescriptionText" />
-   
-   <style name="Task_Overview_ListName" parent="@style/TasksList_ListItem_ListName" />
-   
-   <style name="Task_Date_Text" parent="@style/App_Note_Created_Date_Text" />
-   
-   <style name="Task_TitleWithText">
-      <item name="showTopLine">true</item>
-      <item name="topLineColor">@color/task_overview_bgnd_stroke</item>
-      <item name="topLineHeight">1sp</item>
-      <item name="titleColor">@color/task_title_with_text_text</item>
-      <item name="titleSize">14sp</item>
-      <item name="titleStyle">bold</item>
-      <item name="textColor">@color/task_title_with_text_text</item>
-      <item name="textSize">14sp</item>
-      <item name="textStyle">normal</item>
-   </style>
-   
-   
-   <!-- ********* -->
-   <!-- Note      -->
-   <style name="Note">
-      <item name="android:background">@color/note_bgnd</item>
-   </style>
-   
-   <style name="Note_ButtonBar_Bgnd">
-      <item name="android:background">@color/note_buttonbar_bgnd</item>
-   </style>
-   
+	<!-- ********* -->
+	<!-- Task      -->
+
+	<style name="Task">
+		<item name="android:background">@color/task_bgnd</item>
+	</style>
+
+	<style name="Task_Section">
+		<item name="android:background">@drawable/task_overview_bgnd</item>
+	</style>
+
+	<style name="Task_Overview_DescriptionText" parent="@style/TasksList_ListItem_DescriptionText" />
+
+	<style name="Task_Overview_ListName" parent="@style/TasksList_ListItem_ListName" />
+
+	<style name="Task_Date_Text" parent="@style/App_Note_Created_Date_Text" />
+
+	<style name="Task_TitleWithText">
+		<item name="showTopLine">true</item>
+		<item name="topLineColor">@color/task_overview_bgnd_stroke</item>
+		<item name="topLineHeight">1sp</item>
+		<item name="titleColor">@color/task_title_with_text_text</item>
+		<item name="titleSize">14sp</item>
+		<item name="titleStyle">bold</item>
+		<item name="textColor">@color/task_title_with_text_text</item>
+		<item name="textSize">14sp</item>
+		<item name="textStyle">normal</item>
+	</style>
+
+
+	<!-- ********* -->
+	<!-- Note      -->
+	<style name="Note">
+		<item name="android:background">@color/note_bgnd</item>
+	</style>
+
+	<style name="Note_ButtonBar_Bgnd">
+		<item name="android:background">@color/note_buttonbar_bgnd</item>
+	</style>
+
 	<!-- ********* -->
 	<!-- TaskLists -->
-	
+
 	<style name="TaskLists_Lists" parent="@android:style/Widget.ListView">
 		<item name="android:background">@color/tasklists_lists_bgnd</item>
 	</style>
-	
+
 	<style name="TaskLists_ListItem_ListName" parent="@android:style/TextAppearance.Medium">
-		<item name="android:textColor">@color/tasklists_listitem_listname</item> 
+		<item name="android:textColor">@color/tasklists_listitem_listname</item>
 		<item name="android:textStyle">bold</item>
 	</style>
-	
+
 	<style name="TaskLists_ListItem_NumTasks_Text" parent="@android:style/TextAppearance.Medium">
 		<item name="android:textColor">@color/tasklists_listitem_numtasks_text</item>
 	</style>
 
 
 	<!-- ********* -->
-	<!-- TasksList -->	
-	
+	<!-- TasksList -->
+
 	<style name="TasksList_TaskList" parent="@android:style/Widget.ListView">
-      <item name="android:background">@color/taskslist_tasklist_bgnd</item>
-      <item name="android:cacheColorHint">@color/taskslist_tasklist_bgnd</item>
+		<item name="android:background">@color/taskslist_tasklist_bgnd</item>
+		<item name="android:cacheColorHint">@color/taskslist_tasklist_bgnd</item>
 	</style>
-	
-	<style name="TasksList_ListItem_Checked" >
-      <item name="android:src">@drawable/taskslist_listitem_checked_mark</item>
-      <item name="android:scaleType">fitXY</item>
-   </style>
-   
+
+	<style name="TasksList_ListItem_Checked">
+		<item name="android:src">@drawable/taskslist_listitem_checked_mark</item>
+		<item name="android:scaleType">fitXY</item>
+	</style>
+
 	<style name="TasksList_ListItem_DescriptionText" parent="@android:style/TextAppearance.Medium">
-		<item name="android:textColor">@color/taskslist_listitem_desc_text</item> 
+		<item name="android:textColor">@color/taskslist_listitem_desc_text</item>
 	</style>
-			
+
 	<style name="TasksList_ListItem_ListName" parent="@android:style/TextAppearance.Small">
 		<item name="android:textStyle">bold</item>
-	   <item name="android:textColor">@drawable/taskslist_listitem_listname_text</item>
-      <item name="android:background">@color/taskslist_listitem_listname_text_bgnd</item>
+		<item name="android:textColor">@drawable/taskslist_listitem_listname_text</item>
+		<item name="android:background">@color/taskslist_listitem_listname_text_bgnd</item>
 	</style>
-		
+
 	<style name="TasksList_ListItem_DueDate" parent="@android:style/TextAppearance.Small">
 		<item name="android:textColor">@color/taskslist_listitem_due_date</item>
 	</style>
-		
-   <style name="TasksList_ListItem_Note" parent="@android:style/TextAppearance.Small">
-      <item name="android:textColor">@drawable/taskslist_listitem_note_text</item>
-      <item name="android:background">@color/taskslist_listitem_note_text_bgnd</item>
-      <item name="android:ellipsize">end</item>
-      <item name="android:singleLine">true</item>
-   </style>
-	
+
+	<style name="TasksList_ListItem_Note" parent="@android:style/TextAppearance.Small">
+		<item name="android:textColor">@drawable/taskslist_listitem_note_text</item>
+		<item name="android:background">@color/taskslist_listitem_note_text_bgnd</item>
+		<item name="android:ellipsize">end</item>
+		<item name="android:singleLine">true</item>
+	</style>
+
 </resources>

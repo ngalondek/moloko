@@ -193,6 +193,39 @@
 </foreign-key>
 </foreign-key-list>
 </table>
+<table id="3b2fd2:12b0f7019ac:-7ff0" name="settings">
+<column-list>
+<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fec" mandatory="true" name="_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="a15918:12b160056d6:-7feb" mandatory="true" name="sync_timestamp">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fe9" mandatory="false" name="timezone">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="3b2fd2:12b0f7019ac:-7fe8" mandatory="true" name="dateformat">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="0" id="3b2fd2:12b0f7019ac:-7fe7" mandatory="true" name="timeformat">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fe6" mandatory="false" name="defaultlist_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fe5" mandatory="false" name="language">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+</column-list>
+<primary-key id="3b2fd2:12b0f7019ac:-7fef" name="PK_SETTINGS">
+<primary-key-column name="_id"/>
+</primary-key>
+<foreign-key-list>
+<foreign-key id="3b2fd2:12b0f7019ac:-7fc1" name="defaultlist" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_LISTS" referenced-table="lists" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..1" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
+<foreign-key-column column-name="defaultlist_id" referenced-key-column-name="_id"/>
+</foreign-key>
+</foreign-key-list>
+</table>
 </table-list>
 </schema>
 </schema-list>
@@ -207,5 +240,6 @@
 <table-figure refid="190abb9:128ce294477:-7fe8" x="281" y="18"/>
 <table-figure refid="190abb9:128ce294477:-7f35" x="8" y="235"/>
 <table-figure refid="163c031:128fe8bf79f:-7f97" x="550" y="165"/>
+<table-figure refid="3b2fd2:12b0f7019ac:-7ff0" x="10" y="28"/>
 </diagram>
 </clay-model>

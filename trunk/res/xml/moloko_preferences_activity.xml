@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko">
+   
+   <PreferenceScreen
+      android:title="@string/moloko_prefs_rtm_title"
+      android:summary="@string/moloko_prefs_rtm_summary">
+      
+      <dev.drsoran.moloko.prefs.RtmSyncStatePreference
+         moloko:infoWidget="@layout/moloko_prefs_widget_sync"/>
+      
+      <dev.drsoran.moloko.prefs.TimezonePreference
+         android:title="@string/moloko_prefs_rtm_timezone_title"
+         android:summary="%s"
+         android:key="@string/key_timezone_local"
+         moloko:syncWithRtmKey="@string/key_timezone_sync_with_rtm" />
+         
+      <dev.drsoran.moloko.prefs.SyncableListPreference
+         android:title="@string/moloko_prefs_rtm_dateformat_title"
+         android:summary="%s"
+         android:entries="@array/moloko_prefs_rtm_dateformat"
+         android:entryValues="@array/moloko_prefs_rtm_dateformat_values"
+         android:key="@string/key_dateformat_local"
+         moloko:syncWithRtmKey="@string/key_dateformat_sync_with_rtm" />
+         
+      <dev.drsoran.moloko.prefs.SyncableListPreference
+         android:title="@string/moloko_prefs_rtm_timeformat_title"
+         android:summary="%s"
+         android:entries="@array/moloko_prefs_rtm_timeformat"
+         android:entryValues="@array/moloko_prefs_rtm_timeformat_values"
+         android:key="@string/key_timeformat_local"
+         moloko:syncWithRtmKey="@string/key_timeformat_sync_with_rtm" />
+         
+      <dev.drsoran.moloko.prefs.DefaultListPreference
+         android:title="@string/moloko_prefs_rtm_defaultlist_title"
+         android:summary="%s"
+         android:key="@string/key_def_list_local"
+         moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm" />
+      
+   </PreferenceScreen>   
+      
+</PreferenceScreen>

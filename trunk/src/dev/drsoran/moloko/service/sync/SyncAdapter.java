@@ -17,7 +17,6 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -118,7 +117,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                
                final ArrayList< IContentProviderSyncOperation > batch = new ArrayList< IContentProviderSyncOperation >();
                
-               if ( computeOperationsBatch( provider, syncResult, batch ) )
+               if ( computeOperationsBatch( provider, syncResult, extras, batch ) )
                {
                   final ArrayList< ContentProviderOperation > contentProviderOperationsBatch = new ArrayList< ContentProviderOperation >();
                   
@@ -151,6 +150,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                   clearSyncResult( syncResult );
                }
             }
+         }
+         else
+         {
+            accountManager.invalidateAuthToken( Constants.ACCOUNT_TYPE,
+                                                authToken );
          }
       }
       catch ( final AuthenticatorException e )
@@ -194,35 +198,49 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
 
    private boolean computeOperationsBatch( ContentProviderClient provider,
                                            SyncResult syncResult,
+                                           Bundle extras,
                                            ArrayList< IContentProviderSyncOperation > batch )
    {
       boolean ok = true;
       
-      // Sync RtmList
-      ok = RtmListsSync.in_computeSync( provider,
-                                        serviceImpl,
-                                        syncResult,
-                                        batch );
+      if ( !extras.getBoolean( dev.drsoran.moloko.service.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
+                               false ) )
+      {
+         // Sync RtmList
+         ok = RtmListsSync.in_computeSync( provider,
+                                           serviceImpl,
+                                           syncResult,
+                                           batch );
+         
+         Log.i( TAG, "Compute RtmLists sync " + ( ok ? "ok" : "failed" ) );
+         
+         // Sync RtmTasks
+         ok = ok
+            && RtmTasksSync.in_computeSync( provider,
+                                            serviceImpl,
+                                            syncResult,
+                                            batch );
+         
+         Log.i( TAG, "Compute RtmTasks sync " + ( ok ? "ok" : "failed" ) );
+         
+         // Sync locations
+         ok = ok
+            && RtmLocationsSync.in_computeSync( provider,
+                                                serviceImpl,
+                                                syncResult,
+                                                batch );
+         
+         Log.i( TAG, "Compute RtmLocations sync " + ( ok ? "ok" : "failed" ) );
+      }
       
-      Log.i( TAG, "Compute RtmLists sync " + ( ok ? "ok" : "failed" ) );
-      
-      // Sync RtmTasks
+      // Sync settings
       ok = ok
-         && RtmTasksSync.in_computeSync( provider,
-                                         serviceImpl,
-                                         syncResult,
-                                         batch );
+         && RtmSettingsSync.in_computeSync( provider,
+                                            serviceImpl,
+                                            syncResult,
+                                            batch );
       
-      Log.i( TAG, "Compute RtmTasks sync " + ( ok ? "ok" : "failed" ) );
-      
-      // Sync locations
-      ok = ok
-         && RtmLocationsSync.in_computeSync( provider,
-                                             serviceImpl,
-                                             syncResult,
-                                             batch );
-      
-      Log.i( TAG, "Compute RtmLocations sync " + ( ok ? "ok" : "failed" ) );
+      Log.i( TAG, "Compute RtmSettings sync " + ( ok ? "ok" : "failed" ) );
       
       if ( !ok )
          batch.clear();

@@ -19,6 +19,7 @@ import com.mdt.rtm.data.RtmLists;
 
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.provider.Rtm.Settings;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.RtmSmartFilter;
 
@@ -30,8 +31,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Lists._ID, Lists.LIST_NAME, Lists.LIST_DELETED, Lists.LOCKED, Lists.ARCHIVED,
-    Lists.POSITION, Lists.IS_SMART_LIST, Lists.FILTER };
+   { Lists._ID, Lists.LIST_NAME, Lists.LIST_DELETED, Lists.LOCKED,
+    Lists.ARCHIVED, Lists.POSITION, Lists.IS_SMART_LIST, Lists.FILTER };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -63,7 +64,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          if ( c.getCount() > 0 )
          {
             RtmSmartFilter filter = null;
-
+            
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
                if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
@@ -183,9 +184,15 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       // Trigger: If a list gets deleted, move all contained tasks to the
       // Inbox list.
       db.execSQL( "CREATE TRIGGER " + path + "_delete_list AFTER DELETE ON "
-         + path + " BEGIN UPDATE taskseries SET " + TaskSeries.LIST_ID
-         + " = ( SELECT " + Lists._ID + " FROM " + path + " WHERE "
-         + Lists.LIST_NAME + " like 'Inbox' ); END;" );
+         + path + " BEGIN UPDATE " + TaskSeries.PATH + " SET "
+         + TaskSeries.LIST_ID + " = ( SELECT " + Lists._ID + " FROM " + path
+         + " WHERE " + Lists.LIST_NAME + " like 'Inbox' ); END;" );
+      
+      // Trigger: If a list gets deleted, check the default list setting
+      db.execSQL( "CREATE TRIGGER " + path + "_default_list AFTER DELETE ON "
+         + path + " BEGIN UPDATE " + Settings.PATH + " SET "
+         + Settings.DEFAULTLIST_ID + " = NULL WHERE old." + Lists._ID + " = "
+         + Settings.DEFAULTLIST_ID + "; END;" );
       
       // Trigger: A locked list should always exist and cannot be
       // deleted.

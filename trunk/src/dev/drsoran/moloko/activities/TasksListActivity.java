@@ -25,10 +25,11 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    private final static String TAG = TasksListActivity.class.getSimpleName();
    
    
-   protected static class TasksListOptionsMenu extends
-            AbstractTasksListActivity.OptionsMenu
+   protected static class OptionsMenu
    {
       protected final static int START_IDX = AbstractTasksListActivity.OptionsMenu.START_IDX + 1000;
+      
+      public final static int MENU_ORDER = AbstractTasksListActivity.OptionsMenu.MENU_ORDER - 1000;
       
       public final static int SHOW_LISTS = START_IDX + 0;
    }
@@ -58,15 +59,16 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      super.onCreateOptionsMenu( menu );
+      boolean ok = super.onCreateOptionsMenu( menu );
       
-      menu.add( Menu.NONE,
-                TasksListOptionsMenu.SHOW_LISTS,
-                Menu.NONE,
-                R.string.taskslist_menu_opt_lists )
-          .setIcon( R.drawable.icon_list_black );
+      if ( ok )
+         menu.add( Menu.NONE,
+                   OptionsMenu.SHOW_LISTS,
+                   OptionsMenu.MENU_ORDER,
+                   R.string.taskslist_menu_opt_lists )
+             .setIcon( R.drawable.icon_list_black );
       
-      return addOptionsMenuIntents( menu );
+      return ok && addOptionsMenuIntents( menu );
    }
    
 
@@ -125,21 +127,18 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
-   private final boolean addOptionsMenuIntents( Menu menu )
+   private boolean addOptionsMenuIntents( Menu menu )
    {
       boolean ok = true;
       
+      final MenuItem item = menu.findItem( OptionsMenu.SHOW_LISTS );
+      
+      ok = item != null;
+      
       if ( ok )
       {
-         final MenuItem item = menu.findItem( TasksListOptionsMenu.SHOW_LISTS );
-         
-         ok = item != null;
-         
-         if ( ok )
-         {
-            item.setIntent( new Intent( Intent.ACTION_VIEW,
-                                        ListOverviews.CONTENT_URI ) );
-         }
+         item.setIntent( new Intent( Intent.ACTION_VIEW,
+                                     ListOverviews.CONTENT_URI ) );
       }
       
       return ok;

@@ -37,8 +37,7 @@ public abstract class AbstractProviderPart implements IProviderPart
       this.dbAccess = dbAccess;
       this.path = path;
       
-      uriMatcher.addURI( Rtm.AUTHORITY, path, DIR );
-      uriMatcher.addURI( Rtm.AUTHORITY, path + "/#", ITEM_ID );
+      addUris();
    }
    
 
@@ -116,6 +115,14 @@ public abstract class AbstractProviderPart implements IProviderPart
          default :
             return UriMatcher.NO_MATCH;
       }
+   }
+   
+
+
+   protected void addUris()
+   {
+      uriMatcher.addURI( Rtm.AUTHORITY, path, DIR );
+      uriMatcher.addURI( Rtm.AUTHORITY, path + "/#", ITEM_ID );
    }
    
 

@@ -32,6 +32,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 
 /**
@@ -110,6 +111,14 @@ public abstract class RtmData implements Parcelable
          child = child.getNextSibling();
       }
       return result.toString();
+   }
+   
+
+
+   protected String textNullIfEmpty( Element elt )
+   {
+      final String text = text( elt );
+      return ( TextUtils.isEmpty( text ) ? null : text );
    }
    
 

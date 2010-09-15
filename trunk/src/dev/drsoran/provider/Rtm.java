@@ -597,4 +597,81 @@ public class Rtm
        */
       public final static String TAGS_DELIMITER = ",";
    }
+   
+
+   protected static interface SettingsColumns
+   {
+      /**
+       * The time stamp when the setting were retrieved from the server
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String SYNC_TIMESTAMP = "sync_timestamp";
+      
+      /**
+       * The user's Olson timezone. Null if the user has not set a timezone
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String TIMEZONE = "timezone";
+      
+      /**
+       * The date format the user has set
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - indicates an European date format (e.g. 14/02/06)</LI> <LI>1 - indicates an American date format (e.g.
+       * 02/14/06)</LI>
+       */
+      public final static String DATEFORMAT = "dateformat";
+      
+      /**
+       * The time format the user has set
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - indicates 12 hour time with day period (e.g. 5pm)</LI> <LI>1 - indicates 24 hour time (e.g. 17:00)</LI>
+       */
+      public final static String TIMEFORMAT = "timeformat";
+      
+      /**
+       * The ID of the default list the user set.
+       * <P>
+       * Type: INTEGER (foreign key to table lists _ID field), NULL if not set.
+       * </P>
+       */
+      public final static String DEFAULTLIST_ID = "defaultlist_id";
+      
+      /**
+       * The user's language (ISO 639-1 code), NULL is not set
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String LANGUAGE = "language";
+   }
+   
+
+   public static final class Settings implements BaseColumns, SettingsColumns
+   {
+      public final static String PATH = "settings";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing the settings.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.settings";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.settings";      
+   }
 }

@@ -13,6 +13,10 @@
    <string name="rtm_short">RTM</string>
    
    <!-- Global constants -->
+   <string name="g_settings_src_rtm_btn">Einstellung vom RTM Server übernehmen</string>
+   <string name="g_settings_src_rtm">Vom RTM Server geladen</string>
+   <string name="g_settings_src_local">Lokale Einstellung</string>
+   <string name="g_no_account">Kein RTM Konto vorhanden. Ein neues Konto kann unter Einstellungen->Konten und Synchronisation angelegt werden.</string>
 
 	<!-- Global keys -->
 	<string name="key_auth">auth</string>
@@ -24,6 +28,14 @@
 	<string name="key_shared_secret">shared_secret</string>
 	<string name="key_permission">permission</string>
 	<string name="key_sync_inverval">sync_interval</string>
+	<string name="key_timezone_local">timezone_local</string>
+	<string name="key_timezone_sync_with_rtm">timezone_sync_with_rtm</string>
+	<string name="key_dateformat_local">dateformat_local</string>
+	<string name="key_dateformat_sync_with_rtm">dateformat_sync_with_rtm</string>
+	<string name="key_timeformat_local">timeformat_local</string>
+	<string name="key_timeformat_sync_with_rtm">timeformat_sync_with_rtm</string>
+	<string name="key_def_list_local">def_list_local</string>
+	<string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
@@ -32,6 +44,10 @@
    <string name="phr_open_with_name">Öffne %1$s</string>
    <string name="phr_close">Schliessen</string>
    <string name="phr_ok">OK</string>
+   <string name="phr_settings">Einstellungen</string>
+   <string name="phr_none_f">keine</string>
+   <string name="phr_none_m">keiner</string>
+   <string name="phr_none_mainly">keines</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -101,6 +117,22 @@
       <string name="auth_err_cause_inv_auth_token">Ungüliges Auth-Token empfangen</string>
       <string name="auth_err_cause_scurity">Sicherheitsverletzung. </string>
       <string name="auth_err_cause_inv_login_url">Ungültige Login-URL empfangen</string>
+            
+   <!-- MolokoPreferences activity -->
+   <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
+   <string name="moloko_prefs_rtm_summary">Zeitzone, Zeit- und Datumsformat, usw.</string>
+   <string name="moloko_prefs_rtm_sync_text_in_sync">RTM Einstellungen zuletzt am %1$s abgerufen.</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Standardeinstellungen verwendet.</string>
+   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
+   <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
+   <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(TT/MM/YYYY)</string>
+   <string name="moloko_prefs_rtm_dateformat_us">Amerikanisch\n(MM/TT/YYYY)</string>
+   <string name="moloko_prefs_rtm_timeformat_title">Zeitformat</string>
+   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
+   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
+   <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
+      <!-- Dialogs -->
+      <string name="moloko_prefs_rtm_sync_dlg_message">RTM Einstellungen werden abgerufen</string>
       
 	<!-- AccountPreferences + activity -->
 	<string name="auth_pref_title">Allgemeine Einstellungen</string>

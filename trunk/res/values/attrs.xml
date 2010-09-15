@@ -24,4 +24,12 @@
 		<attr name="textPaddingTop" format="reference|dimension" />
 	</declare-styleable>
 
+   <declare-styleable name="SyncableListPreference">
+      <attr name="syncWithRtmKey" format="reference|string" />
+   </declare-styleable>
+   
+   <declare-styleable name="InfoTextPreference">
+      <attr name="infoText" format="reference|string" />
+      <attr name="infoWidget" format="reference" />
+   </declare-styleable>
 </resources>

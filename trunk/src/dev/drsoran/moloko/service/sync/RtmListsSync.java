@@ -55,10 +55,13 @@ public final class RtmListsSync
             case RtmServiceConstants.RtmErrorCodes.LOGIN_FAILED:
             case RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY:
                ++syncResult.stats.numAuthExceptions;
+               break;
             case RtmServiceConstants.RtmErrorCodes.SERVICE_UNAVAILABLE:
                ++syncResult.stats.numIoExceptions;
+               break;
             default :
                ++syncResult.stats.numParseExceptions;
+               break;
          }
          
          return false;

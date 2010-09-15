@@ -33,6 +33,8 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.rtm.RtmSettings;
+
 
 /**
  * Represents the Remember the Milk service API.
@@ -184,7 +186,7 @@ public interface Service
    
 
 
-   void settings_getList() throws ServiceException;
+   RtmSettings settings_getList() throws ServiceException;
    
 
 

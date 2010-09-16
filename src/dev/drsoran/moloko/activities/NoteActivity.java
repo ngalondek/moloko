@@ -10,7 +10,6 @@ import android.content.ContentUris;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.util.DateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
@@ -63,6 +63,8 @@ public class NoteActivity extends Activity
                                   taskId,
                                   intent.getStringExtra( Notes._ID ) );
             }
+            
+            client.release();
             
             if ( notePos != -1 )
                displayNote( notes.get( notePos ) );

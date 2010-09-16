@@ -5,19 +5,23 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.RemoteException;
 import android.util.AttributeSet;
+import android.view.View;
 import dev.drsoran.moloko.R;
 import dev.drsoran.provider.Rtm.Lists;
 
 
 public class DefaultListPreference extends SyncableListPreference
 {
-   
    public DefaultListPreference( Context context, AttributeSet attrs )
    {
-      // TODO: Connect the preference to changes of list column
-      
       super( context, attrs );
-      
+   }
+   
+
+
+   @Override
+   protected void onBindView( View view )
+   {
       // get all lists
       final ContentProviderClient client = getContext().getContentResolver()
                                                        .acquireContentProviderClient( Lists.CONTENT_URI );
@@ -35,8 +39,6 @@ public class DefaultListPreference extends SyncableListPreference
             {
                CharSequence[] entries = new CharSequence[ c.getCount() ];
                CharSequence[] entryValues = new CharSequence[ c.getCount() ];
-               
-               setEnabled( c.getCount() > 0 );
                
                if ( c.getCount() > 0 )
                {
@@ -56,12 +58,16 @@ public class DefaultListPreference extends SyncableListPreference
             
             if ( c != null )
                c.close();
+            
+            client.release();
          }
          catch ( RemoteException e )
          {
             // TODO: Show error
          }
       }
+      
+      super.onBindView( view );
    }
    
 

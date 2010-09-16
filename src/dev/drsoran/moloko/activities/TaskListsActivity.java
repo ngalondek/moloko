@@ -150,6 +150,7 @@ public class TaskListsActivity extends ListActivity
          setListAdapter( new TaskListsAdapter( this,
                                                R.layout.tasklists_activity_listitem,
                                                ListOverviewsProviderPart.getListsOverview( client ) ) );
+         client.release();
       }
    }
    

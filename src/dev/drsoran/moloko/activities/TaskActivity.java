@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
+
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -23,6 +23,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.DateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -63,6 +64,8 @@ public class TaskActivity extends Activity
          {
             final Task task = TasksProviderPart.getTask( client,
                                                          String.valueOf( ContentUris.parseId( taskUri ) ) );
+            
+            client.release();
             
             // TODO: Show error if task could not be found.
             if ( task != null )
@@ -210,6 +213,8 @@ public class TaskActivity extends Activity
                Log.e( TAG, "Unable to retrieve notes from DB for task ID "
                   + task.getId(), e );
             }
+            
+            client.release();
          }
          
          if ( notes != null )

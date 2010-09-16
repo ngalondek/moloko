@@ -24,7 +24,10 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
@@ -35,7 +38,8 @@ import dev.drsoran.rtm.ListTask;
 
 
 public abstract class AbstractTasksListActivity extends ListActivity implements
-         DialogInterface.OnClickListener, View.OnClickListener
+         DialogInterface.OnClickListener, View.OnClickListener,
+         IOnSettingsChangedListener
 {
    private final static String TAG = AbstractTasksListActivity.class.getSimpleName();
    
@@ -92,6 +96,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
    protected final Bundle configuration = new Bundle();
    
+   protected boolean settingsChanged = false;
+   
    /**
     * Variable holds the temporary selected sort mode from the sort order AlertDialog. This will be made persistent if
     * the dialog is closed with OK.
@@ -107,6 +113,12 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       setContentView( R.layout.taskslist_activity );
       
       registerForContextMenu( getListView() );
+      
+      MolokoApp.getSettings()
+               .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_TIMEZONE
+                                                      | Settings.SETTINGS_RTM_DATEFORMAT
+                                                      | Settings.SETTINGS_RTM_TIMEFORMAT,
+                                                   this );
    }
    
 
@@ -118,6 +130,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    // fillList();
    // }
    
+   @Override
+   protected void onDestroy()
+   {
+      super.onDestroy();
+      
+      MolokoApp.getSettings().unregisterOnSettingsChangedListener( this );
+   }
+   
+
+
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -603,6 +625,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
+   public void onSettingsChanged( int which )
+   {
+      settingsChanged = true;
+      
+      if ( hasWindowFocus() )
+         getListView().requestLayout();
+   }
+   
+
+
    protected boolean isListFilled()
    {
       return getListAdapter() instanceof TasksListAdapter;
@@ -612,7 +644,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    protected boolean shouldFillList()
    {
-      return !isListFilled();
+      return !isListFilled() || settingsChanged;
    }
    
 

@@ -141,15 +141,12 @@ public class SyncableListPreference extends ListPreference implements
       
       setSyncWithRtm( isChecked );
       
-      if ( isChecked )
-      {
-         /*
-          * Clicking on the check box simulates the negative button click, and dismisses the dialog. This is needed
-          * cause we write the value from RTM and a positive result would write the current list value.
-          */
-         onClick( getDialog(), DialogInterface.BUTTON_NEGATIVE );
-         getDialog().dismiss();
-      }
+      /*
+       * Clicking on the check box simulates the negative button click, and dismisses the dialog. This is needed cause
+       * we write the value from RTM and a positive result would write the current list value.
+       */
+      onClick( getDialog(), DialogInterface.BUTTON_NEGATIVE );
+      getDialog().dismiss();
    }
    
 

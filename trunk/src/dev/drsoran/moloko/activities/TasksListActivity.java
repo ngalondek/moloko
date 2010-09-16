@@ -114,6 +114,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                      evaluatedFilter,
                                                                      getSortOrder() );
          
+         client.release();
+         
          // TODO: Handle null. Show error?
          if ( tasks != null )
          {

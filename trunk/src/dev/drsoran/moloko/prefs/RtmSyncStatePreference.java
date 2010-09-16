@@ -10,12 +10,12 @@ import android.content.SyncStatusObserver;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.util.DateUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.rtm.RtmSettings;
 

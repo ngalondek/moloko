@@ -1,6 +1,8 @@
 package dev.drsoran.moloko;
 
-import java.util.Calendar;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -17,26 +19,60 @@ import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.rtm.RtmSettings;
 
 
-public class Settings extends ContentObserver implements
-         OnSharedPreferenceChangeListener
+public class Settings implements OnSharedPreferenceChangeListener
 {
-   public int SRC_RTM = 0;
+   private final static class ListenerEntry
+   {
+      public final int mask;
+      
+      public final WeakReference< IOnSettingsChangedListener > listener;
+      
+      
+
+      public ListenerEntry( int setting, IOnSettingsChangedListener listener )
+      {
+         this.mask = setting;
+         this.listener = new WeakReference< IOnSettingsChangedListener >( listener );
+      }
+      
+
+
+      boolean notifyIfMatches( int setting )
+      {
+         boolean ok = listener.get() != null;
+         
+         if ( ok && ( ( mask & setting ) != 0 ) )
+            listener.get().onSettingsChanged( setting );
+         
+         return ok;
+      }
+   }
    
-   public int SRC_LOCAL = 1;
+   public final static int DATEFORMAT_EU = 0;
    
-   public int SRC_DEFAULT = 2;
+   public final static int DATEFORMAT_US = 1;
    
-   public int DATEFORMAT_EU = 0;
+   public final static int TIMEFORMAT_12 = 0;
    
-   public int DATEFORMAT_US = 1;
+   public final static int TIMEFORMAT_24 = 1;
    
-   public int TIMEFORMAT_12 = 0;
+   public final static int SETTINGS_RTM_TIMEZONE = 1 << 0;
    
-   public int TIMEFORMAT_24 = 1;
+   public final static int SETTINGS_RTM_DATEFORMAT = 1 << 1;
+   
+   public final static int SETTINGS_RTM_TIMEFORMAT = 1 << 2;
+   
+   public final static int SETTINGS_RTM_DEFAULTLIST = 1 << 3;
+   
+   public final static int SETTINGS_ALL = Integer.MAX_VALUE;
    
    private final Context context;
    
    private final SharedPreferences preferences;
+   
+   // TODO: No check for double registration, no check for registration of same listener
+   // with different mask. In these cases the listener gets notified multiple times.
+   private final ArrayList< ListenerEntry > listeners = new ArrayList< ListenerEntry >();
    
    private RtmSettings rtmSettings;
    
@@ -44,8 +80,6 @@ public class Settings extends ContentObserver implements
 
    public Settings( Context context, Handler handler )
    {
-      super( handler );
-      
       this.context = context;
       
       preferences = PreferenceManager.getDefaultSharedPreferences( context );
@@ -63,27 +97,50 @@ public class Settings extends ContentObserver implements
       context.getContentResolver()
              .registerContentObserver( dev.drsoran.provider.Rtm.Settings.CONTENT_URI,
                                        true,
-                                       this );
+                                       new ContentObserver( handler )
+                                       {
+                                          // This should be called from the main thread,
+                                          // see handler parameter.
+                                          @Override
+                                          public void onChange( boolean selfChange )
+                                          {
+                                             loadRtmSettings();
+                                          }
+                                       } );
    }
    
 
 
-   synchronized public TimeZone getTimezone()
+   public void registerOnSettingsChangedListener( int which,
+                                                  IOnSettingsChangedListener listener )
    {
-      TimeZone timeZone = TimeZone.getTimeZone( preferences.getString( context.getString( R.string.key_timezone_local ),
-                                                                       "" ) );
-      
-      if ( timeZone == null )
+      if ( listener != null )
       {
-         timeZone = Calendar.getInstance().getTimeZone();
+         listeners.add( new ListenerEntry( which, listener ) );
       }
-      
-      return timeZone;
    }
    
 
 
-   synchronized public int getDateformat()
+   public void unregisterOnSettingsChangedListener( IOnSettingsChangedListener listener )
+   {
+      if ( listener != null )
+      {
+         removeListener( listener );
+      }
+   }
+   
+
+
+   public TimeZone getTimezone()
+   {
+      return TimeZone.getTimeZone( preferences.getString( context.getString( R.string.key_timezone_local ),
+                                                          TimeZone.getDefault().getID() ) );
+   }
+   
+
+
+   public int getDateformat()
    {
       return Integer.parseInt( preferences.getString( context.getString( R.string.key_dateformat_local ),
                                                       "0" ) );
@@ -91,7 +148,7 @@ public class Settings extends ContentObserver implements
    
 
 
-   synchronized public int getTimeformat()
+   public int getTimeformat()
    {
       return Integer.parseInt( preferences.getString( context.getString( R.string.key_timeformat_local ),
                                                       "0" ) );
@@ -99,7 +156,7 @@ public class Settings extends ContentObserver implements
    
 
 
-   synchronized public String getDefaultListId()
+   public String getDefaultListId()
    {
       return preferences.getString( context.getString( R.string.key_def_list_local ),
                                     null );
@@ -107,7 +164,7 @@ public class Settings extends ContentObserver implements
    
 
 
-   synchronized public Locale getLanguage()
+   public Locale getLanguage()
    {
       Locale language = null;
       
@@ -142,116 +199,107 @@ public class Settings extends ContentObserver implements
    
 
 
-   @Override
-   public void onChange( boolean selfChange )
+   public void onSharedPreferenceChanged( SharedPreferences newValue, String key )
    {
-      if ( !selfChange )
+      int settingsChanged = 0;
+      
+      if ( key.equals( context.getString( R.string.key_timezone_local ) ) )
       {
-         final boolean newSettings = loadRtmSettings();
-         
-         // TODO: Notify settings changed
+         settingsChanged = SETTINGS_RTM_TIMEZONE;
       }
-      
-      super.onChange( selfChange );
-   }
-   
-
-
-   public void onSharedPreferenceChanged( SharedPreferences newValue,
-                                          String key )
-   {
-      boolean notifyChanged = false;
-      
-      if ( key.equals( context.getString( R.string.key_timezone_local ) )
-         || key.equals( context.getString( R.string.key_dateformat_local ) )
-         || key.equals( context.getString( R.string.key_timeformat_local ) )
-         || key.equals( context.getString( R.string.key_def_list_local ) ) )
+      else if ( key.equals( context.getString( R.string.key_dateformat_local ) ) )
       {
-         notifyChanged = !newValue.getString( key, null )
-                                           .equals( preferences.getString( key,
-                                                                           null ) );
+         settingsChanged = SETTINGS_RTM_DATEFORMAT;
+      }
+      else if ( key.equals( context.getString( R.string.key_timeformat_local ) ) )
+      {
+         settingsChanged = SETTINGS_RTM_TIMEFORMAT;
+      }
+      else if ( key.equals( context.getString( R.string.key_def_list_local ) ) )
+      {
+         settingsChanged = SETTINGS_RTM_DEFAULTLIST;
       }
       else if ( key.equals( context.getString( R.string.key_timezone_sync_with_rtm ) ) )
       {
          if ( newValue.getBoolean( key, true ) )
          {
-            notifyChanged = setTimezone();
+            setTimezone();
          }
       }
       else if ( key.equals( context.getString( R.string.key_dateformat_sync_with_rtm ) ) )
       {
          if ( newValue.getBoolean( key, true ) )
          {
-            notifyChanged = setDateformat();
+            setDateformat();
          }
       }
       else if ( key.equals( context.getString( R.string.key_timeformat_sync_with_rtm ) ) )
       {
          if ( newValue.getBoolean( key, true ) )
          {
-            notifyChanged = setTimeformat();
+            setTimeformat();
          }
       }
       else if ( key.equals( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
       {
          if ( newValue.getBoolean( key, true ) )
          {
-            notifyChanged = setDefaultListId();
+            setDefaultListId();
          }
       }
       
-      if ( notifyChanged )
-      {
-         // TODO: Notify changed
-      }
+      notifyListeners( settingsChanged );
    }
    
 
 
-   private boolean setTimezone()
+   private void setTimezone()
    {
+      TimeZone timeZone = null;
+      
       final String keySync = context.getString( R.string.key_timezone_sync_with_rtm );
       final String key = context.getString( R.string.key_timezone_local );
       final boolean useRtm = useRtmSetting( keySync );
       
       if ( useRtm )
       {
-         TimeZone timeZone = null;
+         timeZone = null;
          
          if ( rtmSettings != null && rtmSettings.getTimezone() != null )
          {
             timeZone = TimeZone.getTimeZone( rtmSettings.getTimezone() );
-            return persistSetting( key, keySync, timeZone.getID(), true );
+            persistSetting( key, keySync, timeZone.getID(), true );
          }
          else
          {
-            timeZone = Calendar.getInstance().getTimeZone();
-            return persistSetting( key, keySync, timeZone.getID(), true );
+            timeZone = TimeZone.getDefault();
+            persistSetting( key, keySync, timeZone.getID(), true );
          }
       }
+      else
+      {
+         timeZone = getTimezone();
+      }
       
-      return false;
+      TimeZone.setDefault( timeZone );
    }
    
 
 
-   private boolean setDateformat()
+   private void setDateformat()
    {
       final String keySync = context.getString( R.string.key_dateformat_sync_with_rtm );
       final String key = context.getString( R.string.key_dateformat_local );
       final boolean useRtm = useRtmSetting( keySync );
+    
+      int dateformat = DATEFORMAT_EU;
       
       if ( useRtm )
       {
-         int dateformat;
-         
          if ( rtmSettings != null )
          {
             dateformat = rtmSettings.getDateFormat();
-            return persistSetting( key,
-                                   keySync,
-                                   String.valueOf( dateformat ),
-                                   true );
+            persistSetting( key, keySync, String.valueOf( dateformat ), true );
          }
          else
          {
@@ -260,19 +308,14 @@ public class Settings extends ContentObserver implements
             dateformat = ( order.length > 0 && order[ 0 ] == DateFormat.DATE )
                                                                               ? DATEFORMAT_EU
                                                                               : DATEFORMAT_US;
-            return persistSetting( key,
-                                   keySync,
-                                   String.valueOf( dateformat ),
-                                   true );
+            persistSetting( key, keySync, String.valueOf( dateformat ), true );
          }
       }
-      
-      return false;
    }
    
 
 
-   private boolean setTimeformat()
+   private void setTimeformat()
    {
       final String keySync = context.getString( R.string.key_timeformat_sync_with_rtm );
       final String key = context.getString( R.string.key_timeformat_local );
@@ -285,29 +328,21 @@ public class Settings extends ContentObserver implements
          if ( rtmSettings != null )
          {
             timeformat = rtmSettings.getTimeFormat();
-            return persistSetting( key,
-                                   keySync,
-                                   String.valueOf( timeformat ),
-                                   true );
+            persistSetting( key, keySync, String.valueOf( timeformat ), true );
          }
          else
          {
             timeformat = ( DateFormat.is24HourFormat( context ) )
                                                                  ? TIMEFORMAT_24
                                                                  : TIMEFORMAT_12;
-            return persistSetting( key,
-                                   keySync,
-                                   String.valueOf( timeformat ),
-                                   true );
+            persistSetting( key, keySync, String.valueOf( timeformat ), true );
          }
       }
-      
-      return false;
    }
    
 
 
-   private boolean setDefaultListId()
+   private void setDefaultListId()
    {
       final String keySync = context.getString( R.string.key_def_list_sync_with_rtm );
       final String key = context.getString( R.string.key_def_list_local );
@@ -320,15 +355,13 @@ public class Settings extends ContentObserver implements
          if ( rtmSettings != null && rtmSettings.getDefaultListId() != null )
          {
             id = rtmSettings.getDefaultListId();
-            return persistSetting( key, keySync, id, true );
+            persistSetting( key, keySync, id, true );
          }
          else
          {
-            return persistSetting( key, keySync, null, true );
+            persistSetting( key, keySync, null, true );
          }
       }
-      
-      return false;
    }
    
 
@@ -351,33 +384,27 @@ public class Settings extends ContentObserver implements
    
 
 
-   private boolean persistSetting( String key,
-                                   String keySync,
-                                   String value,
-                                   boolean useRtm )
+   private void persistSetting( String key,
+                                String keySync,
+                                String value,
+                                boolean useRtm )
    {
-      boolean changed = false;
-      
       final Editor editor = preferences.edit();
       
       if ( !preferences.getString( key, "" ).equals( value ) )
       {
          editor.putString( key, value ).commit();
-         changed = true;
       }
       
       if ( preferences.getBoolean( keySync, true ) != useRtm )
       {
          editor.putBoolean( keySync, useRtm ).commit();
-         changed = true;
       }
-      
-      return changed;
    }
    
 
 
-   synchronized private boolean loadRtmSettings()
+   private void loadRtmSettings()
    {
       final ContentProviderClient client = context.getContentResolver()
                                                   .acquireContentProviderClient( dev.drsoran.provider.Rtm.Settings.CONTENT_URI );
@@ -386,12 +413,47 @@ public class Settings extends ContentObserver implements
       {
          rtmSettings = RtmSettingsProviderPart.getSettings( client );
          
+         client.release();
+         
          setTimezone();
          setDateformat();
          setTimeformat();
          setDefaultListId();
-         
-         return true;
+      }
+   }
+   
+
+
+   private void notifyListeners( int mask )
+   {
+      if ( mask > 0 )
+      {
+         for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
+         {
+            ListenerEntry entry = i.next();
+            
+            // Check if we have a dead entry
+            if ( !entry.notifyIfMatches( mask ) )
+            {
+               i.remove();
+            }
+         }
+      }
+   }
+   
+
+
+   private boolean removeListener( IOnSettingsChangedListener listener )
+   {
+      final int size = listeners.size();
+      
+      for ( int i = 0; i < size; i++ )
+      {
+         if ( listener == listeners.get( i ).listener )
+         {
+            listeners.remove( i );
+            return true;
+         }
       }
       
       return false;

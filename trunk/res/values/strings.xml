@@ -122,7 +122,7 @@
    <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
    <string name="moloko_prefs_rtm_summary">Zeitzone, Zeit- und Datumsformat, usw.</string>
    <string name="moloko_prefs_rtm_sync_text_in_sync">RTM Einstellungen zuletzt am %1$s abgerufen.</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Standardeinstellungen verwendet.</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen klicken.</string>
    <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
    <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
    <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(TT/MM/YYYY)</string>
@@ -131,6 +131,7 @@
    <string name="moloko_prefs_rtm_timeformat_12">12h</string>
    <string name="moloko_prefs_rtm_timeformat_24">24h</string>
    <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
+   <string name="moloko_prefs_rtm_defaultlist_no_lists">Es sind keine Listen vorhanden.</string>
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">RTM Einstellungen werden abgerufen</string>
       

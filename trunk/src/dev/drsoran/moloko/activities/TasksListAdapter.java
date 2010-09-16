@@ -6,7 +6,6 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +22,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.util.DateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.rtm.ListTask;
@@ -133,7 +133,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    {
       // if has a due date
       if ( task.getDue() != null )
-      {
+      {         
          String dueText = null;
          
          final long dueMillis = task.getDue().getTime();
@@ -226,6 +226,8 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                {
                   final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
                                                                                   task.getId() );
+                  client.release();
+                  
                   if ( rtmNotes != null )
                   {
                      notes = rtmNotes.getNotes();

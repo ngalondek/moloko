@@ -14,7 +14,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.ContentObserver;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.rtm.RtmSettings;
 
@@ -48,21 +47,11 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-   public final static int DATEFORMAT_EU = 0;
-   
-   public final static int DATEFORMAT_US = 1;
-   
-   public final static int TIMEFORMAT_12 = 0;
-   
-   public final static int TIMEFORMAT_24 = 1;
-   
    public final static int SETTINGS_RTM_TIMEZONE = 1 << 0;
    
-   public final static int SETTINGS_RTM_DATEFORMAT = 1 << 1;
+   public final static int SETTINGS_RTM_DEFAULTLIST = 1 << 1;
    
-   public final static int SETTINGS_RTM_TIMEFORMAT = 1 << 2;
-   
-   public final static int SETTINGS_RTM_DEFAULTLIST = 1 << 3;
+   public final static int SETTINGS_RTM_LANGUAGE = 1 << 2;
    
    public final static int SETTINGS_ALL = Integer.MAX_VALUE;
    
@@ -75,6 +64,12 @@ public class Settings implements OnSharedPreferenceChangeListener
    private final ArrayList< ListenerEntry > listeners = new ArrayList< ListenerEntry >();
    
    private RtmSettings rtmSettings;
+   
+   private TimeZone timeZone;
+   
+   private String defaultListId;
+   
+   private Locale locale;
    
    
 
@@ -134,60 +129,31 @@ public class Settings implements OnSharedPreferenceChangeListener
 
    public TimeZone getTimezone()
    {
-      return TimeZone.getTimeZone( preferences.getString( context.getString( R.string.key_timezone_local ),
-                                                          TimeZone.getDefault().getID() ) );
-   }
-   
-
-
-   public int getDateformat()
-   {
-      return Integer.parseInt( preferences.getString( context.getString( R.string.key_dateformat_local ),
-                                                      "0" ) );
-   }
-   
-
-
-   public int getTimeformat()
-   {
-      return Integer.parseInt( preferences.getString( context.getString( R.string.key_timeformat_local ),
-                                                      "0" ) );
+      return timeZone;
    }
    
 
 
    public String getDefaultListId()
    {
-      return preferences.getString( context.getString( R.string.key_def_list_local ),
-                                    null );
+      return defaultListId;
    }
    
 
 
-   public Locale getLanguage()
+   public void setDefaultListId( String id )
    {
-      Locale language = null;
-      
-      if ( rtmSettings != null && rtmSettings.getLanguage() != null )
-      {
-         final String rtmLang = rtmSettings.getLanguage();
-         final Locale[] locales = Locale.getAvailableLocales();
-         
-         for ( int i = 0; i < locales.length && language == null; i++ )
-         {
-            if ( locales[ i ].getLanguage().equals( rtmLang ) )
-            {
-               language = locales[ i ];
-            }
-         }
-      }
-      
-      if ( language == null )
-      {
-         language = Locale.getDefault();
-      }
-      
-      return language;
+      persistSetting( context.getString( R.string.key_def_list_local ),
+                      context.getString( R.string.key_def_list_sync_with_rtm ),
+                      id,
+                      false );
+   }
+   
+
+
+   public Locale getLocale()
+   {
+      return locale;
    }
    
 
@@ -203,49 +169,20 @@ public class Settings implements OnSharedPreferenceChangeListener
    {
       int settingsChanged = 0;
       
-      if ( key.equals( context.getString( R.string.key_timezone_local ) ) )
+      if ( key.equals( context.getString( R.string.key_timezone_local ) )
+         || key.equals( context.getString( R.string.key_timezone_sync_with_rtm ) ) )
       {
-         settingsChanged = SETTINGS_RTM_TIMEZONE;
+         settingsChanged = setTimezone();
       }
-      else if ( key.equals( context.getString( R.string.key_dateformat_local ) ) )
+      else if ( key.equals( context.getString( R.string.key_def_list_local ) )
+         || key.equals( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
       {
-         settingsChanged = SETTINGS_RTM_DATEFORMAT;
+         settingsChanged = setDefaultListId();
       }
-      else if ( key.equals( context.getString( R.string.key_timeformat_local ) ) )
+      else if ( key.equals( context.getString( R.string.key_lang_local ) )
+         || key.equals( context.getString( R.string.key_lang_sync_with_rtm ) ) )
       {
-         settingsChanged = SETTINGS_RTM_TIMEFORMAT;
-      }
-      else if ( key.equals( context.getString( R.string.key_def_list_local ) ) )
-      {
-         settingsChanged = SETTINGS_RTM_DEFAULTLIST;
-      }
-      else if ( key.equals( context.getString( R.string.key_timezone_sync_with_rtm ) ) )
-      {
-         if ( newValue.getBoolean( key, true ) )
-         {
-            setTimezone();
-         }
-      }
-      else if ( key.equals( context.getString( R.string.key_dateformat_sync_with_rtm ) ) )
-      {
-         if ( newValue.getBoolean( key, true ) )
-         {
-            setDateformat();
-         }
-      }
-      else if ( key.equals( context.getString( R.string.key_timeformat_sync_with_rtm ) ) )
-      {
-         if ( newValue.getBoolean( key, true ) )
-         {
-            setTimeformat();
-         }
-      }
-      else if ( key.equals( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
-      {
-         if ( newValue.getBoolean( key, true ) )
-         {
-            setDefaultListId();
-         }
+         settingsChanged = setLocale();
       }
       
       notifyListeners( settingsChanged );
@@ -253,9 +190,9 @@ public class Settings implements OnSharedPreferenceChangeListener
    
 
 
-   private void setTimezone()
+   private int setTimezone()
    {
-      TimeZone timeZone = null;
+      TimeZone newTimeZone;
       
       final String keySync = context.getString( R.string.key_timezone_sync_with_rtm );
       final String key = context.getString( R.string.key_timezone_local );
@@ -263,105 +200,123 @@ public class Settings implements OnSharedPreferenceChangeListener
       
       if ( useRtm )
       {
-         timeZone = null;
+         newTimeZone = null;
          
          if ( rtmSettings != null && rtmSettings.getTimezone() != null )
          {
-            timeZone = TimeZone.getTimeZone( rtmSettings.getTimezone() );
-            persistSetting( key, keySync, timeZone.getID(), true );
+            newTimeZone = TimeZone.getTimeZone( rtmSettings.getTimezone() );
+            persistSetting( key, keySync, newTimeZone.getID(), true );
          }
          else
          {
-            timeZone = TimeZone.getDefault();
-            persistSetting( key, keySync, timeZone.getID(), true );
+            newTimeZone = TimeZone.getDefault();
+            persistSetting( key, keySync, newTimeZone.getID(), true );
          }
       }
       else
       {
-         timeZone = getTimezone();
+         newTimeZone = TimeZone.getTimeZone( preferences.getString( key,
+                                                                    TimeZone.getDefault()
+                                                                            .getID() ) );
+         persistSetting( key, keySync, newTimeZone.getID(), false );
       }
       
-      TimeZone.setDefault( timeZone );
-   }
-   
-
-
-   private void setDateformat()
-   {
-      final String keySync = context.getString( R.string.key_dateformat_sync_with_rtm );
-      final String key = context.getString( R.string.key_dateformat_local );
-      final boolean useRtm = useRtmSetting( keySync );
-    
-      int dateformat = DATEFORMAT_EU;
+      if ( newTimeZone == null )
+         newTimeZone = TimeZone.getDefault();
       
-      if ( useRtm )
+      if ( !newTimeZone.getID().equals( timeZone ) )
       {
-         if ( rtmSettings != null )
-         {
-            dateformat = rtmSettings.getDateFormat();
-            persistSetting( key, keySync, String.valueOf( dateformat ), true );
-         }
-         else
-         {
-            final char[] order = DateFormat.getDateFormatOrder( context );
-            
-            dateformat = ( order.length > 0 && order[ 0 ] == DateFormat.DATE )
-                                                                              ? DATEFORMAT_EU
-                                                                              : DATEFORMAT_US;
-            persistSetting( key, keySync, String.valueOf( dateformat ), true );
-         }
+         timeZone = newTimeZone;
+         return SETTINGS_RTM_TIMEZONE;
       }
-   }
-   
-
-
-   private void setTimeformat()
-   {
-      final String keySync = context.getString( R.string.key_timeformat_sync_with_rtm );
-      final String key = context.getString( R.string.key_timeformat_local );
-      final boolean useRtm = useRtmSetting( keySync );
       
-      if ( useRtm )
-      {
-         int timeformat;
-         
-         if ( rtmSettings != null )
-         {
-            timeformat = rtmSettings.getTimeFormat();
-            persistSetting( key, keySync, String.valueOf( timeformat ), true );
-         }
-         else
-         {
-            timeformat = ( DateFormat.is24HourFormat( context ) )
-                                                                 ? TIMEFORMAT_24
-                                                                 : TIMEFORMAT_12;
-            persistSetting( key, keySync, String.valueOf( timeformat ), true );
-         }
-      }
+      return 0;
    }
    
 
 
-   private void setDefaultListId()
+   private int setDefaultListId()
    {
+      String newListId;
+      
       final String keySync = context.getString( R.string.key_def_list_sync_with_rtm );
       final String key = context.getString( R.string.key_def_list_local );
       final boolean useRtm = useRtmSetting( keySync );
       
       if ( useRtm )
       {
-         String id;
-         
          if ( rtmSettings != null && rtmSettings.getDefaultListId() != null )
          {
-            id = rtmSettings.getDefaultListId();
-            persistSetting( key, keySync, id, true );
+            newListId = rtmSettings.getDefaultListId();
          }
          else
          {
-            persistSetting( key, keySync, null, true );
+            newListId = null;
+         }
+         
+         persistSetting( key, keySync, newListId, true );
+      }
+      else
+      {
+         newListId = preferences.getString( key, defaultListId );
+      }
+      
+      if ( ( defaultListId == null && newListId != null )
+         || ( defaultListId != null && newListId == null )
+         || !defaultListId.equals( newListId ) )
+      {
+         defaultListId = newListId;
+         return SETTINGS_RTM_DEFAULTLIST;
+      }
+      
+      return 0;
+   }
+   
+
+
+   private int setLocale()
+   {
+      Locale newLocale;
+      
+      final String keySync = context.getString( R.string.key_lang_sync_with_rtm );
+      final String key = context.getString( R.string.key_lang_local );
+      final boolean useRtm = useRtmSetting( keySync );
+      
+      if ( useRtm )
+      {
+         newLocale = null;
+         
+         if ( rtmSettings != null && rtmSettings.getLanguage() != null )
+         {
+            newLocale = getLocaleFromLanguage( rtmSettings.getLanguage() );
+            persistSetting( key, keySync, newLocale.getLanguage(), true );
+         }
+         else
+         {
+            newLocale = Locale.getDefault();
+            persistSetting( key, keySync, newLocale.getLanguage(), true );
          }
       }
+      else
+      {
+         newLocale = getLocaleFromLanguage( preferences.getString( key,
+                                                                   Locale.getDefault()
+                                                                         .getLanguage() ) );
+         persistSetting( key, keySync, newLocale.getLanguage(), false );
+      }
+      
+      if ( newLocale == null )
+      {
+         newLocale = Locale.getDefault();
+      }
+      
+      if ( !newLocale.equals( locale ) )
+      {
+         locale = newLocale;
+         return SETTINGS_RTM_LANGUAGE;
+      }
+      
+      return 0;
    }
    
 
@@ -416,9 +371,8 @@ public class Settings implements OnSharedPreferenceChangeListener
          client.release();
          
          setTimezone();
-         setDateformat();
-         setTimeformat();
          setDefaultListId();
+         setLocale();
       }
    }
    
@@ -457,5 +411,24 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
       
       return false;
+   }
+   
+
+
+   private static Locale getLocaleFromLanguage( String language )
+   {
+      Locale locale = null;
+      
+      final Locale[] locales = Locale.getAvailableLocales();
+      
+      for ( int i = 0; i < locales.length && locale == null; i++ )
+      {
+         if ( locales[ i ].getLanguage().equals( language ) )
+         {
+            locale = locales[ i ];
+         }
+      }
+      
+      return locale;
    }
 }

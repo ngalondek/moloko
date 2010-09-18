@@ -14,6 +14,14 @@
 	   android:layout_weight="1"
 	   android:text="ListName"	   
 	   android:padding="10sp" />
+	   
+	 <LinearLayout
+	   android:id="@+id/tasklists_listitem_icons_container"
+	   android:layout_width="wrap_content"
+	   android:layout_height="wrap_content"
+	   android:layout_gravity="center_vertical"
+	   android:orientation="horizontal"
+	   android:visibility="gone" />
 	      
     <TextView
        android:id="@+id/tasklists_listitem_num_tasks"
@@ -22,7 +30,7 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:layout_marginLeft="5sp"
-       android:layout_marginRight="5sp"
+       android:layout_marginRight="?android:attr/scrollbarSize"
        android:layout_centerVertical="true"
        android:text="num_tasks"
        android:gravity="center" />	

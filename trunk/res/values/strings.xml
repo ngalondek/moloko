@@ -16,7 +16,7 @@
    <string name="g_settings_src_rtm_btn">Einstellung vom RTM Server übernehmen</string>
    <string name="g_settings_src_rtm">Vom RTM Server geladen</string>
    <string name="g_settings_src_local">Lokale Einstellung</string>
-   <string name="g_no_account">Kein RTM Konto vorhanden. Ein neues Konto kann unter Einstellungen->Konten und Synchronisation angelegt werden.</string>
+   <string name="g_no_account">Kein RTM Konto vorhanden. Ein neues Konto kann durch einen Klick hinzugefügt werden</string>
 
 	<!-- Global keys -->
 	<string name="key_auth">auth</string>
@@ -30,12 +30,10 @@
 	<string name="key_sync_inverval">sync_interval</string>
 	<string name="key_timezone_local">timezone_local</string>
 	<string name="key_timezone_sync_with_rtm">timezone_sync_with_rtm</string>
-	<string name="key_dateformat_local">dateformat_local</string>
-	<string name="key_dateformat_sync_with_rtm">dateformat_sync_with_rtm</string>
-	<string name="key_timeformat_local">timeformat_local</string>
-	<string name="key_timeformat_sync_with_rtm">timeformat_sync_with_rtm</string>
 	<string name="key_def_list_local">def_list_local</string>
 	<string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
+	<string name="key_lang_local">lang_local</string>
+   <string name="key_lang_sync_with_rtm">lang_sync_with_rtm</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
@@ -55,10 +53,14 @@
    <string name="err_canceled">Abgebrochen</string>   
    <string name="err_saving_preferences">Fehler beim Speichern der Einstellungen</string>
    <string name="err_not_connected">Keine Verbindung</string>
+   <string name="err_add_account_canceled">Das Hinzufügen eines neuen Kontos wurde abgebrochen</string>
+   <string name="err_unexpected">Wenn Sie dies lesen könne LAUFEN SIE SO SCHNELL SIE KÖNNEN!</string>
+   
    
 	<!-- Global buttons -->
 	<string name="btn_ok">OK</string>
 	<string name="btn_continue">Weiter</string>
+	<string name="btn_cancel">Abbrechen</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
@@ -93,6 +95,10 @@
      <string name="abstaskslist_dlg_sort_prio">Priorität</string>
      <string name="abstaskslist_dlg_sort_due_date">Fälligkeitsdatum</string>	  
 	
+	<!-- TaskLists activity -->
+     <!-- Menus -->
+     <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
+	
 	<!-- TasksList activity -->
 	<string name="taskslist_titlebar">%1$s</string>
 	  <!-- Menus -->
@@ -123,15 +129,10 @@
    <string name="moloko_prefs_rtm_summary">Zeitzone, Zeit- und Datumsformat, usw.</string>
    <string name="moloko_prefs_rtm_sync_text_in_sync">RTM Einstellungen zuletzt am %1$s abgerufen.</string>
    <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen klicken.</string>
-   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
-   <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
-   <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(TT/MM/YYYY)</string>
-   <string name="moloko_prefs_rtm_dateformat_us">Amerikanisch\n(MM/TT/YYYY)</string>
-   <string name="moloko_prefs_rtm_timeformat_title">Zeitformat</string>
-   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
-   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
+   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>   
    <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
    <string name="moloko_prefs_rtm_defaultlist_no_lists">Es sind keine Listen vorhanden.</string>
+   <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">RTM Einstellungen werden abgerufen</string>
       

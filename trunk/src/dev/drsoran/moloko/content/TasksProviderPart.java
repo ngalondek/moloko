@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -172,6 +174,36 @@ public class TasksProviderPart extends AbstractProviderPart
    }
    
    
+
+   public final static void registerContentObserver( Context context,
+                                                     ContentObserver observer )
+   {
+      context.getContentResolver().registerContentObserver( Lists.CONTENT_URI,
+                                                            true,
+                                                            observer );
+      context.getContentResolver()
+             .registerContentObserver( TaskSeries.CONTENT_URI, true, observer );
+      context.getContentResolver()
+             .registerContentObserver( RawTasks.CONTENT_URI, true, observer );
+      context.getContentResolver()
+             .registerContentObserver( Locations.CONTENT_URI, true, observer );
+      context.getContentResolver().registerContentObserver( Tags.CONTENT_URI,
+                                                            true,
+                                                            observer );
+      context.getContentResolver().registerContentObserver( Notes.CONTENT_URI,
+                                                            true,
+                                                            observer );
+   }
+   
+
+
+   public final static void unregisterContentObserver( Context context,
+                                                       ContentObserver observer )
+   {
+      context.getContentResolver().unregisterContentObserver( observer );
+   }
+   
+
 
    public final static Task getTask( ContentProviderClient client, String id )
    {

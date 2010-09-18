@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,7 +12,10 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.UIUtils;
@@ -21,12 +25,31 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class TaskListsActivity extends ListActivity
+public class TaskListsActivity extends ListActivity implements
+         IOnSettingsChangedListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = TaskListsActivity.class.getSimpleName();
    
-   private final int CTX_MENU_OPEN_LIST = 0;
+   
+   protected static class OptionsMenu
+   {
+      protected final static int START_IDX = 0;
+      
+      private final static int MENU_ORDER_STATIC = 10000;
+      
+      public final static int MENU_ORDER = MENU_ORDER_STATIC - 1;
+      
+      public final static int SETTINGS = START_IDX + 1;
+   }
+   
+
+   protected static class CtxtMenu
+   {
+      public final static int OPEN_LIST = 1;
+      
+      public final static int MAKE_DEFAULT_LIST = 2;
+   }
    
    
 
@@ -42,6 +65,37 @@ public class TaskListsActivity extends ListActivity
       
       if ( !( getListAdapter() instanceof TaskListsAdapter ) )
          queryLists();
+      
+      MolokoApp.getSettings()
+               .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_DEFAULTLIST,
+                                                   this );
+   }
+   
+
+
+   @Override
+   protected void onDestroy()
+   {
+      super.onDestroy();
+      
+      unregisterForContextMenu( getListView() );
+      
+      MolokoApp.getSettings().unregisterOnSettingsChangedListener( this );
+   }
+   
+
+
+   @Override
+   public boolean onCreateOptionsMenu( Menu menu )
+   {
+      menu.add( Menu.NONE,
+                OptionsMenu.SETTINGS,
+                OptionsMenu.MENU_ORDER_STATIC,
+                R.string.phr_settings )
+          .setIcon( R.drawable.icon_settings_black )
+          .setIntent( new Intent( this, MolokoPreferencesActivity.class ) );
+      
+      return true;
    }
    
 
@@ -56,10 +110,18 @@ public class TaskListsActivity extends ListActivity
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
       
       menu.add( Menu.NONE,
-                CTX_MENU_OPEN_LIST,
+                CtxtMenu.OPEN_LIST,
                 Menu.NONE,
                 getString( R.string.phr_open_with_name,
                            getRtmList( info.position ).getName() ) );
+      
+      final RtmListWithTaskCount list = getRtmList( info.position );
+      
+      if ( !list.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
+         menu.add( Menu.NONE,
+                   CtxtMenu.MAKE_DEFAULT_LIST,
+                   Menu.NONE,
+                   getString( R.string.tasklists_menu_ctx_make_def_list ) );
    }
    
 
@@ -71,8 +133,13 @@ public class TaskListsActivity extends ListActivity
       
       switch ( item.getItemId() )
       {
-         case CTX_MENU_OPEN_LIST:
+         case CtxtMenu.OPEN_LIST:
             openList( getRtmList( info.position ) );
+            return true;
+            
+         case CtxtMenu.MAKE_DEFAULT_LIST:
+            MolokoApp.getSettings()
+                     .setDefaultListId( getRtmList( info.position ).getId() );
             return true;
             
          default :
@@ -86,6 +153,20 @@ public class TaskListsActivity extends ListActivity
    protected void onListItemClick( ListView l, View v, int position, long id )
    {
       openList( getRtmList( position ) );
+   }
+   
+
+
+   public void onSettingsChanged( int which )
+   {
+      final Handler handler = new Handler();
+      handler.post( new Runnable()
+      {
+         public void run()
+         {
+            onContentChanged();
+         }
+      } );
    }
    
 

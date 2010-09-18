@@ -67,21 +67,23 @@
 	      android:id="@+id/taskslist_listitem_tags"
          android:layout_height="wrap_content"
          android:layout_width="fill_parent"
-         android:layout_marginLeft="@dimen/taskslist_listitem_col_space" />
+         android:layout_marginLeft="@dimen/taskslist_listitem_col_space"
+         android:layout_marginRight="?android:attr/scrollbarSize" />
 
       <ViewStub
          android:id="@+id/taskslist_listitem_notes_stub"
          android:layout="@layout/taskslist_listitem_notes_layout"
          android:inflatedId="@+id/taskslist_listitem_notes"
          android:layout_height="fill_parent"
-         android:layout_width="fill_parent" />
+         android:layout_width="fill_parent"
+         android:layout_marginRight="?android:attr/scrollbarSize" />
          
       <TextView
          android:id="@+id/taskslist_listitem_due_date"
          style="@style/TasksList_ListItem_DueDate"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:layout_marginRight="@dimen/taskslist_listitem_widget_space_sml"        
+         android:layout_marginRight="?android:attr/scrollbarSize"        
          android:text="due_date"
          android:singleLine="true"
          android:gravity="right"

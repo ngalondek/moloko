@@ -1,5 +1,6 @@
 package dev.drsoran.moloko.activities;
 
+import java.text.DateFormat;
 import java.util.List;
 
 import android.app.Activity;
@@ -9,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.TextUtils;
-
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -23,7 +23,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.util.DateUtils;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -34,8 +34,7 @@ public class TaskActivity extends Activity
 {
    private final static String TAG = TaskActivity.class.getSimpleName();
    
-   private final int FULL_DATE_FLAGS = DateUtils.LENGTH_MEDIUM
-      | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME;
+   private final int FULL_DATE_FLAGS = DateFormat.MEDIUM;
    
    
 
@@ -96,16 +95,14 @@ public class TaskActivity extends Activity
                   throw e;
                }
                
-               addedDate.setText( DateUtils.formatDateTime( this,
-                                                            task.getAdded()
-                                                                .getTime(),
-                                                            FULL_DATE_FLAGS ) );
+               addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
+                                                                      .getTime(),
+                                                                  DateFormat.LONG ) );
                
                if ( task.getCompleted() != null )
-                  completedDate.setText( DateUtils.formatDateTime( this,
-                                                                   task.getCompleted()
-                                                                       .getTime(),
-                                                                   FULL_DATE_FLAGS ) );
+                  completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
+                                                                             .getTime(),
+                                                                         DateFormat.LONG ) );
                else
                   completedDate.setVisibility( View.GONE );
                
@@ -157,17 +154,17 @@ public class TaskActivity extends Activity
          
          if ( hasDue )
          {
-            int flags = DateUtils.LENGTH_LONG | DateUtils.FORMAT_SHOW_DATE
-               | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_SHOW_YEAR;
-            
             if ( task.hasDueTime() )
-               flags |= DateUtils.FORMAT_SHOW_TIME;
+               UIUtils.appendAtNewLine( textBuffer,
+                                        MolokoDateUtils.formatDateTime( task.getDue()
+                                                                            .getTime(),
+                                                                        DateFormat.FULL ) );
+            else
+               UIUtils.appendAtNewLine( textBuffer,
+                                        MolokoDateUtils.formatDate( task.getDue()
+                                                                        .getTime(),
+                                                                    DateFormat.FULL ) );
             
-            UIUtils.appendAtNewLine( textBuffer,
-                                     DateUtils.formatDateTime( this,
-                                                               task.getDue()
-                                                                   .getTime(),
-                                                               flags ) );
          }
          
          // TODO: Handle repeating tasks
@@ -235,10 +232,9 @@ public class TaskActivity extends Activity
                   try
                   {
                      final TextView createdDate = (TextView) noteView.findViewById( R.id.note_created_date );
-                     createdDate.setText( DateUtils.formatDateTime( this,
-                                                                    note.getCreated()
-                                                                        .getTime(),
-                                                                    FULL_DATE_FLAGS ) );
+                     createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
+                                                                              .getTime(),
+                                                                          FULL_DATE_FLAGS ) );
                   }
                   catch ( ClassCastException e )
                   {

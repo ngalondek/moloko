@@ -184,6 +184,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
 
 
+   public void onCancel( View view )
+   {
+      finish();
+   }
+   
+
+
    public void onPreBeginAuthentication()
    {
       showDialog( 0 );

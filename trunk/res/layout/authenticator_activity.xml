@@ -6,16 +6,16 @@
     android:layout_height="fill_parent">
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="0dip"
+        android:layout_height="0sp"
         android:layout_weight="1">
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingBottom="13dip"
-            android:paddingLeft="20dip"
-            android:paddingRight="20dip">
+            android:paddingBottom="13sp"
+            android:paddingLeft="20sp"
+            android:paddingRight="20sp">
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/auth_permission_label"
-                android:layout_marginTop="25dip"/>
+                android:layout_marginTop="25sp"/>
             <Spinner
                 android:id="@+id/auth_spin_permission"
                 android:layout_width="fill_parent"
@@ -72,25 +72,35 @@
                 android:id="@+id/auth_text_message"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dip"
-                android:layout_marginRight="10dip"
-                android:layout_marginTop="10dip" /> 
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
+                android:layout_marginTop="10sp" /> 
         </LinearLayout>
     </ScrollView>
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#c6c3c6"
-        android:minHeight="54dip"
-        android:paddingTop="4dip"
-        android:paddingLeft="2dip"
-        android:paddingRight="2dip">
+        android:minHeight="54sp"
+        android:paddingTop="4sp"
+        android:paddingLeft="2sp"
+        android:paddingRight="2sp">
+        <Button
+            android:id="@+id/auth_btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10sp"
+            android:minWidth="100sp"
+            android:text="@string/btn_cancel"
+            android:onClick="onCancel" />
         <Button
             android:id="@+id/auth_btn_continue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:minWidth="100dip"
+            android:layout_gravity="right"
+            android:layout_marginRight="10sp"
+            android:minWidth="100sp"
             android:text="@string/btn_continue"
             android:onClick="onAuthenticate" />
     </FrameLayout>

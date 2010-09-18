@@ -9,7 +9,9 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -29,6 +31,7 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.Queries;
+import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
 import dev.drsoran.moloko.util.UIUtils;
@@ -94,9 +97,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public final static int NOTES = 5;
    }
    
-   protected final Bundle configuration = new Bundle();
+   private final ContentObserver dbObserver = new ContentObserver( new Handler() )
+   {
+      @Override
+      public void onChange( boolean selfChange )
+      {
+         // Aggregate several calls to a single update.
+         // @see http://developer.android.com/resources/articles/timed-ui-updates.html
+      }
+   };
    
-   protected boolean settingsChanged = false;
+   protected final Bundle configuration = new Bundle();
    
    /**
     * Variable holds the temporary selected sort mode from the sort order AlertDialog. This will be made persistent if
@@ -116,26 +127,24 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       MolokoApp.getSettings()
                .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_TIMEZONE
-                                                      | Settings.SETTINGS_RTM_DATEFORMAT
-                                                      | Settings.SETTINGS_RTM_TIMEFORMAT,
+                                                      | Settings.SETTINGS_RTM_LANGUAGE,
                                                    this );
+      
+      TasksProviderPart.registerContentObserver( this, dbObserver );
    }
    
 
 
-   // @Override
-   // protected void onResume()
-   // {
-   // super.onResume();
-   // fillList();
-   // }
-   
    @Override
    protected void onDestroy()
    {
       super.onDestroy();
       
+      unregisterForContextMenu( getListView() );
+      
       MolokoApp.getSettings().unregisterOnSettingsChangedListener( this );
+      
+      TasksProviderPart.unregisterContentObserver( this, dbObserver );
    }
    
 
@@ -627,10 +636,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    public void onSettingsChanged( int which )
    {
-      settingsChanged = true;
-      
-      if ( hasWindowFocus() )
-         getListView().requestLayout();
+      onContentChanged();
    }
    
 
@@ -644,7 +650,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    protected boolean shouldFillList()
    {
-      return !isListFilled() || settingsChanged;
+      return !isListFilled();
    }
    
 

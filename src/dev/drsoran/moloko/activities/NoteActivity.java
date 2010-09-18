@@ -1,5 +1,6 @@
 package dev.drsoran.moloko.activities;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +20,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
-import dev.drsoran.moloko.util.DateUtils;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
@@ -159,7 +160,7 @@ public class NoteActivity extends Activity
                                    String taskId,
                                    String startNoteId )
    {
-      // Query all notes of task      
+      // Query all notes of task
       try
       {
          final RtmTaskNotes rtmTaskNotes = RtmNotesProviderPart.getAllNotes( client,
@@ -209,12 +210,9 @@ public class NoteActivity extends Activity
       try
       {
          final TextView createdDate = (TextView) findViewById( R.id.note_created_date );
-         createdDate.setText( DateUtils.formatDateTime( this,
-                                                        note.getCreated()
-                                                            .getTime(),
-                                                        DateUtils.LENGTH_MEDIUM
-                                                           | DateUtils.FORMAT_SHOW_DATE
-                                                           | DateUtils.FORMAT_SHOW_TIME ) );
+         createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
+                                                                  .getTime(),
+                                                              DateFormat.LONG ) );
          
          // TODO: Handle return value
          UIUtils.initializeTitleWithTextLayout( findViewById( R.id.note ),

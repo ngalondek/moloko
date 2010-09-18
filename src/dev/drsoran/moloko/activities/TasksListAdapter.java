@@ -1,11 +1,13 @@
 package dev.drsoran.moloko.activities;
 
+import java.text.DateFormat;
 import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,9 +22,10 @@ import android.widget.TextView;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
-import dev.drsoran.moloko.util.DateUtils;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.rtm.ListTask;
@@ -40,7 +43,9 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
    private final Bundle configuration;
    
-   private final Time now = new Time();
+   private final Time now = new Time( MolokoApp.getSettings()
+                                               .getTimezone()
+                                               .getID() );
    
    
 
@@ -133,28 +138,28 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    {
       // if has a due date
       if ( task.getDue() != null )
-      {         
+      {
          String dueText = null;
          
-         final long dueMillis = task.getDue().getTime();
+         final long dueMillisUtc = task.getDue().getTime();
          final boolean hasDueTime = task.hasDueTime();
          
          // Today
-         if ( DateUtils.isToday( dueMillis ) )
+         if ( DateUtils.isToday( dueMillisUtc ) )
          {
             // If it has a time, we show the time
             if ( hasDueTime )
-               dueText = DateUtils.formatDateTime( context,
-                                                   dueMillis,
-                                                   DateUtils.FORMAT_SHOW_TIME );
+               dueText = MolokoDateUtils.formatTime( dueMillisUtc );
             else
                // We only show the 'Today' phrase
                dueText = context.getString( R.string.phr_today );
          }
          else
          {
-            final Time dueTime = new Time();
-            dueTime.set( dueMillis );
+            final Time dueTime = new Time( MolokoApp.getSettings()
+                                           .getTimezone()
+                                           .getID() );
+            dueTime.set( dueMillisUtc );
             
             // If it is the same year
             if ( dueTime.year == now.year )
@@ -164,7 +169,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                   && dueTime.after( now ) )
                {
                   // we only show the week day
-                  dueText = DateUtils.getRelativeTimeSpanString( dueMillis,
+                  dueText = DateUtils.getRelativeTimeSpanString( dueMillisUtc,
                                                                  System.currentTimeMillis(),
                                                                  DateUtils.WEEK_IN_MILLIS,
                                                                  DateUtils.FORMAT_SHOW_WEEKDAY )
@@ -175,10 +180,8 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                else
                {
                   // we show the date but w/o year
-                  dueText = DateUtils.formatDateTime( context,
-                                                      dueMillis,
-                                                      DateUtils.FORMAT_SHOW_DATE
-                                                         | DateUtils.FORMAT_NO_YEAR );
+                  dueText = MolokoDateUtils.formatDate( dueMillisUtc,
+                                                        DateFormat.LONG );
                }
             }
             
@@ -186,9 +189,8 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
             else
             {
                // we show the full date with year
-               dueText = DateUtils.formatDateTime( context,
-                                                   dueMillis,
-                                                   DateUtils.FORMAT_SHOW_DATE );
+               dueText = MolokoDateUtils.formatDate( dueMillisUtc,
+                                                     DateFormat.LONG );
             }
          }
          

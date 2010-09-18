@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
@@ -44,11 +46,13 @@ public class TaskListsAdapter extends ArrayAdapter< RtmListWithTaskCount >
       
       TextView listName;
       TextView tasksCount;
+      ViewGroup iconsContainer;
       
       try
       {
          listName = (TextView) view.findViewById( R.id.tasklists_listitem_list_name );
          tasksCount = (TextView) view.findViewById( R.id.tasklists_listitem_num_tasks );
+         iconsContainer = (ViewGroup) view.findViewById( R.id.tasklists_listitem_icons_container );
       }
       catch ( ClassCastException e )
       {
@@ -82,6 +86,33 @@ public class TaskListsAdapter extends ArrayAdapter< RtmListWithTaskCount >
          }
       }
       
+      if ( rtmList.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
+      {
+         addIcon( iconsContainer, R.drawable.icon_flag_black );
+      }
+      
+      if ( rtmList.getLocked() != 0 )
+      {
+         addIcon( iconsContainer, R.drawable.icon_lock_black );
+      }
+      
       return view;
+   }
+   
+
+
+   private void addIcon( ViewGroup container, int resId )
+   {
+      container.setVisibility( View.VISIBLE );
+      
+      final ImageView icon = (ImageView) ImageView.inflate( getContext(),
+                                                            R.layout.tasklists_activity_listitem_icon,
+                                                            null );
+      
+      if ( icon != null )
+      {
+         icon.setImageResource( resId );
+         container.addView( icon );
+      }
    }
 }

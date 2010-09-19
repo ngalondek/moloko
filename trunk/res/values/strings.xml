@@ -30,6 +30,10 @@
 	<string name="key_sync_inverval">sync_interval</string>
 	<string name="key_timezone_local">timezone_local</string>
 	<string name="key_timezone_sync_with_rtm">timezone_sync_with_rtm</string>
+	<string name="key_dateformat_local">dateformat_local</string>
+	<string name="key_dateformat_sync_with_rtm">dateformat_sync_with_rtm</string>
+	<string name="key_timeformat_local">timeformat_local</string>
+	<string name="key_timeformat_sync_with_rtm">timeformat_sync_with_rtm</string>
 	<string name="key_def_list_local">def_list_local</string>
 	<string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
 	<string name="key_lang_local">lang_local</string>
@@ -129,7 +133,13 @@
    <string name="moloko_prefs_rtm_summary">Zeitzone, Zeit- und Datumsformat, usw.</string>
    <string name="moloko_prefs_rtm_sync_text_in_sync">RTM Einstellungen zuletzt am %1$s abgerufen.</string>
    <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen klicken.</string>
-   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>   
+   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
+   <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
+   <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(14.02.2000)</string>
+   <string name="moloko_prefs_rtm_dateformat_us">Amerikanisch\n(02/14/2000)</string>
+   <string name="moloko_prefs_rtm_timeformat_title">Zeitformat</string>
+   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
+   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
    <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
    <string name="moloko_prefs_rtm_defaultlist_no_lists">Es sind keine Listen vorhanden.</string>
    <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>

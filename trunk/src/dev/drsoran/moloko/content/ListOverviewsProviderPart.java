@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
+import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -51,6 +53,26 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    }
    
    
+
+   public final static void registerContentObserver( Context context,
+                                                     ContentObserver observer )
+   {
+      context.getContentResolver().registerContentObserver( Lists.CONTENT_URI,
+                                                            true,
+                                                            observer );
+      context.getContentResolver()
+             .registerContentObserver( TaskSeries.CONTENT_URI, true, observer );
+   }
+   
+
+
+   public final static void unregisterContentObserver( Context context,
+                                                       ContentObserver observer )
+   {
+      context.getContentResolver().unregisterContentObserver( observer );
+   }
+   
+
 
    public final static ArrayList< RtmListWithTaskCount > getListsOverview( ContentProviderClient client )
    {

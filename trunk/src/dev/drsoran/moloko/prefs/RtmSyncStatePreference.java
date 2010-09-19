@@ -1,7 +1,6 @@
 package dev.drsoran.moloko.prefs;
 
 import java.io.IOException;
-import java.text.DateFormat;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -150,7 +149,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
          {
             final String date = MolokoDateUtils.formatDate( settings.getSyncTimeStamp()
                                                                     .toMillis( false ),
-                                                            DateFormat.MEDIUM );
+                                                            MolokoDateUtils.FORMAT_NUMERIC
+                                                               | MolokoDateUtils.FORMAT_WITH_YEAR );
             
             setInfoText( getContext().getString( R.string.moloko_prefs_rtm_sync_text_in_sync,
                                                  date ) );

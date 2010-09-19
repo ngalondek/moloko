@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.activities;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -212,7 +211,7 @@ public class NoteActivity extends Activity
          final TextView createdDate = (TextView) findViewById( R.id.note_created_date );
          createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
                                                                   .getTime(),
-                                                              DateFormat.LONG ) );
+                                                              MolokoDateUtils.FORMAT_WITH_YEAR ) );
          
          // TODO: Handle return value
          UIUtils.initializeTitleWithTextLayout( findViewById( R.id.note ),

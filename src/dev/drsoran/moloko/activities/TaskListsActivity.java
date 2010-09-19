@@ -3,6 +3,7 @@ package dev.drsoran.moloko.activities;
 import android.app.ListActivity;
 import android.content.ContentProviderClient;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.ContextMenu;
@@ -18,6 +19,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -51,6 +53,26 @@ public class TaskListsActivity extends ListActivity implements
       public final static int MAKE_DEFAULT_LIST = 2;
    }
    
+   protected final Runnable queryListsRunnable = new Runnable()
+   {
+      public void run()
+      {
+         TaskListsActivity.this.queryLists();
+      }
+   };
+   
+   protected final Handler handler = new Handler();
+   
+   protected final ContentObserver dbObserver = new ContentObserver( handler )
+   {
+      @Override
+      public void onChange( boolean selfChange )
+      {
+         // Aggregate several calls to a single update.
+         DelayedRun.run( handler, queryListsRunnable, 1000 );
+      }
+   };
+   
    
 
    @Override
@@ -69,6 +91,8 @@ public class TaskListsActivity extends ListActivity implements
       MolokoApp.getSettings()
                .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_DEFAULTLIST,
                                                    this );
+      
+      ListOverviewsProviderPart.registerContentObserver( this, dbObserver );
    }
    
 
@@ -81,6 +105,8 @@ public class TaskListsActivity extends ListActivity implements
       unregisterForContextMenu( getListView() );
       
       MolokoApp.getSettings().unregisterOnSettingsChangedListener( this );
+      
+      ListOverviewsProviderPart.unregisterContentObserver( this, dbObserver );
    }
    
 

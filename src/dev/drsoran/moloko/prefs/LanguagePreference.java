@@ -13,11 +13,19 @@ public class LanguagePreference extends SyncableListPreference
 {
    private final static class Entry implements Comparable< Entry >
    {
-      public String displayLang;
+      public final String displayLang;
       
-      public String langCode;
+      public final String langCode;
       
       
+
+      public Entry( String disp, String code )
+      {
+         displayLang = disp;
+         langCode = code;
+      }
+      
+
 
       public int compareTo( Entry another )
       {
@@ -33,29 +41,26 @@ public class LanguagePreference extends SyncableListPreference
       
       final Locale systemLocale = context.getResources().getConfiguration().locale;
       final Locale[] locales = Locale.getAvailableLocales();
-      // final ArrayList< CharSequence > entriesTmp = new ArrayList< CharSequence >( locales.length / 2 );
-      // final ArrayList< CharSequence > valuesTmp = new ArrayList< CharSequence >( locales.length / 2 );
-      
       final TreeSet< Entry > set = new TreeSet< Entry >();
-      
-      String lastLanguage = null;
       
       for ( int i = 0; i < locales.length; i++ )
       {
          final Locale locale = locales[ i ];
-         final String language = locale.getDisplayLanguage( systemLocale );
          
-         if ( !TextUtils.isEmpty( language ) && !language.equals( lastLanguage ) )
+         if ( locale != null )
          {
-            lastLanguage = language;
+            final String language = locale.getDisplayLanguage( systemLocale );
             
-            final Entry entry = new Entry();
-            entry.displayLang = lastLanguage;
-            entry.langCode = locale.getLanguage();
-            
-            set.add( entry );
+            if ( !TextUtils.isEmpty( language ) )
+            {
+               final Entry entry = new Entry( language, locale.getLanguage() );
+               set.add( entry );
+            }
          }
       }
+      
+      set.add( new Entry( systemLocale.getDisplayLanguage( systemLocale ),
+                          systemLocale.getLanguage() ) );
       
       final CharSequence[] entries = new CharSequence[ set.size() ];
       final CharSequence[] values = new CharSequence[ set.size() ];

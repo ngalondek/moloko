@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.activities;
 
-import java.text.DateFormat;
 import java.util.List;
 
 import android.content.ContentProviderClient;
@@ -157,8 +156,8 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
          else
          {
             final Time dueTime = new Time( MolokoApp.getSettings()
-                                           .getTimezone()
-                                           .getID() );
+                                                    .getTimezone()
+                                                    .getID() );
             dueTime.set( dueMillisUtc );
             
             // If it is the same year
@@ -180,8 +179,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                else
                {
                   // we show the date but w/o year
-                  dueText = MolokoDateUtils.formatDate( dueMillisUtc,
-                                                        DateFormat.LONG );
+                  dueText = MolokoDateUtils.formatDate( dueMillisUtc, 0 );
                }
             }
             
@@ -190,7 +188,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
             {
                // we show the full date with year
                dueText = MolokoDateUtils.formatDate( dueMillisUtc,
-                                                     DateFormat.LONG );
+                                                     MolokoDateUtils.FORMAT_WITH_YEAR );
             }
          }
          

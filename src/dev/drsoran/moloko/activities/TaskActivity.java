@@ -1,6 +1,5 @@
 package dev.drsoran.moloko.activities;
 
-import java.text.DateFormat;
 import java.util.List;
 
 import android.app.Activity;
@@ -34,7 +33,7 @@ public class TaskActivity extends Activity
 {
    private final static String TAG = TaskActivity.class.getSimpleName();
    
-   private final int FULL_DATE_FLAGS = DateFormat.MEDIUM;
+   private final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
    
 
@@ -97,12 +96,12 @@ public class TaskActivity extends Activity
                
                addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
                                                                       .getTime(),
-                                                                  DateFormat.LONG ) );
+                                                                  FULL_DATE_FLAGS ) );
                
                if ( task.getCompleted() != null )
                   completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                              .getTime(),
-                                                                         DateFormat.LONG ) );
+                                                                         FULL_DATE_FLAGS ) );
                else
                   completedDate.setVisibility( View.GONE );
                
@@ -158,12 +157,14 @@ public class TaskActivity extends Activity
                UIUtils.appendAtNewLine( textBuffer,
                                         MolokoDateUtils.formatDateTime( task.getDue()
                                                                             .getTime(),
-                                                                        DateFormat.FULL ) );
+                                                                        MolokoDateUtils.FORMAT_WITH_YEAR
+                                                                           | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
             else
                UIUtils.appendAtNewLine( textBuffer,
                                         MolokoDateUtils.formatDate( task.getDue()
                                                                         .getTime(),
-                                                                    DateFormat.FULL ) );
+                                                                    MolokoDateUtils.FORMAT_WITH_YEAR
+                                                                       | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
             
          }
          

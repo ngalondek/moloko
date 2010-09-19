@@ -33,6 +33,7 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
@@ -97,13 +98,23 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public final static int NOTES = 5;
    }
    
-   private final ContentObserver dbObserver = new ContentObserver( new Handler() )
+   protected final Runnable fillListRunnable = new Runnable()
+   {
+      public void run()
+      {
+         AbstractTasksListActivity.this.fillList();
+      }
+   };
+   
+   protected final Handler handler = new Handler();
+   
+   protected final ContentObserver dbObserver = new ContentObserver( handler )
    {
       @Override
       public void onChange( boolean selfChange )
       {
          // Aggregate several calls to a single update.
-         // @see http://developer.android.com/resources/articles/timed-ui-updates.html
+         DelayedRun.run( handler, fillListRunnable, 1000 );
       }
    };
    
@@ -127,7 +138,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       MolokoApp.getSettings()
                .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_TIMEZONE
-                                                      | Settings.SETTINGS_RTM_LANGUAGE,
+                                                      | Settings.SETTINGS_RTM_DATEFORMAT
+                                                      | Settings.SETTINGS_RTM_TIMEFORMAT,
                                                    this );
       
       TasksProviderPart.registerContentObserver( this, dbObserver );

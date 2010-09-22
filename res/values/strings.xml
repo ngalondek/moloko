@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+   <string name="app_version">1.0.0</string>
+   <string name="app_version_code">0</string>
 	<string name="app_name">Moloko</string>
 	<string name="app_preferences">Einstellungen</string>
 	<string name="app_tasklists">Listen</string>
@@ -16,7 +18,7 @@
    <string name="g_settings_src_rtm_btn">Einstellung vom RTM Server übernehmen</string>
    <string name="g_settings_src_rtm">Vom RTM Server geladen</string>
    <string name="g_settings_src_local">Lokale Einstellung</string>
-   <string name="g_no_account">Kein RTM Konto vorhanden. Ein neues Konto kann durch einen Klick hinzugefügt werden</string>
+   <string name="g_no_account">Keine RTM Zugangsdaten vorhanden. Die Zugangsdaten können durch einen Klick hinterlegt werden.</string>
 
 	<!-- Global keys -->
 	<string name="key_auth">auth</string>
@@ -38,6 +40,7 @@
 	<string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
 	<string name="key_lang_local">lang_local</string>
    <string name="key_lang_sync_with_rtm">lang_sync_with_rtm</string>
+   <string name="key_startup_view">startup_view</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
@@ -58,13 +61,14 @@
    <string name="err_saving_preferences">Fehler beim Speichern der Einstellungen</string>
    <string name="err_not_connected">Keine Verbindung</string>
    <string name="err_add_account_canceled">Das Hinzufügen eines neuen Kontos wurde abgebrochen</string>
-   <string name="err_unexpected">Wenn Sie dies lesen könne LAUFEN SIE SO SCHNELL SIE KÖNNEN!</string>
+   <string name="err_unexpected">Wenn Sie dies lesen LAUFEN SIE SO SCHNELL SIE KÖNNEN!</string>
    
    
 	<!-- Global buttons -->
 	<string name="btn_ok">OK</string>
 	<string name="btn_continue">Weiter</string>
 	<string name="btn_cancel">Abbrechen</string>
+	<string name="btn_new_account">Neues Konto</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
@@ -72,6 +76,12 @@
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>
 	<string name="search_hint">Suche nach Aufgaben</string>
+	
+	<!-- StartUp activity -->
+	<string name="startup_no_account">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
+	<string name="startup_no_def_list">Es kann nicht mit der Standardliste gestartet werden, da diese nicht existiert.\n\nEs wird mit der Standardansicht gestartet.</string>
+	  <!-- Toasts -->
+	  <string name="startup_toast_no_settings">Einstellungen konnten nicht geladen werden. Starte mit Standarseinstellungen.</string>	  
 	
 	<!-- Task activity -->
 	<string name="task_datetime_title_due">Wann</string>
@@ -102,6 +112,7 @@
 	<!-- TaskLists activity -->
      <!-- Menus -->
      <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
+     <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
 	
 	<!-- TasksList activity -->
 	<string name="taskslist_titlebar">%1$s</string>
@@ -130,9 +141,9 @@
             
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
-   <string name="moloko_prefs_rtm_summary">Zeitzone, Zeit- und Datumsformat, usw.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">RTM Einstellungen zuletzt am %1$s abgerufen.</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen klicken.</string>
+   <string name="moloko_prefs_rtm_summary">Zeit- und Datumsformat, Standardliste usw.</string>
+   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen.</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken.</string>
    <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
    <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
    <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(14.02.2000)</string>
@@ -141,10 +152,13 @@
    <string name="moloko_prefs_rtm_timeformat_12">12h</string>
    <string name="moloko_prefs_rtm_timeformat_24">24h</string>
    <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
-   <string name="moloko_prefs_rtm_defaultlist_no_lists">Es sind keine Listen vorhanden.</string>
    <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>
+   <string name="moloko_prefs_startup_view_title">Startansicht</string>
+   <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen</string>
+   <string name="moloko_prefs_startup_view_def_list_name">Standardliste (%1$s)</string>
+   <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
       <!-- Dialogs -->
-      <string name="moloko_prefs_rtm_sync_dlg_message">RTM Einstellungen werden abgerufen</string>
+      <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
       
 	<!-- AccountPreferences + activity -->
 	<string name="auth_pref_title">Allgemeine Einstellungen</string>

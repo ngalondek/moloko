@@ -105,6 +105,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
             
             if ( evaluatedFilter == null )
             {
+               // TODO: Show error if eval of filter failed
                // RETURN: evaluation failed
                return;
             }

@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
@@ -74,6 +75,38 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
 
 
+   public final static RtmListWithTaskCount getListOverview( ContentProviderClient client,
+                                                             String id )
+   {
+      RtmListWithTaskCount list = null;
+      
+      try
+      {
+         final Cursor c = client.query( Rtm.ListOverviews.CONTENT_URI,
+                                        PROJECTION,
+                                        ListOverviews._ID + " = " + id,
+                                        null,
+                                        null );
+         
+         if ( c != null && c.getCount() > 0 && c.moveToFirst() )
+         {
+            list = createListOverview( client, c );
+         }         
+         
+         if ( c != null )
+            c.close();
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query lists overview failed. ", e );
+         list = null;
+      }
+      
+      return list;
+   }
+   
+
+
    public final static ArrayList< RtmListWithTaskCount > getListsOverview( ContentProviderClient client )
    {
       ArrayList< RtmListWithTaskCount > lists = null;
@@ -94,23 +127,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
          {
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
-               RtmSmartFilter filter = null;
-               
-               if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
-                  filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
-               
-               final RtmListWithTaskCount list = new RtmListWithTaskCount( c.getString( COL_INDICES.get( ListOverviews._ID ) ),
-                                                                           c.getString( COL_INDICES.get( ListOverviews.LIST_NAME ) ),
-                                                                           c.getInt( COL_INDICES.get( ListOverviews.LIST_DELETED ) ),
-                                                                           c.getInt( COL_INDICES.get( ListOverviews.LOCKED ) ),
-                                                                           c.getInt( COL_INDICES.get( ListOverviews.ARCHIVED ) ),
-                                                                           c.getInt( COL_INDICES.get( ListOverviews.POSITION ) ),
-                                                                           filter,
-                                                                           ( filter != null )
-                                                                                             ? getSmartFilterTaskCount( client,
-                                                                                                                        filter )
-                                                                                             : c.getInt( COL_INDICES.get( ListOverviews.TASKS_COUNT ) ) );
-               
+               final RtmListWithTaskCount list = createListOverview( client, c );
                lists.add( list );
             }
          }
@@ -224,6 +241,29 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
+   }
+   
+
+
+   private final static RtmListWithTaskCount createListOverview( ContentProviderClient client,
+                                                                 Cursor c )
+   {
+      RtmSmartFilter filter = null;
+      
+      if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
+         filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
+      
+      return new RtmListWithTaskCount( c.getString( COL_INDICES.get( ListOverviews._ID ) ),
+                                       c.getString( COL_INDICES.get( ListOverviews.LIST_NAME ) ),
+                                       c.getInt( COL_INDICES.get( ListOverviews.LIST_DELETED ) ),
+                                       c.getInt( COL_INDICES.get( ListOverviews.LOCKED ) ),
+                                       c.getInt( COL_INDICES.get( ListOverviews.ARCHIVED ) ),
+                                       c.getInt( COL_INDICES.get( ListOverviews.POSITION ) ),
+                                       filter,
+                                       ( filter != null )
+                                                         ? getSmartFilterTaskCount( client,
+                                                                                    filter )
+                                                         : c.getInt( COL_INDICES.get( ListOverviews.TASKS_COUNT ) ) );
    }
    
 

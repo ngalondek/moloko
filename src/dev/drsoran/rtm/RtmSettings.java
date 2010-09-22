@@ -17,12 +17,12 @@ import android.util.Log;
 
 import com.mdt.rtm.data.RtmData;
 
-import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Settings;
 
 

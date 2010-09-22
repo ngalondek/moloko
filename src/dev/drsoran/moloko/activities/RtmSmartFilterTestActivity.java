@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.TimeSpecLexer;
@@ -77,7 +78,7 @@ public class RtmSmartFilterTestActivity extends Activity
          
          try
          {
-            parser.parseDateTime( cal, true );
+            parser.parseDateTime( cal, MolokoApp.getSettings().getDateformat() );
          }
          catch ( RecognitionException re )
          {

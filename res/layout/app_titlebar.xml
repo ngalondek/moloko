@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   style="@style/App_TitleBar"
-   android:layout_width="fill_parent"
-   android:layout_height="@dimen/app_titlebar_height">
+<merge
+   xmlns:android="http://schemas.android.com/apk/res/android">
    
    <TextView
       android:id="@+id/app_titlebar_text"
@@ -21,9 +18,11 @@
       android:drawablePadding="5sp" />
       
    <ImageView
+      android:id="@+id/app_titlebar_sep_search"
       style="@style/App_TitleBar_Separator"
       android:layout_width="1sp"
-      android:layout_height="fill_parent" />
+      android:layout_height="fill_parent"
+      android:visibility="gone" />
    
    <ImageButton
       android:id="@+id/app_titlebar_btn_search"
@@ -32,6 +31,7 @@
       android:layout_width="@dimen/app_titlebar_btn_width"
       android:src="@drawable/icon_search_white"
       android:scaleType="centerInside"
-      android:onClick="onTitleBarSearchClicked" />      
+      android:onClick="onTitleBarSearchClicked"
+      android:visibility="gone" />      
 
-</LinearLayout>
+</merge>

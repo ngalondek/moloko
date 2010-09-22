@@ -30,11 +30,12 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -516,21 +517,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    public void onListNameClicked( View view )
    {
-      final TextView listNameCtrl = (TextView) view;
+      final int pos = getListView().getPositionForView( view );
+      final ListTask listTask = getTask( pos );
       
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      intent.putExtra( FILTER, RtmSmartFilterLexer.OP_LIST_LIT
-         + RtmSmartFilterLexer.quotify( listNameCtrl.getText().toString() ) );
-      intent.putExtra( TITLE, getString( R.string.taskslist_titlebar,
-                                         listNameCtrl.getText() ) );
-      intent.putExtra( TITLE_ICON, R.drawable.icon_list_white );
-      
-      final Bundle config = new Bundle();
-      config.putBoolean( DISABLE_LIST_NAME, true );
-      
-      intent.putExtra( ADAPTER_CONFIG, config );
-      
-      startActivity( intent );
+      if ( listTask != null )
+      {
+         final Intent intent = Intents.createOpenListIntent( this,
+                                                             listTask.getListId() );
+         
+         if ( intent != null )
+            startActivity( intent );
+      }
    }
    
 

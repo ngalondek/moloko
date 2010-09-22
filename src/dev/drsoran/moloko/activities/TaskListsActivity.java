@@ -20,7 +20,6 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -48,9 +47,11 @@ public class TaskListsActivity extends ListActivity implements
 
    protected static class CtxtMenu
    {
-      public final static int OPEN_LIST = 1;
+      public final static int OPEN_LIST = 1 << 0;
       
-      public final static int MAKE_DEFAULT_LIST = 2;
+      public final static int MAKE_DEFAULT_LIST = 1 << 1;
+      
+      public final static int REMOVE_DEFAULT_LIST = 1 << 2;
    }
    
    protected final Runnable queryListsRunnable = new Runnable()
@@ -82,8 +83,6 @@ public class TaskListsActivity extends ListActivity implements
       
       setContentView( R.layout.tasklists_activity );
       registerForContextMenu( getListView() );
-      
-      UIUtils.setTitle( this, R.string.app_tasklists );
       
       if ( !( getListAdapter() instanceof TaskListsAdapter ) )
          queryLists();
@@ -143,7 +142,12 @@ public class TaskListsActivity extends ListActivity implements
       
       final RtmListWithTaskCount list = getRtmList( info.position );
       
-      if ( !list.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
+      if ( list.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
+         menu.add( Menu.NONE,
+                   CtxtMenu.REMOVE_DEFAULT_LIST,
+                   Menu.NONE,
+                   getString( R.string.tasklists_menu_ctx_remove_def_list ) );
+      else
          menu.add( Menu.NONE,
                    CtxtMenu.MAKE_DEFAULT_LIST,
                    Menu.NONE,
@@ -166,6 +170,11 @@ public class TaskListsActivity extends ListActivity implements
          case CtxtMenu.MAKE_DEFAULT_LIST:
             MolokoApp.getSettings()
                      .setDefaultListId( getRtmList( info.position ).getId() );
+            return true;
+            
+         case CtxtMenu.REMOVE_DEFAULT_LIST:
+            MolokoApp.getSettings()
+                     .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
             return true;
             
          default :

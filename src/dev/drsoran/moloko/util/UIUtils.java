@@ -65,8 +65,7 @@ public final class UIUtils
          
          if ( iconResId != -1 )
          {
-            final BitmapDrawable bitmap = new BitmapDrawable( activity.getResources(),
-                                                              activity.getResources()
+            final BitmapDrawable bitmap = new BitmapDrawable( activity.getResources()
                                                                       .openRawResource( iconResId ) );
             
             titleBarText.setCompoundDrawablesWithIntrinsicBounds( bitmap,

@@ -20,9 +20,10 @@ options
    import java.text.ParseException;
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
-   import java.util.Date;
    import java.util.Locale;
    import java.util.HashMap;
+   
+   import dev.drsoran.moloko.Settings;
 }
 
 @lexer::header
@@ -222,12 +223,12 @@ options
 /** RULES **/
 
 
-parseDateTime [Calendar cal, boolean dayFirst]
+parseDateTime [Calendar cal, int dateformat]
    @init
    {
       boolean hasTime = false;
    }     
-   : date_spec[$cal, $dayFirst] (time_spec[ $cal ] { hasTime = true; })?
+   : date_spec[$cal, $dateformat] (time_spec[ $cal ] { hasTime = true; })?
    {
       if ( !hasTime )
       {
@@ -243,16 +244,17 @@ parseDateTime [Calendar cal, boolean dayFirst]
       throw new RecognitionException();
    }
 
-date_spec [Calendar cal, boolean dayFirst]
-   : (   date_full         [$cal, $dayFirst]
+date_spec [Calendar cal, int dateformat]
+   : (   date_full         [$cal, $dateformat]
        | date_on           [$cal]
        | date_in_X_YMWD    [$cal]
        | date_end_of_the_MW[$cal]
        | date_natural      [$cal])
    ;
 
-date_full [Calendar cal, boolean dayFirst]
-   : ( {$dayFirst}? pt1=INT ( DOT | MINUS | DATE_SEP )
+date_full [Calendar cal, int dateformat]
+   : ( {$dateformat == Settings.DATEFORMAT_EU}?
+   					  pt1=INT ( DOT | MINUS | DATE_SEP )
                     pt2=INT ( DOT | MINUS | DATE_SEP )
                     pt3=INT
                     {

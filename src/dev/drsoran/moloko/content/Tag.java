@@ -5,6 +5,7 @@ import android.content.ContentProviderOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tags;
 
 

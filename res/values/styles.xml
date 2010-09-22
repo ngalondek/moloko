@@ -29,7 +29,9 @@
 
 	<style name="App_TitleBar">
 		<item name="android:background">@drawable/app_titlebar_bgnd</item>
-	</style>
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">@dimen/app_titlebar_height</item>
+   </style>
 
 	<style name="App_TitleBar_Text" parent="@android:style/TextAppearance.WindowTitle">
 		<item name="android:textColor">@color/app_titlebar_text</item>
@@ -69,6 +71,9 @@
 		<item name="showTopLine">false</item>
 	</style>
 
+   <style name="App_ButtonBar_Bgnd">
+      <item name="android:background">@color/app_buttonbar_bgnd</item>
+   </style>
 
 	<!-- ********* -->
 	<!-- Task      -->
@@ -102,13 +107,37 @@
 
 	<!-- ********* -->
 	<!-- Note      -->
+	
 	<style name="Note">
 		<item name="android:background">@color/note_bgnd</item>
 	</style>
 
-	<style name="Note_ButtonBar_Bgnd">
-		<item name="android:background">@color/note_buttonbar_bgnd</item>
-	</style>
+
+   <!-- ********* -->
+   <!-- StartUp   -->
+
+   <style name="StartUp">
+      <item name="android:background">@color/startup_bgnd</item>
+   </style>
+   
+   <style name="StartUp.Error">
+      <item name="android:layout_width">fill_parent</item>
+      <item name="android:layout_height">wrap_content</item>
+      <item name="textSize">11sp</item>
+      <item name="textStyle">normal</item>
+      <item name="showTopLine">false</item>
+      <item name="imageSrc">@drawable/icon_error_black</item>
+   </style>
+   
+   <style name="StartUp.Error.NoAccount">
+      <item name="imageSrc">@drawable/rtm</item>
+      <item name="text">@string/startup_no_account</item>
+   </style>
+   
+   <style name="StartUp.Error.NoDefList">
+      <item name="text">@string/startup_no_def_list</item>
+   </style>
+
 
 	<!-- ********* -->
 	<!-- TaskLists -->

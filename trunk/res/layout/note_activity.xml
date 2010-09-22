@@ -16,12 +16,13 @@
          android:paddingTop="10sp"
          android:paddingLeft="10sp">
       
-         <include layout="@layout/note" />    
+         <include
+            layout="@layout/note" />    
       </LinearLayout>
    </ScrollView>
    
    <RelativeLayout
-      style="@style/Note_ButtonBar_Bgnd"
+      style="@style/App_ButtonBar_Bgnd"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom"

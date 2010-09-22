@@ -1,35 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<declare-styleable name="TitleWithText">
-	   <attr name="showTopLine" format="boolean" />
-      <attr name="topLineColor" format="reference|color" />
-      <attr name="topLineHeight" format="reference|dimension" />
-      <attr name="title" format="reference|string" />
-      <attr name="titleColor" format="reference|color" />
-      <attr name="titleSize" format="reference|dimension" />
+		<attr name="showTopLine" format="boolean" />
+		<attr name="topLineColor" format="reference|color" />
+		<attr name="topLineHeight" format="reference|dimension" />
+		<attr name="imageSrc" format="reference" />
+		<attr name="title" format="reference|string" />
+		<attr name="titleColor" format="reference|color" />
+		<attr name="titleSize" format="reference|dimension" />
 		<attr name="titleStyle">
-         <flag name="normal" value="0" />
-         <flag name="bold" value="1" />
-         <flag name="italic" value="2" />
+			<flag name="normal" value="0" />
+			<flag name="bold" value="1" />
+			<flag name="italic" value="2" />
 		</attr>
 		<attr name="titlePaddingTop" format="reference|dimension" />
 		<attr name="text" format="reference|string" />
 		<attr name="textColor" format="reference|color" />
 		<attr name="textSize" format="reference|dimension" />
 		<attr name="textStyle">
-		   <flag name="normal" value="0" />
-         <flag name="bold" value="1" />
-         <flag name="italic" value="2" />
+			<flag name="normal" value="0" />
+			<flag name="bold" value="1" />
+			<flag name="italic" value="2" />
 		</attr>
 		<attr name="textPaddingTop" format="reference|dimension" />
 	</declare-styleable>
 
-   <declare-styleable name="SyncableListPreference">
-      <attr name="syncWithRtmKey" format="reference|string" />
-   </declare-styleable>
-   
-   <declare-styleable name="InfoTextPreference">
-      <attr name="infoText" format="reference|string" />
-      <attr name="infoWidget" format="reference" />
-   </declare-styleable>
+	<declare-styleable name="TitleBar">
+	   <attr name="titleText" format="reference|string" />
+      <attr name="showButton">
+         <flag name="none" value="0" />
+		   <flag name="search" value="1" />
+      </attr>
+	</declare-styleable>
+
+	<declare-styleable name="SyncableListPreference">
+		<attr name="syncWithRtmKey" format="reference|string" />
+	</declare-styleable>
+
+	<declare-styleable name="InfoTextPreference">
+		<attr name="infoText" format="reference|string" />
+		<attr name="infoWidget" format="reference" />
+	</declare-styleable>
 </resources>

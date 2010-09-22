@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.mdt.rtm.data.RtmLocation;
 
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Locations;
 
 

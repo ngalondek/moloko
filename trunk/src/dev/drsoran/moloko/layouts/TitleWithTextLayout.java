@@ -3,10 +3,13 @@ package dev.drsoran.moloko.layouts;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
@@ -18,20 +21,45 @@ public class TitleWithTextLayout extends LinearLayout
    public TitleWithTextLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
-      setOrientation( VERTICAL );
       
       LayoutInflater.from( context ).inflate( R.layout.title_with_text,
                                               this,
                                               true );
+      
+      init( context, attrs );
+   }
+   
+
+
+   public TitleWithTextLayout( Context context, AttributeSet attrs,
+      ViewGroup root )
+   {
+      super( context, attrs );
+      
+      LayoutInflater.from( context ).inflate( R.layout.title_with_text,
+                                              root,
+                                              true );
+      
+      init( context, attrs );
+   }
+   
+
+
+   private void init( Context context, AttributeSet attrs )
+   {
+      setOrientation( VERTICAL );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.TitleWithText,
                                                                0,
                                                                0 );
       
+      // Image
+      setImage( array.getDrawable( R.styleable.TitleWithText_imageSrc ) );
+      
       // Top line
       {
-         final View topLine = (View) findViewById( R.id.title_with_text_top_line );
+         final View topLine = findViewById( R.id.title_with_text_top_line );
          
          if ( array.getBoolean( R.styleable.TitleWithText_showTopLine, true ) )
          {
@@ -75,14 +103,32 @@ public class TitleWithTextLayout extends LinearLayout
    
 
 
+   private void setImage( Drawable drawable )
+   {
+      final ImageView imageView = (ImageView) findViewById( R.id.title_with_text_image );
+      
+      if ( drawable != null )
+      {
+         imageView.setVisibility( VISIBLE );
+         imageView.setImageDrawable( drawable );
+      }
+      else
+      {
+         imageView.setVisibility( GONE );
+      }
+   }
+   
+
+
    private final static void setAttr( TextView view,
                                       TypedArray array,
                                       int[] attrs )
    {
-      String text = array.getString( attrs[ 0 ] );
-      if ( text == null )
-         view.setVisibility( View.GONE );
-      else
+      final String text = array.getString( attrs[ 0 ] );
+      
+      setTextViewText( view, text );
+      
+      if ( text != null )
       {
          view.setText( text );
          
@@ -112,5 +158,15 @@ public class TitleWithTextLayout extends LinearLayout
                              0 );
          }
       }
+   }
+   
+
+
+   private final static void setTextViewText( TextView view, String text )
+   {
+      if ( text == null )
+         view.setVisibility( View.GONE );
+      else
+         view.setText( text );
    }
 }

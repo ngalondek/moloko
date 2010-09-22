@@ -28,11 +28,11 @@ import android.content.ContentProviderOperation;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import dev.drsoran.moloko.content.Queries;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 

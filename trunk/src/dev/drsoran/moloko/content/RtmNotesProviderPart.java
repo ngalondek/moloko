@@ -17,6 +17,7 @@ import android.os.RemoteException;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
 

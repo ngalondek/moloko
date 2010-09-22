@@ -1,4 +1,4 @@
-package dev.drsoran.moloko.content;
+package dev.drsoran.moloko.util;
 
 import java.util.Date;
 
@@ -44,7 +44,10 @@ public final class Queries
 
    public final static Uri contentUriWithId( Uri contentUri, String id )
    {
-      return ContentUris.withAppendedId( contentUri, Long.parseLong( id ) );
+      return ( !TextUtils.isEmpty( id ) )
+                                         ? ContentUris.withAppendedId( contentUri,
+                                                                       Long.parseLong( id ) )
+                                         : null;
    }
    
 
@@ -55,9 +58,10 @@ public final class Queries
    {
       final Cursor c = getItem( client, PROJECTION_ID, contentUri, id );
       
-      final boolean exists = c.getCount() > 0;
+      final boolean exists = c != null && c.getCount() > 0;
       
-      c.close();
+      if ( c != null )
+         c.close();
       
       return exists;
    }
@@ -69,11 +73,14 @@ public final class Queries
                                        Uri contentUri,
                                        String id ) throws RemoteException
    {
-      return client.query( contentUriWithId( contentUri, id ),
-                           projection,
-                           null,
-                           null,
-                           null );
+      return ( contentUri != null && !TextUtils.isEmpty( id ) )
+                                                               ? client.query( contentUriWithId( contentUri,
+                                                                                                 id ),
+                                                                               projection,
+                                                                               null,
+                                                                               null,
+                                                                               null )
+                                                               : null;
    }
    
 

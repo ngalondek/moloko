@@ -8,7 +8,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -21,7 +20,7 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 
 
-public class SyncableListPreference extends ListPreference implements
+public class SyncableListPreference extends AutoSummaryListPreference implements
          OnClickListener, OnSharedPreferenceChangeListener,
          OnPreferenceChangeListener
 {
@@ -66,43 +65,6 @@ public class SyncableListPreference extends ListPreference implements
       {
          prefs.registerOnSharedPreferenceChangeListener( this );
          setOnPreferenceChangeListener( this );
-      }
-   }
-   
-
-
-   @Override
-   public CharSequence getSummary()
-   {
-      final CharSequence summary = super.getSummary();
-      final CharSequence entry = getEntry();
-      
-      if ( summary == null || entry == null )
-      {
-         return summary;
-      }
-      else
-      {
-         return String.format( summary.toString(), entry.toString() );
-      }
-   }
-   
-
-
-   @Override
-   public void setSummary( CharSequence summary )
-   {
-      super.setSummary( summary );
-      
-      final CharSequence lSummary = getSummary();
-      
-      if ( summary == null && lSummary != null )
-      {
-         setSummary( null );
-      }
-      else if ( summary != null && !summary.equals( lSummary ) )
-      {
-         setSummary( summary.toString() );
       }
    }
    
@@ -154,7 +116,7 @@ public class SyncableListPreference extends ListPreference implements
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
    {
-      if ( key.equals( getKey() ) && isSyncWithRtm() )
+      if ( key != null && key.equals( getKey() ) && isSyncWithRtm() )
          setValue( sharedPreferences.getString( getKey(), getValue() ) );
    }
    

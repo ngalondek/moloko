@@ -38,6 +38,11 @@
          android:key="@string/key_def_list_local"
          moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm" />
       
-   </PreferenceScreen>   
+   </PreferenceScreen>
+   
+   <dev.drsoran.moloko.prefs.StartUpViewPreference
+      android:title="@string/moloko_prefs_startup_view_title"
+      android:summary="%s"
+      android:key="@string/key_startup_view" />
       
 </PreferenceScreen>

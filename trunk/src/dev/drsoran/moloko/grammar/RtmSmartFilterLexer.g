@@ -18,6 +18,7 @@ options
 	import org.antlr.runtime.CommonTokenStream;
 	import org.antlr.runtime.RecognitionException;
 	
+	import dev.drsoran.moloko.MolokoApp;
 	import dev.drsoran.moloko.grammar.TimeSpecLexer;
 	import dev.drsoran.moloko.grammar.TimeSpecParser;
 	
@@ -104,10 +105,12 @@ options
    	  + " WHERE " + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks._ID;
    
 	private final StringBuffer result = new StringBuffer();
+	
+	private final int dateformat = MolokoApp.getSettings().getDateformat();
 
 
 
-	private static Calendar parseDateTimeSpec( String spec )
+	private Calendar parseDateTimeSpec( String spec )
 	{
 	   final TimeSpecLexer     lexer       = new TimeSpecLexer( new ANTLRNoCaseStringStream( spec ) );
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
@@ -126,9 +129,7 @@ options
       	// try to parse date and time
       	try
       	{
-      		// TODO: Read the dayFirst parameter from settings and
-      		// remove the true.
-            parser.parseDateTime( cal, true );
+      		parser.parseDateTime( cal, dateformat );
             return cal;
          }
          catch( RecognitionException e1 )
@@ -242,7 +243,6 @@ options
       
       return result.toString();
 	}
-
 }
 
 

@@ -4,13 +4,10 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,8 +18,7 @@ import dev.drsoran.moloko.R;
 
 
 public class SyncableListPreference extends AutoSummaryListPreference implements
-         OnClickListener, OnSharedPreferenceChangeListener,
-         OnPreferenceChangeListener
+         OnClickListener
 {
    private CheckBox checkBox;
    
@@ -50,22 +46,6 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       
       if ( syncWithRtmKey == null )
          throw new IllegalStateException( "SyncableListPreference requires a syncWithRtmKey attribute." );
-   }
-   
-
-
-   @Override
-   protected void onAttachedToHierarchy( PreferenceManager preferenceManager )
-   {
-      super.onAttachedToHierarchy( preferenceManager );
-      
-      final SharedPreferences prefs = getSharedPreferences();
-      
-      if ( prefs != null )
-      {
-         prefs.registerOnSharedPreferenceChangeListener( this );
-         setOnPreferenceChangeListener( this );
-      }
    }
    
 
@@ -113,15 +93,24 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    
 
 
+   @Override
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
    {
       if ( key != null && key.equals( getKey() ) && isSyncWithRtm() )
+      {
          setValue( sharedPreferences.getString( getKey(), getValue() ) );
+         notifyChanged();
+      }
+      else
+      {
+         super.onSharedPreferenceChanged( sharedPreferences, key );
+      }
    }
    
 
 
+   @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
       updateUi();

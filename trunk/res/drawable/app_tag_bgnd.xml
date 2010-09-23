@@ -9,11 +9,11 @@
 	      <solid
 	        android:color="@color/app_tag_bgnd_normal_fill"/>
 	      <padding
-	        android:left="5sp"
-	        android:right="5sp"
-	        android:bottom="2sp"/>     
+	        android:left="5dip"
+	        android:right="5dip"
+	        android:bottom="2dip"/>     
 	      <corners
-	        android:radius="2sp"/>     
+	        android:radius="2dip"/>     
       </shape>
 	</item>
 
@@ -24,11 +24,11 @@
          <solid
             android:color="@color/app_tag_bgnd_pressed_fill"/>
          <padding
-            android:left="5sp"
-            android:right="5sp"
-            android:bottom="2sp"/>     
+            android:left="5dip"
+            android:right="5dip"
+            android:bottom="2dip"/>     
          <corners
-            android:radius="2sp"/>
+            android:radius="2dip"/>
       </shape>
    </item>
     

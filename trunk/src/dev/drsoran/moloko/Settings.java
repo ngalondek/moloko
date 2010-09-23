@@ -128,7 +128,7 @@ public class Settings implements OnSharedPreferenceChangeListener
                                           @Override
                                           public void onChange( boolean selfChange )
                                           {
-                                             loadRtmSettings();
+                                             notifyListeners( loadRtmSettings() );
                                           }
                                        } );
    }
@@ -566,8 +566,10 @@ public class Settings implements OnSharedPreferenceChangeListener
    
 
 
-   private void loadRtmSettings()
+   private int loadRtmSettings()
    {
+      int settingsChanged = 0;
+      
       final ContentProviderClient client = context.getContentResolver()
                                                   .acquireContentProviderClient( dev.drsoran.provider.Rtm.Settings.CONTENT_URI );
       
@@ -577,12 +579,14 @@ public class Settings implements OnSharedPreferenceChangeListener
          
          client.release();
          
-         setTimezone();
-         setDateformat();
-         setTimeformat();
-         setDefaultListId();
-         setLocale();
+         settingsChanged |= setTimezone();
+         settingsChanged |= setDateformat();
+         settingsChanged |= setTimeformat();
+         settingsChanged |= setDefaultListId();
+         settingsChanged |= setLocale();
       }
+      
+      return settingsChanged;
    }
    
 

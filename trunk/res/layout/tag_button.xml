@@ -5,6 +5,6 @@
 	style="@style/App_Tag"  
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:layout_marginRight="5sp"
+	android:layout_marginRight="5dip"
 	android:focusable="false"
 	android:text="tag" />

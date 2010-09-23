@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
    <dimen
-      name="app_titlebar_height">40sp</dimen>
-   <dimen
+      name="app_titlebar_height">40dip</dimen>
+   <dimen   
       name="app_titlebar_btn_width">@dimen/app_titlebar_height</dimen>
    <dimen
-      name="task_overview_corner_radius">3sp</dimen>   
+      name="app_title_with_text_textSize">14sp</dimen>
    <dimen
-      name="taskslist_listitem_row_space">10sp</dimen>
+      name="task_overview_corner_radius">3dip</dimen>   
    <dimen
-      name="taskslist_listitem_col_space">44sp</dimen>
+      name="taskslist_listitem_row_space">10dip</dimen>
    <dimen
-      name="taskslist_listitem_widget_space_sml">5sp</dimen>
+      name="taskslist_listitem_col_space">44dip</dimen>
    <dimen
-      name="taskslist_listitem_widget_space_lrg">10sp</dimen>
+      name="taskslist_listitem_widget_space_sml">5dip</dimen>
+   <dimen
+      name="taskslist_listitem_widget_space_lrg">10dip</dimen>
 </resources>

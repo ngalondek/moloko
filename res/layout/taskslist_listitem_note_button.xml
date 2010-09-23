@@ -6,7 +6,7 @@
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
    android:drawableLeft="@drawable/tasklists_listitem_note_bubble"
-   android:drawablePadding="5sp"
+   android:drawablePadding="5dip"
    android:gravity="left"
    android:text="note"
    android:focusable="false"

@@ -6,7 +6,7 @@
 	<solid
 		android:color="@color/taskslist_listitem_note_bubble_fill"/>
    <size
-      android:height="8sp"
-      android:width="8sp"/>
+      android:height="8dip"
+      android:width="8dip"/>
       	
 </shape>

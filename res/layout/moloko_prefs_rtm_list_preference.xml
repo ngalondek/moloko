@@ -11,10 +11,10 @@
 	   xmlns:android="http://schemas.android.com/apk/res/android"
 	   android:layout_width="wrap_content"
 	   android:layout_height="fill_parent"
-	   android:layout_marginLeft="15sp"
-      android:layout_marginRight="6sp"
-      android:layout_marginTop="6sp"
-      android:layout_marginBottom="6sp"
+	   android:layout_marginLeft="15dip"
+      android:layout_marginRight="6dip"
+      android:layout_marginTop="6dip"
+      android:layout_marginBottom="6dip"
 	   android:layout_weight="1">
 	   
 	   <TextView
@@ -47,7 +47,7 @@
 	      android:textSize="11sp"
 	      android:text="setting_source"
 	      android:drawableLeft="@drawable/icon_checked_white_small"
-	      android:drawablePadding="5sp" />  
+	      android:drawablePadding="5dip" />  
 	      
    </RelativeLayout>
 	      

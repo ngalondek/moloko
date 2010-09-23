@@ -76,7 +76,8 @@ public class TitleWithTextLayout extends LinearLayout
       
       // Title
       {
-         setAttr( (TextView) findViewById( R.id.title_with_text_title ),
+         setAttr( context,
+                  (TextView) findViewById( R.id.title_with_text_title ),
                   array,
                   new int[]
                   { R.styleable.TitleWithText_title,
@@ -88,7 +89,8 @@ public class TitleWithTextLayout extends LinearLayout
       
       // Text
       {
-         setAttr( (TextView) findViewById( R.id.title_with_text_text ),
+         setAttr( context,
+                  (TextView) findViewById( R.id.title_with_text_text ),
                   array,
                   new int[]
                   { R.styleable.TitleWithText_text,
@@ -120,7 +122,8 @@ public class TitleWithTextLayout extends LinearLayout
    
 
 
-   private final static void setAttr( TextView view,
+   private final static void setAttr( Context context,
+                                      TextView view,
                                       TypedArray array,
                                       int[] attrs )
    {
@@ -130,8 +133,6 @@ public class TitleWithTextLayout extends LinearLayout
       
       if ( text != null )
       {
-         view.setText( text );
-         
          if ( array.hasValue( attrs[ 1 ] ) )
          {
             view.setTextColor( array.getColor( attrs[ 1 ], 0 ) );
@@ -139,7 +140,9 @@ public class TitleWithTextLayout extends LinearLayout
          
          if ( array.hasValue( attrs[ 2 ] ) )
          {
-            view.setTextSize( array.getDimension( attrs[ 2 ], 0.0f ) );
+            final float spDensity = context.getResources().getDisplayMetrics().scaledDensity;
+            final float size = array.getDimension( attrs[ 2 ], 0.0f ) / spDensity;
+            view.setTextSize( size );
          }
          
          if ( array.hasValue( attrs[ 3 ] ) )

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<!-- ********* -->
+	<!-- *********** -->
 	<!-- Application -->
 
 	<style name="Theme" parent="android:Theme"></style>
@@ -24,7 +24,7 @@
 
 	<style name="App_Default_Title_Bgnd">
 		<item name="android:background">@color/app_default_title_bgnd</item>
-		<item name="android:paddingLeft">5sp</item>
+		<item name="android:paddingLeft">5dip</item>
 	</style>
 
 	<style name="App_TitleBar">
@@ -61,12 +61,12 @@
 
 	<style name="App_Note_TitleWithText">
 		<item name="topLineColor">@color/task_overview_bgnd_stroke</item>
-		<item name="topLineHeight">1sp</item>
+		<item name="topLineHeight">1dip</item>
 		<item name="titleColor">@color/task_title_with_text_text</item>
-		<item name="titleSize">14sp</item>
+		<item name="titleSize">@dimen/app_title_with_text_textSize</item>
 		<item name="titleStyle">bold</item>
 		<item name="textColor">@color/task_title_with_text_text</item>
-		<item name="textSize">14sp</item>
+		<item name="textSize">@dimen/app_title_with_text_textSize</item>
 		<item name="textStyle">normal</item>
 		<item name="showTopLine">false</item>
 	</style>
@@ -95,12 +95,12 @@
 	<style name="Task_TitleWithText">
 		<item name="showTopLine">true</item>
 		<item name="topLineColor">@color/task_overview_bgnd_stroke</item>
-		<item name="topLineHeight">1sp</item>
+		<item name="topLineHeight">1dip</item>
 		<item name="titleColor">@color/task_title_with_text_text</item>
-		<item name="titleSize">14sp</item>
+		<item name="titleSize">@dimen/app_title_with_text_textSize</item>
 		<item name="titleStyle">bold</item>
 		<item name="textColor">@color/task_title_with_text_text</item>
-		<item name="textSize">14sp</item>
+		<item name="textSize">@dimen/app_title_with_text_textSize</item>
 		<item name="textStyle">normal</item>
 	</style>
 

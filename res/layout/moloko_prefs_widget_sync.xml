@@ -4,7 +4,7 @@
    android:id="@+id/moloko_prefs_widget_sync" 
    android:layout_width="wrap_content"
    android:layout_height="wrap_content"
-   android:layout_marginRight="6sp"
+   android:layout_marginRight="6dip"
    android:src="@drawable/icon_refresh_white"
    android:gravity="center_vertical"
    android:focusable="false"

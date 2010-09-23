@@ -6,13 +6,13 @@
 	<solid
 		android:color="@color/tasklists_listitem_numtasks_bgnd_smart_fill"/>
 	<stroke
-		android:width="2sp"
+		android:width="2dip"
 		android:color="@color/tasklists_listitem_numtasks_bgnd_smart_stroke"/>
 	<padding
-		android:left="15sp"
-		android:right="15sp"
-		android:top="3sp"
-		android:bottom="3sp"/>		
+		android:left="15dip"
+		android:right="15dip"
+		android:top="3dip"
+		android:bottom="3dip"/>		
 	<corners
-		android:radius="5sp"/>		
+		android:radius="5dip"/>		
 </shape>

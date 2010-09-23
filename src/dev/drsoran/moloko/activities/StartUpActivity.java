@@ -107,6 +107,8 @@ public class StartUpActivity extends Activity implements
       
       if ( account == null )
       {
+         widgetContainer.removeAllViews();
+         
          LayoutInflater.from( this )
                        .inflate( R.layout.startup_activity_no_account_widget,
                                  widgetContainer,
@@ -151,6 +153,8 @@ public class StartUpActivity extends Activity implements
             {
                if ( !existsList( defaultListId ) )
                {
+                  widgetContainer.removeAllViews();
+                  
                   LayoutInflater.from( this )
                                 .inflate( R.layout.startup_activity_no_def_list_widget,
                                           widgetContainer,
@@ -228,9 +232,13 @@ public class StartUpActivity extends Activity implements
 
    private void onAddNewAccount()
    {
-      final AccountManager accountManager = AccountManager.get( this );
+      if ( addAccountHandle != null )
+      {
+         addAccountHandle.cancel( true );
+         addAccountHandle = null;
+      }
       
-      assert ( addAccountHandle == null );
+      final AccountManager accountManager = AccountManager.get( this );
       
       addAccountHandle = accountManager.addAccount( Constants.ACCOUNT_TYPE,
                                                     Constants.AUTH_TOKEN_TYPE,

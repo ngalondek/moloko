@@ -21,7 +21,7 @@
          <solid
             android:color="@color/app_titlebar_btn_bgnd_normal" />
          <stroke 
-            android:width="2sp"
+            android:width="2dip"
             android:color="@color/app_titlebar_btn_focused" />
       </shape>
    </item>

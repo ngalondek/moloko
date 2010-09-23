@@ -1,33 +1,37 @@
 package dev.drsoran.moloko.prefs;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceManager;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.AttributeSet;
 
 
-public class AutoSummaryListPreference extends ListPreference
+public class AutoSummaryListPreference extends ListPreference implements
+         OnSharedPreferenceChangeListener, OnPreferenceChangeListener
 {
-   protected final OnPreferenceChangeListener preferenceChangeListener = new OnPreferenceChangeListener()
-   {
-      public boolean onPreferenceChange( Preference preference, Object newValue )
-      {
-         if ( newValue != null && newValue instanceof String
-            && !( (String) newValue ).equals( getValue() ) )
-         {
-            notifyChanged();
-         }
-         return true;
-      }
-   };
-   
-   
-
    public AutoSummaryListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+   }
+   
+
+
+   @Override
+   protected void onAttachedToHierarchy( PreferenceManager preferenceManager )
+   {
+      super.onAttachedToHierarchy( preferenceManager );
       
-      setOnPreferenceChangeListener( preferenceChangeListener );
+      final SharedPreferences prefs = getSharedPreferences();
+      
+      if ( prefs != null )
+      {
+         prefs.registerOnSharedPreferenceChangeListener( this );
+         setOnPreferenceChangeListener( this );
+      }
    }
    
 
@@ -38,6 +42,14 @@ public class AutoSummaryListPreference extends ListPreference
       super.onPrepareForRemoval();
       
       setOnPreferenceChangeListener( null );
+      
+      final SharedPreferences prefs = getSharedPreferences();
+      
+      if ( prefs != null )
+      {
+         prefs.unregisterOnSharedPreferenceChangeListener( this );
+         setOnPreferenceChangeListener( this );
+      }
    }
    
 
@@ -75,5 +87,29 @@ public class AutoSummaryListPreference extends ListPreference
       {
          setSummary( summary.toString() );
       }
+   }
+   
+
+
+   public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
+                                          String key )
+   {
+      if ( key != null && key.equals( getKey() ) )
+      {
+         notifyChanged();
+      }
+   }
+   
+
+
+   public boolean onPreferenceChange( Preference preference, Object newValue )
+   {
+      if ( newValue != null && newValue instanceof String
+         && !( (String) newValue ).equals( getValue() ) )
+      {
+         notifyChanged();
+      }
+      
+      return true;
    }
 }

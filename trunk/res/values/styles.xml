@@ -123,7 +123,7 @@
    <style name="StartUp.Error">
       <item name="android:layout_width">fill_parent</item>
       <item name="android:layout_height">wrap_content</item>
-      <item name="textSize">11sp</item>
+      <item name="textSize">@dimen/app_title_with_text_textSize</item>
       <item name="textStyle">normal</item>
       <item name="showTopLine">false</item>
       <item name="imageSrc">@drawable/icon_error_black</item>

@@ -154,7 +154,7 @@
    <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
    <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>
    <string name="moloko_prefs_startup_view_title">Startansicht</string>
-   <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen</string>
+   <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen...</string>
    <string name="moloko_prefs_startup_view_def_list_name">Standardliste (%1$s)</string>
    <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
       <!-- Dialogs -->

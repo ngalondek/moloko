@@ -1,5 +1,6 @@
 package dev.drsoran.moloko.prefs;
 
+import dev.drsoran.moloko.util.Strings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -13,6 +14,10 @@ import android.util.AttributeSet;
 public class AutoSummaryListPreference extends ListPreference implements
          OnSharedPreferenceChangeListener, OnPreferenceChangeListener
 {
+   private int clickedDialogIndex;
+   
+   
+
    public AutoSummaryListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -91,12 +96,31 @@ public class AutoSummaryListPreference extends ListPreference implements
    
 
 
+   public String getClickedDialogValue()
+   {
+      if ( clickedDialogIndex > -1
+         && clickedDialogIndex < getEntryValues().length )
+         return getEntryValues()[ clickedDialogIndex ].toString();
+      else
+         return null;
+   }
+   
+
+
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
    {
       if ( key != null && key.equals( getKey() ) )
       {
-         notifyChanged();
+         final String currentValue = getValue();
+         final String persistedValue = sharedPreferences.getString( key,
+                                                                    currentValue );
+         
+         if ( Strings.hasStringChanged( currentValue, persistedValue ) )
+         {
+            setValue( persistedValue );
+            notifyChanged();
+         }
       }
    }
    

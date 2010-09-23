@@ -23,6 +23,7 @@ import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Settings;
 
 
@@ -251,7 +252,7 @@ public class RtmSettings extends RtmData implements
                                                             .toMillis( false ) )
                                           .build() );
       
-      if ( !update.timezone.equals( timezone ) )
+      if ( Strings.hasStringChanged( timezone, update.timezone ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.TIMEZONE,
                                                          update.timezone )
@@ -269,12 +270,13 @@ public class RtmSettings extends RtmData implements
                                                          update.timeFormat )
                                              .build() );
       
-      if ( !update.defaultListId.equals( defaultListId ) )
+      if ( Strings.hasStringChanged( defaultListId, update.defaultListId ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.DEFAULTLIST_ID,
                                                          update.defaultListId )
                                              .build() );
-      if ( !update.language.equals( language ) )
+      
+      if ( Strings.hasStringChanged( language, update.language ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.LANGUAGE,
                                                          update.language )

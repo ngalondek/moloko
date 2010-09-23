@@ -12,13 +12,39 @@ import dev.drsoran.provider.Rtm.Lists;
 
 public class DefaultListPreference extends SyncableListPreference
 {
+   public final static class EntriesAndValues
+   {
+      public final static int NONE_IDX = 0;
+      
+      public CharSequence[] entries;
+      
+      public CharSequence[] values;
+   }
+   
+   
+
    public DefaultListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       
+      final EntriesAndValues entriesAndValues = createEntriesAndValues( context );
+      
+      if ( entriesAndValues != null )
+      {
+         setEntries( entriesAndValues.entries );
+         setEntryValues( entriesAndValues.values );
+      }
+   }
+   
+
+
+   public final static EntriesAndValues createEntriesAndValues( Context context )
+   {
+      EntriesAndValues entriesAndValues = null;
+      
       // get all lists
-      final ContentProviderClient client = getContext().getContentResolver()
-                                                       .acquireContentProviderClient( Lists.CONTENT_URI );
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( Lists.CONTENT_URI );
       
       if ( client != null )
       {
@@ -31,12 +57,12 @@ public class DefaultListPreference extends SyncableListPreference
             
             if ( ok )
             {
-               CharSequence[] entries = new CharSequence[ c.getCount() + 1 ];
-               CharSequence[] entryValues = new CharSequence[ c.getCount() + 1 ];
+               CharSequence[] entries = new CharSequence[ c.getCount() + 1 ]; // +1 cause of "none"
+               CharSequence[] entryValues = new CharSequence[ c.getCount() + 1 ]; // +1 cause of "none"
                
-               entries[ 0 ] = getContext().getResources()
-                                          .getString( R.string.phr_none_f );
-               entryValues[ 0 ] = Settings.NO_DEFAULT_LIST_ID;
+               entries[ EntriesAndValues.NONE_IDX ] = context.getResources()
+                                                             .getString( R.string.phr_none_f );
+               entryValues[ EntriesAndValues.NONE_IDX ] = Settings.NO_DEFAULT_LIST_ID;
                
                if ( c.getCount() > 0 )
                {
@@ -49,8 +75,9 @@ public class DefaultListPreference extends SyncableListPreference
                
                if ( ok )
                {
-                  setEntries( entries );
-                  setEntryValues( entryValues );
+                  entriesAndValues = new EntriesAndValues();
+                  entriesAndValues.entries = entries;
+                  entriesAndValues.values = entryValues;
                }
             }
             
@@ -64,5 +91,7 @@ public class DefaultListPreference extends SyncableListPreference
             // TODO: Show error
          }
       }
-   }   
+      
+      return entriesAndValues;
+   }
 }

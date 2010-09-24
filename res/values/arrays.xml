@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string-array name="rtm_permissions">		
+
+   <string-array name="app_sort_options">
+      <item>@string/app_sort_prio</item>
+      <item>@string/app_sort_due_date</item>
+      <item>@string/app_sort_alpha</item>
+   </string-array>
+   
+  <string-array name="rtm_permissions">		
 		<item>@string/auth_perm_read</item>
 		<item>@string/auth_perm_write</item>
 		<item>@string/auth_perm_delete</item>
@@ -11,12 +18,6 @@
 		<item>write</item>
 		<item>delete</item>
 	</string-array>
-	
-	<string-array name="abstaskslist_dlg_sort_options">
-      <item>@string/abstaskslist_dlg_sort_prio</item>
-      <item>@string/abstaskslist_dlg_sort_due_date</item>
-      <item>@string/abstaskslist_dlg_sort_alpha</item>
-   </string-array>
    
    <string-array name="moloko_prefs_rtm_dateformat">     
       <item>@string/moloko_prefs_rtm_dateformat_eu</item>

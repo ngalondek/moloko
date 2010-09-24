@@ -1,6 +1,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
@@ -56,7 +58,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
    public static final String FILTER_EVALUATED = "filter_eval";
    
-   public static final String SORT_ORDER_IDX = "sort_order_idx";
+   public static final String TASK_SORT_ORDER = "task_sort_order";
    
    public static final String ADAPTER_CONFIG = "adapter_config";
    
@@ -65,9 +67,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
     * this only applies to non smart lists
     */
    public static final String DISABLE_LIST_NAME = "disable_list_name";
-   
-   protected static final String[] SORT_ORDER_VALUES =
-   { Tasks.DEFAULT_SORT_ORDER, Tasks.SORT_DUE_DATE, Tasks.SORT_TASK_NAME };
    
    
    protected static class OptionsMenu
@@ -121,12 +120,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
    protected final Bundle configuration = new Bundle();
    
-   /**
-    * Variable holds the temporary selected sort mode from the sort order AlertDialog. This will be made persistent if
-    * the dialog is closed with OK.
-    */
-   private int tempSelectedSortOrder = -1;
-   
    
 
    @Override
@@ -140,10 +133,14 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       MolokoApp.getSettings()
                .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_TIMEZONE
                                                       | Settings.SETTINGS_RTM_DATEFORMAT
-                                                      | Settings.SETTINGS_RTM_TIMEFORMAT,
+                                                      | Settings.SETTINGS_RTM_TIMEFORMAT
+                                                      | Settings.SETTINGS_TASK_SORT,
                                                    this );
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
+      
+      if ( !configuration.containsKey( TASK_SORT_ORDER ) )
+         setTaskSort( MolokoApp.getSettings().getTaskSort(), false );
    }
    
 
@@ -226,10 +223,10 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          case OptionsMenu.SORT:
             new AlertDialog.Builder( this ).setIcon( R.drawable.icon_sort_white )
                                            .setTitle( R.string.abstaskslist_dlg_sort_title )
-                                           .setSingleChoiceItems( R.array.abstaskslist_dlg_sort_options,
-                                                                  getSortOrderIdx(),
+                                           .setSingleChoiceItems( R.array.app_sort_options,
+                                                                  TaskSortPreference.getIndexOfValue( getTaskSort() ),
                                                                   this )
-                                           .setPositiveButton( R.string.phr_ok,
+                                           .setNegativeButton( R.string.btn_cancel,
                                                                this )
                                            .show();
             return true;
@@ -425,32 +422,18 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       {
          switch ( which )
          {
-            case Dialog.BUTTON_POSITIVE:
-               if ( tempSelectedSortOrder > -1
-                  && tempSelectedSortOrder < SORT_ORDER_VALUES.length )
-               {
-                  if ( !isSameSortOrderLikeCurrent( tempSelectedSortOrder ) )
-                  {
-                     configuration.putInt( SORT_ORDER_IDX,
-                                           tempSelectedSortOrder );
-                     fillList();
-                  }
-               }
-               else
-               {
-                  Log.e( TAG, "Unknown sort option selected " + which );
-               }
-               
-               tempSelectedSortOrder = -1;
-               
-               break;
-            
             case Dialog.BUTTON_NEGATIVE:
-               tempSelectedSortOrder = -1;
                break;
             
             default :
-               tempSelectedSortOrder = which;
+               final int newTaskSort = TaskSortPreference.getValueOfIndex( which );
+               
+               if ( !isSameTaskSortLikeCurrent( newTaskSort ) )
+               {
+                  setTaskSort( newTaskSort, true );
+               }
+               
+               dialog.dismiss();
                break;
          }
       }
@@ -643,9 +626,26 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   public void onSettingsChanged( int which )
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldVlaues )
    {
-      onContentChanged();
+      switch ( which )
+      {
+         case Settings.SETTINGS_TASK_SORT:
+            // Check if this list was sorted by now changed task sort.
+            // If so, we must re-sort it.
+            if ( getTaskSort() == (Integer) oldVlaues.get( Integer.valueOf( which ) ) )
+            {
+               setTaskSort( MolokoApp.getSettings().getTaskSort(), true );
+            }
+            else
+            {
+               break;
+            }
+            
+         default :
+            onContentChanged();
+      }
    }
    
 
@@ -665,6 +665,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
 
    abstract protected void fillList();
+   
+
+
+   protected void fillListAsync()
+   {
+      handler.post( fillListRunnable );
+   }
    
 
 
@@ -693,48 +700,25 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   protected String getSortOrder()
+   protected int getTaskSort()
    {
-      String sortOrder = SORT_ORDER_VALUES[ 0 ];
-      
-      final int sortOrderIdx = configuration.getInt( SORT_ORDER_IDX, -1 );
-      
-      if ( sortOrderIdx > -1 && sortOrderIdx < SORT_ORDER_VALUES.length )
-      {
-         sortOrder = SORT_ORDER_VALUES[ sortOrderIdx ];
-      }
-      
-      return sortOrder;
+      return configuration.getInt( TASK_SORT_ORDER, Settings.TASK_SORT_DEFAULT );
    }
    
 
 
-   protected int getSortOrderIdx()
+   protected void setTaskSort( int taskSort, boolean refillList )
    {
-      final String sortOrder = getSortOrder();
-      
-      int idx = 0;
-      boolean found = false;
-      while ( idx < SORT_ORDER_VALUES.length && !found )
-      {
-         found = SORT_ORDER_VALUES[ idx ].equals( sortOrder );
-         if ( !found )
-            ++idx;
-      }
-      
-      if ( !found )
-      {
-         idx = 0;
-      }
-      
-      return idx;
+      configuration.putInt( TASK_SORT_ORDER, taskSort );
+      if ( refillList )
+         fillListAsync();
    }
    
 
 
-   private boolean isSameSortOrderLikeCurrent( int idx )
+   protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
-      return configuration.getInt( SORT_ORDER_IDX, -1 ) == idx;
+      return getTaskSort() == sortOrder;
    }
    
 

@@ -45,4 +45,10 @@
       android:summary="%s"
       android:key="@string/key_startup_view" />
       
+   <dev.drsoran.moloko.prefs.TaskSortPreference
+      android:title="@string/moloko_prefs_def_sort_title"
+      android:summary="@string/moloko_prefs_def_sort_summary"
+      android:entries="@array/app_sort_options"
+      android:key="@string/key_task_sort" />
+      
 </PreferenceScreen>

@@ -6,10 +6,14 @@
 	<string name="app_preferences">Einstellungen</string>
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
-	<string name="app_note">Notiz</string>	
+	<string name="app_note">Notiz</string>
+	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
+   <string name="app_sort_prio">Priorität</string>
+   <string name="app_sort_due_date">Fälligkeitsdatum</string>
+   	
 	<string name="svc_rtm">Moloko.RtmService</string>
 	<string name="svc_auth">Moloko.AuthService</string>
-	<string name="svc_rtm_process">:Moloko</string>
+	<string name="svc_rtm_process">:Moloko</string>	
 
    <string name="rtm_full">Remember The Milk</string>
    <string name="rtm_short">RTM</string>
@@ -41,6 +45,7 @@
 	<string name="key_lang_local">lang_local</string>
    <string name="key_lang_sync_with_rtm">lang_sync_with_rtm</string>
    <string name="key_startup_view">startup_view</string>
+   <string name="key_task_sort">task_sort</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
@@ -105,9 +110,6 @@
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
-     <string name="abstaskslist_dlg_sort_alpha">Aufgabenbezeichnung</string>
-     <string name="abstaskslist_dlg_sort_prio">Priorität</string>
-     <string name="abstaskslist_dlg_sort_due_date">Fälligkeitsdatum</string>	  
 	
 	<!-- TaskLists activity -->
      <!-- Menus -->
@@ -157,6 +159,8 @@
    <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen...</string>
    <string name="moloko_prefs_startup_view_def_list_name">Standardliste (%1$s)</string>
    <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
+   <string name="moloko_prefs_def_sort_title">Sortierung der Aufgaben</string>
+   <string name="moloko_prefs_def_sort_summary">nach %s</string>   
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
       

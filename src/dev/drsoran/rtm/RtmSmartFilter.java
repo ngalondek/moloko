@@ -12,6 +12,7 @@ import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class RtmSmartFilter extends RtmData
@@ -44,7 +45,7 @@ public class RtmSmartFilter extends RtmData
 
    public RtmSmartFilter( String filter )
    {
-      this.filter = filter.replaceAll( "\\(|\\)", "" );
+      this.filter = filter.replaceAll( "\\(|\\)", Strings.EMPTY_STRING );
       this.evalFilter = null;
    }
    
@@ -55,11 +56,11 @@ public class RtmSmartFilter extends RtmData
       if ( elt.getChildNodes().getLength() > 0 )
       {
          final Text innerText = (Text) elt.getChildNodes().item( 0 );
-         filter = innerText.getData().replaceAll( "\\(|\\)", "" );
+         filter = innerText.getData().replaceAll( "\\(|\\)", Strings.EMPTY_STRING );
       }
       else
       {
-         filter = "";
+         filter = Strings.EMPTY_STRING;
       }
       
       this.evalFilter = null;

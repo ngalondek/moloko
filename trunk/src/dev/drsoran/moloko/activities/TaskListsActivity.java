@@ -1,5 +1,7 @@
 package dev.drsoran.moloko.activities;
 
+import java.util.HashMap;
+
 import android.app.ListActivity;
 import android.content.ContentProviderClient;
 import android.content.Intent;
@@ -192,7 +194,8 @@ public class TaskListsActivity extends ListActivity implements
    
 
 
-   public void onSettingsChanged( int which )
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
    {
       final Handler handler = new Handler();
       handler.post( new Runnable()

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -113,7 +114,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
          
          final ArrayList< Task > tasks = TasksProviderPart.getTasks( client,
                                                                      evaluatedFilter,
-                                                                     getSortOrder() );
+                                                                     Settings.resolveTaskSortToSqlite( getTaskSort() ) );
          
          client.release();
          

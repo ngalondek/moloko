@@ -1,7 +1,8 @@
-package dev.drsoran.moloko.content;
+package dev.drsoran.rtm;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;

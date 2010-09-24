@@ -30,6 +30,7 @@ import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.rtm.Tag;
 
 
 public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart

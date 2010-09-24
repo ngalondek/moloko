@@ -35,7 +35,6 @@ import android.os.RemoteException;
 import android.util.Log;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
-import dev.drsoran.moloko.content.Tag;
 import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
@@ -47,6 +46,7 @@ import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.rtm.Tag;
 
 
 /**

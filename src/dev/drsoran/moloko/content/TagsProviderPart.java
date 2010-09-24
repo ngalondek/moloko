@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.rtm.Tag;
 
 
 public class TagsProviderPart extends AbstractRtmProviderPart

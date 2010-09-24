@@ -1,20 +1,47 @@
+/*
+Copyright (c) 2010 Ronny Röhricht   
+
+This file is part of Moloko.
+
+Moloko is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moloko is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
+
+Contributors:
+	Ronny Röhricht - implementation
+*/
+
 // $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeSpec.g 2010-09-21 09:27:37
 
    package dev.drsoran.moloko.grammar;
 
    import java.text.ParseException;
-   import java.text.SimpleDateFormat;
-   import java.util.Calendar;
-   import java.util.Locale;
-   import java.util.HashMap;
-   
-   import dev.drsoran.moloko.Settings;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
 
+import org.antlr.runtime.BitSet;
+import org.antlr.runtime.EarlyExitException;
+import org.antlr.runtime.FailedPredicateException;
+import org.antlr.runtime.MismatchedSetException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.Parser;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenStream;
 
-import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
+import dev.drsoran.moloko.Settings;
 
 public class TimeSpecParser extends Parser {
     public static final String[] tokenNames = new String[] {

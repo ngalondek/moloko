@@ -96,6 +96,28 @@
    <style name="App_ButtonBar_Bgnd">
       <item name="android:background">@color/app_buttonbar_bgnd</item>
    </style>
+   
+   <style name="App_Counter_Bubble">
+      <item name="android:background">@drawable/counter_bubble</item>
+      <item name="android:textColor">@color/app_counter_bubble_text</item>
+      <item name="android:textSize">12sp</item>
+      <item name="android:textStyle">bold</item>
+   </style>
+
+
+   <!-- ********* -->
+   <!-- Home      -->
+   
+   <style name="Home_Widget_Text">
+      <item name="android:textSize">18sp</item>
+      <item name="android:textStyle">bold</item>
+   </style>
+   
+   <style name="Home_Widget_Calendar_Date">
+      <item name="android:textSize">21sp</item>
+      <item name="android:textStyle">bold</item>
+      <item name="android:textColor">@color/app_darker_gray</item>
+   </style>
 
 	<!-- ********* -->
 	<!-- Task      -->

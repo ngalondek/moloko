@@ -25,6 +25,7 @@
    <string name="app_version">1.0.0</string>
    <string name="app_version_code">0</string>
 	<string name="app_name">Moloko</string>
+	<string name="app_home">Home</string>
 	<string name="app_preferences">Einstellungen</string>
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
@@ -104,6 +105,10 @@
 	<string name="search_label">@string/app_name</string>
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
+	<!-- Home activity -->
+	<string name="home_btn_today">Heute</string>
+	<string name="home_btn_tomorrow">Morgen</string>
+	
 	<!-- StartUp activity -->
 	<string name="startup_no_account">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
 	<string name="startup_no_def_list">Es kann nicht mit der Standardliste gestartet werden, da diese nicht existiert.\n\nEs wird mit der Standardansicht gestartet.</string>
@@ -181,6 +186,7 @@
    <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen...</string>
    <string name="moloko_prefs_startup_view_def_list_name">Standardliste (%1$s)</string>
    <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
+   <string name="moloko_prefs_startup_view_home">@string/app_home</string>
    <string name="moloko_prefs_def_sort_title">Sortierung der Aufgaben</string>
    <string name="moloko_prefs_def_sort_summary">nach %s</string>   
       <!-- Dialogs -->

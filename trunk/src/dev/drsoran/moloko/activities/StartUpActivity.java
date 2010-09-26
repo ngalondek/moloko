@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
+Copyright (c) 2010 Ronny Röhricht
 
 This file is part of Moloko.
 
@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.activities;
 
@@ -240,6 +240,10 @@ public class StartUpActivity extends Activity implements
          case Settings.STARTUP_VIEW_LISTS:
             startActivity( new Intent( Intent.ACTION_VIEW,
                                        ListOverviews.CONTENT_URI ) );
+            break;
+         
+         case Settings.STARTUP_VIEW_HOME:
+            startActivity( new Intent( this, HomeActivity.class ) );
             break;
          
          default :

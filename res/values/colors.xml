@@ -22,6 +22,7 @@
 -->
 
 <resources>
+   <color name="app_default_bgnd">@android:color/white</color>
    <color name="app_default_title_bgnd">@color/priority_2</color>
    <color name="app_titlebar_bgnd_start">@color/priority_3</color>
    <color name="app_titlebar_bgnd_end">#FF0078F0</color>
@@ -36,18 +37,24 @@
    <color name="app_default_line">@android:color/black</color>
    <color name="app_light_gray">#FFC9C9C9</color>
    <color name="app_dark_gray">#FFB8B8B8</color>
+   <color name="app_darker_gray">#FF858585</color>   
    <color name="app_bgnd_gray">#FFE8E8E8</color>
    <color name="app_note_created_date_text">@color/app_light_gray</color>
    <color name="app_buttonbar_bgnd">@color/app_light_gray</color>
+   
+   <color name="app_counter_bubble_bgnd_end">#FFFAE6E8</color>
+   <color name="app_counter_bubble_bgnd_start">#FFCF0019</color>
+   <color name="app_counter_bubble_text">@android:color/white</color>
+   <color name="app_counter_bubble_stroke">@color/app_counter_bubble_text</color>
 
    <color name="task_bgnd">@color/app_bgnd_gray</color>
-   <color name="task_overview_bgnd_fill">@android:color/white</color>
+   <color name="task_overview_bgnd_fill">@color/app_default_bgnd</color>
    <color name="task_overview_bgnd_stroke">#FFA6A6A6</color>   
    <color name="task_title_with_text_text">@android:color/black</color>
    
-   <color name="note_bgnd">@android:color/white</color>
+   <color name="note_bgnd">@color/app_default_bgnd</color>
 
-   <color name="startup_bgnd">@android:color/white</color>
+   <color name="startup_bgnd">@color/app_default_bgnd</color>
 
    <color name="tasklists_lists_bgnd">@android:color/white</color>
    <color name="tasklists_listitem_listname">@android:color/black</color>

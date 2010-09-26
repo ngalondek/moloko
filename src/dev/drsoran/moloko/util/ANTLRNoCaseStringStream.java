@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.util;
 
@@ -49,7 +49,7 @@ public class ANTLRNoCaseStringStream extends ANTLRStringStream
       }
       
       if ( ( p + i - 1 ) >= n )
-      {         
+      {
          return CharStream.EOF;
       }
       

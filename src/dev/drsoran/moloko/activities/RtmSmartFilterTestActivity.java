@@ -18,13 +18,10 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Calendar;
-
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
 import android.app.Activity;
@@ -32,11 +29,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.grammar.TimeSpecLexer;
-import dev.drsoran.moloko.grammar.TimeSpecParser;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
 
@@ -83,33 +77,33 @@ public class RtmSmartFilterTestActivity extends Activity
 
    public void onTimeSpec( View view )
    {
-      final TimeSpecLexer tsl = new TimeSpecLexer( new ANTLRNoCaseStringStream( timeSpecInput.getText()
-                                                                                             .toString() ) );
-      final CommonTokenStream antlrTokens = new CommonTokenStream( tsl );
-      final TimeSpecParser parser = new TimeSpecParser( antlrTokens );
-      final Calendar cal = TimeSpecParser.getLocalizedCalendar();
-      
-      // first try to parse time
-      try
-      {
-         parser.time_spec( cal );
-      }
-      catch ( RecognitionException e )
-      {
-         tsl.reset();
-         
-         try
-         {
-            parser.parseDateTime( cal, MolokoApp.getSettings().getDateformat() );
-         }
-         catch ( RecognitionException re )
-         {
-            Log.e( TAG, "Parsing failed.", e );
-            return;
-         }
-      }
-      
-      Log.d( TAG, "Millis: " + cal.getTimeInMillis() );
-      Log.d( TAG, "Text  : " + cal.getTime() );
+      // final TimeSpecLexer tsl = new TimeSpecLexer( new ANTLRNoCaseStringStream( timeSpecInput.getText()
+      // .toString() ) );
+      // final CommonTokenStream antlrTokens = new CommonTokenStream( tsl );
+      // final TimeSpecParser parser = new TimeSpecParser( antlrTokens );
+      // final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+      //      
+      // // first try to parse time
+      // try
+      // {
+      // parser.time_spec( cal );
+      // }
+      // catch ( RecognitionException e )
+      // {
+      // tsl.reset();
+      //         
+      // try
+      // {
+      // parser.parseDateTime( cal, MolokoApp.getSettings().getDateformat() );
+      // }
+      // catch ( RecognitionException re )
+      // {
+      // Log.e( TAG, "Parsing failed.", e );
+      // return;
+      // }
+      // }
+      //      
+      // Log.d( TAG, "Millis: " + cal.getTimeInMillis() );
+      // Log.d( TAG, "Text  : " + cal.getTime() );
    }
 }

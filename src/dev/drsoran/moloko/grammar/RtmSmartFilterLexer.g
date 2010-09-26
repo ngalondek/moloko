@@ -18,9 +18,9 @@ options
 	import org.antlr.runtime.CommonTokenStream;
 	import org.antlr.runtime.RecognitionException;
 	
-	import dev.drsoran.moloko.MolokoApp;
-	import dev.drsoran.moloko.grammar.TimeSpecLexer;
-	import dev.drsoran.moloko.grammar.TimeSpecParser;
+	import dev.drsoran.moloko.grammar.DateTimeLexer;
+	import dev.drsoran.moloko.grammar.TimeParser;
+	import dev.drsoran.moloko.grammar.DateParser;
 	
 	import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 }
@@ -106,37 +106,58 @@ options
    
 	private final StringBuffer result = new StringBuffer();
 	
-	private final int dateformat = MolokoApp.getSettings().getDateformat();
-
-
-
 	private Calendar parseDateTimeSpec( String spec )
 	{
-	   final TimeSpecLexer     lexer       = new TimeSpecLexer( new ANTLRNoCaseStringStream( spec ) );
+      final DateTimeLexer lexer           = new DateTimeLexer( new ANTLRNoCaseStringStream( spec ) );
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      final TimeSpecParser    parser      = new TimeSpecParser( antlrTokens );
+      final TimeParser timeParser         = new TimeParser( antlrTokens );
       
-      final Calendar cal = TimeSpecParser.getLocalizedCalendar();
+      final Calendar cal = TimeParser.getLocalizedCalendar();
       
+      boolean finished = false;
       // first try to parse time
       try
       {
-         parser.time_spec( cal );
-         return cal;
+         // The parser can adjust the day of week
+         // for times in the past.
+         timeParser.parseTime( cal, true );
+         finished = true;
       }
-      catch( RecognitionException e )
+      catch ( RecognitionException e )
       {
-      	// try to parse date and time
-      	try
-      	{
-      		parser.parseDateTime( cal, dateformat );
-            return cal;
-         }
-         catch( RecognitionException e1 )
+      }
+      
+      if ( !finished )
+      {
+         antlrTokens.reset();
+         
+         final DateParser dateParser = new DateParser( antlrTokens );
+         
+         try
          {
-            return null;
+            dateParser.parseDate( cal );
+            
+            try
+            {
+               // Check if there is a time trailing.
+               // The parser can not adjust the day of week
+               // for times in the past.
+               timeParser.parseTime( cal, false );
+            }
+            catch ( RecognitionException re2 )
+            {
+            }
+            finally
+            {
+               finished = true;
+            }
+         }
+         catch ( RecognitionException e )
+         {           
          }
       }
+      
+      return ( finished ) ? cal : null;
 	}
 
 

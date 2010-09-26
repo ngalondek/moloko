@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
+Copyright (c) 2010 Ronny Röhricht
 
 This file is part of Moloko.
 
@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko;
 
@@ -54,37 +54,37 @@ public class Settings implements OnSharedPreferenceChangeListener
       public final WeakReference< IOnSettingsChangedListener > listener;
       
       
-
+      
       public ListenerEntry( int setting, IOnSettingsChangedListener listener )
       {
          this.mask = setting;
          this.listener = new WeakReference< IOnSettingsChangedListener >( listener );
       }
       
-
-
+      
+      
       boolean isDead()
       {
          return listener.get() == null;
       }
       
-
-
+      
+      
       boolean matches( int setting )
       {
          return ( ( mask & setting ) != 0 );
       }
       
-
-
+      
+      
       void notify( int setting, HashMap< Integer, Object > oldValues )
       {
          if ( listener.get() != null )
             listener.get().onSettingsChanged( setting, oldValues );
       }
       
-
-
+      
+      
       boolean notifyIfMatches( int setting, HashMap< Integer, Object > oldValues )
       {
          boolean ok = !isDead();
@@ -110,7 +110,9 @@ public class Settings implements OnSharedPreferenceChangeListener
    
    public final static int STARTUP_VIEW_LISTS = 1 << 1;
    
-   public final static int STARTUP_VIEW_DEFAULT = STARTUP_VIEW_LISTS;
+   public final static int STARTUP_VIEW_HOME = 1 << 2;
+   
+   public final static int STARTUP_VIEW_DEFAULT = STARTUP_VIEW_HOME;
    
    public final static int TASK_SORT_PRIORITY = 1 << 0;
    
@@ -161,7 +163,7 @@ public class Settings implements OnSharedPreferenceChangeListener
    private int taskSort = TASK_SORT_DEFAULT;
    
    
-
+   
    public Settings( Context context, Handler handler )
    {
       this.context = context;
@@ -181,24 +183,24 @@ public class Settings implements OnSharedPreferenceChangeListener
       
       // Watch for settings changes from background sync
       context.getContentResolver()
-             .registerContentObserver( dev.drsoran.provider.Rtm.Settings.CONTENT_URI,
-                                       true,
-                                       new ContentObserver( handler )
-                                       {
-                                          // This should be called from the main thread,
-                                          // see handler parameter.
-                                          @Override
-                                          public void onChange( boolean selfChange )
-                                          {
-                                             final HashMap< Integer, Object > oldValues = new HashMap< Integer, Object >();
-                                             notifyListeners( loadRtmSettings( oldValues ),
-                                                              oldValues );
-                                          }
-                                       } );
+      .registerContentObserver( dev.drsoran.provider.Rtm.Settings.CONTENT_URI,
+                                true,
+                                new ContentObserver( handler )
+      {
+         // This should be called from the main thread,
+         // see handler parameter.
+         @Override
+         public void onChange( boolean selfChange )
+         {
+            final HashMap< Integer, Object > oldValues = new HashMap< Integer, Object >();
+            notifyListeners( loadRtmSettings( oldValues ),
+                             oldValues );
+         }
+      } );
    }
    
-
-
+   
+   
    public void registerOnSettingsChangedListener( int which,
                                                   IOnSettingsChangedListener listener )
    {
@@ -208,8 +210,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    public void unregisterOnSettingsChangedListener( IOnSettingsChangedListener listener )
    {
       if ( listener != null )
@@ -218,36 +220,36 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    public TimeZone getTimezone()
    {
       return timeZone;
    }
    
-
-
+   
+   
    public int getDateformat()
    {
       return dateformat;
    }
    
-
-
+   
+   
    public int getTimeformat()
    {
       return timeformat;
    }
    
-
-
+   
+   
    public String getDefaultListId()
    {
       return defaultListId;
    }
    
-
-
+   
+   
    public void setDefaultListId( String id )
    {
       if ( TextUtils.isEmpty( id ) )
@@ -259,29 +261,29 @@ public class Settings implements OnSharedPreferenceChangeListener
                                       false );
    }
    
-
-
+   
+   
    public Locale getLocale()
    {
       return locale;
    }
    
-
-
+   
+   
    public RtmSettings getRtmSettings()
    {
       return rtmSettings;
    }
    
-
-
+   
+   
    public int getStartupView()
    {
       return startupView;
    }
    
-
-
+   
+   
    public void setStartupView( int value )
    {
       startupView = Integer.valueOf( persistSetting( context.getString( R.string.key_startup_view ),
@@ -290,15 +292,15 @@ public class Settings implements OnSharedPreferenceChangeListener
                                                      false ) );
    }
    
-
-
+   
+   
    public int getTaskSort()
    {
       return taskSort;
    }
    
-
-
+   
+   
    public final static String resolveTaskSortToSqlite( int sortValue )
    {
       switch ( sortValue )
@@ -314,34 +316,34 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    public void onSharedPreferenceChanged( SharedPreferences newValue, String key )
    {
       if ( key != null && newValue != null )
       {
          if ( key.equals( context.getString( R.string.key_timezone_local ) )
-            || key.equals( context.getString( R.string.key_timezone_sync_with_rtm ) ) )
+                  || key.equals( context.getString( R.string.key_timezone_sync_with_rtm ) ) )
          {
             notifyListeners( SETTINGS_RTM_TIMEZONE, setTimezone() );
          }
          else if ( key.equals( context.getString( R.string.key_dateformat_local ) )
-            || key.equals( context.getString( R.string.key_dateformat_sync_with_rtm ) ) )
+                  || key.equals( context.getString( R.string.key_dateformat_sync_with_rtm ) ) )
          {
             notifyListeners( SETTINGS_RTM_DATEFORMAT, setDateformat() );
          }
          else if ( key.equals( context.getString( R.string.key_timeformat_local ) )
-            || key.equals( context.getString( R.string.key_timeformat_sync_with_rtm ) ) )
+                  || key.equals( context.getString( R.string.key_timeformat_sync_with_rtm ) ) )
          {
             notifyListeners( SETTINGS_RTM_TIMEFORMAT, setTimeformat() );
          }
          else if ( key.equals( context.getString( R.string.key_def_list_local ) )
-            || key.equals( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
+                  || key.equals( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
          {
             notifyListeners( SETTINGS_RTM_DEFAULTLIST, setDefaultListId() );
          }
          else if ( key.equals( context.getString( R.string.key_lang_local ) )
-            || key.equals( context.getString( R.string.key_lang_sync_with_rtm ) ) )
+                  || key.equals( context.getString( R.string.key_lang_sync_with_rtm ) ) )
          {
             notifyListeners( SETTINGS_RTM_LANGUAGE, setLocale() );
          }
@@ -352,8 +354,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    private TimeZone setTimezone()
    {
       TimeZone newTimeZone;
@@ -394,8 +396,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return null;
    }
    
-
-
+   
+   
    private Integer setDateformat()
    {
       int newDateformat;
@@ -415,8 +417,8 @@ public class Settings implements OnSharedPreferenceChangeListener
             final char[] order = DateFormat.getDateFormatOrder( context );
             
             newDateformat = ( order.length > 0 && order[ 0 ] == DateFormat.DATE )
-                                                                                 ? DATEFORMAT_EU
-                                                                                 : DATEFORMAT_US;
+            ? DATEFORMAT_EU
+            : DATEFORMAT_US;
          }
       }
       else
@@ -437,8 +439,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return null;
    }
    
-
-
+   
+   
    private Integer setTimeformat()
    {
       int newTimeformat;
@@ -456,8 +458,8 @@ public class Settings implements OnSharedPreferenceChangeListener
          else
          {
             newTimeformat = ( DateFormat.is24HourFormat( context ) )
-                                                                    ? TIMEFORMAT_24
-                                                                    : TIMEFORMAT_12;
+            ? TIMEFORMAT_24
+            : TIMEFORMAT_12;
          }
       }
       else
@@ -478,8 +480,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return null;
    }
    
-
-
+   
+   
    private String setDefaultListId()
    {
       String newListId;
@@ -517,8 +519,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return null;
    }
    
-
-
+   
+   
    private Locale setLocale()
    {
       Locale newLocale;
@@ -545,7 +547,7 @@ public class Settings implements OnSharedPreferenceChangeListener
       {
          newLocale = getLocaleFromLanguage( preferences.getString( key,
                                                                    locale.getLanguage() ),
-                                            locale );
+                                                                   locale );
       }
       
       if ( !newLocale.equals( locale ) )
@@ -561,8 +563,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return null;
    }
    
-
-
+   
+   
    private Integer setTaskSort()
    {
       final int newTaskSort = Integer.valueOf( preferences.getString( context.getString( R.string.key_task_sort ),
@@ -579,16 +581,16 @@ public class Settings implements OnSharedPreferenceChangeListener
       return null;
    }
    
-
-
+   
+   
    private boolean useRtmSetting( String key )
    {
       if ( !preferences.contains( key ) )
       {
          preferences.edit()
-                    .putBoolean( context.getString( R.string.key_timezone_sync_with_rtm ),
-                                 true )
-                    .commit();
+         .putBoolean( context.getString( R.string.key_timezone_sync_with_rtm ),
+                      true )
+                      .commit();
          return true;
       }
       else
@@ -597,8 +599,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    private String persistSetting( String key,
                                   String keySync,
                                   String value,
@@ -619,8 +621,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return value;
    }
    
-
-
+   
+   
    private String loadLocalValue( String key, String keySync, String defValue )
    {
       String value;
@@ -645,8 +647,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return value;
    }
    
-
-
+   
+   
    private int loadLocalValue( String key, String keySync, int defValue )
    {
       return Integer.parseInt( loadLocalValue( key,
@@ -654,8 +656,8 @@ public class Settings implements OnSharedPreferenceChangeListener
                                                String.valueOf( defValue ) ) );
    }
    
-
-
+   
+   
    private void loadLocalSettings()
    {
       timeZone = TimeZone.getTimeZone( loadLocalValue( context.getString( R.string.key_timezone_local ),
@@ -673,7 +675,7 @@ public class Settings implements OnSharedPreferenceChangeListener
       locale = getLocaleFromLanguage( loadLocalValue( context.getString( R.string.key_lang_local ),
                                                       context.getString( R.string.key_lang_sync_with_rtm ),
                                                       locale.getLanguage() ),
-                                      null );
+                                                      null );
       startupView = loadLocalValue( context.getString( R.string.key_startup_view ),
                                     null,
                                     startupView );
@@ -682,14 +684,14 @@ public class Settings implements OnSharedPreferenceChangeListener
                                  taskSort );
    }
    
-
-
+   
+   
    private int loadRtmSettings( HashMap< Integer, Object > oldValues )
    {
       int settingsChanged = 0;
       
       final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( dev.drsoran.provider.Rtm.Settings.CONTENT_URI );
+      .acquireContentProviderClient( dev.drsoran.provider.Rtm.Settings.CONTENT_URI );
       
       if ( client != null )
       {
@@ -717,8 +719,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return settingsChanged;
    }
    
-
-
+   
+   
    private final static int addSettingIfChanged( HashMap< Integer, Object > oldValues,
                                                  Object oldValue,
                                                  int setting )
@@ -733,8 +735,8 @@ public class Settings implements OnSharedPreferenceChangeListener
          return 0;
    }
    
-
-
+   
+   
    private void notifyListeners( int setting, Object oldValue )
    {
       if ( setting > 0 && oldValue != null )
@@ -756,8 +758,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    private void notifyListeners( int mask, HashMap< Integer, Object > oldValues )
    {
       if ( mask > 0 && oldValues != null && oldValues.size() > 0 )
@@ -775,8 +777,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    private boolean removeListener( IOnSettingsChangedListener listener )
    {
       final int size = listeners.size();
@@ -793,8 +795,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return false;
    }
    
-
-
+   
+   
    private static Locale getLocaleFromLanguage( String language, Locale defValue )
    {
       Locale locale = null;

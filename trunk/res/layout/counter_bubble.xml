@@ -21,21 +21,12 @@
   	Ronny Röhricht - implementation
 -->
 
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
-  
-  <LinearLayout
-     android:id="@+id/widget_container"
-     android:layout_width="fill_parent"
-     android:layout_height="wrap_content"
-     android:gravity="center" />
-     
-  <TextView
-     android:id="@+id/text"
-     style="@style/Home_Widget_Text"
-     android:layout_width="fill_parent"
-     android:layout_height="wrap_content"
-     android:layout_marginTop="2dip"
-     android:gravity="center" />
-  
-</merge>
+<TextView
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/counter_bubble"
+   style="@style/App_Counter_Bubble"
+   android:layout_width="wrap_content"
+   android:layout_height="wrap_content"
+   android:layout_gravity="bottom|right"
+   android:gravity="center"
+   android:text="cnt" />

@@ -22,39 +22,43 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Calendar;
-
 import android.content.Context;
-import android.database.Cursor;
-import android.view.LayoutInflater;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.moloko.layouts.SimpleHomeWidgetLayout;
+import dev.drsoran.moloko.widgets.CalendarHomeWidget;
+import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
+import dev.drsoran.provider.Rtm.ListOverviews;
 
 
 public class HomeAdapter extends BaseAdapter
 {
-   private final static int[] LABELS =
-   { R.string.home_btn_today, R.string.home_btn_tomorrow };
-   
-   private final static int[] WIDGETS =
-   { R.layout.home_activity_calendar_widget,
-    R.layout.home_activity_calendar_widget };
-   
-   private final Context context;
+   private final View[] WIDGETS;
    
    
 
    public HomeAdapter( Context context )
    {
-      this.context = context;
+      WIDGETS = new View[]
+      {
+       new CalendarHomeWidget( context,
+                               null,
+                               R.string.home_label_today,
+                               CalendarHomeWidget.TODAY ),
+       new CalendarHomeWidget( context,
+                               null,
+                               R.string.home_label_tomorrow,
+                               CalendarHomeWidget.TOMORROW ),
+       new OverDueTasksHomeWidget( context, null, R.string.home_label_overdue ),
+       new SimpleHomeWidgetLayout( context,
+                                   null,
+                                   R.string.app_tasklists,
+                                   R.drawable.lists_black,
+                                   new Intent( Intent.ACTION_VIEW,
+                                               ListOverviews.CONTENT_URI ) ) };
    }
    
 
@@ -84,81 +88,11 @@ public class HomeAdapter extends BaseAdapter
    {
       if ( convertView == null )
       {
-         // if it's not recycled, initialize some attributes
-         switch ( position )
-         {
-            // TODAY
-            case 0:
-               return createCalendarView( position,
-                                          Calendar.getInstance( MolokoApp.getSettings()
-                                                                         .getTimezone() ) );
-               // TOMORROW
-            case 1:
-               final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
-                                                                   .getTimezone() );
-               cal.roll( Calendar.DAY_OF_MONTH, true );
-               
-               return createCalendarView( position, cal );
-               
-            default :
-               return createView( position );
-         }
+         return WIDGETS[ position ];
       }
       else
       {
          return convertView;
       }
-   }
-   
-
-
-   private View createView( int position )
-   {
-      final LayoutInflater inflater = LayoutInflater.from( context );
-      
-      final View view = inflater.inflate( R.layout.home_activity_widget,
-                                          null,
-                                          false );
-      
-      final ViewGroup widgetContainer = (ViewGroup) view.findViewById( R.id.widget_container );
-      inflater.inflate( WIDGETS[ position ], widgetContainer, true );
-      
-      ( (TextView) view.findViewById( R.id.text ) ).setText( LABELS[ position ] );
-      
-      return view;
-   }
-   
-
-
-   private View createCalendarView( int position, Calendar date )
-   {
-      date.clear( Calendar.HOUR_OF_DAY );
-      
-      final View view = createView( position );
-      
-      final TextView dateView = (TextView) view.findViewById( R.id.home_calendar_date );
-      dateView.setText( String.valueOf( date.get( Calendar.DAY_OF_MONTH ) ) );
-      
-      final TextView counterView = (TextView) view.findViewById( R.id.counter_bubble );
-      
-      final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_LIT
-         + MolokoDateUtils.formatDate( date.getTimeInMillis(),
-                                       MolokoDateUtils.FORMAT_PARSER ) );
-      
-      final Cursor c = context.getContentResolver()
-                              .query( RawTasks.CONTENT_URI, new String[]
-                              { RawTasks._ID }, selection, null, null );
-      
-      if ( c != null )
-      {
-         counterView.setText( String.valueOf( c.getCount() ) );
-         c.close();
-      }
-      else
-      {
-         counterView.setText( "?" );
-      }
-      
-      return view;
    }
 }

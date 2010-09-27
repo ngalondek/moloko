@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.util;
 
@@ -33,6 +33,7 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public final class Intents
@@ -90,6 +91,33 @@ public final class Intents
          intent.putExtra( AbstractTasksListActivity.FILTER,
                           list.getSmartFilter().getFilterString() );
       }
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createSmartFilterIntent( Context context,
+                                                       RtmSmartFilter filter,
+                                                       String title,
+                                                       int iconId )
+   {
+      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
+      
+      intent.putExtra( AbstractTasksListActivity.TITLE,
+                       context.getString( R.string.taskslist_titlebar,
+                                          ( title != null )
+                                                           ? title
+                                                           : filter.getFilterString() ) );
+      if ( iconId != -1 )
+         intent.putExtra( AbstractTasksListActivity.TITLE_ICON, iconId );
+      
+      if ( filter.isEvaluated() )
+         intent.putExtra( AbstractTasksListActivity.FILTER_EVALUATED,
+                          filter.getEvaluatedFilterString() );
+      else
+         intent.putExtra( AbstractTasksListActivity.FILTER,
+                          filter.getFilterString() );
       
       return intent;
    }

@@ -40,6 +40,22 @@
       android:drawablePadding="5dip" />
       
    <ImageView
+      android:id="@+id/app_titlebar_sep_home"
+      style="@style/App_TitleBar_Separator"
+      android:layout_width="1dip"
+      android:layout_height="fill_parent"
+      android:visibility="gone" />
+   
+   <ImageButton
+      android:id="@+id/app_titlebar_btn_home"
+      style="@style/App_TitleBar_Btn"
+      android:layout_height="fill_parent"
+      android:layout_width="@dimen/app_titlebar_btn_width"
+      android:src="@drawable/icon_home_white"
+      android:scaleType="centerInside"
+      android:visibility="gone" />
+      
+   <ImageView
       android:id="@+id/app_titlebar_sep_search"
       style="@style/App_TitleBar_Separator"
       android:layout_width="1dip"

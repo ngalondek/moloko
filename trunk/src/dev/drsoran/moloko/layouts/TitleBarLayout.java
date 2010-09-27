@@ -18,22 +18,25 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.HomeActivity;
 
 
-public class TitleBarLayout extends LinearLayout
+public class TitleBarLayout extends LinearLayout implements
+         View.OnClickListener
 {
-   
    public TitleBarLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -50,6 +53,8 @@ public class TitleBarLayout extends LinearLayout
       if ( titleText != null )
          ( (TextView) findViewById( R.id.app_titlebar_text ) ).setText( titleText );
       
+      findViewById( R.id.app_titlebar_btn_home ).setOnClickListener( this );
+      
       final int showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
       
       // Show search button
@@ -57,6 +62,13 @@ public class TitleBarLayout extends LinearLayout
       {
          setVisible( R.id.app_titlebar_sep_search );
          setVisible( R.id.app_titlebar_btn_search );
+      }
+      
+      // Show home button
+      if ( ( showButtons & 2 ) != 0 )
+      {
+         setVisible( R.id.app_titlebar_sep_home );
+         setVisible( R.id.app_titlebar_btn_home );
       }
       
       array.recycle();
@@ -67,5 +79,14 @@ public class TitleBarLayout extends LinearLayout
    private void setVisible( int id )
    {
       findViewById( id ).setVisibility( VISIBLE );
+   }
+   
+
+
+   public void onClick( View v )
+   {
+      if ( v.getId() == R.id.app_titlebar_btn_home )
+         getContext().startActivity( new Intent( getContext(),
+                                                 HomeActivity.class ) );
    }
 }

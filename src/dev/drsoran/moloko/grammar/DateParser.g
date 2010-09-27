@@ -193,10 +193,16 @@ parseDate [Calendar cal]
    // at last step cause the Calendar methods
    // will set them again.
 	{
+		cal.set( Calendar.HOUR_OF_DAY, 0 );
+   	cal.set( Calendar.MINUTE, 0 );
+		cal.set( Calendar.SECOND, 0 );
+		cal.set( Calendar.MILLISECOND, 0 );
+		
 	   cal.clear( Calendar.HOUR );
       cal.clear( Calendar.HOUR_OF_DAY );
       cal.clear( Calendar.MINUTE );
-      cal.clear( Calendar.SECOND );   
+      cal.clear( Calendar.SECOND );
+      cal.clear( Calendar.MILLISECOND );
    }
    ;
    catch [NoViableAltException nve]

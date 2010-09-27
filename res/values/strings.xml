@@ -106,8 +106,9 @@
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
 	<!-- Home activity -->
-	<string name="home_btn_today">Heute</string>
-	<string name="home_btn_tomorrow">Morgen</string>
+	<string name="home_label_today">Heute</string>
+	<string name="home_label_tomorrow">Morgen</string>
+	<string name="home_label_overdue">Überfällig</string>
 	
 	<!-- StartUp activity -->
 	<string name="startup_no_account">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>

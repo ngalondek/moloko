@@ -52,6 +52,7 @@
       <attr name="showButton">
          <flag name="none" value="0" />
 		   <flag name="search" value="1" />
+		   <flag name="home" value="2" />
       </attr>
 	</declare-styleable>
 

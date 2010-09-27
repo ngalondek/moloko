@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.rtm;
 
@@ -78,7 +78,8 @@ public class RtmSmartFilter extends RtmData
       if ( elt.getChildNodes().getLength() > 0 )
       {
          final Text innerText = (Text) elt.getChildNodes().item( 0 );
-         filter = innerText.getData().replaceAll( "\\(|\\)", Strings.EMPTY_STRING );
+         filter = innerText.getData().replaceAll( "\\(|\\)",
+                                                  Strings.EMPTY_STRING );
       }
       else
       {
@@ -107,7 +108,7 @@ public class RtmSmartFilter extends RtmData
 
    public String getEvaluatedFilterString()
    {
-      if ( evalFilter == null )
+      if ( !isEvaluated() )
       {
          if ( filter != null && filter.length() > 0 )
          {
@@ -120,6 +121,13 @@ public class RtmSmartFilter extends RtmData
       }
       
       return evalFilter;
+   }
+   
+
+
+   public boolean isEvaluated()
+   {
+      return evalFilter != null;
    }
    
 

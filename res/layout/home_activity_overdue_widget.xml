@@ -21,21 +21,20 @@
   	Ronny Röhricht - implementation
 -->
 
-<merge
-  xmlns:android="http://schemas.android.com/apk/res/android">
-  
-  <LinearLayout
-     android:id="@+id/widget_container"
-     android:layout_width="fill_parent"
-     android:layout_height="wrap_content"
-     android:gravity="center" />
-     
-  <TextView
-     android:id="@+id/text"
-     style="@style/Home_Widget_Text"
-     android:layout_width="fill_parent"
-     android:layout_height="wrap_content"
-     android:layout_marginTop="2dip"
-     android:gravity="center" />
-  
-</merge>
+<FrameLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="wrap_content"
+   android:layout_height="wrap_content"
+   android:paddingTop="12dip"
+   android:background="@drawable/calendar_empty_black">
+   
+   <ImageView    
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"	  
+	  android:layout_gravity="center"
+	  android:src="@drawable/icon_time_black" />
+	  
+   <include
+      layout="@layout/counter_bubble" />
+	  
+</FrameLayout>

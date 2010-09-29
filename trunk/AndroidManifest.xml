@@ -163,6 +163,12 @@
       </activity>
       
       <activity
+         android:label="@string/app_tagcloud"
+         android:name=".activities.TagCloudActivity"
+         android:theme="@style/Theme.Moloko">
+      </activity>          
+      
+      <activity
           android:label="@string/app_preferences"
           android:name=".activities.MolokoPreferencesActivity"
           android:theme="@style/Theme.Moloko.Preferences"

@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.activities;
 
@@ -60,7 +60,6 @@ import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ListTask;
@@ -473,13 +472,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   public void onTitleBarSearchClicked( View view )
-   {
-      onSearchRequested();
-   }
-   
-
-
    public void onTaskClicked( int pos )
    {
       final Intent intent = new Intent( Intent.ACTION_VIEW,
@@ -548,17 +540,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    public void onTagClicked( CharSequence tag )
    {
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      intent.putExtra( FILTER, RtmSmartFilterLexer.OP_TAG_LIT + tag );
-      intent.putExtra( TITLE, getString( R.string.taskslist_titlebar, tag ) );
-      intent.putExtra( TITLE_ICON, R.drawable.icon_tag_white );
-      
-      final Bundle config = new Bundle();
-      config.putString( UIUtils.DISABLE_TAG_EQUALS, tag.toString() );
-      
-      intent.putExtra( ADAPTER_CONFIG, config );
-      
-      startActivity( intent );
+      startActivity( Intents.createOpenTagIntent( this, tag.toString() ) );
    }
    
 

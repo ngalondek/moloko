@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.content;
 
@@ -60,6 +60,7 @@ public class RtmProvider extends ContentProvider
       
 
 
+      @Override
       public void onCreate( SQLiteDatabase db )
       {
          final int size = mutableParts.size();
@@ -79,6 +80,7 @@ public class RtmProvider extends ContentProvider
       
 
 
+      @Override
       public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
       {
          final int size = mutableParts.size();
@@ -127,7 +129,8 @@ public class RtmProvider extends ContentProvider
       // These parts are immutable and allow no insert, update, deletion
       parts.addAll( Arrays.asList( new IProviderPart[]
       { new TasksProviderPart( dbHelper ),
-       new ListOverviewsProviderPart( dbHelper ) } ) );
+       new ListOverviewsProviderPart( dbHelper ),
+       new TagOverviewsProviderPart( dbHelper ) } ) );
       
       return true;
    }

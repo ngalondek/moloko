@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.content;
 
@@ -98,7 +98,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
 
 
    public final static RtmListWithTaskCount getListOverview( ContentProviderClient client,
-                                                             String id )
+                                                             String selection )
    {
       RtmListWithTaskCount list = null;
       
@@ -106,14 +106,14 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       {
          final Cursor c = client.query( Rtm.ListOverviews.CONTENT_URI,
                                         PROJECTION,
-                                        ListOverviews._ID + " = " + id,
+                                        selection,
                                         null,
                                         null );
          
          if ( c != null && c.getCount() > 0 && c.moveToFirst() )
          {
             list = createListOverview( client, c );
-         }         
+         }
          
          if ( c != null )
             c.close();
@@ -129,7 +129,8 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public final static ArrayList< RtmListWithTaskCount > getListsOverview( ContentProviderClient client )
+   public final static ArrayList< RtmListWithTaskCount > getListsOverview( ContentProviderClient client,
+                                                                           String selection )
    {
       ArrayList< RtmListWithTaskCount > lists = null;
       
@@ -137,7 +138,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       {
          final Cursor c = client.query( Rtm.ListOverviews.CONTENT_URI,
                                         PROJECTION,
-                                        null,
+                                        selection,
                                         null,
                                         Rtm.ListOverviews.DEFAULT_SORT_ORDER );
          
@@ -177,6 +178,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
 
 
+   @Override
    public Cursor query( String id,
                         String[] projection,
                         String selection,

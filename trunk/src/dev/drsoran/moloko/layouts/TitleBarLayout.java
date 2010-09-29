@@ -22,6 +22,7 @@ Contributors:
 
 package dev.drsoran.moloko.layouts;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -54,6 +55,7 @@ public class TitleBarLayout extends LinearLayout implements
          ( (TextView) findViewById( R.id.app_titlebar_text ) ).setText( titleText );
       
       findViewById( R.id.app_titlebar_btn_home ).setOnClickListener( this );
+      findViewById( R.id.app_titlebar_btn_search ).setOnClickListener( this );
       
       final int showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
       
@@ -85,8 +87,20 @@ public class TitleBarLayout extends LinearLayout implements
 
    public void onClick( View v )
    {
-      if ( v.getId() == R.id.app_titlebar_btn_home )
-         getContext().startActivity( new Intent( getContext(),
-                                                 HomeActivity.class ) );
+      switch ( v.getId() )
+      {
+         case R.id.app_titlebar_btn_search:
+            if ( getContext() instanceof Activity )
+               ( (Activity) getContext() ).onSearchRequested();
+            break;
+         
+         case R.id.app_titlebar_btn_home:
+            getContext().startActivity( new Intent( getContext(),
+                                                    HomeActivity.class ) );
+            break;
+         
+         default :
+            break;
+      }
    }
 }

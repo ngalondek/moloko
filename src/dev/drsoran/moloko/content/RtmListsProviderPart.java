@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.content;
 
@@ -86,10 +86,12 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          
          if ( c.getCount() > 0 )
          {
-            RtmSmartFilter filter = null;
-            
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
+               // This as to be inside the loop. Otherwise we can get old
+               // values.
+               RtmSmartFilter filter = null;
+               
                if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
                   filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
                

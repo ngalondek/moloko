@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.content;
 
@@ -33,6 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmLocation;
@@ -78,7 +79,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
          values.put( Locations.LONGITUDE, location.longitude );
          values.put( Locations.LATITUDE, location.latitude );
          
-         if ( location.address != null )
+         if ( !TextUtils.isEmpty( location.address ) )
             values.put( Locations.ADDRESS, location.address );
          else
             values.putNull( Locations.ADDRESS );
@@ -122,7 +123,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
                                                              c.getFloat( COL_INDICES.get( Locations.LONGITUDE ) ),
                                                              c.getFloat( COL_INDICES.get( Locations.LATITUDE ) ),
                                                              Queries.getOptString( c,
-                                                                                   COL_INDICES.get( Locations.LOCATION_NAME ) ),
+                                                                                   COL_INDICES.get( Locations.ADDRESS ) ),
                                                              c.getInt( COL_INDICES.get( Locations.VIEWABLE ) ) == 1
                                                                                                                    ? true
                                                                                                                    : false,

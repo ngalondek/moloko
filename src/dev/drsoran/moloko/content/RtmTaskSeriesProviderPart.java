@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.content;
 
@@ -36,6 +36,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
@@ -102,19 +103,19 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       
       values.put( TaskSeries.TASKSERIES_NAME, taskSeries.getName() );
       
-      if ( taskSeries.getSource() != null )
+      if ( !TextUtils.isEmpty( taskSeries.getSource() ) )
          values.put( TaskSeries.SOURCE, taskSeries.getSource() );
       else
          values.putNull( TaskSeries.SOURCE );
       
-      if ( taskSeries.getURL() != null )
+      if ( !TextUtils.isEmpty( taskSeries.getURL() ) )
          values.put( TaskSeries.URL, taskSeries.getURL() );
       else
          values.putNull( TaskSeries.URL );
       
       values.put( TaskSeries.RAW_TASK_ID, taskSeries.getTask().getId() );
       
-      if ( taskSeries.getLocationId() != null )
+      if ( !TextUtils.isEmpty( taskSeries.getLocationId() ) )
          values.put( TaskSeries.LOCATION_ID, taskSeries.getLocationId() );
       else
          values.putNull( TaskSeries.LOCATION_ID );
@@ -209,14 +210,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                
                if ( ok )
                {
-                  Date modifiedDate = null;
                   String locationId = null;
-                  
-                  // Check if this taskseries has an modified date
-                  if ( !c.isNull( COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ) )
-                  {
-                     modifiedDate = new Date( c.getLong( COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ) );
-                  }
                   
                   // Check if this taskseries has a location
                   if ( !c.isNull( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) )
@@ -227,7 +221,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                   // add the current task series to the task list.
                   final RtmTaskSeries taskSeries = new RtmTaskSeries( taskSeriesId,
                                                                       new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
-                                                                      modifiedDate,
+                                                                      Queries.getOptDate( c,
+                                                                                          COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ),
                                                                       c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
                                                                       Queries.getOptString( c,
                                                                                             COL_INDICES.get( TaskSeries.SOURCE ) ),

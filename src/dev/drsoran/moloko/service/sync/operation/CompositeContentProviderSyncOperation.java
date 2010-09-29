@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.service.sync.operation;
 
@@ -134,5 +134,12 @@ public class CompositeContentProviderSyncOperation extends
       }
       
       return num;
+   }
+   
+
+
+   public int plainSize()
+   {
+      return operations.size();
    }
 }

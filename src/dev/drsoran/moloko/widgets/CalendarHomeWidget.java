@@ -127,6 +127,7 @@ public class CalendarHomeWidget extends LinearLayout implements OnClickListener
    {
       final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
                                                           .getTimezone() );
+      cal.setTimeInMillis( MolokoDateUtils.toLocal( System.currentTimeMillis() ) );
       
       switch ( type )
       {

@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.activities;
 
@@ -231,8 +231,8 @@ public class NoteActivity extends Activity
       try
       {
          final TextView createdDate = (TextView) findViewById( R.id.note_created_date );
-         createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
-                                                                  .getTime(),
+         createdDate.setText( MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( note.getCreated()
+                                                                                           .getTime() ),
                                                               MolokoDateUtils.FORMAT_WITH_YEAR ) );
          
          // TODO: Handle return value

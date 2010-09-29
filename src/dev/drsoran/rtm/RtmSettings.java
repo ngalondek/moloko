@@ -18,11 +18,12 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.rtm;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import org.w3c.dom.Element;
@@ -34,15 +35,16 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.DateFormat;
-import android.text.format.Time;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
+import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -71,7 +73,7 @@ public class RtmSettings extends RtmData implements
       
    };
    
-   private final Time syncTimeStamp;
+   private final ParcelableDate syncTimeStamp;
    
    private final String timezone;
    
@@ -99,10 +101,7 @@ public class RtmSettings extends RtmData implements
       
       final String language = Locale.getDefault().getLanguage();
       
-      Time time = new Time();
-      time.setToNow();
-      
-      return new RtmSettings( time,
+      return new RtmSettings( new Date(),
                               timeZone,
                               dateformat,
                               timeformat,
@@ -112,10 +111,12 @@ public class RtmSettings extends RtmData implements
    
 
 
-   public RtmSettings( Time syncTimeStamp, String timezone, int dateFormat,
+   public RtmSettings( Date syncTimeStamp, String timezone, int dateFormat,
       int timeFormat, String defaultListId, String language )
    {
-      this.syncTimeStamp = syncTimeStamp;
+      this.syncTimeStamp = ( syncTimeStamp != null )
+                                                    ? new ParcelableDate( syncTimeStamp )
+                                                    : null;
       this.timezone = timezone;
       this.dateFormat = dateFormat;
       this.timeFormat = timeFormat;
@@ -127,8 +128,7 @@ public class RtmSettings extends RtmData implements
 
    public RtmSettings( Element elt )
    {
-      this.syncTimeStamp = new Time();
-      this.syncTimeStamp.setToNow();
+      this.syncTimeStamp = new ParcelableDate( new Date() );
       
       if ( !elt.getNodeName().equals( "settings" ) )
       {
@@ -166,8 +166,7 @@ public class RtmSettings extends RtmData implements
 
    public RtmSettings( Parcel source )
    {
-      this.syncTimeStamp = new Time();
-      this.syncTimeStamp.set( source.readLong() );
+      this.syncTimeStamp = source.readParcelable( null );
       this.timezone = source.readString();
       this.dateFormat = source.readInt();
       this.timeFormat = source.readInt();
@@ -177,9 +176,9 @@ public class RtmSettings extends RtmData implements
    
 
 
-   public Time getSyncTimeStamp()
+   public Date getSyncTimeStamp()
    {
-      return syncTimeStamp;
+      return syncTimeStamp.getDate();
    }
    
 
@@ -228,7 +227,7 @@ public class RtmSettings extends RtmData implements
 
    public void writeToParcel( Parcel dest, int flags )
    {
-      dest.writeLong( syncTimeStamp.toMillis( false ) );
+      dest.writeParcelable( syncTimeStamp, flags );
       dest.writeString( timezone );
       dest.writeInt( dateFormat );
       dest.writeInt( timeFormat );
@@ -241,7 +240,7 @@ public class RtmSettings extends RtmData implements
    public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
                                                                                Object... params )
    {
-      return ContentProviderSyncOperation.NOOP;
+      return NoopContentProviderSyncOperation.INSTANCE;
    }
    
 
@@ -271,7 +270,7 @@ public class RtmSettings extends RtmData implements
       result.add( ContentProviderOperation.newUpdate( settingsUri )
                                           .withValue( Settings.SYNC_TIMESTAMP,
                                                       update.getSyncTimeStamp()
-                                                            .toMillis( false ) )
+                                                            .getTime() )
                                           .build() );
       
       if ( Strings.hasStringChanged( timezone, update.timezone ) )

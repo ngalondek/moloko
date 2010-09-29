@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.service.sync.util;
 
@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import dev.drsoran.moloko.service.sync.lists.SyncableList;
+import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 
 
 public class SyncDiffer
@@ -65,13 +66,15 @@ public class SyncDiffer
          }
          
          ok = operation != null;
-         operations.add( operation );
+         
+         if ( ok && !( operation instanceof NoopContentProviderSyncOperation ) )
+            operations.add( operation );
       }
       
       if ( ok )
       {
          // DELETE: Get all elements which have not been touched during the diff.
-         // These elements are no in the reference list.
+         // These elements are not in the reference list.
          final ArrayList< T > untouchedElements = target.getUntouchedElements();
          
          for ( T tgtElement : untouchedElements )
@@ -80,7 +83,10 @@ public class SyncDiffer
                                                                params );
             
             ok = operation != null;
-            operations.add( operation );
+            
+            if ( ok
+               && !( operation instanceof NoopContentProviderSyncOperation ) )
+               operations.add( operation );
          }
       }
       

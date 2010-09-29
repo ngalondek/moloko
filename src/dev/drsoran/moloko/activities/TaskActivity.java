@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.activities;
 
@@ -116,13 +116,13 @@ public class TaskActivity extends Activity
                   throw e;
                }
                
-               addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
-                                                                      .getTime(),
+               addedDate.setText( MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( task.getAdded()
+                                                                                               .getTime() ),
                                                                   FULL_DATE_FLAGS ) );
                
                if ( task.getCompleted() != null )
-                  completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
-                                                                             .getTime(),
+                  completedDate.setText( MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( task.getCompleted()
+                                                                                                      .getTime() ),
                                                                          FULL_DATE_FLAGS ) );
                else
                   completedDate.setVisibility( View.GONE );
@@ -177,14 +177,14 @@ public class TaskActivity extends Activity
          {
             if ( task.hasDueTime() )
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDateTime( task.getDue()
-                                                                            .getTime(),
+                                        MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( task.getDue()
+                                                                                                     .getTime() ),
                                                                         MolokoDateUtils.FORMAT_WITH_YEAR
                                                                            | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
             else
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDate( task.getDue()
-                                                                        .getTime(),
+                                        MolokoDateUtils.formatDate( MolokoDateUtils.toLocal( task.getDue()
+                                                                                                 .getTime() ),
                                                                     MolokoDateUtils.FORMAT_WITH_YEAR
                                                                        | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
             
@@ -255,8 +255,8 @@ public class TaskActivity extends Activity
                   try
                   {
                      final TextView createdDate = (TextView) noteView.findViewById( R.id.note_created_date );
-                     createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
-                                                                              .getTime(),
+                     createdDate.setText( MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( note.getCreated()
+                                                                                                       .getTime() ),
                                                                           FULL_DATE_FLAGS ) );
                   }
                   catch ( ClassCastException e )

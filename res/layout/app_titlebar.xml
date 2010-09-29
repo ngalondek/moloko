@@ -69,7 +69,6 @@
       android:layout_width="@dimen/app_titlebar_btn_width"
       android:src="@drawable/icon_search_white"
       android:scaleType="centerInside"
-      android:onClick="onTitleBarSearchClicked"
       android:visibility="gone" />      
 
 </merge>

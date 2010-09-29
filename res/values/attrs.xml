@@ -64,4 +64,9 @@
 		<attr name="infoText" format="reference|string" />
 		<attr name="infoWidget" format="reference" />
 	</declare-styleable>
+	
+	<declare-styleable name="WrappingLayout">
+      <attr name="horizontal_spacing" format="reference|dimension" />
+      <attr name="vertical_spacing" format="reference|dimension" />
+   </declare-styleable>
 </resources>

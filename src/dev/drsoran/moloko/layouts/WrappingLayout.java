@@ -13,9 +13,11 @@
 package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import dev.drsoran.moloko.R;
 
 
 public class WrappingLayout extends ViewGroup
@@ -31,7 +33,7 @@ public class WrappingLayout extends ViewGroup
       public final int vertical_spacing;
       
       
-      
+
       /**
        * @param horizontal_spacing
        *           Pixels between items, horizontally
@@ -47,30 +49,43 @@ public class WrappingLayout extends ViewGroup
    }
    
    
-   
+
    public WrappingLayout( Context context )
    {
       super( context );
    }
    
-   
-   
+
+
    public WrappingLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      
+      final TypedArray array = context.obtainStyledAttributes( attrs,
+                                                               R.styleable.WrappingLayout,
+                                                               0,
+                                                               0 );
+      
+      final LayoutParams layoutParams = new LayoutParams( array.getDimensionPixelOffset( R.styleable.WrappingLayout_horizontal_spacing,
+                                                                                         1 ),
+                                                          array.getDimensionPixelOffset( R.styleable.WrappingLayout_vertical_spacing,
+                                                                                         1 ) );
+      array.recycle();
+      
+      setLayoutParams( layoutParams );
    }
    
-   
-   
+
+
    @Override
    protected void onMeasure( int widthMeasureSpec, int heightMeasureSpec )
    {
       assert ( MeasureSpec.getMode( widthMeasureSpec ) != MeasureSpec.UNSPECIFIED );
       
       final int width = MeasureSpec.getSize( widthMeasureSpec )
-      - getPaddingLeft() - getPaddingRight();
+         - getPaddingLeft() - getPaddingRight();
       int height = MeasureSpec.getSize( heightMeasureSpec ) - getPaddingTop()
-      - getPaddingBottom();
+         - getPaddingBottom();
       final int count = getChildCount();
       int line_height = 0;
       
@@ -98,11 +113,11 @@ public class WrappingLayout extends ViewGroup
             
             child.measure( MeasureSpec.makeMeasureSpec( width,
                                                         MeasureSpec.AT_MOST ),
-                                                        childHeightMeasureSpec );
+                           childHeightMeasureSpec );
             
             final int childw = child.getMeasuredWidth();
             line_height = Math.max( line_height, child.getMeasuredHeight()
-                                    + lp.vertical_spacing );
+               + lp.vertical_spacing );
             
             if ( xpos + childw > width )
             {
@@ -130,16 +145,16 @@ public class WrappingLayout extends ViewGroup
       setMeasuredDimension( width, height );
    }
    
-   
-   
+
+
    @Override
    protected ViewGroup.LayoutParams generateDefaultLayoutParams()
    {
       return new LayoutParams( 1, 1 ); // default of 1px spacing
    }
    
-   
-   
+
+
    @Override
    protected boolean checkLayoutParams( ViewGroup.LayoutParams p )
    {
@@ -148,8 +163,8 @@ public class WrappingLayout extends ViewGroup
       return false;
    }
    
-   
-   
+
+
    @Override
    protected void onLayout( boolean changed, int l, int t, int r, int b )
    {

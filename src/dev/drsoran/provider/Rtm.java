@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.provider;
 
@@ -319,14 +319,6 @@ public class Rtm
    protected static interface TagColumns
    {
       /**
-       * The ID of the taskseries referenced.
-       * <P>
-       * Type: INTEGER (foreign key to table taskseries _ID field)
-       * </P>
-       */
-      public final static String TASKSERIES_ID = "taskseries_id";
-      
-      /**
        * The tag itself
        * <P>
        * Type: STRING
@@ -336,7 +328,20 @@ public class Rtm
    }
    
 
-   public static final class Tags implements BaseColumns, TagColumns
+   protected static interface TagReferenceColumns
+   {
+      /**
+       * The ID of the taskseries referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table taskseries _ID field)
+       * </P>
+       */
+      public final static String TASKSERIES_ID = "taskseries_id";
+   }
+   
+
+   public static final class Tags implements BaseColumns, TagColumns,
+            TagReferenceColumns
    {
       public final static String PATH = "tags";
       
@@ -621,6 +626,41 @@ public class Rtm
    }
    
 
+   public static final class TagOverviews implements BaseColumns, TagColumns
+   {
+      public final static String PATH = "tag_overviews";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing the settings.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.tag_overviews";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.tag_overviews";
+      
+      /**
+       * The number of tasks tagged with the tag
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String TASKS_COUNT = "tasks_count";
+      
+      /**
+       * The default sort order for this table
+       */
+      public final static String DEFAULT_SORT_ORDER = TAG;
+   }
+   
+
    protected static interface SettingsColumns
    {
       /**
@@ -694,6 +734,6 @@ public class Rtm
       /**
        * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
        */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.settings";      
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.settings";
    }
 }

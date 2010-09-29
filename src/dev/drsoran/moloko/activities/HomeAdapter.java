@@ -58,7 +58,12 @@ public class HomeAdapter extends BaseAdapter
                                    R.string.app_tasklists,
                                    R.drawable.lists_black,
                                    new Intent( Intent.ACTION_VIEW,
-                                               ListOverviews.CONTENT_URI ) ) };
+                                               ListOverviews.CONTENT_URI ) ),
+       new SimpleHomeWidgetLayout( context,
+                                   null,
+                                   R.string.app_tagcloud,
+                                   R.drawable.tag_black,
+                                   new Intent( context, TagCloudActivity.class ) ) };
    }
    
 

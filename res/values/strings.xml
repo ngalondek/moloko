@@ -30,6 +30,7 @@
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
 	<string name="app_note">Notiz</string>
+	<string name="app_tagcloud">Tags</string>
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
    <string name="app_sort_due_date">Fälligkeitsdatum</string>

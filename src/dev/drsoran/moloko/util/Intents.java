@@ -48,7 +48,36 @@ public final class Intents
       if ( client != null )
       {
          final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
-                                                                                      id );
+                                                                                      ListOverviews._ID
+                                                                                         + " = "
+                                                                                         + id );
+         
+         if ( list != null )
+            intent = createOpenListIntent( context, list );
+         
+         client.release();
+      }
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createOpenListIntentByName( Context context,
+                                                          String name )
+   {
+      Intent intent = null;
+      
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( ListOverviews.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
+                                                                                      ListOverviews.LIST_NAME
+                                                                                         + " = '"
+                                                                                         + name
+                                                                                         + "'" );
          
          if ( list != null )
             intent = createOpenListIntent( context, list );
@@ -91,6 +120,27 @@ public final class Intents
          intent.putExtra( AbstractTasksListActivity.FILTER,
                           list.getSmartFilter().getFilterString() );
       }
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createOpenTagIntent( Context context,
+                                                   String tagText )
+   {
+      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
+      intent.putExtra( AbstractTasksListActivity.FILTER,
+                       RtmSmartFilterLexer.OP_TAG_LIT + tagText );
+      intent.putExtra( AbstractTasksListActivity.TITLE,
+                       context.getString( R.string.taskslist_titlebar, tagText ) );
+      intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
+                       R.drawable.icon_tag_white );
+      
+      final Bundle config = new Bundle();
+      config.putString( UIUtils.DISABLE_TAG_EQUALS, tagText );
+      
+      intent.putExtra( AbstractTasksListActivity.ADAPTER_CONFIG, config );
       
       return intent;
    }

@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.activities;
 
@@ -231,13 +231,6 @@ public class TaskListsActivity extends ListActivity implements
    
 
 
-   public void onTitleBarSearchClicked( View view )
-   {
-      onSearchRequested();
-   }
-   
-
-
    private void openList( RtmListWithTaskCount rtmList )
    {
       // Check if the smart filter could be parsed. Otherwise
@@ -290,7 +283,8 @@ public class TaskListsActivity extends ListActivity implements
       {
          setListAdapter( new TaskListsAdapter( this,
                                                R.layout.tasklists_activity_listitem,
-                                               ListOverviewsProviderPart.getListsOverview( client ) ) );
+                                               ListOverviewsProviderPart.getListsOverview( client,
+                                                                                           null ) ) );
          client.release();
       }
    }

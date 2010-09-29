@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.content;
 
@@ -32,7 +32,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.text.format.Time;
+import android.text.TextUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Settings;
@@ -72,9 +72,9 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          
          values.put( Settings._ID, "1" );
          values.put( Settings.SYNC_TIMESTAMP, settings.getSyncTimeStamp()
-                                                      .toMillis( false ) );
+                                                      .getTime() );
          
-         if ( settings.getTimezone() != null )
+         if ( !TextUtils.isEmpty( settings.getTimezone() ) )
             values.put( Settings.TIMEZONE, settings.getTimezone() );
          else
             values.putNull( Settings.TIMEZONE );
@@ -82,12 +82,12 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          values.put( Settings.DATEFORMAT, settings.getDateFormat() );
          values.put( Settings.TIMEFORMAT, settings.getTimeFormat() );
          
-         if ( settings.getDefaultListId() != null )
+         if ( !TextUtils.isEmpty( settings.getDefaultListId() ) )
             values.put( Settings.DEFAULTLIST_ID, settings.getDefaultListId() );
          else
             values.putNull( Settings.DEFAULTLIST_ID );
          
-         if ( settings.getLanguage() != null )
+         if ( !TextUtils.isEmpty( settings.getLanguage() ) )
             values.put( Settings.LANGUAGE, settings.getLanguage() );
          else
             values.putNull( Settings.LANGUAGE );
@@ -150,10 +150,8 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          
          if ( ok )
          {
-            Time time = new Time();
-            time.set( c.getLong( COL_INDICES.get( Settings.SYNC_TIMESTAMP ) ) );
-            
-            settings = new RtmSettings( time,
+            settings = new RtmSettings( Queries.getOptDate( c,
+                                                            COL_INDICES.get( Settings.SYNC_TIMESTAMP ) ),
                                         Queries.getOptString( c,
                                                               COL_INDICES.get( Settings.TIMEZONE ) ),
                                         c.getInt( COL_INDICES.get( Settings.DATEFORMAT ) ),

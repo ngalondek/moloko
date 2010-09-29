@@ -23,8 +23,11 @@ Contributors:
 package dev.drsoran.moloko.util;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import android.text.format.DateFormat;
+import android.text.format.Time;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.Settings;
 
@@ -42,10 +45,57 @@ public class MolokoDateUtils
    
    
 
+   public final static long toLocal( long millis )
+   {
+      return millis + MolokoApp.getSettings().getTimezone().getOffset( millis );
+   }
+   
+
+
+   public final static long toTimeZone( long millis, TimeZone timeZone )
+   {
+      return millis + timeZone.getOffset( millis );
+   }
+   
+
+
+   public final static long toUtc( long millis )
+   {
+      return millis - MolokoApp.getSettings().getTimezone().getOffset( millis );
+   }
+   
+
+
+   public final static Date newDate()
+   {
+      return new Date( toLocal( System.currentTimeMillis() ) );
+   }
+   
+
+
+   public final static Time newTime()
+   {
+      final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
+      t.set( toLocal( System.currentTimeMillis() ) );
+      return t;
+   }
+   
+
+
+   public final static Time newTime( long millis )
+   {
+      final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
+      t.set( millis );
+      return t;
+   }
+   
+
+
    public final static String formatDate( long millis, int dateStyle )
    {
-      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
-                                                          .getTimezone() );
+      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
+      final Calendar cal = Calendar.getInstance( timeZone );
+      
       cal.setTimeInMillis( millis );
       
       return DateFormat.format( buildPattern( true, false, dateStyle ), cal )
@@ -56,8 +106,9 @@ public class MolokoDateUtils
 
    public final static String formatDateTime( long millis, int dateStyle )
    {
-      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
-                                                          .getTimezone() );
+      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
+      final Calendar cal = Calendar.getInstance( timeZone );
+      
       cal.setTimeInMillis( millis );
       
       return DateFormat.format( buildPattern( true, true, dateStyle ), cal )
@@ -68,8 +119,9 @@ public class MolokoDateUtils
 
    public final static String formatTime( long millis )
    {
-      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
-                                                          .getTimezone() );
+      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
+      final Calendar cal = Calendar.getInstance( timeZone );
+      
       cal.setTimeInMillis( millis );
       
       return DateFormat.format( buildPattern( false, true, 0 ), cal )

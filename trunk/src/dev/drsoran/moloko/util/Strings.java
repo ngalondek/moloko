@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.util;
 
@@ -30,7 +30,7 @@ public final class Strings
 
    public final static boolean hasStringChanged( String current, String update )
    {
-      return ( current != update || ( current != null && !current.equals( update ) ) );
+      return ( ( current == null && update != null ) || ( current != null && !current.equals( update ) ) );
    }
    
 }

@@ -33,6 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Tag;
@@ -68,7 +69,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
          values = new ContentValues();
          
          if ( withId )
-            if ( tag.getId() != null )
+            if ( !TextUtils.isEmpty( tag.getId() ) )
                values.put( Tags._ID, tag.getId() );
             else
                values.putNull( Tags._ID );
@@ -96,7 +97,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
                                            Tags.TASKSERIES_ID + " = "
                                               + taskSeriesId,
                                            null,
-                                           Tags.TAG + " ASC " );
+                                           Tags.TAG );
             
             tags = new ArrayList< Tag >( c.getCount() );
             

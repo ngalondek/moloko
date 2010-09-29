@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.content;
 
@@ -34,6 +34,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -99,7 +100,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
                   RtmTask.convertPriority( task.getPriority() ) );
       values.put( RawTasks.POSTPONED, task.getPostponed() );
       
-      if ( task.getEstimate() != null )
+      if ( !TextUtils.isEmpty( task.getEstimate() ) )
          values.put( RawTasks.ESTIMATE, task.getEstimate() );
       else
          values.putNull( RawTasks.ESTIMATE );

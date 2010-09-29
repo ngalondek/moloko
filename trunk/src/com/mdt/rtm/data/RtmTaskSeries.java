@@ -29,22 +29,26 @@ import org.w3c.dom.Element;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
-import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.util.ParamChecker;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
+import dev.drsoran.moloko.service.sync.util.SyncUpdateUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Tag;
 
@@ -115,9 +119,9 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String id;
    
-   private final Date created;
+   private final ParcelableDate created;
    
-   private final Date modified;
+   private final ParcelableDate modified;
    
    private final String name;
    
@@ -140,8 +144,9 @@ public class RtmTaskSeries extends RtmData implements
       String url, List< String > tags )
    {
       this.id = id;
-      this.created = created;
-      this.modified = modified;
+      this.created = ( created != null ) ? new ParcelableDate( created ) : null;
+      this.modified = ( modified != null ) ? new ParcelableDate( modified )
+                                          : null;
       this.name = name;
       this.source = source;
       this.task = task;
@@ -155,20 +160,21 @@ public class RtmTaskSeries extends RtmData implements
 
    public RtmTaskSeries( Element elt )
    {
-      id = elt.getAttribute( "id" );
+      id = textNullIfEmpty( elt, "id" );
       created = parseDate( elt.getAttribute( "created" ) );
       modified = parseDate( elt.getAttribute( "modified" ) );
-      name = elt.getAttribute( "name" );
-      source = elt.getAttribute( "source" );
+      name = textNullIfEmpty( elt, "name" );
+      source = textNullIfEmpty( elt, "source" );
       task = new RtmTask( child( elt, "task" ) );
       
       if ( children( elt, "task" ).size() > 1 )
       {
          log.severe( "WARNING: Assumption incorrect: found a TaskSeries with more than one child Task." );
       }
+      
       notes = new RtmTaskNotes( child( elt, "notes" ) );
-      locationId = elt.getAttribute( "location_id" );
-      url = elt.getAttribute( "url" );
+      locationId = textNullIfEmpty( elt, "location_id" );
+      url = textNullIfEmpty( elt, "url" );
       
       final Element elementTags = child( elt, "tags" );
       if ( elementTags.getChildNodes().getLength() > 0 )
@@ -178,7 +184,7 @@ public class RtmTaskSeries extends RtmData implements
          for ( Element elementTag : elementTagList )
          {
             final String tag = text( elementTag );
-            if ( tag != null )
+            if ( !TextUtils.isEmpty( tag ) )
             {
                tags.add( tag );
             }
@@ -200,7 +206,7 @@ public class RtmTaskSeries extends RtmData implements
       name = null;
       source = null;
       task = new RtmTask( child( elt, "task" ), deleted );
-      this.locationId = null;
+      locationId = null;
       notes = null;
       url = null;
       tags = null;
@@ -211,8 +217,8 @@ public class RtmTaskSeries extends RtmData implements
    public RtmTaskSeries( Parcel source )
    {
       id = source.readString();
-      created = new Date( source.readLong() );
-      modified = new Date( source.readLong() );
+      created = source.readParcelable( null );
+      modified = source.readParcelable( null );
       name = source.readString();
       this.source = source.readString();
       task = new RtmTask( source );
@@ -233,14 +239,14 @@ public class RtmTaskSeries extends RtmData implements
 
    public Date getCreated()
    {
-      return created;
+      return ( created != null ) ? created.getDate() : null;
    }
    
 
 
    public Date getModified()
    {
-      return modified;
+      return ( modified != null ) ? modified.getDate() : null;
    }
    
 
@@ -331,8 +337,8 @@ public class RtmTaskSeries extends RtmData implements
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );
-      dest.writeLong( created.getTime() );
-      dest.writeLong( modified.getTime() );
+      dest.writeParcelable( created, 0 );
+      dest.writeParcelable( modified, 0 );
       dest.writeString( name );
       dest.writeString( source );
       task.writeToParcel( dest, flags );
@@ -401,7 +407,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                                RtmTaskSeries update,
                                                                                Object... params )
    {
-      CompositeContentProviderSyncOperation operation = null;
+      CompositeContentProviderSyncOperation result = null;
       
       boolean ok = ParamChecker.checkParams( TAG,
                                              "ContentProvider update failed. ",
@@ -429,17 +435,18 @@ public class RtmTaskSeries extends RtmData implements
                                                                                                                      notes.getNotes(),
                                                                                                                      RtmTaskNote.LESS_ID );
          
-         final ArrayList< IContentProviderSyncOperation > operations = SyncDiffer.diff( update.notes.getNotes(),
-                                                                                        syncList,
-                                                                                        id );
-         
-         ok = operations != null;
+         final ArrayList< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( update.notes.getNotes(),
+                                                                                            syncList,
+                                                                                            id );
+         ok = noteOperations != null;
          
          if ( ok )
          {
-            operation = new CompositeContentProviderSyncOperation( provider,
-                                                                   operations,
-                                                                   IContentProviderSyncOperation.Op.UPDATE );
+            result = new CompositeContentProviderSyncOperation( provider,
+                                                                IContentProviderSyncOperation.Op.UPDATE );
+            
+            if ( noteOperations.size() > 0 )
+               result.addAll( noteOperations );
             
             // Update tags
             if ( ok )
@@ -447,34 +454,75 @@ public class RtmTaskSeries extends RtmData implements
                final IContentProviderSyncOperation tagOperation = updateTags( provider,
                                                                               update );
                ok = tagOperation != null;
-               if ( ok )
-                  operation.add( tagOperation );
+               if ( ok
+                  && tagOperation.getOperationType() != IContentProviderSyncOperation.Op.NOOP )
+                  result.add( tagOperation );
             }
             
+            // Update task
             if ( ok )
             {
-               // Update task
-               operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                            task.getId() ) )
-                                                      .withValues( RtmTasksProviderPart.getContentValues( update.task,
-                                                                                                          true ) )
-                                                      .build() );
+               final IContentProviderSyncOperation taskOperation = task.computeContentProviderUpdateOperation( provider,
+                                                                                                               update.task );
+               ok = taskOperation != null;
+               if ( ok
+                  && taskOperation.getOperationType() != IContentProviderSyncOperation.Op.NOOP )
+                  result.add( taskOperation );
+            }
+            
+            // Update taskseries
+            if ( ok )
+            {
+               final Uri uri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                         id );
                
-               // Update taskseries
-               operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                            id ) )
-                                                      .withValues( RtmTaskSeriesProviderPart.getContentValues( update,
-                                                                                                               (String) params[ 0 ],
-                                                                                                               true ) )
-                                                      .build() );
+               final CompositeContentProviderSyncOperation taskSeriesOperation = new CompositeContentProviderSyncOperation( provider,
+                                                                                                                            IContentProviderSyncOperation.Op.UPDATE );
+               SyncUpdateUtils.updateDate( created,
+                                           update.created,
+                                           uri,
+                                           TaskSeries.TASKSERIES_CREATED_DATE,
+                                           taskSeriesOperation );
+               
+               SyncUpdateUtils.updateDate( modified,
+                                           update.modified,
+                                           uri,
+                                           TaskSeries.MODIFIED_DATE,
+                                           taskSeriesOperation );
+               
+               if ( Strings.hasStringChanged( name, update.name ) )
+                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
+                                                                   .withValue( TaskSeries.TASKSERIES_NAME,
+                                                                               update.name )
+                                                                   .build() );
+               
+               if ( Strings.hasStringChanged( source, update.source ) )
+                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
+                                                                   .withValue( TaskSeries.SOURCE,
+                                                                               update.source )
+                                                                   .build() );
+               
+               if ( Strings.hasStringChanged( locationId, update.locationId ) )
+                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
+                                                                   .withValue( TaskSeries.LOCATION_ID,
+                                                                               update.locationId )
+                                                                   .build() );
+               
+               if ( Strings.hasStringChanged( url, update.url ) )
+                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
+                                                                   .withValue( TaskSeries.URL,
+                                                                               update.url )
+                                                                   .build() );
             }
          }
       }
       
       if ( !ok )
-         operation = null;
-      
-      return operation;
+         return null;
+      else
+         return ( result == null || result.plainSize() > 0 )
+                                                            ? result
+                                                            : NoopContentProviderSyncOperation.INSTANCE;
    }
    
 
@@ -482,8 +530,6 @@ public class RtmTaskSeries extends RtmData implements
    private IContentProviderSyncOperation updateTags( ContentProviderClient provider,
                                                      RtmTaskSeries update )
    {
-      CompositeContentProviderSyncOperation operation = null;
-      
       final ArrayList< Tag > tags = TagsProviderPart.getAllTags( provider, id );
       
       if ( tags != null )
@@ -496,12 +542,15 @@ public class RtmTaskSeries extends RtmData implements
          
          if ( syncOperations != null )
          {
-            operation = new CompositeContentProviderSyncOperation( provider,
-                                                                   syncOperations,
-                                                                   IContentProviderSyncOperation.Op.UPDATE );
+            if ( syncOperations.size() > 0 )
+               return new CompositeContentProviderSyncOperation( provider,
+                                                                 syncOperations,
+                                                                 IContentProviderSyncOperation.Op.UPDATE );
+            else
+               return NoopContentProviderSyncOperation.INSTANCE;
          }
       }
       
-      return operation;
+      return null;
    }
 }

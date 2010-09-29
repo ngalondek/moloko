@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.prefs;
 
@@ -169,8 +169,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
          }
          else
          {
-            final String date = MolokoDateUtils.formatDate( settings.getSyncTimeStamp()
-                                                                    .toMillis( false ),
+            final String date = MolokoDateUtils.formatDate( MolokoDateUtils.toLocal( settings.getSyncTimeStamp()
+                                                                                             .getTime() ),
                                                             MolokoDateUtils.FORMAT_NUMERIC
                                                                | MolokoDateUtils.FORMAT_WITH_YEAR );
             

@@ -18,17 +18,21 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.rtm;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.net.Uri;
 import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tags;
 
 
@@ -91,17 +95,20 @@ public class Tag implements IContentProviderSyncable< Tag >
          return super.equals( o );
       else
       {
-         Tag other = (Tag) o;
+         final Tag other = (Tag) o;
          
+         // Only if booth tags have an id we compare it.
+         // It may happen that we create temporary tag objects
+         // with no ID. In this case the ID is not important.
          boolean equals = ( id != null && other.id != null )
                                                             ? id.equals( other.id )
                                                             : true;
          
          equals = equals
-            && ( ( taskSeriesId == null && other.taskSeriesId == null ) || taskSeriesId.equals( other.taskSeriesId ) );
+            && !Strings.hasStringChanged( taskSeriesId, other.taskSeriesId );
          
-         equals = equals
-            && ( ( tag == null && other.tag == null ) || tag.equals( other.tag ) );
+         equals = equals && !Strings.hasStringChanged( tag, other.tag );
+         
          return equals;
       }
    }
@@ -137,13 +144,24 @@ public class Tag implements IContentProviderSyncable< Tag >
                                                                                Tag update,
                                                                                Object... params )
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newUpdate( Queries.contentUriWithId( Tags.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .withValues( TagsProviderPart.getContentValues( update,
-                                                                                                                       false ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.UPDATE );
+      final Uri uri = Queries.contentUriWithId( Tags.CONTENT_URI, id );
+      
+      final CompositeContentProviderSyncOperation result = new CompositeContentProviderSyncOperation( provider,
+                                                                                                      IContentProviderSyncOperation.Op.UPDATE );
+      
+      if ( Strings.hasStringChanged( taskSeriesId, update.taskSeriesId ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Tags.TASKSERIES_ID,
+                                                         update.taskSeriesId )
+                                             .build() );
+      
+      if ( Strings.hasStringChanged( tag, update.tag ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Tags.TAG, update.tag )
+                                             .build() );
+      
+      return ( result.plainSize() > 0 )
+                                       ? result
+                                       : NoopContentProviderSyncOperation.INSTANCE;
    }
-   
 }

@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,6 +32,7 @@ import org.w3c.dom.NodeList;
 
 import android.os.Parcelable;
 import android.text.TextUtils;
+import dev.drsoran.moloko.service.parcel.ParcelableDate;
 
 
 /**
@@ -123,26 +123,35 @@ public abstract class RtmData implements Parcelable
    
 
 
-   public static Date parseDate( String s )
+   protected String textNullIfEmpty( Element elt, String attribute )
    {
-      try
+      final String text = elt.getAttribute( attribute );
+      return ( TextUtils.isEmpty( text ) ? null : text );
+   }
+   
+
+
+   public static ParcelableDate parseDate( String s )
+   {
+      if ( !TextUtils.isEmpty( s ) )
       {
-         Date d = DATE_FORMAT.parse( s );
-         return new Date( d.getTime()
-            + TimeZone.getDefault().getOffset( d.getTime() ) );
+         try
+         {
+            return new ParcelableDate( DATE_FORMAT.parse( s ) );
+         }
+         catch ( ParseException e )
+         {
+            throw new RuntimeException( e );
+         }
       }
-      catch ( ParseException e )
-      {
-         throw new RuntimeException( e );
-      }
+      
+      return null;
    }
    
 
 
    public static String formatDate( Date d )
    {
-      return DATE_FORMAT.format( new Date( d.getTime()
-         - TimeZone.getDefault().getOffset( d.getTime() ) ) )
-         + "Z";
+      return DATE_FORMAT.format( new Date( d.getTime() ) ) + "Z";
    }
 }

@@ -33,8 +33,8 @@ import android.os.Parcelable;
 import android.util.Log;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 
@@ -199,7 +199,7 @@ public class RtmTaskList extends RtmData implements
       //
       // TODO: Think about behavior if sync direction is from client to server, aka
       // IServerSyncable.
-      return ContentProviderSyncOperation.NOOP;
+      return NoopContentProviderSyncOperation.INSTANCE;
    }
    
 
@@ -209,8 +209,6 @@ public class RtmTaskList extends RtmData implements
                                                                                Object... params )
    {
       // Here booth parties have the same list. We run a sync.
-      CompositeContentProviderSyncOperation operation = null;
-      
       if ( id.equals( update.id ) )
       {
          // Sync taskseries
@@ -224,17 +222,21 @@ public class RtmTaskList extends RtmData implements
          
          if ( syncOperations != null )
          {
-            operation = new CompositeContentProviderSyncOperation( provider,
-                                                                   syncOperations,
-                                                                   IContentProviderSyncOperation.Op.UPDATE );
+            if ( syncOperations.size() > 0 )
+               return new CompositeContentProviderSyncOperation( provider,
+                                                                 syncOperations,
+                                                                 IContentProviderSyncOperation.Op.UPDATE );
+            else
+               return NoopContentProviderSyncOperation.INSTANCE;
          }
       }
       else
       {
-         Log.e( TAG, "ContentProvider update failed. Different RtmTaskList IDs." );
+         Log.e( TAG,
+                "ContentProvider update failed. Different RtmTaskList IDs." );
       }
       
-      return operation;
+      return null;
    }
    
 }

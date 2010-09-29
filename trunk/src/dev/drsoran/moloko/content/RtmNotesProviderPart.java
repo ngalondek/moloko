@@ -18,7 +18,7 @@ along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
 
 Contributors:
 	Ronny Röhricht - implementation
-*/
+ */
 
 package dev.drsoran.moloko.content;
 
@@ -35,6 +35,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
@@ -87,7 +88,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          else
             values.putNull( Notes.NOTE_MODIFIED_DATE );
          
-         if ( note.getTitle() != null )
+         if ( !TextUtils.isEmpty( note.getTitle() ) )
             values.put( Notes.NOTE_TITLE, note.getTitle() );
          else
             values.putNull( Notes.NOTE_TITLE );

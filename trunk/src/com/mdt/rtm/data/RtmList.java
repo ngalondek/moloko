@@ -25,14 +25,18 @@ import org.w3c.dom.Element;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 
@@ -235,23 +239,89 @@ public class RtmList extends RtmData implements
                                                                                RtmList update,
                                                                                Object... params )
    {
-      IContentProviderSyncOperation operation = null;
+      CompositeContentProviderSyncOperation result = null;
       
       if ( this.id.equals( update.id ) )
       {
-         operation = new ContentProviderSyncOperation( provider,
-                                                       ContentProviderOperation.newUpdate( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                                                     id ) )
-                                                                               .withValues( RtmListsProviderPart.getContentValues( update,
-                                                                                                                                   true ) )
-                                                                               .build(),
-                                                       IContentProviderSyncOperation.Op.UPDATE );
+         final Uri uri = Queries.contentUriWithId( Lists.CONTENT_URI, id );
+         
+         result = new CompositeContentProviderSyncOperation( provider,
+                                                             IContentProviderSyncOperation.Op.UPDATE );
+         
+         if ( Strings.hasStringChanged( name, update.name ) )
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.LIST_NAME,
+                                                            update.name )
+                                                .build() );
+         
+         if ( deleted != update.deleted )
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.LIST_DELETED,
+                                                            update.deleted )
+                                                .build() );
+         
+         if ( locked != update.locked )
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.LOCKED,
+                                                            update.locked )
+                                                .build() );
+         
+         if ( archived != update.archived )
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.ARCHIVED,
+                                                            update.archived )
+                                                .build() );
+         
+         if ( position != update.position )
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.POSITION,
+                                                            update.position )
+                                                .build() );
+         
+         // This list gets smart
+         if ( smartFilter == null && update.smartFilter != null )
+         {
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.IS_SMART_LIST,
+                                                            1 )
+                                                .build() );
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.FILTER,
+                                                            update.smartFilter.getFilterString() )
+                                                .build() );
+         }
+         
+         // This list gets normal
+         else if ( smartFilter != null && update.smartFilter == null )
+         {
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.IS_SMART_LIST,
+                                                            0 )
+                                                .build() );
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.FILTER, null )
+                                                .build() );
+         }
+         
+         // Filter has changed
+         else if ( smartFilter != null
+            && update.smartFilter != null
+            && !smartFilter.getFilterString()
+                           .equals( update.smartFilter.getFilterString() ) )
+         {
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Lists.FILTER,
+                                                            update.smartFilter.getFilterString() )
+                                                .build() );
+         }
       }
       else
       {
          Log.e( TAG, "ContentProvider update failed. Different RtmList IDs." );
       }
       
-      return operation;
+      return ( result == null || result.plainSize() > 0 )
+                                                         ? result
+                                                         : NoopContentProviderSyncOperation.INSTANCE;
    }
 }

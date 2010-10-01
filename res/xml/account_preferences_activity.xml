@@ -25,26 +25,18 @@
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:orderingFromXml="true">
    
-   <PreferenceCategory
-      android:title="@string/auth_pref_title">
-      
-	   <PreferenceScreen
-	      android:orderingFromXml="true"
-	      android:title="@string/auth_pref_sync_interval_title">
-	   
-	      <EditTextPreference
-	         android:key="@string/key_sync_inverval"
-	         android:title="@string/auth_pref_sync_interval_title"
-	         android:summary="@string/auth_pref_sync_interval_summary" />
-	   </PreferenceScreen>
-   </PreferenceCategory>
-         
-	   <!-- 
-		<dev.drsoran.moloko.auth.prefs.RtmPermissionPreference 
-			android:title="@string/auth_pref_permission_title"
-			android:key="@string/auth_pref_permission_key" 
-			android:entries="@array/rtm_permissions"
-			android:entryValues="@array/rtm_permissions_values"
-			android:dependency="@string/auth_pref_api_key_key"/>
-		-->
+   <dev.drsoran.moloko.prefs.AutoSummaryListPreference
+      android:title="@string/auth_pref_sync_interval_title"
+      android:summary="%s"
+      android:key="@string/key_sync_inverval"
+      android:entries="@array/moloko_auth_prefs_sync_interval"
+      android:entryValues="@array/moloko_auth_prefs_sync_interval_entries"
+      android:defaultValue="@string/auth_pref_sync_interval_default_value" />
+       
+   <dev.drsoran.moloko.auth.prefs.RtmPermissionPreference 
+      android:title="@string/auth_pref_perm_title"
+		android:key="@string/key_permission" 
+		android:entries="@array/rtm_permissions"
+		android:entryValues="@array/rtm_permissions_values" />
+		
 </PreferenceScreen>

@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	<!--
-		The attributes in this XML file provide configuration information
-	-->
-	<!-- for the Account Manager. -->
-
 <account-authenticator
    xmlns:android="http://schemas.android.com/apk/res/android"
 	android:accountType="dev.drsoran.moloko"
 	android:icon="@drawable/rtm"
 	android:smallIcon="@drawable/rtm"
-	android:label="@string/rtm_full" />
+	android:label="@string/rtm_full"
+	android:accountPreferences="@xml/account_preferences" />

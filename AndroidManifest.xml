@@ -174,15 +174,23 @@
           android:theme="@style/Theme.Moloko.Preferences"
           android:excludeFromRecents="true">
       </activity>
-      
-      <!--  Deactivated
+            
       <activity
-		    android:label="@string/app_preferences"
+		    android:label="@string/app_account_preferences"
 		    android:name=".auth.prefs.AccountPreferencesActivity"
-		    android:excludeFromRecents="true">
+		    android:theme="@style/Theme.Moloko.Preferences"
+		    android:taskAffinity="android.system"
+		    android:launchMode="singleTask"		    
+		    android:noHistory="true"
+		    android:excludeFromRecents="true"
+		    android:exported="true">
+		    <intent-filter>
+		       <action
+		          android:name="dev.drsoran.moloko.auth.prefs.account.MAIN" />
+             <category
+                android:name="android.intent.category.DEFAULT" />
+		    </intent-filter>
       </activity>
-      
-       -->
                  
       <activity
           android:name=".auth.AuthenticatorActivity"

@@ -60,5 +60,31 @@
       <item>0</item>
       <item>1</item>
    </string-array>
+   
+   <string-array name="moloko_auth_prefs_sync_interval">     
+      <item>Manuell</item>
+      <item>Alle 5 Min.</item>
+      <item>Alle 15 Min.</item>
+      <item>Alle 30 Min.</item>
+      <item>Jede Stunde</item>
+      <item>Alle 2 Stunden</item>
+      <item>Alle 4 Stunden</item>
+      <item>Alle 8 Stunden</item>
+      <item>Alle 12 Stunden</item>
+      <item>Einmal täglich</item>
+   </string-array>
+   
+   <string-array name="moloko_auth_prefs_sync_interval_entries">     
+      <item>-1</item>
+      <item>5</item>
+      <item>15</item>
+      <item>30</item>
+      <item>60</item>
+      <item>120</item>
+      <item>240</item>
+      <item>480</item>
+      <item>720</item>
+      <item>-2</item>
+   </string-array>
 
 </resources>

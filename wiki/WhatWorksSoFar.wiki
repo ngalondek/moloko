@@ -49,9 +49,10 @@ Support for Android integrated search dialog. Allows searching for tasks using s
 
 === TODO ===
 
- * implement search auto completion (low pro)
- * handle reoccurred tasks
  * account settings
+ * handle reoccurred tasks
+ * support for HTTPS
+ * implement search auto completion (low pro)
  * RTM date format:
    * missing separator \u0020\u0068\u0020|\u6642|h
    * '.' is only allowed for dates not times

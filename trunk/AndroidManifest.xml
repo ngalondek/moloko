@@ -195,22 +195,25 @@
       <activity
           android:name=".auth.AuthenticatorActivity"
           android:label="@string/rtm_full"
-          android:excludeFromRecents="true"/>
+          android:theme="@style/Theme"
+          android:excludeFromRecents="true" />
           
       <activity
           android:name=".auth.RtmWebLoginActivity"
           android:label="@string/rtm_full"
-          android:excludeFromRecents="true"/>
+          android:theme="@style/Theme"
+          android:excludeFromRecents="true" />
           
       <activity
           android:name=".activities.RtmSmartFilterTestActivity"
           android:label="Test RTM smart filter"
-          android:excludeFromRecents="true"/>
+          android:excludeFromRecents="true" />
 		
 		<!-- Services -->
 		
       <service
          android:name=".auth.AuthenticationService"
+         android:label="@string/svc_auth"
          android:exported="true">
          <intent-filter>
             <action
@@ -223,6 +226,7 @@
       
       <service
          android:name=".service.sync.SyncService"
+         android:label="@string/svc_sync"
          android:exported="true">
          <intent-filter>
             <action
@@ -231,13 +235,41 @@
          <meta-data
              android:name="android.content.SyncAdapter"
              android:resource="@xml/syncadapter" />
-      </service>      
+      </service>
+      
+      <!-- Broadcast receivers -->
+      
+      <receiver
+         android:name=".service.sync.SyncAlarmReceiver" />
+         
+      <receiver
+         android:name=".NetworkStatusReceiver">
+         <intent-filter>
+            <action
+               android:name="android.net.conn.BACKGROUND_DATA_SETTING_CHANGED" />
+            <action
+               android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>
+      </receiver>
+          
+      <receiver
+         android:name=".BootReceiver">
+         <intent-filter>
+            <action
+               android:name="android.intent.action.BOOT_COMPLETED" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>
+      </receiver>
+         
    </application>
 
    <uses-permission
-        android:name="android.permission.ACCESS_NETWORK_STATE"/>
+        android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission
-	     android:name="android.permission.INTERNET"/>
+	     android:name="android.permission.INTERNET" />
    <uses-permission
         android:name="android.permission.GET_ACCOUNTS" />        
    <uses-permission
@@ -254,4 +286,6 @@
        android:name="android.permission.READ_SYNC_SETTINGS" />
    <uses-permission
        android:name="android.permission.WRITE_SYNC_SETTINGS" />
+   <uses-permission
+       android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest> 

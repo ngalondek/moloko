@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.content;
@@ -47,7 +47,10 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Tags._ID, Tags.TASKSERIES_ID, Tags.TAG };
+   {
+    Tags._ID,
+    Tags.TASKSERIES_ID,
+    Tags.TAG };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -95,7 +98,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
             final Cursor c = client.query( Tags.CONTENT_URI,
                                            PROJECTION,
                                            Tags.TASKSERIES_ID + " = "
-                                              + taskSeriesId,
+                                                    + taskSeriesId,
                                            null,
                                            Tags.TAG );
             
@@ -139,12 +142,14 @@ public class TagsProviderPart extends AbstractRtmProviderPart
          try
          {
             final String[] projection =
-            { Tags._ID, Tags.TAG };
+            {
+             Tags._ID,
+             Tags.TAG };
             
             final Cursor c = client.query( Tags.CONTENT_URI,
                                            projection,
                                            Tags.TASKSERIES_ID + " = "
-                                              + taskSeriesId,
+                                                    + taskSeriesId,
                                            null,
                                            null );
             
@@ -185,21 +190,28 @@ public class TagsProviderPart extends AbstractRtmProviderPart
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE " + path + " ( " + Tags._ID
-         + " INTEGER NOT NULL CONSTRAINT PK_TAGS PRIMARY KEY AUTOINCREMENT, "
-         + Tags.TASKSERIES_ID + " INTEGER NOT NULL, " + Tags.TAG
-         + " TEXT NOT NULL, CONSTRAINT taskseries_1 FOREIGN KEY ( "
-         + Tags.TASKSERIES_ID + ") REFERENCES " + TaskSeries.PATH + "( "
-         + TaskSeries._ID + " ) );" );
+      db.execSQL( "CREATE TABLE "
+                  + path
+                  + " ( "
+                  + Tags._ID
+                  + " INTEGER NOT NULL CONSTRAINT PK_TAGS PRIMARY KEY AUTOINCREMENT, "
+                  + Tags.TASKSERIES_ID + " INTEGER NOT NULL, " + Tags.TAG
+                  + " TEXT NOT NULL, CONSTRAINT taskseries_1 FOREIGN KEY ( "
+                  + Tags.TASKSERIES_ID + ") REFERENCES " + TaskSeries.PATH
+                  + "( "
+                  + TaskSeries._ID + " ) );" );
       
       // Trigger: Silently ignores inserts with a taskseries ID
       // and a tag that already exits
-      db.execSQL( "CREATE TRIGGER " + path
-         + "_ignore_duplicate_insert BEFORE INSERT ON " + path
-         + " FOR EACH ROW BEGIN SELECT RAISE ( IGNORE ) WHERE EXISTS ( SELECT "
-         + Tags.TASKSERIES_ID + ", " + Tags.TAG + " FROM " + Tags.PATH
-         + " WHERE " + Tags.TASKSERIES_ID + " = new." + Tags.TASKSERIES_ID
-         + " AND " + Tags.TAG + " = new." + Tags.TAG + "); END;" );
+      db.execSQL( "CREATE TRIGGER "
+                  + path
+                  + "_ignore_duplicate_insert BEFORE INSERT ON "
+                  + path
+                  + " FOR EACH ROW BEGIN SELECT RAISE ( IGNORE ) WHERE EXISTS ( SELECT "
+                  + Tags.TASKSERIES_ID + ", " + Tags.TAG + " FROM " + Tags.PATH
+                  + " WHERE " + Tags.TASKSERIES_ID + " = new."
+                  + Tags.TASKSERIES_ID
+                  + " AND " + Tags.TAG + " = new." + Tags.TAG + "); END;" );
    }
    
 

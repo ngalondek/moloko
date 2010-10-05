@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.prefs;
@@ -47,6 +47,7 @@ import android.widget.Toast;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.rtm.RtmSettings;
@@ -64,7 +65,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
    private AccountManagerFuture< Bundle > addAccountHandle;
    
-   private final Handler handler;
+   private final Handler handler = new Handler();
    
    
 
@@ -72,13 +73,11 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    {
       super( context, attrs );
       
-      handler = new Handler();
-      
       final AccountManager accountManager = AccountManager.get( getContext() );
       
       if ( accountManager != null )
       {
-         setAccount( accountManager );
+         account = AccountUtils.getRtmAccount( accountManager );
          accountManager.addOnAccountsUpdatedListener( this, handler, true );
       }
    }
@@ -126,7 +125,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       
       if ( accountManager != null )
       {
-         setAccount( accountManager );
+         account = AccountUtils.getRtmAccount( accountManager );
          notifyChanged();
       }
    }
@@ -172,7 +171,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
             final String date = MolokoDateUtils.formatDate( MolokoDateUtils.toLocal( settings.getSyncTimeStamp()
                                                                                              .getTime() ),
                                                             MolokoDateUtils.FORMAT_NUMERIC
-                                                               | MolokoDateUtils.FORMAT_WITH_YEAR );
+                                                                     | MolokoDateUtils.FORMAT_WITH_YEAR );
             
             setInfoText( getContext().getString( R.string.moloko_prefs_rtm_sync_text_in_sync,
                                                  date ) );
@@ -287,19 +286,6 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
          ContentResolver.removeStatusChangeListener( syncStatusHandle );
          syncStatusHandle = null;
       }
-   }
-   
-
-
-   private void setAccount( AccountManager accountManager )
-   {
-      final Account[] accounts = accountManager.getAccountsByType( Constants.ACCOUNT_TYPE );
-      
-      // TODO: We simple take the first one. Think about showing a choose dialog.
-      if ( accounts != null && accounts.length > 0 )
-         account = accounts[ 0 ];
-      else
-         account = null;
    }
    
 }

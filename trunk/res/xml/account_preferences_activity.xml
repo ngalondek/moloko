@@ -33,10 +33,7 @@
       android:entryValues="@array/moloko_auth_prefs_sync_interval_entries"
       android:defaultValue="@string/auth_pref_sync_interval_default_value" />
        
-   <dev.drsoran.moloko.auth.prefs.RtmPermissionPreference 
-      android:title="@string/auth_pref_perm_title"
-		android:key="@string/key_permission" 
-		android:entries="@array/rtm_permissions"
-		android:entryValues="@array/rtm_permissions_values" />
+   <dev.drsoran.moloko.auth.prefs.AccountAccessLevelPreference
+      android:title="@string/auth_pref_perm_title" />
 		
 </PreferenceScreen>

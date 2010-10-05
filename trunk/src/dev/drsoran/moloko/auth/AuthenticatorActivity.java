@@ -1,24 +1,24 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
-*/
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
+ */
 
 package dev.drsoran.moloko.auth;
 
@@ -28,7 +28,6 @@ import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,8 +51,8 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.service.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.util.ConnectionChecker;
-import dev.drsoran.provider.Rtm;
 
 
 /**
@@ -69,6 +68,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    public static final String PARAM_MISSINGCREDENTIALS = "missingCredentials";
    
    public static final String PARAM_CONFIRMCREDENTIALS = "confirmCredentials";
+   
+   public static final String PARAM_UPDATECREDENTIALS = "updateCredentials";
    
    public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
    
@@ -213,6 +214,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
 
 
+   public void onPermInfoClicked( View view )
+   {
+      // TODO: Show features for permission level
+   }
+   
+
+
    public void onPreBeginAuthentication()
    {
       showDialog( 0 );
@@ -286,7 +294,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       else
       {
          // Response is received from the server for authentication request.
-         // Sets the AccountAuthenticatorResult which is sent back to the caller.
+         // Sets the AccountAuthenticatorResult which is sent back to the
+         // caller.
          // Also sets the authToken in AccountManager for this account.
          final Account account = new Account( rtmAuth.getUser().getUsername(),
                                               Constants.ACCOUNT_TYPE );
@@ -303,9 +312,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
                if ( ok )
                {
                   // Set RTM sync for this account.
-                  ContentResolver.setSyncAutomatically( account,
-                                                        Rtm.AUTHORITY,
-                                                        true );
+                  SyncAlarmReceiver.scheduleSyncAlarm( getApplicationContext() );
                }
             }
             
@@ -349,7 +356,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
          catch ( SecurityException e )
          {
             messageText.setText( getErrorMessage( R.string.auth_err_cause_scurity )
-               + e.getLocalizedMessage() );
+                                 + e.getLocalizedMessage() );
          }
       }
    }
@@ -382,7 +389,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
       if ( requestCode == RtmWebLoginActivity.ReqType.OPEN_URL
-         && resultCode == RtmWebLoginActivity.ReturnCode.SUCCESS )
+           && resultCode == RtmWebLoginActivity.ReturnCode.SUCCESS )
       {
          authenticator.completeAuthentication();
       }
@@ -420,6 +427,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       {
          messageText.setText( getString( R.string.auth_expired_auth_token,
                                          getString( R.string.app_name ) ) );
+      }
+      else
+      {
+         messageText.setText( getString( R.string.auth_info_text ) );
       }
    }
    
@@ -487,7 +498,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       final String[] rtmPermissionsVals = getResources().getStringArray( R.array.rtm_permissions_values );
       
       for ( int i = 0; i < rtmPermissionsVals.length
-         && position == Spinner.INVALID_POSITION; i++ )
+                       && position == Spinner.INVALID_POSITION; i++ )
       {
          if ( rtmPermissionsVals[ i ].equals( permissionValue ) )
             position = i;

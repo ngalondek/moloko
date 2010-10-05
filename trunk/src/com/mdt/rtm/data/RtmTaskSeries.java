@@ -1,21 +1,21 @@
 /*
  * Copyright 2007, MetaDimensional Technologies Inc.
- *
- *
+ * 
+ * 
  * This file is part of the RememberTheMilk Java API.
- *
+ * 
  * The RememberTheMilk Java API is free software; you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 3 of the
  * License, or (at your option) any later version.
- *
+ * 
  * The RememberTheMilk Java API is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
  * General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.mdt.rtm.data;
 
@@ -137,6 +137,8 @@ public class RtmTaskSeries extends RtmData implements
    
    private final List< String > tags;
    
+   private final boolean deleted;
+   
    
 
    public RtmTaskSeries( String id, Date created, Date modified, String name,
@@ -154,6 +156,7 @@ public class RtmTaskSeries extends RtmData implements
       this.locationId = locationId;
       this.url = url;
       this.tags = tags;
+      this.deleted = false;
    }
    
 
@@ -192,8 +195,12 @@ public class RtmTaskSeries extends RtmData implements
       }
       else
       {
+         // do not use Collections.emptyList() here cause we
+         // need a mutable list.
          tags = new ArrayList< String >( 0 );
       }
+      
+      deleted = false;
    }
    
 
@@ -210,6 +217,7 @@ public class RtmTaskSeries extends RtmData implements
       notes = null;
       url = null;
       tags = null;
+      this.deleted = deleted;
    }
    
 
@@ -226,6 +234,7 @@ public class RtmTaskSeries extends RtmData implements
       locationId = source.readString();
       url = source.readString();
       tags = source.createStringArrayList();
+      deleted = source.readInt() != 0;
    }
    
 
@@ -286,6 +295,13 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
+   public boolean isDeleted()
+   {
+      return deleted;
+   }
+   
+
+
    public ArrayList< Tag > getTagObjects()
    {
       ArrayList< Tag > tags = new ArrayList< Tag >( this.tags != null
@@ -315,7 +331,7 @@ public class RtmTaskSeries extends RtmData implements
    @Override
    public String toString()
    {
-      return "TaskSeries<" + id + "," + name + ">";
+      return "TaskSeries<" + id + "," + name + "," + deleted + ">";
    }
    
 
@@ -346,6 +362,7 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeString( locationId );
       dest.writeString( url );
       dest.writeStringList( tags );
+      dest.writeInt( deleted ? 1 : 0 );
    }
    
 
@@ -409,13 +426,9 @@ public class RtmTaskSeries extends RtmData implements
    {
       CompositeContentProviderSyncOperation result = null;
       
-      boolean ok = ParamChecker.checkParams( TAG,
-                                             "ContentProvider update failed. ",
-                                             new Class[]
-                                             { String.class },
-                                             params );
+      boolean ok = true;
       
-      if ( ok && !update.id.equals( id ) )
+      if ( !update.id.equals( id ) )
       {
          ok = false;
          Log.e( TAG,

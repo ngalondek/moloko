@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.content;
@@ -51,9 +51,16 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { RawTasks._ID, RawTasks.DUE_DATE, RawTasks.HAS_DUE_TIME,
-    RawTasks.ADDED_DATE, RawTasks.COMPLETED_DATE, RawTasks.DELETED_DATE,
-    RawTasks.PRIORITY, RawTasks.POSTPONED, RawTasks.ESTIMATE };
+   {
+    RawTasks._ID,
+    RawTasks.DUE_DATE,
+    RawTasks.HAS_DUE_TIME,
+    RawTasks.ADDED_DATE,
+    RawTasks.COMPLETED_DATE,
+    RawTasks.DELETED_DATE,
+    RawTasks.PRIORITY,
+    RawTasks.POSTPONED,
+    RawTasks.ESTIMATE };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -187,14 +194,17 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + RawTasks._ID
-         + " INTEGER NOT NULL, " + RawTasks.DUE_DATE + " INTEGER, "
-         + RawTasks.HAS_DUE_TIME + " INTEGER NOT NULL DEFAULT 0, "
-         + RawTasks.ADDED_DATE + " INTEGER NOT NULL, "
-         + RawTasks.COMPLETED_DATE + " INTEGER, " + RawTasks.DELETED_DATE
-         + " INTEGER, " + RawTasks.PRIORITY + " CHAR(1) NOT NULL DEFAULT 'n', "
-         + RawTasks.POSTPONED + " INTEGER DEFAULT 0, " + RawTasks.ESTIMATE
-         + " NOTE_TEXT, " + "CONSTRAINT PK_TASKS PRIMARY KEY ( \""
-         + RawTasks._ID + "\" )" + " );" );
+                  + " INTEGER NOT NULL, " + RawTasks.DUE_DATE + " INTEGER, "
+                  + RawTasks.HAS_DUE_TIME + " INTEGER NOT NULL DEFAULT 0, "
+                  + RawTasks.ADDED_DATE + " INTEGER NOT NULL, "
+                  + RawTasks.COMPLETED_DATE + " INTEGER, "
+                  + RawTasks.DELETED_DATE
+                  + " INTEGER, " + RawTasks.PRIORITY
+                  + " CHAR(1) NOT NULL DEFAULT 'n', "
+                  + RawTasks.POSTPONED + " INTEGER DEFAULT 0, "
+                  + RawTasks.ESTIMATE
+                  + " NOTE_TEXT, " + "CONSTRAINT PK_TASKS PRIMARY KEY ( \""
+                  + RawTasks._ID + "\" )" + " );" );
    }
    
 

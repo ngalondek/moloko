@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.provider;
@@ -107,7 +107,7 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of lists.
@@ -134,10 +134,11 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of list overviews.
+       * The MIME type of {@link #CONTENT_URI} providing a directory of list
+       * overviews.
        */
       public final static String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.list_overview";
       
@@ -153,7 +154,7 @@ public class Rtm
        * The default sort order for this table
        */
       public final static String DEFAULT_SORT_ORDER = POSITION + ", "
-         + LIST_NAME;
+                                                      + LIST_NAME;
    }
    
 
@@ -213,7 +214,7 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of notes.
@@ -297,15 +298,17 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of locations.
+       * The MIME type of {@link #CONTENT_URI} providing a directory of
+       * locations.
        */
       public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.location";
       
       /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single location.
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single
+       * location.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.location";
       
@@ -349,7 +352,7 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of tags.
@@ -445,15 +448,17 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of taskseries.
+       * The MIME type of {@link #CONTENT_URI} providing a directory of
+       * taskseries.
        */
       public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.taskseries";
       
       /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single taskseries.
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single
+       * taskseries.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.taskseries";
       
@@ -511,7 +516,8 @@ public class Rtm
        * <P>
        * Type: CHAR(1)
        * </P>
-       * <LI>'n' - none</LI> <LI>'1' - high</LI> <LI>'2' - medium</LI> <LI>'3' - low</LI>
+       * <LI>'n' - none</LI> <LI>'1' - high</LI> <LI>'2' - medium</LI> <LI>'3' -
+       * low</LI>
        */
       public final static String PRIORITY = "priority";
       
@@ -541,15 +547,17 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of raw tasks.
+       * The MIME type of {@link #CONTENT_URI} providing a directory of raw
+       * tasks.
        */
       public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.rawtask";
       
       /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single raw task.
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single raw
+       * task.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.rawtask";
       
@@ -569,7 +577,7 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of tasks.
@@ -601,13 +609,13 @@ public class Rtm
        * Sorts result tasks by their priority
        */
       public final static String SORT_PRIORITY = PRIORITY + ", "
-         + TASKSERIES_NAME;
+                                                 + TASKSERIES_NAME;
       
       /**
        * Sorts result tasks by their due date
        */
       public final static String SORT_DUE_DATE = "COALESCE(" + DUE_DATE
-         + ",'-1'), " + TASKSERIES_NAME;
+                                                 + ",'-1'), " + TASKSERIES_NAME;
       
       /**
        * Sorts result tasks by their name
@@ -634,7 +642,7 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing the settings.
@@ -664,7 +672,7 @@ public class Rtm
    protected static interface SettingsColumns
    {
       /**
-       * The time stamp when the setting were retrieved from the server
+       * The time stamp when the settings were retrieved from the server
        * <P>
        * Type: INTEGER(long)
        * </P>
@@ -684,8 +692,8 @@ public class Rtm
        * <P>
        * Type: INTEGER
        * </P>
-       * <LI>0 - indicates an European date format (e.g. 14/02/06)</LI> <LI>1 - indicates an American date format (e.g.
-       * 02/14/06)</LI>
+       * <LI>0 - indicates an European date format (e.g. 14/02/06)</LI> <LI>1 -
+       * indicates an American date format (e.g. 02/14/06)</LI>
        */
       public final static String DATEFORMAT = "dateformat";
       
@@ -694,7 +702,8 @@ public class Rtm
        * <P>
        * Type: INTEGER
        * </P>
-       * <LI>0 - indicates 12 hour time with day period (e.g. 5pm)</LI> <LI>1 - indicates 24 hour time (e.g. 17:00)</LI>
+       * <LI>0 - indicates 12 hour time with day period (e.g. 5pm)</LI> <LI>1 -
+       * indicates 24 hour time (e.g. 17:00)</LI>
        */
       public final static String TIMEFORMAT = "timeformat";
       
@@ -724,7 +733,7 @@ public class Rtm
        * The content:// style URL for this table
        */
       public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
+                                                       + "/" + PATH );
       
       /**
        * The MIME type of {@link #CONTENT_URI} providing the settings.
@@ -735,5 +744,47 @@ public class Rtm
        * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.settings";
+   }
+   
+
+   protected static interface SyncColumns
+   {
+      /**
+       * The time stamp of the last synchronization RTM -> local
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String LAST_IN = "last_in";
+      
+      /**
+       * The time stamp of the last synchronization local -> RTM
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String LAST_OUT = "last_out";
+   }
+   
+
+   public static final class Sync implements BaseColumns, SyncColumns
+   {
+      public final static String PATH = "sync";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+                                                       + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing the settings.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.sync";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.sync";
    }
 }

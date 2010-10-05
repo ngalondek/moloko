@@ -20,22 +20,33 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.search;
+package dev.drsoran.moloko;
 
-import android.content.SearchRecentSuggestionsProvider;
+import android.accounts.Account;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import dev.drsoran.moloko.service.sync.SyncAlarmReceiver;
 
 
-public class TasksSearchRecentSuggestionsProvider extends
-         SearchRecentSuggestionsProvider
+public class BootReceiver extends BroadcastReceiver
 {
-   public final static String AUTHORITY = TasksSearchRecentSuggestionsProvider.class.getName();
    
-   public final static int MODE = DATABASE_MODE_QUERIES;
-   
+   @Override
+   public void onReceive( Context context, Intent intent )
+   {
+      scheduleSync( context );
+   }
    
 
-   public TasksSearchRecentSuggestionsProvider()
+
+   public final static void scheduleSync( Context context )
    {
-      setupSuggestions( AUTHORITY, MODE );
+      final Account account = SyncAlarmReceiver.isReadyToSync( context );
+      
+      if ( account != null )
+      {
+         SyncAlarmReceiver.scheduleSyncAlarm( context );
+      }
    }
 }

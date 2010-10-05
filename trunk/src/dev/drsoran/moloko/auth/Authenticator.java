@@ -1,24 +1,24 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
-*/
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
+ */
 
 package dev.drsoran.moloko.auth;
 
@@ -83,7 +83,13 @@ public class Authenticator extends AbstractAccountAuthenticator
                                      Account account,
                                      Bundle options ) throws NetworkErrorException
    {
-      throw new UnsupportedOperationException( "confirmCredentials" );
+      final Bundle result = new Bundle();
+      
+      result.putInt( AccountManager.KEY_ERROR_CODE,
+                     AccountManager.ERROR_CODE_UNSUPPORTED_OPERATION );
+      result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
+      
+      return result;
    }
    
 
@@ -94,7 +100,41 @@ public class Authenticator extends AbstractAccountAuthenticator
                                     String authTokenType,
                                     Bundle options ) throws NetworkErrorException
    {
-      throw new UnsupportedOperationException( "updateCredentials" );
+      final Bundle result = new Bundle();
+      
+      boolean ok = options != null;
+      
+      if ( ok )
+      {
+         // Check the feature to update
+         if ( options.getBoolean( Constants.FEAT_PERMISSION ) )
+         {
+            final Intent intent = new Intent( context,
+                                              AuthenticatorActivity.class );
+            
+            configureIntent( context, intent, account );
+            
+            intent.putExtra( AuthenticatorActivity.PARAM_UPDATECREDENTIALS,
+                             true );
+            intent.putExtra( AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
+                             response );
+            
+            result.putParcelable( AccountManager.KEY_INTENT, intent );
+         }
+         else
+         {
+            ok = false;
+         }
+      }
+      
+      if ( !ok )
+      {
+         result.putInt( AccountManager.KEY_ERROR_CODE,
+                        AccountManager.ERROR_CODE_BAD_ARGUMENTS );
+         result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
+      }
+      
+      return result;
    }
    
 
@@ -107,6 +147,7 @@ public class Authenticator extends AbstractAccountAuthenticator
       
       result.putInt( AccountManager.KEY_ERROR_CODE,
                      AccountManager.ERROR_CODE_UNSUPPORTED_OPERATION );
+      result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
       
       return result;
    }
@@ -133,7 +174,8 @@ public class Authenticator extends AbstractAccountAuthenticator
                                                                Constants.FEAT_PERMISSION );
          
          final boolean missingCredential = apiKey == null
-            || sharedSecret == null || permission == null;
+                                           || sharedSecret == null
+                                           || permission == null;
          
          boolean authTokenExpired = authToken == null;
          
@@ -192,7 +234,7 @@ public class Authenticator extends AbstractAccountAuthenticator
             final Intent intent = new Intent( context,
                                               AuthenticatorActivity.class );
             
-            configureIntent( intent, account );
+            configureIntent( context, intent, account );
             
             if ( missingCredential )
                intent.putExtra( AuthenticatorActivity.PARAM_MISSINGCREDENTIALS,
@@ -258,7 +300,9 @@ public class Authenticator extends AbstractAccountAuthenticator
    
 
 
-   private void configureIntent( Intent intent, Account account )
+   private final static void configureIntent( Context context,
+                                              Intent intent,
+                                              Account account )
    {
       final AccountManager accountManager = AccountManager.get( context );
       

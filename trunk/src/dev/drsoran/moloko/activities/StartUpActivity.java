@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.activities;
@@ -48,6 +48,7 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -71,7 +72,10 @@ public class StartUpActivity extends Activity implements
    private final static int STATE_COMPLETED = 2;
    
    private final static int[] STATE_SEQUENCE =
-   { STATE_CHECK_ACCOUNT, STATE_DETERMINE_STARTUP_VIEW, STATE_COMPLETED };
+   {
+    STATE_CHECK_ACCOUNT,
+    STATE_DETERMINE_STARTUP_VIEW,
+    STATE_COMPLETED };
    
    private ViewGroup widgetContainer;
    
@@ -125,7 +129,7 @@ public class StartUpActivity extends Activity implements
 
    private void checkAccount()
    {
-      final Account account = getAccount();
+      final Account account = AccountUtils.getRtmAccount( this );
       
       if ( account == null )
       {
@@ -357,17 +361,6 @@ public class StartUpActivity extends Activity implements
       return client != null && Queries.exists( client, Lists.CONTENT_URI, id );
    }
    
-
-
-   private Account getAccount()
-   {
-      final Account[] accounts = AccountManager.get( this )
-                                               .getAccountsByType( Constants.ACCOUNT_TYPE );
-      
-      // TODO: We simple take the first one. Think about showing a choose dialog.
-      return ( accounts != null && accounts.length > 0 ) ? accounts[ 0 ] : null;
-   }
-   
    private final Handler handler = new Handler()
    {
       @Override
@@ -376,30 +369,30 @@ public class StartUpActivity extends Activity implements
          switch ( msg.what )
          {
             case MSG_STATE_CHANGED:
-               switch ( stateIndex )
-               {
-                  case STATE_CHECK_ACCOUNT:
-                     checkAccount();
-                     break;
-                  
-                  case STATE_DETERMINE_STARTUP_VIEW:
-                     determineStartupView();
-                     break;
-                  
-                  case STATE_COMPLETED:
-                     onStartUpCompleted();
-                     break;
-                  
-                  default :
-                     throw new IllegalStateException( "Unknown state: "
-                        + stateIndex );
-               }
-               break;
-            
-            default :
-               super.handleMessage( msg );
-         }
-      }
+                                   switch ( stateIndex )
+                                   {
+                                      case STATE_CHECK_ACCOUNT:
+                                   checkAccount();
+                                   break;
+                                
+                                case STATE_DETERMINE_STARTUP_VIEW:
+                                   determineStartupView();
+                                   break;
+                                
+                                case STATE_COMPLETED:
+                                   onStartUpCompleted();
+                                   break;
+                                
+                                default :
+                                   throw new IllegalStateException( "Unknown state: "
+                                                                    + stateIndex );
+                             }
+                             break;
+                          
+                          default :
+                                   super.handleMessage( msg );
+                             }
+                          }
    };
    
 }

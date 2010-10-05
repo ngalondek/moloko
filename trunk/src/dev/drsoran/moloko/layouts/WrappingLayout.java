@@ -1,11 +1,14 @@
 /**
- * ViewGroup that arranges child views in a similar way to text, with them laid out one line at a time and "wrapping" to
+ * ViewGroup that arranges child views in a similar way to text, with them laid
+ * out one line at a time and "wrapping" to
  * the next line as needed.
  * 
  * Code licensed under CC-by-SA
  * 
  * @author Henrik Gustafsson
- * @see http://stackoverflow.com/questions/549451/line-breaking-widget-layout-for-android
+ * @see http
+ *      ://stackoverflow.com/questions/549451/line-breaking-widget-layout-for
+ *      -android
  * @license http://creativecommons.org/licenses/by-sa/2.5/
  * 
  */
@@ -83,9 +86,9 @@ public class WrappingLayout extends ViewGroup
       assert ( MeasureSpec.getMode( widthMeasureSpec ) != MeasureSpec.UNSPECIFIED );
       
       final int width = MeasureSpec.getSize( widthMeasureSpec )
-         - getPaddingLeft() - getPaddingRight();
+                        - getPaddingLeft() - getPaddingRight();
       int height = MeasureSpec.getSize( heightMeasureSpec ) - getPaddingTop()
-         - getPaddingBottom();
+                   - getPaddingBottom();
       final int count = getChildCount();
       int line_height = 0;
       
@@ -117,7 +120,7 @@ public class WrappingLayout extends ViewGroup
             
             final int childw = child.getMeasuredWidth();
             line_height = Math.max( line_height, child.getMeasuredHeight()
-               + lp.vertical_spacing );
+                                                 + lp.vertical_spacing );
             
             if ( xpos + childw > width )
             {

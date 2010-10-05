@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.content;
@@ -53,8 +53,12 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Notes._ID, Notes.NOTE_CREATED_DATE, Notes.NOTE_MODIFIED_DATE,
-    Notes.NOTE_TITLE, Notes.NOTE_TEXT };
+   {
+    Notes._ID,
+    Notes.NOTE_CREATED_DATE,
+    Notes.NOTE_MODIFIED_DATE,
+    Notes.NOTE_TITLE,
+    Notes.NOTE_TEXT };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -113,7 +117,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          final Cursor c = client.query( Notes.CONTENT_URI,
                                         PROJECTION,
                                         Notes.TASKSERIES_ID + " = "
-                                           + taskSeriesId,
+                                                 + taskSeriesId,
                                         null,
                                         null );
          
@@ -210,14 +214,17 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Notes._ID
-         + " INTEGER NOT NULL, " + Notes.TASKSERIES_ID + " INTEGER NOT NULL, "
-         + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
-         + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_TITLE
-         + " TEXT, " + Notes.NOTE_TEXT + " TEXT NOT NULL, "
-         + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID + "\" ), "
-         + "CONSTRAINT taskseries_ref FOREIGN KEY ( " + Notes.TASKSERIES_ID
-         + " ) REFERENCES " + TaskSeries.PATH + " ( " + TaskSeries._ID
-         + " ) );" );
+                  + " INTEGER NOT NULL, " + Notes.TASKSERIES_ID
+                  + " INTEGER NOT NULL, "
+                  + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
+                  + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_TITLE
+                  + " TEXT, " + Notes.NOTE_TEXT + " TEXT NOT NULL, "
+                  + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID
+                  + "\" ), "
+                  + "CONSTRAINT taskseries_ref FOREIGN KEY ( "
+                  + Notes.TASKSERIES_ID
+                  + " ) REFERENCES " + TaskSeries.PATH + " ( " + TaskSeries._ID
+                  + " ) );" );
    }
    
 

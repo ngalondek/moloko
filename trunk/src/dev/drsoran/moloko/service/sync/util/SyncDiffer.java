@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.service.sync.util;
@@ -27,14 +27,13 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import dev.drsoran.moloko.service.sync.lists.SyncableList;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 
 
 public class SyncDiffer
 {
-   public static < O, T > ArrayList< O > diff( Collection< T > reference,
-                                               SyncableList< O, T > target,
-                                               Object... params ) throws NullPointerException
+   public final static < O, T > ArrayList< O > diff( Collection< T > reference,
+                                                     SyncableList< O, T > target,
+                                                     Object... params ) throws NullPointerException
    {
       if ( reference == null || target == null )
          throw new NullPointerException();
@@ -67,13 +66,14 @@ public class SyncDiffer
          
          ok = operation != null;
          
-         if ( ok && !( operation instanceof NoopContentProviderSyncOperation ) )
+         if ( ok )
             operations.add( operation );
       }
       
       if ( ok )
       {
-         // DELETE: Get all elements which have not been touched during the diff.
+         // DELETE: Get all elements which have not been touched during the
+         // diff.
          // These elements are not in the reference list.
          final ArrayList< T > untouchedElements = target.getUntouchedElements();
          
@@ -84,8 +84,7 @@ public class SyncDiffer
             
             ok = operation != null;
             
-            if ( ok
-               && !( operation instanceof NoopContentProviderSyncOperation ) )
+            if ( ok )
                operations.add( operation );
          }
       }
@@ -95,4 +94,5 @@ public class SyncDiffer
       
       return operations;
    }
+   
 }

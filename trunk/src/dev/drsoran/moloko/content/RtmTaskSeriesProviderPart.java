@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.content;
@@ -25,7 +25,9 @@ package dev.drsoran.moloko.content;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
@@ -38,6 +40,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
 
+import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
@@ -131,120 +134,128 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    {
       RtmTasks tasksLists = null;
       
-      // We query all TaskSeries rows and sort them by their list ID.
-      // So we have all lists with their tasks together.
-      try
+      // Query all non-smart lists. So we get empty RtmTaskList instances too.
+      final RtmLists lists = RtmListsProviderPart.getAllLists( client,
+                                                               Lists.IS_SMART_LIST
+                                                                  + " = 0" );
+      if ( lists != null )
       {
-         final Cursor c = client.query( Rtm.TaskSeries.CONTENT_URI,
-                                        PROJECTION,
-                                        null,
-                                        null,
-                                        TaskSeries.LIST_ID );
+         boolean ok = true;
          
          tasksLists = new RtmTasks();
          
-         boolean ok = true;
+         final Set< String > listIds = lists.getLists().keySet();
          
-         if ( c.getCount() > 0 )
+         // For each list
+         for ( Iterator< String > i = listIds.iterator(); ok && i.hasNext(); )
          {
-            RtmTaskList taskList = null;
+            final String listId = i.next();
             
-            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            final RtmTaskList taskList = new RtmTaskList( listId );
+            tasksLists.add( taskList );
+            
+            // We query all TaskSeries rows and sort them by their list ID.
+            // So we have all lists with their tasks together.
+            try
             {
-               final String currentTaskListId = c.getString( COL_INDICES.get( TaskSeries.LIST_ID ) );
+               final Cursor c = client.query( Rtm.TaskSeries.CONTENT_URI,
+                                              PROJECTION,
+                                              TaskSeries.LIST_ID + " = "
+                                                 + listId,
+                                              null,
+                                              null );
                
-               // Check if we have reached a new task list
-               if ( taskList == null
-                  || !taskList.getId().equals( currentTaskListId ) )
+               if ( c.getCount() > 0 )
                {
-                  taskList = new RtmTaskList( currentTaskListId );
-                  tasksLists.add( taskList );
-               }
-               
-               RtmTask task = null;
-               
-               if ( ok )
-               {
-                  task = RtmTasksProviderPart.getTask( client,
-                                                       c.getString( COL_INDICES.get( TaskSeries.RAW_TASK_ID ) ) );
-                  ok = task != null;
-               }
-               
-               String taskSeriesId = null;
-               
-               if ( ok )
-               {
-                  taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
-               }
-               
-               List< String > tags = null;
-               
-               if ( ok )
-               {
-                  final ArrayList< Tag > tagImpls = TagsProviderPart.getAllTags( client,
-                                                                                 taskSeriesId );
-                  ok = tagImpls != null;
-                  
-                  if ( ok )
+                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                   {
-                     tags = new ArrayList< String >( tagImpls.size() );
+                     RtmTask task = null;
                      
-                     for ( Tag tag : tagImpls )
+                     if ( ok )
                      {
-                        tags.add( tag.getTag() );
+                        task = RtmTasksProviderPart.getTask( client,
+                                                             c.getString( COL_INDICES.get( TaskSeries.RAW_TASK_ID ) ) );
+                        ok = task != null;
+                     }
+                     
+                     String taskSeriesId = null;
+                     
+                     if ( ok )
+                     {
+                        taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
+                     }
+                     
+                     List< String > tags = null;
+                     
+                     if ( ok )
+                     {
+                        final ArrayList< Tag > tagImpls = TagsProviderPart.getAllTags( client,
+                                                                                       taskSeriesId );
+                        ok = tagImpls != null;
+                        
+                        if ( ok )
+                        {
+                           tags = new ArrayList< String >( tagImpls.size() );
+                           
+                           for ( Tag tag : tagImpls )
+                           {
+                              tags.add( tag.getTag() );
+                           }
+                        }
+                     }
+                     
+                     RtmTaskNotes notes = null;
+                     
+                     if ( ok )
+                     {
+                        // Get all notes this taskseries references
+                        notes = RtmNotesProviderPart.getAllNotes( client,
+                                                                  taskSeriesId );
+                        
+                        // If the taskseries has no notes, we get an empty list, but
+                        // not null
+                        ok = notes != null;
+                     }
+                     
+                     if ( ok )
+                     {
+                        String locationId = null;
+                        
+                        // Check if this taskseries has a location
+                        if ( !c.isNull( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) )
+                        {
+                           locationId = Long.toString( c.getLong( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) );
+                        }
+                        
+                        // add the current task series to the task list.
+                        final RtmTaskSeries taskSeries = new RtmTaskSeries( taskSeriesId,
+                                                                            new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
+                                                                            Queries.getOptDate( c,
+                                                                                                COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ),
+                                                                            c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
+                                                                            Queries.getOptString( c,
+                                                                                                  COL_INDICES.get( TaskSeries.SOURCE ) ),
+                                                                            task,
+                                                                            notes,
+                                                                            locationId,
+                                                                            Queries.getOptString( c,
+                                                                                                  COL_INDICES.get( TaskSeries.URL ) ),
+                                                                            tags );
+                        taskList.add( taskSeries );
                      }
                   }
                }
                
-               RtmTaskNotes notes = null;
+               if ( !ok )
+                  tasksLists = null;
                
-               if ( ok )
-               {
-                  // Get all notes this taskseries references
-                  notes = RtmNotesProviderPart.getAllNotes( client,
-                                                            taskSeriesId );
-                  
-                  // If the taskseries has no notes, we get an empty list, but not null
-                  ok = notes != null;
-               }
-               
-               if ( ok )
-               {
-                  String locationId = null;
-                  
-                  // Check if this taskseries has a location
-                  if ( !c.isNull( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) )
-                  {
-                     locationId = Long.toString( c.getLong( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) );
-                  }
-                  
-                  // add the current task series to the task list.
-                  final RtmTaskSeries taskSeries = new RtmTaskSeries( taskSeriesId,
-                                                                      new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
-                                                                      Queries.getOptDate( c,
-                                                                                          COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ),
-                                                                      c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
-                                                                      Queries.getOptString( c,
-                                                                                            COL_INDICES.get( TaskSeries.SOURCE ) ),
-                                                                      task,
-                                                                      notes,
-                                                                      locationId,
-                                                                      Queries.getOptString( c,
-                                                                                            COL_INDICES.get( TaskSeries.URL ) ),
-                                                                      tags );
-                  taskList.add( taskSeries );
-               }
+               c.close();
+            }
+            catch ( RemoteException e )
+            {
+               tasksLists = null;
             }
          }
-         
-         if ( !ok )
-            tasksLists = null;
-         
-         c.close();
-      }
-      catch ( RemoteException e )
-      {
-         tasksLists = null;
       }
       
       return tasksLists;
@@ -379,7 +390,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       db.execSQL( "CREATE TRIGGER " + path
          + "_delete_taskseries AFTER DELETE ON " + path
          + " FOR EACH ROW BEGIN DELETE FROM " + RawTasks.PATH + " WHERE "
-         + RawTasks.PATH + "._id = old." + TaskSeries._ID + "; DELETE FROM "
+         + RawTasks._ID + " = old." + TaskSeries.RAW_TASK_ID + "; DELETE FROM "
          + Notes.PATH + " WHERE " + Notes.TASKSERIES_ID + " = old."
          + TaskSeries._ID + ";" + " DELETE FROM " + Tags.PATH + " WHERE "
          + Tags.TASKSERIES_ID + " = old." + TaskSeries._ID + ";" + " END;" );

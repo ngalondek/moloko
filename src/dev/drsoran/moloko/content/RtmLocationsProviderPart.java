@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.content;
@@ -49,8 +49,14 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Locations._ID, Locations.LOCATION_NAME, Locations.LONGITUDE,
-    Locations.LATITUDE, Locations.ADDRESS, Locations.VIEWABLE, Locations.ZOOM };
+   {
+    Locations._ID,
+    Locations.LOCATION_NAME,
+    Locations.LONGITUDE,
+    Locations.LATITUDE,
+    Locations.ADDRESS,
+    Locations.VIEWABLE,
+    Locations.ZOOM };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -155,13 +161,16 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Locations._ID
-         + " INTEGER NOT NULL, " + Locations.LOCATION_NAME + " NOTE_TEXT, "
-         + Locations.LONGITUDE + " REAL NOT NULL, " + Locations.LATITUDE
-         + " REAL NOT NULL, " + Locations.ADDRESS + " NOTE_TEXT, "
-         + Locations.VIEWABLE + " INTEGER NOT NULL DEFAULT 1, "
-         + Locations.ZOOM + " INTEGER, "
-         + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + Locations._ID + "\" )"
-         + " );" );
+                  + " INTEGER NOT NULL, " + Locations.LOCATION_NAME
+                  + " NOTE_TEXT, "
+                  + Locations.LONGITUDE + " REAL NOT NULL, "
+                  + Locations.LATITUDE
+                  + " REAL NOT NULL, " + Locations.ADDRESS + " NOTE_TEXT, "
+                  + Locations.VIEWABLE + " INTEGER NOT NULL DEFAULT 1, "
+                  + Locations.ZOOM + " INTEGER, "
+                  + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + Locations._ID
+                  + "\" )"
+                  + " );" );
    }
    
 

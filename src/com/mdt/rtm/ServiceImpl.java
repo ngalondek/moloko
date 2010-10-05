@@ -1,21 +1,21 @@
 /*
  * Copyright 2007, MetaDimensional Technologies Inc.
- *
- *
+ * 
+ * 
  * This file is part of the RememberTheMilk Java API.
- *
+ * 
  * The RememberTheMilk Java API is free software; you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 3 of the
  * License, or (at your option) any later version.
- *
+ * 
  * The RememberTheMilk Java API is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
  * General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.mdt.rtm;
 
@@ -97,14 +97,17 @@ public class ServiceImpl implements Service
     * If you want to go through an HTTP proxy.
     * 
     * @param proxyHostName
-    *           the host name of the HTTP proxy machine (if <code>null</code>, no proxy is set, and all parameters are
+    *           the host name of the HTTP proxy machine (if <code>null</code>,
+    *           no proxy is set, and all parameters are
     *           ignored)
     * @param proxyPortNumber
     *           the port number the HTTP proxy listens to
     * @param proxyLogin
-    *           the account identifier against the HTTP proxy: if set to <code>null</code>, no authentication will be
-    *           performed and the HTTP is considered working anonymously, and the last <code>proxyPassword</code>
-    *           parameter is not taken into account
+    *           the account identifier against the HTTP proxy: if set to
+    *           <code>null</code>, no authentication will be
+    *           performed and the HTTP is considered working anonymously, and
+    *           the last <code>proxyPassword</code> parameter is not taken into
+    *           account
     * @param proxyPassword
     *           the previous identifier related password
     */
@@ -151,7 +154,8 @@ public class ServiceImpl implements Service
    public String beginAuthorization( RtmAuth.Perms permissions ) throws ServiceException
    {
       // Instructions from the "User authentication for desktop applications"
-      // section at http://www.rememberthemilk.com/services/api/authentication.rtm
+      // section at
+      // http://www.rememberthemilk.com/services/api/authentication.rtm
       tempFrob = auth_getFrob();
       return beginAuthorization( tempFrob, permissions );
    }
@@ -162,7 +166,8 @@ public class ServiceImpl implements Service
    {
       String authBaseUrl = "http://" + SERVER_HOST_NAME + "/services/auth/";
       Param[] params = new Param[]
-      { new Param( "api_key", applicationInfo.getApiKey() ),
+      {
+       new Param( "api_key", applicationInfo.getApiKey() ),
        new Param( "perms", permissions.toString() ),
        new Param( "frob", frob.getValue() ) };
       Param sig = new Param( "api_sig", invoker.calcApiSig( params ) );
@@ -424,7 +429,8 @@ public class ServiceImpl implements Service
       else if ( rtmTaskList.getSeries().size() > 1 )
       {
          throw new ServiceInternalException( "Internal error: more that one task ("
-            + rtmTaskList.getSeries().size() + ") has been created" );
+                                             + rtmTaskList.getSeries().size()
+                                             + ") has been created" );
       }
       throw new ServiceInternalException( "Internal error: no task has been created" );
    }
@@ -645,7 +651,7 @@ public class ServiceImpl implements Service
       for ( RtmTaskSeries series : rtmTaskList.getSeries() )
       {
          if ( series.getId().equals( taskSeriesId )
-            && series.getTask().getId().equals( taskId ) )
+              && series.getTask().getId().equals( taskId ) )
          {
             return series;
          }

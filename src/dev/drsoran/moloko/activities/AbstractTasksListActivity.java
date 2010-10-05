@@ -1,23 +1,23 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.activities;
@@ -84,7 +84,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    public static final String ADAPTER_CONFIG = "adapter_config";
    
    /**
-    * If we have a concrete list name, then we do not need to click it. Otherwise we would call the same list again. But
+    * If we have a concrete list name, then we do not need to click it.
+    * Otherwise we would call the same list again. But
     * this only applies to non smart lists
     */
    public static final String DISABLE_LIST_NAME = "disable_list_name";
@@ -153,9 +154,9 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       MolokoApp.getSettings()
                .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_TIMEZONE
-                                                      | Settings.SETTINGS_RTM_DATEFORMAT
-                                                      | Settings.SETTINGS_RTM_TIMEFORMAT
-                                                      | Settings.SETTINGS_TASK_SORT,
+                                                            | Settings.SETTINGS_RTM_DATEFORMAT
+                                                            | Settings.SETTINGS_RTM_TIMEFORMAT
+                                                            | Settings.SETTINGS_TASK_SORT,
                                                    this );
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
@@ -271,7 +272,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       // TODO: Make this menu item dependent on the access level set
       /**
-       * menu.add( Menu.NONE, CTX_MENU_TOGGLE_TASK_COMPLETED, Menu.NONE, ( task.getCompleted() == null ) ? getString(
+       * menu.add( Menu.NONE, CTX_MENU_TOGGLE_TASK_COMPLETED, Menu.NONE, (
+       * task.getCompleted() == null ) ? getString(
        * R.string.taskslist_listitem_ctx_set_task_completed ) : getString(
        * R.string.taskslist_listitem_ctx_set_task_incomplete ) );
        */
@@ -285,7 +287,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       final Bundle adapterConfig = configuration.getBundle( ADAPTER_CONFIG );
       
       if ( adapterConfig == null
-         || !adapterConfig.getBoolean( DISABLE_LIST_NAME ) )
+           || !adapterConfig.getBoolean( DISABLE_LIST_NAME ) )
       {
          menu.add( Menu.NONE,
                    CtxtMenu.OPEN_LIST,
@@ -554,7 +556,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       String id = null;
       for ( Iterator< RtmTaskNote > i = notes.iterator(); i.hasNext()
-         && id == null; )
+                                                          && id == null; )
       {
          final RtmTaskNote rtmTaskNote = i.next();
          

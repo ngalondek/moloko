@@ -1,4 +1,6 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g 2010-09-26 18:29:27
+// $ANTLR 3.2 Sep 23, 2009 12:02:23
+// F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g
+// 2010-09-26 18:29:27
 
 package dev.drsoran.moloko.grammar;
 
@@ -162,8 +164,11 @@ public class RtmSmartFilterLexer extends Lexer
    // END TOKEN LITERALS
    
    private final static String TAGS_QUERY_PREFIX = "(SELECT "
-      + Tags.TASKSERIES_ID + " FROM " + Tags.PATH + " WHERE "
-      + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks._ID;
+                                                   + Tags.TASKSERIES_ID
+                                                   + " FROM " + Tags.PATH
+                                                   + " WHERE "
+                                                   + Tags.TASKSERIES_ID + " = "
+                                                   + "subQuery." + Tasks._ID;
    
    private final StringBuffer result = new StringBuffer();
    
@@ -385,7 +390,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA1_0 = input.LA( 1 );
             
             if ( ( ( LA1_0 >= '\u0000' && LA1_0 <= '\u001F' ) || LA1_0 == '!'
-               || ( LA1_0 >= '#' && LA1_0 <= '\'' ) || ( LA1_0 >= '*' && LA1_0 <= '\uFFFF' ) ) )
+                   || ( LA1_0 >= '#' && LA1_0 <= '\'' ) || ( LA1_0 >= '*' && LA1_0 <= '\uFFFF' ) ) )
             {
                alt1 = 1;
             }
@@ -592,7 +597,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA3_0 = input.LA( 1 );
             
             if ( ( ( LA3_0 >= '\u0000' && LA3_0 <= '\u001F' ) || LA3_0 == '!'
-               || ( LA3_0 >= '#' && LA3_0 <= '\'' ) || ( LA3_0 >= '*' && LA3_0 <= '\uFFFF' ) ) )
+                   || ( LA3_0 >= '#' && LA3_0 <= '\'' ) || ( LA3_0 >= '*' && LA3_0 <= '\uFFFF' ) ) )
             {
                alt3 = 1;
             }
@@ -684,7 +689,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA4_0 = input.LA( 1 );
             
             if ( ( ( LA4_0 >= '\u0000' && LA4_0 <= '\u001F' ) || LA4_0 == '!'
-               || ( LA4_0 >= '#' && LA4_0 <= '\'' ) || ( LA4_0 >= '*' && LA4_0 <= '\uFFFF' ) ) )
+                   || ( LA4_0 >= '#' && LA4_0 <= '\'' ) || ( LA4_0 >= '*' && LA4_0 <= '\uFFFF' ) ) )
             {
                alt4 = 1;
             }
@@ -854,7 +859,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA6_0 = input.LA( 1 );
             
             if ( ( ( LA6_0 >= '\u0000' && LA6_0 <= '\u001F' ) || LA6_0 == '!'
-               || ( LA6_0 >= '#' && LA6_0 <= '\'' ) || ( LA6_0 >= '*' && LA6_0 <= '\uFFFF' ) ) )
+                   || ( LA6_0 >= '#' && LA6_0 <= '\'' ) || ( LA6_0 >= '*' && LA6_0 <= '\uFFFF' ) ) )
             {
                alt6 = 1;
             }
@@ -1020,7 +1025,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA8_0 = input.LA( 1 );
             
             if ( ( ( LA8_0 >= '\u0000' && LA8_0 <= '\u001F' ) || LA8_0 == '!'
-               || ( LA8_0 >= '#' && LA8_0 <= '\'' ) || ( LA8_0 >= '*' && LA8_0 <= '\uFFFF' ) ) )
+                   || ( LA8_0 >= '#' && LA8_0 <= '\'' ) || ( LA8_0 >= '*' && LA8_0 <= '\uFFFF' ) ) )
             {
                alt8 = 1;
             }
@@ -1109,7 +1114,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA9_0 = input.LA( 1 );
             
             if ( ( ( LA9_0 >= '\u0000' && LA9_0 <= '\u001F' ) || LA9_0 == '!'
-               || ( LA9_0 >= '#' && LA9_0 <= '\'' ) || ( LA9_0 >= '*' && LA9_0 <= '\uFFFF' ) ) )
+                   || ( LA9_0 >= '#' && LA9_0 <= '\'' ) || ( LA9_0 >= '*' && LA9_0 <= '\uFFFF' ) ) )
             {
                alt9 = 1;
             }
@@ -1283,7 +1288,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA11_0 = input.LA( 1 );
             
             if ( ( ( LA11_0 >= '\u0000' && LA11_0 <= '\u001F' )
-               || LA11_0 == '!' || ( LA11_0 >= '#' && LA11_0 <= '\'' ) || ( LA11_0 >= '*' && LA11_0 <= '\uFFFF' ) ) )
+                   || LA11_0 == '!' || ( LA11_0 >= '#' && LA11_0 <= '\'' ) || ( LA11_0 >= '*' && LA11_0 <= '\uFFFF' ) ) )
             {
                alt11 = 1;
             }
@@ -1371,7 +1376,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA12_0 = input.LA( 1 );
             
             if ( ( ( LA12_0 >= '\u0000' && LA12_0 <= '\u001F' )
-               || LA12_0 == '!' || ( LA12_0 >= '#' && LA12_0 <= '\'' ) || ( LA12_0 >= '*' && LA12_0 <= '\uFFFF' ) ) )
+                   || LA12_0 == '!' || ( LA12_0 >= '#' && LA12_0 <= '\'' ) || ( LA12_0 >= '*' && LA12_0 <= '\uFFFF' ) ) )
             {
                alt12 = 1;
             }
@@ -1459,7 +1464,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA13_0 = input.LA( 1 );
             
             if ( ( ( LA13_0 >= '\u0000' && LA13_0 <= '\u001F' )
-               || LA13_0 == '!' || ( LA13_0 >= '#' && LA13_0 <= '\'' ) || ( LA13_0 >= '*' && LA13_0 <= '\uFFFF' ) ) )
+                   || LA13_0 == '!' || ( LA13_0 >= '#' && LA13_0 <= '\'' ) || ( LA13_0 >= '*' && LA13_0 <= '\uFFFF' ) ) )
             {
                alt13 = 1;
             }
@@ -1547,7 +1552,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA14_0 = input.LA( 1 );
             
             if ( ( ( LA14_0 >= '\u0000' && LA14_0 <= '\u001F' )
-               || LA14_0 == '!' || ( LA14_0 >= '#' && LA14_0 <= '\'' ) || ( LA14_0 >= '*' && LA14_0 <= '\uFFFF' ) ) )
+                   || LA14_0 == '!' || ( LA14_0 >= '#' && LA14_0 <= '\'' ) || ( LA14_0 >= '*' && LA14_0 <= '\uFFFF' ) ) )
             {
                alt14 = 1;
             }
@@ -1635,7 +1640,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA15_0 = input.LA( 1 );
             
             if ( ( ( LA15_0 >= '\u0000' && LA15_0 <= '\u001F' )
-               || LA15_0 == '!' || ( LA15_0 >= '#' && LA15_0 <= '\'' ) || ( LA15_0 >= '*' && LA15_0 <= '\uFFFF' ) ) )
+                   || LA15_0 == '!' || ( LA15_0 >= '#' && LA15_0 <= '\'' ) || ( LA15_0 >= '*' && LA15_0 <= '\uFFFF' ) ) )
             {
                alt15 = 1;
             }
@@ -1723,7 +1728,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA16_0 = input.LA( 1 );
             
             if ( ( ( LA16_0 >= '\u0000' && LA16_0 <= '\u001F' )
-               || LA16_0 == '!' || ( LA16_0 >= '#' && LA16_0 <= '\'' ) || ( LA16_0 >= '*' && LA16_0 <= '\uFFFF' ) ) )
+                   || LA16_0 == '!' || ( LA16_0 >= '#' && LA16_0 <= '\'' ) || ( LA16_0 >= '*' && LA16_0 <= '\uFFFF' ) ) )
             {
                alt16 = 1;
             }
@@ -1811,7 +1816,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA17_0 = input.LA( 1 );
             
             if ( ( ( LA17_0 >= '\u0000' && LA17_0 <= '\u001F' )
-               || LA17_0 == '!' || ( LA17_0 >= '#' && LA17_0 <= '\'' ) || ( LA17_0 >= '*' && LA17_0 <= '\uFFFF' ) ) )
+                   || LA17_0 == '!' || ( LA17_0 >= '#' && LA17_0 <= '\'' ) || ( LA17_0 >= '*' && LA17_0 <= '\uFFFF' ) ) )
             {
                alt17 = 1;
             }
@@ -1899,7 +1904,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA18_0 = input.LA( 1 );
             
             if ( ( ( LA18_0 >= '\u0000' && LA18_0 <= '\u001F' )
-               || LA18_0 == '!' || ( LA18_0 >= '#' && LA18_0 <= '\'' ) || ( LA18_0 >= '*' && LA18_0 <= '\uFFFF' ) ) )
+                   || LA18_0 == '!' || ( LA18_0 >= '#' && LA18_0 <= '\'' ) || ( LA18_0 >= '*' && LA18_0 <= '\uFFFF' ) ) )
             {
                alt18 = 1;
             }
@@ -1987,7 +1992,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA19_0 = input.LA( 1 );
             
             if ( ( ( LA19_0 >= '\u0000' && LA19_0 <= '\u001F' )
-               || LA19_0 == '!' || ( LA19_0 >= '#' && LA19_0 <= '\'' ) || ( LA19_0 >= '*' && LA19_0 <= '\uFFFF' ) ) )
+                   || LA19_0 == '!' || ( LA19_0 >= '#' && LA19_0 <= '\'' ) || ( LA19_0 >= '*' && LA19_0 <= '\uFFFF' ) ) )
             {
                alt19 = 1;
             }
@@ -2077,7 +2082,7 @@ public class RtmSmartFilterLexer extends Lexer
             int LA20_0 = input.LA( 1 );
             
             if ( ( ( LA20_0 >= '\u0000' && LA20_0 <= '\u001F' )
-               || LA20_0 == '!' || ( LA20_0 >= '#' && LA20_0 <= '\'' ) || ( LA20_0 >= '*' && LA20_0 <= '\uFFFF' ) ) )
+                   || LA20_0 == '!' || ( LA20_0 >= '#' && LA20_0 <= '\'' ) || ( LA20_0 >= '*' && LA20_0 <= '\uFFFF' ) ) )
             {
                alt20 = 1;
             }
@@ -2364,7 +2369,7 @@ public class RtmSmartFilterLexer extends Lexer
          // ( ' ' | '\\t' | '\\r' | '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
-               || input.LA( 1 ) == '\r' || input.LA( 1 ) == ' ' )
+                 || input.LA( 1 ) == '\r' || input.LA( 1 ) == ' ' )
             {
                input.consume();
                
@@ -2423,7 +2428,7 @@ public class RtmSmartFilterLexer extends Lexer
                      // ~ ( '\"' )
                   {
                      if ( ( input.LA( 1 ) >= '\u0000' && input.LA( 1 ) <= '!' )
-                        || ( input.LA( 1 ) >= '#' && input.LA( 1 ) <= '\uFFFF' ) )
+                          || ( input.LA( 1 ) >= '#' && input.LA( 1 ) <= '\uFFFF' ) )
                      {
                         input.consume();
                         
@@ -2478,7 +2483,7 @@ public class RtmSmartFilterLexer extends Lexer
                int LA22_0 = input.LA( 1 );
                
                if ( ( ( LA22_0 >= '\u0000' && LA22_0 <= '\u001F' )
-                  || LA22_0 == '!' || ( LA22_0 >= '#' && LA22_0 <= '\'' ) || ( LA22_0 >= '*' && LA22_0 <= '\uFFFF' ) ) )
+                      || LA22_0 == '!' || ( LA22_0 >= '#' && LA22_0 <= '\'' ) || ( LA22_0 >= '*' && LA22_0 <= '\uFFFF' ) ) )
                {
                   alt22 = 1;
                }
@@ -2490,9 +2495,9 @@ public class RtmSmartFilterLexer extends Lexer
                      // ~ ( '\"' | ' ' | '(' | ')' )
                   {
                      if ( ( input.LA( 1 ) >= '\u0000' && input.LA( 1 ) <= '\u001F' )
-                        || input.LA( 1 ) == '!'
-                        || ( input.LA( 1 ) >= '#' && input.LA( 1 ) <= '\'' )
-                        || ( input.LA( 1 ) >= '*' && input.LA( 1 ) <= '\uFFFF' ) )
+                          || input.LA( 1 ) == '!'
+                          || ( input.LA( 1 ) >= '#' && input.LA( 1 ) <= '\'' )
+                          || ( input.LA( 1 ) >= '*' && input.LA( 1 ) <= '\uFFFF' ) )
                      {
                         input.consume();
                         
@@ -2533,10 +2538,14 @@ public class RtmSmartFilterLexer extends Lexer
    @Override
    public void mTokens() throws RecognitionException
    {
-      // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:8: (
-      // OP_LIST | OP_PRIORITY | OP_STATUS | OP_TAG | OP_TAG_CONTAINS | OP_IS_TAGGED | OP_LOCATION | OP_ISLOCATED |
-      // OP_NAME | OP_NOTE_CONTAINS | OP_HAS_NOTES | OP_DUE | OP_DUE_AFTER | OP_DUE_BEFORE | OP_COMPLETED |
-      // OP_COMPLETED_BEFORE | OP_COMPLETED_AFTER | OP_ADDED | OP_ADDED_BEFORE | OP_ADDED_AFTER | OP_POSTPONED | TRUE |
+      // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:8:
+      // (
+      // OP_LIST | OP_PRIORITY | OP_STATUS | OP_TAG | OP_TAG_CONTAINS |
+      // OP_IS_TAGGED | OP_LOCATION | OP_ISLOCATED |
+      // OP_NAME | OP_NOTE_CONTAINS | OP_HAS_NOTES | OP_DUE | OP_DUE_AFTER |
+      // OP_DUE_BEFORE | OP_COMPLETED |
+      // OP_COMPLETED_BEFORE | OP_COMPLETED_AFTER | OP_ADDED | OP_ADDED_BEFORE |
+      // OP_ADDED_AFTER | OP_POSTPONED | TRUE |
       // FALSE | L_PARENTH | R_PARENTH | AND | OR | NOT | WS )
       int alt23 = 29;
       alt23 = dfa23.predict( input );
@@ -2786,34 +2795,83 @@ public class RtmSmartFilterLexer extends Lexer
    static final String DFA23_eofS = "\71\uffff";
    
    static final String DFA23_minS = "\1\11\1\151\1\157\1\uffff\1\141\1\163\1\141\1\uffff\1\165\1\157"
-      + "\1\144\11\uffff\1\147\1\uffff\1\114\1\uffff\1\164\1\145\1\155\1"
-      + "\144\1\uffff\1\72\2\uffff\1\145\1\72\1\160\1\145\7\uffff\1\154\1"
-      + "\144\1\145\1\72\1\164\3\uffff\1\145\1\144\1\72\3\uffff";
+                                    + "\1\144\11\uffff\1\147\1\uffff\1\114\1\uffff\1\164\1\145\1\155\1"
+                                    + "\144\1\uffff\1\72\2\uffff\1\145\1\72\1\160\1\145\7\uffff\1\154\1"
+                                    + "\144\1\145\1\72\1\164\3\uffff\1\145\1\144\1\72\3\uffff";
    
    static final String DFA23_maxS = "\1\164\1\157\1\162\1\uffff\1\162\1\163\1\157\1\uffff\1\165\1\157"
-      + "\1\156\11\uffff\1\147\1\uffff\1\164\1\uffff\1\164\1\145\1\155\1"
-      + "\144\1\uffff\1\143\2\uffff\1\145\1\142\1\160\1\145\7\uffff\1\154"
-      + "\1\144\1\145\1\142\1\164\3\uffff\1\145\1\144\1\142\3\uffff";
+                                    + "\1\156\11\uffff\1\147\1\uffff\1\164\1\uffff\1\164\1\145\1\155\1"
+                                    + "\144\1\uffff\1\143\2\uffff\1\145\1\142\1\160\1\145\7\uffff\1\154"
+                                    + "\1\144\1\145\1\142\1\164\3\uffff\1\145\1\144\1\142\3\uffff";
    
    static final String DFA23_acceptS = "\3\uffff\1\3\3\uffff\1\13\3\uffff\1\27\1\30\1\31\1\33\1\35\1\1"
-      + "\1\7\1\2\1\25\1\uffff\1\26\1\uffff\1\11\4\uffff\1\32\1\uffff\1\6"
-      + "\1\10\4\uffff\1\4\1\5\1\12\1\34\1\14\1\15\1\16\5\uffff\1\22\1\23"
-      + "\1\24\3\uffff\1\17\1\20\1\21";
+                                       + "\1\7\1\2\1\25\1\uffff\1\26\1\uffff\1\11\4\uffff\1\32\1\uffff\1\6"
+                                       + "\1\10\4\uffff\1\4\1\5\1\12\1\34\1\14\1\15\1\16\5\uffff\1\22\1\23"
+                                       + "\1\24\3\uffff\1\17\1\20\1\21";
    
    static final String DFA23_specialS = "\71\uffff}>";
    
    static final String[] DFA23_transitionS =
    {
     "\2\17\2\uffff\1\17\22\uffff\1\17\7\uffff\1\14\1\15\67\uffff"
-       + "\1\12\1\uffff\1\11\1\10\1\uffff\1\13\1\uffff\1\7\1\5\2\uffff"
-       + "\1\1\1\uffff\1\6\1\16\1\2\2\uffff\1\3\1\4", "\1\20\5\uffff\1\21",
-    "\1\23\2\uffff\1\22", "", "\1\24\20\uffff\1\25", "\1\26",
-    "\1\27\15\uffff\1\30", "", "\1\31", "\1\32", "\1\33\11\uffff\1\34", "", "",
-    "", "", "", "", "", "", "", "\1\35", "", "\1\37\47\uffff\1\36", "",
-    "\1\40", "\1\41", "\1\42", "\1\43", "", "\1\44\50\uffff\1\45", "", "",
-    "\1\46", "\1\50\46\uffff\1\51\1\52", "\1\53", "\1\54", "", "", "", "", "",
-    "", "", "\1\55", "\1\56", "\1\57", "\1\60\46\uffff\1\62\1\61", "\1\63", "",
-    "", "", "\1\64", "\1\65", "\1\66\46\uffff\1\70\1\67", "", "", "" };
+             + "\1\12\1\uffff\1\11\1\10\1\uffff\1\13\1\uffff\1\7\1\5\2\uffff"
+             + "\1\1\1\uffff\1\6\1\16\1\2\2\uffff\1\3\1\4",
+    "\1\20\5\uffff\1\21",
+    "\1\23\2\uffff\1\22",
+    "",
+    "\1\24\20\uffff\1\25",
+    "\1\26",
+    "\1\27\15\uffff\1\30",
+    "",
+    "\1\31",
+    "\1\32",
+    "\1\33\11\uffff\1\34",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "\1\35",
+    "",
+    "\1\37\47\uffff\1\36",
+    "",
+    "\1\40",
+    "\1\41",
+    "\1\42",
+    "\1\43",
+    "",
+    "\1\44\50\uffff\1\45",
+    "",
+    "",
+    "\1\46",
+    "\1\50\46\uffff\1\51\1\52",
+    "\1\53",
+    "\1\54",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "\1\55",
+    "\1\56",
+    "\1\57",
+    "\1\60\46\uffff\1\62\1\61",
+    "\1\63",
+    "",
+    "",
+    "",
+    "\1\64",
+    "\1\65",
+    "\1\66\46\uffff\1\70\1\67",
+    "",
+    "",
+    "" };
    
    static final short[] DFA23_eot = DFA.unpackEncodedString( DFA23_eotS );
    

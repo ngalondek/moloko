@@ -1,21 +1,21 @@
 /*
  * Copyright 2007, MetaDimensional Technologies Inc.
- *
- *
+ * 
+ * 
  * This file is part of the RememberTheMilk Java API.
- *
+ * 
  * The RememberTheMilk Java API is free software; you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 3 of the
  * License, or (at your option) any later version.
- *
+ * 
  * The RememberTheMilk Java API is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
  * General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.mdt.rtm;
 
@@ -250,7 +250,7 @@ public class Invoker
    public Element invoke( Param... params ) throws ServiceException
    {
       long timeSinceLastInvocation = System.currentTimeMillis()
-         - lastInvocation;
+                                     - lastInvocation;
       if ( timeSinceLastInvocation < INVOCATION_INTERVAL )
       {
          // In order not to invoke the RTM service too often
@@ -284,7 +284,8 @@ public class Invoker
       // client.getHostConfiguration().setProxy(proxyHostName, proxyPortNumber);
       // if (proxyLogin != null)
       // {
-      // client.getState().setProxyCredentials(AuthScope.ANY, new UsernamePasswordCredentials(proxyLogin,
+      // client.getState().setProxyCredentials(AuthScope.ANY, new
+      // UsernamePasswordCredentials(proxyLogin,
       // proxyPassword));
       // }
       // }
@@ -300,11 +301,13 @@ public class Invoker
          {
             Log.e( TAG, "Method failed: " + response.getStatusLine() );
             throw new ServiceInternalException( "method failed: "
-               + response.getStatusLine() );
+                                                + response.getStatusLine() );
          }
          
-         // THINK: this method is depreciated, but the only way to get the body as a string, without consuming
-         // the body input stream: the HttpMethodBase issues a warning but does not let you call the
+         // THINK: this method is depreciated, but the only way to get the body
+         // as a string, without consuming
+         // the body input stream: the HttpMethodBase issues a warning but does
+         // not let you call the
          // "setResponseStream()" method!
          final String responseBodyAsString = "";// EntityUtils.toString(response.getEntity());
          Log.i( TAG, "  Invocation response:\r\n" + responseBodyAsString );
@@ -314,7 +317,7 @@ public class Invoker
          if ( !wrapperElt.getNodeName().equals( "rsp" ) )
          {
             throw new ServiceInternalException( "unexpected response returned by RTM service: "
-               + responseBodyAsString );
+                                                + responseBodyAsString );
          }
          else
          {
@@ -323,15 +326,15 @@ public class Invoker
             {
                Node errElt = wrapperElt.getFirstChild();
                while ( errElt != null
-                  && ( errElt.getNodeType() != Node.ELEMENT_NODE || !errElt.getNodeName()
-                                                                           .equals( "err" ) ) )
+                       && ( errElt.getNodeType() != Node.ELEMENT_NODE || !errElt.getNodeName()
+                                                                                .equals( "err" ) ) )
                {
                   errElt = errElt.getNextSibling();
                }
                if ( errElt == null )
                {
                   throw new ServiceInternalException( "unexpected response returned by RTM service: "
-                     + responseBodyAsString );
+                                                      + responseBodyAsString );
                }
                else
                {
@@ -343,8 +346,8 @@ public class Invoker
             {
                Node dataElt = wrapperElt.getFirstChild();
                while ( dataElt != null
-                  && ( dataElt.getNodeType() != Node.ELEMENT_NODE || dataElt.getNodeName()
-                                                                            .equals( "transaction" ) == true ) )
+                       && ( dataElt.getNodeType() != Node.ELEMENT_NODE || dataElt.getNodeName()
+                                                                                 .equals( "transaction" ) == true ) )
                {
                   try
                   {
@@ -360,14 +363,15 @@ public class Invoker
                   }
                   catch ( IndexOutOfBoundsException exception )
                   {
-                     // Some implementation may throw this exception, instead of returning a null sibling
+                     // Some implementation may throw this exception, instead of
+                     // returning a null sibling
                      break;
                   }
                }
                if ( dataElt == null )
                {
                   throw new ServiceInternalException( "unexpected response returned by RTM service: "
-                     + responseBodyAsString );
+                                                      + responseBodyAsString );
                }
                else
                {
@@ -391,8 +395,8 @@ public class Invoker
       finally
       {
          if ( connection != null
-            && ( response == null || connectionStrategy.keepAlive( response,
-                                                                   context ) == false ) )
+              && ( response == null || connectionStrategy.keepAlive( response,
+                                                                     context ) == false ) )
          {
             try
             {

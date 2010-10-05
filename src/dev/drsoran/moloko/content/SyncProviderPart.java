@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.content;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
@@ -32,29 +33,26 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.text.TextUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.provider.Rtm.Lists;
-import dev.drsoran.provider.Rtm.Settings;
-import dev.drsoran.rtm.RtmSettings;
+import dev.drsoran.provider.Rtm.Sync;
 
 
-public class RtmSettingsProviderPart extends AbstractRtmProviderPart
+public class SyncProviderPart extends AbstractRtmProviderPart
 {
    @SuppressWarnings( "unused" )
-   private static final String TAG = RtmSettingsProviderPart.class.getSimpleName();
+   private static final String TAG = SyncProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
    {
-    Settings._ID,
-    Settings.SYNC_TIMESTAMP,
-    Settings.TIMEZONE,
-    Settings.DATEFORMAT,
-    Settings.TIMEFORMAT,
-    Settings.DEFAULTLIST_ID,
-    Settings.LANGUAGE };
+    Sync._ID,
+    Sync.LAST_IN,
+    Sync.LAST_OUT };
+   
+   public final static long DONT_TOUCH = -1;
+   
+   public final static String FIX_ID = "1";
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -67,49 +65,63 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    
    
 
-   public final static ContentValues getContentValues( RtmSettings settings )
+   public final static ContentValues getContentValues( Long lastIn, Long lastOut )
    {
       ContentValues values = null;
       
-      if ( settings != null )
-      {
-         values = new ContentValues();
-         
-         values.put( Settings._ID, "1" );
-         values.put( Settings.SYNC_TIMESTAMP, settings.getSyncTimeStamp()
-                                                      .getTime() );
-         
-         if ( !TextUtils.isEmpty( settings.getTimezone() ) )
-            values.put( Settings.TIMEZONE, settings.getTimezone() );
+      values = new ContentValues();
+      
+      values.put( Sync._ID, FIX_ID );
+      
+      if ( lastIn != null )
+         if ( lastIn != DONT_TOUCH )
+            values.put( Sync.LAST_IN, lastIn );
          else
-            values.putNull( Settings.TIMEZONE );
-         
-         values.put( Settings.DATEFORMAT, settings.getDateFormat() );
-         values.put( Settings.TIMEFORMAT, settings.getTimeFormat() );
-         
-         if ( !TextUtils.isEmpty( settings.getDefaultListId() ) )
-            values.put( Settings.DEFAULTLIST_ID, settings.getDefaultListId() );
+            values.putNull( Sync.LAST_IN );
+      
+      if ( lastOut != null )
+         if ( lastOut != DONT_TOUCH )
+            values.put( Sync.LAST_OUT, lastOut );
          else
-            values.putNull( Settings.DEFAULTLIST_ID );
-         
-         if ( !TextUtils.isEmpty( settings.getLanguage() ) )
-            values.put( Settings.LANGUAGE, settings.getLanguage() );
-         else
-            values.putNull( Settings.LANGUAGE );
-      }
+            values.putNull( Sync.LAST_OUT );
       
       return values;
    }
    
 
 
-   public final static String getSettingsId( ContentProviderClient client )
+   public final static void updateSync( ContentProviderClient client,
+                                        Long lastIn,
+                                        Long lastOut )
+   {
+      try
+      {
+         if ( Queries.exists( client, Sync.CONTENT_URI, FIX_ID ) )
+         {
+            client.update( Queries.contentUriWithId( Sync.CONTENT_URI, FIX_ID ),
+                           getContentValues( lastIn, lastOut ),
+                           null,
+                           null );
+         }
+         else
+         {
+            client.insert( Sync.CONTENT_URI, getContentValues( lastIn, lastOut ) );
+         }
+      }
+      catch ( RemoteException e )
+      {
+      }
+   }
+   
+
+
+   public final static String getSyncId( ContentProviderClient client )
    {
       String id = null;
       
       try
       {
-         final Cursor c = client.query( Settings.CONTENT_URI,
+         final Cursor c = client.query( Sync.CONTENT_URI,
                                         PROJECTION,
                                         null,
                                         null,
@@ -121,7 +133,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          
          if ( ok )
          {
-            id = c.getString( COL_INDICES.get( Settings._ID ) );
+            id = c.getString( COL_INDICES.get( Sync._ID ) );
          }
          
          if ( c != null )
@@ -137,13 +149,13 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static RtmSettings getSettings( ContentProviderClient client )
+   public final static ArrayList< Long > getLastInAndLastOut( ContentProviderClient client )
    {
-      RtmSettings settings = null;
+      ArrayList< Long > inAndOut = null;
       
       try
       {
-         final Cursor c = client.query( Settings.CONTENT_URI,
+         final Cursor c = client.query( Sync.CONTENT_URI,
                                         PROJECTION,
                                         null,
                                         null,
@@ -155,16 +167,10 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          
          if ( ok )
          {
-            settings = new RtmSettings( Queries.getOptDate( c,
-                                                            COL_INDICES.get( Settings.SYNC_TIMESTAMP ) ),
-                                        Queries.getOptString( c,
-                                                              COL_INDICES.get( Settings.TIMEZONE ) ),
-                                        c.getInt( COL_INDICES.get( Settings.DATEFORMAT ) ),
-                                        c.getInt( COL_INDICES.get( Settings.TIMEFORMAT ) ),
-                                        Queries.getOptString( c,
-                                                              COL_INDICES.get( Settings.DEFAULTLIST_ID ) ),
-                                        Queries.getOptString( c,
-                                                              COL_INDICES.get( Settings.LANGUAGE ) ) );
+            inAndOut = new ArrayList< Long >( 2 );
+            inAndOut.add( Queries.getOptLong( c, COL_INDICES.get( Sync.LAST_IN ) ) );
+            inAndOut.add( Queries.getOptLong( c,
+                                              COL_INDICES.get( Sync.LAST_OUT ) ) );
          }
          
          if ( c != null )
@@ -172,17 +178,17 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         settings = null;
+         inAndOut = null;
       }
       
-      return settings;
+      return inAndOut;
    }
    
 
 
-   public RtmSettingsProviderPart( SQLiteOpenHelper dbAccess )
+   public SyncProviderPart( SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Settings.PATH );
+      super( dbAccess, Sync.PATH );
    }
    
 
@@ -192,18 +198,9 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       db.execSQL( "CREATE TABLE "
                   + path
                   + " ( "
-                  + Settings._ID
-                  + " INTEGER NOT NULL CONSTRAINT PK_SETTINGS PRIMARY KEY AUTOINCREMENT, "
-                  + Settings.SYNC_TIMESTAMP + " INTEGER NOT NULL, "
-                  + Settings.TIMEZONE
-                  + " TEXT, " + Settings.DATEFORMAT
-                  + " INTEGER NOT NULL DEFAULT 0, "
-                  + Settings.TIMEFORMAT + " INTEGER NOT NULL DEFAULT 0, "
-                  + Settings.DEFAULTLIST_ID + " INTEGER, " + Settings.LANGUAGE
-                  + " TEXT, CONSTRAINT defaultlist FOREIGN KEY ( "
-                  + Settings.DEFAULTLIST_ID + ") REFERENCES " + Lists.PATH
-                  + "( "
-                  + Lists._ID + " ) );" );
+                  + Sync._ID
+                  + " INTEGER NOT NULL CONSTRAINT PK_SYNC PRIMARY KEY AUTOINCREMENT, "
+                  + Sync.LAST_IN + " INTEGER, " + Sync.LAST_OUT + " INTEGER );" );
    }
    
 
@@ -211,7 +208,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    @Override
    protected String getContentItemType()
    {
-      return Settings.CONTENT_ITEM_TYPE;
+      return Sync.CONTENT_ITEM_TYPE;
    }
    
 
@@ -219,7 +216,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    @Override
    protected String getContentType()
    {
-      return Settings.CONTENT_TYPE;
+      return Sync.CONTENT_TYPE;
    }
    
 
@@ -227,7 +224,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    @Override
    protected Uri getContentUri()
    {
-      return Settings.CONTENT_URI;
+      return Sync.CONTENT_URI;
    }
    
 

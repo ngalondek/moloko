@@ -1,24 +1,24 @@
 /*
-Copyright (c) 2010 Ronny Röhricht   
-
-This file is part of Moloko.
-
-Moloko is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Moloko is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-Contributors:
-	Ronny Röhricht - implementation
-*/
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
+ */
 
 package dev.drsoran.moloko.layouts;
 
@@ -102,7 +102,8 @@ public class TitleWithTextLayout extends LinearLayout
                   (TextView) findViewById( R.id.title_with_text_title ),
                   array,
                   new int[]
-                  { R.styleable.TitleWithText_title,
+                  {
+                   R.styleable.TitleWithText_title,
                    R.styleable.TitleWithText_titleColor,
                    R.styleable.TitleWithText_titleSize,
                    R.styleable.TitleWithText_titleStyle,
@@ -115,7 +116,8 @@ public class TitleWithTextLayout extends LinearLayout
                   (TextView) findViewById( R.id.title_with_text_text ),
                   array,
                   new int[]
-                  { R.styleable.TitleWithText_text,
+                  {
+                   R.styleable.TitleWithText_text,
                    R.styleable.TitleWithText_textColor,
                    R.styleable.TitleWithText_textSize,
                    R.styleable.TitleWithText_textStyle,
@@ -163,7 +165,8 @@ public class TitleWithTextLayout extends LinearLayout
          if ( array.hasValue( attrs[ 2 ] ) )
          {
             final float spDensity = context.getResources().getDisplayMetrics().scaledDensity;
-            final float size = array.getDimension( attrs[ 2 ], 0.0f ) / spDensity;
+            final float size = array.getDimension( attrs[ 2 ], 0.0f )
+                               / spDensity;
             view.setTextSize( size );
          }
          

@@ -1,4 +1,6 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g 2010-09-27 17:58:08
+// $ANTLR 3.2 Sep 23, 2009 12:02:23
+// F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g
+// 2010-09-27 17:58:08
 
 package dev.drsoran.moloko.grammar;
 
@@ -22,11 +24,48 @@ import org.antlr.runtime.TokenStream;
 public class DateParser extends Parser
 {
    public static final String[] tokenNames = new String[]
-   { "<invalid>", "<EOR>", "<DOWN>", "<UP>", "NEVER", "TODAY", "TOMORROW",
-    "YESTERDAY", "AT", "ON", "IN", "OF", "NEXT", "AND", "END", "THE", "STs",
-    "NOW", "TONIGHT", "MIDNIGHT", "MIDDAY", "NOON", "YEARS", "MONTHS", "WEEKS",
-    "DAYS", "HOURS", "MINUTES", "SECONDS", "MONTH", "WEEKDAY", "DATE_SEP",
-    "DOT", "COLON", "MINUS", "MINUS_A", "COMMA", "INT", "AM", "PM", "NUM_STR",
+   {
+    "<invalid>",
+    "<EOR>",
+    "<DOWN>",
+    "<UP>",
+    "NEVER",
+    "TODAY",
+    "TOMORROW",
+    "YESTERDAY",
+    "AT",
+    "ON",
+    "IN",
+    "OF",
+    "NEXT",
+    "AND",
+    "END",
+    "THE",
+    "STs",
+    "NOW",
+    "TONIGHT",
+    "MIDNIGHT",
+    "MIDDAY",
+    "NOON",
+    "YEARS",
+    "MONTHS",
+    "WEEKS",
+    "DAYS",
+    "HOURS",
+    "MINUTES",
+    "SECONDS",
+    "MONTH",
+    "WEEKDAY",
+    "DATE_SEP",
+    "DOT",
+    "COLON",
+    "MINUS",
+    "MINUS_A",
+    "COMMA",
+    "INT",
+    "AM",
+    "PM",
+    "NUM_STR",
     "WS" };
    
    public static final int STs = 16;
@@ -299,19 +338,26 @@ public class DateParser extends Parser
 
    // $ANTLR start "parseDate"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:183:1:
-   // parseDate[Calendar cal] : ( date_full[$cal] | date_on[$cal] | date_in_X_YMWD[$cal] | date_end_of_the_MW[$cal] |
+   // parseDate[Calendar cal] : ( date_full[$cal] | date_on[$cal] |
+   // date_in_X_YMWD[$cal] | date_end_of_the_MW[$cal] |
    // date_natural[$cal] ) ;
    public final void parseDate( Calendar cal ) throws RecognitionException
    {
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:187:4: ( (
-         // date_full[$cal] | date_on[$cal] | date_in_X_YMWD[$cal] | date_end_of_the_MW[$cal] | date_natural[$cal] ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:187:6: (
-         // date_full[$cal] | date_on[$cal] | date_in_X_YMWD[$cal] | date_end_of_the_MW[$cal] | date_natural[$cal] )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:187:4:
+         // ( (
+         // date_full[$cal] | date_on[$cal] | date_in_X_YMWD[$cal] |
+         // date_end_of_the_MW[$cal] | date_natural[$cal] ) )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:187:6:
+         // (
+         // date_full[$cal] | date_on[$cal] | date_in_X_YMWD[$cal] |
+         // date_end_of_the_MW[$cal] | date_natural[$cal] )
          {
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:187:6: (
-            // date_full[$cal] | date_on[$cal] | date_in_X_YMWD[$cal] | date_end_of_the_MW[$cal] | date_natural[$cal] )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:187:6:
+            // (
+            // date_full[$cal] | date_on[$cal] | date_in_X_YMWD[$cal] |
+            // date_end_of_the_MW[$cal] | date_natural[$cal] )
             int alt1 = 5;
             switch ( input.LA( 1 ) )
             {
@@ -506,7 +552,8 @@ public class DateParser extends Parser
    
    // $ANTLR start "date_full"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:213:1:
-   // date_full[Calendar cal] : pt1= INT ( DOT | MINUS | COLON | DATE_SEP ) m= INT ( DOT | MINUS | COLON | DATE_SEP )
+   // date_full[Calendar cal] : pt1= INT ( DOT | MINUS | COLON | DATE_SEP ) m=
+   // INT ( DOT | MINUS | COLON | DATE_SEP )
    // pt3= INT ;
    public final void date_full( Calendar cal ) throws RecognitionException
    {
@@ -516,10 +563,14 @@ public class DateParser extends Parser
       
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:214:4: (pt1=
-         // INT ( DOT | MINUS | COLON | DATE_SEP ) m= INT ( DOT | MINUS | COLON | DATE_SEP ) pt3= INT )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:214:6: pt1= INT
-         // ( DOT | MINUS | COLON | DATE_SEP ) m= INT ( DOT | MINUS | COLON | DATE_SEP ) pt3= INT
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:214:4:
+         // (pt1=
+         // INT ( DOT | MINUS | COLON | DATE_SEP ) m= INT ( DOT | MINUS | COLON
+         // | DATE_SEP ) pt3= INT )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:214:6:
+         // pt1= INT
+         // ( DOT | MINUS | COLON | DATE_SEP ) m= INT ( DOT | MINUS | COLON |
+         // DATE_SEP ) pt3= INT
          {
             pt1 = (Token) match( input, INT, FOLLOW_INT_in_date_full186 );
             if ( ( input.LA( 1 ) >= DATE_SEP && input.LA( 1 ) <= MINUS ) )
@@ -589,17 +640,23 @@ public class DateParser extends Parser
    
    // $ANTLR start "date_on"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:240:1:
-   // date_on[Calendar cal] : ( ON )? ( date_on_Xst_of_M[$cal] | date_on_M_Xst[$cal] | date_on_weekday[$cal] ) ;
+   // date_on[Calendar cal] : ( ON )? ( date_on_Xst_of_M[$cal] |
+   // date_on_M_Xst[$cal] | date_on_weekday[$cal] ) ;
    public final void date_on( Calendar cal ) throws RecognitionException
    {
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:241:4: ( ( ON
-         // )? ( date_on_Xst_of_M[$cal] | date_on_M_Xst[$cal] | date_on_weekday[$cal] ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:241:6: ( ON )?
-         // ( date_on_Xst_of_M[$cal] | date_on_M_Xst[$cal] | date_on_weekday[$cal] )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:241:4:
+         // ( ( ON
+         // )? ( date_on_Xst_of_M[$cal] | date_on_M_Xst[$cal] |
+         // date_on_weekday[$cal] ) )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:241:6:
+         // ( ON )?
+         // ( date_on_Xst_of_M[$cal] | date_on_M_Xst[$cal] |
+         // date_on_weekday[$cal] )
          {
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:241:6: ( ON
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:241:6:
+            // ( ON
             // )?
             int alt2 = 2;
             int LA2_0 = input.LA( 1 );
@@ -621,8 +678,10 @@ public class DateParser extends Parser
                
             }
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:241:10: (
-            // date_on_Xst_of_M[$cal] | date_on_M_Xst[$cal] | date_on_weekday[$cal] )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:241:10:
+            // (
+            // date_on_Xst_of_M[$cal] | date_on_M_Xst[$cal] |
+            // date_on_weekday[$cal] )
             int alt3 = 3;
             switch ( input.LA( 1 ) )
             {
@@ -709,7 +768,8 @@ public class DateParser extends Parser
    
    // $ANTLR start "date_on_Xst_of_M"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:246:1:
-   // date_on_Xst_of_M[Calendar cal] : d= INT ( STs )? ( ( OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS | DOT
+   // date_on_Xst_of_M[Calendar cal] : d= INT ( STs )? ( ( OF | MINUS_A | MINUS
+   // | COMMA | DOT )? m= MONTH ( MINUS | DOT
    // )? (y= INT )? )? ;
    public final void date_on_Xst_of_M( Calendar cal ) throws RecognitionException
    {
@@ -723,13 +783,18 @@ public class DateParser extends Parser
       
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:253:4: (d= INT
-         // ( STs )? ( ( OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS | DOT )? (y= INT )? )? )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:253:6: d= INT (
-         // STs )? ( ( OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS | DOT )? (y= INT )? )?
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:253:4:
+         // (d= INT
+         // ( STs )? ( ( OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS
+         // | DOT )? (y= INT )? )? )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:253:6:
+         // d= INT (
+         // STs )? ( ( OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS |
+         // DOT )? (y= INT )? )?
          {
             d = (Token) match( input, INT, FOLLOW_INT_in_date_on_Xst_of_M340 );
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:253:12: (
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:253:12:
+            // (
             // STs )?
             int alt4 = 2;
             int LA4_0 = input.LA( 1 );
@@ -754,8 +819,10 @@ public class DateParser extends Parser
             cal.set( Calendar.DAY_OF_MONTH,
                      Integer.parseInt( ( d != null ? d.getText() : null ) ) );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:257:6: ( (
-            // OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS | DOT )? (y= INT )? )?
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:257:6:
+            // ( (
+            // OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS | DOT )?
+            // (y= INT )? )?
             int alt8 = 2;
             int LA8_0 = input.LA( 1 );
             
@@ -767,7 +834,8 @@ public class DateParser extends Parser
             {
                case 1:
                   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:257:7:
-                  // ( OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS | DOT )? (y= INT )?
+                  // ( OF | MINUS_A | MINUS | COMMA | DOT )? m= MONTH ( MINUS |
+                  // DOT )? (y= INT )?
                {
                   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:257:7:
                   // ( OF | MINUS_A | MINUS | COMMA | DOT )?
@@ -784,8 +852,8 @@ public class DateParser extends Parser
                         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:
                      {
                         if ( input.LA( 1 ) == OF
-                           || input.LA( 1 ) == DOT
-                           || ( input.LA( 1 ) >= MINUS && input.LA( 1 ) <= COMMA ) )
+                             || input.LA( 1 ) == DOT
+                             || ( input.LA( 1 ) >= MINUS && input.LA( 1 ) <= COMMA ) )
                         {
                            input.consume();
                            state.errorRecovery = false;
@@ -905,7 +973,8 @@ public class DateParser extends Parser
    
    // $ANTLR start "date_on_M_Xst"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:288:1:
-   // date_on_M_Xst[Calendar cal] : m= MONTH ( MINUS | COMMA | DOT )? (d= INT ( STs | MINUS_A | MINUS | COMMA | DOT )+
+   // date_on_M_Xst[Calendar cal] : m= MONTH ( MINUS | COMMA | DOT )? (d= INT (
+   // STs | MINUS_A | MINUS | COMMA | DOT )+
    // )? (y= INT )? ;
    public final void date_on_M_Xst( Calendar cal ) throws RecognitionException
    {
@@ -917,16 +986,21 @@ public class DateParser extends Parser
       
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:293:4: (m=
-         // MONTH ( MINUS | COMMA | DOT )? (d= INT ( STs | MINUS_A | MINUS | COMMA | DOT )+ )? (y= INT )? )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:293:6: m= MONTH
-         // ( MINUS | COMMA | DOT )? (d= INT ( STs | MINUS_A | MINUS | COMMA | DOT )+ )? (y= INT )?
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:293:4:
+         // (m=
+         // MONTH ( MINUS | COMMA | DOT )? (d= INT ( STs | MINUS_A | MINUS |
+         // COMMA | DOT )+ )? (y= INT )? )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:293:6:
+         // m= MONTH
+         // ( MINUS | COMMA | DOT )? (d= INT ( STs | MINUS_A | MINUS | COMMA |
+         // DOT )+ )? (y= INT )?
          {
             m = (Token) match( input, MONTH, FOLLOW_MONTH_in_date_on_M_Xst485 );
             
             parseTextMonth( cal, ( m != null ? m.getText() : null ) );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:297:5: (
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:297:5:
+            // (
             // MINUS | COMMA | DOT )?
             int alt9 = 2;
             int LA9_0 = input.LA( 1 );
@@ -941,7 +1015,7 @@ public class DateParser extends Parser
                   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:
                {
                   if ( input.LA( 1 ) == DOT || input.LA( 1 ) == MINUS
-                     || input.LA( 1 ) == COMMA )
+                       || input.LA( 1 ) == COMMA )
                   {
                      input.consume();
                      state.errorRecovery = false;
@@ -958,7 +1032,8 @@ public class DateParser extends Parser
                
             }
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:298:5: (d=
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:298:5:
+            // (d=
             // INT ( STs | MINUS_A | MINUS | COMMA | DOT )+ )?
             int alt11 = 2;
             int LA11_0 = input.LA( 1 );
@@ -1002,8 +1077,8 @@ public class DateParser extends Parser
                            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:
                         {
                            if ( input.LA( 1 ) == STs
-                              || input.LA( 1 ) == DOT
-                              || ( input.LA( 1 ) >= MINUS && input.LA( 1 ) <= COMMA ) )
+                                || input.LA( 1 ) == DOT
+                                || ( input.LA( 1 ) >= MINUS && input.LA( 1 ) <= COMMA ) )
                            {
                               input.consume();
                               state.errorRecovery = false;
@@ -1034,7 +1109,8 @@ public class DateParser extends Parser
                
             }
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:303:5: (y=
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:303:5:
+            // (y=
             // INT )?
             int alt12 = 2;
             int LA12_0 = input.LA( 1 );
@@ -1095,12 +1171,15 @@ public class DateParser extends Parser
       
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:326:4: ( ( NEXT
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:326:4:
+         // ( ( NEXT
          // )? wd= WEEKDAY )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:326:6: ( NEXT
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:326:6:
+         // ( NEXT
          // )? wd= WEEKDAY
          {
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:326:6: (
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:326:6:
+            // (
             // NEXT )?
             int alt13 = 2;
             int LA13_0 = input.LA( 1 );
@@ -1165,18 +1244,24 @@ public class DateParser extends Parser
    
    // $ANTLR start "date_in_X_YMWD"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:350:1:
-   // date_in_X_YMWD[Calendar cal] : ( IN )? date_in_X_YMWD_distance[$cal] ( ( AND | COMMA )
+   // date_in_X_YMWD[Calendar cal] : ( IN )? date_in_X_YMWD_distance[$cal] ( (
+   // AND | COMMA )
    // date_in_X_YMWD_distance[$cal] )* ;
    public final void date_in_X_YMWD( Calendar cal ) throws RecognitionException
    {
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:351:4: ( ( IN
-         // )? date_in_X_YMWD_distance[$cal] ( ( AND | COMMA ) date_in_X_YMWD_distance[$cal] )* )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:351:7: ( IN )?
-         // date_in_X_YMWD_distance[$cal] ( ( AND | COMMA ) date_in_X_YMWD_distance[$cal] )*
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:351:4:
+         // ( ( IN
+         // )? date_in_X_YMWD_distance[$cal] ( ( AND | COMMA )
+         // date_in_X_YMWD_distance[$cal] )* )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:351:7:
+         // ( IN )?
+         // date_in_X_YMWD_distance[$cal] ( ( AND | COMMA )
+         // date_in_X_YMWD_distance[$cal] )*
          {
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:351:7: ( IN
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:351:7:
+            // ( IN
             // )?
             int alt14 = 2;
             int LA14_0 = input.LA( 1 );
@@ -1203,7 +1288,8 @@ public class DateParser extends Parser
             
             state._fsp--;
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:352:7: ( (
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:352:7:
+            // ( (
             // AND | COMMA ) date_in_X_YMWD_distance[$cal] )*
             loop15: do
             {
@@ -1267,7 +1353,8 @@ public class DateParser extends Parser
    
    // $ANTLR start "date_in_X_YMWD_distance"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:355:1:
-   // date_in_X_YMWD_distance[Calendar cal] : (a= NUM_STR | a= INT ) ( YEARS | MONTHS | WEEKS | DAYS ) ;
+   // date_in_X_YMWD_distance[Calendar cal] : (a= NUM_STR | a= INT ) ( YEARS |
+   // MONTHS | WEEKS | DAYS ) ;
    public final void date_in_X_YMWD_distance( Calendar cal ) throws RecognitionException
    {
       Token a = null;
@@ -1277,12 +1364,15 @@ public class DateParser extends Parser
       
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:361:4: ( (a=
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:361:4:
+         // ( (a=
          // NUM_STR | a= INT ) ( YEARS | MONTHS | WEEKS | DAYS ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:361:6: (a=
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:361:6:
+         // (a=
          // NUM_STR | a= INT ) ( YEARS | MONTHS | WEEKS | DAYS )
          {
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:361:6: (a=
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:361:6:
+            // (a=
             // NUM_STR | a= INT )
             int alt16 = 2;
             int LA16_0 = input.LA( 1 );
@@ -1331,7 +1421,8 @@ public class DateParser extends Parser
                
             }
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:363:6: (
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:363:6:
+            // (
             // YEARS | MONTHS | WEEKS | DAYS )
             int alt17 = 4;
             switch ( input.LA( 1 ) )
@@ -1441,18 +1532,22 @@ public class DateParser extends Parser
    
    // $ANTLR start "date_end_of_the_MW"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:383:1:
-   // date_end_of_the_MW[Calendar cal] : END ( OF )? ( THE )? ( WEEKS | MONTHS ) ;
+   // date_end_of_the_MW[Calendar cal] : END ( OF )? ( THE )? ( WEEKS | MONTHS )
+   // ;
    public final void date_end_of_the_MW( Calendar cal ) throws RecognitionException
    {
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:384:4: ( END (
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:384:4:
+         // ( END (
          // OF )? ( THE )? ( WEEKS | MONTHS ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:384:6: END ( OF
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:384:6:
+         // END ( OF
          // )? ( THE )? ( WEEKS | MONTHS )
          {
             match( input, END, FOLLOW_END_in_date_end_of_the_MW858 );
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:384:10: ( OF
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:384:10:
+            // ( OF
             // )?
             int alt18 = 2;
             int LA18_0 = input.LA( 1 );
@@ -1474,7 +1569,8 @@ public class DateParser extends Parser
                
             }
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:384:14: (
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:384:14:
+            // (
             // THE )?
             int alt19 = 2;
             int LA19_0 = input.LA( 1 );
@@ -1496,7 +1592,8 @@ public class DateParser extends Parser
                
             }
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:385:6: (
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:385:6:
+            // (
             // WEEKS | MONTHS )
             int alt20 = 2;
             int LA20_0 = input.LA( 1 );
@@ -1563,12 +1660,14 @@ public class DateParser extends Parser
    
    // $ANTLR start "date_natural"
    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:395:1:
-   // date_natural[Calendar cal] : ( ( TODAY | TONIGHT ) | TOMORROW | YESTERDAY );
+   // date_natural[Calendar cal] : ( ( TODAY | TONIGHT ) | TOMORROW | YESTERDAY
+   // );
    public final void date_natural( Calendar cal ) throws RecognitionException
    {
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:396:4: ( (
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:396:4:
+         // ( (
          // TODAY | TONIGHT ) | TOMORROW | YESTERDAY )
          int alt21 = 3;
          switch ( input.LA( 1 ) )
@@ -1601,7 +1700,8 @@ public class DateParser extends Parser
          switch ( alt21 )
          {
             case 1:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:396:6: (
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g:396:6:
+               // (
                // TODAY | TONIGHT )
             {
                if ( input.LA( 1 ) == TODAY || input.LA( 1 ) == TONIGHT )

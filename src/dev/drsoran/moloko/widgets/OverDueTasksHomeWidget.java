@@ -1,23 +1,23 @@
-/* 
-	Copyright (c) 2010 Ronny Röhricht
-
-	This file is part of Moloko.
-
-	Moloko is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	Moloko is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-
-	Contributors:
-     Ronny Röhricht - implementation
+/*
+ * Copyright (c) 2010 Ronny Röhricht
+ * 
+ * This file is part of Moloko.
+ * 
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ * Ronny Röhricht - implementation
  */
 
 package dev.drsoran.moloko.widgets;
@@ -81,7 +81,7 @@ public class OverDueTasksHomeWidget extends LinearLayout implements
       {
          final TextView counterView = (TextView) view.findViewById( R.id.counter_bubble );
          final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-            + "today" );
+                                                           + "today" );
          
          final Cursor c = context.getContentResolver()
                                  .query( RawTasks.CONTENT_URI, new String[]
@@ -106,7 +106,7 @@ public class OverDueTasksHomeWidget extends LinearLayout implements
    public void onClick( View v )
    {
       final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-         + "today" );
+                                                        + "today" );
       
       getContext().startActivity( Intents.createSmartFilterIntent( getContext(),
                                                                    filter,

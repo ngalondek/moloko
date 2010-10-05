@@ -35,10 +35,12 @@
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
    <string name="app_sort_due_date">Fälligkeitsdatum</string>
-   	
-	<string name="svc_rtm">Moloko.RtmService</string>
-	<string name="svc_auth">Moloko.AuthService</string>
-	<string name="svc_rtm_process">:Moloko</string>	
+   
+   <string name="svc_sync">RTM Synchronisierung</string>	
+   <string name="svc_auth">RTM Authentifizierung</string>
+   
+   <string name="rec_sync">Moloko Sync-Alarm</string>
+   <string name="rec_boot">Moloko boot</string>
 
    <string name="rtm_full">Remember The Milk</string>
    <string name="rtm_short">RTM</string>
@@ -47,17 +49,14 @@
    <string name="g_settings_src_rtm_btn">Einstellung vom RTM Server übernehmen</string>
    <string name="g_settings_src_rtm">Vom RTM Server geladen</string>
    <string name="g_settings_src_local">Lokale Einstellung</string>
-   <string name="g_no_account">Keine RTM Zugangsdaten vorhanden. Die Zugangsdaten können durch einen Klick hinterlegt werden.</string>
+   <string name="g_no_account">Keine RTM Zugangsdaten vorhanden</string>
+   
+   <!-- To be removed -->   
+   <string name="key_api_key">api_key</string>
+   <string name="key_shared_secret">shared_secret</string>
+   <string name="key_permission">permission</string>   
 
 	<!-- Global keys -->
-	<string name="key_auth">auth</string>
-	<string name="key_authToken">authToken</string>
-	<string name="key_authToken_date">authTokenDate</string>
-	<string name="key_url">url</string>
-	<string name="key_lastError">lastError</string>
-	<string name="key_api_key">api_key</string>
-	<string name="key_shared_secret">shared_secret</string>
-	<string name="key_permission">permission</string>
 	<string name="key_sync_inverval">sync_interval</string>
 	<string name="key_timezone_local">timezone_local</string>
 	<string name="key_timezone_sync_with_rtm">timezone_sync_with_rtm</string>
@@ -152,11 +151,10 @@
 	  <string name="taskslist_menu_opt_lists">@string/app_tasklists</string>
 	  
    <!-- Authenticator activity -->
-   <string name="auth_username_label">Benutzername</string>
-   <string name="auth_password_label">Passwort</string>
    <string name="auth_api_key_label">API key</string>
    <string name="auth_api_shared_secret_label">Shared secret</string>
    <string name="auth_permission_label">Berechtigung</string>
+   <string name="auth_info_text">Nach dem fortfahren werden Sie auf die Remember The Milk Website geleitet, wo Sie durch die Eingabe Ihrer Zugangsdaten die Zugriffsberechtigung auf die RTM Daten bestätigen.\n\nIhr Benutzername und Ihr Passwort werden nicht lokal gespeichert.</string>
    <string name="auth_missing_credential">Wichtige Kontoangaben fehlen. Bitte ergänzen.</string>
    <string name="auth_expired_auth_token">Die Zugriffsberechtigung wurde von Remember The Milk für %1$s nicht bestätigt. Bitte neu beantragen.</string>
    <string name="auth_perm_no">Keine</string>
@@ -176,26 +174,10 @@
    <string name="auth_pref_account_tilte">@string/app_account_preferences</string>
    <string name="auth_pref_account_summary">Synchronisierung, RTM-Zugriffsebene usw.</string>
    <string name="auth_pref_sync_interval_title">Synchronisierung</string>
-   <string name="auth_pref_sync_interval_default_value">-2</string>
+   <string name="auth_pref_sync_interval_default_value">86400000</string>
    <string name="auth_pref_perm_title">Zugriffsebene</string>
-   <string name="auth_pref_perm_summary">Legt die Zugriffsebene für die RTM Daten fest</string>
-   <string name="auth_pref_perm_has">%1$s</string>
-   <string name="auth_pref_perm_has_since">%1$s seit dem %2$s</string>
-   <string name="auth_pref_perm_has_not">Diese Anwendung hat keine Zugangsberechtigung</string>
-      <!-- Dialogs -->
-      <string name="auth_pref_dlg_check_auth_token">Überprüfe Zugriffsebene %1$s</string>
-      <string name="auth_pref_dlg_check_auth_token_finished">Zugriffsebene %1$s für Benutzer %2$s bestätigt</string>
-      <string name="auth_pref_dlg_check_auth_token_invalid">Zugriff nicht bestätigt. Bitte neu beantragen</string>
-      <string name="auth_pref_dlg_update_svc_failed">Update der Zugriffsdaten fehlgeschlagen. Grund: %1$s</string>
-      <string name="auth_pref_dlg_finsihed">Zugriff der Ebene %1$s gewährt</string>
-      <string name="auth_pref_dlg_error">Zugriff nicht gewährt. Grund: %1$s</string>
-      <!-- Errors -->     
-      <string name="auth_pref_err_conn_lost">Verbinding zum Dienst ist unerwartet abgebrochen</string>
-      <string name="auth_pref_err_rtmWebAccess">RTM Webzugriff ist fehlgeschlagen</string>
-      <string name="auth_pref_err_invalid_auth_token">Ungültiges Auth-Token</string>
-      <string name="auth_pref_err_check_auth_token_failed">Überprüfung konnte nicht durchgeführt werden</string>
-      <!-- Menus -->
-      <string name="auth_pref_ctxmenu_perm_check_auth_token">Überprüfe Gültigkeit</string>
+   <string name="auth_pref_perm_value">%1$s - zum Ändern klicken</string>    
+   <string name="auth_pref_perm_has_not">Keine Zugangsberechtigung</string>      
    
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>

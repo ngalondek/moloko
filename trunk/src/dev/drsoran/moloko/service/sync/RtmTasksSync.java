@@ -208,14 +208,16 @@ public final class RtmTasksSync
                
                IContentProviderSyncOperation taskSeriesOperation = null;
                
-               // INSERT: The reference element is not contained in the target
-               // list
-               // and is not deleted. If it is deleted then we never had it
-               // locally.
-               if ( posTaskSeries == -1 && !refTaskSeries.isDeleted() )
+               if ( posTaskSeries == -1 )
                {
-                  taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) refTaskSeries ).computeContentProviderInsertOperation( provider,
-                                                                                                                                             refElement.getId() );
+                  // INSERT: The reference element is not contained in the target
+                  // list and is not deleted.
+                  if ( !refTaskSeries.isDeleted() )
+                     taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) refTaskSeries ).computeContentProviderInsertOperation( provider,
+                                                                                                                                                refElement.getId() );
+                  // We never had this taskseries.
+                  else
+                     taskSeriesOperation = NoopContentProviderSyncOperation.INSTANCE;
                }
                
                // The reference element is contained in the target list.

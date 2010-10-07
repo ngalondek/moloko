@@ -39,9 +39,9 @@ import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.util.ParamChecker;
-import dev.drsoran.moloko.service.sync.util.SyncUpdateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
 
@@ -246,13 +246,13 @@ public class RtmTaskNote extends RtmData implements
          result = new CompositeContentProviderSyncOperation( provider,
                                                              IContentProviderSyncOperation.Op.UPDATE );
          
-         SyncUpdateUtils.updateDate( created,
+         SyncUtils.updateDate( created,
                                      update.created,
                                      uri,
                                      Notes.NOTE_CREATED_DATE,
                                      result );
          
-         SyncUpdateUtils.updateDate( modified,
+         SyncUtils.updateDate( modified,
                                      update.modified,
                                      uri,
                                      Notes.NOTE_MODIFIED_DATE,

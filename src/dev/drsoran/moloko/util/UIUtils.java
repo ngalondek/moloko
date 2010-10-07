@@ -24,6 +24,7 @@ package dev.drsoran.moloko.util;
 
 import java.util.List;
 
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -31,12 +32,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.text.style.UnderlineSpan;
 import android.view.InflateException;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
@@ -46,8 +49,7 @@ import dev.drsoran.rtm.Task;
 public final class UIUtils
 {
    /**
-    * If a tag has been clicked then it makes no sense to click it in the result
-    * again.
+    * If a tag has been clicked then it makes no sense to click it in the result again.
     */
    public static final String DISABLE_TAG_EQUALS = "disable_tag_equals";
    
@@ -107,8 +109,7 @@ public final class UIUtils
    {
       if ( timeBase == null )
       {
-         timeBase = new Time();
-         timeBase.set( System.currentTimeMillis() );
+         timeBase = MolokoDateUtils.newTime();
       }
       
       view.setText( task.getName() );
@@ -119,7 +120,7 @@ public final class UIUtils
          final long dueDateMillis = task.getDue().getTime();
          
          // Make bold if the task is today
-         if ( DateUtils.isToday( dueDateMillis ) )
+         if ( MolokoDateUtils.isToday( dueDateMillis ) )
          {
             view.setTypeface( Typeface.DEFAULT_BOLD );
             view.setText( task.getName() );
@@ -128,8 +129,8 @@ public final class UIUtils
          // Make underline and bold if overdue
          else
          {
-            final Time dueTime = new Time();
-            dueTime.set( task.getDue().getTime() );
+            final Time dueTime = MolokoDateUtils.newTime( task.getDue()
+                                                              .getTime() );
             
             if ( timeBase.after( dueTime ) )
             {
@@ -170,7 +171,7 @@ public final class UIUtils
             {
                tagToDisable = configuration.getString( DISABLE_TAG_EQUALS );
                disableAllTags = configuration.getBoolean( DISABLE_ALL_TAGS )
-                                || listener == null;
+                  || listener == null;
             }
             
             final List< String > tags = task.getTags();
@@ -184,7 +185,7 @@ public final class UIUtils
                container.addView( tagView );
                
                if ( disableAllTags
-                    || ( tagToDisable != null && tagText.equalsIgnoreCase( tagToDisable ) ) )
+                  || ( tagToDisable != null && tagText.equalsIgnoreCase( tagToDisable ) ) )
                {
                   tagView.setEnabled( false );
                }
@@ -275,5 +276,56 @@ public final class UIUtils
          }
       
       return ok;
+   }
+   
+
+
+   public final static void addSyncMenuItem( final Context context,
+                                             Menu menu,
+                                             int id,
+                                             int menuOrder )
+   {
+      if ( menu.findItem( id ) == null )
+      {
+         if ( SyncUtils.isSyncing( context ) )
+         {
+            menu.add( Menu.NONE, id, menuOrder, R.string.phr_cancel_sync )
+                .setIcon( R.drawable.icon_cancel_black )
+                .setOnMenuItemClickListener( new OnMenuItemClickListener()
+                {
+                   public boolean onMenuItemClick( MenuItem item )
+                   {
+                      SyncUtils.cancelSync( context );
+                      return true;
+                   }
+                } );
+         }
+         else
+         {
+            final MenuItem menuItem = menu.add( Menu.NONE,
+                                                id,
+                                                menuOrder,
+                                                R.string.phr_do_sync )
+                                          .setIcon( R.drawable.icon_refresh_black );
+            
+            final Account account = SyncUtils.isReadyToSync( context );
+            
+            if ( account != null )
+            {
+               menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+               {
+                  public boolean onMenuItemClick( MenuItem item )
+                  {
+                     SyncUtils.requestSync( context, account, true );
+                     return true;
+                  }
+               } );
+            }
+            else
+            {
+               menuItem.setEnabled( false );
+            }
+         }
+      }
    }
 }

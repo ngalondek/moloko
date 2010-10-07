@@ -36,9 +36,9 @@ import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.service.sync.util.SyncUpdateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.RawTasks;
 
 
@@ -378,7 +378,7 @@ public class RtmTask extends RtmData implements
          result = new CompositeContentProviderSyncOperation( provider,
                                                              IContentProviderSyncOperation.Op.UPDATE );
          
-         SyncUpdateUtils.updateDate( due,
+         SyncUtils.updateDate( due,
                                      update.due,
                                      uri,
                                      RawTasks.DUE_DATE,
@@ -390,19 +390,19 @@ public class RtmTask extends RtmData implements
                                                             update.hasDueTime )
                                                 .build() );
          
-         SyncUpdateUtils.updateDate( added,
+         SyncUtils.updateDate( added,
                                      update.added,
                                      uri,
                                      RawTasks.ADDED_DATE,
                                      result );
          
-         SyncUpdateUtils.updateDate( completed,
+         SyncUtils.updateDate( completed,
                                      update.completed,
                                      uri,
                                      RawTasks.COMPLETED_DATE,
                                      result );
          
-         SyncUpdateUtils.updateDate( deleted,
+         SyncUtils.updateDate( deleted,
                                      update.deleted,
                                      uri,
                                      RawTasks.DELETED_DATE,

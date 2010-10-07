@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,6 +33,7 @@ import org.w3c.dom.NodeList;
 
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.text.format.Time;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 
 
@@ -44,6 +46,11 @@ public abstract class RtmData implements Parcelable
    
    private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss" );
    
+   static
+   {
+      DATE_FORMAT.setTimeZone( TimeZone.getTimeZone( Time.TIMEZONE_UTC ) );
+   }
+   
    
 
    public RtmData()
@@ -53,8 +60,7 @@ public abstract class RtmData implements Parcelable
 
 
    /**
-    * The method is not optimized at most, but circumvents a bug in Android
-    * runtime.
+    * The method is not optimized at most, but circumvents a bug in Android runtime.
     */
    public static Element child( Element elt, String nodeName )
    {
@@ -63,7 +69,7 @@ public abstract class RtmData implements Parcelable
       {
          Node child = childNodes.item( index );
          if ( child.getNodeType() == Node.ELEMENT_NODE
-              && child.getNodeName().equals( nodeName ) )
+            && child.getNodeName().equals( nodeName ) )
          {
             return (Element) child;
          }
@@ -74,8 +80,7 @@ public abstract class RtmData implements Parcelable
 
 
    /**
-    * The method is not optimized at most, but circumvents a bug in Android
-    * runtime.
+    * The method is not optimized at most, but circumvents a bug in Android runtime.
     */
    public static List< Element > children( Element elt, String nodeName )
    {
@@ -85,7 +90,7 @@ public abstract class RtmData implements Parcelable
       {
          Node child = childNodes.item( index );
          if ( child.getNodeType() == Node.ELEMENT_NODE
-              && child.getNodeName().equals( nodeName ) )
+            && child.getNodeName().equals( nodeName ) )
          {
             result.add( (Element) child );
          }
@@ -154,6 +159,6 @@ public abstract class RtmData implements Parcelable
 
    public static String formatDate( Date d )
    {
-      return DATE_FORMAT.format( new Date( d.getTime() ) ) + "Z";
+      return DATE_FORMAT.format( d ) + "Z";
    }
 }

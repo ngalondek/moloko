@@ -157,35 +157,33 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       {
          String dueText = null;
          
-         final long dueMillisLocal = MolokoDateUtils.toLocal( task.getDue()
-                                                                  .getTime() );
+         final long dueMillis = task.getDue().getTime();
          final boolean hasDueTime = task.hasDueTime();
          
          // Today
-         // TODO: Check. Respects DateUtils.isToday the time zone?
-         if ( DateUtils.isToday( dueMillisLocal ) )
+         if ( MolokoDateUtils.isToday( dueMillis ) )
          {
             // If it has a time, we show the time
             if ( hasDueTime )
-               dueText = MolokoDateUtils.formatTime( dueMillisLocal );
+               dueText = MolokoDateUtils.formatTime( dueMillis );
             else
                // We only show the 'Today' phrase
                dueText = context.getString( R.string.phr_today );
          }
          else
          {
-            final Time dueTime = MolokoDateUtils.newTime( dueMillisLocal );
+            final Time dueTime = MolokoDateUtils.newTime( dueMillis );
             
             // If it is the same year
             if ( dueTime.year == now.year )
             {
                // If the same week and in the future
                if ( now.getWeekNumber() == dueTime.getWeekNumber()
-                    && dueTime.after( now ) )
+                  && dueTime.after( now ) )
                {
                   // we only show the week day
-                  dueText = DateUtils.getRelativeTimeSpanString( dueMillisLocal,
-                                                                 MolokoDateUtils.toLocal( System.currentTimeMillis() ),
+                  dueText = DateUtils.getRelativeTimeSpanString( dueMillis,
+                                                                 System.currentTimeMillis(),
                                                                  DateUtils.WEEK_IN_MILLIS,
                                                                  DateUtils.FORMAT_SHOW_WEEKDAY )
                                      .toString();
@@ -195,7 +193,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                else
                {
                   // we show the date but w/o year
-                  dueText = MolokoDateUtils.formatDate( dueMillisLocal, 0 );
+                  dueText = MolokoDateUtils.formatDate( dueMillis, 0 );
                }
             }
             
@@ -203,7 +201,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
             else
             {
                // we show the full date with year
-               dueText = MolokoDateUtils.formatDate( dueMillisLocal,
+               dueText = MolokoDateUtils.formatDate( dueMillis,
                                                      MolokoDateUtils.FORMAT_WITH_YEAR );
             }
          }
@@ -253,7 +251,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                catch ( RemoteException e )
                {
                   Log.e( TAG, "Unable to retrieve notes from DB for task ID "
-                              + task.getId(), e );
+                     + task.getId(), e );
                }
             }
          }

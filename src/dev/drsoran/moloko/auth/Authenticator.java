@@ -83,13 +83,7 @@ public class Authenticator extends AbstractAccountAuthenticator
                                      Account account,
                                      Bundle options ) throws NetworkErrorException
    {
-      final Bundle result = new Bundle();
-      
-      result.putInt( AccountManager.KEY_ERROR_CODE,
-                     AccountManager.ERROR_CODE_UNSUPPORTED_OPERATION );
-      result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
-      
-      return result;
+      throw new UnsupportedOperationException();
    }
    
 
@@ -100,41 +94,31 @@ public class Authenticator extends AbstractAccountAuthenticator
                                     String authTokenType,
                                     Bundle options ) throws NetworkErrorException
    {
-      final Bundle result = new Bundle();
+      // Currently it is not possible to update an authToken for an account. This method
+      // is intended to be used to update the password. But we store no password so
+      // we can't use it.
+      throw new UnsupportedOperationException();
       
-      boolean ok = options != null;
-      
-      if ( ok )
-      {
-         // Check the feature to update
-         if ( options.getBoolean( Constants.FEAT_PERMISSION ) )
-         {
-            final Intent intent = new Intent( context,
-                                              AuthenticatorActivity.class );
-            
-            configureIntent( context, intent, account );
-            
-            intent.putExtra( AuthenticatorActivity.PARAM_UPDATECREDENTIALS,
-                             true );
-            intent.putExtra( AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-                             response );
-            
-            result.putParcelable( AccountManager.KEY_INTENT, intent );
-         }
-         else
-         {
-            ok = false;
-         }
-      }
-      
-      if ( !ok )
-      {
-         result.putInt( AccountManager.KEY_ERROR_CODE,
-                        AccountManager.ERROR_CODE_BAD_ARGUMENTS );
-         result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
-      }
-      
-      return result;
+      /**
+       * final Bundle result = new Bundle();
+       * 
+       * boolean ok = options != null;
+       * 
+       * if ( ok ) { // Check the feature to update if ( options.getBoolean( Constants.FEAT_PERMISSION ) ) { final
+       * Intent intent = new Intent( context, AuthenticatorActivity.class );
+       * 
+       * configureIntent( context, intent, account );
+       * 
+       * intent.putExtra( AuthenticatorActivity.PARAM_UPDATECREDENTIALS, true ); intent.putExtra(
+       * AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response );
+       * 
+       * result.putParcelable( AccountManager.KEY_INTENT, intent ); } else { ok = false; } }
+       * 
+       * if ( !ok ) { result.putInt( AccountManager.KEY_ERROR_CODE, AccountManager.ERROR_CODE_BAD_ARGUMENTS );
+       * result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false ); }
+       * 
+       * return result; }
+       */
    }
    
 
@@ -143,13 +127,7 @@ public class Authenticator extends AbstractAccountAuthenticator
    public Bundle editProperties( AccountAuthenticatorResponse response,
                                  String accountType )
    {
-      final Bundle result = new Bundle();
-      
-      result.putInt( AccountManager.KEY_ERROR_CODE,
-                     AccountManager.ERROR_CODE_UNSUPPORTED_OPERATION );
-      result.putBoolean( AccountManager.KEY_BOOLEAN_RESULT, false );
-      
-      return result;
+      throw new UnsupportedOperationException();
    }
    
 
@@ -174,8 +152,7 @@ public class Authenticator extends AbstractAccountAuthenticator
                                                                Constants.FEAT_PERMISSION );
          
          final boolean missingCredential = apiKey == null
-                                           || sharedSecret == null
-                                           || permission == null;
+            || sharedSecret == null || permission == null;
          
          boolean authTokenExpired = authToken == null;
          

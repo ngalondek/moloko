@@ -20,21 +20,33 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.auth.prefs;
+package dev.drsoran.moloko.receivers;
 
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.SyncUtils;
+import android.accounts.Account;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 
 
-public class AccountPreferencesActivity extends PreferenceActivity
+public class BootReceiver extends BroadcastReceiver
 {
+   
    @Override
-   protected void onCreate( Bundle savedInstanceState )
+   public void onReceive( Context context, Intent intent )
    {
-      super.onCreate( savedInstanceState );
-      
-      addPreferencesFromResource( R.xml.account_preferences_activity );
+      scheduleSync( context );
    }
    
+
+
+   public final static void scheduleSync( Context context )
+   {
+      final Account account = SyncUtils.isReadyToSync( context );
+      
+      if ( account != null )
+      {
+         SyncUtils.scheduleSyncAlarm( context );
+      }
+   }
 }

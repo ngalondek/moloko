@@ -51,8 +51,8 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.service.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.util.ConnectionChecker;
+import dev.drsoran.moloko.util.SyncUtils;
 
 
 /**
@@ -312,7 +312,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
                if ( ok )
                {
                   // Set RTM sync for this account.
-                  SyncAlarmReceiver.scheduleSyncAlarm( getApplicationContext() );
+                  SyncUtils.scheduleSyncAlarm( getApplicationContext() );
                }
             }
             

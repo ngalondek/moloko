@@ -46,9 +46,9 @@ import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperatio
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.util.ParamChecker;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
-import dev.drsoran.moloko.service.sync.util.SyncUpdateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Tag;
 
@@ -491,13 +491,13 @@ public class RtmTaskSeries extends RtmData implements
                
                final CompositeContentProviderSyncOperation taskSeriesOperation = new CompositeContentProviderSyncOperation( provider,
                                                                                                                             IContentProviderSyncOperation.Op.UPDATE );
-               SyncUpdateUtils.updateDate( created,
+               SyncUtils.updateDate( created,
                                            update.created,
                                            uri,
                                            TaskSeries.TASKSERIES_CREATED_DATE,
                                            taskSeriesOperation );
                
-               SyncUpdateUtils.updateDate( modified,
+               SyncUtils.updateDate( modified,
                                            update.modified,
                                            uri,
                                            TaskSeries.MODIFIED_DATE,

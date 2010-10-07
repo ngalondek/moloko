@@ -135,6 +135,8 @@
 	<style name="Task_Overview_ListName" parent="@style/TasksList_ListItem_ListName" />
 
 	<style name="Task_Date_Text" parent="@style/App_Note_Created_Date_Text" />
+	
+	<style name="Task_Source_Text" parent="@style/App_Note_Created_Date_Text" />
 
 	<style name="Task_TitleWithText">
 		<item name="showTopLine">true</item>

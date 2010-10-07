@@ -31,7 +31,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.service.sync.SyncAlarmReceiver;
+import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;

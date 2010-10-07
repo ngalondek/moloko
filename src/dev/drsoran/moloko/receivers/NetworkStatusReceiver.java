@@ -20,7 +20,7 @@
      Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.receivers;
 
 import android.accounts.Account;
 import android.content.BroadcastReceiver;
@@ -28,9 +28,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import dev.drsoran.moloko.service.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.ConnectionChecker;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm;
 
 
@@ -55,7 +55,7 @@ public class NetworkStatusReceiver extends BroadcastReceiver
                && ConnectionChecker.isConnected( context ) )
             {
                // This respects the SYNC_INTERVAL_MANUAL setting
-               SyncAlarmReceiver.scheduleSyncAlarm( context );
+               SyncUtils.scheduleSyncAlarm( context );
             }
             
             // Disconnected or background date forbidden
@@ -79,7 +79,7 @@ public class NetworkStatusReceiver extends BroadcastReceiver
          // If we have connection again. This respects the SYNC_INTERVAL_MANUAL setting.
          else
          {
-            SyncAlarmReceiver.scheduleSyncAlarm( context );
+            SyncUtils.scheduleSyncAlarm( context );
          }
       }
       
@@ -96,7 +96,7 @@ public class NetworkStatusReceiver extends BroadcastReceiver
             }
          }
          
-         SyncAlarmReceiver.stopSyncAlarm( context );
+         SyncUtils.stopSyncAlarm( context );
       }
    }
 }

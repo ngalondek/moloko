@@ -60,6 +60,7 @@ import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ListTask;
@@ -84,8 +85,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    public static final String ADAPTER_CONFIG = "adapter_config";
    
    /**
-    * If we have a concrete list name, then we do not need to click it.
-    * Otherwise we would call the same list again. But
+    * If we have a concrete list name, then we do not need to click it. Otherwise we would call the same list again. But
     * this only applies to non smart lists
     */
    public static final String DISABLE_LIST_NAME = "disable_list_name";
@@ -99,9 +99,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       public final static int MENU_ORDER = MENU_ORDER_STATIC - 1;
       
+      protected final static int MENU_ORDER_FRONT = 1000;
+      
       public final static int SORT = START_IDX + 1;
       
       public final static int SETTINGS = START_IDX + 2;
+      
+      public final static int SYNC = START_IDX + 3;
    }
    
 
@@ -154,9 +158,9 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       MolokoApp.getSettings()
                .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_TIMEZONE
-                                                            | Settings.SETTINGS_RTM_DATEFORMAT
-                                                            | Settings.SETTINGS_RTM_TIMEFORMAT
-                                                            | Settings.SETTINGS_TASK_SORT,
+                                                      | Settings.SETTINGS_RTM_DATEFORMAT
+                                                      | Settings.SETTINGS_RTM_TIMEFORMAT
+                                                      | Settings.SETTINGS_TASK_SORT,
                                                    this );
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
@@ -224,6 +228,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    @Override
    public boolean onPrepareOptionsMenu( Menu menu )
    {
+      UIUtils.addSyncMenuItem( this,
+                               menu,
+                               OptionsMenu.SYNC,
+                               OptionsMenu.MENU_ORDER_FRONT );
+      
       addOptionalMenuItem( menu,
                            OptionsMenu.SORT,
                            getString( R.string.abstaskslist_menu_opt_sort ),
@@ -272,8 +281,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       // TODO: Make this menu item dependent on the access level set
       /**
-       * menu.add( Menu.NONE, CTX_MENU_TOGGLE_TASK_COMPLETED, Menu.NONE, (
-       * task.getCompleted() == null ) ? getString(
+       * menu.add( Menu.NONE, CTX_MENU_TOGGLE_TASK_COMPLETED, Menu.NONE, ( task.getCompleted() == null ) ? getString(
        * R.string.taskslist_listitem_ctx_set_task_completed ) : getString(
        * R.string.taskslist_listitem_ctx_set_task_incomplete ) );
        */
@@ -287,7 +295,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       final Bundle adapterConfig = configuration.getBundle( ADAPTER_CONFIG );
       
       if ( adapterConfig == null
-           || !adapterConfig.getBoolean( DISABLE_LIST_NAME ) )
+         || !adapterConfig.getBoolean( DISABLE_LIST_NAME ) )
       {
          menu.add( Menu.NONE,
                    CtxtMenu.OPEN_LIST,
@@ -556,7 +564,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       String id = null;
       for ( Iterator< RtmTaskNote > i = notes.iterator(); i.hasNext()
-                                                          && id == null; )
+         && id == null; )
       {
          final RtmTaskNote rtmTaskNote = i.next();
          

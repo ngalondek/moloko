@@ -46,7 +46,6 @@ import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
 public final class RtmTasksSync
@@ -83,7 +82,7 @@ public final class RtmTasksSync
             final Long lastIn = lastInAndOut.get( 0 );
             
             if ( lastIn != null )
-               lastSync = MolokoDateUtils.newDateUtc( lastIn ).getTime();
+               lastSync = new Date( lastIn );
          }
       }
       
@@ -213,7 +212,7 @@ public final class RtmTasksSync
                // list
                // and is not deleted. If it is deleted then we never had it
                // locally.
-               if ( pos == -1 && !refTaskSeries.isDeleted() )
+               if ( posTaskSeries == -1 && !refTaskSeries.isDeleted() )
                {
                   taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) refTaskSeries ).computeContentProviderInsertOperation( provider,
                                                                                                                                              refElement.getId() );

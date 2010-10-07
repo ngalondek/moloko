@@ -44,6 +44,7 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -66,6 +67,8 @@ public class TaskListsActivity extends ListActivity implements
       public final static int MENU_ORDER = MENU_ORDER_STATIC - 1;
       
       public final static int SETTINGS = START_IDX + 1;
+      
+      public final static int SYNC = START_IDX + 2;
    }
    
 
@@ -143,6 +146,19 @@ public class TaskListsActivity extends ListActivity implements
                 R.string.phr_settings )
           .setIcon( R.drawable.icon_settings_black )
           .setIntent( new Intent( this, MolokoPreferencesActivity.class ) );
+      
+      return true;
+   }
+   
+
+
+   @Override
+   public boolean onPrepareOptionsMenu( Menu menu )
+   {
+      UIUtils.addSyncMenuItem( this,
+                               menu,
+                               OptionsMenu.SYNC,
+                               OptionsMenu.MENU_ORDER_STATIC - 1 );
       
       return true;
    }
@@ -253,7 +269,7 @@ public class TaskListsActivity extends ListActivity implements
          if ( filter == null )
          {
             filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_LIST_LIT
-                                         + RtmSmartFilterLexer.quotify( listName ) );
+               + RtmSmartFilterLexer.quotify( listName ) );
             
             assert ( filter.getEvaluatedFilterString() != null );
             

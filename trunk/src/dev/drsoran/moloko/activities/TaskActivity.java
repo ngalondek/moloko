@@ -94,6 +94,7 @@ public class TaskActivity extends Activity
                View priorityBar;
                TextView addedDate;
                TextView completedDate;
+               TextView source;
                TextView description;
                TextView listName;
                ViewGroup tagsLayout;
@@ -105,6 +106,7 @@ public class TaskActivity extends Activity
                   priorityBar = taskContainer.findViewById( R.id.task_overview_priority_bar );
                   addedDate = (TextView) taskContainer.findViewById( R.id.task_overview_added_date );
                   completedDate = (TextView) taskContainer.findViewById( R.id.task_overview_completed_date );
+                  source = (TextView) taskContainer.findViewById( R.id.task_overview_src );
                   description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
                   listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
                   tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
@@ -116,16 +118,27 @@ public class TaskActivity extends Activity
                   throw e;
                }
                
-               addedDate.setText( MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( task.getAdded()
-                                                                                               .getTime() ),
+               addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
+                                                                      .getTime(),
                                                                   FULL_DATE_FLAGS ) );
                
                if ( task.getCompleted() != null )
-                  completedDate.setText( MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( task.getCompleted()
-                                                                                                      .getTime() ),
+                  completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
+                                                                             .getTime(),
                                                                          FULL_DATE_FLAGS ) );
                else
                   completedDate.setVisibility( View.GONE );
+               
+               if ( !TextUtils.isEmpty( task.getSource() ) )
+               {
+                  String sourceStr = task.getSource();
+                  if ( sourceStr.equalsIgnoreCase( "js" ) )
+                     sourceStr = "Web";
+                  
+                  source.setText( getString( R.string.task_source, sourceStr ) );
+               }
+               else
+                  source.setVisibility( View.GONE );
                
                UIUtils.setPriorityColor( priorityBar, task );
                
@@ -177,16 +190,16 @@ public class TaskActivity extends Activity
          {
             if ( task.hasDueTime() )
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( task.getDue()
-                                                                                                     .getTime() ),
+                                        MolokoDateUtils.formatDateTime( task.getDue()
+                                                                            .getTime(),
                                                                         MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                                 | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
+                                                                           | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
             else
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDate( MolokoDateUtils.toLocal( task.getDue()
-                                                                                                 .getTime() ),
+                                        MolokoDateUtils.formatDate( task.getDue()
+                                                                        .getTime(),
                                                                     MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                             | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
+                                                                       | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
             
          }
          
@@ -194,7 +207,9 @@ public class TaskActivity extends Activity
          
          if ( hasEstimate )
          {
-            UIUtils.appendAtNewLine( textBuffer, task.getEstimate() );
+            UIUtils.appendAtNewLine( textBuffer,
+                                     getString( R.string.task_datetime_estimate_inline,
+                                                task.getEstimate() ) );
          }
          
          // TODO: Handle return value
@@ -231,7 +246,7 @@ public class TaskActivity extends Activity
             catch ( RemoteException e )
             {
                Log.e( TAG, "Unable to retrieve notes from DB for task ID "
-                           + task.getId(), e );
+                  + task.getId(), e );
             }
             
             client.release();
@@ -255,8 +270,8 @@ public class TaskActivity extends Activity
                   try
                   {
                      final TextView createdDate = (TextView) noteView.findViewById( R.id.note_created_date );
-                     createdDate.setText( MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( note.getCreated()
-                                                                                                       .getTime() ),
+                     createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
+                                                                              .getTime(),
                                                                           FULL_DATE_FLAGS ) );
                   }
                   catch ( ClassCastException e )

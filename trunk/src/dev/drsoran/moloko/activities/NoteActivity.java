@@ -144,7 +144,7 @@ public class NoteActivity extends Activity
       if ( notes.size() > 1 )
       {
          setTitle( getString( R.string.app_note ) + " (" + ( notePos + 1 )
-                   + "/" + notes.size() + ")" );
+            + "/" + notes.size() + ")" );
       }
    }
    
@@ -231,8 +231,8 @@ public class NoteActivity extends Activity
       try
       {
          final TextView createdDate = (TextView) findViewById( R.id.note_created_date );
-         createdDate.setText( MolokoDateUtils.formatDateTime( MolokoDateUtils.toLocal( note.getCreated()
-                                                                                           .getTime() ),
+         createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
+                                                                  .getTime(),
                                                               MolokoDateUtils.FORMAT_WITH_YEAR ) );
          
          // TODO: Handle return value

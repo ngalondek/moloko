@@ -22,6 +22,7 @@ package com.mdt.rtm.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
@@ -81,7 +83,9 @@ public class RtmTaskList extends RtmData implements
    
    private final String id;
    
-   private final List< RtmTaskSeries > series;
+   private List< RtmTaskSeries > series;
+   
+   private final ParcelableDate current;
    
    
 
@@ -92,6 +96,7 @@ public class RtmTaskList extends RtmData implements
       // do not use Collections.emptyList() here cause we
       // need a mutable list.
       this.series = new ArrayList< RtmTaskSeries >( 0 );
+      this.current = null;
    }
    
 
@@ -100,6 +105,7 @@ public class RtmTaskList extends RtmData implements
    {
       id = source.readString();
       series = source.createTypedArrayList( RtmTaskSeries.CREATOR );
+      current = source.readParcelable( null );
    }
    
 
@@ -107,31 +113,51 @@ public class RtmTaskList extends RtmData implements
    public RtmTaskList( Element elt )
    {
       id = elt.getAttribute( "id" );
-      final List< Element > children = children( elt, "taskseries" );
       
-      if ( children.size() > 0 )
+      // Look for taskseries element
       {
-         series = new ArrayList< RtmTaskSeries >( children.size() );
-         for ( Element seriesElt : children )
+         final List< Element > children = children( elt, "taskseries" );
+         
+         if ( children.size() > 0 )
          {
-            series.add( new RtmTaskSeries( seriesElt ) );
-         }
-         // There may also be 'deleted' elements in which are 'taskseries'
-         // elements
-         for ( Element deletedElement : children( elt, "deleted" ) )
-         {
-            for ( Element seriesElt : children( deletedElement, "taskseries" ) )
+            series = new ArrayList< RtmTaskSeries >( children.size() );
+            for ( Element seriesElt : children )
             {
-               series.add( new RtmTaskSeries( seriesElt, true ) );
+               series.add( new RtmTaskSeries( seriesElt ) );
             }
          }
       }
-      else
+      
+      // There may also be 'deleted' elements in which are 'taskseries'
+      // elements
+      {
+         final List< Element > deleted = children( elt, "deleted" );
+         
+         if ( deleted.size() > 0 )
+         {
+            if ( series == null )
+            {
+               series = new ArrayList< RtmTaskSeries >( deleted.size() );
+            }
+            
+            for ( Element deletedElement : deleted )
+            {
+               for ( Element seriesElt : children( deletedElement, "taskseries" ) )
+               {
+                  series.add( new RtmTaskSeries( seriesElt, true ) );
+               }
+            }
+         }
+      }
+      
+      if ( series == null )
       {
          // do not use Collections.emptyList() here cause we
          // need a mutable list.
          series = new ArrayList< RtmTaskSeries >( 0 );
       }
+      
+      current = parseDate( textNullIfEmpty( elt, "current" ) );
       
       if ( TextUtils.isEmpty( id ) )
       {
@@ -174,6 +200,13 @@ public class RtmTaskList extends RtmData implements
    
 
 
+   public Date getCurrent()
+   {
+      return ( current != null ) ? current.getDate() : null;
+   }
+   
+
+
    public int describeContents()
    {
       return 0;
@@ -185,6 +218,17 @@ public class RtmTaskList extends RtmData implements
    {
       dest.writeString( id );
       dest.writeTypedList( series );
+      dest.writeParcelable( current, flags );
+   }
+   
+
+
+   @Override
+   public String toString()
+   {
+      return "RtmTaskList<" + id + ",#" + series.size()
+         + ( ( current != null ) ? "," + current.getDate().toGMTString() : "" )
+         + ">";
    }
    
 

@@ -25,7 +25,7 @@
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:orderingFromXml="true">
    
-   <dev.drsoran.moloko.prefs.AutoSummaryListPreference
+   <dev.drsoran.moloko.auth.prefs.SyncIntervalPreference
       android:title="@string/auth_pref_sync_interval_title"
       android:summary="%s"
       android:key="@string/key_sync_inverval"
@@ -33,7 +33,11 @@
       android:entryValues="@array/moloko_auth_prefs_sync_interval_entries"
       android:defaultValue="@string/auth_pref_sync_interval_default_value" />
        
+   <!-- This has been disabled due to lack of account API to
+        update an authToken for an account.
+        
    <dev.drsoran.moloko.auth.prefs.AccountAccessLevelPreference
       android:title="@string/auth_pref_perm_title" />
+  -->
 		
 </PreferenceScreen>

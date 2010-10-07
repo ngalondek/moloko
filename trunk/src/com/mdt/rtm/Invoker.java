@@ -19,7 +19,9 @@
  */
 package com.mdt.rtm;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URLEncoder;
@@ -55,6 +57,7 @@ import org.apache.http.protocol.RequestContent;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
+import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -250,7 +253,7 @@ public class Invoker
    public Element invoke( Param... params ) throws ServiceException
    {
       long timeSinceLastInvocation = System.currentTimeMillis()
-                                     - lastInvocation;
+         - lastInvocation;
       if ( timeSinceLastInvocation < INVOCATION_INTERVAL )
       {
          // In order not to invoke the RTM service too often
@@ -301,7 +304,7 @@ public class Invoker
          {
             Log.e( TAG, "Method failed: " + response.getStatusLine() );
             throw new ServiceInternalException( "method failed: "
-                                                + response.getStatusLine() );
+               + response.getStatusLine() );
          }
          
          // THINK: this method is depreciated, but the only way to get the body
@@ -309,15 +312,18 @@ public class Invoker
          // the body input stream: the HttpMethodBase issues a warning but does
          // not let you call the
          // "setResponseStream()" method!
-         final String responseBodyAsString = "";// EntityUtils.toString(response.getEntity());
+         final String responseBodyAsString = EntityUtils.toString( response.getEntity() );
          Log.i( TAG, "  Invocation response:\r\n" + responseBodyAsString );
-         final Document responseDoc = builder.parse( response.getEntity()
-                                                             .getContent() );
+         response.getEntity().consumeContent();
+         
+         final InputStream respContentStream = new ByteArrayInputStream( responseBodyAsString.getBytes() );
+         
+         final Document responseDoc = builder.parse( respContentStream );
          final Element wrapperElt = responseDoc.getDocumentElement();
          if ( !wrapperElt.getNodeName().equals( "rsp" ) )
          {
             throw new ServiceInternalException( "unexpected response returned by RTM service: "
-                                                + responseBodyAsString );
+               + responseBodyAsString );
          }
          else
          {
@@ -326,15 +332,15 @@ public class Invoker
             {
                Node errElt = wrapperElt.getFirstChild();
                while ( errElt != null
-                       && ( errElt.getNodeType() != Node.ELEMENT_NODE || !errElt.getNodeName()
-                                                                                .equals( "err" ) ) )
+                  && ( errElt.getNodeType() != Node.ELEMENT_NODE || !errElt.getNodeName()
+                                                                           .equals( "err" ) ) )
                {
                   errElt = errElt.getNextSibling();
                }
                if ( errElt == null )
                {
                   throw new ServiceInternalException( "unexpected response returned by RTM service: "
-                                                      + responseBodyAsString );
+                     + responseBodyAsString );
                }
                else
                {
@@ -346,8 +352,8 @@ public class Invoker
             {
                Node dataElt = wrapperElt.getFirstChild();
                while ( dataElt != null
-                       && ( dataElt.getNodeType() != Node.ELEMENT_NODE || dataElt.getNodeName()
-                                                                                 .equals( "transaction" ) == true ) )
+                  && ( dataElt.getNodeType() != Node.ELEMENT_NODE || dataElt.getNodeName()
+                                                                            .equals( "transaction" ) == true ) )
                {
                   try
                   {
@@ -371,7 +377,7 @@ public class Invoker
                if ( dataElt == null )
                {
                   throw new ServiceInternalException( "unexpected response returned by RTM service: "
-                                                      + responseBodyAsString );
+                     + responseBodyAsString );
                }
                else
                {
@@ -395,8 +401,8 @@ public class Invoker
       finally
       {
          if ( connection != null
-              && ( response == null || connectionStrategy.keepAlive( response,
-                                                                     context ) == false ) )
+            && ( response == null || connectionStrategy.keepAlive( response,
+                                                                   context ) == false ) )
          {
             try
             {

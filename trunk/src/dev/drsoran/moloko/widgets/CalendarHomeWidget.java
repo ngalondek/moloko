@@ -100,8 +100,8 @@ public class CalendarHomeWidget extends LinearLayout implements OnClickListener
       {
          final TextView counterView = (TextView) view.findViewById( R.id.counter_bubble );
          final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_LIT
-                                                           + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
-                                                                                         MolokoDateUtils.FORMAT_PARSER ) );
+            + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
+                                          MolokoDateUtils.FORMAT_PARSER ) );
          
          final Cursor c = context.getContentResolver()
                                  .query( RawTasks.CONTENT_URI, new String[]
@@ -127,8 +127,6 @@ public class CalendarHomeWidget extends LinearLayout implements OnClickListener
    {
       final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
                                                           .getTimezone() );
-      cal.setTimeInMillis( MolokoDateUtils.toLocal( System.currentTimeMillis() ) );
-      
       switch ( type )
       {
          case TOMORROW:
@@ -147,8 +145,8 @@ public class CalendarHomeWidget extends LinearLayout implements OnClickListener
    {
       final Calendar cal = getCalendar();
       final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_LIT
-                                                        + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
-                                                                                      MolokoDateUtils.FORMAT_PARSER ) );
+         + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
+                                       MolokoDateUtils.FORMAT_PARSER ) );
       
       getContext().startActivity( Intents.createSmartFilterIntent( getContext(),
                                                                    filter,

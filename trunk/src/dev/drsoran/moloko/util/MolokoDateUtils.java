@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.util;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import android.text.format.DateFormat;
@@ -41,58 +40,14 @@ public class MolokoDateUtils
    public final static int FORMAT_SHOW_WEEKDAY = 1 << 2;
    
    public final static int FORMAT_PARSER = FORMAT_WITH_YEAR | FORMAT_NUMERIC
-                                           | ( 1 << 3 );
+      | ( 1 << 3 );
    
    
-
-   public final static long toLocal( long millis )
-   {
-      return millis + MolokoApp.getSettings().getTimezone().getOffset( millis );
-   }
-   
-
-
-   public final static long toTimeZone( long millis, TimeZone timeZone )
-   {
-      return millis + timeZone.getOffset( millis );
-   }
-   
-
-
-   public final static long toUtc( long millis )
-   {
-      return millis - MolokoApp.getSettings().getTimezone().getOffset( millis );
-   }
-   
-
-
-   public final static long toUtc( long millis, TimeZone timeZone )
-   {
-      return millis - timeZone.getOffset( millis );
-   }
-   
-
-
-   public final static Date newDate()
-   {
-      return new Date( toLocal( System.currentTimeMillis() ) );
-   }
-   
-
-
-   public final static Calendar newDateUtc( long millis )
-   {
-      final Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "GMT" ) );
-      cal.setTimeInMillis( millis );
-      return cal;
-   }
-   
-
 
    public final static Time newTime()
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
-      t.set( toLocal( System.currentTimeMillis() ) );
+      t.setToNow();
       return t;
    }
    
@@ -103,6 +58,19 @@ public class MolokoDateUtils
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
       t.set( millis );
       return t;
+   }
+   
+
+
+   public static boolean isToday( long when )
+   {
+      final long nowMillis = System.currentTimeMillis();
+      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
+      final int offWhen = timeZone.getOffset( when ) / 1000; // in sec.
+      final int offNow = timeZone.getOffset( nowMillis ) / 1000; // in sec.
+      
+      return ( Time.getJulianDay( when, offWhen ) == Time.getJulianDay( nowMillis,
+                                                                        offNow ) );
    }
    
 

@@ -20,33 +20,34 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko;
+package dev.drsoran.moloko.receivers;
 
 import android.accounts.Account;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import dev.drsoran.moloko.service.sync.SyncAlarmReceiver;
+import dev.drsoran.moloko.util.SyncUtils;
 
 
-public class BootReceiver extends BroadcastReceiver
+public class SyncAlarmReceiver extends BroadcastReceiver
 {
+   public final static String TAG = SyncAlarmReceiver.class.getSimpleName();
    
+   
+
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      scheduleSync( context );
-   }
-   
-
-
-   public final static void scheduleSync( Context context )
-   {
-      final Account account = SyncAlarmReceiver.isReadyToSync( context );
+      final Account account = SyncUtils.isReadyToSync( context );
       
       if ( account != null )
       {
-         SyncAlarmReceiver.scheduleSyncAlarm( context );
+         SyncUtils.requestSync( context, account, false );
+      }
+      else
+      {
+         SyncUtils.stopSyncAlarm( context );
       }
    }
+   
 }

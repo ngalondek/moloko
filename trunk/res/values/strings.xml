@@ -82,6 +82,9 @@
    <string name="phr_none_f">keine</string>
    <string name="phr_none_m">keiner</string>
    <string name="phr_none_mainly">keines</string>
+   <string name="phr_sync">Synchronisierung</string>
+   <string name="phr_do_sync">Synchronisieren</string>   
+   <string name="phr_cancel_sync">Synchronisierung abbrechen</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -118,8 +121,10 @@
 	  <string name="startup_toast_no_settings">Einstellungen konnten nicht geladen werden. Starte mit Standarseinstellungen.</string>	  
 	
 	<!-- Task activity -->
+	<string name="task_source">von %1$s</string>
 	<string name="task_datetime_title_due">Wann</string>
 	<string name="task_datetime_title_estimate">Dauer</string>
+	<string name="task_datetime_estimate_inline">%1$s geschätzt</string>
 	
 	<!-- TaskSearchResultActivity -->
 	<string name="tasksearchresult_titlebar">%1$s</string>
@@ -173,7 +178,7 @@
    <string name="auth_pref_title">Allgemeine Einstellungen</string>
    <string name="auth_pref_account_tilte">@string/app_account_preferences</string>
    <string name="auth_pref_account_summary">Synchronisierung, RTM-Zugriffsebene usw.</string>
-   <string name="auth_pref_sync_interval_title">Synchronisierung</string>
+   <string name="auth_pref_sync_interval_title">@string/phr_sync</string>
    <string name="auth_pref_sync_interval_default_value">86400000</string>
    <string name="auth_pref_perm_title">Zugriffsebene</string>
    <string name="auth_pref_perm_value">%1$s - zum Ändern klicken</string>    

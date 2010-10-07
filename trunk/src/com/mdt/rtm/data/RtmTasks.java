@@ -21,14 +21,12 @@ package com.mdt.rtm.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
 
 
 /**
@@ -56,14 +54,11 @@ public class RtmTasks extends RtmData
    
    private final List< RtmTaskList > lists;
    
-   private final ParcelableDate current;
-   
    
 
    public RtmTasks()
    {
       this.lists = new ArrayList< RtmTaskList >();
-      this.current = null;
    }
    
 
@@ -76,8 +71,6 @@ public class RtmTasks extends RtmData
       {
          lists.add( new RtmTaskList( listElt ) );
       }
-      
-      current = parseDate( textNullIfEmpty( elt, "current" ) );
    }
    
 
@@ -85,7 +78,6 @@ public class RtmTasks extends RtmData
    public RtmTasks( Parcel source )
    {
       lists = source.createTypedArrayList( RtmTaskList.CREATOR );
-      current = source.readParcelable( null );
    }
    
 
@@ -93,13 +85,6 @@ public class RtmTasks extends RtmData
    public List< RtmTaskList > getLists()
    {
       return Collections.unmodifiableList( lists );
-   }
-   
-
-
-   public Date getCurrent()
-   {
-      return ( current != null ) ? current.getDate() : null;
    }
    
 
@@ -114,7 +99,6 @@ public class RtmTasks extends RtmData
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeTypedList( lists );
-      dest.writeParcelable( current, flags );
    }
    
 
@@ -133,4 +117,13 @@ public class RtmTasks extends RtmData
          taskList.removeDeletedTaskSeries();
       }
    }
+   
+
+
+   @Override
+   public String toString()
+   {
+      return "#Lists: " + lists.size();
+   }
+   
 }

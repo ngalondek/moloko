@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko;
 
+
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.Application;
@@ -30,8 +31,8 @@ import android.content.Context;
 import android.content.SyncStatusObserver;
 import android.os.Handler;
 import dev.drsoran.moloko.service.sync.Constants;
-import dev.drsoran.moloko.service.sync.SyncAlarmReceiver;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm;
 
 
@@ -82,13 +83,6 @@ public class MolokoApp extends Application implements SyncStatusObserver
    
 
 
-   public static Settings getSettings()
-   {
-      return settings;
-   }
-   
-
-
    public void onStatusChanged( int which )
    {
       if ( which == Constants.SYNC_OBSERVER_TYPE_SETTINGS )
@@ -98,10 +92,17 @@ public class MolokoApp extends Application implements SyncStatusObserver
          if ( account != null )
          {
             if ( ContentResolver.getSyncAutomatically( account, Rtm.AUTHORITY ) )
-               SyncAlarmReceiver.scheduleSyncAlarm( getApplicationContext() );
+               SyncUtils.scheduleSyncAlarm( getApplicationContext() );
             else
-               SyncAlarmReceiver.stopSyncAlarm( getApplicationContext() );
+               SyncUtils.stopSyncAlarm( getApplicationContext() );
          }
       }
+   }
+   
+
+
+   public final static Settings getSettings()
+   {
+      return settings;
    }
 }

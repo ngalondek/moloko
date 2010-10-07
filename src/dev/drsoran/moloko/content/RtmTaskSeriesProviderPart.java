@@ -134,10 +134,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    {
       RtmTasks tasksLists = null;
       
-      // Query all non-smart lists. So we get empty RtmTaskList instances too.
-      final RtmLists lists = RtmListsProviderPart.getAllLists( client,
-                                                               Lists.IS_SMART_LIST
-                                                                  + " = 0" );
+      // Query all lists, including smart lists. So we get empty RtmTaskList instances too.
+      final RtmLists lists = RtmListsProviderPart.getAllLists( client, null );
+      
       if ( lists != null )
       {
          boolean ok = true;

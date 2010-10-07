@@ -106,6 +106,8 @@ options
    
 	private final StringBuffer result = new StringBuffer();
 	
+	private boolean hasStatusCompletedOp = false;
+	
 	private Calendar parseDateTimeSpec( String spec )
 	{
       final DateTimeLexer lexer           = new DateTimeLexer( new ANTLRNoCaseStringStream( spec ) );
@@ -258,11 +260,22 @@ options
 	public String getResult() throws RecognitionException
 	{
 		if ( result.length() == 0 )
+		{
+         hasStatusCompletedOp = false;
+
          while ( nextToken() != Token.EOF_TOKEN )
          {
          }
+      }
       
       return result.toString();
+	}
+	
+	
+	
+	public boolean hasStatusCompletedOperator()
+	{
+      return hasStatusCompletedOp;
 	}
 }
 
@@ -288,6 +301,7 @@ OP_STATUS 	:  'status:'
 					(  
 						'completed'
 						{
+						   hasStatusCompletedOp = true;
 							result.append(" IS NOT NULL");
 						}
 						|

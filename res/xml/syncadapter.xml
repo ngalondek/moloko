@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The attributes in this XML file provide configuration information -->
-<!-- for the SyncAdapter. -->
+	<!--
+		The attributes in this XML file provide configuration information
+	-->
+	<!-- for the SyncAdapter. -->
 
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contentAuthority="dev.drsoran.provider.Rtm"
-    android:accountType="dev.drsoran.moloko"
-    android:supportsUploading="true"
-/>
+	android:contentAuthority="dev.drsoran.provider.Rtm"
+	android:accountType="dev.drsoran.moloko" android:supportsUploading="true" />

@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright (c) 2010 Ronny Röhricht   
-  
-  This file is part of Moloko.
-  
-  Moloko is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  Moloko is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-  
-  Contributors:
-  	Ronny Röhricht - implementation
--->
+	<!--
+		Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko
+		is free software: you can redistribute it and/or modify it under the
+		terms of the GNU General Public License as published by the Free
+		Software Foundation, either version 3 of the License, or (at your
+		option) any later version. Moloko is distributed in the hope that it
+		will be useful, but WITHOUT ANY WARRANTY; without even the implied
+		warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+		the GNU General Public License for more details. You should have
+		received a copy of the GNU General Public License along with Moloko.
+		If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny
+		Röhricht - implementation
+	-->
 
 <resources>
 
-   <string-array name="app_sort_options">
-      <item>@string/app_sort_prio</item>
-      <item>@string/app_sort_due_date</item>
-      <item>@string/app_sort_alpha</item>
-   </string-array>
-   
-  <string-array name="rtm_permissions">		
+	<string-array name="app_sort_options">
+		<item>@string/app_sort_prio</item>
+		<item>@string/app_sort_due_date</item>
+		<item>@string/app_sort_alpha</item>
+	</string-array>
+
+	<string-array name="rtm_permissions">
 		<item>@string/auth_perm_read</item>
 		<item>@string/auth_perm_write</item>
 		<item>@string/auth_perm_delete</item>
@@ -40,48 +32,49 @@
 		<item>write</item>
 		<item>delete</item>
 	</string-array>
-   
-   <string-array name="moloko_prefs_rtm_dateformat">     
-      <item>@string/moloko_prefs_rtm_dateformat_eu</item>
-      <item>@string/moloko_prefs_rtm_dateformat_us</item>
-   </string-array>
 
-   <string-array name="moloko_prefs_rtm_dateformat_values">
-      <item>0</item>
-      <item>1</item>
-   </string-array>
-   
-   <string-array name="moloko_prefs_rtm_timeformat">     
-      <item>@string/moloko_prefs_rtm_timeformat_12</item>
-      <item>@string/moloko_prefs_rtm_timeformat_24</item>
-   </string-array>
+	<string-array name="moloko_prefs_rtm_dateformat">
+		<item>@string/moloko_prefs_rtm_dateformat_eu</item>
+		<item>@string/moloko_prefs_rtm_dateformat_us</item>
+	</string-array>
 
-   <string-array name="moloko_prefs_rtm_timeformat_values">
-      <item>0</item>
-      <item>1</item>
-   </string-array>
-   
-   <string-array name="moloko_auth_prefs_sync_interval">     
-      <item>Manuell</item>
-      <item>Jede Minute - Test</item>
-      <item>Alle 15 Min.</item>
-      <item>Alle 30 Min.</item>
-      <item>Jede Stunde</item>
-      <item>Alle 12 Stunden</item>
-      <item>Einmal täglich</item>
-   </string-array>
-   
-   <!-- These values are in ms and chosen to be used with
-        AlarmManger.setInexactRepeating() what saves
-        battery power. -->
-   <string-array name="moloko_auth_prefs_sync_interval_entries">     
-      <item>-1</item>
-      <item>60000</item>      
-      <item>900000</item>
-      <item>1800000</item>
-      <item>3600000</item>
-      <item>43200000</item>
-      <item>86400000</item>
-   </string-array>
+	<string-array name="moloko_prefs_rtm_dateformat_values">
+		<item>0</item>
+		<item>1</item>
+	</string-array>
+
+	<string-array name="moloko_prefs_rtm_timeformat">
+		<item>@string/moloko_prefs_rtm_timeformat_12</item>
+		<item>@string/moloko_prefs_rtm_timeformat_24</item>
+	</string-array>
+
+	<string-array name="moloko_prefs_rtm_timeformat_values">
+		<item>0</item>
+		<item>1</item>
+	</string-array>
+
+	<string-array name="moloko_auth_prefs_sync_interval">
+		<item>Manuell</item>
+		<item>Jede Minute - Test</item>
+		<item>Alle 15 Min.</item>
+		<item>Alle 30 Min.</item>
+		<item>Jede Stunde</item>
+		<item>Alle 12 Stunden</item>
+		<item>Einmal täglich</item>
+	</string-array>
+
+	<!--
+		These values are in ms and chosen to be used with
+		AlarmManger.setInexactRepeating() what saves battery power.
+	-->
+	<string-array name="moloko_auth_prefs_sync_interval_entries">
+		<item>-1</item>
+		<item>60000</item>
+		<item>900000</item>
+		<item>1800000</item>
+		<item>3600000</item>
+		<item>43200000</item>
+		<item>86400000</item>
+	</string-array>
 
 </resources>

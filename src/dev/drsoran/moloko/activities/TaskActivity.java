@@ -98,7 +98,8 @@ public class TaskActivity extends Activity
                TextView description;
                TextView listName;
                ViewGroup tagsLayout;
-               View dateTime;
+               View dateTimeSection;
+               View urlSection;
                
                try
                {
@@ -110,13 +111,16 @@ public class TaskActivity extends Activity
                   description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
                   listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
                   tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
-                  dateTime = taskContainer.findViewById( R.id.task_dateTime );
+                  dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
+                  urlSection = taskContainer.findViewById( R.id.task_url );
                }
                catch ( ClassCastException e )
                {
                   Log.e( TAG, "Invalid layout spec.", e );
                   throw e;
                }
+               
+               UIUtils.setPriorityColor( priorityBar, task );
                
                addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
                                                                       .getTime(),
@@ -140,8 +144,6 @@ public class TaskActivity extends Activity
                else
                   source.setVisibility( View.GONE );
                
-               UIUtils.setPriorityColor( priorityBar, task );
-               
                UIUtils.setTaskDescription( description, task, null );
                
                listName.setText( task.getListName() );
@@ -152,7 +154,7 @@ public class TaskActivity extends Activity
                   taskContainer.setTag( R.id.task_overview_tags, "inflated" );
                }
                
-               setDateTimeSection( dateTime, task );
+               setDateTimeSection( dateTimeSection, task );
                
                // TODO: setLocationSection
                
@@ -164,6 +166,15 @@ public class TaskActivity extends Activity
                {
                   inflateNotes( taskContainer, task );
                   taskContainer.setTag( R.id.task_note, "inflated" );
+               }
+               
+               if ( !TextUtils.isEmpty( task.getUrl() ) )
+               {
+                  ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
+               }
+               else
+               {
+                  urlSection.setVisibility( View.GONE );
                }
             }
          }

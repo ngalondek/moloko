@@ -32,6 +32,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
@@ -40,6 +41,7 @@ import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -53,20 +55,16 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   {
-    ListOverviews._ID,
-    ListOverviews.LIST_NAME,
-    ListOverviews.LIST_DELETED,
-    ListOverviews.LOCKED,
-    ListOverviews.ARCHIVED,
-    ListOverviews.POSITION,
-    ListOverviews.IS_SMART_LIST,
-    ListOverviews.FILTER,
+   { ListOverviews._ID, ListOverviews.LIST_NAME, ListOverviews.LIST_DELETED,
+    ListOverviews.LOCKED, ListOverviews.ARCHIVED, ListOverviews.POSITION,
+    ListOverviews.IS_SMART_LIST, ListOverviews.FILTER,
     ListOverviews.TASKS_COUNT };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    private final static String query;
+   
+   private final static String subQuery;
    
    static
    {
@@ -74,12 +72,51 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                     PROJECTION_MAP,
                                                     COL_INDICES );
       
-      query = "SELECT " + Lists.PATH + ".*, count( " + TaskSeries.PATH + "."
-              + TaskSeries._ID + " ) AS " + ListOverviews.TASKS_COUNT
-              + " FROM "
-              + Lists.PATH + " LEFT OUTER JOIN " + TaskSeries.PATH + " ON "
-              + Lists.PATH + "." + Lists._ID + " = " + TaskSeries.PATH + "."
-              + TaskSeries.LIST_ID + " GROUP BY " + Lists.LIST_NAME;
+      subQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                      false,
+                                                      // tables
+                                                      TaskSeries.PATH + ","
+                                                         + RawTasks.PATH,
+                                                      // columns
+                                                      new String[]
+                                                      {
+                                                       TaskSeries.PATH + "."
+                                                          + TaskSeries._ID
+                                                          + " AS _id",
+                                                       TaskSeries.LIST_ID,
+                                                       RawTasks.COMPLETED_DATE },
+                                                      // where
+                                                      TaskSeries.RAW_TASK_ID
+                                                         + "="
+                                                         + RawTasks.PATH
+                                                         + "."
+                                                         + RawTasks._ID
+                                                         + " AND "
+                                                         
+                                                         // Only non-completed tasks
+                                                         + RawTasks.COMPLETED_DATE
+                                                         + " IS NULL",
+                                                      null,
+                                                      null,
+                                                      null,
+                                                      null );
+      
+      query = new StringBuilder( "SELECT " ).append( Lists.PATH )
+                                            .append( ".*, count( subQuery._id ) AS " )
+                                            .append( ListOverviews.TASKS_COUNT )
+                                            .append( " FROM " )
+                                            .append( Lists.PATH )
+                                            .append( " LEFT OUTER JOIN (" )
+                                            .append( subQuery )
+                                            .append( ") AS subQuery ON " )
+                                            .append( Lists.PATH )
+                                            .append( "." )
+                                            .append( Lists._ID )
+                                            .append( " = " )
+                                            .append( TaskSeries.LIST_ID )
+                                            .append( " GROUP BY " )
+                                            .append( Lists.LIST_NAME )
+                                            .toString();
    }
    
    

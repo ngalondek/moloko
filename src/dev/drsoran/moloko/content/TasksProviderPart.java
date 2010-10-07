@@ -61,34 +61,13 @@ public class TasksProviderPart extends AbstractProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   {
-    Tasks._ID,
-    Tasks.LIST_ID,
-    Tasks.LIST_NAME,
-    Tasks.IS_SMART_LIST,
-    Tasks.TASKSERIES_CREATED_DATE,
-    Tasks.MODIFIED_DATE,
-    Tasks.TASKSERIES_NAME,
-    Tasks.SOURCE,
-    Tasks.URL,
-    Tasks.RAW_TASK_ID,
-    Tasks.DUE_DATE,
-    Tasks.HAS_DUE_TIME,
-    Tasks.ADDED_DATE,
-    Tasks.COMPLETED_DATE,
-    Tasks.DELETED_DATE,
-    Tasks.PRIORITY,
-    Tasks.POSTPONED,
-    Tasks.ESTIMATE,
-    Tasks.LOCATION_ID,
-    Tasks.LOCATION_NAME,
-    Tasks.LONGITUDE,
-    Tasks.LATITUDE,
-    Tasks.ADDRESS,
-    Tasks.VIEWABLE,
-    Tasks.ZOOM,
-    Tasks.TAGS,
-    Tasks.NUM_NOTES };
+   { Tasks._ID, Tasks.LIST_ID, Tasks.LIST_NAME, Tasks.IS_SMART_LIST,
+    Tasks.TASKSERIES_CREATED_DATE, Tasks.MODIFIED_DATE, Tasks.TASKSERIES_NAME,
+    Tasks.SOURCE, Tasks.URL, Tasks.RAW_TASK_ID, Tasks.DUE_DATE,
+    Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE, Tasks.COMPLETED_DATE,
+    Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED, Tasks.ESTIMATE,
+    Tasks.LOCATION_ID, Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE,
+    Tasks.ADDRESS, Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.NUM_NOTES };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -109,25 +88,22 @@ public class TasksProviderPart extends AbstractProviderPart
                                                       
                                                       // tables
                                                       TaskSeries.PATH + ","
-                                                               + Lists.PATH
-                                                               + ","
-                                                               + RawTasks.PATH,
+                                                         + Lists.PATH + ","
+                                                         + RawTasks.PATH,
                                                       
                                                       // columns
                                                       new String[]
                                                       {
-                                                       TaskSeries.PATH
-                                                                + "."
-                                                                + TaskSeries._ID
-                                                                + " AS _id",
+                                                       TaskSeries.PATH + "."
+                                                          + TaskSeries._ID
+                                                          + " AS _id",
                                                        Tasks.LIST_ID,
                                                        Tasks.LIST_NAME,
                                                        Tasks.IS_SMART_LIST,
                                                        Tasks.TASKSERIES_CREATED_DATE,
                                                        Tasks.MODIFIED_DATE,
                                                        Tasks.TASKSERIES_NAME,
-                                                       Tasks.SOURCE,
-                                                       Tasks.URL,
+                                                       Tasks.SOURCE, Tasks.URL,
                                                        Tasks.RAW_TASK_ID,
                                                        Tasks.DUE_DATE,
                                                        Tasks.HAS_DUE_TIME,
@@ -141,20 +117,18 @@ public class TasksProviderPart extends AbstractProviderPart
                                                       
                                                       // where
                                                       TaskSeries.PATH
-                                                               + "."
-                                                               + TaskSeries.LIST_ID
-                                                               + "="
-                                                               + Lists.PATH
-                                                               + "."
-                                                               + Lists._ID
-                                                               + " AND "
-                                                               + TaskSeries.PATH
-                                                               + "."
-                                                               + TaskSeries.RAW_TASK_ID
-                                                               + "="
-                                                               + RawTasks.PATH
-                                                               + "."
-                                                               + RawTasks._ID,
+                                                         + "."
+                                                         + TaskSeries.LIST_ID
+                                                         + "="
+                                                         + Lists.PATH
+                                                         + "."
+                                                         + Lists._ID
+                                                         + " AND "
+                                                         + TaskSeries.PATH
+                                                         + "."
+                                                         + TaskSeries.RAW_TASK_ID
+                                                         + "=" + RawTasks.PATH
+                                                         + "." + RawTasks._ID,
                                                       null,
                                                       null,
                                                       null,
@@ -165,35 +139,34 @@ public class TasksProviderPart extends AbstractProviderPart
                                                           
                                                           // tables
                                                           TaskSeries.PATH + ","
-                                                                   + Tags.PATH,
+                                                             + Tags.PATH,
                                                           
                                                           // columns
                                                           new String[]
                                                           {
                                                            TaskSeries.PATH
-                                                                    + "."
-                                                                    + TaskSeries._ID,
+                                                              + "."
+                                                              + TaskSeries._ID,
                                                            Tags.TASKSERIES_ID,
                                                            "group_concat("
-                                                                    + Tags.TAG
-                                                                    + ",\""
-                                                                    + Tasks.TAGS_DELIMITER
-                                                                    + "\") AS "
-                                                                    + Tasks.TAGS },
+                                                              + Tags.TAG
+                                                              + ",\""
+                                                              + Tasks.TAGS_DELIMITER
+                                                              + "\") AS "
+                                                              + Tasks.TAGS },
                                                           
                                                           // where
                                                           TaskSeries.PATH
-                                                                   + "."
-                                                                   + TaskSeries._ID
-                                                                   + "="
-                                                                   + Tags.PATH
-                                                                   + "."
-                                                                   + Tags.TASKSERIES_ID,
+                                                             + "."
+                                                             + TaskSeries._ID
+                                                             + "="
+                                                             + Tags.PATH
+                                                             + "."
+                                                             + Tags.TASKSERIES_ID,
                                                           
                                                           // group by
-                                                          TaskSeries.PATH
-                                                                   + "."
-                                                                   + TaskSeries._ID,
+                                                          TaskSeries.PATH + "."
+                                                             + TaskSeries._ID,
                                                           null,
                                                           null,
                                                           null );
@@ -212,11 +185,11 @@ public class TasksProviderPart extends AbstractProviderPart
                                                               
                                                               // where
                                                               "subQuery."
-                                                                       + TaskSeries._ID
-                                                                       + "="
-                                                                       + Notes.PATH
-                                                                       + "."
-                                                                       + Notes.TASKSERIES_ID,
+                                                                 + TaskSeries._ID
+                                                                 + "="
+                                                                 + Notes.PATH
+                                                                 + "."
+                                                                 + Notes.TASKSERIES_ID,
                                                               null,
                                                               null,
                                                               null,
@@ -347,6 +320,7 @@ public class TasksProviderPart extends AbstractProviderPart
    
 
 
+   @Override
    public Cursor query( String id,
                         String[] projection,
                         String selection,
@@ -361,7 +335,7 @@ public class TasksProviderPart extends AbstractProviderPart
       boolean replacedNumNotes = false;
       
       for ( int i = 0; i < projection.length
-                       && ( !projectionContainsId || !replacedNumNotes ); i++ )
+         && ( !projectionContainsId || !replacedNumNotes ); i++ )
       {
          final String column = projection[ i ];
          

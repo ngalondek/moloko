@@ -492,16 +492,16 @@ public class RtmTaskSeries extends RtmData implements
                final CompositeContentProviderSyncOperation taskSeriesOperation = new CompositeContentProviderSyncOperation( provider,
                                                                                                                             IContentProviderSyncOperation.Op.UPDATE );
                SyncUtils.updateDate( created,
-                                           update.created,
-                                           uri,
-                                           TaskSeries.TASKSERIES_CREATED_DATE,
-                                           taskSeriesOperation );
+                                     update.created,
+                                     uri,
+                                     TaskSeries.TASKSERIES_CREATED_DATE,
+                                     taskSeriesOperation );
                
                SyncUtils.updateDate( modified,
-                                           update.modified,
-                                           uri,
-                                           TaskSeries.MODIFIED_DATE,
-                                           taskSeriesOperation );
+                                     update.modified,
+                                     uri,
+                                     TaskSeries.MODIFIED_DATE,
+                                     taskSeriesOperation );
                
                if ( Strings.hasStringChanged( name, update.name ) )
                   taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
@@ -526,6 +526,9 @@ public class RtmTaskSeries extends RtmData implements
                                                                    .withValue( TaskSeries.URL,
                                                                                update.url )
                                                                    .build() );
+               
+               if ( taskSeriesOperation.plainSize() > 0 )
+                  result.add( taskSeriesOperation );
             }
          }
       }

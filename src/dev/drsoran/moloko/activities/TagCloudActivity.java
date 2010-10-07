@@ -163,7 +163,7 @@ public class TagCloudActivity extends Activity
             // get all non smart lists
             lists = ListOverviewsProviderPart.getListsOverview( client,
                                                                 ListOverviews.IS_SMART_LIST
-                                                                         + " = 0" );
+                                                                   + " = 0" );
             ok = lists != null;
             
             client.release();
@@ -186,7 +186,7 @@ public class TagCloudActivity extends Activity
          
          if ( ok )
          {
-            tags = TagOverviewsProviderPart.getTagsOverview( client );
+            tags = TagOverviewsProviderPart.getTagsOverview( client, true /* exclude completed */);
             ok = tags != null;
             
             client.release();

@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright (c) 2010 Ronny Röhricht   
-  
-  This file is part of Moloko.
-  
-  Moloko is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  Moloko is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-  
-  Contributors:
-  	Ronny Röhricht - implementation
--->
+	<!--
+		Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko
+		is free software: you can redistribute it and/or modify it under the
+		terms of the GNU General Public License as published by the Free
+		Software Foundation, either version 3 of the License, or (at your
+		option) any later version. Moloko is distributed in the hope that it
+		will be useful, but WITHOUT ANY WARRANTY; without even the implied
+		warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+		the GNU General Public License for more details. You should have
+		received a copy of the GNU General Public License along with Moloko.
+		If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny
+		Röhricht - implementation
+	-->
 
 <resources>
 	<declare-styleable name="TitleWithText">
@@ -48,12 +40,12 @@
 	</declare-styleable>
 
 	<declare-styleable name="TitleBar">
-	   <attr name="titleText" format="reference|string" />
-      <attr name="showButton">
-         <flag name="none" value="0" />
-		   <flag name="search" value="1" />
-		   <flag name="home" value="2" />
-      </attr>
+		<attr name="titleText" format="reference|string" />
+		<attr name="showButton">
+			<flag name="none" value="0" />
+			<flag name="search" value="1" />
+			<flag name="home" value="2" />
+		</attr>
 	</declare-styleable>
 
 	<declare-styleable name="SyncableListPreference">
@@ -64,9 +56,9 @@
 		<attr name="infoText" format="reference|string" />
 		<attr name="infoWidget" format="reference" />
 	</declare-styleable>
-	
+
 	<declare-styleable name="WrappingLayout">
-      <attr name="horizontal_spacing" format="reference|dimension" />
-      <attr name="vertical_spacing" format="reference|dimension" />
-   </declare-styleable>
+		<attr name="horizontal_spacing" format="reference|dimension" />
+		<attr name="vertical_spacing" format="reference|dimension" />
+	</declare-styleable>
 </resources>

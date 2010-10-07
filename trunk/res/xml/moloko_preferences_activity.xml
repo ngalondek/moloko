@@ -1,84 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright (c) 2010 Ronny Röhricht   
-  
-  This file is part of Moloko.
-  
-  Moloko is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  Moloko is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-  
-  Contributors:
-  	Ronny Röhricht - implementation
--->
+	<!--
+		Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko
+		is free software: you can redistribute it and/or modify it under the
+		terms of the GNU General Public License as published by the Free
+		Software Foundation, either version 3 of the License, or (at your
+		option) any later version. Moloko is distributed in the hope that it
+		will be useful, but WITHOUT ANY WARRANTY; without even the implied
+		warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+		the GNU General Public License for more details. You should have
+		received a copy of the GNU General Public License along with Moloko.
+		If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny
+		Röhricht - implementation
+	-->
 
-<PreferenceScreen
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko">
-   
-   <PreferenceScreen
-      android:title="@string/moloko_prefs_rtm_title"
-      android:summary="@string/moloko_prefs_rtm_summary">
-      
-      <dev.drsoran.moloko.prefs.RtmSyncStatePreference
-         moloko:infoWidget="@layout/moloko_prefs_widget_sync"/>
-         
-      <dev.drsoran.moloko.auth.prefs.SyncIntervalPreference
-	      android:title="@string/auth_pref_sync_interval_title"
-	      android:summary="%s"
-	      android:key="@string/key_sync_inverval"
-	      android:entries="@array/moloko_auth_prefs_sync_interval"
-	      android:entryValues="@array/moloko_auth_prefs_sync_interval_entries"
-	      android:defaultValue="@string/auth_pref_sync_interval_default_value" />
-      
-      <dev.drsoran.moloko.prefs.TimezonePreference
-         android:title="@string/moloko_prefs_rtm_timezone_title"
-         android:summary="%s"
-         android:key="@string/key_timezone_local"
-         moloko:syncWithRtmKey="@string/key_timezone_sync_with_rtm" />
-         
-      <dev.drsoran.moloko.prefs.SyncableListPreference
-         android:title="@string/moloko_prefs_rtm_dateformat_title"
-         android:summary="%s"
-         android:entries="@array/moloko_prefs_rtm_dateformat"
-         android:entryValues="@array/moloko_prefs_rtm_dateformat_values"
-         android:key="@string/key_dateformat_local"
-         moloko:syncWithRtmKey="@string/key_dateformat_sync_with_rtm" />
-         
-      <dev.drsoran.moloko.prefs.SyncableListPreference
-         android:title="@string/moloko_prefs_rtm_timeformat_title"
-         android:summary="%s"
-         android:entries="@array/moloko_prefs_rtm_timeformat"
-         android:entryValues="@array/moloko_prefs_rtm_timeformat_values"
-         android:key="@string/key_timeformat_local"
-         moloko:syncWithRtmKey="@string/key_timeformat_sync_with_rtm" />
-         
-      <dev.drsoran.moloko.prefs.DefaultListPreference
-         android:title="@string/moloko_prefs_rtm_defaultlist_title"
-         android:summary="%s"
-         android:key="@string/key_def_list_local"
-         moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm" />
-      
-   </PreferenceScreen>
-   
-   <dev.drsoran.moloko.prefs.StartUpViewPreference
-      android:title="@string/moloko_prefs_startup_view_title"
-      android:summary="%s"
-      android:key="@string/key_startup_view" />
-      
-   <dev.drsoran.moloko.prefs.TaskSortPreference
-      android:title="@string/moloko_prefs_def_sort_title"
-      android:summary="@string/moloko_prefs_def_sort_summary"
-      android:entries="@array/app_sort_options"
-      android:key="@string/key_task_sort" />
-      
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko">
+
+	<PreferenceScreen android:title="@string/moloko_prefs_rtm_title"
+		android:summary="@string/moloko_prefs_rtm_summary">
+
+		<dev.drsoran.moloko.prefs.RtmSyncStatePreference
+			moloko:infoWidget="@layout/moloko_prefs_widget_sync" />
+
+		<dev.drsoran.moloko.auth.prefs.SyncIntervalPreference
+			android:title="@string/auth_pref_sync_interval_title"
+			android:summary="%s" android:key="@string/key_sync_inverval"
+			android:entries="@array/moloko_auth_prefs_sync_interval"
+			android:entryValues="@array/moloko_auth_prefs_sync_interval_entries"
+			android:defaultValue="@string/auth_pref_sync_interval_default_value" />
+
+		<dev.drsoran.moloko.prefs.TimezonePreference
+			android:title="@string/moloko_prefs_rtm_timezone_title"
+			android:summary="%s" android:key="@string/key_timezone_local"
+			moloko:syncWithRtmKey="@string/key_timezone_sync_with_rtm" />
+
+		<dev.drsoran.moloko.prefs.SyncableListPreference
+			android:title="@string/moloko_prefs_rtm_dateformat_title"
+			android:summary="%s" android:entries="@array/moloko_prefs_rtm_dateformat"
+			android:entryValues="@array/moloko_prefs_rtm_dateformat_values"
+			android:key="@string/key_dateformat_local" moloko:syncWithRtmKey="@string/key_dateformat_sync_with_rtm" />
+
+		<dev.drsoran.moloko.prefs.SyncableListPreference
+			android:title="@string/moloko_prefs_rtm_timeformat_title"
+			android:summary="%s" android:entries="@array/moloko_prefs_rtm_timeformat"
+			android:entryValues="@array/moloko_prefs_rtm_timeformat_values"
+			android:key="@string/key_timeformat_local" moloko:syncWithRtmKey="@string/key_timeformat_sync_with_rtm" />
+
+		<dev.drsoran.moloko.prefs.DefaultListPreference
+			android:title="@string/moloko_prefs_rtm_defaultlist_title"
+			android:summary="%s" android:key="@string/key_def_list_local"
+			moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm" />
+
+	</PreferenceScreen>
+
+	<dev.drsoran.moloko.prefs.StartUpViewPreference
+		android:title="@string/moloko_prefs_startup_view_title"
+		android:summary="%s" android:key="@string/key_startup_view" />
+
+	<dev.drsoran.moloko.prefs.TaskSortPreference
+		android:title="@string/moloko_prefs_def_sort_title" android:summary="@string/moloko_prefs_def_sort_summary"
+		android:entries="@array/app_sort_options" android:key="@string/key_task_sort" />
+
 </PreferenceScreen>

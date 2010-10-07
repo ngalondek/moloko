@@ -28,13 +28,13 @@ import org.w3c.dom.Text;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.RawTasks;
 
 
 public class RtmSmartFilter extends RtmData
@@ -108,16 +108,9 @@ public class RtmSmartFilter extends RtmData
 
    public String getEvaluatedFilterString()
    {
-      if ( !isEvaluated() )
+      if ( !isEvaluated() && filter != null )
       {
-         if ( filter != null && filter.length() > 0 )
-         {
-            evalFilter = evaluate( filter );
-         }
-         else
-         {
-            evalFilter = "1";
-         }
+         evalFilter = evaluate( filter );
       }
       
       return evalFilter;
@@ -134,38 +127,49 @@ public class RtmSmartFilter extends RtmData
 
    public static final String evaluate( String filter )
    {
-      String evalFilter = null;
+      StringBuffer evalFilter = new StringBuffer();
       
       // a 0-length filter == "true"
-      if ( filter != null && filter.length() == 0 )
+      if ( filter != null )
       {
-         evalFilter = "1";
-      }
-      
-      // Check if there was no operator used. If so it has the
-      // same meaning as operator name:
-      else
-      {
-         if ( !filter.contains( ":" ) )
-            filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
+         if ( filter.length() == 0 )
+            evalFilter.append( RawTasks.COMPLETED_DATE ).append( " IS NULL" );
          
-         final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
-         final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
-         
-         try
+         // Check if there was no operator used. If so it has the
+         // same meaning as operator name:
+         else
          {
-            evalFilter = lexer.getResult();
-         }
-         catch ( RecognitionException e )
-         {
+            if ( !filter.contains( ":" ) )
+               filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
+            
+            final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
+            final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
+            
+            try
+            {
+               evalFilter.append( lexer.getResult() );
+               
+               // SPECIAL CASE: If the filter contains the operator 'status:completed',
+               // we include completed tasks. Otherwise we would never show tasks in
+               // such lists. In all other cases we exclude completed tasks.
+               if ( !lexer.hasStatusCompletedOperator() )
+               {
+                  evalFilter.append( " AND " )
+                            .append( RawTasks.COMPLETED_DATE )
+                            .append( " IS NULL" );
+               }
+            }
+            catch ( RecognitionException e )
+            {
+            }
          }
       }
       
       // An empty string is an evaluation error.
-      if ( TextUtils.isEmpty( evalFilter ) )
-         evalFilter = null;
+      if ( evalFilter.length() == 0 )
+         return null;
       
-      return evalFilter;
+      return evalFilter.toString();
    }
    
 

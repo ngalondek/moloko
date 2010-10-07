@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright (c) 2010 Ronny Röhricht   
-  
-  This file is part of Moloko.
-  
-  Moloko is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  Moloko is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
-  
-  Contributors:
-  	Ronny Röhricht - implementation
--->
+	<!--
+		Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko
+		is free software: you can redistribute it and/or modify it under the
+		terms of the GNU General Public License as published by the Free
+		Software Foundation, either version 3 of the License, or (at your
+		option) any later version. Moloko is distributed in the hope that it
+		will be useful, but WITHOUT ANY WARRANTY; without even the implied
+		warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+		the GNU General Public License for more details. You should have
+		received a copy of the GNU General Public License along with Moloko.
+		If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny
+		Röhricht - implementation
+	-->
 
 <resources>
 
@@ -53,7 +45,7 @@
 		<item name="android:background">@drawable/app_titlebar_bgnd</item>
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">@dimen/app_titlebar_height</item>
-   </style>
+	</style>
 
 	<style name="App_TitleBar_Text" parent="@android:style/TextAppearance.WindowTitle">
 		<item name="android:textColor">@color/app_titlebar_text</item>
@@ -93,31 +85,31 @@
 		<item name="showTopLine">false</item>
 	</style>
 
-   <style name="App_ButtonBar_Bgnd">
-      <item name="android:background">@color/app_buttonbar_bgnd</item>
-   </style>
-   
-   <style name="App_Counter_Bubble">
-      <item name="android:background">@drawable/counter_bubble</item>
-      <item name="android:textColor">@color/app_counter_bubble_text</item>
-      <item name="android:textSize">12sp</item>
-      <item name="android:textStyle">bold</item>
-   </style>
+	<style name="App_ButtonBar_Bgnd">
+		<item name="android:background">@color/app_buttonbar_bgnd</item>
+	</style>
+
+	<style name="App_Counter_Bubble">
+		<item name="android:background">@drawable/counter_bubble</item>
+		<item name="android:textColor">@color/app_counter_bubble_text</item>
+		<item name="android:textSize">12sp</item>
+		<item name="android:textStyle">bold</item>
+	</style>
 
 
-   <!-- ********* -->
-   <!-- Home      -->
-   
-   <style name="Home_Widget_Text">
-      <item name="android:textSize">18sp</item>
-      <item name="android:textStyle">bold</item>
-   </style>
-   
-   <style name="Home_Widget_Calendar_Date">
-      <item name="android:textSize">21sp</item>
-      <item name="android:textStyle">bold</item>
-      <item name="android:textColor">@color/app_darker_gray</item>
-   </style>
+	<!-- ********* -->
+	<!-- Home      -->
+
+	<style name="Home_Widget_Text">
+		<item name="android:textSize">18sp</item>
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="Home_Widget_Calendar_Date">
+		<item name="android:textSize">21sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">@color/app_darker_gray</item>
+	</style>
 
 	<!-- ********* -->
 	<!-- Task      -->
@@ -135,7 +127,7 @@
 	<style name="Task_Overview_ListName" parent="@style/TasksList_ListItem_ListName" />
 
 	<style name="Task_Date_Text" parent="@style/App_Note_Created_Date_Text" />
-	
+
 	<style name="Task_Source_Text" parent="@style/App_Note_Created_Date_Text" />
 
 	<style name="Task_TitleWithText">
@@ -153,36 +145,36 @@
 
 	<!-- ********* -->
 	<!-- Note      -->
-	
+
 	<style name="Note">
 		<item name="android:background">@color/note_bgnd</item>
 	</style>
 
 
-   <!-- ********* -->
-   <!-- StartUp   -->
+	<!-- ********* -->
+	<!-- StartUp   -->
 
-   <style name="StartUp">
-      <item name="android:background">@color/startup_bgnd</item>
-   </style>
-   
-   <style name="StartUp.Error">
-      <item name="android:layout_width">fill_parent</item>
-      <item name="android:layout_height">wrap_content</item>
-      <item name="textSize">@dimen/app_title_with_text_textSize</item>
-      <item name="textStyle">normal</item>
-      <item name="showTopLine">false</item>
-      <item name="imageSrc">@drawable/icon_error_black</item>
-   </style>
-   
-   <style name="StartUp.Error.NoAccount">
-      <item name="imageSrc">@drawable/rtm</item>
-      <item name="text">@string/startup_no_account</item>
-   </style>
-   
-   <style name="StartUp.Error.NoDefList">
-      <item name="text">@string/startup_no_def_list</item>
-   </style>
+	<style name="StartUp">
+		<item name="android:background">@color/startup_bgnd</item>
+	</style>
+
+	<style name="StartUp.Error">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="textSize">@dimen/app_title_with_text_textSize</item>
+		<item name="textStyle">normal</item>
+		<item name="showTopLine">false</item>
+		<item name="imageSrc">@drawable/icon_error_black</item>
+	</style>
+
+	<style name="StartUp.Error.NoAccount">
+		<item name="imageSrc">@drawable/rtm</item>
+		<item name="text">@string/startup_no_account</item>
+	</style>
+
+	<style name="StartUp.Error.NoDefList">
+		<item name="text">@string/startup_no_def_list</item>
+	</style>
 
 
 	<!-- ********* -->

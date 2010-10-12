@@ -19,7 +19,7 @@
    style="@style/TasksList_ListItem_Note"
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
-   android:drawableLeft="@drawable/tasklists_listitem_note_bubble"
+   android:drawableLeft="@drawable/taskslist_listitem_note_bubble"
    android:drawablePadding="5dip"
    android:gravity="left"
    android:text="note"

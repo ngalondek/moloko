@@ -64,7 +64,8 @@ public class TagCloudActivity extends Activity
       {
          startActivity( Intents.createOpenListIntentByName( TagCloudActivity.this,
                                                             ( (TextView) v ).getText()
-                                                                            .toString() ) );
+                                                                            .toString(),
+                                                            null ) );
       }
    };
    
@@ -211,7 +212,7 @@ public class TagCloudActivity extends Activity
             {
                cloudEntries.add( new CloudEntry( CloudEntry.LIST,
                                                  list.getName(),
-                                                 list.getTaskCount() ) );
+                                                 list.getIncompletedTaskCount() ) );
             }
             
             for ( TagWithTaskCount tag : tags )

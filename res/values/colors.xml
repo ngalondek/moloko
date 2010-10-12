@@ -57,14 +57,15 @@
 	<color name="tagcloud_tag_bgnd_focused">@color/priority_2</color>
 
 	<color name="tasklists_lists_bgnd">@android:color/white</color>
-	<color name="tasklists_listitem_listname">@android:color/black</color>
-	<color name="tasklists_listitem_numtasks_text">@android:color/black</color>
-	<color name="tasklists_listitem_numtasks_bgnd_fill">#FFE0E0E0</color>
-	<color name="tasklists_listitem_numtasks_bgnd_stroke">#FFC4C4C4</color>
-	<color name="tasklists_listitem_numtasks_bgnd_smart_fill">#FF81B4EB</color>
-	<color name="tasklists_listitem_numtasks_bgnd_smart_stroke">#FF8185EB</color>
-	<color name="tasklists_listitem_numtasks_bgnd_smart_fill_fail">#FFEB8181</color>
-	<color name="tasklists_listitem_numtasks_bgnd_smart_fail_stroke">#FFD17575</color>
+	<color name="tasklists_group_listname">@android:color/black</color>
+	<color name="tasklists_group_numtasks_text">@android:color/black</color>
+	<color name="tasklists_group_numtasks_bgnd_fill">#FFE0E0E0</color>
+	<color name="tasklists_group_numtasks_bgnd_stroke">#FFC4C4C4</color>
+	<color name="tasklists_group_numtasks_bgnd_smart_fill">#FF81B4EB</color>
+	<color name="tasklists_group_numtasks_bgnd_smart_stroke">#FF8185EB</color>
+	<color name="tasklists_group_numtasks_bgnd_smart_fill_fail">#FFEB8181</color>
+	<color name="tasklists_group_numtasks_bgnd_smart_fail_stroke">#FFD17575</color>
+   <color name="tasklists_child_text">@color/priority_2</color>
 
 	<color name="taskslist_tasklist_bgnd">@android:color/white</color>
 	<color name="taskslist_listitem_desc_text">@android:color/black</color>

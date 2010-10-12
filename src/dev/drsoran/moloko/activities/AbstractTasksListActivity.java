@@ -530,7 +530,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       if ( listTask != null )
       {
          final Intent intent = Intents.createOpenListIntent( this,
-                                                             listTask.getListId() );
+                                                             listTask.getListId(),
+                                                             null );
          
          if ( intent != null )
             startActivity( intent );

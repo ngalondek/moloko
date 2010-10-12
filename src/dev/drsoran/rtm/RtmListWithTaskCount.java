@@ -22,14 +22,60 @@
 
 package dev.drsoran.rtm;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.mdt.rtm.data.RtmList;
+
+import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 
 
 public class RtmListWithTaskCount
 {
+   private final static String TAG = RtmListWithTaskCount.class.getSimpleName();
+   
+   
+   public final static class ExtendedListInfo
+   {
+      public int dueTodayTaskCount;
+      
+      public int dueTomorrowTaskCount;
+      
+      public int overDueTaskCount;
+      
+      public int sumEstimated;
+      
+      public int completedTaskCount;
+      
+      
+
+      public ExtendedListInfo()
+      {
+         this.dueTodayTaskCount = 0;
+         this.dueTomorrowTaskCount = 0;
+         this.overDueTaskCount = 0;
+         this.sumEstimated = 0;
+         this.completedTaskCount = 0;
+      }
+      
+
+
+      public ExtendedListInfo( int dueTodayTaskCount, int dueTomorrowTaskCount,
+         int overDueTaskCount, int sumEstimated, int completedTaskCount )
+      {
+         this.dueTodayTaskCount = dueTodayTaskCount;
+         this.dueTomorrowTaskCount = dueTomorrowTaskCount;
+         this.overDueTaskCount = overDueTaskCount;
+         this.sumEstimated = sumEstimated;
+         this.completedTaskCount = completedTaskCount;
+      }
+   }
+   
    private final RtmList impl;
    
-   private final int taskCount;
+   private final int incompletedTaskCount;
+   
+   private ExtendedListInfo extendedListInfo = null;
    
    
 
@@ -40,14 +86,14 @@ public class RtmListWithTaskCount
          throw new NullPointerException();
       
       this.impl = impl;
-      this.taskCount = taskCount;
+      this.incompletedTaskCount = taskCount;
    }
    
 
 
    public RtmListWithTaskCount( String id, String name, int deleted,
       int locked, int archived, int position, RtmSmartFilter smartFilter,
-      int taskCount )
+      int incompletedTaskCount )
    {
       this.impl = new RtmList( id,
                                name,
@@ -56,7 +102,7 @@ public class RtmListWithTaskCount
                                archived,
                                position,
                                smartFilter );
-      this.taskCount = taskCount;
+      this.incompletedTaskCount = incompletedTaskCount;
    }
    
 
@@ -119,13 +165,48 @@ public class RtmListWithTaskCount
 
    public boolean isSmartFilterValid()
    {
-      return !hasSmartFilter() || taskCount > -1;
+      return !hasSmartFilter() || incompletedTaskCount > -1;
    }
    
 
 
-   public int getTaskCount()
+   public int getIncompletedTaskCount()
    {
-      return taskCount;
+      return incompletedTaskCount;
+   }
+   
+
+
+   public ExtendedListInfo getExtendedListInfo( Context context )
+   {
+      if ( extendedListInfo == null )
+      {
+         if ( isSmartFilterValid() )
+         {
+            extendedListInfo = ListOverviewsProviderPart.getExtendedOverview( context.getContentResolver(),
+                                                                              getId(),
+                                                                              hasSmartFilter()
+                                                                                              ? getSmartFilter().getFilterString()
+                                                                                              : null );
+         }
+         
+         if ( extendedListInfo == null )
+         {
+            Log.e( TAG, "Unable to create ExtendedListInfo." );
+            
+            // RETURN: Create temporary empty instance
+            return new ExtendedListInfo();
+         }
+      }
+      
+      return extendedListInfo;
+   }
+   
+
+
+   @Override
+   public String toString()
+   {
+      return "<" + impl.toString() + "," + incompletedTaskCount + ">";
    }
 }

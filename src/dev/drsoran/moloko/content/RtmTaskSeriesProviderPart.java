@@ -130,6 +130,119 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
 
 
+   public final static RtmTaskList getAllTaskSeriesForList( ContentProviderClient client,
+                                                            String listId )
+   {
+      RtmTaskList taskList = new RtmTaskList( listId );
+      
+      // We query all TaskSeries rows and sort them by their list ID.
+      // So we have all lists with their tasks together.
+      try
+      {
+         final Cursor c = client.query( Rtm.TaskSeries.CONTENT_URI,
+                                        PROJECTION,
+                                        TaskSeries.LIST_ID + " = " + listId,
+                                        null,
+                                        null );
+         
+         boolean ok = true;
+         
+         if ( c.getCount() > 0 )
+         {
+            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            {
+               RtmTask task = null;
+               
+               if ( ok )
+               {
+                  task = RtmTasksProviderPart.getTask( client,
+                                                       c.getString( COL_INDICES.get( TaskSeries.RAW_TASK_ID ) ) );
+                  ok = task != null;
+               }
+               
+               String taskSeriesId = null;
+               
+               if ( ok )
+               {
+                  taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
+               }
+               
+               List< String > tags = null;
+               
+               if ( ok )
+               {
+                  final ArrayList< Tag > tagImpls = TagsProviderPart.getAllTags( client,
+                                                                                 taskSeriesId );
+                  ok = tagImpls != null;
+                  
+                  if ( ok )
+                  {
+                     tags = new ArrayList< String >( tagImpls.size() );
+                     
+                     for ( Tag tag : tagImpls )
+                     {
+                        tags.add( tag.getTag() );
+                     }
+                  }
+               }
+               
+               RtmTaskNotes notes = null;
+               
+               if ( ok )
+               {
+                  // Get all notes this taskseries references
+                  notes = RtmNotesProviderPart.getAllNotes( client,
+                                                            taskSeriesId );
+                  
+                  // If the taskseries has no notes, we get an empty list, but
+                  // not null
+                  ok = notes != null;
+               }
+               
+               if ( ok )
+               {
+                  String locationId = null;
+                  
+                  // Check if this taskseries has a location
+                  if ( !c.isNull( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) )
+                  {
+                     locationId = Long.toString( c.getLong( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) );
+                  }
+                  
+                  // add the current task series to the task list.
+                  final RtmTaskSeries taskSeries = new RtmTaskSeries( taskSeriesId,
+                                                                      new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
+                                                                      Queries.getOptDate( c,
+                                                                                          COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ),
+                                                                      c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
+                                                                      Queries.getOptString( c,
+                                                                                            COL_INDICES.get( TaskSeries.SOURCE ) ),
+                                                                      task,
+                                                                      notes,
+                                                                      locationId,
+                                                                      Queries.getOptString( c,
+                                                                                            COL_INDICES.get( TaskSeries.URL ) ),
+                                                                      tags );
+                  taskList.add( taskSeries );
+               }
+            }
+         }
+         
+         if ( !ok )
+            taskList = null;
+         
+         c.close();
+      }
+      catch ( RemoteException e )
+      {
+         taskList = null;
+      }
+      
+      return taskList;
+   }
+   
+
+
    public final static RtmTasks getAllTaskSeries( ContentProviderClient client )
    {
       RtmTasks tasksLists = null;
@@ -150,110 +263,12 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          {
             final String listId = i.next();
             
-            final RtmTaskList taskList = new RtmTaskList( listId );
-            tasksLists.add( taskList );
+            final RtmTaskList taskList = getAllTaskSeriesForList( client,
+                                                                  listId );
             
-            // We query all TaskSeries rows and sort them by their list ID.
-            // So we have all lists with their tasks together.
-            try
-            {
-               final Cursor c = client.query( Rtm.TaskSeries.CONTENT_URI,
-                                              PROJECTION,
-                                              TaskSeries.LIST_ID + " = "
-                                                 + listId,
-                                              null,
-                                              null );
-               
-               if ( c.getCount() > 0 )
-               {
-                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-                  {
-                     RtmTask task = null;
-                     
-                     if ( ok )
-                     {
-                        task = RtmTasksProviderPart.getTask( client,
-                                                             c.getString( COL_INDICES.get( TaskSeries.RAW_TASK_ID ) ) );
-                        ok = task != null;
-                     }
-                     
-                     String taskSeriesId = null;
-                     
-                     if ( ok )
-                     {
-                        taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
-                     }
-                     
-                     List< String > tags = null;
-                     
-                     if ( ok )
-                     {
-                        final ArrayList< Tag > tagImpls = TagsProviderPart.getAllTags( client,
-                                                                                       taskSeriesId );
-                        ok = tagImpls != null;
-                        
-                        if ( ok )
-                        {
-                           tags = new ArrayList< String >( tagImpls.size() );
-                           
-                           for ( Tag tag : tagImpls )
-                           {
-                              tags.add( tag.getTag() );
-                           }
-                        }
-                     }
-                     
-                     RtmTaskNotes notes = null;
-                     
-                     if ( ok )
-                     {
-                        // Get all notes this taskseries references
-                        notes = RtmNotesProviderPart.getAllNotes( client,
-                                                                  taskSeriesId );
-                        
-                        // If the taskseries has no notes, we get an empty list, but
-                        // not null
-                        ok = notes != null;
-                     }
-                     
-                     if ( ok )
-                     {
-                        String locationId = null;
-                        
-                        // Check if this taskseries has a location
-                        if ( !c.isNull( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) )
-                        {
-                           locationId = Long.toString( c.getLong( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) );
-                        }
-                        
-                        // add the current task series to the task list.
-                        final RtmTaskSeries taskSeries = new RtmTaskSeries( taskSeriesId,
-                                                                            new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
-                                                                            Queries.getOptDate( c,
-                                                                                                COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ),
-                                                                            c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
-                                                                            Queries.getOptString( c,
-                                                                                                  COL_INDICES.get( TaskSeries.SOURCE ) ),
-                                                                            task,
-                                                                            notes,
-                                                                            locationId,
-                                                                            Queries.getOptString( c,
-                                                                                                  COL_INDICES.get( TaskSeries.URL ) ),
-                                                                            tags );
-                        taskList.add( taskSeries );
-                     }
-                  }
-               }
-               
-               if ( !ok )
-                  tasksLists = null;
-               
-               c.close();
-            }
-            catch ( RemoteException e )
-            {
-               tasksLists = null;
-            }
+            ok = taskList != null;
+            if ( ok )
+               tasksLists.add( taskList );
          }
       }
       

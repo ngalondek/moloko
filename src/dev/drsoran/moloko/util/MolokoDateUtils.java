@@ -64,13 +64,19 @@ public class MolokoDateUtils
 
    public static boolean isToday( long when )
    {
-      final long nowMillis = System.currentTimeMillis();
+      return ( getTimespanInDays( System.currentTimeMillis(), when ) == 0 );
+   }
+   
+
+
+   public static int getTimespanInDays( long start, long end )
+   {
       final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
-      final int offWhen = timeZone.getOffset( when ) / 1000; // in sec.
-      final int offNow = timeZone.getOffset( nowMillis ) / 1000; // in sec.
+      final int offStart = timeZone.getOffset( start ) / 1000; // in sec.
+      final int offEnd = timeZone.getOffset( end ) / 1000; // in sec.
       
-      return ( Time.getJulianDay( when, offWhen ) == Time.getJulianDay( nowMillis,
-                                                                        offNow ) );
+      return ( Time.getJulianDay( end, offEnd ) - Time.getJulianDay( start,
+                                                                     offStart ) );
    }
    
 

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -37,6 +38,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -46,6 +48,8 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.rtm.Task;
+import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 
 
 public class ListOverviewsProviderPart extends AbstractProviderPart
@@ -62,9 +66,9 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
-   private final static String query;
+   private final static String QUERY;
    
-   private final static String subQuery;
+   private final static String SUBQUERY_NON_COMPLETED;
    
    static
    {
@@ -72,42 +76,44 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                     PROJECTION_MAP,
                                                     COL_INDICES );
       
-      subQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                      false,
-                                                      // tables
-                                                      TaskSeries.PATH + ","
-                                                         + RawTasks.PATH,
-                                                      // columns
-                                                      new String[]
-                                                      {
-                                                       TaskSeries.PATH + "."
-                                                          + TaskSeries._ID
-                                                          + " AS _id",
-                                                       TaskSeries.LIST_ID,
-                                                       RawTasks.COMPLETED_DATE },
-                                                      // where
-                                                      TaskSeries.RAW_TASK_ID
-                                                         + "="
-                                                         + RawTasks.PATH
-                                                         + "."
-                                                         + RawTasks._ID
-                                                         + " AND "
-                                                         
-                                                         // Only non-completed tasks
-                                                         + RawTasks.COMPLETED_DATE
-                                                         + " IS NULL",
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null );
+      SUBQUERY_NON_COMPLETED = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                                    false,
+                                                                    // tables
+                                                                    TaskSeries.PATH
+                                                                       + ","
+                                                                       + RawTasks.PATH,
+                                                                    // columns
+                                                                    new String[]
+                                                                    {
+                                                                     TaskSeries.PATH
+                                                                        + "."
+                                                                        + TaskSeries._ID
+                                                                        + " AS _id",
+                                                                     TaskSeries.LIST_ID,
+                                                                     RawTasks.COMPLETED_DATE },
+                                                                    // where
+                                                                    TaskSeries.RAW_TASK_ID
+                                                                       + "="
+                                                                       + RawTasks.PATH
+                                                                       + "."
+                                                                       + RawTasks._ID
+                                                                       + " AND "
+                                                                       
+                                                                       // Only non-completed tasks
+                                                                       + RawTasks.COMPLETED_DATE
+                                                                       + " IS NULL",
+                                                                    null,
+                                                                    null,
+                                                                    null,
+                                                                    null );
       
-      query = new StringBuilder( "SELECT " ).append( Lists.PATH )
+      QUERY = new StringBuilder( "SELECT " ).append( Lists.PATH )
                                             .append( ".*, count( subQuery._id ) AS " )
                                             .append( ListOverviews.TASKS_COUNT )
                                             .append( " FROM " )
                                             .append( Lists.PATH )
                                             .append( " LEFT OUTER JOIN (" )
-                                            .append( subQuery )
+                                            .append( SUBQUERY_NON_COMPLETED )
                                             .append( ") AS subQuery ON " )
                                             .append( Lists.PATH )
                                             .append( "." )
@@ -215,6 +221,78 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
 
 
+   public final static ExtendedListInfo getExtendedOverview( ContentResolver contentResolver,
+                                                             String listId,
+                                                             String filter )
+   {
+      ExtendedListInfo extendedOverview = null;
+      ArrayList< Task > tasks = null;
+      
+      final ContentProviderClient client = contentResolver.acquireContentProviderClient( Tasks.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         // Check if we have a smart list
+         if ( filter != null )
+         {
+            final String evalFilter = RtmSmartFilter.evaluate( filter, false );
+            
+            if ( !TextUtils.isEmpty( evalFilter ) )
+            {
+               tasks = TasksProviderPart.getTasks( client, evalFilter, null );
+            }
+            else
+            {
+               Log.e( TAG,
+                      "Unable to query extended list info with invalid filter "
+                         + filter );
+            }
+         }
+         else
+         {
+            tasks = TasksProviderPart.getTasks( client, Tasks.LIST_ID + " = "
+               + listId, null );
+         }
+         
+         if ( tasks != null )
+         {
+            extendedOverview = new ExtendedListInfo();
+            
+            for ( Task task : tasks )
+            {
+               if ( task.getDue() != null )
+               {
+                  final long dueMillis = task.getDue().getTime();
+                  final int diffToNow = MolokoDateUtils.getTimespanInDays( System.currentTimeMillis(),
+                                                                           dueMillis );
+                  
+                  // Today?
+                  if ( diffToNow == 0 )
+                     ++extendedOverview.dueTodayTaskCount;
+                  
+                  // Tomorrow?
+                  else if ( diffToNow == 1 )
+                     ++extendedOverview.dueTomorrowTaskCount;
+                  
+                  // Overdue?
+                  else if ( diffToNow < 0 )
+                     ++extendedOverview.overDueTaskCount;
+               }
+               
+               // Completed?
+               if ( task.getCompleted() != null )
+                  ++extendedOverview.completedTaskCount;
+               
+               // TODO: Sum up estimate time if available
+            }
+         }
+      }
+      
+      return extendedOverview;
+   }
+   
+
+
    public ListOverviewsProviderPart( SQLiteOpenHelper dbAccess )
    {
       super( dbAccess, ListOverviews.PATH );
@@ -231,7 +309,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    {
       final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
                                                                         .append( " FROM (" )
-                                                                        .append( query )
+                                                                        .append( QUERY )
                                                                         .append( ")" );
       
       if ( !TextUtils.isEmpty( selection ) )
@@ -251,7 +329,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       
       final String finalQuery = stringBuilder.toString();
       
-      // Get the database and run the query
+      // Get the database and run the QUERY
       final SQLiteDatabase db = dbAccess.getReadableDatabase();
       final Cursor cursor = db.rawQuery( finalQuery, null );
       
@@ -361,12 +439,12 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
          }
          catch ( SQLiteException e )
          {
-            Log.e( TAG, "Tried to query with Bad RTM filter: " + evalFilter, e );
+            Log.e( TAG, "Tried to QUERY with Bad RTM filter: " + evalFilter, e );
             badFilter = true;
          }
          catch ( RemoteException e )
          {
-            Log.e( TAG, "Unable to query tasks with filter.", e );
+            Log.e( TAG, "Unable to QUERY tasks with filter.", e );
             badFilter = true;
          }
       }

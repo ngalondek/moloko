@@ -81,7 +81,8 @@ public class OverDueTasksHomeWidget extends LinearLayout implements
       {
          final TextView counterView = (TextView) view.findViewById( R.id.counter_bubble );
          final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-                                                           + "today" );
+                                                              + "today",
+                                                           true );
          
          final Cursor c = context.getContentResolver()
                                  .query( RawTasks.CONTENT_URI, new String[]
@@ -106,7 +107,7 @@ public class OverDueTasksHomeWidget extends LinearLayout implements
    public void onClick( View v )
    {
       final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-                                                        + "today" );
+         + "today" );
       
       getContext().startActivity( Intents.createSmartFilterIntent( getContext(),
                                                                    filter,

@@ -210,6 +210,19 @@ public class RtmList extends RtmData implements
    
 
 
+   @Override
+   public String toString()
+   {
+      return "<"
+         + id
+         + ","
+         + name
+         + ( ( smartFilter != null ) ? "," + smartFilter.getFilterString()
+                                    : Strings.EMPTY_STRING ) + ">";
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
                                                                                Object... params )
    {
@@ -305,9 +318,9 @@ public class RtmList extends RtmData implements
          
          // Filter has changed
          else if ( smartFilter != null
-                   && update.smartFilter != null
-                   && !smartFilter.getFilterString()
-                                  .equals( update.smartFilter.getFilterString() ) )
+            && update.smartFilter != null
+            && !smartFilter.getFilterString()
+                           .equals( update.smartFilter.getFilterString() ) )
          {
             result.add( ContentProviderOperation.newUpdate( uri )
                                                 .withValue( Lists.FILTER,

@@ -42,8 +42,7 @@ public class TaskSearchResultActivity extends TasksListActivity
    private final static String QUERY_NOT_EVALUABLE = "query_not_evaluable";
    
    /**
-    * This prevents the base class TasksListActivity to fill the list with all
-    * tasks during onCreate().
+    * This prevents the base class TasksListActivity to fill the list with all tasks during onCreate().
     */
    private boolean preventSuperFillList = true;
    
@@ -163,7 +162,7 @@ public class TaskSearchResultActivity extends TasksListActivity
          final String query = intent.getStringExtra( SearchManager.QUERY );
          
          // try to evaluate the query
-         final String evalQuery = RtmSmartFilter.evaluate( query );
+         final String evalQuery = RtmSmartFilter.evaluate( query, true );
          
          if ( evalQuery != null )
          {

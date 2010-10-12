@@ -26,10 +26,10 @@
 	android:shape="rectangle">
 	
 	<solid
-		android:color="@color/tasklists_listitem_numtasks_bgnd_fill"/>
+		android:color="@color/tasklists_group_numtasks_bgnd_smart_fill_fail"/>
 	<stroke
 		android:width="2dip"
-		android:color="@color/tasklists_listitem_numtasks_bgnd_stroke"/>
+		android:color="@color/tasklists_group_numtasks_bgnd_smart_fail_stroke"/>
 	<padding
 		android:left="15dip"
 		android:right="15dip"

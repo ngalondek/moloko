@@ -84,6 +84,10 @@ options
 	
 	public final static String OP_POSTPONED_LIT = "postponed:";
 	
+	public final static String	COMPLETED_LIT = "completed";
+	
+	public final static String	INCOMPLETE_LIT = "incomplete";
+	
 	public final static String	TRUE_LIT = "true";
 
 	public final static String FALSE_LIT = "false";
@@ -299,13 +303,13 @@ OP_STATUS 	:  'status:'
 						result.append( Tasks.COMPLETED_DATE );
 					}
 					(  
-						'completed'
+						COMPLETED
 						{
 						   hasStatusCompletedOp = true;
 							result.append(" IS NOT NULL");
 						}
 						|
-						'incomplete'
+                  INCOMPLETE
 						{
 							result.append(" IS NULL");
 						}						
@@ -489,6 +493,10 @@ OP_POSTPONED : 'postponed:'
 
 
 /** other tokens **/
+
+COMPLETED   : 'completed';
+
+INCOMPLETE  : 'incomplete';
 
 TRUE			: 'true';
 

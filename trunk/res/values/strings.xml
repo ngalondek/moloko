@@ -125,13 +125,18 @@
 	<string name="task_datetime_title_due">Wann</string>
 	<string name="task_datetime_title_estimate">Dauer</string>
 	<string name="task_datetime_estimate_inline">%1$s geschätzt</string>
-	
-	<!-- TaskSearchResultActivity -->
-	<string name="tasksearchresult_titlebar">%1$s</string>
-	<string name="tasksearchresult_titlebar_error">%1$s falsche Syntax</string>
-	  <!-- Menus -->
-     <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
-     
+		
+   <!-- TaskLists activity -->
+   <string name="tasklists_child_due_today">%1$s heute fällig</string>
+   <string name="tasklists_child_due_tomorrow">%1$s morgen fällig</string>
+   <string name="tasklists_child_overdue">%1$s überfällig</string>
+   <string name="tasklists_child_completed">%1$s erledigt</string>
+     <!-- Menus -->
+     <string name="tasklists_menu_ctx_expand">Erweitere %1$s</string>
+     <string name="tasklists_menu_ctx_collapse">Reduziere %1$s</string>
+     <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
+     <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
+   
 	<!-- AbstractTasksList -->
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
@@ -145,15 +150,16 @@
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
 	
-	<!-- TaskLists activity -->
-     <!-- Menus -->
-     <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
-     <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
-	
 	<!-- TasksList activity -->
 	<string name="taskslist_titlebar">%1$s</string>
 	  <!-- Menus -->
 	  <string name="taskslist_menu_opt_lists">@string/app_tasklists</string>
+     
+   <!-- TaskSearchResultActivity -->
+   <string name="tasksearchresult_titlebar">%1$s</string>
+   <string name="tasksearchresult_titlebar_error">%1$s falsche Syntax</string>
+     <!-- Menus -->
+     <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>   
 	  
    <!-- Authenticator activity -->
    <string name="auth_api_key_label">API key</string>

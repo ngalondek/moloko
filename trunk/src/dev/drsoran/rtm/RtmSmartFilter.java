@@ -110,7 +110,7 @@ public class RtmSmartFilter extends RtmData
    {
       if ( !isEvaluated() && filter != null )
       {
-         evalFilter = evaluate( filter );
+         evalFilter = evaluate( filter, true );
       }
       
       return evalFilter;
@@ -125,7 +125,7 @@ public class RtmSmartFilter extends RtmData
    
 
 
-   public static final String evaluate( String filter )
+   public static final String evaluate( String filter, boolean excludeCompleted )
    {
       StringBuffer evalFilter = new StringBuffer();
       
@@ -133,7 +133,10 @@ public class RtmSmartFilter extends RtmData
       if ( filter != null )
       {
          if ( filter.length() == 0 )
-            evalFilter.append( RawTasks.COMPLETED_DATE ).append( " IS NULL" );
+            if ( excludeCompleted )
+               evalFilter.append( RawTasks.COMPLETED_DATE ).append( " IS NULL" );
+            else
+               evalFilter.append( "1" );
          
          // Check if there was no operator used. If so it has the
          // same meaning as operator name:
@@ -152,7 +155,7 @@ public class RtmSmartFilter extends RtmData
                // SPECIAL CASE: If the filter contains the operator 'status:completed',
                // we include completed tasks. Otherwise we would never show tasks in
                // such lists. In all other cases we exclude completed tasks.
-               if ( !lexer.hasStatusCompletedOperator() )
+               if ( !lexer.hasStatusCompletedOperator() && excludeCompleted )
                {
                   evalFilter.append( " AND " )
                             .append( RawTasks.COMPLETED_DATE )

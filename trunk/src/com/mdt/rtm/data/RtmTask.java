@@ -89,7 +89,7 @@ public class RtmTask extends RtmData implements
    
    public enum Priority
    {
-         High, Medium, Low, None
+      High, Medium, Low, None
    }
    
    
@@ -152,6 +152,8 @@ public class RtmTask extends RtmData implements
       this.deleted = ( deleted != null ) ? new ParcelableDate( deleted ) : null;
       this.priority = priority;
       this.postponed = postponed;
+      
+      // TODO: Parse estimated string and store as Time
       this.estimate = estimate;
    }
    
@@ -186,7 +188,7 @@ public class RtmTask extends RtmData implements
                break;
             default :
                System.err.println( "Unrecognized RTM task priority: '"
-                                   + priorityStr + "'" );
+                  + priorityStr + "'" );
                priority = Priority.Medium;
          }
       }
@@ -196,7 +198,7 @@ public class RtmTask extends RtmData implements
       }
       
       if ( elt.hasAttribute( "postponed" ) == true
-           && elt.getAttribute( "postponed" ).length() > 0 )
+         && elt.getAttribute( "postponed" ).length() > 0 )
       {
          postponed = Integer.parseInt( elt.getAttribute( "postponed" ) );
       }
@@ -205,6 +207,7 @@ public class RtmTask extends RtmData implements
          postponed = 0;
       }
       
+      // TODO: Parse estimated string and store as Time
       estimate = textNullIfEmpty( elt, "estimate" );
    }
    
@@ -378,11 +381,7 @@ public class RtmTask extends RtmData implements
          result = new CompositeContentProviderSyncOperation( provider,
                                                              IContentProviderSyncOperation.Op.UPDATE );
          
-         SyncUtils.updateDate( due,
-                                     update.due,
-                                     uri,
-                                     RawTasks.DUE_DATE,
-                                     result );
+         SyncUtils.updateDate( due, update.due, uri, RawTasks.DUE_DATE, result );
          
          if ( hasDueTime != update.hasDueTime )
             result.add( ContentProviderOperation.newUpdate( uri )
@@ -391,22 +390,22 @@ public class RtmTask extends RtmData implements
                                                 .build() );
          
          SyncUtils.updateDate( added,
-                                     update.added,
-                                     uri,
-                                     RawTasks.ADDED_DATE,
-                                     result );
+                               update.added,
+                               uri,
+                               RawTasks.ADDED_DATE,
+                               result );
          
          SyncUtils.updateDate( completed,
-                                     update.completed,
-                                     uri,
-                                     RawTasks.COMPLETED_DATE,
-                                     result );
+                               update.completed,
+                               uri,
+                               RawTasks.COMPLETED_DATE,
+                               result );
          
          SyncUtils.updateDate( deleted,
-                                     update.deleted,
-                                     uri,
-                                     RawTasks.DELETED_DATE,
-                                     result );
+                               update.deleted,
+                               uri,
+                               RawTasks.DELETED_DATE,
+                               result );
          
          if ( priority.ordinal() != update.priority.ordinal() )
             result.add( ContentProviderOperation.newUpdate( uri )

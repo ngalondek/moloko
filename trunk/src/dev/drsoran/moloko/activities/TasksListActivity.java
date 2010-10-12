@@ -124,7 +124,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
          if ( smartFilter != null && evaluatedFilter == null )
          {
             // try to evaluate the filter
-            evaluatedFilter = RtmSmartFilter.evaluate( smartFilter );
+            evaluatedFilter = RtmSmartFilter.evaluate( smartFilter, true );
             
             if ( evaluatedFilter == null )
             {

@@ -51,7 +51,9 @@ public final class Intents
    
 
 
-   public final static Intent createOpenListIntent( Context context, String id )
+   public final static Intent createOpenListIntent( Context context,
+                                                    String id,
+                                                    String filter )
    {
       Intent intent = null;
       
@@ -62,11 +64,11 @@ public final class Intents
       {
          final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
                                                                                       ListOverviews._ID
-                                                                                               + " = "
-                                                                                               + id );
+                                                                                         + " = "
+                                                                                         + id );
          
          if ( list != null )
-            intent = createOpenListIntent( context, list );
+            intent = createOpenListIntent( context, list, filter );
          
          client.release();
       }
@@ -77,7 +79,8 @@ public final class Intents
 
 
    public final static Intent createOpenListIntentByName( Context context,
-                                                          String name )
+                                                          String name,
+                                                          String filter )
    {
       Intent intent = null;
       
@@ -88,12 +91,12 @@ public final class Intents
       {
          final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
                                                                                       ListOverviews.LIST_NAME
-                                                                                               + " = '"
-                                                                                               + name
-                                                                                               + "'" );
+                                                                                         + " = '"
+                                                                                         + name
+                                                                                         + "'" );
          
          if ( list != null )
-            intent = createOpenListIntent( context, list );
+            intent = createOpenListIntent( context, list, filter );
          
          client.release();
       }
@@ -104,7 +107,8 @@ public final class Intents
 
 
    public final static Intent createOpenListIntent( Context context,
-                                                    RtmListWithTaskCount list )
+                                                    RtmListWithTaskCount list,
+                                                    String filter )
    {
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
       
@@ -114,12 +118,13 @@ public final class Intents
       intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
                        R.drawable.icon_list_white );
       
+      String filterString = Strings.EMPTY_STRING;
+      
       // If we open a non-smart list, we do not make the list names clickable.
       if ( !list.hasSmartFilter() )
       {
-         intent.putExtra( AbstractTasksListActivity.FILTER,
-                          RtmSmartFilterLexer.OP_LIST_LIT
-                                   + RtmSmartFilterLexer.quotify( list.getName() ) );
+         filterString = RtmSmartFilterLexer.OP_LIST_LIT
+            + RtmSmartFilterLexer.quotify( list.getName() );
          
          final Bundle config = new Bundle();
          config.putBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME, true );
@@ -130,9 +135,15 @@ public final class Intents
       // if we open a smart list
       else
       {
-         intent.putExtra( AbstractTasksListActivity.FILTER,
-                          list.getSmartFilter().getFilterString() );
+         filterString = list.getSmartFilter().getFilterString();
       }
+      
+      if ( filter != null )
+      {
+         filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " " + filter );
+      }
+      
+      intent.putExtra( AbstractTasksListActivity.FILTER, filterString );
       
       return intent;
    }

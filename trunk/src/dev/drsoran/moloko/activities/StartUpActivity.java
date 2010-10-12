@@ -72,10 +72,7 @@ public class StartUpActivity extends Activity implements
    private final static int STATE_COMPLETED = 2;
    
    private final static int[] STATE_SEQUENCE =
-   {
-    STATE_CHECK_ACCOUNT,
-    STATE_DETERMINE_STARTUP_VIEW,
-    STATE_COMPLETED };
+   { STATE_CHECK_ACCOUNT, STATE_DETERMINE_STARTUP_VIEW, STATE_COMPLETED };
    
    private ViewGroup widgetContainer;
    
@@ -238,7 +235,8 @@ public class StartUpActivity extends Activity implements
          case Settings.STARTUP_VIEW_DEFAULT_LIST:
             startActivity( Intents.createOpenListIntent( this,
                                                          MolokoApp.getSettings()
-                                                                  .getDefaultListId() ) );
+                                                                  .getDefaultListId(),
+                                                         null ) );
             break;
          
          case Settings.STARTUP_VIEW_LISTS:
@@ -369,30 +367,30 @@ public class StartUpActivity extends Activity implements
          switch ( msg.what )
          {
             case MSG_STATE_CHANGED:
-                                   switch ( stateIndex )
-                                   {
-                                      case STATE_CHECK_ACCOUNT:
-                                   checkAccount();
-                                   break;
-                                
-                                case STATE_DETERMINE_STARTUP_VIEW:
-                                   determineStartupView();
-                                   break;
-                                
-                                case STATE_COMPLETED:
-                                   onStartUpCompleted();
-                                   break;
-                                
-                                default :
-                                   throw new IllegalStateException( "Unknown state: "
-                                                                    + stateIndex );
-                             }
-                             break;
-                          
-                          default :
-                                   super.handleMessage( msg );
-                             }
-                          }
+               switch ( stateIndex )
+               {
+                  case STATE_CHECK_ACCOUNT:
+                     checkAccount();
+                     break;
+                  
+                  case STATE_DETERMINE_STARTUP_VIEW:
+                     determineStartupView();
+                     break;
+                  
+                  case STATE_COMPLETED:
+                     onStartUpCompleted();
+                     break;
+                  
+                  default :
+                     throw new IllegalStateException( "Unknown state: "
+                        + stateIndex );
+               }
+               break;
+            
+            default :
+               super.handleMessage( msg );
+         }
+      }
    };
    
 }

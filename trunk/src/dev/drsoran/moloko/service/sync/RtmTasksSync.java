@@ -170,7 +170,7 @@ public final class RtmTasksSync
          final int pos = target.find( refElement );
          
          // INSERT: The reference element is not contained in the target list.
-         if ( pos == -1 )
+         if ( pos < 0 )
          {
             // Remove all deleted tasks from the reference list. These tasks
             // we never had locally.
@@ -208,7 +208,7 @@ public final class RtmTasksSync
                
                IContentProviderSyncOperation taskSeriesOperation = null;
                
-               if ( posTaskSeries == -1 )
+               if ( posTaskSeries < 0 )
                {
                   // INSERT: The reference element is not contained in the target
                   // list and is not deleted.

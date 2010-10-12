@@ -100,8 +100,9 @@ public class CalendarHomeWidget extends LinearLayout implements OnClickListener
       {
          final TextView counterView = (TextView) view.findViewById( R.id.counter_bubble );
          final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_LIT
-            + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
-                                          MolokoDateUtils.FORMAT_PARSER ) );
+                                                              + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
+                                                                                            MolokoDateUtils.FORMAT_PARSER ),
+                                                           true );
          
          final Cursor c = context.getContentResolver()
                                  .query( RawTasks.CONTENT_URI, new String[]

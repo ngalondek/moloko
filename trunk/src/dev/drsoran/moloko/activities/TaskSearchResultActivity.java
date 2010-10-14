@@ -143,7 +143,7 @@ public class TaskSearchResultActivity extends TasksListActivity
          UIUtils.setTitle( this,
                            getString( R.string.tasksearchresult_titlebar_error,
                                       configuration.getString( QUERY_NOT_EVALUABLE ),
-                                      R.drawable.icon_sad_face_white ) );
+                                      R.drawable.icon_error_black ) );
       }
       else
       {

@@ -95,13 +95,13 @@ public class TaskSearchResultActivity extends TasksListActivity
                 OptionsMenu.NEW_SEARCH,
                 OptionsMenu.MENU_ORDER,
                 R.string.menu_opt_search_task_title )
-          .setIcon( R.drawable.icon_search_black );
+          .setIcon( R.drawable.ic_menu_search );
       
       menu.add( Menu.NONE,
                 OptionsMenu.CLEAR_HISTORY,
                 OptionsMenu.MENU_ORDER,
                 R.string.tasksearchresult_menu_opt_clear_history_title )
-          .setIcon( R.drawable.icon_delete_black );
+          .setIcon( R.drawable.ic_menu_delete );
       
       return true;
    }
@@ -143,7 +143,7 @@ public class TaskSearchResultActivity extends TasksListActivity
          UIUtils.setTitle( this,
                            getString( R.string.tasksearchresult_titlebar_error,
                                       configuration.getString( QUERY_NOT_EVALUABLE ),
-                                      R.drawable.icon_error_black ) );
+                                      R.drawable.ic_title_error ) );
       }
       else
       {

@@ -153,7 +153,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
                 OptionsMenu.SETTINGS,
                 OptionsMenu.MENU_ORDER_STATIC,
                 R.string.phr_settings )
-          .setIcon( R.drawable.icon_settings_black )
+          .setIcon( R.drawable.ic_menu_settings )
           .setIntent( new Intent( this, MolokoPreferencesActivity.class ) );
       
       return true;
@@ -338,7 +338,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
          intent.putExtra( AbstractTasksListActivity.TITLE,
                           getString( R.string.taskslist_titlebar, listName ) );
          intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                          R.drawable.icon_list_white );
+                          R.drawable.ic_title_list );
          
          RtmSmartFilter filter = rtmList.getSmartFilter();
          

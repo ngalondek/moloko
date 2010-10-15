@@ -261,7 +261,7 @@
       <item
          name="showTopLine">false</item>
       <item
-         name="imageSrc">@drawable/icon_error_black</item>
+         name="imageSrc">@drawable/ic_black_error</item>
    </style>
 
    <style

@@ -89,7 +89,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                    OptionsMenu.SHOW_LISTS,
                    OptionsMenu.MENU_ORDER,
                    R.string.taskslist_menu_opt_lists )
-             .setIcon( R.drawable.icon_list_black );
+             .setIcon( R.drawable.ic_menu_list );
       
       return ok && addOptionsMenuIntents( menu );
    }

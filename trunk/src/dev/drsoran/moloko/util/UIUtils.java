@@ -290,7 +290,7 @@ public final class UIUtils
          if ( SyncUtils.isSyncing( context ) )
          {
             menu.add( Menu.NONE, id, menuOrder, R.string.phr_cancel_sync )
-                .setIcon( R.drawable.icon_cancel_black )
+                .setIcon( R.drawable.ic_menu_cancel )
                 .setOnMenuItemClickListener( new OnMenuItemClickListener()
                 {
                    public boolean onMenuItemClick( MenuItem item )
@@ -306,7 +306,7 @@ public final class UIUtils
                                                 id,
                                                 menuOrder,
                                                 R.string.phr_do_sync )
-                                          .setIcon( R.drawable.icon_refresh_black );
+                                          .setIcon( R.drawable.ic_menu_refresh );
             
             final Account account = SyncUtils.isReadyToSync( context );
             

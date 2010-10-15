@@ -147,7 +147,7 @@ public class StartUpActivity extends Activity implements
                onAddNewAccount();
             }
          } );
-         setButtonIcon( btnCenter, R.drawable.icon_add_black );
+         setButtonIcon( btnCenter, R.drawable.ic_button_add );
          
          buttonBar.setVisibility( View.VISIBLE );
       }

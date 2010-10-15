@@ -340,13 +340,13 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          }
          
          addConditionalIcon( iconsContainer,
-                             R.drawable.icon_flag_black,
+                             R.drawable.ic_list_tasklists_flag,
                              ID_ICON_DEFAULT_LIST,
                              rtmList.getId()
                                     .equals( MolokoApp.getSettings()
                                                       .getDefaultListId() ) );
          addConditionalIcon( iconsContainer,
-                             R.drawable.icon_lock_black,
+                             R.drawable.ic_list_tasklists_lock,
                              ID_ICON_LOCKED,
                              rtmList.getLocked() != 0 );
       }

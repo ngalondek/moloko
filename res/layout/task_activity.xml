@@ -67,7 +67,7 @@
                android:layout_marginRight="5dip"
                android:layout_alignParentRight="true"
                android:layout_below="@id/task_overview_added_date"
-               android:drawableLeft="@drawable/icon_checked_white_small"
+               android:drawableLeft="@drawable/ic_small_white_check"
                android:drawablePadding="2dip"
                android:text="Completed_Date" />
 

@@ -77,7 +77,7 @@ public class HomeActivity extends Activity
       
       UIUtils.setTitle( this,
                         getString( R.string.app_home ),
-                        R.drawable.icon_home_white );
+                        R.drawable.ic_title_home );
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
       
@@ -103,7 +103,7 @@ public class HomeActivity extends Activity
                 OptionsMenu.SETTINGS,
                 OptionsMenu.MENU_ORDER_STATIC,
                 R.string.phr_settings )
-          .setIcon( R.drawable.icon_settings_black )
+          .setIcon( R.drawable.ic_menu_settings )
           .setIntent( new Intent( this, MolokoPreferencesActivity.class ) );
       
       return true;

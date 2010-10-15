@@ -116,7 +116,7 @@ public final class Intents
                        context.getString( R.string.taskslist_titlebar,
                                           list.getName() ) );
       intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                       R.drawable.icon_list_white );
+                       R.drawable.ic_title_list );
       
       String filterString = Strings.EMPTY_STRING;
       
@@ -159,7 +159,7 @@ public final class Intents
       intent.putExtra( AbstractTasksListActivity.TITLE,
                        context.getString( R.string.taskslist_titlebar, tagText ) );
       intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                       R.drawable.icon_tag_white );
+                       R.drawable.ic_title_tag );
       
       final Bundle config = new Bundle();
       config.putString( UIUtils.DISABLE_TAG_EQUALS, tagText );

@@ -217,8 +217,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       menu.add( Menu.NONE,
                 OptionsMenu.SETTINGS,
                 OptionsMenu.MENU_ORDER_STATIC,
-                R.string.phr_settings )
-          .setIcon( R.drawable.icon_settings_black );
+                R.string.phr_settings ).setIcon( R.drawable.ic_menu_settings );
       
       return addOptionsMenuIntents( menu );
    }
@@ -237,7 +236,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                            OptionsMenu.SORT,
                            getString( R.string.abstaskslist_menu_opt_sort ),
                            OptionsMenu.MENU_ORDER,
-                           R.drawable.icon_sort_black,
+                           R.drawable.ic_menu_sort,
                            getListAdapter().getCount() > 1 );
       
       return true;
@@ -252,7 +251,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       switch ( item.getItemId() )
       {
          case OptionsMenu.SORT:
-            new AlertDialog.Builder( this ).setIcon( R.drawable.icon_sort_white )
+            new AlertDialog.Builder( this ).setIcon( R.drawable.ic_dialog_sort )
                                            .setTitle( R.string.abstaskslist_dlg_sort_title )
                                            .setSingleChoiceItems( R.array.app_sort_options,
                                                                   TaskSortPreference.getIndexOfValue( getTaskSort() ),
@@ -407,7 +406,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             final boolean andLink = ( which == DialogInterface.BUTTON1 );
             final Intent intent = new Intent( Intent.ACTION_VIEW,
                                               Tasks.CONTENT_URI );
-            intent.putExtra( TITLE_ICON, R.drawable.icon_tag_white );
+            intent.putExtra( TITLE_ICON, R.drawable.ic_title_tag );
             
             final StringBuffer filter = new StringBuffer();
             
@@ -591,7 +590,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       new MultiChoiceDialog( this, tmp, this ).setTitle( getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
                                                                                            tags.size() ) )
-                                              .setIcon( R.drawable.icon_tag_white )
+                                              .setIcon( R.drawable.ic_dialog_tag )
                                               .setButtonText( getString( R.string.abstaskslist_dlg_show_tags_and ) )
                                               .setButton2Text( getString( R.string.abstaskslist_dlg_show_tags_or ) )
                                               .show();

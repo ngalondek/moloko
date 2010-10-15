@@ -42,7 +42,7 @@ public class MolokoPreferencesActivity extends PreferenceActivity
       addPreferencesFromResource( R.xml.moloko_preferences_activity );
       
       getWindow().setFeatureDrawableResource( Window.FEATURE_LEFT_ICON,
-                                              R.drawable.icon_settings_white );
+                                              R.drawable.ic_title_settings );
    }
    
 }

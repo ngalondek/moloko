@@ -1,96 +1,96 @@
 var preProdFolder = Folder.selectDialog( "Select _pre_production folder",
-												    	 "/f/Programmierung/Projects/java/Moloko/assets/_pre_production" );
+                                         "/f/Programmierung/Projects/java/Moloko/assets/_pre_production" );
+var startFolder = Folder.selectDialog( "Select start folder", preProdFolder );
+
 var ldpiFolder = null;
 var mdpiFolder = null;
 var hdpiFolder = null;
 
 
-if ( preProdFolder != null )
+if ( preProdFolder != null && startFolder != null )
 {
-	var rawFiles   = new Folder( preProdFolder + "/raw" ).getFiles();
-   var blackFiles = new Folder( preProdFolder + "/black" ).getFiles();
-	var whiteFiles = new Folder( preProdFolder + "/white" ).getFiles();
-	
-	if ( rawFiles != null )
-	{
-		for ( var i = 0; i < rawFiles.length; i++ )
-		{		
-			var file = resolveLink( rawFiles[ i ] );
-			
-			if ( file != null )
-			{
-				open( file );
-				
-				exportLDPI( file, "" );
-				exportMDPI( file, "" );
-				exportHDPI( file, "" );
-				
-				activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-			}
-		}
-	}
-	
-	if ( blackFiles != null )
-	{
-		for ( var i = 0; i < blackFiles.length; i++ )
-		{
-			var file = resolveLink( blackFiles[ i ] );
-			
-			if ( file != null )
-			{
-				open( file );
-				
-				if ( selectLayer( activeDocument, "shape" ) )
-				{
-					setForegroundColor( 71.0, 71.0, 71.0 );
-					fillLayerWithForegroundColor();
-					exportLDPI( file, "_black" );
-					exportMDPI( file, "_black" );
-					exportHDPI( file, "_black" );
-				}
-				else
-				{
-					alert( "No layer with name 'shape' found. Skipping file " + file.name );
-				}
-				
-				activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-			}
-		}
-	}
-	
-	if ( whiteFiles != null )
-	{
-		for ( var i = 0; i < whiteFiles.length; i++ )
-		{
-			var file = resolveLink( whiteFiles[ i ] );
-			
-			if ( file != null )
-			{
-				open( file );
-				
-				if ( selectLayer( activeDocument, "shape" ) )
-				{
-					fillLayerGradientWhite();
-					exportLDPI( file, "_white" );
-    				exportMDPI( file, "_white" );
-					exportHDPI( file, "_white" );
-				}
-				else
-				{
-					alert( "No layer with name 'shape' found. Skipping file " + file.name );
-				}
-				
-				activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-			}
-		}
-	}
+	exportFolder( startFolder,
+					  ( ( startFolder.name != preProdFolder.name ) ? startFolder.name : null ) );
 	
 	alert( "Finished!" );
 }
 
 
+function exportFolder( folder, prefix )
+{
+	var script = loadScriptFromFolder( folder );
+	var files = folder.getFiles();
+	 
+	for ( var i = 0; i < files.length; i++ )
+	{
+		var file = files[ i ];
+		
+		if ( file instanceof Folder )
+		{
+			// Skip folder starting with ".", e.g. ".svn"
+			if ( !file.name.match(/^\./) )
+				exportFolder( file,
+								  ( ( prefix != null ) ? prefix + "_" + file.name : file.name ) );
+		}
+		
+		// Check if we have a script in this folder
+		else if ( script != null  )
+		{
+			// skip scripts
+			if ( file.name.match( /jsx$/ ) )
+			{
+				continue;
+			}
+			
+			// resolve links
+			else if ( !file.name.match( /psd$/ ) )
+			{
+				file = resolveLink( file );
+			}			
+			
+			// Export the file
+			open( file );
+		
+			var ok = true;
+			
+			eval( script );
+			
+			if ( ok )
+			{
+				exportLDPI( file, prefix );
+				exportMDPI( file, prefix );
+				exportHDPI( file, prefix );
+			}
+		
+			activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+		}		
+	}
+}
 
-function exportLDPI( file, suffix )
+function loadScriptFromFolder( folder )
+{
+	var script = null;	
+	var scriptFile = folder.getFiles("*.jsx");
+	
+	if ( scriptFile != null && scriptFile.length > 0 )
+	{
+		scriptFile = scriptFile[ 0 ];
+		
+		if ( scriptFile.open( "r" ) )
+		{
+			script = "";
+			
+			while ( !scriptFile.eof )
+			{
+				script += scriptFile.readln();
+			}
+		}
+	}
+		
+	return script;
+}
+
+function exportLDPI( file, prefix )
 {	
 	if ( ldpiFolder == null )
 	{
@@ -108,14 +108,14 @@ function exportLDPI( file, suffix )
    	activeDocument = activeDocument.duplicate( "temp" );
    	
 		resizeImage( 75 );
-		saveForWebPNG24( ldpiFolder, file, suffix );
+		saveForWebPNG24( ldpiFolder, file, prefix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
 		activeDocument = temp;
 	}
 }
 
-function exportMDPI( file, suffix )
+function exportMDPI( file, prefix )
 {	
 	if ( mdpiFolder == null )
 	{
@@ -129,11 +129,11 @@ function exportMDPI( file, suffix )
 	
 	if ( mdpiFolder != null )
 	{
-		saveForWebPNG24( mdpiFolder, file, suffix );
+		saveForWebPNG24( mdpiFolder, file, prefix );
 	}
 }
 
-function exportHDPI( file, suffix )
+function exportHDPI( file, prefix )
 {	
 	if ( hdpiFolder == null )
 	{
@@ -151,7 +151,7 @@ function exportHDPI( file, suffix )
    	activeDocument = activeDocument.duplicate( "temp" );
    	
 		resizeImage( 150 );
-		saveForWebPNG24( hdpiFolder, file, suffix );		
+		saveForWebPNG24( hdpiFolder, file, prefix );		
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
 		activeDocument = temp;
@@ -166,8 +166,18 @@ function resizeImage( percentage )
 											ResampleMethod.BICUBIC );
 }
 
-function saveForWebPNG24( folder, file, suffix )
+function resizeImagePx( pixel )
 {
+	activeDocument.resizeImage( UnitValue( pixel, "px" ),
+					      			  UnitValue( pixel, "px" ),
+											null,
+											ResampleMethod.BICUBIC );
+}
+
+function saveForWebPNG24( folder, file, prefix )
+{
+	var filename = folder + "/" + prefix + "_" + file.name.replace( /\.psd$/, ".png" );
+	
 	var idExpr = charIDToTypeID( "Expr" );
     var desc36 = new ActionDescriptor();
     var idUsng = charIDToTypeID( "Usng" );
@@ -179,7 +189,7 @@ function saveForWebPNG24( folder, file, suffix )
         var idDIDr = charIDToTypeID( "DIDr" );
         desc37.putBoolean( idDIDr, false );
         var idIn = charIDToTypeID( "In  " );
-        desc37.putPath( idIn, new File( folder + "/" + file.name.replace( /\.psd$/, suffix + ".png" ) ) );
+        desc37.putPath( idIn, new File( filename ) );
         var idFmt = charIDToTypeID( "Fmt " );
         var idIRFm = charIDToTypeID( "IRFm" );
         var idPNtwofour = charIDToTypeID( "PN24" );

@@ -26,9 +26,9 @@
 
    <item
       android:state_enabled="false"
-      android:drawable="@drawable/icon_not_checked" />
+      android:drawable="@drawable/ic_list_unchecked_check" />
    <item
       android:state_enabled="true"
-      android:drawable="@drawable/icon_checked" />
+      android:drawable="@drawable/ic_list_checked_check" />
       
 </selector>

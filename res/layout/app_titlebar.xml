@@ -43,7 +43,7 @@
       style="@style/App_TitleBar_Btn"
       android:layout_height="fill_parent"
       android:layout_width="@dimen/app_titlebar_btn_width"
-      android:src="@drawable/icon_home_white"
+      android:src="@drawable/ic_button_title_home"
       android:scaleType="centerInside"
       android:visibility="gone" />
 
@@ -59,7 +59,7 @@
       style="@style/App_TitleBar_Btn"
       android:layout_height="fill_parent"
       android:layout_width="@dimen/app_titlebar_btn_width"
-      android:src="@drawable/icon_search_white"
+      android:src="@drawable/ic_button_title_search"
       android:scaleType="centerInside"
       android:visibility="gone" />
 

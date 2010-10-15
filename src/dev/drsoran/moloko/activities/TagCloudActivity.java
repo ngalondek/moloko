@@ -140,7 +140,7 @@ public class TagCloudActivity extends Activity
       
       UIUtils.setTitle( this,
                         getString( R.string.app_tagcloud ),
-                        R.drawable.icon_tag_white );
+                        R.drawable.ic_title_tag );
       
       fillContent();
    }

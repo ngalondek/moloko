@@ -106,10 +106,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       setSyncWithRtm( isChecked );
       
       /*
-       * Clicking on the check box simulates the negative button click, and
-       * dismisses the dialog. This is needed cause
-       * we write the value from RTM and a positive result would write the
-       * current list value.
+       * Clicking on the check box simulates the negative button click, and dismisses the dialog. This is needed cause
+       * we write the value from RTM and a positive result would write the current list value.
        */
       onClick( getDialog(), DialogInterface.BUTTON_NEGATIVE );
       getDialog().dismiss();
@@ -149,10 +147,10 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       if ( settingSourceText != null )
       {
          if ( isSyncWithRtm()
-              && MolokoApp.getSettings().getRtmSettings() != null )
+            && MolokoApp.getSettings().getRtmSettings() != null )
          {
             settingSourceText.setText( R.string.g_settings_src_rtm );
-            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.icon_refresh_white_small ),
+            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_white_refresh ),
                                                     null,
                                                     null,
                                                     null );
@@ -160,7 +158,7 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
          else
          {
             settingSourceText.setText( R.string.g_settings_src_local );
-            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.icon_user_white_small ),
+            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_white_user ),
                                                     null,
                                                     null,
                                                     null );

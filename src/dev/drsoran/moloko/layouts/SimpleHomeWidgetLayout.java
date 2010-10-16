@@ -27,15 +27,15 @@ import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 
 
 public class SimpleHomeWidgetLayout extends LinearLayout implements
-         OnClickListener
+         IMolokoHomeWidget
 {
    private final Intent intent;
    
@@ -54,8 +54,6 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
       ( (ImageView) findViewById( R.id.widget_simple_image ) ).setImageResource( imgId );
       ( (TextView) findViewById( R.id.text ) ).setText( labelId );
       
-      setOnClickListener( this );
-      
       this.intent = intent;
    }
    
@@ -65,5 +63,12 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
    {
       if ( intent != null )
          getContext().startActivity( intent );
+   }
+   
+
+
+   public Intent getIntent()
+   {
+      return intent;
    }
 }

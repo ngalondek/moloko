@@ -30,6 +30,7 @@ import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.SimpleHomeWidgetLayout;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
+import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
 import dev.drsoran.provider.Rtm.ListOverviews;
 
@@ -56,14 +57,21 @@ public class HomeAdapter extends BaseAdapter
        new SimpleHomeWidgetLayout( context,
                                    null,
                                    R.string.app_tasklists,
-                                   R.drawable.lists_black,
+                                   R.drawable.ic_home_list_detailed,
                                    new Intent( Intent.ACTION_VIEW,
                                                ListOverviews.CONTENT_URI ) ),
        new SimpleHomeWidgetLayout( context,
                                    null,
                                    R.string.app_tagcloud,
-                                   R.drawable.tag_black,
-                                   new Intent( context, TagCloudActivity.class ) ) };
+                                   R.drawable.ic_home_tag,
+                                   new Intent( context, TagCloudActivity.class ) ),
+       
+       new SimpleHomeWidgetLayout( context,
+                                   null,
+                                   R.string.app_preferences,
+                                   R.drawable.ic_home_settings,
+                                   new Intent( context,
+                                               MolokoPreferencesActivity.class ) ) };
    }
    
 
@@ -99,5 +107,15 @@ public class HomeAdapter extends BaseAdapter
       {
          return convertView;
       }
+   }
+   
+
+
+   public Intent getIntentForWidget( int position )
+   {
+      if ( position < WIDGETS.length )
+         return ( (IMolokoHomeWidget) WIDGETS[ position ] ).getIntent();
+      else
+         return null;
    }
 }

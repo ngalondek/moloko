@@ -25,12 +25,12 @@ package dev.drsoran.moloko.widgets;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.MolokoApp;
@@ -42,7 +42,8 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class CalendarHomeWidget extends LinearLayout implements OnClickListener
+public class CalendarHomeWidget extends LinearLayout implements
+         IMolokoHomeWidget
 {
    private ViewGroup widgetContainer;
    
@@ -76,8 +77,6 @@ public class CalendarHomeWidget extends LinearLayout implements OnClickListener
       
       label = (TextView) view.findViewById( R.id.text );
       label.setText( labelId );
-      
-      setOnClickListener( this );
    }
    
 
@@ -142,18 +141,19 @@ public class CalendarHomeWidget extends LinearLayout implements OnClickListener
    
 
 
-   public void onClick( View v )
+   public Intent getIntent()
    {
       final Calendar cal = getCalendar();
       final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_LIT
          + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
                                        MolokoDateUtils.FORMAT_PARSER ) );
       
-      getContext().startActivity( Intents.createSmartFilterIntent( getContext(),
-                                                                   filter,
-                                                                   label.getText()
-                                                                        .toString(),
-                                                                   -1 ) );
+      final String title = getContext().getString( ( ( type == TODAY )
+                                                                      ? R.string.phr_today_with_date
+                                                                      : R.string.phr_tomorrow_with_date ),
+                                                   MolokoDateUtils.formatDate( cal.getTimeInMillis(),
+                                                                               0 ) );
+      
+      return Intents.createSmartFilterIntent( getContext(), filter, title, -1 );
    }
-   
 }

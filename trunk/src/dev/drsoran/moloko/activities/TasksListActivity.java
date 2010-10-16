@@ -60,26 +60,6 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
    @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      final Intent intent = getIntent();
-      
-      // Intent extras have precedence before
-      // stored values.
-      if ( intent.getExtras() != null )
-         configuration.putAll( intent.getExtras() );
-      else if ( savedInstanceState != null )
-         configuration.putAll( savedInstanceState );
-      
-      if ( shouldFillList() )
-         fillList();
-   }
-   
-
-
-   @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
       boolean ok = super.onCreateOptionsMenu( menu );
@@ -99,6 +79,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    @Override
    protected void fillList()
    {
+      final Bundle configuration = getIntent().getExtras();
+      
       final String title = configuration.getString( TITLE );
       
       final int titleIconId = configuration.getInt( TITLE_ICON, -1 );
@@ -149,6 +131,14 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                   configuration.getBundle( ADAPTER_CONFIG ) ) );
          }
       }
+   }
+   
+
+
+   @Override
+   protected void handleIntent( Intent intent )
+   {
+      fillList();
    }
    
 

@@ -144,8 +144,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    };
    
-   protected final Bundle configuration = new Bundle();
-   
    
 
    @Override
@@ -165,8 +163,18 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
       
-      if ( !configuration.containsKey( TASK_SORT_ORDER ) )
+      if ( getIntent().getExtras() == null )
+         // Put an empty bundle, this prevents null pointer checking
+         // in later steps.
+         getIntent().putExtras( new Bundle() );
+      
+      if ( savedInstanceState != null )
+         getIntent().getExtras().putAll( savedInstanceState );
+      
+      if ( !getIntent().getExtras().containsKey( TASK_SORT_ORDER ) )
          setTaskSort( MolokoApp.getSettings().getTaskSort(), false );
+      
+      handleIntent( getIntent() );
    }
    
 
@@ -186,10 +194,19 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
 
    @Override
+   protected void onNewIntent( Intent intent )
+   {
+      setIntent( intent );
+      handleIntent( intent );
+   }
+   
+
+
+   @Override
    protected void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      outState.putAll( configuration );
+      outState.putAll( getIntent().getExtras() );
    }
    
 
@@ -201,11 +218,10 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       if ( state != null )
       {
-         configuration.clear();
-         configuration.putAll( state );
+         getIntent().getExtras().clear();
+         getIntent().getExtras().putAll( state );
          
-         if ( shouldFillList() )
-            fillList();
+         handleIntent( getIntent() );
       }
    }
    
@@ -278,7 +294,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       final ListTask task = getTask( info.position );
       
-      // TODO: Make this menu item dependent on the access level set
+      // TODO: Make this menu item dependent from the set RTM access level
       /**
        * menu.add( Menu.NONE, CTX_MENU_TOGGLE_TASK_COMPLETED, Menu.NONE, ( task.getCompleted() == null ) ? getString(
        * R.string.taskslist_listitem_ctx_set_task_completed ) : getString(
@@ -291,7 +307,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                 getString( R.string.phr_open_with_name, task.getName() ) )
           .setTitleCondensed( getString( R.string.abstaskslist_listitem_ctx_open_task ) );
       
-      final Bundle adapterConfig = configuration.getBundle( ADAPTER_CONFIG );
+      final Bundle adapterConfig = getIntent().getExtras()
+                                              .getBundle( ADAPTER_CONFIG );
       
       if ( adapterConfig == null
          || !adapterConfig.getBoolean( DISABLE_LIST_NAME ) )
@@ -664,21 +681,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   protected boolean isListFilled()
-   {
-      return getListAdapter() instanceof TasksListAdapter;
-   }
-   
-
-
-   protected boolean shouldFillList()
-   {
-      return !isListFilled();
-   }
-   
-
-
    abstract protected void fillList();
+   
+
+
+   abstract protected void handleIntent( Intent intent );
    
 
 
@@ -716,14 +723,15 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    protected int getTaskSort()
    {
-      return configuration.getInt( TASK_SORT_ORDER, Settings.TASK_SORT_DEFAULT );
+      return getIntent().getExtras().getInt( TASK_SORT_ORDER,
+                                             Settings.TASK_SORT_DEFAULT );
    }
    
 
 
    protected void setTaskSort( int taskSort, boolean refillList )
    {
-      configuration.putInt( TASK_SORT_ORDER, taskSort );
+      getIntent().getExtras().putInt( TASK_SORT_ORDER, taskSort );
       if ( refillList )
          fillListAsync();
    }

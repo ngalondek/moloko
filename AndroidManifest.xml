@@ -67,7 +67,8 @@
 
       <activity
          android:label="@string/app_name"
-         android:name=".activities.TasksListActivity">
+         android:name=".activities.TasksListActivity"
+         android:launchMode="singleTop">
          <intent-filter>
             <!-- Show a list of tasks -->
             <action

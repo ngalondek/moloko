@@ -95,8 +95,13 @@ public class TitleBarLayout extends LinearLayout implements
             break;
          
          case R.id.app_titlebar_btn_home:
-            getContext().startActivity( new Intent( getContext(),
-                                                    HomeActivity.class ) );
+            final Intent intent = new Intent( getContext(), HomeActivity.class );
+            
+            // If we return to the home screen from another activity
+            // we clear the stack.
+            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+            
+            getContext().startActivity( intent );
             break;
          
          default :

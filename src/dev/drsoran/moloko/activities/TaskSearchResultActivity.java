@@ -24,7 +24,6 @@ package dev.drsoran.moloko.activities;
 
 import android.app.SearchManager;
 import android.content.Intent;
-import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,11 +40,6 @@ public class TaskSearchResultActivity extends TasksListActivity
    
    private final static String QUERY_NOT_EVALUABLE = "query_not_evaluable";
    
-   /**
-    * This prevents the base class TasksListActivity to fill the list with all tasks during onCreate().
-    */
-   private boolean preventSuperFillList = true;
-   
    
    protected static class OptionsMenu
    {
@@ -59,30 +53,6 @@ public class TaskSearchResultActivity extends TasksListActivity
    }
    
    
-
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      if ( savedInstanceState != null )
-         configuration.putAll( savedInstanceState );
-      
-      preventSuperFillList = false;
-      
-      handleIntent( getIntent() );
-   }
-   
-
-
-   @Override
-   protected void onNewIntent( Intent intent )
-   {
-      setIntent( intent );
-      handleIntent( intent );
-   }
-   
-
 
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
@@ -128,21 +98,14 @@ public class TaskSearchResultActivity extends TasksListActivity
 
 
    @Override
-   protected boolean shouldFillList()
-   {
-      return !preventSuperFillList;
-   }
-   
-
-
-   @Override
    protected void fillList()
    {
-      if ( configuration.containsKey( QUERY_NOT_EVALUABLE ) )
+      if ( getIntent().getExtras().containsKey( QUERY_NOT_EVALUABLE ) )
       {
          UIUtils.setTitle( this,
                            getString( R.string.tasksearchresult_titlebar_error,
-                                      configuration.getString( QUERY_NOT_EVALUABLE ),
+                                      getIntent().getExtras()
+                                                 .getString( QUERY_NOT_EVALUABLE ),
                                       R.drawable.ic_title_error ) );
       }
       else
@@ -153,11 +116,12 @@ public class TaskSearchResultActivity extends TasksListActivity
    
 
 
-   private void handleIntent( Intent intent )
+   @Override
+   protected void handleIntent( Intent intent )
    {
       if ( Intent.ACTION_SEARCH.equals( intent.getAction() ) )
       {
-         configuration.clear();
+         getIntent().getExtras().clear();
          
          final String query = intent.getStringExtra( SearchManager.QUERY );
          
@@ -172,18 +136,18 @@ public class TaskSearchResultActivity extends TasksListActivity
             // smart lists are nothing else than saved searches.
             //
             // Tag the filter as already evaluated.
-            configuration.putString( FILTER_EVALUATED, evalQuery );
-            configuration.putString( TITLE,
-                                     getString( R.string.tasksearchresult_titlebar,
-                                                query ) );
+            getIntent().getExtras().putString( FILTER_EVALUATED, evalQuery );
+            getIntent().getExtras()
+                       .putString( TITLE,
+                                   getString( R.string.tasksearchresult_titlebar,
+                                              query ) );
          }
          else
          {
-            configuration.putString( QUERY_NOT_EVALUABLE, query );
+            getIntent().getExtras().putString( QUERY_NOT_EVALUABLE, query );
          }
          
-         if ( shouldFillList() )
-            fillList();
+         fillList();
       }
    }
    

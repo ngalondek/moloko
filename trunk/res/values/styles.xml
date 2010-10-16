@@ -172,7 +172,7 @@
       <item
          name="android:textStyle">bold</item>
       <item
-         name="android:textColor">@color/app_darker_gray</item>
+         name="android:textColor">@color/app_icon_black_fill</item>
    </style>
 
    <!-- ********* -->

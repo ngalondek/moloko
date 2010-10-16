@@ -23,15 +23,16 @@
 package dev.drsoran.moloko.widgets;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.provider.Rtm.RawTasks;
@@ -39,7 +40,7 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class OverDueTasksHomeWidget extends LinearLayout implements
-         OnClickListener
+         IMolokoHomeWidget
 {
    private ViewGroup widgetContainer;
    
@@ -64,8 +65,6 @@ public class OverDueTasksHomeWidget extends LinearLayout implements
       
       label = (TextView) view.findViewById( R.id.text );
       label.setText( labelId );
-      
-      setOnClickListener( this );
    }
    
 
@@ -104,15 +103,14 @@ public class OverDueTasksHomeWidget extends LinearLayout implements
    
 
 
-   public void onClick( View v )
+   public Intent getIntent()
    {
       final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-         + "today" );
+         + DateParser.tokenNames[ DateParser.TODAY ] );
       
-      getContext().startActivity( Intents.createSmartFilterIntent( getContext(),
-                                                                   filter,
-                                                                   label.getText()
-                                                                        .toString(),
-                                                                   -1 ) );
+      return Intents.createSmartFilterIntent( getContext(),
+                                              filter,
+                                              label.getText().toString(),
+                                              -1 );
    }
 }

@@ -74,6 +74,9 @@
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
    <string name="phr_today">Heute</string>
+   <string name="phr_today_with_date">Heute, der %1$s</string>
+   <string name="phr_tomorrow">Morgen</string>
+   <string name="phr_tomorrow_with_date">Morgen, der %1$s</string>
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
    <string name="phr_open_with_name">Öffne %1$s</string>
    <string name="phr_close">Schliessen</string>
@@ -110,8 +113,8 @@
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
 	<!-- Home activity -->
-	<string name="home_label_today">Heute</string>
-	<string name="home_label_tomorrow">Morgen</string>
+	<string name="home_label_today">@string/phr_today</string>
+	<string name="home_label_tomorrow">@string/phr_tomorrow</string>
 	<string name="home_label_overdue">Überfällig</string>
 	
 	<!-- StartUp activity -->

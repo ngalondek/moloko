@@ -140,7 +140,10 @@ public final class Intents
       
       if ( filter != null )
       {
-         filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " " + filter );
+         if ( filterString.length() > 0 )
+            filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " " + filter );
+         else
+            filterString = filter;
       }
       
       intent.putExtra( AbstractTasksListActivity.FILTER, filterString );

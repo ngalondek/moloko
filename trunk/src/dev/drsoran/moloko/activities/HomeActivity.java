@@ -27,15 +27,17 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class HomeActivity extends Activity
+public class HomeActivity extends Activity implements OnItemClickListener
 {
    protected static class OptionsMenu
    {
@@ -44,8 +46,6 @@ public class HomeActivity extends Activity
       private final static int MENU_ORDER_STATIC = 10000;
       
       public final static int MENU_ORDER = MENU_ORDER_STATIC - 1;
-      
-      public final static int SETTINGS = START_IDX + 1;
    }
    
    protected final Handler handler = new Handler();
@@ -81,6 +81,9 @@ public class HomeActivity extends Activity
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
       
+      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
+      gridview.setOnItemClickListener( this );
+      
       fillGrid();
    }
    
@@ -96,24 +99,22 @@ public class HomeActivity extends Activity
    
 
 
-   @Override
-   public boolean onCreateOptionsMenu( Menu menu )
-   {
-      menu.add( Menu.NONE,
-                OptionsMenu.SETTINGS,
-                OptionsMenu.MENU_ORDER_STATIC,
-                R.string.phr_settings )
-          .setIcon( R.drawable.ic_menu_settings )
-          .setIntent( new Intent( this, MolokoPreferencesActivity.class ) );
-      
-      return true;
-   }
-   
-
-
    private void fillGrid()
    {
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setAdapter( new HomeAdapter( this ) );
+   }
+   
+
+
+   public void onItemClick( AdapterView< ? > adapterView,
+                            View view,
+                            int pos,
+                            long id )
+   {
+      final Intent intent = ( (HomeAdapter) ( (GridView) adapterView ).getAdapter() ).getIntentForWidget( pos );
+      
+      if ( intent != null )
+         startActivity( intent );
    }
 }

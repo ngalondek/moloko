@@ -18,7 +18,7 @@
    android:layout_width="wrap_content"
    android:layout_height="wrap_content"
    android:paddingTop="12dip"
-   android:background="@drawable/calendar_empty_black">
+   android:background="@drawable/ic_home_calendar_empty">
 
    <TextView
       android:id="@+id/home_calendar_date"

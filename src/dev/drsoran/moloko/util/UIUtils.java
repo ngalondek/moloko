@@ -88,16 +88,18 @@ public final class UIUtils
          
          titleBarText.setText( text );
          
+         BitmapDrawable bitmap = null;
+         
          if ( iconResId != -1 )
          {
-            final BitmapDrawable bitmap = new BitmapDrawable( activity.getResources()
-                                                                      .openRawResource( iconResId ) );
-            
-            titleBarText.setCompoundDrawablesWithIntrinsicBounds( bitmap,
-                                                                  null,
-                                                                  null,
-                                                                  null );
+            bitmap = new BitmapDrawable( activity.getResources()
+                                                 .openRawResource( iconResId ) );
          }
+         
+         titleBarText.setCompoundDrawablesWithIntrinsicBounds( bitmap,
+                                                               null,
+                                                               null,
+                                                               null );
       }
    }
    

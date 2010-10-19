@@ -90,9 +90,14 @@ options
             sdf = new SimpleDateFormat( "dd.MMM.yyyy",
                                         LOCALE /* Locale for MMM*/ );
          }
-
-         sdf.setCalendar( cal );
+         
          sdf.parse( day + "." + month + "." + year );
+
+			final Calendar sdfCal = sdf.getCalendar();
+			
+         cal.set( Calendar.DAY_OF_MONTH, sdfCal.get( Calendar.DAY_OF_MONTH ) );
+         cal.set( Calendar.MONTH,        sdfCal.get( Calendar.MONTH ) );         
+         cal.set( Calendar.YEAR,         sdfCal.get( Calendar.YEAR ) );
       }
       catch( ParseException e )
       {
@@ -183,7 +188,7 @@ options
 /** RULES **/
 
 
-parseDate [Calendar cal]
+parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
    : (   date_full         [$cal]
        | date_on           [$cal]
        | date_in_X_YMWD    [$cal]
@@ -193,21 +198,28 @@ parseDate [Calendar cal]
    // at last step cause the Calendar methods
    // will set them again.
 	{
-		cal.set( Calendar.HOUR_OF_DAY, 0 );
-   	cal.set( Calendar.MINUTE, 0 );
-		cal.set( Calendar.SECOND, 0 );
-		cal.set( Calendar.MILLISECOND, 0 );
+		if ( clearTime )
+		{
+			cal.set( Calendar.HOUR_OF_DAY, 0 );
+	   	cal.set( Calendar.MINUTE, 0 );
+			cal.set( Calendar.SECOND, 0 );
+			cal.set( Calendar.MILLISECOND, 0 );
 		
-	   cal.clear( Calendar.HOUR );
-      cal.clear( Calendar.HOUR_OF_DAY );
-      cal.clear( Calendar.MINUTE );
-      cal.clear( Calendar.SECOND );
-      cal.clear( Calendar.MILLISECOND );
+		   cal.clear( Calendar.HOUR );
+	      cal.clear( Calendar.HOUR_OF_DAY );
+   	   cal.clear( Calendar.MINUTE );
+      	cal.clear( Calendar.SECOND );
+	      cal.clear( Calendar.MILLISECOND );
+      }
+   }
+   | EOF
+   {
+   	eof = true;
    }
    ;
-   catch [NoViableAltException nve]
+   catch [RecognitionException e]
    {
-      throw new RecognitionException();
+      throw e;
    }
 
 date_full [Calendar cal]
@@ -242,6 +254,10 @@ date_on [Calendar cal]
            | date_on_M_Xst   [$cal]
            | date_on_weekday [$cal])
    ;
+   catch [RecognitionException e]
+   {
+      throw e;
+   }
 
 date_on_Xst_of_M [Calendar cal]
 	@init
@@ -284,6 +300,10 @@ date_on_Xst_of_M [Calendar cal]
    {
       throw new RecognitionException();
    }
+   catch [RecognitionException e]
+   {
+      throw e;
+   }
 
 date_on_M_Xst [Calendar cal]
 	@init
@@ -317,6 +337,10 @@ date_on_M_Xst [Calendar cal]
    {
       throw new RecognitionException();
    }
+   catch [RecognitionException e]
+   {
+      throw e;
+   }
 
 date_on_weekday [Calendar cal]
    @init
@@ -346,11 +370,19 @@ date_on_weekday [Calendar cal]
    {
       throw new RecognitionException();
    }
+   catch [RecognitionException e]
+   {
+      throw e;
+   }
 
 date_in_X_YMWD [Calendar cal]
    :  IN?             date_in_X_YMWD_distance[$cal]
       (( AND| COMMA ) date_in_X_YMWD_distance[$cal])*
    ;
+   catch [RecognitionException e]
+   {
+      throw e;
+   }
 
 date_in_X_YMWD_distance [Calendar cal]
    @init
@@ -379,6 +411,10 @@ date_in_X_YMWD_distance [Calendar cal]
    {
       throw new RecognitionException();
    }
+   catch [RecognitionException e]
+   {
+      throw e;
+   }
 
 date_end_of_the_MW [Calendar cal]
    : END OF? THE?
@@ -391,6 +427,10 @@ date_end_of_the_MW [Calendar cal]
             rollToEndOf( Calendar.DAY_OF_MONTH, cal );
          })
    ;
+   catch [RecognitionException e]
+   {
+      throw e;
+   }
 
 date_natural [Calendar cal]
    : (TODAY | TONIGHT)
@@ -405,3 +445,8 @@ date_natural [Calendar cal]
         cal.roll( Calendar.DAY_OF_YEAR, false );
      }
    ;
+   catch [RecognitionException e]
+   {
+      throw e;
+   }
+   

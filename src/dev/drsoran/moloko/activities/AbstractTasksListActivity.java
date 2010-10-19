@@ -124,6 +124,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public final static int NOTES = 5;
    }
    
+   protected View emptyListView;
+   
    protected final Runnable fillListRunnable = new Runnable()
    {
       public void run()
@@ -151,6 +153,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       super.onCreate( savedInstanceState );
       setContentView( R.layout.taskslist_activity );
+      
+      emptyListView = findViewById( R.id.empty );
       
       registerForContextMenu( getListView() );
       
@@ -248,12 +252,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                OptionsMenu.SYNC,
                                OptionsMenu.MENU_ORDER_FRONT );
       
-      addOptionalMenuItem( menu,
-                           OptionsMenu.SORT,
-                           getString( R.string.abstaskslist_menu_opt_sort ),
-                           OptionsMenu.MENU_ORDER,
-                           R.drawable.ic_menu_sort,
-                           getListAdapter().getCount() > 1 );
+      if ( getListAdapter() != null )
+         addOptionalMenuItem( menu,
+                              OptionsMenu.SORT,
+                              getString( R.string.abstaskslist_menu_opt_sort ),
+                              OptionsMenu.MENU_ORDER,
+                              R.drawable.ic_menu_sort,
+                              getListAdapter().getCount() > 1 );
       
       return true;
    }
@@ -685,6 +690,18 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
+   protected void clearList( View emptyView )
+   {
+      setListAdapter( new TasksListAdapter( this,
+                                            R.layout.taskslist_activity_listitem,
+                                            new ArrayList< ListTask >( 0 ),
+                                            null ) );
+      
+      switchEmptyView( emptyView );
+   }
+   
+
+
    abstract protected void handleIntent( Intent intent );
    
 
@@ -767,6 +784,25 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       else
       {
          menu.removeItem( id );
+      }
+   }
+   
+
+
+   protected void switchEmptyView( View newEmptyView )
+   {
+      final View currentView = getListView().getEmptyView();
+      
+      final boolean change = ( currentView != null && newEmptyView == null )
+         || ( currentView == null && newEmptyView != null )
+         || ( currentView.getId() != newEmptyView.getId() );
+      
+      if ( change )
+      {
+         if ( currentView != null )
+            currentView.setVisibility( View.GONE );
+         
+         getListView().setEmptyView( newEmptyView );
       }
    }
 }

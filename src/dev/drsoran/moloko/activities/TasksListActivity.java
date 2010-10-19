@@ -129,7 +129,13 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                   R.layout.taskslist_activity_listitem,
                                                   ListTask.fromTaskList( tasks ),
                                                   configuration.getBundle( ADAPTER_CONFIG ) ) );
+            
+            switchEmptyView( emptyListView );
          }
+      }
+      else
+      {
+         // TODO: Show error
       }
    }
    

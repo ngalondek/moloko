@@ -27,11 +27,33 @@
       moloko:titleText="@string/app_name"
       moloko:showButton="home|search" />
 
-   <ListView
-      android:id="@+id/android:list"
-      style="@style/TasksList_TaskList"
+   <!--
+      The frame layout is here since we will be showing either the empty view or
+      the list view.
+   -->
+   <FrameLayout
       android:layout_width="fill_parent"
       android:layout_height="0dip"
-      android:layout_weight="1" />
+      android:layout_weight="1">
+
+      <ListView
+         android:id="@+id/android:list"
+         style="@style/TasksList_TaskList"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent" />
+
+      <TextView
+         android:id="@+id/empty"
+         style="@style/App_No_List_Elements_Text"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent"
+         android:text="@string/abstaskslist_no_tasks"
+         android:visibility="gone" />
+
+      <dev.drsoran.moloko.layouts.TitleWithTextLayout
+         android:id="@+id/tasksearchresult_wrong_syntax"
+         style="@style/TaskSearchResult_Wrong_Syntax"
+         android:visibility="gone" />
+   </FrameLayout>
 
 </LinearLayout>

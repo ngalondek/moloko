@@ -25,10 +25,14 @@ package dev.drsoran.moloko.activities;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.provider.SearchRecentSuggestions;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.RtmSmartFilter;
 
@@ -37,8 +41,6 @@ public class TaskSearchResultActivity extends TasksListActivity
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = TaskSearchResultActivity.class.getSimpleName();
-   
-   private final static String QUERY_NOT_EVALUABLE = "query_not_evaluable";
    
    
    protected static class OptionsMenu
@@ -98,56 +100,45 @@ public class TaskSearchResultActivity extends TasksListActivity
 
 
    @Override
-   protected void fillList()
-   {
-      if ( getIntent().getExtras().containsKey( QUERY_NOT_EVALUABLE ) )
-      {
-         UIUtils.setTitle( this,
-                           getString( R.string.tasksearchresult_titlebar_error,
-                                      getIntent().getExtras()
-                                                 .getString( QUERY_NOT_EVALUABLE ),
-                                      R.drawable.ic_title_error ) );
-      }
-      else
-      {
-         super.fillList();
-      }
-   }
-   
-
-
-   @Override
    protected void handleIntent( Intent intent )
    {
       if ( Intent.ACTION_SEARCH.equals( intent.getAction() ) )
       {
-         getIntent().getExtras().clear();
-         
-         final String query = intent.getStringExtra( SearchManager.QUERY );
+         final RtmSmartFilter filter = new RtmSmartFilter( intent.getStringExtra( SearchManager.QUERY ) );
          
          // try to evaluate the query
-         final String evalQuery = RtmSmartFilter.evaluate( query, true );
+         final String evalQuery = filter.getEvaluatedFilterString();
          
          if ( evalQuery != null )
          {
-            getRecentSuggestions().saveRecentQuery( query, null );
+            getRecentSuggestions().saveRecentQuery( filter.getFilterString(),
+                                                    null );
             
-            // we put the query string as smart filter cause
-            // smart lists are nothing else than saved searches.
-            //
-            // Tag the filter as already evaluated.
-            getIntent().getExtras().putString( FILTER_EVALUATED, evalQuery );
-            getIntent().getExtras()
-                       .putString( TITLE,
-                                   getString( R.string.tasksearchresult_titlebar,
-                                              query ) );
+            final Intent newIntent = Intents.createSmartFilterIntent( this,
+                                                                      filter,
+                                                                      getString( R.string.tasksearchresult_titlebar,
+                                                                                 filter.getFilterString() ),
+                                                                      -1 );
+            setIntent( newIntent );
+            super.handleIntent( newIntent );
          }
          else
          {
-            getIntent().getExtras().putString( QUERY_NOT_EVALUABLE, query );
+            UIUtils.setTitle( this,
+                              getString( R.string.tasksearchresult_titlebar_error ),
+                              R.drawable.ic_title_error );
+            
+            final View wrongSyntaxView = findViewById( R.id.tasksearchresult_wrong_syntax );
+            final TextView text = (TextView) wrongSyntaxView.findViewById( R.id.title_with_text_text );
+            
+            final String msgStr = String.format( getString( R.string.tasksearchresult_wrong_syntax ),
+                                                 filter.getFilterString() );
+            final CharSequence msg = Html.fromHtml( msgStr );
+            
+            text.setText( msg );
+            
+            clearList( wrongSyntaxView );
          }
-         
-         fillList();
       }
    }
    

@@ -712,30 +712,30 @@ rg.prototype.formatTimeEstimate = function (B)
    this.timeEstimateFormatCache[B] = E;
    return E
 };
-rg.prototype.parseTimeSpec = function (B, V)
+rg.prototype.parseTimeSpec = function (B, withPos)
 {
    var Q = ".",
       O = "0",
       U = "_",
-      R = "undefined";
+      undef = "undefined";
    var A = false;
-   var K, F, D;
-   var V = !! V;
+   var hour, min, sec;
+   var withPos = !! withPos;
    var M = null;
    var I = [B, V].join(U);
    if (this.timeSpecCache[I])
    {
       return this.timeSpecCache[I]
    }
-   K = F = D = 0;
+   hour = min = sec = 0;
    var H = /([0-9]+)\:([0-9]+)\:([0-9]+)/i.exec(B);
    if (H != null)
    {
-      if (typeof H[0] != R)
+      if (typeof H[0] != undef)
       {
-         K = parseInt(H[1], 10);
-         F = parseInt(H[2], 10);
-         D = parseInt(H[3], 10);
+         hour = parseInt(H[1], 10);
+         min = parseInt(H[2], 10);
+         sec = parseInt(H[3], 10);
          A = true;
          M = B.indexOf(H[0])
       }
@@ -745,17 +745,17 @@ rg.prototype.parseTimeSpec = function (B, V)
       var H = /([0-9.]+)\s*(hours|hour|hrs|hr|h)/i.exec(B);
       if (H != null)
       {
-         if (typeof H[0] != R)
+         if (typeof H[0] != undef)
          {
             var J = H[1].indexOf(Q);
             if (J > -1)
             {
-               K = parseInt(H[1].substring(0, J), 10);
-               F = parseFloat(O + H[1].substring(J, H[1].length)) * 60
+               hour = parseInt(H[1].substring(0, J), 10);
+               min = parseFloat(O + H[1].substring(J, H[1].length)) * 60
             }
             else
             {
-               K = parseInt(H[1], 10)
+               hour = parseInt(H[1], 10)
             }
             A = true;
             M = B.indexOf(H[0])
@@ -764,9 +764,9 @@ rg.prototype.parseTimeSpec = function (B, V)
       var H = /([0-9.]+)\s*(minutes|minute|mins|min|m)/i.exec(B);
       if (H != null)
       {
-         if (typeof H[0] != R)
+         if (typeof H[0] != undef)
          {
-            F += parseInt(H[1], 10);
+            min += parseInt(H[1], 10);
             A = true;
             if (M === null)
             {
@@ -777,9 +777,9 @@ rg.prototype.parseTimeSpec = function (B, V)
       var H = /([0-9.]+)\s*(seconds|second|secs|sec|s)/i.exec(B);
       if (H != null)
       {
-         if (typeof H[0] != R)
+         if (typeof H[0] != undef)
          {
-            D += parseInt(H[1], 10);
+            sec += parseInt(H[1], 10);
             A = true;
             if (M === null)
             {
@@ -788,10 +788,10 @@ rg.prototype.parseTimeSpec = function (B, V)
          }
       }
    }
-   D = K * 60 * 60 + F * 60 + D;
+   res = hour * 60 * 60 + min * 60 + sec;
    if (A)
    {
-      var E = V ? [D, M] : D;
+      var E = withPos ? [res, M] : res;
       this.timeSpecCache[I] = E;
       return E
    }
@@ -820,7 +820,7 @@ rg.prototype.formatTimeSpec = function (E)
       K = "minute",
       I = "second";
    var B = this.splitTimeSpec(E);
-   var F = B[0];
+   var sec = B[0];
    var D = B[1];
    var A = B[2];
    var H = Q;
@@ -1175,15 +1175,15 @@ rg.prototype.parseDueDate = function (input)
       matchNow = rg.reNow.exec(input);
       matchTom = rg.tom.exec(input)
    }
-   var A9 = this.parseTimeSpec(input, true);
-   var Ae = A9 !== null ? A9[1] : null;
-   A9 = A9 !== null ? A9[0] : null;
-   var Av = rg.time_sep.exec(input);
-   var A4 = rg.time_hhmm.exec(input);
-   var An = rg.time_hh.exec(input);
+   var timeSpec = this.parseTimeSpec(input, true);
+   var posTimeSpecStart = timeSpec !== null ? timeSpec[1] : null;
+   timeSpec = timeSpec !== null ? timeSpec[0] : null;
+   var matchTimeSep = rg.time_sep.exec(input);
+   var matchTime_hhmm = rg.time_hhmm.exec(input);
+   var matchTime_hh = rg.time_hh.exec(input);
    var A6 = false;
    var O = false;
-   if (!matchNow && (!matchTom && (!matchFullDate && (!matchOn_Xst_of_M_Y && (!matchOn_next_weekday && (!matchIn_X_YMWD && (!matchOn_Xst && (!matchOn_M_Xst_Y && (!matchRTMformat && (!matchEnd_of_WM && (!Av && (!A4 && (!An && !A9)))))))))))))
+   if (!matchNow && (!matchTom && (!matchFullDate && (!matchOn_Xst_of_M_Y && (!matchOn_next_weekday && (!matchIn_X_YMWD && (!matchOn_Xst && (!matchOn_M_Xst_Y && (!matchRTMformat && (!matchEnd_of_WM && (!matchTimeSep && (!matchTime_hhmm && (!matchTime_hh && !timeSpec)))))))))))))
    {
       return this.useCache ? (this.cache[Q] = [null, null]) : [null, null]
    }
@@ -1280,12 +1280,12 @@ rg.prototype.parseDueDate = function (input)
       }
    }
    AS = BA;
-   A9 = this.parseTimeSpec(input, true);
-   Ae = A9 !== null ? A9[1] : null;
-   A9 = A9 !== null ? A9[0] : null;
-   Av = rg.time_sep.exec(input);
-   A4 = rg.time_hhmm.exec(input);
-   An = rg.time_hh.exec(input);
+   timeSpec = this.parseTimeSpec(input, true);
+   posTimeSpecStart = timeSpec !== null ? timeSpec[1] : null;
+   timeSpec = timeSpec !== null ? timeSpec[0] : null;
+   matchTimeSep = rg.time_sep.exec(input);
+   matchTime_hhmm = rg.time_hhmm.exec(input);
+   matchTime_hh = rg.time_hh.exec(input);
    var BG = null;
    var A0 = null;
    var A7 = null;
@@ -1588,72 +1588,72 @@ rg.prototype.parseDueDate = function (input)
    var Ar = true;
    var M = null;
    var BJ = null;
-   if (Av)
+   if (matchTimeSep)
    {
-      if (Av[2])
+      if (matchTimeSep[2])
       {
-         AA = Av[2];
-         if (Av[3])
+         AA = matchTimeSep[2];
+         if (matchTimeSep[3])
          {
-            BM = parseInt(Av[3], 10)
+            BM = parseInt(matchTimeSep[3], 10)
          }
          else
          {
             BM = 0
          }
-         AA = this.normalizeAMPM(AA, Av[4]);
+         AA = this.normalizeAMPM(AA, matchTimeSep[4]);
          O = true;
          AE += AN;
-         M = Q.indexOf(Av[0])
+         M = Q.indexOf(matchTimeSep[0])
       }
    }
    else
    {
-      if (A4)
+      if (matchTime_hhmm)
       {
-         if (A4[2])
+         if (matchTime_hhmm[2])
          {
-            if (A4[2].length == 3)
+            if (matchTime_hhmm[2].length == 3)
             {
-               AA = parseInt(A4[2].substring(0, 1), 10);
-               BM = parseInt(A4[2].substring(1, 3), 10)
+               AA = parseInt(matchTime_hhmm[2].substring(0, 1), 10);
+               BM = parseInt(matchTime_hhmm[2].substring(1, 3), 10)
             }
             else
             {
-               AA = parseInt(A4[2].substring(0, 2), 10);
-               BM = parseInt(A4[2].substring(2, 4), 10)
+               AA = parseInt(matchTime_hhmm[2].substring(0, 2), 10);
+               BM = parseInt(matchTime_hhmm[2].substring(2, 4), 10)
             }
-            AA = this.normalizeAMPM(AA, A4[3]);
+            AA = this.normalizeAMPM(AA, matchTime_hhmm[3]);
             O = true;
             AE += AM;
-            M = Q.indexOf(A4[0])
+            M = Q.indexOf(matchTime_hhmm[0])
          }
       }
       else
       {
-         if (A9 === null && An)
+         if (timeSpec === null && matchTime_hh)
          {
-            if (An[2])
+            if (matchTime_hh[2])
             {
-               AA = parseInt(An[2], 10);
+               AA = parseInt(matchTime_hh[2], 10);
                BM = 0;
-               AA = this.normalizeAMPM(AA, An[3]);
+               AA = this.normalizeAMPM(AA, matchTime_hh[3]);
                O = true;
                AE += AL;
-               M = Q.indexOf(An[0]);
-               BJ = An[0].length
+               M = Q.indexOf(matchTime_hh[0]);
+               BJ = matchTime_hh[0].length
             }
          }
          else
          {
-            An = null
+            matchTime_hh = null
          }
       }
    }
    var Ag = false;
-   if (!Av && (!A4 && !An) && A9 !== null)
+   if (!matchTimeSep && (!matchTime_hhmm && !matchTime_hh) && timeSpec !== null)
    {
-      var As = this.splitTimeSpec(A9);
+      var As = this.splitTimeSpec(timeSpec);
       AA = As[0];
       BM = As[1];
       seconds = As[2];
@@ -1667,7 +1667,7 @@ rg.prototype.parseDueDate = function (input)
       Ar = false;
       AE += AK;
       Ag = true;
-      M = Ae
+      M = posTimeSpecStart
    }
    if (M !== null && (AS === null || M < AS))
    {
@@ -1707,7 +1707,7 @@ rg.prototype.parseDueDate = function (input)
       A7 = parseInt(A7, 10) + 1
    }
    var matchIn_X_YMWD = new Date(BG, A0 - 1, A7, AA, BM, 0);
-   var A3 = [matchIn_X_YMWD, Z, Ar, AE, BI, Q, input, AS, Au, An];
+   var A3 = [matchIn_X_YMWD, Z, Ar, AE, BI, Q, input, AS, Au, matchTime_hh];
    return this.useCache ? (this.cache[Q] = A3) : A3
 };
 rg.prototype.getTimeTuple = function ()

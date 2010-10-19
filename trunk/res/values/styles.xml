@@ -152,6 +152,15 @@
       <item
          name="android:textStyle">bold</item>
    </style>
+   
+   <style
+      name="App_No_List_Elements_Text"
+      parent="@android:style/TextAppearance.Medium">
+      <item      
+         name="android:textColor">@color/priority_2</item>
+      <item
+         name="android:textStyle">italic|bold</item>
+   </style>
 
 
    <!-- ********* -->
@@ -375,6 +384,26 @@
          name="android:ellipsize">end</item>
       <item
          name="android:singleLine">true</item>
+   </style>
+   
+   <!-- **************** -->
+   <!-- TaskSearchResult -->
+   <style
+      name="TaskSearchResult_Wrong_Syntax">
+      <item
+         name="android:layout_width">fill_parent</item>
+      <item
+         name="android:layout_height">wrap_content</item>
+      <item
+         name="textSize">@dimen/app_title_with_text_textSize</item>
+      <item
+         name="textStyle">normal</item>
+      <item
+         name="showTopLine">false</item>
+      <item
+         name="imageSrc">@drawable/ic_black_error</item>
+      <item
+         name="text">@string/err_error</item>
    </style>
 
 </resources>

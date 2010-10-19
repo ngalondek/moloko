@@ -32,4 +32,11 @@
       style="@style/TaskLists_Lists"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent" />
+      
+   <TextView
+      android:id="@id/android:empty"
+      style="@style/App_No_List_Elements_Text"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:text="@string/tasklists_no_lists" />
 </LinearLayout>

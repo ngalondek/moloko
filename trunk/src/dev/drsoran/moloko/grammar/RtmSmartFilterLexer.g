@@ -112,6 +112,8 @@ options
 	
 	private boolean hasStatusCompletedOp = false;
 	
+	private boolean error = false;
+	
 	private Calendar parseDateTimeSpec( String spec )
 	{
       final DateTimeLexer lexer           = new DateTimeLexer( new ANTLRNoCaseStringStream( spec ) );
@@ -120,50 +122,74 @@ options
       
       final Calendar cal = TimeParser.getLocalizedCalendar();
       
-      boolean finished = false;
-      // first try to parse time
+      boolean eof = false;
+      boolean hasTime = false;
+      boolean hasDate = false;
+      boolean error = false;
+      
+      // first try to parse time spec
       try
       {
          // The parser can adjust the day of week
          // for times in the past.
-         timeParser.parseTime( cal, true );
-         finished = true;
+         eof = timeParser.parseTimeSpec( cal, !hasDate );
+         hasTime = !eof;
       }
       catch ( RecognitionException e )
       {
       }
       
-      if ( !finished )
+      if ( !eof )
       {
-         antlrTokens.reset();
+         if ( !hasTime )
+            antlrTokens.reset();
          
          final DateParser dateParser = new DateParser( antlrTokens );
          
          try
          {
-            dateParser.parseDate( cal );
-            
-            try
-            {
-               // Check if there is a time trailing.
-               // The parser can not adjust the day of week
-               // for times in the past.
-               timeParser.parseTime( cal, false );
-            }
-            catch ( RecognitionException re2 )
-            {
-            }
-            finally
-            {
-               finished = true;
-            }
+            eof = dateParser.parseDate( cal, !hasTime );
+            hasDate = !eof;
          }
          catch ( RecognitionException e )
-         {           
+         {
+            error = true;
          }
       }
       
-      return ( finished ) ? cal : null;
+      // Check if there is a time trailing.
+      // The parser can NOT adjust the day of week
+      // for times in the past.
+      if ( !error && !eof && hasDate && !hasTime )
+      {
+         final int streamPos = antlrTokens.mark();
+         
+         try
+         {
+            eof = timeParser.parseTime( cal, !hasDate );
+            hasTime = !eof;
+         }
+         catch ( RecognitionException re2 )
+         {
+         }
+         
+         if ( !eof && !hasTime )
+         {
+            antlrTokens.rewind( streamPos );
+            
+            try
+            {
+               eof = timeParser.parseTimeSpec( cal, !hasDate );
+               hasTime = !eof;
+            }
+            catch ( RecognitionException re3 )
+            {
+               error = true;
+            }
+         }
+      }
+      
+      return ( !error ) ? cal : null;
 	}
 
 
@@ -243,6 +269,9 @@ options
 				result.append( cal.getTimeInMillis() );
 		   }
       }
+      else
+      	// Parser error
+      	error = true;
    }
 
 
@@ -263,16 +292,19 @@ options
 
 	public String getResult() throws RecognitionException
 	{
-		if ( result.length() == 0 )
+		if ( !error && result.length() == 0 )
 		{
          hasStatusCompletedOp = false;
 
-         while ( nextToken() != Token.EOF_TOKEN )
+         while ( !error && nextToken() != Token.EOF_TOKEN )
          {
          }
       }
       
-      return result.toString();
+      if ( error )
+         throw new RecognitionException();
+            
+	   return result.toString();
 	}
 	
 	
@@ -357,7 +389,7 @@ OP_LOCATION : 'location:' ( s=STRING | s=Q_STRING )
 					
 // OP_LOCATED_WITHIN
 
-OP_ISLOCATED : 'isLocated:'
+OP_ISLOCATED : 'islocated:'
 					{
 						result.append( Tasks.LOCATION_ID );
 					}
@@ -384,17 +416,17 @@ OP_NAME		:  'name:' ( s=STRING | s=Q_STRING )
 OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
 						 {
 						 	 result.append( " (SELECT " )
-				                 .append( Notes.TASKSERIES_ID )
-				                 .append( " FROM " )
-				                 .append( Notes.PATH )
-				                 .append( " WHERE " )
-				                 .append( Notes.TASKSERIES_ID )
-				                 .append( " = subQuery." )
-				                 .append( Tasks._ID )
-				                 .append( " AND " )
-				                 .append( Notes.NOTE_TEXT );
-				           containsStringParam( $s.getText() );
-				           result.append( ")" );
+				                .append( Notes.TASKSERIES_ID )
+				                .append( " FROM " )
+				                .append( Notes.PATH )
+				                .append( " WHERE " )
+				                .append( Notes.TASKSERIES_ID )
+				                .append( " = subQuery." )
+				                .append( Tasks._ID )
+				                .append( " AND " )
+				                .append( Notes.NOTE_TEXT );
+				          containsStringParam( $s.getText() );
+				          result.append( ")" );
 						 };
 
 OP_HAS_NOTES : 'hasnotes:'

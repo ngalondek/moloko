@@ -130,6 +130,7 @@
 	<string name="task_datetime_estimate_inline">%1$s geschätzt</string>
 		
    <!-- TaskLists activity -->
+   <string name="tasklists_no_lists">Es existieren kein Listen</string>
    <string name="tasklists_child_due_today">%1$s heute fällig</string>
    <string name="tasklists_child_due_tomorrow">%1$s morgen fällig</string>
    <string name="tasklists_child_overdue">%1$s überfällig</string>
@@ -141,6 +142,7 @@
      <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
    
 	<!-- AbstractTasksList -->
+   <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
 	  <string name="abstaskslist_listitem_ctx_open_task">Öffne Aufgabe</string>
@@ -160,7 +162,8 @@
      
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar">%1$s</string>
-   <string name="tasksearchresult_titlebar_error">%1$s falsche Syntax</string>
+   <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>
+   <string name="tasksearchresult_wrong_syntax">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>   
 	  

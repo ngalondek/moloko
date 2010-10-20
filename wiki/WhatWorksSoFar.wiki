@@ -35,6 +35,7 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 || added: || _date string_ ||
 || addedAfter: || _date string_ ||
 || addedBefore: || _date string_ ||
+|| timeEstimate: || "(>|<)? _time estimation string_" ||
 || postponed: || string ||
 || tag: || string ||
 || tagContains: || string ||
@@ -44,6 +45,7 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 || AND, OR, NOT, (, ) || operator ||
 
  * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
+* _time estimation string_ is an [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm RTM time format] string.
 
 Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.
 
@@ -65,7 +67,6 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
  * isRepeating:
  * completedWithin:
  * addedWithin:
- * timeEstimate:
  * isShared:
  * sharedWith
  * isReceived:

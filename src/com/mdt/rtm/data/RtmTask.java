@@ -28,8 +28,11 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
+import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
@@ -86,6 +89,8 @@ public class RtmTask extends RtmData implements
    
    private final String estimate;
    
+   private long estimateMillis;
+   
    
    public enum Priority
    {
@@ -141,7 +146,7 @@ public class RtmTask extends RtmData implements
 
    public RtmTask( String id, Date due, int hasDueTime, Date added,
       Date completed, Date deleted, Priority priority, int postponed,
-      String estimate )
+      String estimate, long estimateMillis )
    {
       this.id = id;
       this.due = ( due != null ) ? new ParcelableDate( due ) : null;
@@ -153,6 +158,7 @@ public class RtmTask extends RtmData implements
       this.priority = priority;
       this.postponed = postponed;
       this.estimate = estimate;
+      this.estimateMillis = estimateMillis;
    }
    
 
@@ -206,6 +212,8 @@ public class RtmTask extends RtmData implements
       }
       
       estimate = textNullIfEmpty( elt, "estimate" );
+      
+      parseEstimate();
    }
    
 
@@ -221,6 +229,7 @@ public class RtmTask extends RtmData implements
       priority = Priority.None;
       postponed = 0;
       estimate = null;
+      estimateMillis = -1;
    }
    
 
@@ -236,6 +245,7 @@ public class RtmTask extends RtmData implements
       this.priority = Priority.valueOf( source.readString() );
       this.postponed = source.readInt();
       this.estimate = source.readString();
+      this.estimateMillis = source.readLong();
    }
    
 
@@ -310,6 +320,13 @@ public class RtmTask extends RtmData implements
    
 
 
+   public long getEstimateMillis()
+   {
+      return estimateMillis;
+   }
+   
+
+
    @Override
    public String toString()
    {
@@ -336,6 +353,31 @@ public class RtmTask extends RtmData implements
       dest.writeString( priority.toString() );
       dest.writeInt( postponed );
       dest.writeString( estimate );
+      dest.writeLong( estimateMillis );
+   }
+   
+
+
+   private void parseEstimate()
+   {
+      if ( !TextUtils.isEmpty( estimate ) )
+      {
+         RtmSmartFilterLexer lexer = MolokoApp.acquireLexer();
+         
+         if ( lexer != null )
+         {
+            this.estimateMillis = lexer.parseEstimated( estimate );
+            lexer = MolokoApp.releaseLexer();
+         }
+         else
+         {
+            this.estimateMillis = -1;
+         }
+      }
+      else
+      {
+         this.estimateMillis = -1;
+      }
    }
    
 
@@ -417,10 +459,17 @@ public class RtmTask extends RtmData implements
                                                 .build() );
          
          if ( Strings.hasStringChanged( estimate, update.estimate ) )
+         {
             result.add( ContentProviderOperation.newUpdate( uri )
                                                 .withValue( RawTasks.ESTIMATE,
                                                             update.estimate )
                                                 .build() );
+            
+            result.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( RawTasks.ESTIMATE_MILLIS,
+                                                            update.estimateMillis )
+                                                .build() );
+         }
       }
       else
       {
@@ -431,4 +480,5 @@ public class RtmTask extends RtmData implements
                                                          ? result
                                                          : NoopContentProviderSyncOperation.INSTANCE;
    }
+   
 }

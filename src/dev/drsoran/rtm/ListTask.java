@@ -41,9 +41,9 @@ public class ListTask extends Task
       Date created, Date modified, String name, String source, String url,
       String locationId, String listId, Date due, boolean hasDueTime,
       Date added, Date completed, Date deleted, Priority priority,
-      boolean posponed, String estimate, String locationName, float longitude,
-      float latitude, String address, boolean isViewable, int zoom,
-      List< String > tags, int numNotes )
+      boolean posponed, String estimate, long estimateMillis,
+      String locationName, float longitude, float latitude, String address,
+      boolean isViewable, int zoom, List< String > tags, int numNotes )
    {
       super( id,
              listName,
@@ -63,6 +63,7 @@ public class ListTask extends Task
              priority,
              posponed,
              estimate,
+             estimateMillis,
              locationName,
              longitude,
              latitude,
@@ -95,6 +96,7 @@ public class ListTask extends Task
                            task.getPriority(),
                            task.isPosponed(),
                            task.getEstimate(),
+                           task.getEstimateMillis(),
                            task.getLocationName(),
                            task.getLongitude(),
                            task.getLatitude(),

@@ -136,7 +136,7 @@ options
    
    
 	
-	private Calendar parseDateTimeSpec( String spec )
+	public Calendar parseDateTimeSpec( String spec )
 	{
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( spec );
       dateTimeLexer.setCharStream( stream );
@@ -215,6 +215,32 @@ options
       
       return ( !error ) ? cal : null;
 	}
+
+
+
+	public long parseEstimated( String estimated )
+   {
+      long estimatedLong = -1;
+      
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( estimated );
+      dateTimeLexer.setCharStream( stream );
+      
+      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
+      boolean error = false;
+      
+      timeParser.setTokenStream( antlrTokens );
+      
+      try
+      {
+         estimatedLong = timeParser.parseTimeEstimate();
+      }
+      catch ( RecognitionException e )
+      {
+         error = true;
+      }
+      
+      return ( !error ) ? estimatedLong : -1;
+   }
 
 
 
@@ -540,7 +566,33 @@ OP_ADDED_AFTER : 'addedafter:' ( s=STRING | s=Q_STRING )
 
 // OP_ADDED_WITHIN
 
-// OP_TIME_ESTIMATE
+OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
+                   {
+                   	 result.append( Tasks.ESTIMATE_MILLIS );
+            
+			             final String param = unquotify( s.getText() );
+			            
+			             long estimatedMillis = -1;
+			             final char chPos0 = param.charAt( 0 );
+			            
+			             if ( chPos0 == '<' || chPos0 == '>' )
+			             {
+     			             result.append( " > -1 AND " ).append( Tasks.ESTIMATE_MILLIS );
+			                result.append( chPos0 );
+			                estimatedMillis = parseEstimated( param.substring( 1 ) );			               
+   	    	          }
+			             else
+			             {
+			                result.append( "=" );
+			                estimatedMillis = parseEstimated( param );
+			             }
+			            
+			             // Parser error
+			             if ( estimatedMillis == -1 )
+			                error = true;
+			             else
+			                result.append( estimatedMillis );
+						 };
 
 OP_POSTPONED : 'postponed:'
 					{

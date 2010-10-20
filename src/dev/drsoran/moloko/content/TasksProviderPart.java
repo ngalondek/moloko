@@ -66,8 +66,9 @@ public class TasksProviderPart extends AbstractProviderPart
     Tasks.SOURCE, Tasks.URL, Tasks.RAW_TASK_ID, Tasks.DUE_DATE,
     Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE, Tasks.COMPLETED_DATE,
     Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED, Tasks.ESTIMATE,
-    Tasks.LOCATION_ID, Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE,
-    Tasks.ADDRESS, Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.NUM_NOTES };
+    Tasks.ESTIMATE_MILLIS, Tasks.LOCATION_ID, Tasks.LOCATION_NAME,
+    Tasks.LONGITUDE, Tasks.LATITUDE, Tasks.ADDRESS, Tasks.VIEWABLE, Tasks.ZOOM,
+    Tasks.TAGS, Tasks.NUM_NOTES };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -113,6 +114,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        Tasks.PRIORITY,
                                                        Tasks.POSTPONED,
                                                        Tasks.ESTIMATE,
+                                                       Tasks.ESTIMATE_MILLIS,
                                                        Tasks.LOCATION_ID },
                                                       
                                                       // where
@@ -505,7 +507,9 @@ public class TasksProviderPart extends AbstractProviderPart
                                            COL_INDICES.get( Tasks.DELETED_DATE ) ),
                        RtmTask.convertPriority( c.getString( COL_INDICES.get( Tasks.PRIORITY ) ) ),
                        c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ) != 0,
-                       c.getString( COL_INDICES.get( Tasks.ESTIMATE ) ),
+                       Queries.getOptString( c,
+                                             COL_INDICES.get( Tasks.ESTIMATE ) ),
+                       c.getLong( COL_INDICES.get( Tasks.ESTIMATE_MILLIS ) ),
                        Queries.getOptString( c,
                                              COL_INDICES.get( Tasks.LOCATION_NAME ) ),
                        Queries.getOptFloat( c,

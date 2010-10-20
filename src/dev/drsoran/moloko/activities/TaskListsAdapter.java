@@ -38,6 +38,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
@@ -54,6 +55,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    public final static int OVER_DUE_TASK_COUNT = 3;
    
    public final static int COMPLETED_TASK_COUNT = 4;
+   
+   public final static int SUM_ESTIMATE = 5;
    
    private final static int ID_ICON_DEFAULT_LIST = 1;
    
@@ -102,6 +105,10 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          case COMPLETED_TASK_COUNT:
             return new Integer( lists.get( groupPosition )
                                      .getExtendedListInfo( context ).completedTaskCount );
+         case SUM_ESTIMATE:
+            return MolokoDateUtils.formatEstimated( context,
+                                                    lists.get( groupPosition )
+                                                         .getExtendedListInfo( context ).sumEstimated );
          default :
             return null;
       }
@@ -225,6 +232,12 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                                                           childPosition ) ) ) );
                break;
             
+            case SUM_ESTIMATE:
+               textView.setText( context.getString( R.string.task_datetime_estimate_inline,
+                                                    getChild( groupPosition,
+                                                              childPosition ) ) );
+               break;
+            
             default :
                break;
          }
@@ -238,7 +251,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
 
    public int getChildrenCount( int groupPosition )
    {
-      return COMPLETED_TASK_COUNT;
+      return SUM_ESTIMATE;
    }
    
 
@@ -365,7 +378,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
 
    public boolean isChildSelectable( int groupPosition, int childPosition )
    {
-      return true;
+      return childPosition != SUM_ESTIMATE;
    }
    
 

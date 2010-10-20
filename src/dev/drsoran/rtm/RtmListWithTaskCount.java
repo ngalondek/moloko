@@ -43,7 +43,7 @@ public class RtmListWithTaskCount
       
       public int overDueTaskCount;
       
-      public int sumEstimated;
+      public long sumEstimated;
       
       public int completedTaskCount;
       
@@ -61,7 +61,7 @@ public class RtmListWithTaskCount
 
 
       public ExtendedListInfo( int dueTodayTaskCount, int dueTomorrowTaskCount,
-         int overDueTaskCount, int sumEstimated, int completedTaskCount )
+         int overDueTaskCount, long sumEstimated, int completedTaskCount )
       {
          this.dueTodayTaskCount = dueTodayTaskCount;
          this.dueTomorrowTaskCount = dueTomorrowTaskCount;

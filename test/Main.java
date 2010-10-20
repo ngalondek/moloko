@@ -224,26 +224,11 @@ public class Main
       
       System.out.println( ">input: " + string );
       
-      final Calendar cal = TimeParser.getLocalizedCalendar();
-      cal.setTimeZone( TimeZone.getTimeZone( "Europe/Berlin" ) );
-      
-      final Calendar calEst = TimeParser.getLocalizedCalendar();
-      cal.setTimeZone( TimeZone.getTimeZone( "Europe/Berlin" ) );
-      cal.setTimeInMillis( cal.getTimeInMillis() );
-      
       try
       {
-         timeParser.parseTimeEstimate( calEst );
-         
-         System.out.println( string + ": " + calEst.getTimeInMillis() );
-         System.out.println( string + ": " + calEst.getTime() );
-         System.out.println( string + " has time: "
-                             + calEst.isSet( Calendar.HOUR_OF_DAY ) );
-         
-         final long diff = ( calEst.getTimeInMillis() - cal.getTimeInMillis() ) / 1000;       
+         final long diff = timeParser.parseTimeEstimate() / 1000;
          
          assertEquals( diff,  h * 3600 + m * 60 + s, "Diff is wrong." );
-         assertTrue( cal.isSet( Calendar.HOUR_OF_DAY ), "Calendar has no time." );
       }
       catch ( RecognitionException e )
       {

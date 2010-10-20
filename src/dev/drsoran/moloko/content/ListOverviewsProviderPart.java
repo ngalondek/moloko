@@ -283,7 +283,14 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                if ( task.getCompleted() != null )
                   ++extendedOverview.completedTaskCount;
                
-               // TODO: Sum up estimate time if available
+               // Sum up estimated times
+               final long estimateLong = task.getEstimateLong();
+               
+               if ( estimateLong != -1 )
+                  extendedOverview.sumEstimated += estimateLong;
+               else
+                  Log.e( TAG, "Unable to parse task estimate string "
+                     + task.getEstimate() );
             }
          }
       }

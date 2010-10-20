@@ -28,10 +28,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+
 import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.grammar.DateTimeLexer;
+import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.grammar.TimeParser;
+import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
@@ -88,6 +96,8 @@ public class Task
    final private ArrayList< String > tags;
    
    final private int numNotes;
+   
+   private long estimateLong = -1;
    
    
 
@@ -316,6 +326,16 @@ public class Task
    
 
 
+   public long getEstimateLong()
+   {
+      if ( estimateLong == -1 )
+         parseEstimate();
+      
+      return estimateLong;
+   }
+   
+
+
    public String getLocationName()
    {
       return locationName;
@@ -371,5 +391,44 @@ public class Task
    public int getNumberOfNotes()
    {
       return numNotes;
+   }
+   
+
+
+   private void parseEstimate()
+   {
+      if ( !TextUtils.isEmpty( estimate ) )
+      {
+         RtmSmartFilterLexer lexer = MolokoApp.acquireLexer();
+         
+         if ( lexer != null )
+         {
+            {
+               final DateTimeLexer dateTimeLexer = lexer.getDateTimeLexer();
+               final TimeParser parser = lexer.getTimeParser();
+               final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( estimate );
+               
+               dateTimeLexer.setCharStream( stream );
+               
+               final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
+               
+               parser.setTokenStream( antlrTokens );
+               
+               try
+               {
+                  estimateLong = parser.parseTimeEstimate();
+               }
+               catch ( RecognitionException e )
+               {
+               }
+            }
+            
+            lexer = MolokoApp.releaseLexer();
+         }
+      }
+      else
+      {
+         this.estimateLong = 0;
+      }
    }
 }

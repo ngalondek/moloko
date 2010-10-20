@@ -23,6 +23,11 @@ options
 
 @members
 {
+   public DateParser()
+   {
+   	super( null );
+   }
+   
    private final static Locale LOCALE = Locale.ENGLISH;
 
    private final static HashMap< String, Integer > numberLookUp = new HashMap< String, Integer >();

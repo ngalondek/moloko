@@ -152,8 +152,6 @@ public class RtmTask extends RtmData implements
       this.deleted = ( deleted != null ) ? new ParcelableDate( deleted ) : null;
       this.priority = priority;
       this.postponed = postponed;
-      
-      // TODO: Parse estimated string and store as Time
       this.estimate = estimate;
    }
    
@@ -207,7 +205,6 @@ public class RtmTask extends RtmData implements
          postponed = 0;
       }
       
-      // TODO: Parse estimated string and store as Time
       estimate = textNullIfEmpty( elt, "estimate" );
    }
    

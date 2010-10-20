@@ -14,6 +14,24 @@
 	-->
 
 <resources>
+   <!-- Globals -->
+   <plurals name="g_day">
+      <item quantity="one">Tag</item>
+      <item quantity="other">Tage</item>
+   </plurals>
+   <plurals name="g_hour">
+      <item quantity="one">Stunde</item>
+      <item quantity="other">Stunden</item>
+   </plurals>
+   <plurals name="g_minute">
+      <item quantity="one">Minute</item>
+      <item quantity="other">Minuten</item>
+   </plurals>
+   <plurals name="g_second">
+      <item quantity="one">Sekunde</item>
+      <item quantity="other">Sekunden</item>
+   </plurals>
+
 	<!-- TasksList activity -->
 	<!-- Menus -->
 	<plurals name="taskslist_listitem_ctx_notes">
@@ -24,4 +42,5 @@
 		<item quantity="one">Alle Aufgaben mit Tag</item>
 		<item quantity="other">Alle Aufgaben mit Tags...</item>
 	</plurals>
+   
 </resources>

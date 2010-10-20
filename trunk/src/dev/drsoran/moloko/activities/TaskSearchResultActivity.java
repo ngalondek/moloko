@@ -131,7 +131,7 @@ public class TaskSearchResultActivity extends TasksListActivity
             final View wrongSyntaxView = findViewById( R.id.tasksearchresult_wrong_syntax );
             final TextView text = (TextView) wrongSyntaxView.findViewById( R.id.title_with_text_text );
             
-            final String msgStr = String.format( getString( R.string.tasksearchresult_wrong_syntax ),
+            final String msgStr = String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
                                                  filter.getFilterString() );
             final CharSequence msg = Html.fromHtml( msgStr );
             

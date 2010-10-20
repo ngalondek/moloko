@@ -108,24 +108,48 @@ options
    	= "(SELECT "  + Tags.TASKSERIES_ID + " FROM " + Tags.PATH
    	  + " WHERE " + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks._ID;
    
-	private final StringBuffer result = new StringBuffer();
-	
-	private boolean hasStatusCompletedOp = false;
-	
-	private boolean error = false;
+	private final DateTimeLexer dateTimeLexer = new DateTimeLexer();
+   
+   private final TimeParser timeParser = new TimeParser();
+   
+   private final DateParser dateParser = new DateParser();
+   
+   // STATUS VARIABLES
+   
+   private StringBuffer result = new StringBuffer();
+   
+   private boolean hasStatusCompletedOp = false;
+   
+   private boolean error = false;
+   
+   
+   
+   @Override
+   public void reset()
+   {
+      super.reset();
+      
+      result = new StringBuffer();
+      hasStatusCompletedOp = false;
+      error = false;
+   }
+   
+   
 	
 	private Calendar parseDateTimeSpec( String spec )
 	{
-      final DateTimeLexer lexer           = new DateTimeLexer( new ANTLRNoCaseStringStream( spec ) );
-      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      final TimeParser timeParser         = new TimeParser( antlrTokens );
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( spec );
+      dateTimeLexer.setCharStream( stream );
       
+      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
       final Calendar cal = TimeParser.getLocalizedCalendar();
       
       boolean eof = false;
       boolean hasTime = false;
       boolean hasDate = false;
       boolean error = false;
+      
+      timeParser.setTokenStream( antlrTokens );
       
       // first try to parse time spec
       try
@@ -144,7 +168,7 @@ options
          if ( !hasTime )
             antlrTokens.reset();
          
-         final DateParser dateParser = new DateParser( antlrTokens );
+         dateParser.setTokenStream( antlrTokens );
          
          try
          {
@@ -187,7 +211,7 @@ options
                error = true;
             }
          }
-      }
+      }      
       
       return ( !error ) ? cal : null;
 	}
@@ -290,6 +314,27 @@ options
 
 
 
+	public DateTimeLexer getDateTimeLexer()
+	{
+		return dateTimeLexer;
+	}
+
+
+
+	public DateParser getDateParser()
+	{
+		return dateParser;
+	}
+
+
+
+	public TimeParser getTimeParser()
+	{
+		return timeParser;
+	}
+
+
+
 	public String getResult() throws RecognitionException
 	{
 		if ( !error && result.length() == 0 )
@@ -300,6 +345,8 @@ options
          {
          }
       }
+      
+      error = error || result.length() == 0;
       
       if ( error )
          throw new RecognitionException();

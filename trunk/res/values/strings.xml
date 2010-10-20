@@ -163,7 +163,7 @@
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar">%1$s</string>
    <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>
-   <string name="tasksearchresult_wrong_syntax">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
+   <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>   
 	  

@@ -31,6 +31,7 @@ import android.os.Parcelable;
 
 import com.mdt.rtm.data.RtmData;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.util.Strings;
@@ -146,24 +147,31 @@ public class RtmSmartFilter extends RtmData
                filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
             
             final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
-            final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
+            RtmSmartFilterLexer lexer = MolokoApp.acquireLexer();
             
-            try
+            if ( lexer != null )
             {
-               evalFilter.append( lexer.getResult() );
+               lexer.setCharStream( input );
                
-               // SPECIAL CASE: If the filter contains the operator 'status:completed',
-               // we include completed tasks. Otherwise we would never show tasks in
-               // such lists. In all other cases we exclude completed tasks.
-               if ( !lexer.hasStatusCompletedOperator() && excludeCompleted )
+               try
                {
-                  evalFilter.append( " AND " )
-                            .append( RawTasks.COMPLETED_DATE )
-                            .append( " IS NULL" );
+                  evalFilter.append( lexer.getResult() );
+                  
+                  // SPECIAL CASE: If the filter contains the operator 'status:completed',
+                  // we include completed tasks. Otherwise we would never show tasks in
+                  // such lists. In all other cases we exclude completed tasks.
+                  if ( !lexer.hasStatusCompletedOperator() && excludeCompleted )
+                  {
+                     evalFilter.append( " AND " )
+                               .append( RawTasks.COMPLETED_DATE )
+                               .append( " IS NULL" );
+                  }
                }
-            }
-            catch ( RecognitionException e )
-            {
+               catch ( RecognitionException e )
+               {
+               }
+               
+               lexer = MolokoApp.releaseLexer();
             }
          }
       }

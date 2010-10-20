@@ -25,9 +25,12 @@ package dev.drsoran.moloko.util;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.text.format.DateFormat;
 import android.text.format.Time;
 import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 
 
@@ -116,6 +119,67 @@ public class MolokoDateUtils
       
       return DateFormat.format( buildPattern( false, true, 0 ), cal )
                        .toString();
+   }
+   
+
+
+   public final static String formatEstimated( Context context, long millis )
+   {
+      final StringBuilder stringBuilder = new StringBuilder();
+      final Resources res = context.getResources();
+      
+      int timeSeconds = (int) ( millis / 1000 );
+      
+      // Minute is minimal resolution
+      if ( timeSeconds >= 60 )
+      {
+         int days = 0;
+         int hours = 0;
+         int minutes = 0;
+         
+         if ( timeSeconds >= 3600 * 24 )
+         {
+            days = timeSeconds / 3600 * 24;
+            timeSeconds -= hours * 3600 * 24;
+            
+            stringBuilder.append( days )
+                         .append( " " )
+                         .append( res.getQuantityString( R.plurals.g_day, days ) );
+         }
+         if ( timeSeconds >= 3600 )
+         {
+            hours = timeSeconds / 3600;
+            timeSeconds -= hours * 3600;
+            
+            if ( stringBuilder.length() > 0 )
+               stringBuilder.append( ", " );
+            
+            stringBuilder.append( hours )
+                         .append( " " )
+                         .append( res.getQuantityString( R.plurals.g_hour,
+                                                         hours ) );
+         }
+         if ( timeSeconds >= 60 )
+         {
+            minutes = timeSeconds / 60;
+            timeSeconds -= minutes * 60;
+            
+            if ( stringBuilder.length() > 0 )
+               stringBuilder.append( ", " );
+            
+            stringBuilder.append( minutes )
+                         .append( " " )
+                         .append( res.getQuantityString( R.plurals.g_minute,
+                                                         minutes ) );
+         }
+      }
+      
+      if ( stringBuilder.length() == 0 )
+         stringBuilder.append( 0 )
+                      .append( " " )
+                      .append( res.getQuantityString( R.plurals.g_minute, 0 ) );
+      
+      return stringBuilder.toString();
    }
    
 

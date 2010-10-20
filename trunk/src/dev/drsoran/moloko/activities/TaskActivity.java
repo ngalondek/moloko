@@ -220,7 +220,8 @@ public class TaskActivity extends Activity
          {
             UIUtils.appendAtNewLine( textBuffer,
                                      getString( R.string.task_datetime_estimate_inline,
-                                                task.getEstimate() ) );
+                                                MolokoDateUtils.formatEstimated( this,
+                                                                                 task.getEstimateLong() ) ) );
          }
          
          // TODO: Handle return value

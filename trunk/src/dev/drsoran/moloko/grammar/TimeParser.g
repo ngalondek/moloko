@@ -18,6 +18,11 @@ options
 
 @members
 {
+   public TimeParser()
+   {
+   	super( null );
+   }
+   
    private final static Locale LOCALE = Locale.ENGLISH;
 
 
@@ -203,12 +208,20 @@ time_separatorspec [Calendar cal]
       throw e;
    }
 
-time_naturalspec [Calendar cal]
+time_naturalspec [Calendar cal] returns [int seconds]
 	@init
 	{
 		int calType = -1;
 	}
-   :   hour_floatspec[$cal]
+	@after
+	{
+	   if ( cal != null )
+			cal.add( Calendar.SECOND, seconds );
+	}
+   :   fs=hour_floatspec
+   	 {
+   	 	seconds += fs;
+   	 }
      | v=INT ( HOURS
                {
 		            calType = Calendar.HOUR_OF_DAY;
@@ -223,10 +236,22 @@ time_naturalspec [Calendar cal]
 			   	}
 			    )
 	    {
-	       if ( calType != -1 )
-	          cal.add( calType, Integer.parseInt( $v.text ) ); 
-	   	 else
-	   	    throw new RecognitionException();       		
+	    	int val = Integer.parseInt( $v.text );
+	    	
+	    	switch( calType )
+	    	{
+	    		case Calendar.HOUR_OF_DAY:
+	    			seconds += val * 3600;
+	    			break;
+	    		case Calendar.MINUTE:
+	    			seconds += val * 60;
+					break;
+	    		case Calendar.SECOND:
+	    			seconds += val;
+					break;
+	    		default:
+	    			throw new RecognitionException();
+	    	}
 	    }
    ;
    catch[ NumberFormatException nfe ]
@@ -238,11 +263,11 @@ time_naturalspec [Calendar cal]
       throw e;
    }
 
-hour_floatspec [Calendar cal]
+hour_floatspec returns [int seconds]
    : h=INT DOT deciHour=INT HOURS
    {
-   	cal.add( Calendar.HOUR_OF_DAY, Integer.parseInt( $h.text ) );
-      cal.add( Calendar.MINUTE, (int)((float)Integer.parseInt( $deciHour.text ) * 0.1f * 60) );
+   	seconds = Integer.parseInt( $h.text ) * 3600;
+   	seconds += Integer.parseInt( $deciHour.text ) * 360;
    }
    ;
    catch[ NumberFormatException nfe ]
@@ -258,19 +283,23 @@ hour_floatspec [Calendar cal]
 	This parses time in the format:
 		- [0-9]+ d|h|m|s ([0-9]+ d|h|m|s ([0-9]+ d|h|m|s ([0-9]+ d|h|m|s)?)?)?
 	
-   return true in case of EOF.
+   returns the parsed time span in milliseconds.
 */
-parseTimeEstimate [Calendar cal] returns [boolean eof]
+parseTimeEstimate returns [long span]
+	@after
+	{
+		span *= 1000;
+	}
 	: (   d=INT DAYS
 	      {
-	         cal.add( Calendar.HOUR_OF_DAY, Integer.parseInt( $d.text ) * 24 ); 
+	      	span += Integer.parseInt( $d.text ) * 3600 * 24;
 	      }
-	    | time_naturalspec[$cal]
+	    | ts=time_naturalspec[null]
+	    {
+	    	 span += ts;
+	    }	    
 	  )+
    | EOF
-   {
-   	eof = true;
-   }
    ;
    catch[ NumberFormatException nfe ]
    {

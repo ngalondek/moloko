@@ -400,8 +400,7 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       else
       {
-         // TODO: Throw exception in this case otherwise we get a list of all
-         // tasks and no error
+         // TODO: Throw exception in this case otherwise we get a list of all tasks and no error
       }
       
       if ( !TextUtils.isEmpty( selection ) )

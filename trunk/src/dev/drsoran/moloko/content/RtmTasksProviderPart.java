@@ -51,16 +51,10 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   {
-    RawTasks._ID,
-    RawTasks.DUE_DATE,
-    RawTasks.HAS_DUE_TIME,
-    RawTasks.ADDED_DATE,
-    RawTasks.COMPLETED_DATE,
-    RawTasks.DELETED_DATE,
-    RawTasks.PRIORITY,
-    RawTasks.POSTPONED,
-    RawTasks.ESTIMATE };
+   { RawTasks._ID, RawTasks.DUE_DATE, RawTasks.HAS_DUE_TIME,
+    RawTasks.ADDED_DATE, RawTasks.COMPLETED_DATE, RawTasks.DELETED_DATE,
+    RawTasks.PRIORITY, RawTasks.POSTPONED, RawTasks.ESTIMATE,
+    RawTasks.ESTIMATE_MILLIS };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -112,6 +106,8 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       else
          values.putNull( RawTasks.ESTIMATE );
       
+      values.put( RawTasks.ESTIMATE_MILLIS, task.getEstimateMillis() );
+      
       return values;
    }
    
@@ -154,27 +150,20 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       
       if ( c.moveToFirst() )
       {
-         Date due = null;
-         Date completed = null;
-         Date deleted = null;
-         
-         if ( !c.isNull( COL_INDICES.get( RawTasks.DUE_DATE ) ) )
-            due = new Date( c.getLong( COL_INDICES.get( RawTasks.DUE_DATE ) ) );
-         if ( !c.isNull( COL_INDICES.get( RawTasks.COMPLETED_DATE ) ) )
-            completed = new Date( c.getLong( COL_INDICES.get( RawTasks.COMPLETED_DATE ) ) );
-         if ( !c.isNull( COL_INDICES.get( RawTasks.DELETED_DATE ) ) )
-            deleted = new Date( c.getLong( COL_INDICES.get( RawTasks.DELETED_DATE ) ) );
-         
          task = new RtmTask( c.getString( COL_INDICES.get( RawTasks._ID ) ),
-                             due,
+                             Queries.getOptDate( c,
+                                                 COL_INDICES.get( RawTasks.DUE_DATE ) ),
                              c.getInt( COL_INDICES.get( RawTasks.HAS_DUE_TIME ) ),
                              new Date( c.getLong( COL_INDICES.get( RawTasks.ADDED_DATE ) ) ),
-                             completed,
-                             deleted,
+                             Queries.getOptDate( c,
+                                                 COL_INDICES.get( RawTasks.COMPLETED_DATE ) ),
+                             Queries.getOptDate( c,
+                                                 COL_INDICES.get( RawTasks.DELETED_DATE ) ),
                              RtmTask.convertPriority( c.getString( COL_INDICES.get( RawTasks.PRIORITY ) ) ),
                              c.getInt( COL_INDICES.get( RawTasks.POSTPONED ) ),
                              Queries.getOptString( c,
-                                                   COL_INDICES.get( RawTasks.ESTIMATE ) ) );
+                                                   COL_INDICES.get( RawTasks.ESTIMATE ) ),
+                             c.getLong( COL_INDICES.get( RawTasks.ESTIMATE_MILLIS ) ) );
       }
       
       c.close();
@@ -194,17 +183,15 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + RawTasks._ID
-                  + " INTEGER NOT NULL, " + RawTasks.DUE_DATE + " INTEGER, "
-                  + RawTasks.HAS_DUE_TIME + " INTEGER NOT NULL DEFAULT 0, "
-                  + RawTasks.ADDED_DATE + " INTEGER NOT NULL, "
-                  + RawTasks.COMPLETED_DATE + " INTEGER, "
-                  + RawTasks.DELETED_DATE
-                  + " INTEGER, " + RawTasks.PRIORITY
-                  + " CHAR(1) NOT NULL DEFAULT 'n', "
-                  + RawTasks.POSTPONED + " INTEGER DEFAULT 0, "
-                  + RawTasks.ESTIMATE
-                  + " NOTE_TEXT, " + "CONSTRAINT PK_TASKS PRIMARY KEY ( \""
-                  + RawTasks._ID + "\" )" + " );" );
+         + " INTEGER NOT NULL, " + RawTasks.DUE_DATE + " INTEGER, "
+         + RawTasks.HAS_DUE_TIME + " INTEGER NOT NULL DEFAULT 0, "
+         + RawTasks.ADDED_DATE + " INTEGER NOT NULL, "
+         + RawTasks.COMPLETED_DATE + " INTEGER, " + RawTasks.DELETED_DATE
+         + " INTEGER, " + RawTasks.PRIORITY + " CHAR(1) NOT NULL DEFAULT 'n', "
+         + RawTasks.POSTPONED + " INTEGER DEFAULT 0, " + RawTasks.ESTIMATE
+         + " TEXT, " + RawTasks.ESTIMATE_MILLIS + " INTEGER DEFAULT -1, "
+         + "CONSTRAINT PK_TASKS PRIMARY KEY ( \"" + RawTasks._ID + "\" )"
+         + " );" );
    }
    
 

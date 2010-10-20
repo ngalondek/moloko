@@ -28,76 +28,68 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-
 import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask.Priority;
 
-import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.grammar.DateTimeLexer;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.grammar.TimeParser;
-import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class Task
 {
-   final private String id;
+   private final String id;
    
-   final private String listName;
+   private final String listName;
    
-   final private boolean isSmartList;
+   private final boolean isSmartList;
    
-   final private Date created;
+   private final Date created;
    
-   final private Date modified;
+   private final Date modified;
    
-   final private String name;
+   private final String name;
    
-   final private String source;
+   private final String source;
    
-   final private String url;
+   private final String url;
    
-   final private String locationId;
+   private final String locationId;
    
-   final private String listId;
+   private final String listId;
    
-   final private Date due;
+   private final Date due;
    
-   final private boolean hasDueTime;
+   private final boolean hasDueTime;
    
-   final private Date added;
+   private final Date added;
    
-   final private Date completed;
+   private final Date completed;
    
-   final private Date deleted;
+   private final Date deleted;
    
-   final private Priority priority;
+   private final Priority priority;
    
-   final private boolean posponed;
+   private final boolean posponed;
    
-   final private String estimate;
+   private final String estimate;
    
-   final private String locationName;
+   private final long estimateMillis;
    
-   final private float longitude;
+   private final String locationName;
    
-   final private float latitude;
+   private final float longitude;
    
-   final private String address;
+   private final float latitude;
    
-   final private boolean isViewable;
+   private final String address;
    
-   final private int zoom;
+   private final boolean isViewable;
    
-   final private ArrayList< String > tags;
+   private final int zoom;
    
-   final private int numNotes;
+   private final ArrayList< String > tags;
    
-   private long estimateLong = -1;
+   private final int numNotes;
    
    
 
@@ -105,8 +97,9 @@ public class Task
       Date modified, String name, String source, String url, String locationId,
       String listId, Date due, boolean hasDueTime, Date added, Date completed,
       Date deleted, Priority priority, boolean posponed, String estimate,
-      String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, String tags, int numNotes )
+      long estimateMillis, String locationName, float longitude,
+      float latitude, String address, boolean isViewable, int zoom,
+      String tags, int numNotes )
    {
       this.id = id;
       this.listName = listName;
@@ -126,6 +119,7 @@ public class Task
       this.priority = priority;
       this.posponed = posponed;
       this.estimate = estimate;
+      this.estimateMillis = estimateMillis;
       this.locationName = locationName;
       this.longitude = longitude;
       this.latitude = latitude;
@@ -159,8 +153,9 @@ public class Task
       Date modified, String name, String source, String url, String locationId,
       String listId, Date due, boolean hasDueTime, Date added, Date completed,
       Date deleted, Priority priority, boolean posponed, String estimate,
-      String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, List< String > tags, int numNotes )
+      long estimateMillis, String locationName, float longitude,
+      float latitude, String address, boolean isViewable, int zoom,
+      List< String > tags, int numNotes )
    {
       this.id = id;
       this.listName = listName;
@@ -180,6 +175,7 @@ public class Task
       this.priority = priority;
       this.posponed = posponed;
       this.estimate = estimate;
+      this.estimateMillis = estimateMillis;
       this.locationName = locationName;
       this.longitude = longitude;
       this.latitude = latitude;
@@ -326,12 +322,9 @@ public class Task
    
 
 
-   public long getEstimateLong()
+   public long getEstimateMillis()
    {
-      if ( estimateLong == -1 )
-         parseEstimate();
-      
-      return estimateLong;
+      return estimateMillis;
    }
    
 
@@ -391,44 +384,5 @@ public class Task
    public int getNumberOfNotes()
    {
       return numNotes;
-   }
-   
-
-
-   private void parseEstimate()
-   {
-      if ( !TextUtils.isEmpty( estimate ) )
-      {
-         RtmSmartFilterLexer lexer = MolokoApp.acquireLexer();
-         
-         if ( lexer != null )
-         {
-            {
-               final DateTimeLexer dateTimeLexer = lexer.getDateTimeLexer();
-               final TimeParser parser = lexer.getTimeParser();
-               final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( estimate );
-               
-               dateTimeLexer.setCharStream( stream );
-               
-               final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-               
-               parser.setTokenStream( antlrTokens );
-               
-               try
-               {
-                  estimateLong = parser.parseTimeEstimate();
-               }
-               catch ( RecognitionException e )
-               {
-               }
-            }
-            
-            lexer = MolokoApp.releaseLexer();
-         }
-      }
-      else
-      {
-         this.estimateLong = 0;
-      }
    }
 }

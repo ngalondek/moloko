@@ -257,6 +257,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
          if ( tasks != null )
          {
             extendedOverview = new ExtendedListInfo();
+            long sumEstimated = 0;
             
             for ( Task task : tasks )
             {
@@ -284,15 +285,17 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                   ++extendedOverview.completedTaskCount;
                
                // Sum up estimated times
-               final long estimateLong = task.getEstimateLong();
                
-               if ( estimateLong != -1 )
-                  extendedOverview.sumEstimated += estimateLong;
-               else
-                  Log.e( TAG, "Unable to parse task estimate string "
-                     + task.getEstimate() );
+               final long estimateMillis = task.getEstimateMillis();
+               
+               if ( estimateMillis != -1 )
+                  sumEstimated += estimateMillis;
             }
+            
+            if ( sumEstimated > 0 )
+               extendedOverview.sumEstimated = sumEstimated;
          }
+         
       }
       
       return extendedOverview;

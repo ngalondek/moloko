@@ -33,6 +33,9 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff1" mandatory="false" name="estimate">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="-1" id="2e2d78:12bca86c927:-7fea" mandatory="false" name="estimateMillis">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
 </column-list>
 <primary-key id="5122f2:128cb6194ba:-7ffe" name="PK_RAWTASKS">
 <primary-key-column name="_id"/>
@@ -247,7 +250,7 @@
 </schema-list>
 </database-model>
 <diagram>
-<table-figure height="150" refid="5122f2:128cb6194ba:-7fff" width="177" x="249" y="481"/>
+<table-figure height="167" refid="5122f2:128cb6194ba:-7fff" width="177" x="249" y="481"/>
 <table-figure refid="5122f2:128cb6194ba:-7fee" x="253" y="222"/>
 <fk-figure refid="5122f2:128cb6194ba:-7fc5">
 <target-terminal x="96" y="4"/>

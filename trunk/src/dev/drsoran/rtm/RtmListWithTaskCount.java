@@ -54,7 +54,7 @@ public class RtmListWithTaskCount
          this.dueTodayTaskCount = 0;
          this.dueTomorrowTaskCount = 0;
          this.overDueTaskCount = 0;
-         this.sumEstimated = 0;
+         this.sumEstimated = -1;
          this.completedTaskCount = 0;
       }
       

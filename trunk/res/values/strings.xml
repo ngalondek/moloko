@@ -85,6 +85,7 @@
    <string name="phr_none_f">keine</string>
    <string name="phr_none_m">keiner</string>
    <string name="phr_none_mainly">keines</string>
+   <string name="phr_nothing">nichts</string>
    <string name="phr_sync">Synchronisierung</string>
    <string name="phr_do_sync">Synchronisieren</string>   
    <string name="phr_cancel_sync">Synchronisierung abbrechen</string>

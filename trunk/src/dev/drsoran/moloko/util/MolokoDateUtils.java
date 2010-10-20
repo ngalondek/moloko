@@ -125,61 +125,69 @@ public class MolokoDateUtils
 
    public final static String formatEstimated( Context context, long millis )
    {
-      final StringBuilder stringBuilder = new StringBuilder();
       final Resources res = context.getResources();
       
-      int timeSeconds = (int) ( millis / 1000 );
-      
-      // Minute is minimal resolution
-      if ( timeSeconds >= 60 )
+      if ( millis > -1 )
       {
-         int days = 0;
-         int hours = 0;
-         int minutes = 0;
+         final StringBuilder stringBuilder = new StringBuilder();
+         int timeSeconds = (int) ( millis / 1000 );
          
-         if ( timeSeconds >= 3600 * 24 )
-         {
-            days = timeSeconds / 3600 * 24;
-            timeSeconds -= hours * 3600 * 24;
-            
-            stringBuilder.append( days )
-                         .append( " " )
-                         .append( res.getQuantityString( R.plurals.g_day, days ) );
-         }
-         if ( timeSeconds >= 3600 )
-         {
-            hours = timeSeconds / 3600;
-            timeSeconds -= hours * 3600;
-            
-            if ( stringBuilder.length() > 0 )
-               stringBuilder.append( ", " );
-            
-            stringBuilder.append( hours )
-                         .append( " " )
-                         .append( res.getQuantityString( R.plurals.g_hour,
-                                                         hours ) );
-         }
+         // Minute is minimal resolution
          if ( timeSeconds >= 60 )
          {
-            minutes = timeSeconds / 60;
-            timeSeconds -= minutes * 60;
+            int days = 0;
+            int hours = 0;
+            int minutes = 0;
             
-            if ( stringBuilder.length() > 0 )
-               stringBuilder.append( ", " );
-            
-            stringBuilder.append( minutes )
-                         .append( " " )
-                         .append( res.getQuantityString( R.plurals.g_minute,
-                                                         minutes ) );
+            if ( timeSeconds >= 3600 * 24 )
+            {
+               days = timeSeconds / 3600 * 24;
+               timeSeconds -= hours * 3600 * 24;
+               
+               stringBuilder.append( days )
+                            .append( " " )
+                            .append( res.getQuantityString( R.plurals.g_day,
+                                                            days ) );
+            }
+            if ( timeSeconds >= 3600 )
+            {
+               hours = timeSeconds / 3600;
+               timeSeconds -= hours * 3600;
+               
+               if ( stringBuilder.length() > 0 )
+                  stringBuilder.append( ", " );
+               
+               stringBuilder.append( hours )
+                            .append( " " )
+                            .append( res.getQuantityString( R.plurals.g_hour,
+                                                            hours ) );
+            }
+            if ( timeSeconds >= 60 )
+            {
+               minutes = timeSeconds / 60;
+               timeSeconds -= minutes * 60;
+               
+               if ( stringBuilder.length() > 0 )
+                  stringBuilder.append( ", " );
+               
+               stringBuilder.append( minutes )
+                            .append( " " )
+                            .append( res.getQuantityString( R.plurals.g_minute,
+                                                            minutes ) );
+            }
          }
+         
+         if ( stringBuilder.length() == 0 )
+            stringBuilder.append( 0 )
+                         .append( " " )
+                         .append( res.getQuantityString( R.plurals.g_minute, 0 ) );
+         
+         return stringBuilder.toString();
       }
-      
-      if ( stringBuilder.length() == 0 )
-         stringBuilder.append( 0 )
-                      .append( " " )
-                      .append( res.getQuantityString( R.plurals.g_minute, 0 ) );
-      
-      return stringBuilder.toString();
+      else
+      {
+         return res.getString( R.string.phr_nothing );
+      }
    }
    
 

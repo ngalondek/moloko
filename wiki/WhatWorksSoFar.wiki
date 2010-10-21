@@ -57,11 +57,8 @@ Support for Android integrated search dialog. Allows searching for tasks using s
  * handle reoccurred tasks
  * support for HTTPS
  * implement search auto completion (low prio)
- * parse "estimated" strings
  * RTM date format:
    * missing separator \u0020\u0068\u0020|\u6642|h
-   * '.' is only allowed for dates not times
-   * ':' is only allowed for times not dates
 
 Unsupported RTM smart search syntax operators. Also used for smart lists:
 See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]

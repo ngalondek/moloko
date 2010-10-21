@@ -29,12 +29,15 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 || due: || _date string_ ||
 || dueAfter: || _date string_ ||
 || dueBefore: || _date string_ ||
+|| dueWithin: || string ||
 || completed: || _date string_ ||
 || completedAfter: || _date string_ ||
 || completedBefore: || _date string_ ||
+|| completedWithin: || string ||
 || added: || _date string_ ||
 || addedAfter: || _date string_ ||
 || addedBefore: || _date string_ ||
+|| addedWithin: || string ||
 || timeEstimate: || "(>|<)? _time estimation string_" ||
 || postponed: || string ||
 || tag: || string ||
@@ -65,8 +68,6 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 
  * locationWithin:
  * isRepeating:
- * completedWithin:
- * addedWithin:
  * isShared:
  * sharedWith
  * isReceived:

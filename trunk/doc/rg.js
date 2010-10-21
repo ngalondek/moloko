@@ -337,63 +337,63 @@ rg.prototype.checkDate = function (K, H)
    J.setSeconds(B.getSeconds());
    return J
 };
-rg.prototype.calculateUnit = function (K, H, B, E)
+rg.prototype.calculateUnit = function (date, amount, unit, past)
 {
-   var Y = "d",
-      W = "m",
+   var day = "d",
+      month = "m",
       U = "undefined",
-      X = "w",
-      V = "y";
-   var Q = 0;
-   var O = 0;
-   var A = 0;
-   var I = K.getFullYear();
-   var J = K.getMonth();
-   var M = K.getDate();
-   var D = B.toLowerCase().charAt(0);
-   var F = parseInt(H, 10);
-   if (isNaN(F))
+      week = "w",
+      year = "y";
+   var num_days = 0;
+   var num_months = 0;
+   var num_years = 0;
+   var I = date.getFullYear();
+   var J = date.getMonth();
+   var M = date.getDate();
+   var unit_char0 = unit.toLowerCase().charAt(0);
+   var amount_int = parseInt(amount, 10);
+   if (isNaN(amount_int))
    {
-      F = this.numbers[H.toLowerCase()]
+      amount_int = this.numbers[amount.toLowerCase()]
    }
-   switch (D)
+   switch (unit_char0)
    {
-   case Y:
-      Q = F;
+   case day:
+      num_days = amount_int;
       break;
-   case X:
-      Q = F * 7;
+   case week:
+      num_days = amount_int * 7;
       break;
-   case W:
-      O = F;
+   case month:
+      num_months = amount_int;
       break;
-   case V:
-      A = F;
+   case year:
+      num_years = amount_int;
       break
    }
-   if (!E)
+   if (!past)
    {
-      I += A;
-      J += O;
-      M += Q
+      I += num_years;
+      J += num_months;
+      M += num_days
    }
    else
    {
-      I -= A;
-      J -= O;
-      M -= Q
+      I -= num_years;
+      J -= num_months;
+      M -= num_days
    }
-   K.setYear(I);
-   K.setMonth(J);
+   date.setYear(I);
+   date.setMonth(J);
    var R;
    if (typeof is_safari !== U && (is_safari && !is_safari_3))
    {
-      R = this.checkDate(K, Q)
+      R = this.checkDate(date, num_days)
    }
    else
    {
-      K.setDate(M);
-      R = this.checkDate(K)
+      date.setDate(M);
+      R = this.checkDate(date)
    }
    return R
 };
@@ -1007,11 +1007,11 @@ rg.prototype.parseTime = function (B)
    }
    return [E, D]
 };
-rg.prototype.parseDueRange = function (input, J)
+rg.prototype.parseDueRange = function (input, past)
 {
-   var amount = "1",
+   var one = "1",
       R = "of",
-      U = "today";
+      today = "today";
    var H = input;
    input = input.trim();
    if (this.useCache && this.rangeCache[H])
@@ -1023,42 +1023,42 @@ rg.prototype.parseDueRange = function (input, J)
       return this.useCache ? (this.rangeCache[H] = null) : null
    }
    var E = input.split(/\bof\b/i);
-   var I, O;
+   var rangeEnd, rangeStart;
    if (E.length == 1)
    {
-      I = E[0];
-      O = U
+      rangeEnd = E[0];
+      rangeStart = today
    }
    else
    {
       if (E.length == 2)
       {
-         I = E[0];
-         O = E[1]
+         rangeEnd = E[0];
+         rangeStart = E[1]
       }
       else
       {
-         I = E.shift();
-         O = E.join(R)
+         rangeEnd = E.shift();
+         rangeStart = E.join(R)
       }
    }
-   I = I.trim();
-   O = O.trim();
-   var D = this.parseDueDate(O);
-   if (D[0] === null)
+   rangeEnd = rangeEnd.trim();
+   rangeStart = rangeStart.trim();
+   var rangeStartDate = this.parseDueDate(rangeStart);
+   if (rangeStartDate[0] === null)
    {
       return this.useCache ? (this.rangeCache[H] = null) : null
    }
-   D = new Date(D[0]);
-   I = I.replace(/a /, amount).split(/\s+/);
-   if (I.length == 1)
+   rangeStartDate = new Date(rangeStartDate[0]);
+   rangeEnd = rangeEnd.replace(/a /, one).split(/\s+/);
+   if (rangeEnd.length == 1)
    {
       return this.useCache ? (this.rangeCache[H] = null) : null
    }
-   var K = I.shift();
-   var A = I.shift();
-   var M = this.calculateUnit(new Date(D), K, A, !! J);
-   if (!D || !M)
+   var rangeEnd_amount = rangeEnd.shift();
+   var rangeEnd_unit = rangeEnd.shift();
+   var M = this.calculateUnit(new Date(rangeStartDate), rangeEnd_amount, rangeEnd_unit, !! past);
+   if (!rangeStartDate || !M)
    {
       return this.useCache ? (this.rangeCache[H] = null) : null
    }

@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g 2010-10-18 11:03:29
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g 2010-10-21 19:27:12
 
 package dev.drsoran.moloko.grammar;
 
@@ -19,49 +19,23 @@ public class DateTimeLexer extends Lexer
    
    public static final int MIDDAY = 20;
    
-   public static final int TODAY = 5;
-   
-   public static final int MINUS_A = 35;
-   
    public static final int THE = 15;
-   
-   public static final int ON = 9;
-   
-   public static final int SECONDS = 28;
    
    public static final int NOW = 17;
    
-   public static final int INT = 37;
+   public static final int SECONDS = 28;
    
    public static final int MIDNIGHT = 19;
    
-   public static final int MINUS = 34;
-   
    public static final int AND = 13;
-   
-   public static final int YEARS = 22;
    
    public static final int EOF = -1;
    
-   public static final int OF = 11;
-   
-   public static final int NUM_STR = 40;
-   
    public static final int MONTH = 29;
-   
-   public static final int COLON = 33;
-   
-   public static final int MINUTES = 27;
    
    public static final int AT = 8;
    
-   public static final int DAYS = 25;
-   
-   public static final int WS = 41;
-   
    public static final int WEEKDAY = 30;
-   
-   public static final int WEEKS = 24;
    
    public static final int IN = 10;
    
@@ -69,19 +43,51 @@ public class DateTimeLexer extends Lexer
    
    public static final int COMMA = 36;
    
-   public static final int MONTHS = 23;
-   
    public static final int NOON = 21;
-   
-   public static final int PM = 39;
    
    public static final int NEXT = 12;
    
-   public static final int DATE_SEP = 31;
+   public static final int DOT = 32;
+   
+   public static final int AM = 39;
+   
+   public static final int TOMORROW = 6;
+   
+   public static final int TODAY = 5;
+   
+   public static final int A = 38;
+   
+   public static final int MINUS_A = 35;
+   
+   public static final int ON = 9;
+   
+   public static final int INT = 37;
+   
+   public static final int MINUS = 34;
+   
+   public static final int OF = 11;
+   
+   public static final int YEARS = 22;
+   
+   public static final int NUM_STR = 41;
+   
+   public static final int MINUTES = 27;
+   
+   public static final int COLON = 33;
+   
+   public static final int DAYS = 25;
+   
+   public static final int WEEKS = 24;
+   
+   public static final int WS = 43;
+   
+   public static final int MONTHS = 23;
+   
+   public static final int PM = 40;
    
    public static final int NEVER = 4;
    
-   public static final int DOT = 32;
+   public static final int DATE_SEP = 31;
    
    public static final int END = 14;
    
@@ -89,9 +95,7 @@ public class DateTimeLexer extends Lexer
    
    public static final int HOURS = 26;
    
-   public static final int AM = 38;
-   
-   public static final int TOMORROW = 6;
+   public static final int STRING = 42;
    
    
 
@@ -120,7 +124,6 @@ public class DateTimeLexer extends Lexer
    
 
 
-   @Override
    public String getGrammarFileName()
    {
       return "F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g";
@@ -1999,6 +2002,33 @@ public class DateTimeLexer extends Lexer
 
    // $ANTLR end "INT"
    
+   // $ANTLR start "A"
+   public final void mA() throws RecognitionException
+   {
+      try
+      {
+         int _type = A;
+         int _channel = DEFAULT_TOKEN_CHANNEL;
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:8: ( 'a'
+         // )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:10: 'a'
+         {
+            match( 'a' );
+            
+         }
+         
+         state.type = _type;
+         state.channel = _channel;
+      }
+      finally
+      {
+      }
+   }
+   
+
+
+   // $ANTLR end "A"
+   
    // $ANTLR start "AM"
    public final void mAM() throws RecognitionException
    {
@@ -2006,8 +2036,8 @@ public class DateTimeLexer extends Lexer
       {
          int _type = AM;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:7: ( 'a'
-         // ( 'm' )? | '\\u4E0A' | '\\u5348\\u524D' | '\\uC624\\uC804' )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:7: ( A (
+         // 'm' )? | '\\u4E0A' | '\\u5348\\u524D' | '\\uC624\\uC804' )
          int alt17 = 4;
          switch ( input.LA( 1 ) )
          {
@@ -2043,11 +2073,11 @@ public class DateTimeLexer extends Lexer
          switch ( alt17 )
          {
             case 1:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:9:
-               // 'a' ( 'm' )?
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:10:
+               // A ( 'm' )?
             {
-               match( 'a' );
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:12:
+               mA();
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:11:
                // ( 'm' )?
                int alt16 = 2;
                int LA16_0 = input.LA( 1 );
@@ -2059,7 +2089,7 @@ public class DateTimeLexer extends Lexer
                switch ( alt16 )
                {
                   case 1:
-                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:13:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:12:
                      // 'm'
                   {
                      match( 'm' );
@@ -2072,7 +2102,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 2:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:21:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:20:
                // '\\u4E0A'
             {
                match( '\u4E0A' );
@@ -2080,7 +2110,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 3:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:32:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:31:
                // '\\u5348\\u524D'
             {
                match( "\u5348\u524D" );
@@ -2088,7 +2118,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 4:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:49:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:48:
                // '\\uC624\\uC804'
             {
                match( "\uC624\uC804" );
@@ -2116,7 +2146,7 @@ public class DateTimeLexer extends Lexer
       {
          int _type = PM;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:7: ( 'p'
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:7: ( 'p'
          // ( 'm' )? | '\\u4E0B' | '\\u5348\\u5F8C' | '\\uC624\\uD6C4' )
          int alt19 = 4;
          switch ( input.LA( 1 ) )
@@ -2153,11 +2183,11 @@ public class DateTimeLexer extends Lexer
          switch ( alt19 )
          {
             case 1:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:9:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:9:
                // 'p' ( 'm' )?
             {
                match( 'p' );
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:12:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:12:
                // ( 'm' )?
                int alt18 = 2;
                int LA18_0 = input.LA( 1 );
@@ -2169,7 +2199,7 @@ public class DateTimeLexer extends Lexer
                switch ( alt18 )
                {
                   case 1:
-                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:13:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:13:
                      // 'm'
                   {
                      match( 'm' );
@@ -2182,7 +2212,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 2:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:21:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:21:
                // '\\u4E0B'
             {
                match( '\u4E0B' );
@@ -2190,7 +2220,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 3:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:32:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:32:
                // '\\u5348\\u5F8C'
             {
                match( "\u5348\u5F8C" );
@@ -2198,7 +2228,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 4:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:49:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:49:
                // '\\uC624\\uD6C4'
             {
                match( "\uC624\uD6C4" );
@@ -2226,14 +2256,14 @@ public class DateTimeLexer extends Lexer
       {
          int _type = NUM_STR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:11: (
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:11: (
          // 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' )
          int alt20 = 9;
          alt20 = dfa20.predict( input );
          switch ( alt20 )
          {
             case 1:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:13:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:13:
                // 'one'
             {
                match( "one" );
@@ -2241,7 +2271,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 2:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:21:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:21:
                // 'two'
             {
                match( "two" );
@@ -2249,7 +2279,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 3:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:29:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:29:
                // 'three'
             {
                match( "three" );
@@ -2257,7 +2287,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 4:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:39:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:39:
                // 'four'
             {
                match( "four" );
@@ -2265,7 +2295,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 5:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:48:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:48:
                // 'six'
             {
                match( "six" );
@@ -2273,7 +2303,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 6:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:56:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:56:
                // 'seven'
             {
                match( "seven" );
@@ -2281,7 +2311,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 7:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:66:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:66:
                // 'eight'
             {
                match( "eight" );
@@ -2289,7 +2319,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 8:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:76:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:76:
                // 'nine'
             {
                match( "nine" );
@@ -2297,7 +2327,7 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 9:
-               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:85:
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:85:
                // 'ten'
             {
                match( "ten" );
@@ -2318,6 +2348,77 @@ public class DateTimeLexer extends Lexer
 
    // $ANTLR end "NUM_STR"
    
+   // $ANTLR start "STRING"
+   public final void mSTRING() throws RecognitionException
+   {
+      try
+      {
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:95:11: ( (~
+         // ( '\"' | ' ' | '(' | ')' ) )+ )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:95:13: (~ (
+         // '\"' | ' ' | '(' | ')' ) )+
+         {
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:95:13: (~
+            // ( '\"' | ' ' | '(' | ')' ) )+
+            int cnt21 = 0;
+            loop21: do
+            {
+               int alt21 = 2;
+               int LA21_0 = input.LA( 1 );
+               
+               if ( ( ( LA21_0 >= '\u0000' && LA21_0 <= '\u001F' )
+                  || LA21_0 == '!' || ( LA21_0 >= '#' && LA21_0 <= '\'' ) || ( LA21_0 >= '*' && LA21_0 <= '\uFFFF' ) ) )
+               {
+                  alt21 = 1;
+               }
+               
+               switch ( alt21 )
+               {
+                  case 1:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:95:13:
+                     // ~ ( '\"' | ' ' | '(' | ')' )
+                  {
+                     if ( ( input.LA( 1 ) >= '\u0000' && input.LA( 1 ) <= '\u001F' )
+                        || input.LA( 1 ) == '!'
+                        || ( input.LA( 1 ) >= '#' && input.LA( 1 ) <= '\'' )
+                        || ( input.LA( 1 ) >= '*' && input.LA( 1 ) <= '\uFFFF' ) )
+                     {
+                        input.consume();
+                        
+                     }
+                     else
+                     {
+                        MismatchedSetException mse = new MismatchedSetException( null,
+                                                                                 input );
+                        recover( mse );
+                        throw mse;
+                     }
+                     
+                  }
+                     break;
+                  
+                  default :
+                     if ( cnt21 >= 1 )
+                        break loop21;
+                     EarlyExitException eee = new EarlyExitException( 21, input );
+                     throw eee;
+               }
+               cnt21++;
+            }
+            while ( true );
+            
+         }
+         
+      }
+      finally
+      {
+      }
+   }
+   
+
+
+   // $ANTLR end "STRING"
+   
    // $ANTLR start "WS"
    public final void mWS() throws RecognitionException
    {
@@ -2325,9 +2426,9 @@ public class DateTimeLexer extends Lexer
       {
          int _type = WS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:11: ( (
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:97:11: ( (
          // ' ' | '\\t' | '\\r' | '\\n' ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:13: ( ' '
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:97:13: ( ' '
          // | '\\t' | '\\r' | '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
@@ -2360,16 +2461,15 @@ public class DateTimeLexer extends Lexer
 
    // $ANTLR end "WS"
    
-   @Override
    public void mTokens() throws RecognitionException
    {
       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:8: ( NEVER |
       // TODAY | TOMORROW | YESTERDAY | AT | ON | IN | OF | NEXT | AND | END | THE | STs | NOW | TONIGHT | MIDNIGHT |
       // MIDDAY | NOON | YEARS | MONTHS | WEEKS | DAYS | HOURS | MINUTES | SECONDS | MONTH | WEEKDAY | DATE_SEP | DOT |
-      // COLON | MINUS | MINUS_A | COMMA | INT | AM | PM | NUM_STR | WS )
-      int alt21 = 38;
-      alt21 = dfa21.predict( input );
-      switch ( alt21 )
+      // COLON | MINUS | MINUS_A | COMMA | INT | A | AM | PM | NUM_STR | WS )
+      int alt22 = 39;
+      alt22 = dfa22.predict( input );
+      switch ( alt22 )
       {
          case 1:
             // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:10:
@@ -2635,29 +2735,36 @@ public class DateTimeLexer extends Lexer
          }
             break;
          case 35:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:210: AM
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:210: A
+         {
+            mA();
+            
+         }
+            break;
+         case 36:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:212: AM
          {
             mAM();
             
          }
             break;
-         case 36:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:213: PM
+         case 37:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:215: PM
          {
             mPM();
             
          }
             break;
-         case 37:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:216:
+         case 38:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:218:
             // NUM_STR
          {
             mNUM_STR();
             
          }
             break;
-         case 38:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:224: WS
+         case 39:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:226: WS
          {
             mWS();
             
@@ -2686,7 +2793,7 @@ public class DateTimeLexer extends Lexer
    
    protected DFA20 dfa20 = new DFA20( this );
    
-   protected DFA21 dfa21 = new DFA21( this );
+   protected DFA22 dfa22 = new DFA22( this );
    
    static final String DFA6_eotS = "\3\uffff\1\6\3\uffff\1\11\2\uffff";
    
@@ -2747,7 +2854,6 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
          return "49:1: YEARS : ( 'years' | 'year' | 'yrs' | 'yr' );";
@@ -2812,7 +2918,6 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
          return "51:1: MONTHS : ( 'months' | 'month' | 'mons' | 'mon' );";
@@ -2878,7 +2983,6 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
          return "53:1: WEEKS : ( 'weeks' | 'week' | 'wks' | 'wk' );";
@@ -2944,7 +3048,6 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
          return "57:1: HOURS : ( 'hours' | 'hour' | 'hrs' | 'hr' | 'h' );";
@@ -3010,7 +3113,6 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
          return "59:1: MINUTES : ( 'minutes' | 'minute' | 'mins' | 'min' | 'm' );";
@@ -3076,7 +3178,6 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
          return "61:1: SECONDS : ( 'seconds' | 'second' | 'secs' | 'sec' | 's' );";
@@ -3157,7 +3258,6 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
          return "63:1: MONTH : ( 'january' | 'jan' | 'february' | 'feb' | 'march' | 'mar' | 'april' | 'apr' | 'may' | 'june' | 'jun' | 'july' | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'november' | 'nov' | 'december' | 'dec' );";
@@ -3229,7 +3329,6 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
          return "68:1: WEEKDAY : ( 'monday' | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' | 'thursday' | 'thu' | 'friday' | 'fri' | 'saturday' | 'sat' | 'sunday' | 'sun' );";
@@ -3296,39 +3395,38 @@ public class DateTimeLexer extends Lexer
       
 
 
-      @Override
       public String getDescription()
       {
-         return "90:1: NUM_STR : ( 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' );";
+         return "92:1: NUM_STR : ( 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' );";
       }
    }
    
-   static final String DFA21_eotS = "\5\uffff\1\27\3\uffff\1\52\1\uffff\1\55\1\uffff\1\60\6\uffff\1"
-      + "\62\14\uffff\1\12\4\uffff\1\73\26\uffff\1\100\3\uffff";
+   static final String DFA22_eotS = "\5\uffff\1\46\3\uffff\1\53\1\uffff\1\56\1\uffff\1\61\6\uffff\1"
+      + "\63\14\uffff\1\12\5\uffff\1\74\26\uffff\1\101\3\uffff";
    
-   static final String DFA21_eofS = "\101\uffff";
+   static final String DFA22_eofS = "\102\uffff";
    
-   static final String DFA21_minS = "\1\11\1\144\2\145\1\uffff\1\156\1\143\1\uffff\1\151\1\141\1\uffff"
+   static final String DFA22_minS = "\1\11\1\144\2\145\1\uffff\1\155\1\143\1\uffff\1\151\1\141\1\uffff"
       + "\1\141\2\145\2\uffff\1\145\3\uffff\1\141\3\uffff\1\u524d\1\uc804"
-      + "\2\uffff\1\166\1\157\1\uffff\1\144\1\uffff\1\145\1\uffff\1\141\2"
+      + "\2\uffff\1\166\1\157\1\uffff\1\144\1\uffff\1\145\1\uffff\1\141\3"
       + "\uffff\1\145\2\uffff\1\143\1\uffff\1\144\1\156\1\uffff\1\144\15"
       + "\uffff\2\144\3\uffff";
    
-   static final String DFA21_maxS = "\1\uc624\1\157\1\167\1\162\1\uffff\1\165\1\156\1\uffff\1\156\1"
+   static final String DFA22_maxS = "\1\uc624\1\157\1\167\1\162\1\uffff\1\165\1\156\1\uffff\1\156\1"
       + "\165\1\uffff\1\157\1\153\1\145\2\uffff\1\162\3\uffff\1\141\3\uffff"
       + "\1\u5f8c\1\ud6c4\2\uffff\1\170\1\167\1\uffff\1\156\1\uffff\1\165"
-      + "\1\uffff\1\163\2\uffff\1\145\2\uffff\1\166\1\uffff\2\156\1\uffff"
+      + "\1\uffff\1\163\3\uffff\1\145\2\uffff\1\166\1\uffff\2\156\1\uffff"
       + "\1\145\15\uffff\1\156\1\144\3\uffff";
    
-   static final String DFA21_acceptS = "\4\uffff\1\5\2\uffff\1\7\2\uffff\1\15\3\uffff\1\27\1\32\1\uffff"
-      + "\1\34\1\35\1\36\1\uffff\1\41\1\42\1\43\2\uffff\1\44\1\46\2\uffff"
-      + "\1\45\1\uffff\1\3\1\uffff\1\33\1\uffff\1\23\1\12\1\uffff\1\10\1"
-      + "\13\1\uffff\1\31\2\uffff\1\30\1\uffff\1\25\1\26\1\40\1\37\1\1\1"
-      + "\11\1\16\1\22\1\2\1\17\1\14\1\4\1\6\2\uffff\1\20\1\21\1\24";
+   static final String DFA22_acceptS = "\4\uffff\1\5\2\uffff\1\7\2\uffff\1\15\3\uffff\1\27\1\32\1\uffff"
+      + "\1\34\1\35\1\36\1\uffff\1\41\1\42\1\44\2\uffff\1\45\1\47\2\uffff"
+      + "\1\46\1\uffff\1\3\1\uffff\1\33\1\uffff\1\23\1\12\1\43\1\uffff\1"
+      + "\10\1\13\1\uffff\1\31\2\uffff\1\30\1\uffff\1\25\1\26\1\40\1\37\1"
+      + "\1\1\11\1\16\1\22\1\2\1\17\1\14\1\4\1\6\2\uffff\1\20\1\21\1\24";
    
-   static final String DFA21_specialS = "\101\uffff}>";
+   static final String DFA22_specialS = "\102\uffff}>";
    
-   static final String[] DFA21_transitionS =
+   static final String[] DFA22_transitionS =
    {
     "\2\33\2\uffff\1\33\22\uffff\1\33\13\uffff\1\25\1\24\1\22\1"
        + "\21\12\26\1\23\5\uffff\1\4\40\uffff\1\5\2\uffff\1\15\1\10\1"
@@ -3339,66 +3437,65 @@ public class DateTimeLexer extends Lexer
     "\1\12\1\34\3\uffff\1\36\5\uffff\1\35",
     "\1\36\2\uffff\1\41\4\uffff\1\40\1\uffff\1\37\5\uffff\1\42"
        + "\1\uffff\1\36", "\1\43\14\uffff\1\44", "",
-    "\1\45\1\uffff\1\17\3\uffff\1\4\1\17", "\1\17\2\uffff\1\47\7\uffff\1\46",
-    "", "\1\36\4\uffff\1\50",
-    "\1\42\3\uffff\1\51\3\uffff\1\36\12\uffff\1\12\1\42", "",
-    "\1\17\7\uffff\1\53\5\uffff\1\54", "\1\56\5\uffff\1\57", "\1\17", "", "",
-    "\1\17\11\uffff\1\36\2\uffff\1\42", "", "", "", "\1\61", "", "", "",
+    "\1\27\1\45\1\uffff\1\17\3\uffff\1\4\1\17",
+    "\1\17\2\uffff\1\50\7\uffff\1\47", "", "\1\36\4\uffff\1\51",
+    "\1\42\3\uffff\1\52\3\uffff\1\36\12\uffff\1\12\1\42", "",
+    "\1\17\7\uffff\1\54\5\uffff\1\55", "\1\57\5\uffff\1\60", "\1\17", "", "",
+    "\1\17\11\uffff\1\36\2\uffff\1\42", "", "", "", "\1\62", "", "", "",
     "\1\27\u0d3e\uffff\1\32", "\1\27\u0ebf\uffff\1\32", "", "",
-    "\1\63\1\uffff\1\64", "\1\66\6\uffff\1\17\1\65", "",
-    "\1\67\10\uffff\1\40\1\70", "", "\1\71\14\uffff\1\36\2\uffff\1\42", "",
-    "\1\44\21\uffff\1\72", "", "", "\1\36", "", "",
-    "\1\52\14\uffff\1\17\5\uffff\1\36", "", "\1\74\11\uffff\1\55", "\1\75", "",
-    "\1\42\1\57", "", "", "", "", "", "", "", "", "", "", "", "", "",
-    "\1\77\11\uffff\1\76", "\1\42", "", "", "" };
+    "\1\64\1\uffff\1\65", "\1\67\6\uffff\1\17\1\66", "",
+    "\1\70\10\uffff\1\40\1\71", "", "\1\72\14\uffff\1\36\2\uffff\1\42", "",
+    "\1\44\21\uffff\1\73", "", "", "", "\1\36", "", "",
+    "\1\53\14\uffff\1\17\5\uffff\1\36", "", "\1\75\11\uffff\1\56", "\1\76", "",
+    "\1\42\1\60", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    "\1\100\11\uffff\1\77", "\1\42", "", "", "" };
    
-   static final short[] DFA21_eot = DFA.unpackEncodedString( DFA21_eotS );
+   static final short[] DFA22_eot = DFA.unpackEncodedString( DFA22_eotS );
    
-   static final short[] DFA21_eof = DFA.unpackEncodedString( DFA21_eofS );
+   static final short[] DFA22_eof = DFA.unpackEncodedString( DFA22_eofS );
    
-   static final char[] DFA21_min = DFA.unpackEncodedStringToUnsignedChars( DFA21_minS );
+   static final char[] DFA22_min = DFA.unpackEncodedStringToUnsignedChars( DFA22_minS );
    
-   static final char[] DFA21_max = DFA.unpackEncodedStringToUnsignedChars( DFA21_maxS );
+   static final char[] DFA22_max = DFA.unpackEncodedStringToUnsignedChars( DFA22_maxS );
    
-   static final short[] DFA21_accept = DFA.unpackEncodedString( DFA21_acceptS );
+   static final short[] DFA22_accept = DFA.unpackEncodedString( DFA22_acceptS );
    
-   static final short[] DFA21_special = DFA.unpackEncodedString( DFA21_specialS );
+   static final short[] DFA22_special = DFA.unpackEncodedString( DFA22_specialS );
    
-   static final short[][] DFA21_transition;
+   static final short[][] DFA22_transition;
    
    static
    {
-      int numStates = DFA21_transitionS.length;
-      DFA21_transition = new short[ numStates ][];
+      int numStates = DFA22_transitionS.length;
+      DFA22_transition = new short[ numStates ][];
       for ( int i = 0; i < numStates; i++ )
       {
-         DFA21_transition[ i ] = DFA.unpackEncodedString( DFA21_transitionS[ i ] );
+         DFA22_transition[ i ] = DFA.unpackEncodedString( DFA22_transitionS[ i ] );
       }
    }
    
    
-   class DFA21 extends DFA
+   class DFA22 extends DFA
    {
       
-      public DFA21( BaseRecognizer recognizer )
+      public DFA22( BaseRecognizer recognizer )
       {
          this.recognizer = recognizer;
-         this.decisionNumber = 21;
-         this.eot = DFA21_eot;
-         this.eof = DFA21_eof;
-         this.min = DFA21_min;
-         this.max = DFA21_max;
-         this.accept = DFA21_accept;
-         this.special = DFA21_special;
-         this.transition = DFA21_transition;
+         this.decisionNumber = 22;
+         this.eot = DFA22_eot;
+         this.eof = DFA22_eof;
+         this.min = DFA22_min;
+         this.max = DFA22_max;
+         this.accept = DFA22_accept;
+         this.special = DFA22_special;
+         this.transition = DFA22_transition;
       }
       
 
 
-      @Override
       public String getDescription()
       {
-         return "1:1: Tokens : ( NEVER | TODAY | TOMORROW | YESTERDAY | AT | ON | IN | OF | NEXT | AND | END | THE | STs | NOW | TONIGHT | MIDNIGHT | MIDDAY | NOON | YEARS | MONTHS | WEEKS | DAYS | HOURS | MINUTES | SECONDS | MONTH | WEEKDAY | DATE_SEP | DOT | COLON | MINUS | MINUS_A | COMMA | INT | AM | PM | NUM_STR | WS );";
+         return "1:1: Tokens : ( NEVER | TODAY | TOMORROW | YESTERDAY | AT | ON | IN | OF | NEXT | AND | END | THE | STs | NOW | TONIGHT | MIDNIGHT | MIDDAY | NOON | YEARS | MONTHS | WEEKS | DAYS | HOURS | MINUTES | SECONDS | MONTH | WEEKDAY | DATE_SEP | DOT | COLON | MINUS | MINUS_A | COMMA | INT | A | AM | PM | NUM_STR | WS );";
       }
    }
    

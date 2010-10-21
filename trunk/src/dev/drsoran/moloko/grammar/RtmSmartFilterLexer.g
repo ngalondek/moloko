@@ -241,6 +241,26 @@ options
       
       return ( !error ) ? estimatedLong : -1;
    }
+   
+   
+   
+   public DateParser.parseDateWithin_return parseDateWithin( String range, boolean past )
+   {
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( range );
+      dateTimeLexer.setCharStream( stream );
+      
+      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );      
+      dateParser.setTokenStream( antlrTokens );
+      
+      try
+      {
+			return dateParser.parseDateWithin( past );
+      }
+      catch ( RecognitionException e )
+      {
+			return null;
+      }
+   }
 
 
 
@@ -336,7 +356,31 @@ options
          result.append( ( before ) ? " < " : " > " );
          result.append( cal.getTimeInMillis() );
 		}
+		else
+         // Parser error
+         error = true;
    }
+
+
+
+	private void inTimeParamRange( String column, String param, boolean past )
+	{
+		final DateParser.parseDateWithin_return range = parseDateWithin( unquotify( param ), past );
+						
+		if ( range != null )
+		{			
+			result.append( column );			
+			result.append( " >= " );
+         result.append( !past ? range.epochStart.getTimeInMillis() : range.epochEnd.getTimeInMillis() );
+         result.append( " AND " );
+         result.append( column );
+         result.append( " < " );
+         result.append( !past ? range.epochEnd.getTimeInMillis() : range.epochStart.getTimeInMillis() );        
+		}
+		else
+        // Parser error
+        error = true;
+	}
 
 
 
@@ -530,24 +574,34 @@ OP_DUE_BEFORE : 'duebefore:' ( s=STRING | s=Q_STRING )
 						differsTimeParam( Tasks.DUE_DATE, $s.getText(), true );
 					};
 
-// OP_DUE_WITHIN
+OP_DUE_WITHIN : 'duewithin:' s=Q_STRING
+               {
+                  inTimeParamRange( Tasks.DUE_DATE, $s.getText(), false );
+               };
 
 OP_COMPLETED : 'completed:' ( s=STRING | s=Q_STRING )
 					{
+						hasStatusCompletedOp = true;
 						equalsTimeParam( Tasks.COMPLETED_DATE, $s.getText() );
 					};
 
 OP_COMPLETED_BEFORE : 'completedbefore:' ( s=STRING | s=Q_STRING )
 					{
+						hasStatusCompletedOp = true;
 						differsTimeParam( Tasks.COMPLETED_DATE, $s.getText(), true );
 					};
 
 OP_COMPLETED_AFTER : 'completedafter:' ( s=STRING | s=Q_STRING )
 					{
+						hasStatusCompletedOp = true;
 						differsTimeParam( Tasks.COMPLETED_DATE, $s.getText(), false );
 					};
 
-// OP_COMPLETED_WITHIN
+OP_COMPLETED_WITHIN : 'completedwithin:' s=Q_STRING
+               {
+	               hasStatusCompletedOp = true;
+                  inTimeParamRange( Tasks.COMPLETED_DATE, $s.getText(), true );
+               }; 
 
 OP_ADDED     : 'added:' ( s=STRING | s=Q_STRING )
 					{
@@ -564,7 +618,10 @@ OP_ADDED_AFTER : 'addedafter:' ( s=STRING | s=Q_STRING )
 						differsTimeParam( Tasks.ADDED_DATE, $s.getText(), false );
 					};
 
-// OP_ADDED_WITHIN
+OP_ADDED_WITHIN : 'addedwithin:' s=Q_STRING
+               {
+                  inTimeParamRange( Tasks.ADDED_DATE, $s.getText(), true );
+               }; 
 
 OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
                    {

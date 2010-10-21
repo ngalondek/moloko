@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeParser.g 2010-10-20 11:10:03
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeParser.g 2010-10-21 19:29:46
 
 package dev.drsoran.moloko.grammar;
 
@@ -25,44 +25,64 @@ public class TimeParser extends Parser
     "YESTERDAY", "AT", "ON", "IN", "OF", "NEXT", "AND", "END", "THE", "STs",
     "NOW", "TONIGHT", "MIDNIGHT", "MIDDAY", "NOON", "YEARS", "MONTHS", "WEEKS",
     "DAYS", "HOURS", "MINUTES", "SECONDS", "MONTH", "WEEKDAY", "DATE_SEP",
-    "DOT", "COLON", "MINUS", "MINUS_A", "COMMA", "INT", "AM", "PM", "NUM_STR",
-    "WS" };
+    "DOT", "COLON", "MINUS", "MINUS_A", "COMMA", "INT", "A", "AM", "PM",
+    "NUM_STR", "STRING", "WS" };
    
    public static final int STs = 16;
    
    public static final int MIDDAY = 20;
    
-   public static final int TODAY = 5;
-   
-   public static final int MINUS_A = 35;
-   
    public static final int THE = 15;
-   
-   public static final int ON = 9;
    
    public static final int SECONDS = 28;
    
    public static final int NOW = 17;
    
-   public static final int INT = 37;
-   
    public static final int MIDNIGHT = 19;
-   
-   public static final int MINUS = 34;
    
    public static final int AND = 13;
    
    public static final int EOF = -1;
    
-   public static final int YEARS = 22;
-   
-   public static final int OF = 11;
-   
-   public static final int NUM_STR = 40;
-   
    public static final int MONTH = 29;
    
    public static final int AT = 8;
+   
+   public static final int WEEKDAY = 30;
+   
+   public static final int IN = 10;
+   
+   public static final int TONIGHT = 18;
+   
+   public static final int COMMA = 36;
+   
+   public static final int NOON = 21;
+   
+   public static final int NEXT = 12;
+   
+   public static final int DOT = 32;
+   
+   public static final int AM = 39;
+   
+   public static final int TOMORROW = 6;
+   
+   public static final int TODAY = 5;
+   
+   public static final int A = 38;
+   
+   public static final int MINUS_A = 35;
+   
+   public static final int ON = 9;
+   
+   public static final int INT = 37;
+   
+   public static final int MINUS = 34;
+   
+   public static final int OF = 11;
+   
+   public static final int YEARS = 22;
+   
+   public static final int NUM_STR = 41;
    
    public static final int MINUTES = 27;
    
@@ -72,23 +92,11 @@ public class TimeParser extends Parser
    
    public static final int WEEKS = 24;
    
-   public static final int WEEKDAY = 30;
-   
-   public static final int WS = 41;
-   
-   public static final int IN = 10;
-   
-   public static final int TONIGHT = 18;
-   
-   public static final int COMMA = 36;
+   public static final int WS = 43;
    
    public static final int MONTHS = 23;
    
-   public static final int NOON = 21;
-   
-   public static final int PM = 39;
-   
-   public static final int NEXT = 12;
+   public static final int PM = 40;
    
    public static final int NEVER = 4;
    
@@ -96,15 +104,11 @@ public class TimeParser extends Parser
    
    public static final int END = 14;
    
-   public static final int DOT = 32;
-   
    public static final int YESTERDAY = 7;
    
    public static final int HOURS = 26;
    
-   public static final int AM = 38;
-   
-   public static final int TOMORROW = 6;
+   public static final int STRING = 42;
    
    
 
@@ -126,7 +130,6 @@ public class TimeParser extends Parser
    
 
 
-   @Override
    public String[] getTokenNames()
    {
       return TimeParser.tokenNames;
@@ -134,7 +137,6 @@ public class TimeParser extends Parser
    
 
 
-   @Override
    public String getGrammarFileName()
    {
       return "F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeParser.g";
@@ -1393,7 +1395,7 @@ public class TimeParser extends Parser
    { 0x0000000000000002L } );
    
    public static final BitSet FOLLOW_INT_in_time_point_in_time173 = new BitSet( new long[]
-   { 0x000000C000000002L } );
+   { 0x0000018000000002L } );
    
    public static final BitSet FOLLOW_time_component_in_time_point_in_time193 = new BitSet( new long[]
    { 0x0000000300000000L } );
@@ -1402,7 +1404,7 @@ public class TimeParser extends Parser
    { 0x0000002000380010L } );
    
    public static final BitSet FOLLOW_time_component_in_time_point_in_time203 = new BitSet( new long[]
-   { 0x000000C000000002L } );
+   { 0x0000018000000002L } );
    
    public static final BitSet FOLLOW_am_pm_in_time_point_in_time232 = new BitSet( new long[]
    { 0x0000000000000002L } );

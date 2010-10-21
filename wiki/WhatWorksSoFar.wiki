@@ -4,11 +4,6 @@
 
 This is a collection of features which are supported and what is todo.
 
-=== What works (% finished)===
-
-  * Account creation and background synchronization from RTM to Moloko (90%)
-  * Database and ContentProvider (70%)
-
 RTM features of:
     * lists (including smart lists)
     * locations

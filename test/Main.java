@@ -152,6 +152,58 @@ public class Main
    
 
 
+   private static void parseDateWithin( String string,
+                                        boolean past,
+                                        int sy,
+                                        int sm,
+                                        int sw,
+                                        int sd,
+                                        int ey,
+                                        int em,
+                                        int ew,
+                                        int ed )
+   {
+      final DateTimeLexer lexer = new DateTimeLexer( new ANTLRNoCaseStringStream( string ) );
+      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
+      final DateParser parser = new DateParser( antlrTokens );
+      
+      System.out.println( ">input: " + string + ", past: " + past );
+      
+      try
+      {
+         final DateParser.parseDateWithin_return ret = parser.parseDateWithin( past );
+         
+         final Calendar start = ret.epochStart;
+         final Calendar end = ret.epochEnd;
+         
+         System.out.println( string + "_start: " + start.getTimeInMillis() );
+         System.out.println( string + "_start: " + start.getTime() );
+         System.out.println( string + "_start has time: "
+                             + start.isSet( Calendar.HOUR_OF_DAY ) );
+         
+         System.out.println( string + "_end: " + end.getTimeInMillis() );
+         System.out.println( string + "_end: " + end.getTime() );
+         System.out.println( string + "_end has time: "
+                             + end.isSet( Calendar.HOUR_OF_DAY ) );
+         
+         assertEquals( start.get( Calendar.DAY_OF_YEAR ), sd, "Day is wrong." );
+         assertEquals( start.get( Calendar.WEEK_OF_YEAR ), sw, "Week is wrong." );
+         assertEquals( start.get( Calendar.MONTH ), sm, "Month is wrong." );
+         assertEquals( start.get( Calendar.YEAR ), sy, "Year is wrong." );
+         
+         assertEquals( end.get( Calendar.DAY_OF_YEAR ), ed, "Day is wrong." );
+         assertEquals( end.get( Calendar.WEEK_OF_YEAR ), ew, "Week is wrong." );
+         assertEquals( end.get( Calendar.MONTH ), em, "Month is wrong." );
+         assertEquals( end.get( Calendar.YEAR ), ey, "Year is wrong." );
+      }
+      catch ( RecognitionException e )
+      {
+         System.err.println( "Parsing failed!" );
+      }
+   }
+   
+
+
    private static void parseTime( String string, int h, int m, int s )
    {
       final DateTimeLexer lexer = new DateTimeLexer( new ANTLRNoCaseStringStream( string ) );
@@ -216,6 +268,8 @@ public class Main
       }
    }
    
+
+
    private static void parseTimeEstimate( String string, int h, int m, int s )
    {
       final DateTimeLexer lexer = new DateTimeLexer( new ANTLRNoCaseStringStream( string ) );
@@ -228,29 +282,30 @@ public class Main
       {
          final long diff = timeParser.parseTimeEstimate() / 1000;
          
-         assertEquals( diff,  h * 3600 + m * 60 + s, "Diff is wrong." );
+         assertEquals( diff, h * 3600 + m * 60 + s, "Diff is wrong." );
       }
       catch ( RecognitionException e )
       {
          System.err.println( e.getMessage() );
       }
    }
+   
 
 
    /**
     * @param args
     */
    public static void main( String[] args )
-   {      
+   {
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          parseDate( "today",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.roll( Calendar.DAY_OF_MONTH, true );
          parseDate( "tomorrow@9",
                     cal.get( Calendar.DAY_OF_MONTH ),
@@ -261,7 +316,7 @@ public class Main
                     0 );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.DAY_OF_MONTH,
                   cal.getActualMaximum( Calendar.DAY_OF_MONTH ) );
          parseDate( "end of month",
@@ -270,7 +325,7 @@ public class Main
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.roll( Calendar.YEAR, true );
          cal.add( Calendar.MONTH, 2 );
          parseDate( "in 1 year and 2 mons@7",
@@ -282,10 +337,10 @@ public class Main
                     0 );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.DAY_OF_WEEK, Calendar.MONDAY );
          
-         if ( cal.before( Calendar.getInstance() ) )
+         if ( cal.before( DateParser.getLocalizedCalendar() ) )
             cal.roll( Calendar.WEEK_OF_YEAR, true );
          
          // due to "next" Monday
@@ -300,11 +355,11 @@ public class Main
                     0 );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.MONTH, Calendar.JULY );
          cal.set( Calendar.DAY_OF_MONTH, 3 );
          
-         if ( cal.before( Calendar.getInstance() ) )
+         if ( cal.before( DateParser.getLocalizedCalendar() ) )
             cal.roll( Calendar.YEAR, true );
          
          parseDate( "on july 3rd",
@@ -313,7 +368,7 @@ public class Main
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.YEAR, 2000 );
          cal.set( Calendar.MONTH, Calendar.JULY );
          cal.set( Calendar.DAY_OF_MONTH, 3 );
@@ -324,10 +379,10 @@ public class Main
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.DAY_OF_MONTH, 21 );
          
-         if ( cal.before( Calendar.getInstance() ) )
+         if ( cal.before( DateParser.getLocalizedCalendar() ) )
             cal.roll( Calendar.MONTH, true );
          
          parseDate( "on 21st",
@@ -336,11 +391,11 @@ public class Main
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.DAY_OF_MONTH, 3 );
          cal.set( Calendar.MONTH, Calendar.JUNE );
          
-         if ( cal.before( Calendar.getInstance() ) )
+         if ( cal.before( DateParser.getLocalizedCalendar() ) )
             cal.roll( Calendar.YEAR, true );
          
          parseDate( "on 3rd of june",
@@ -349,7 +404,7 @@ public class Main
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.YEAR, 2006 );
          cal.set( Calendar.MONTH, Calendar.FEBRUARY );
          cal.set( Calendar.DAY_OF_MONTH, 21 );
@@ -360,7 +415,7 @@ public class Main
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.YEAR, 2011 );
          cal.set( Calendar.MONTH, Calendar.JULY );
          cal.set( Calendar.DAY_OF_MONTH, 1 );
@@ -371,7 +426,7 @@ public class Main
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.YEAR, 2010 );
          cal.set( Calendar.MONTH, Calendar.OCTOBER );
          cal.set( Calendar.DAY_OF_MONTH, 10 );
@@ -382,7 +437,7 @@ public class Main
                     cal.get( Calendar.YEAR ) );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.YEAR, 2010 );
          cal.set( Calendar.MONTH, Calendar.OCTOBER );
          cal.set( Calendar.DAY_OF_MONTH, 10 );
@@ -396,7 +451,7 @@ public class Main
                     0 );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.YEAR, 2010 );
          cal.set( Calendar.MONTH, Calendar.OCTOBER );
          cal.set( Calendar.DAY_OF_MONTH, 10 );
@@ -410,7 +465,7 @@ public class Main
                     0 );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.YEAR, 2010 );
          cal.set( Calendar.MONTH, Calendar.OCTOBER );
          cal.set( Calendar.DAY_OF_MONTH, 10 );
@@ -424,7 +479,7 @@ public class Main
                     0 );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.roll( Calendar.DAY_OF_MONTH, true );
          parseDate( "tom@12",
                     cal.get( Calendar.DAY_OF_MONTH ),
@@ -435,7 +490,7 @@ public class Main
                     0 );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          parseDate( "tod@1310",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
@@ -445,10 +500,10 @@ public class Main
                     0 );
       }
       {
-         final Calendar cal = Calendar.getInstance();
+         final Calendar cal = DateParser.getLocalizedCalendar();
          cal.set( Calendar.DAY_OF_MONTH, 21 );
          
-         if ( cal.before( Calendar.getInstance() ) )
+         if ( cal.before( DateParser.getLocalizedCalendar() ) )
             cal.roll( Calendar.MONTH, true );
          
          parseDate( "on 21st 2000",
@@ -458,6 +513,83 @@ public class Main
                     20,
                     00,
                     00 );
+      }
+      
+      {
+         final Calendar end = DateParser.getLocalizedCalendar();
+         end.roll( Calendar.DAY_OF_YEAR, true );
+         
+         final Calendar start = DateParser.getLocalizedCalendar();
+         
+         parseDateWithin( "1 day",
+                          false,
+                          start.get( Calendar.YEAR ),
+                          start.get( Calendar.MONTH ),
+                          start.get( Calendar.WEEK_OF_YEAR ),
+                          start.get( Calendar.DAY_OF_YEAR ),
+                          end.get( Calendar.YEAR ),
+                          end.get( Calendar.MONTH ),
+                          end.get( Calendar.WEEK_OF_YEAR ),
+                          end.get( Calendar.DAY_OF_YEAR ) );
+      }
+      {
+         final Calendar end = DateParser.getLocalizedCalendar();
+         end.add( Calendar.DAY_OF_YEAR, 2 );
+         
+         final Calendar start = DateParser.getLocalizedCalendar();
+         start.add( Calendar.DAY_OF_YEAR, 1 );
+         
+         parseDateWithin( "1 day of tomorrow",
+                          false,
+                          start.get( Calendar.YEAR ),
+                          start.get( Calendar.MONTH ),
+                          start.get( Calendar.WEEK_OF_YEAR ),
+                          start.get( Calendar.DAY_OF_YEAR ),
+                          end.get( Calendar.YEAR ),
+                          end.get( Calendar.MONTH ),
+                          end.get( Calendar.WEEK_OF_YEAR ),
+                          end.get( Calendar.DAY_OF_YEAR ) );
+      }
+      {
+         final Calendar end = DateParser.getLocalizedCalendar();
+         end.add( Calendar.DAY_OF_YEAR, 2 );
+         
+         final Calendar start = DateParser.getLocalizedCalendar();
+         start.add( Calendar.DAY_OF_YEAR, 1 );
+         
+         parseDateWithin( "a day of tomorrow",
+                          false,
+                          start.get( Calendar.YEAR ),
+                          start.get( Calendar.MONTH ),
+                          start.get( Calendar.WEEK_OF_YEAR ),
+                          start.get( Calendar.DAY_OF_YEAR ),
+                          end.get( Calendar.YEAR ),
+                          end.get( Calendar.MONTH ),
+                          end.get( Calendar.WEEK_OF_YEAR ),
+                          end.get( Calendar.DAY_OF_YEAR ) );
+      }
+      {
+         final Calendar end = DateParser.getLocalizedCalendar();
+         end.set( Calendar.YEAR, 2010 );
+         end.set( Calendar.MONTH, Calendar.JULY );
+         end.set( Calendar.DAY_OF_MONTH, 3 );         
+         end.add( Calendar.WEEK_OF_YEAR, -2 );
+         
+         final Calendar start = DateParser.getLocalizedCalendar();
+         start.set( Calendar.YEAR, 2010 );
+         start.set( Calendar.MONTH, Calendar.JULY );
+         start.set( Calendar.DAY_OF_MONTH, 3 );
+         
+         parseDateWithin( "2 weeks of july-3rd 2010",
+                          true,
+                          start.get( Calendar.YEAR ),
+                          start.get( Calendar.MONTH ),
+                          start.get( Calendar.WEEK_OF_YEAR ),
+                          start.get( Calendar.DAY_OF_YEAR ),
+                          end.get( Calendar.YEAR ),
+                          end.get( Calendar.MONTH ),
+                          end.get( Calendar.WEEK_OF_YEAR ),
+                          end.get( Calendar.DAY_OF_YEAR ) );
       }
       
       parseTime( "@1310", 13, 10, 0 );

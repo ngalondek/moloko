@@ -52,10 +52,11 @@ options
    {
 	   final Calendar cal = Calendar.getInstance( LOCALE );
 	   
-  	   cal.clear( Calendar.HOUR );
+	   cal.clear( Calendar.HOUR );
       cal.clear( Calendar.HOUR_OF_DAY );
       cal.clear( Calendar.MINUTE );
       cal.clear( Calendar.SECOND );
+      cal.clear( Calendar.MILLISECOND );
       
       return cal;
    }
@@ -204,12 +205,7 @@ parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
    // will set them again.
 	{
 		if ( clearTime )
-		{
-			cal.set( Calendar.HOUR_OF_DAY, 0 );
-	   	cal.set( Calendar.MINUTE, 0 );
-			cal.set( Calendar.SECOND, 0 );
-			cal.set( Calendar.MILLISECOND, 0 );
-		
+		{		
 		   cal.clear( Calendar.HOUR );
 	      cal.clear( Calendar.HOUR_OF_DAY );
    	   cal.clear( Calendar.MINUTE );
@@ -226,10 +222,71 @@ parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
    {
       throw e;
    }
+   
+parseDateWithin[boolean past] returns [Calendar epochStart, Calendar epochEnd]
+	@init
+	{
+	   retval.epochStart = getLocalizedCalendar();
+		int amount        =  1;
+		int unit          = -1;
+	}
+	@after
+	{
+		retval.epochEnd = getLocalizedCalendar();
+		retval.epochEnd.setTimeInMillis( retval.epochStart.getTimeInMillis() );
+		retval.epochEnd.add( unit, past ? -amount : amount );
+		
+		retval.epochStart.clear( Calendar.HOUR );
+      retval.epochStart.clear( Calendar.HOUR_OF_DAY );
+  	   retval.epochStart.clear( Calendar.MINUTE );
+     	retval.epochStart.clear( Calendar.SECOND );
+      retval.epochStart.clear( Calendar.MILLISECOND );
+		retval.epochEnd.clear( Calendar.HOUR );
+      retval.epochEnd.clear( Calendar.HOUR_OF_DAY );
+  	   retval.epochEnd.clear( Calendar.MINUTE );
+     	retval.epochEnd.clear( Calendar.SECOND );
+      retval.epochEnd.clear( Calendar.MILLISECOND );
+	}
+	: (  a=INT
+	     {
+	        amount = Integer.parseInt( $a.text );
+	     }
+	   | n=NUM_STR
+	     {
+	        amount = strToNumber( $n.text );
+	     }
+	   | A)?
+	   (  DAYS
+	   	{
+	   	   unit = Calendar.DAY_OF_YEAR;
+	   	}
+	    | WEEKS
+	      {
+	         unit = Calendar.WEEK_OF_YEAR;
+	      }
+	    | MONTHS
+	      {
+	         unit = Calendar.MONTH;
+	      }
+	    | YEARS
+	      {
+	         unit = Calendar.YEAR;
+	      }
+	   )	   
+	   (OF parseDate[retval.epochStart, false])?
+	;
+	catch [NumberFormatException e]
+   {
+      throw new RecognitionException();
+   }
+	catch [RecognitionException e]
+   {
+      throw e;
+   }
 
 date_full [Calendar cal]
-   : pt1=INT ( DOT | MINUS | COLON | DATE_SEP )
-     m  =INT ( DOT | MINUS | COLON | DATE_SEP )
+   : pt1=INT (DOT | MINUS | COLON | DATE_SEP)
+     m  =INT (DOT | MINUS | COLON | DATE_SEP)
      pt3=INT
      {
 	     // year first

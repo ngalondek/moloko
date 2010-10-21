@@ -83,11 +83,16 @@ COMMA     : ',';
 
 INT       : '0'..'9'+;
 
-AM			 : 'a'('m')? | '\u4E0A' | '\u5348\u524D' | '\uC624\uC804';
+A		    : 'a';
+
+AM			 :  A('m')? | '\u4E0A' | '\u5348\u524D' | '\uC624\uC804';
 
 PM			 : 'p'('m')? | '\u4E0B' | '\u5348\u5F8C' | '\uC624\uD6C4';
 
 NUM_STR   : 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten';
+
+fragment
+STRING    : ~('"' | ' ' | '(' | ')')+;
 
 WS        : ( ' '
           |   '\t'

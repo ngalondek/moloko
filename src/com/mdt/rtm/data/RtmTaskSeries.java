@@ -135,6 +135,10 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String url;
    
+   private final String recurrence;
+   
+   private boolean isEveryRecurrence;
+   
    private final List< String > tags;
    
    private final boolean deleted;
@@ -143,7 +147,8 @@ public class RtmTaskSeries extends RtmData implements
 
    public RtmTaskSeries( String id, Date created, Date modified, String name,
       String source, RtmTask task, RtmTaskNotes notes, String locationId,
-      String url, List< String > tags )
+      String url, String recurrence, boolean isEveryRecurrence,
+      List< String > tags )
    {
       this.id = id;
       this.created = ( created != null ) ? new ParcelableDate( created ) : null;
@@ -155,6 +160,8 @@ public class RtmTaskSeries extends RtmData implements
       this.notes = notes;
       this.locationId = locationId;
       this.url = url;
+      this.recurrence = recurrence;
+      this.isEveryRecurrence = isEveryRecurrence;
       this.tags = tags;
       this.deleted = false;
    }
@@ -168,6 +175,29 @@ public class RtmTaskSeries extends RtmData implements
       modified = parseDate( elt.getAttribute( "modified" ) );
       name = textNullIfEmpty( elt, "name" );
       source = textNullIfEmpty( elt, "source" );
+      
+      final Element recurrenceRule = child( elt, "rrule" );
+      if ( recurrenceRule != null
+         && recurrenceRule.getChildNodes().getLength() > 0 )
+      {
+         recurrence = textNullIfEmpty( recurrenceRule );
+         
+         try
+         {
+            isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
+                                                                   "every" ) ) != 0;
+         }
+         catch ( NumberFormatException nfe )
+         {
+            isEveryRecurrence = false;
+         }
+      }
+      else
+      {
+         recurrence = null;
+         isEveryRecurrence = false;
+      }
+      
       task = new RtmTask( child( elt, "task" ) );
       
       if ( children( elt, "task" ).size() > 1 )
@@ -216,6 +246,8 @@ public class RtmTaskSeries extends RtmData implements
       locationId = null;
       notes = null;
       url = null;
+      recurrence = null;
+      isEveryRecurrence = false;
       tags = null;
       this.deleted = deleted;
    }
@@ -233,6 +265,8 @@ public class RtmTaskSeries extends RtmData implements
       notes = new RtmTaskNotes( source );
       locationId = source.readString();
       url = source.readString();
+      recurrence = source.readString();
+      isEveryRecurrence = source.readInt() != 0;
       tags = source.createStringArrayList();
       deleted = source.readInt() != 0;
    }
@@ -343,6 +377,20 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
+   public String getRecurrence()
+   {
+      return recurrence;
+   }
+   
+
+
+   public boolean isEveryRecurrence()
+   {
+      return isEveryRecurrence;
+   }
+   
+
+
    public int describeContents()
    {
       return 0;
@@ -361,6 +409,8 @@ public class RtmTaskSeries extends RtmData implements
       notes.writeToParcel( dest, flags );
       dest.writeString( locationId );
       dest.writeString( url );
+      dest.writeString( recurrence );
+      dest.writeInt( isEveryRecurrence ? 1 : 0 );
       dest.writeStringList( tags );
       dest.writeInt( deleted ? 1 : 0 );
    }
@@ -526,6 +576,28 @@ public class RtmTaskSeries extends RtmData implements
                                                                    .withValue( TaskSeries.URL,
                                                                                update.url )
                                                                    .build() );
+               
+               if ( Strings.hasStringChanged( recurrence, update.recurrence ) )
+               {
+                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
+                                                                   .withValue( TaskSeries.RECURRENCE,
+                                                                               update.recurrence )
+                                                                   .build() );
+                  if ( TextUtils.isEmpty( update.recurrence ) )
+                  {
+                     taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
+                                                                      .withValue( TaskSeries.RECURRENCE_EVERY,
+                                                                                  null )
+                                                                      .build() );
+                  }
+                  else if ( isEveryRecurrence != update.isEveryRecurrence )
+                     taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
+                                                                      .withValue( TaskSeries.RECURRENCE_EVERY,
+                                                                                  update.isEveryRecurrence
+                                                                                                          ? 1
+                                                                                                          : 0 )
+                                                                      .build() );
+               }
                
                if ( taskSeriesOperation.plainSize() > 0 )
                   result.add( taskSeriesOperation );

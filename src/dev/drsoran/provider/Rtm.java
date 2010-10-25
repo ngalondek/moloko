@@ -411,6 +411,23 @@ public class Rtm
       public final static String URL = "url";
       
       /**
+       * A recurrence pattern for the taskseries.
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String RECURRENCE = "recurrence";
+      
+      /**
+       * Indicates the type of the recurrence pattern.
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <UI> <LI>0 - indicates an 'after' pattern</LI> <LI>1 - indicates an 'every' pattern</LI> </UI>
+       */
+      public final static String RECURRENCE_EVERY = "recurrence_every";
+      
+      /**
        * The ID of the task of this taskseries.
        * <P>
        * Type: INTEGER (foreign key to table tasks _ID field)

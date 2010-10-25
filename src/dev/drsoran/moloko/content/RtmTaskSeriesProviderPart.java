@@ -69,8 +69,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    public final static String[] PROJECTION =
    { TaskSeries._ID, TaskSeries.TASKSERIES_CREATED_DATE,
     TaskSeries.MODIFIED_DATE, TaskSeries.TASKSERIES_NAME, TaskSeries.SOURCE,
-    TaskSeries.URL, TaskSeries.RAW_TASK_ID, TaskSeries.LOCATION_ID,
-    TaskSeries.LIST_ID };
+    TaskSeries.URL, TaskSeries.RECURRENCE, TaskSeries.RECURRENCE_EVERY,
+    TaskSeries.RAW_TASK_ID, TaskSeries.LOCATION_ID, TaskSeries.LIST_ID };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -115,6 +115,18 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          values.put( TaskSeries.URL, taskSeries.getURL() );
       else
          values.putNull( TaskSeries.URL );
+      
+      if ( !TextUtils.isEmpty( taskSeries.getRecurrence() ) )
+      {
+         values.put( TaskSeries.RECURRENCE, taskSeries.getRecurrence() );
+         values.put( TaskSeries.RECURRENCE_EVERY,
+                     taskSeries.isEveryRecurrence() ? 1 : 0 );
+      }
+      else
+      {
+         values.putNull( TaskSeries.RECURRENCE );
+         values.putNull( TaskSeries.RECURRENCE_EVERY );
+      }
       
       values.put( TaskSeries.RAW_TASK_ID, taskSeries.getTask().getId() );
       
@@ -222,6 +234,11 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                                                                       locationId,
                                                                       Queries.getOptString( c,
                                                                                             COL_INDICES.get( TaskSeries.URL ) ),
+                                                                      Queries.getOptString( c,
+                                                                                            COL_INDICES.get( TaskSeries.RECURRENCE ) ),
+                                                                      Queries.getOptBool( c,
+                                                                                          COL_INDICES.get( TaskSeries.RECURRENCE_EVERY ),
+                                                                                          false ),
                                                                       tags );
                   taskList.add( taskSeries );
                }
@@ -383,8 +400,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       db.execSQL( "CREATE TABLE " + path + " ( " + TaskSeries._ID
          + " INTEGER NOT NULL, " + TaskSeries.TASKSERIES_CREATED_DATE
          + " INTEGER NOT NULL, " + TaskSeries.MODIFIED_DATE + " INTEGER, "
-         + TaskSeries.TASKSERIES_NAME + " NOTE_TEXT NOT NULL, "
-         + TaskSeries.SOURCE + " NOTE_TEXT, " + TaskSeries.URL + " NOTE_TEXT, "
+         + TaskSeries.TASKSERIES_NAME + " TEXT NOT NULL, " + TaskSeries.SOURCE
+         + " TEXT, " + TaskSeries.URL + " TEXT, " + TaskSeries.RECURRENCE
+         + " TEXT, " + TaskSeries.RECURRENCE_EVERY + " INTEGER, "
          + TaskSeries.RAW_TASK_ID + " INTEGER NOT NULL, "
          + TaskSeries.LOCATION_ID + " INTEGER, " + TaskSeries.LIST_ID
          + " INTEGER NOT NULL, " + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \""

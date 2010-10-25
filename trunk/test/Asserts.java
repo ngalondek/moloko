@@ -5,7 +5,7 @@ public final class Asserts
    {
       if ( !x.equals( y ) )
       {
-         System.err.println( message + " Expected " + x + " to be " + y + "." );
+         System.err.println( message + " Expected '" + x + "' to be '" + y + "'." );
       }
    }
    

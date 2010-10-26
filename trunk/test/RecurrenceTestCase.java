@@ -6,11 +6,14 @@ import org.antlr.runtime.RecognitionException;
 
 import dev.drsoran.moloko.grammar.RecurrenceLexer;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
+import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
 
 public class RecurrenceTestCase
 {
+   private static final RecurrPatternLanguage lang = new RecurrPatternLanguage();
+   
    private static void parseRecurrence( String string,
                                         String freq,
                                         int interval,
@@ -120,7 +123,7 @@ public class RecurrenceTestCase
       
       try
       {
-         final String result = parser.parseRecurrencePattern( isEvery );
+         final String result = parser.parseRecurrencePattern( lang, isEvery );
          
          System.out.println( string + ": " + result );
          
@@ -303,6 +306,32 @@ public class RecurrenceTestCase
                                             RecurrenceParser.OP_BYDAY_LIT
                                                      + "=1FR"),
                               "every month on the 1st friday",
+                              true );
+      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+                                            2),
+                              "every 2 weeks",
+                              true );
+      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+                                            1,
+                                            RecurrenceParser.OP_BYDAY_LIT
+                                                     + "=TU"),
+                              "every week on the tuesday",
+                              true );
+      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+                                            1,
+                                            RecurrenceParser.OP_BYDAY_LIT
+                                                     + "=MO,WE"),
+                              "every week on the monday, wednesday",
+                              true );
+      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+                                            2,
+                                            RecurrenceParser.OP_BYDAY_LIT
+                                                     + "=FR"),
+                              "every 2 weeks on the friday",
+                              true );      
+      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_DAILY_LIT,
+                                            1 ),
+                              "every day",
                               true );
    }
 }

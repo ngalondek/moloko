@@ -63,12 +63,12 @@ public class TasksProviderPart extends AbstractProviderPart
    public final static String[] PROJECTION =
    { Tasks._ID, Tasks.LIST_ID, Tasks.LIST_NAME, Tasks.IS_SMART_LIST,
     Tasks.TASKSERIES_CREATED_DATE, Tasks.MODIFIED_DATE, Tasks.TASKSERIES_NAME,
-    Tasks.SOURCE, Tasks.URL, Tasks.RAW_TASK_ID, Tasks.DUE_DATE,
-    Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE, Tasks.COMPLETED_DATE,
-    Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED, Tasks.ESTIMATE,
-    Tasks.ESTIMATE_MILLIS, Tasks.LOCATION_ID, Tasks.LOCATION_NAME,
-    Tasks.LONGITUDE, Tasks.LATITUDE, Tasks.ADDRESS, Tasks.VIEWABLE, Tasks.ZOOM,
-    Tasks.TAGS, Tasks.NUM_NOTES };
+    Tasks.SOURCE, Tasks.URL, Tasks.RECURRENCE, Tasks.RECURRENCE_EVERY,
+    Tasks.RAW_TASK_ID, Tasks.DUE_DATE, Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE,
+    Tasks.COMPLETED_DATE, Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED,
+    Tasks.ESTIMATE, Tasks.ESTIMATE_MILLIS, Tasks.LOCATION_ID,
+    Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE, Tasks.ADDRESS,
+    Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.NUM_NOTES };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -105,6 +105,8 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        Tasks.MODIFIED_DATE,
                                                        Tasks.TASKSERIES_NAME,
                                                        Tasks.SOURCE, Tasks.URL,
+                                                       Tasks.RECURRENCE,
+                                                       Tasks.RECURRENCE_EVERY,
                                                        Tasks.RAW_TASK_ID,
                                                        Tasks.DUE_DATE,
                                                        Tasks.HAS_DUE_TIME,
@@ -495,6 +497,11 @@ public class TasksProviderPart extends AbstractProviderPart
                        c.getString( COL_INDICES.get( Tasks.TASKSERIES_NAME ) ),
                        c.getString( COL_INDICES.get( Tasks.SOURCE ) ),
                        c.getString( COL_INDICES.get( Tasks.URL ) ),
+                       Queries.getOptString( c,
+                                             COL_INDICES.get( Tasks.RECURRENCE ) ),
+                       Queries.getOptBool( c,
+                                           COL_INDICES.get( Tasks.RECURRENCE_EVERY ),
+                                           false ),
                        Queries.getOptString( c,
                                              COL_INDICES.get( Tasks.LOCATION_ID ) ),
                        c.getString( COL_INDICES.get( Tasks.LIST_ID ) ),

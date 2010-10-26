@@ -35,6 +35,7 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm;
 
 
@@ -61,6 +62,9 @@ public class MolokoApp extends Application implements SyncStatusObserver
       
       syncStatHandle = ContentResolver.addStatusChangeListener( Constants.SYNC_OBSERVER_TYPE_SETTINGS,
                                                                 this );
+      
+      // TODO: Reinitialize the pattern language if system language changes.
+      RecurrenceParsing.initPatternLanguage( getResources() );
    }
    
 

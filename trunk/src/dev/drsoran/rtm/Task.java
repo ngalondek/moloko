@@ -53,6 +53,10 @@ public class Task
    
    private final String url;
    
+   private final String recurrence;
+   
+   private final boolean isEveryRecurrence;
+   
    private final String locationId;
    
    private final String listId;
@@ -94,9 +98,10 @@ public class Task
    
 
    public Task( String id, String listName, boolean isSmartList, Date created,
-      Date modified, String name, String source, String url, String locationId,
-      String listId, Date due, boolean hasDueTime, Date added, Date completed,
-      Date deleted, Priority priority, boolean posponed, String estimate,
+      Date modified, String name, String source, String url, String recurrence,
+      boolean isEveryRecurrence, String locationId, String listId, Date due,
+      boolean hasDueTime, Date added, Date completed, Date deleted,
+      Priority priority, boolean posponed, String estimate,
       long estimateMillis, String locationName, float longitude,
       float latitude, String address, boolean isViewable, int zoom,
       String tags, int numNotes )
@@ -109,6 +114,8 @@ public class Task
       this.name = name;
       this.source = source;
       this.url = url;
+      this.recurrence = recurrence;
+      this.isEveryRecurrence = isEveryRecurrence;
       this.locationId = locationId;
       this.listId = listId;
       this.due = due;
@@ -150,9 +157,10 @@ public class Task
 
 
    public Task( String id, String listName, boolean isSmartList, Date created,
-      Date modified, String name, String source, String url, String locationId,
-      String listId, Date due, boolean hasDueTime, Date added, Date completed,
-      Date deleted, Priority priority, boolean posponed, String estimate,
+      Date modified, String name, String source, String url, String recurrence,
+      boolean isEveryRecurrence, String locationId, String listId, Date due,
+      boolean hasDueTime, Date added, Date completed, Date deleted,
+      Priority priority, boolean posponed, String estimate,
       long estimateMillis, String locationName, float longitude,
       float latitude, String address, boolean isViewable, int zoom,
       List< String > tags, int numNotes )
@@ -165,6 +173,8 @@ public class Task
       this.name = name;
       this.source = source;
       this.url = url;
+      this.recurrence = recurrence;
+      this.isEveryRecurrence = isEveryRecurrence;
       this.locationId = locationId;
       this.listId = listId;
       this.due = due;
@@ -248,6 +258,20 @@ public class Task
    public String getUrl()
    {
       return url;
+   }
+   
+
+
+   public String getRecurrence()
+   {
+      return recurrence;
+   }
+   
+
+
+   public boolean isEveryRecurrence()
+   {
+      return isEveryRecurrence;
    }
    
 

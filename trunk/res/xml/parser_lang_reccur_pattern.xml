@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RecurrencePattern>
+   <!-- every -->
+   <entryPl
+      key="every"
+      year_1="jedes Jahr"
+      year_n="alle %s Jahre" />
+   <entryPl
+      key="every"
+      month_1="jeden Monat"
+      month_n="alle %s Monate" />
+   <entryPl
+      key="every"
+      week_1="jede Woche"
+      week_n="alle %s Wochen" />
+   <entryPl
+      key="every"
+      day_1="jeden Tag"
+      day_n="alle %s Tage" />
+
+   <!-- after -->
+   <entryPl
+      key="after"
+      year_1="nach einem Jahr"
+      year_n="nach %s Jahren" />
+   <entryPl
+      key="after"
+      month_1="nach einem Monat"
+      month_n="nach %s Monaten" />
+   <entryPl
+      key="after"
+      week_1="nach einer Woche"
+      week_n="nach %s Wochen" />
+   <entryPl
+      key="after"
+      day_1="nach einem Tag"
+      day_n="nach %s Tagen" />
+
+   <!-- Weekdays -->
+   <entry
+      key="MO"
+      value="Montag" />
+   <entry
+      key="TU"
+      value="Dienstag" />
+   <entry
+      key="WE"
+      value="Mittwoch" />
+   <entry
+      key="TH"
+      value="Donnerstag" />
+   <entry
+      key="FR"
+      value="Freitag" />
+   <entry
+      key="SA"
+      value="Samstag" />
+   <entry
+      key="SU"
+      value="Sonntag" />
+
+   <!-- Months -->
+   <entry
+      key="m1"
+      value="Januar" />
+   <entry
+      key="m2"
+      value="Februar" />
+   <entry
+      key="m3"
+      value="März" />
+   <entry
+      key="m4"
+      value="April" />
+   <entry
+      key="m5"
+      value="Mai" />
+   <entry
+      key="m6"
+      value="Juni" />
+   <entry
+      key="m7"
+      value="Juli" />
+   <entry
+      key="m8"
+      value="August" />
+   <entry
+      key="m9"
+      value="September" />
+   <entry
+      key="m10"
+      value="Oktober" />
+   <entry
+      key="m11"
+      value="November" />
+   <entry
+      key="m12"
+      value="Dezember" />
+
+   <!-- Others -->
+   <entry
+      key="last"
+      value="letzten" />
+   <entry
+      key="xst"
+      value="." />
+   <entry
+      key="on_the"
+      value="am" />
+   <entry
+      key="in"
+      value="in" />
+
+</RecurrencePattern>

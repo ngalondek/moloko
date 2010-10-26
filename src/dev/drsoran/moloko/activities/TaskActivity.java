@@ -46,6 +46,7 @@ import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -187,9 +188,10 @@ public class TaskActivity extends Activity
    {
       final boolean hasDue = task.getDue() != null;
       final boolean hasEstimate = !TextUtils.isEmpty( task.getEstimate() );
+      final boolean isRecurrent = !TextUtils.isEmpty( task.getRecurrence() );
       
       // Check if we need this section
-      if ( !hasEstimate && !hasDue )
+      if ( !hasEstimate && !hasDue && !isRecurrent )
       {
          view.setVisibility( View.GONE );
       }
@@ -214,7 +216,30 @@ public class TaskActivity extends Activity
             
          }
          
-         // TODO: Handle repeating tasks
+         if ( isRecurrent )
+         {
+            final String sentence = RecurrenceParsing.parseRecurrencePattern( task.getRecurrence(),
+                                                                              task.isEveryRecurrence() );
+            
+            // In this case we add the 'repeat' to the beginning of the pattern, otherwise
+            // the 'repeat' will be the header of the section.
+            if ( hasDue || hasEstimate )
+            {
+               UIUtils.appendAtNewLine( textBuffer,
+                                        getString( R.string.task_datetime_recurr_inline,
+                                                   ( sentence != null
+                                                                     ? sentence
+                                                                     : getString( R.string.task_datetime_err_recurr ) ) ) );
+            }
+            else
+            {
+               UIUtils.appendAtNewLine( textBuffer,
+                                        ( sentence != null
+                                                          ? sentence
+                                                          : getString( R.string.task_datetime_err_recurr ) ) );
+            }
+            
+         }
          
          if ( hasEstimate )
          {
@@ -224,11 +249,19 @@ public class TaskActivity extends Activity
                                                                                  task.getEstimateMillis() ) ) );
          }
          
+         // Determine the section title
+         int titleId;
+         
+         if ( hasDue )
+            titleId = R.string.task_datetime_title_due;
+         else if ( hasEstimate )
+            titleId = R.string.task_datetime_title_estimate;
+         else
+            titleId = R.string.task_datetime_title_recurr;
+         
          // TODO: Handle return value
          UIUtils.initializeTitleWithTextLayout( view,
-                                                getString( ( hasDue )
-                                                                     ? R.string.task_datetime_title_due
-                                                                     : R.string.task_datetime_title_estimate ),
+                                                getString( titleId ),
                                                 textBuffer.toString() );
          
       }

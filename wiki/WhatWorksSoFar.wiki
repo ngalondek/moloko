@@ -72,6 +72,9 @@ Support for Android integrated search dialog. Allows searching for tasks using s
 
  ==== later steps ===
     * support for HTTPS
+    * Groups, Contacts, Locations
+    * Write access
+    * Delete access
 
  ==== nice to have ===
     * implement search auto completion (low prio)

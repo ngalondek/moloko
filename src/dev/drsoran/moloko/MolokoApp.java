@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko;
 
-import java.util.concurrent.Semaphore;
-
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.Application;
@@ -31,7 +29,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncStatusObserver;
 import android.os.Handler;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.SyncUtils;
@@ -41,10 +38,6 @@ import dev.drsoran.provider.Rtm;
 
 public class MolokoApp extends Application implements SyncStatusObserver
 {
-   private final static RtmSmartFilterLexer rtmSmartFilterLexer = new RtmSmartFilterLexer();
-   
-   private final static Semaphore rtmSmartFilterLexerSemaphore = new Semaphore( 1 );
-   
    private static Settings settings;
    
    private final Handler handler = new Handler();
@@ -89,29 +82,6 @@ public class MolokoApp extends Application implements SyncStatusObserver
          app = MolokoApp.get( context.getApplicationContext() );
       
       return app;
-   }
-   
-
-
-   public static RtmSmartFilterLexer acquireLexer()
-   {
-      try
-      {
-         rtmSmartFilterLexerSemaphore.acquire();
-         return rtmSmartFilterLexer;
-      }
-      catch ( InterruptedException e )
-      {
-         return null;
-      }
-   }
-   
-
-
-   public static RtmSmartFilterLexer releaseLexer()
-   {
-      rtmSmartFilterLexerSemaphore.release();
-      return null;
    }
    
 

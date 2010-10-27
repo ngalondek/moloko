@@ -22,7 +22,6 @@
 
 package dev.drsoran.rtm;
 
-import org.antlr.runtime.RecognitionException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
@@ -31,10 +30,10 @@ import android.os.Parcelable;
 
 import com.mdt.rtm.data.RtmData;
 
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing.RtmSmartFilterReturn;
 import dev.drsoran.provider.Rtm.RawTasks;
 
 
@@ -146,32 +145,21 @@ public class RtmSmartFilter extends RtmData
             if ( !filter.contains( ":" ) )
                filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
             
-            final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filter );
-            RtmSmartFilterLexer lexer = MolokoApp.acquireLexer();
+            final RtmSmartFilterReturn parserRes = RtmSmartFilterParsing.evaluateRtmSmartFilter( filter );
             
-            if ( lexer != null )
+            if ( parserRes != null )
             {
-               lexer.setCharStream( input );
+               evalFilter.append( parserRes.result );
                
-               try
+               // SPECIAL CASE: If the filter contains any operator 'completed',
+               // we include completed tasks. Otherwise we would never show tasks in
+               // such lists. In all other cases we exclude completed tasks.
+               if ( !parserRes.hasCompletedOperator && excludeCompleted )
                {
-                  evalFilter.append( lexer.getResult() );
-                  
-                  // SPECIAL CASE: If the filter contains the operator 'status:completed',
-                  // we include completed tasks. Otherwise we would never show tasks in
-                  // such lists. In all other cases we exclude completed tasks.
-                  if ( !lexer.hasStatusCompletedOperator() && excludeCompleted )
-                  {
-                     evalFilter.append( " AND " )
-                               .append( RawTasks.COMPLETED_DATE )
-                               .append( " IS NULL" );
-                  }
+                  evalFilter.append( " AND " )
+                            .append( RawTasks.COMPLETED_DATE )
+                            .append( " IS NULL" );
                }
-               catch ( RecognitionException e )
-               {
-               }
-               
-               lexer = MolokoApp.releaseLexer();
             }
          }
       }

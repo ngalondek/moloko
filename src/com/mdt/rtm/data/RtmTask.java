@@ -30,9 +30,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
@@ -42,6 +40,7 @@ import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.RawTasks;
 
 
@@ -362,17 +361,7 @@ public class RtmTask extends RtmData implements
    {
       if ( !TextUtils.isEmpty( estimate ) )
       {
-         RtmSmartFilterLexer lexer = MolokoApp.acquireLexer();
-         
-         if ( lexer != null )
-         {
-            this.estimateMillis = lexer.parseEstimated( estimate );
-            lexer = MolokoApp.releaseLexer();
-         }
-         else
-         {
-            this.estimateMillis = -1;
-         }
+         this.estimateMillis = RtmDateTimeParsing.parseEstimated( estimate );
       }
       else
       {

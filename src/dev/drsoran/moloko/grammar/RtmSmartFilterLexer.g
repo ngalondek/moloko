@@ -9,20 +9,14 @@ options
 {
 	package dev.drsoran.moloko.grammar;
 	
+	import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 	import dev.drsoran.provider.Rtm.Tasks;
 	import dev.drsoran.provider.Rtm.Tags;
 	import dev.drsoran.provider.Rtm.Notes;
 	
-	import java.util.Calendar;
-
-	import org.antlr.runtime.CommonTokenStream;
 	import org.antlr.runtime.RecognitionException;
 	
-	import dev.drsoran.moloko.grammar.DateTimeLexer;
-	import dev.drsoran.moloko.grammar.TimeParser;
-	import dev.drsoran.moloko.grammar.DateParser;
-	
-	import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
+	import java.util.Calendar;
 }
 
 
@@ -106,13 +100,7 @@ options
 	
 	private final static String TAGS_QUERY_PREFIX
    	= "(SELECT "  + Tags.TASKSERIES_ID + " FROM " + Tags.PATH
-   	  + " WHERE " + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks._ID;
-   
-	private final DateTimeLexer dateTimeLexer = new DateTimeLexer();
-   
-   private final TimeParser timeParser = new TimeParser();
-   
-   private final DateParser dateParser = new DateParser();
+   	  + " WHERE " + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks._ID;	
    
    // STATUS VARIABLES
    
@@ -132,134 +120,6 @@ options
       result = new StringBuffer();
       hasStatusCompletedOp = false;
       error = false;
-   }
-   
-   
-	
-	public Calendar parseDateTimeSpec( String spec )
-	{
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( spec );
-      dateTimeLexer.setCharStream( stream );
-      
-      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-      final Calendar cal = TimeParser.getLocalizedCalendar();
-      
-      boolean eof = false;
-      boolean hasTime = false;
-      boolean hasDate = false;
-      boolean error = false;
-      
-      timeParser.setTokenStream( antlrTokens );
-      
-      // first try to parse time spec
-      try
-      {
-         // The parser can adjust the day of week
-         // for times in the past.
-         eof = timeParser.parseTimeSpec( cal, !hasDate );
-         hasTime = !eof;
-      }
-      catch ( RecognitionException e )
-      {
-      }
-      
-      if ( !eof )
-      {
-         if ( !hasTime )
-            antlrTokens.reset();
-         
-         dateParser.setTokenStream( antlrTokens );
-         
-         try
-         {
-            eof = dateParser.parseDate( cal, !hasTime );
-            hasDate = !eof;
-         }
-         catch ( RecognitionException e )
-         {
-            error = true;
-         }
-      }
-      
-      // Check if there is a time trailing.
-      // The parser can NOT adjust the day of week
-      // for times in the past.
-      if ( !error && !eof && hasDate && !hasTime )
-      {
-         final int streamPos = antlrTokens.mark();
-         
-         try
-         {
-            eof = timeParser.parseTime( cal, !hasDate );
-            hasTime = !eof;
-         }
-         catch ( RecognitionException re2 )
-         {
-         }
-         
-         if ( !eof && !hasTime )
-         {
-            antlrTokens.rewind( streamPos );
-            
-            try
-            {
-               eof = timeParser.parseTimeSpec( cal, !hasDate );
-               hasTime = !eof;
-            }
-            catch ( RecognitionException re3 )
-            {
-               error = true;
-            }
-         }
-      }      
-      
-      return ( !error ) ? cal : null;
-	}
-
-
-
-	public long parseEstimated( String estimated )
-   {
-      long estimatedLong = -1;
-      
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( estimated );
-      dateTimeLexer.setCharStream( stream );
-      
-      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-      boolean error = false;
-      
-      timeParser.setTokenStream( antlrTokens );
-      
-      try
-      {
-         estimatedLong = timeParser.parseTimeEstimate();
-      }
-      catch ( RecognitionException e )
-      {
-         error = true;
-      }
-      
-      return ( !error ) ? estimatedLong : -1;
-   }
-   
-   
-   
-   public DateParser.parseDateWithin_return parseDateWithin( String range, boolean past )
-   {
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( range );
-      dateTimeLexer.setCharStream( stream );
-      
-      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );      
-      dateParser.setTokenStream( antlrTokens );
-      
-      try
-      {
-			return dateParser.parseDateWithin( past );
-      }
-      catch ( RecognitionException e )
-      {
-			return null;
-      }
    }
 
 
@@ -313,7 +173,7 @@ options
 
    private void equalsTimeParam( String column, String param )
    {
-   	final Calendar cal = parseDateTimeSpec( unquotify( param ) );
+   	final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( unquotify( param ) );
 						
 		if ( cal != null )
 		{
@@ -348,7 +208,7 @@ options
 
 	private void differsTimeParam( String column, String param, boolean before )
    {
-   	final Calendar cal = parseDateTimeSpec( unquotify( param ) );
+   	final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( unquotify( param ) );
 						
 		if ( cal != null )
 		{
@@ -365,44 +225,22 @@ options
 
 	private void inTimeParamRange( String column, String param, boolean past )
 	{
-		final DateParser.parseDateWithin_return range = parseDateWithin( unquotify( param ), past );
+		final RtmDateTimeParsing.DateWithinReturn range = RtmDateTimeParsing.parseDateWithin( unquotify( param ), past );
 						
 		if ( range != null )
 		{			
 			result.append( column );			
 			result.append( " >= " );
-         result.append( !past ? range.epochStart.getTimeInMillis() : range.epochEnd.getTimeInMillis() );
+         result.append( !past ? range.startEpoch.getTimeInMillis() : range.endEpoch.getTimeInMillis() );
          result.append( " AND " );
          result.append( column );
          result.append( " < " );
-         result.append( !past ? range.epochEnd.getTimeInMillis() : range.epochStart.getTimeInMillis() );        
+         result.append( !past ? range.endEpoch.getTimeInMillis() : range.startEpoch.getTimeInMillis() );        
 		}
 		else
         // Parser error
         error = true;
 	}
-
-
-
-	public DateTimeLexer getDateTimeLexer()
-	{
-		return dateTimeLexer;
-	}
-
-
-
-	public DateParser getDateParser()
-	{
-		return dateParser;
-	}
-
-
-
-	public TimeParser getTimeParser()
-	{
-		return timeParser;
-	}
-
 
 
 	public String getResult() throws RecognitionException
@@ -636,12 +474,12 @@ OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
 			             {
      			             result.append( " > -1 AND " ).append( Tasks.ESTIMATE_MILLIS );
 			                result.append( chPos0 );
-			                estimatedMillis = parseEstimated( param.substring( 1 ) );			               
+			                estimatedMillis = RtmDateTimeParsing.parseEstimated( param.substring( 1 ) );			               
    	    	          }
 			             else
 			             {
 			                result.append( "=" );
-			                estimatedMillis = parseEstimated( param );
+			                estimatedMillis = RtmDateTimeParsing.parseEstimated( param );
 			             }
 			            
 			             // Parser error

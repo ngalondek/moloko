@@ -110,5 +110,14 @@
    <entry
       key="in"
       value="in" />
+   <entry
+      key="until"
+      value="bis" />
+   <entry
+      key="for"
+      value="für" />
+   <entry
+      key="times"
+      value="mal" />
 
 </RecurrencePattern>

@@ -360,7 +360,21 @@ OP_ISLOCATED : 'islocated:'
 						}
 					);
 
-// OP_IS_REPEATING
+OP_IS_REPEATING : 'isrepeating:'
+					   {
+						   result.append( Tasks.RECURRENCE );
+					   }
+                  (
+						   TRUE
+						   {
+							   result.append(" IS NOT NULL");	
+						   }
+						   |
+						   FALSE
+						   {
+							   result.append(" IS NULL");
+						   }
+					   );
 
 OP_NAME		:  'name:' ( s=STRING | s=Q_STRING )
 					{
@@ -371,17 +385,19 @@ OP_NAME		:  'name:' ( s=STRING | s=Q_STRING )
 OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
 						 {
 						 	 result.append( " (SELECT " )
-				                .append( Notes.TASKSERIES_ID )
-				                .append( " FROM " )
-				                .append( Notes.PATH )
-				                .append( " WHERE " )
-				                .append( Notes.TASKSERIES_ID )
-				                .append( " = subQuery." )
-				                .append( Tasks._ID )
-				                .append( " AND " )
-				                .append( Notes.NOTE_TEXT );
-				          containsStringParam( $s.getText() );
-				          result.append( ")" );
+                            .append( Notes.TASKSERIES_ID )
+                            .append( " FROM " )
+                            .append( Notes.PATH )
+                            .append( " WHERE " )
+                            .append( Notes.TASKSERIES_ID )
+                            .append( " = subQuery." )
+                            .append( Tasks._ID )
+                            .append( " AND " )
+                            .append( Notes.NOTE_TITLE );
+                      containsStringParam( s.getText() );
+                      result.append( " OR " ).append( Notes.NOTE_TEXT );
+                      containsStringParam( s.getText() );
+                      result.append( ")" );
 						 };
 
 OP_HAS_NOTES : 'hasnotes:'

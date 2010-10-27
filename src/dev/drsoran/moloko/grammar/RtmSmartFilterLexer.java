@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g 2010-10-26 15:06:22
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g 2010-10-27 15:40:34
 
 package dev.drsoran.moloko.grammar;
 
@@ -26,29 +26,29 @@ public class RtmSmartFilterLexer extends Lexer
 {
    public static final int OP_IS_TAGGED = 15;
    
-   public static final int OP_DUE = 21;
+   public static final int OP_DUE = 22;
    
-   public static final int OP_ADDED_WITHIN = 32;
+   public static final int OP_ADDED_WITHIN = 33;
    
-   public static final int OP_DUE_BEFORE = 23;
+   public static final int OP_DUE_BEFORE = 24;
    
-   public static final int OP_HAS_NOTES = 20;
+   public static final int OP_HAS_NOTES = 21;
    
-   public static final int OP_COMPLETED_WITHIN = 28;
+   public static final int OP_COMPLETED_WITHIN = 29;
    
-   public static final int OP_COMPLETED_AFTER = 27;
+   public static final int OP_COMPLETED_AFTER = 28;
    
    public static final int INCOMPLETE = 9;
    
-   public static final int NOT = 39;
+   public static final int NOT = 40;
    
-   public static final int AND = 37;
+   public static final int AND = 38;
    
    public static final int EOF = -1;
    
    public static final int TRUE = 13;
    
-   public static final int OP_ADDED_BEFORE = 30;
+   public static final int OP_ADDED_BEFORE = 31;
    
    public static final int OP_PRIORITY = 7;
    
@@ -56,45 +56,47 @@ public class RtmSmartFilterLexer extends Lexer
    
    public static final int OP_TAG = 11;
    
-   public static final int OP_DUE_WITHIN = 24;
+   public static final int OP_DUE_WITHIN = 25;
    
-   public static final int OP_DUE_AFTER = 22;
+   public static final int OP_DUE_AFTER = 23;
    
    public static final int Q_STRING = 5;
    
    public static final int OP_TAG_CONTAINS = 12;
    
-   public static final int R_PARENTH = 36;
+   public static final int R_PARENTH = 37;
    
-   public static final int OP_ADDED_AFTER = 31;
+   public static final int OP_ADDED_AFTER = 32;
    
-   public static final int OP_COMPLETED_BEFORE = 26;
+   public static final int OP_COMPLETED_BEFORE = 27;
    
-   public static final int OP_POSTPONED = 34;
+   public static final int OP_POSTPONED = 35;
    
-   public static final int OP_COMPLETED = 25;
+   public static final int OP_COMPLETED = 26;
    
    public static final int OP_LIST = 6;
    
-   public static final int WS = 40;
+   public static final int WS = 41;
    
-   public static final int L_PARENTH = 35;
+   public static final int L_PARENTH = 36;
    
-   public static final int OP_TIME_ESTIMATE = 33;
+   public static final int OP_IS_REPEATING = 18;
+   
+   public static final int OP_TIME_ESTIMATE = 34;
    
    public static final int OP_STATUS = 10;
    
    public static final int OP_LOCATION = 16;
    
-   public static final int OR = 38;
+   public static final int OR = 39;
    
-   public static final int OP_NOTE_CONTAINS = 19;
+   public static final int OP_NOTE_CONTAINS = 20;
    
-   public static final int OP_NAME = 18;
+   public static final int OP_NAME = 19;
    
    public static final int FALSE = 14;
    
-   public static final int OP_ADDED = 29;
+   public static final int OP_ADDED = 30;
    
    public static final int OP_ISLOCATED = 17;
    
@@ -1022,33 +1024,32 @@ public class RtmSmartFilterLexer extends Lexer
 
    // $ANTLR end "OP_ISLOCATED"
    
-   // $ANTLR start "OP_NAME"
-   public final void mOP_NAME() throws RecognitionException
+   // $ANTLR start "OP_IS_REPEATING"
+   public final void mOP_IS_REPEATING() throws RecognitionException
    {
       try
       {
-         int _type = OP_NAME;
+         int _type = OP_IS_REPEATING;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         CommonToken s = null;
-         
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:365:10:
-         // ( 'name:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:365:13:
-         // 'name:' (s= STRING | s= Q_STRING )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:363:17:
+         // ( 'isrepeating:' ( TRUE | FALSE ) )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:363:19:
+         // 'isrepeating:' ( TRUE | FALSE )
          {
-            match( "name:" );
+            match( "isrepeating:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:365:21:
-            // (s= STRING | s= Q_STRING )
+            result.append( Tasks.RECURRENCE );
+            
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:367:19:
+            // ( TRUE | FALSE )
             int alt8 = 2;
             int LA8_0 = input.LA( 1 );
             
-            if ( ( ( LA8_0 >= '\u0000' && LA8_0 <= '\u001F' ) || LA8_0 == '!'
-               || ( LA8_0 >= '#' && LA8_0 <= '\'' ) || ( LA8_0 >= '*' && LA8_0 <= '\uFFFF' ) ) )
+            if ( ( LA8_0 == 't' ) )
             {
                alt8 = 1;
             }
-            else if ( ( LA8_0 == '\"' ) )
+            else if ( ( LA8_0 == 'f' ) )
             {
                alt8 = 2;
             }
@@ -1064,29 +1065,107 @@ public class RtmSmartFilterLexer extends Lexer
             switch ( alt8 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:365:23:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:368:10:
+                  // TRUE
+               {
+                  mTRUE();
+                  
+                  result.append( " IS NOT NULL" );
+                  
+               }
+                  break;
+               case 2:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:373:10:
+                  // FALSE
+               {
+                  mFALSE();
+                  
+                  result.append( " IS NULL" );
+                  
+               }
+                  break;
+               
+            }
+            
+         }
+         
+         state.type = _type;
+         state.channel = _channel;
+      }
+      finally
+      {
+      }
+   }
+   
+
+
+   // $ANTLR end "OP_IS_REPEATING"
+   
+   // $ANTLR start "OP_NAME"
+   public final void mOP_NAME() throws RecognitionException
+   {
+      try
+      {
+         int _type = OP_NAME;
+         int _channel = DEFAULT_TOKEN_CHANNEL;
+         CommonToken s = null;
+         
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:379:10:
+         // ( 'name:' (s= STRING | s= Q_STRING ) )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:379:13:
+         // 'name:' (s= STRING | s= Q_STRING )
+         {
+            match( "name:" );
+            
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:379:21:
+            // (s= STRING | s= Q_STRING )
+            int alt9 = 2;
+            int LA9_0 = input.LA( 1 );
+            
+            if ( ( ( LA9_0 >= '\u0000' && LA9_0 <= '\u001F' ) || LA9_0 == '!'
+               || ( LA9_0 >= '#' && LA9_0 <= '\'' ) || ( LA9_0 >= '*' && LA9_0 <= '\uFFFF' ) ) )
+            {
+               alt9 = 1;
+            }
+            else if ( ( LA9_0 == '\"' ) )
+            {
+               alt9 = 2;
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     9,
+                                                                     0,
+                                                                     input );
+               
+               throw nvae;
+            }
+            switch ( alt9 )
+            {
+               case 1:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:379:23:
                   // s= STRING
                {
-                  int sStart450 = getCharIndex();
+                  int sStart551 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart450,
+                                       sStart551,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:365:34:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:379:34:
                   // s= Q_STRING
                {
-                  int sStart456 = getCharIndex();
+                  int sStart557 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart456,
+                                       sStart557,
                                        getCharIndex() - 1 );
                   
                }
@@ -1120,62 +1199,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:371:18:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:385:18:
          // ( 'notecontains:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:371:20:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:385:20:
          // 'notecontains:' (s= STRING | s= Q_STRING )
          {
             match( "notecontains:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:371:36:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:385:36:
             // (s= STRING | s= Q_STRING )
-            int alt9 = 2;
-            int LA9_0 = input.LA( 1 );
+            int alt10 = 2;
+            int LA10_0 = input.LA( 1 );
             
-            if ( ( ( LA9_0 >= '\u0000' && LA9_0 <= '\u001F' ) || LA9_0 == '!'
-               || ( LA9_0 >= '#' && LA9_0 <= '\'' ) || ( LA9_0 >= '*' && LA9_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA10_0 >= '\u0000' && LA10_0 <= '\u001F' )
+               || LA10_0 == '!' || ( LA10_0 >= '#' && LA10_0 <= '\'' ) || ( LA10_0 >= '*' && LA10_0 <= '\uFFFF' ) ) )
             {
-               alt9 = 1;
+               alt10 = 1;
             }
-            else if ( ( LA9_0 == '\"' ) )
+            else if ( ( LA10_0 == '\"' ) )
             {
-               alt9 = 2;
+               alt10 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     9,
+                                                                     10,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt9 )
+            switch ( alt10 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:371:38:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:385:38:
                   // s= STRING
                {
-                  int sStart484 = getCharIndex();
+                  int sStart585 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart484,
+                                       sStart585,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:371:49:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:385:49:
                   // s= Q_STRING
                {
-                  int sStart490 = getCharIndex();
+                  int sStart591 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart490,
+                                       sStart591,
                                        getCharIndex() - 1 );
                   
                }
@@ -1192,7 +1271,9 @@ public class RtmSmartFilterLexer extends Lexer
                   .append( " = subQuery." )
                   .append( Tasks._ID )
                   .append( " AND " )
-                  .append( Notes.NOTE_TEXT );
+                  .append( Notes.NOTE_TITLE );
+            containsStringParam( s.getText() );
+            result.append( " OR " ).append( Notes.NOTE_TEXT );
             containsStringParam( s.getText() );
             result.append( ")" );
             
@@ -1217,39 +1298,39 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = OP_HAS_NOTES;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:387:14:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:401:14:
          // ( 'hasnotes:' ( TRUE | FALSE ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:387:16:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:401:16:
          // 'hasnotes:' ( TRUE | FALSE )
          {
             match( "hasnotes:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:388:6:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:402:6:
             // ( TRUE | FALSE )
-            int alt10 = 2;
-            int LA10_0 = input.LA( 1 );
+            int alt11 = 2;
+            int LA11_0 = input.LA( 1 );
             
-            if ( ( LA10_0 == 't' ) )
+            if ( ( LA11_0 == 't' ) )
             {
-               alt10 = 1;
+               alt11 = 1;
             }
-            else if ( ( LA10_0 == 'f' ) )
+            else if ( ( LA11_0 == 'f' ) )
             {
-               alt10 = 2;
+               alt11 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     10,
+                                                                     11,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt10 )
+            switch ( alt11 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:389:7:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:403:7:
                   // TRUE
                {
                   mTRUE();
@@ -1259,7 +1340,7 @@ public class RtmSmartFilterLexer extends Lexer
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:394:7:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:408:7:
                   // FALSE
                {
                   mFALSE();
@@ -1294,62 +1375,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:400:13:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:414:13:
          // ( 'due:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:400:16:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:414:16:
          // 'due:' (s= STRING | s= Q_STRING )
          {
             match( "due:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:400:23:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:414:23:
             // (s= STRING | s= Q_STRING )
-            int alt11 = 2;
-            int LA11_0 = input.LA( 1 );
+            int alt12 = 2;
+            int LA12_0 = input.LA( 1 );
             
-            if ( ( ( LA11_0 >= '\u0000' && LA11_0 <= '\u001F' )
-               || LA11_0 == '!' || ( LA11_0 >= '#' && LA11_0 <= '\'' ) || ( LA11_0 >= '*' && LA11_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA12_0 >= '\u0000' && LA12_0 <= '\u001F' )
+               || LA12_0 == '!' || ( LA12_0 >= '#' && LA12_0 <= '\'' ) || ( LA12_0 >= '*' && LA12_0 <= '\uFFFF' ) ) )
             {
-               alt11 = 1;
+               alt12 = 1;
             }
-            else if ( ( LA11_0 == '\"' ) )
+            else if ( ( LA12_0 == '\"' ) )
             {
-               alt11 = 2;
+               alt12 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     11,
+                                                                     12,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt11 )
+            switch ( alt12 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:400:25:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:414:25:
                   // s= STRING
                {
-                  int sStart583 = getCharIndex();
+                  int sStart684 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart583,
+                                       sStart684,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:400:36:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:414:36:
                   // s= Q_STRING
                {
-                  int sStart589 = getCharIndex();
+                  int sStart690 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart589,
+                                       sStart690,
                                        getCharIndex() - 1 );
                   
                }
@@ -1382,62 +1463,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:405:14:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:419:14:
          // ( 'dueafter:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:405:16:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:419:16:
          // 'dueafter:' (s= STRING | s= Q_STRING )
          {
             match( "dueafter:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:405:28:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:419:28:
             // (s= STRING | s= Q_STRING )
-            int alt12 = 2;
-            int LA12_0 = input.LA( 1 );
+            int alt13 = 2;
+            int LA13_0 = input.LA( 1 );
             
-            if ( ( ( LA12_0 >= '\u0000' && LA12_0 <= '\u001F' )
-               || LA12_0 == '!' || ( LA12_0 >= '#' && LA12_0 <= '\'' ) || ( LA12_0 >= '*' && LA12_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA13_0 >= '\u0000' && LA13_0 <= '\u001F' )
+               || LA13_0 == '!' || ( LA13_0 >= '#' && LA13_0 <= '\'' ) || ( LA13_0 >= '*' && LA13_0 <= '\uFFFF' ) ) )
             {
-               alt12 = 1;
+               alt13 = 1;
             }
-            else if ( ( LA12_0 == '\"' ) )
+            else if ( ( LA13_0 == '\"' ) )
             {
-               alt12 = 2;
+               alt13 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     12,
+                                                                     13,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt12 )
+            switch ( alt13 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:405:30:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:419:30:
                   // s= STRING
                {
-                  int sStart612 = getCharIndex();
+                  int sStart713 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart612,
+                                       sStart713,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:405:41:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:419:41:
                   // s= Q_STRING
                {
-                  int sStart618 = getCharIndex();
+                  int sStart719 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart618,
+                                       sStart719,
                                        getCharIndex() - 1 );
                   
                }
@@ -1470,62 +1551,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:410:15:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:424:15:
          // ( 'duebefore:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:410:17:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:424:17:
          // 'duebefore:' (s= STRING | s= Q_STRING )
          {
             match( "duebefore:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:410:30:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:424:30:
             // (s= STRING | s= Q_STRING )
-            int alt13 = 2;
-            int LA13_0 = input.LA( 1 );
+            int alt14 = 2;
+            int LA14_0 = input.LA( 1 );
             
-            if ( ( ( LA13_0 >= '\u0000' && LA13_0 <= '\u001F' )
-               || LA13_0 == '!' || ( LA13_0 >= '#' && LA13_0 <= '\'' ) || ( LA13_0 >= '*' && LA13_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA14_0 >= '\u0000' && LA14_0 <= '\u001F' )
+               || LA14_0 == '!' || ( LA14_0 >= '#' && LA14_0 <= '\'' ) || ( LA14_0 >= '*' && LA14_0 <= '\uFFFF' ) ) )
             {
-               alt13 = 1;
+               alt14 = 1;
             }
-            else if ( ( LA13_0 == '\"' ) )
+            else if ( ( LA14_0 == '\"' ) )
             {
-               alt13 = 2;
+               alt14 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     13,
+                                                                     14,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt13 )
+            switch ( alt14 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:410:32:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:424:32:
                   // s= STRING
                {
-                  int sStart646 = getCharIndex();
+                  int sStart747 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart646,
+                                       sStart747,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:410:43:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:424:43:
                   // s= Q_STRING
                {
-                  int sStart652 = getCharIndex();
+                  int sStart753 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart652,
+                                       sStart753,
                                        getCharIndex() - 1 );
                   
                }
@@ -1558,19 +1639,19 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:415:15:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:429:15:
          // ( 'duewithin:' s= Q_STRING )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:415:17:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:429:17:
          // 'duewithin:' s= Q_STRING
          {
             match( "duewithin:" );
             
-            int sStart673 = getCharIndex();
+            int sStart774 = getCharIndex();
             mQ_STRING();
             s = new CommonToken( input,
                                  Token.INVALID_TOKEN_TYPE,
                                  Token.DEFAULT_CHANNEL,
-                                 sStart673,
+                                 sStart774,
                                  getCharIndex() - 1 );
             
             inTimeParamRange( Tasks.DUE_DATE, s.getText(), false );
@@ -1598,62 +1679,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:420:14:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:434:14:
          // ( 'completed:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:420:16:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:434:16:
          // 'completed:' (s= STRING | s= Q_STRING )
          {
             match( "completed:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:420:29:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:434:29:
             // (s= STRING | s= Q_STRING )
-            int alt14 = 2;
-            int LA14_0 = input.LA( 1 );
+            int alt15 = 2;
+            int LA15_0 = input.LA( 1 );
             
-            if ( ( ( LA14_0 >= '\u0000' && LA14_0 <= '\u001F' )
-               || LA14_0 == '!' || ( LA14_0 >= '#' && LA14_0 <= '\'' ) || ( LA14_0 >= '*' && LA14_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA15_0 >= '\u0000' && LA15_0 <= '\u001F' )
+               || LA15_0 == '!' || ( LA15_0 >= '#' && LA15_0 <= '\'' ) || ( LA15_0 >= '*' && LA15_0 <= '\uFFFF' ) ) )
             {
-               alt14 = 1;
+               alt15 = 1;
             }
-            else if ( ( LA14_0 == '\"' ) )
+            else if ( ( LA15_0 == '\"' ) )
             {
-               alt14 = 2;
+               alt15 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     14,
+                                                                     15,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt14 )
+            switch ( alt15 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:420:31:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:434:31:
                   // s= STRING
                {
-                  int sStart704 = getCharIndex();
+                  int sStart805 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart704,
+                                       sStart805,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:420:42:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:434:42:
                   // s= Q_STRING
                {
-                  int sStart710 = getCharIndex();
+                  int sStart811 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart710,
+                                       sStart811,
                                        getCharIndex() - 1 );
                   
                }
@@ -1687,62 +1768,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:426:21:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:440:21:
          // ( 'completedbefore:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:426:23:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:440:23:
          // 'completedbefore:' (s= STRING | s= Q_STRING )
          {
             match( "completedbefore:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:426:42:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:440:42:
             // (s= STRING | s= Q_STRING )
-            int alt15 = 2;
-            int LA15_0 = input.LA( 1 );
+            int alt16 = 2;
+            int LA16_0 = input.LA( 1 );
             
-            if ( ( ( LA15_0 >= '\u0000' && LA15_0 <= '\u001F' )
-               || LA15_0 == '!' || ( LA15_0 >= '#' && LA15_0 <= '\'' ) || ( LA15_0 >= '*' && LA15_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA16_0 >= '\u0000' && LA16_0 <= '\u001F' )
+               || LA16_0 == '!' || ( LA16_0 >= '#' && LA16_0 <= '\'' ) || ( LA16_0 >= '*' && LA16_0 <= '\uFFFF' ) ) )
             {
-               alt15 = 1;
+               alt16 = 1;
             }
-            else if ( ( LA15_0 == '\"' ) )
+            else if ( ( LA16_0 == '\"' ) )
             {
-               alt15 = 2;
+               alt16 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     15,
+                                                                     16,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt15 )
+            switch ( alt16 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:426:44:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:440:44:
                   // s= STRING
                {
-                  int sStart733 = getCharIndex();
+                  int sStart834 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart733,
+                                       sStart834,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:426:55:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:440:55:
                   // s= Q_STRING
                {
-                  int sStart739 = getCharIndex();
+                  int sStart840 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart739,
+                                       sStart840,
                                        getCharIndex() - 1 );
                   
                }
@@ -1776,62 +1857,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:432:20:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:446:20:
          // ( 'completedafter:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:432:22:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:446:22:
          // 'completedafter:' (s= STRING | s= Q_STRING )
          {
             match( "completedafter:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:432:40:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:446:40:
             // (s= STRING | s= Q_STRING )
-            int alt16 = 2;
-            int LA16_0 = input.LA( 1 );
+            int alt17 = 2;
+            int LA17_0 = input.LA( 1 );
             
-            if ( ( ( LA16_0 >= '\u0000' && LA16_0 <= '\u001F' )
-               || LA16_0 == '!' || ( LA16_0 >= '#' && LA16_0 <= '\'' ) || ( LA16_0 >= '*' && LA16_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA17_0 >= '\u0000' && LA17_0 <= '\u001F' )
+               || LA17_0 == '!' || ( LA17_0 >= '#' && LA17_0 <= '\'' ) || ( LA17_0 >= '*' && LA17_0 <= '\uFFFF' ) ) )
             {
-               alt16 = 1;
+               alt17 = 1;
             }
-            else if ( ( LA16_0 == '\"' ) )
+            else if ( ( LA17_0 == '\"' ) )
             {
-               alt16 = 2;
+               alt17 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     16,
+                                                                     17,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt16 )
+            switch ( alt17 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:432:42:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:446:42:
                   // s= STRING
                {
-                  int sStart762 = getCharIndex();
+                  int sStart863 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart762,
+                                       sStart863,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:432:53:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:446:53:
                   // s= Q_STRING
                {
-                  int sStart768 = getCharIndex();
+                  int sStart869 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart768,
+                                       sStart869,
                                        getCharIndex() - 1 );
                   
                }
@@ -1865,19 +1946,19 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:438:21:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:452:21:
          // ( 'completedwithin:' s= Q_STRING )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:438:23:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:452:23:
          // 'completedwithin:' s= Q_STRING
          {
             match( "completedwithin:" );
             
-            int sStart789 = getCharIndex();
+            int sStart890 = getCharIndex();
             mQ_STRING();
             s = new CommonToken( input,
                                  Token.INVALID_TOKEN_TYPE,
                                  Token.DEFAULT_CHANNEL,
-                                 sStart789,
+                                 sStart890,
                                  getCharIndex() - 1 );
             
             hasStatusCompletedOp = true;
@@ -1906,62 +1987,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:444:14:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:458:14:
          // ( 'added:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:444:16:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:458:16:
          // 'added:' (s= STRING | s= Q_STRING )
          {
             match( "added:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:444:25:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:458:25:
             // (s= STRING | s= Q_STRING )
-            int alt17 = 2;
-            int LA17_0 = input.LA( 1 );
+            int alt18 = 2;
+            int LA18_0 = input.LA( 1 );
             
-            if ( ( ( LA17_0 >= '\u0000' && LA17_0 <= '\u001F' )
-               || LA17_0 == '!' || ( LA17_0 >= '#' && LA17_0 <= '\'' ) || ( LA17_0 >= '*' && LA17_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA18_0 >= '\u0000' && LA18_0 <= '\u001F' )
+               || LA18_0 == '!' || ( LA18_0 >= '#' && LA18_0 <= '\'' ) || ( LA18_0 >= '*' && LA18_0 <= '\uFFFF' ) ) )
             {
-               alt17 = 1;
+               alt18 = 1;
             }
-            else if ( ( LA17_0 == '\"' ) )
+            else if ( ( LA18_0 == '\"' ) )
             {
-               alt17 = 2;
+               alt18 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     17,
+                                                                     18,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt17 )
+            switch ( alt18 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:444:27:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:458:27:
                   // s= STRING
                {
-                  int sStart825 = getCharIndex();
+                  int sStart926 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart825,
+                                       sStart926,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:444:38:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:458:38:
                   // s= Q_STRING
                {
-                  int sStart831 = getCharIndex();
+                  int sStart932 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart831,
+                                       sStart932,
                                        getCharIndex() - 1 );
                   
                }
@@ -1994,62 +2075,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:449:17:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:463:17:
          // ( 'addedbefore:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:449:19:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:463:19:
          // 'addedbefore:' (s= STRING | s= Q_STRING )
          {
             match( "addedbefore:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:449:34:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:463:34:
             // (s= STRING | s= Q_STRING )
-            int alt18 = 2;
-            int LA18_0 = input.LA( 1 );
+            int alt19 = 2;
+            int LA19_0 = input.LA( 1 );
             
-            if ( ( ( LA18_0 >= '\u0000' && LA18_0 <= '\u001F' )
-               || LA18_0 == '!' || ( LA18_0 >= '#' && LA18_0 <= '\'' ) || ( LA18_0 >= '*' && LA18_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA19_0 >= '\u0000' && LA19_0 <= '\u001F' )
+               || LA19_0 == '!' || ( LA19_0 >= '#' && LA19_0 <= '\'' ) || ( LA19_0 >= '*' && LA19_0 <= '\uFFFF' ) ) )
             {
-               alt18 = 1;
+               alt19 = 1;
             }
-            else if ( ( LA18_0 == '\"' ) )
+            else if ( ( LA19_0 == '\"' ) )
             {
-               alt18 = 2;
+               alt19 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     18,
+                                                                     19,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt18 )
+            switch ( alt19 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:449:36:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:463:36:
                   // s= STRING
                {
-                  int sStart854 = getCharIndex();
+                  int sStart955 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart854,
+                                       sStart955,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:449:47:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:463:47:
                   // s= Q_STRING
                {
-                  int sStart860 = getCharIndex();
+                  int sStart961 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart860,
+                                       sStart961,
                                        getCharIndex() - 1 );
                   
                }
@@ -2082,62 +2163,62 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:454:16:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:468:16:
          // ( 'addedafter:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:454:18:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:468:18:
          // 'addedafter:' (s= STRING | s= Q_STRING )
          {
             match( "addedafter:" );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:454:32:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:468:32:
             // (s= STRING | s= Q_STRING )
-            int alt19 = 2;
-            int LA19_0 = input.LA( 1 );
+            int alt20 = 2;
+            int LA20_0 = input.LA( 1 );
             
-            if ( ( ( LA19_0 >= '\u0000' && LA19_0 <= '\u001F' )
-               || LA19_0 == '!' || ( LA19_0 >= '#' && LA19_0 <= '\'' ) || ( LA19_0 >= '*' && LA19_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA20_0 >= '\u0000' && LA20_0 <= '\u001F' )
+               || LA20_0 == '!' || ( LA20_0 >= '#' && LA20_0 <= '\'' ) || ( LA20_0 >= '*' && LA20_0 <= '\uFFFF' ) ) )
             {
-               alt19 = 1;
+               alt20 = 1;
             }
-            else if ( ( LA19_0 == '\"' ) )
+            else if ( ( LA20_0 == '\"' ) )
             {
-               alt19 = 2;
+               alt20 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     19,
+                                                                     20,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt19 )
+            switch ( alt20 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:454:34:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:468:34:
                   // s= STRING
                {
-                  int sStart884 = getCharIndex();
+                  int sStart985 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart884,
+                                       sStart985,
                                        getCharIndex() - 1 );
                   
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:454:45:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:468:45:
                   // s= Q_STRING
                {
-                  int sStart890 = getCharIndex();
+                  int sStart991 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart890,
+                                       sStart991,
                                        getCharIndex() - 1 );
                   
                }
@@ -2170,19 +2251,19 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:459:17:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:473:17:
          // ( 'addedwithin:' s= Q_STRING )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:459:19:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:473:19:
          // 'addedwithin:' s= Q_STRING
          {
             match( "addedwithin:" );
             
-            int sStart911 = getCharIndex();
+            int sStart1012 = getCharIndex();
             mQ_STRING();
             s = new CommonToken( input,
                                  Token.INVALID_TOKEN_TYPE,
                                  Token.DEFAULT_CHANNEL,
-                                 sStart911,
+                                 sStart1012,
                                  getCharIndex() - 1 );
             
             inTimeParamRange( Tasks.ADDED_DATE, s.getText(), true );
@@ -2210,19 +2291,19 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:464:18:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:478:18:
          // ( 'timeestimate:' s= Q_STRING )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:464:20:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:478:20:
          // 'timeestimate:' s= Q_STRING
          {
             match( "timeestimate:" );
             
-            int sStart941 = getCharIndex();
+            int sStart1042 = getCharIndex();
             mQ_STRING();
             s = new CommonToken( input,
                                  Token.INVALID_TOKEN_TYPE,
                                  Token.DEFAULT_CHANNEL,
-                                 sStart941,
+                                 sStart1042,
                                  getCharIndex() - 1 );
             
             result.append( Tasks.ESTIMATE_MILLIS );
@@ -2273,50 +2354,50 @@ public class RtmSmartFilterLexer extends Lexer
          int _channel = DEFAULT_TOKEN_CHANNEL;
          CommonToken s = null;
          
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:492:14:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:506:14:
          // ( 'postponed:' (s= STRING | s= Q_STRING ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:492:16:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:506:16:
          // 'postponed:' (s= STRING | s= Q_STRING )
          {
             match( "postponed:" );
             
             result.append( Tasks.POSTPONED );
             
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:496:6:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:510:6:
             // (s= STRING | s= Q_STRING )
-            int alt20 = 2;
-            int LA20_0 = input.LA( 1 );
+            int alt21 = 2;
+            int LA21_0 = input.LA( 1 );
             
-            if ( ( ( LA20_0 >= '\u0000' && LA20_0 <= '\u001F' )
-               || LA20_0 == '!' || ( LA20_0 >= '#' && LA20_0 <= '\'' ) || ( LA20_0 >= '*' && LA20_0 <= '\uFFFF' ) ) )
+            if ( ( ( LA21_0 >= '\u0000' && LA21_0 <= '\u001F' )
+               || LA21_0 == '!' || ( LA21_0 >= '#' && LA21_0 <= '\'' ) || ( LA21_0 >= '*' && LA21_0 <= '\uFFFF' ) ) )
             {
-               alt20 = 1;
+               alt21 = 1;
             }
-            else if ( ( LA20_0 == '\"' ) )
+            else if ( ( LA21_0 == '\"' ) )
             {
-               alt20 = 2;
+               alt21 = 2;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     20,
+                                                                     21,
                                                                      0,
                                                                      input );
                
                throw nvae;
             }
-            switch ( alt20 )
+            switch ( alt21 )
             {
                case 1:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:497:8:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:511:8:
                   // s= STRING
                {
-                  int sStart996 = getCharIndex();
+                  int sStart1097 = getCharIndex();
                   mSTRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart996,
+                                       sStart1097,
                                        getCharIndex() - 1 );
                   
                   equalsIntParam( s.getText() );
@@ -2324,15 +2405,15 @@ public class RtmSmartFilterLexer extends Lexer
                }
                   break;
                case 2:
-                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:502:8:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:516:8:
                   // s= Q_STRING
                {
-                  int sStart1026 = getCharIndex();
+                  int sStart1127 = getCharIndex();
                   mQ_STRING();
                   s = new CommonToken( input,
                                        Token.INVALID_TOKEN_TYPE,
                                        Token.DEFAULT_CHANNEL,
-                                       sStart1026,
+                                       sStart1127,
                                        getCharIndex() - 1 );
                   
                   result.append( unquotify( s.getText() ) );
@@ -2363,9 +2444,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = COMPLETED;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:523:13:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:537:13:
          // ( 'completed' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:523:15:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:537:15:
          // 'completed'
          {
             match( "completed" );
@@ -2391,9 +2472,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = INCOMPLETE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:525:13:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:539:13:
          // ( 'incomplete' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:525:15:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:539:15:
          // 'incomplete'
          {
             match( "incomplete" );
@@ -2419,9 +2500,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = TRUE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:527:8:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:541:8:
          // ( 'true' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:527:10:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:541:10:
          // 'true'
          {
             match( "true" );
@@ -2447,9 +2528,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = FALSE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:529:9:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:543:9:
          // ( 'false' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:529:11:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:543:11:
          // 'false'
          {
             match( "false" );
@@ -2475,9 +2556,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = L_PARENTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:531:13:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:545:13:
          // ( '(' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:531:15:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:545:15:
          // '('
          {
             match( '(' );
@@ -2505,9 +2586,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = R_PARENTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:536:13:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:550:13:
          // ( ')' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:536:15:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:550:15:
          // ')'
          {
             match( ')' );
@@ -2535,9 +2616,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = AND;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:541:10:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:555:10:
          // ( 'and' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:541:12:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:555:12:
          // 'and'
          {
             match( "and" );
@@ -2565,9 +2646,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = OR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:546:8:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:560:8:
          // ( 'or' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:546:10:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:560:10:
          // 'or'
          {
             match( "or" );
@@ -2595,9 +2676,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = NOT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:551:8:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:565:8:
          // ( 'not' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:551:10:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:565:10:
          // 'not'
          {
             match( "not" );
@@ -2625,9 +2706,9 @@ public class RtmSmartFilterLexer extends Lexer
       {
          int _type = WS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:556:8:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:570:8:
          // ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:556:12:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:570:12:
          // ( ' ' | '\\t' | '\\r' | '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
@@ -2665,28 +2746,28 @@ public class RtmSmartFilterLexer extends Lexer
    {
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:564:11:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:578:11:
          // ( '\"' (~ ( '\"' ) )* '\"' )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:564:13:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:578:13:
          // '\"' (~ ( '\"' ) )* '\"'
          {
             match( '\"' );
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:564:17:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:578:17:
             // (~ ( '\"' ) )*
-            loop21: do
+            loop22: do
             {
-               int alt21 = 2;
-               int LA21_0 = input.LA( 1 );
+               int alt22 = 2;
+               int LA22_0 = input.LA( 1 );
                
-               if ( ( ( LA21_0 >= '\u0000' && LA21_0 <= '!' ) || ( LA21_0 >= '#' && LA21_0 <= '\uFFFF' ) ) )
+               if ( ( ( LA22_0 >= '\u0000' && LA22_0 <= '!' ) || ( LA22_0 >= '#' && LA22_0 <= '\uFFFF' ) ) )
                {
-                  alt21 = 1;
+                  alt22 = 1;
                }
                
-               switch ( alt21 )
+               switch ( alt22 )
                {
                   case 1:
-                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:564:17:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:578:17:
                      // ~ ( '\"' )
                   {
                      if ( ( input.LA( 1 ) >= '\u0000' && input.LA( 1 ) <= '!' )
@@ -2707,7 +2788,7 @@ public class RtmSmartFilterLexer extends Lexer
                      break;
                   
                   default :
-                     break loop21;
+                     break loop22;
                }
             }
             while ( true );
@@ -2731,29 +2812,29 @@ public class RtmSmartFilterLexer extends Lexer
    {
       try
       {
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:567:10:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:581:10:
          // ( (~ ( '\"' | ' ' | '(' | ')' ) )+ )
-         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:567:12:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:581:12:
          // (~ ( '\"' | ' ' | '(' | ')' ) )+
          {
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:567:12:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:581:12:
             // (~ ( '\"' | ' ' | '(' | ')' ) )+
-            int cnt22 = 0;
-            loop22: do
+            int cnt23 = 0;
+            loop23: do
             {
-               int alt22 = 2;
-               int LA22_0 = input.LA( 1 );
+               int alt23 = 2;
+               int LA23_0 = input.LA( 1 );
                
-               if ( ( ( LA22_0 >= '\u0000' && LA22_0 <= '\u001F' )
-                  || LA22_0 == '!' || ( LA22_0 >= '#' && LA22_0 <= '\'' ) || ( LA22_0 >= '*' && LA22_0 <= '\uFFFF' ) ) )
+               if ( ( ( LA23_0 >= '\u0000' && LA23_0 <= '\u001F' )
+                  || LA23_0 == '!' || ( LA23_0 >= '#' && LA23_0 <= '\'' ) || ( LA23_0 >= '*' && LA23_0 <= '\uFFFF' ) ) )
                {
-                  alt22 = 1;
+                  alt23 = 1;
                }
                
-               switch ( alt22 )
+               switch ( alt23 )
                {
                   case 1:
-                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:567:12:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:581:12:
                      // ~ ( '\"' | ' ' | '(' | ')' )
                   {
                      if ( ( input.LA( 1 ) >= '\u0000' && input.LA( 1 ) <= '\u001F' )
@@ -2776,12 +2857,12 @@ public class RtmSmartFilterLexer extends Lexer
                      break;
                   
                   default :
-                     if ( cnt22 >= 1 )
-                        break loop22;
-                     EarlyExitException eee = new EarlyExitException( 22, input );
+                     if ( cnt23 >= 1 )
+                        break loop23;
+                     EarlyExitException eee = new EarlyExitException( 23, input );
                      throw eee;
                }
-               cnt22++;
+               cnt23++;
             }
             while ( true );
             
@@ -2802,13 +2883,13 @@ public class RtmSmartFilterLexer extends Lexer
    {
       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:8: (
       // OP_LIST | OP_PRIORITY | OP_STATUS | OP_TAG | OP_TAG_CONTAINS | OP_IS_TAGGED | OP_LOCATION | OP_ISLOCATED |
-      // OP_NAME | OP_NOTE_CONTAINS | OP_HAS_NOTES | OP_DUE | OP_DUE_AFTER | OP_DUE_BEFORE | OP_DUE_WITHIN |
-      // OP_COMPLETED | OP_COMPLETED_BEFORE | OP_COMPLETED_AFTER | OP_COMPLETED_WITHIN | OP_ADDED | OP_ADDED_BEFORE |
-      // OP_ADDED_AFTER | OP_ADDED_WITHIN | OP_TIME_ESTIMATE | OP_POSTPONED | COMPLETED | INCOMPLETE | TRUE | FALSE |
-      // L_PARENTH | R_PARENTH | AND | OR | NOT | WS )
-      int alt23 = 35;
-      alt23 = dfa23.predict( input );
-      switch ( alt23 )
+      // OP_IS_REPEATING | OP_NAME | OP_NOTE_CONTAINS | OP_HAS_NOTES | OP_DUE | OP_DUE_AFTER | OP_DUE_BEFORE |
+      // OP_DUE_WITHIN | OP_COMPLETED | OP_COMPLETED_BEFORE | OP_COMPLETED_AFTER | OP_COMPLETED_WITHIN | OP_ADDED |
+      // OP_ADDED_BEFORE | OP_ADDED_AFTER | OP_ADDED_WITHIN | OP_TIME_ESTIMATE | OP_POSTPONED | COMPLETED | INCOMPLETE |
+      // TRUE | FALSE | L_PARENTH | R_PARENTH | AND | OR | NOT | WS )
+      int alt24 = 36;
+      alt24 = dfa24.predict( input );
+      switch ( alt24 )
       {
          case 1:
             // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:10:
@@ -2876,214 +2957,222 @@ public class RtmSmartFilterLexer extends Lexer
             break;
          case 9:
             // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:101:
+            // OP_IS_REPEATING
+         {
+            mOP_IS_REPEATING();
+            
+         }
+            break;
+         case 10:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:117:
             // OP_NAME
          {
             mOP_NAME();
             
          }
             break;
-         case 10:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:109:
+         case 11:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:125:
             // OP_NOTE_CONTAINS
          {
             mOP_NOTE_CONTAINS();
             
          }
             break;
-         case 11:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:126:
+         case 12:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:142:
             // OP_HAS_NOTES
          {
             mOP_HAS_NOTES();
             
          }
             break;
-         case 12:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:139:
+         case 13:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:155:
             // OP_DUE
          {
             mOP_DUE();
             
          }
             break;
-         case 13:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:146:
+         case 14:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:162:
             // OP_DUE_AFTER
          {
             mOP_DUE_AFTER();
             
          }
             break;
-         case 14:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:159:
+         case 15:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:175:
             // OP_DUE_BEFORE
          {
             mOP_DUE_BEFORE();
             
          }
             break;
-         case 15:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:173:
+         case 16:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:189:
             // OP_DUE_WITHIN
          {
             mOP_DUE_WITHIN();
             
          }
             break;
-         case 16:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:187:
+         case 17:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:203:
             // OP_COMPLETED
          {
             mOP_COMPLETED();
             
          }
             break;
-         case 17:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:200:
+         case 18:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:216:
             // OP_COMPLETED_BEFORE
          {
             mOP_COMPLETED_BEFORE();
             
          }
             break;
-         case 18:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:220:
+         case 19:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:236:
             // OP_COMPLETED_AFTER
          {
             mOP_COMPLETED_AFTER();
             
          }
             break;
-         case 19:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:239:
+         case 20:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:255:
             // OP_COMPLETED_WITHIN
          {
             mOP_COMPLETED_WITHIN();
             
          }
             break;
-         case 20:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:259:
+         case 21:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:275:
             // OP_ADDED
          {
             mOP_ADDED();
             
          }
             break;
-         case 21:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:268:
+         case 22:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:284:
             // OP_ADDED_BEFORE
          {
             mOP_ADDED_BEFORE();
             
          }
             break;
-         case 22:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:284:
+         case 23:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:300:
             // OP_ADDED_AFTER
          {
             mOP_ADDED_AFTER();
             
          }
             break;
-         case 23:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:299:
+         case 24:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:315:
             // OP_ADDED_WITHIN
          {
             mOP_ADDED_WITHIN();
             
          }
             break;
-         case 24:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:315:
+         case 25:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:331:
             // OP_TIME_ESTIMATE
          {
             mOP_TIME_ESTIMATE();
             
          }
             break;
-         case 25:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:332:
+         case 26:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:348:
             // OP_POSTPONED
          {
             mOP_POSTPONED();
             
          }
             break;
-         case 26:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:345:
+         case 27:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:361:
             // COMPLETED
          {
             mCOMPLETED();
             
          }
             break;
-         case 27:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:355:
+         case 28:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:371:
             // INCOMPLETE
          {
             mINCOMPLETE();
             
          }
             break;
-         case 28:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:366:
+         case 29:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:382:
             // TRUE
          {
             mTRUE();
             
          }
             break;
-         case 29:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:371:
+         case 30:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:387:
             // FALSE
          {
             mFALSE();
             
          }
             break;
-         case 30:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:377:
+         case 31:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:393:
             // L_PARENTH
          {
             mL_PARENTH();
             
          }
             break;
-         case 31:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:387:
+         case 32:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:403:
             // R_PARENTH
          {
             mR_PARENTH();
             
          }
             break;
-         case 32:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:397:
+         case 33:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:413:
             // AND
          {
             mAND();
             
          }
             break;
-         case 33:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:401:
+         case 34:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:417:
             // OR
          {
             mOR();
             
          }
             break;
-         case 34:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:404:
+         case 35:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:420:
             // NOT
          {
             mNOT();
             
          }
             break;
-         case 35:
-            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:408:
+         case 36:
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g:1:424:
             // WS
          {
             mWS();
@@ -3095,30 +3184,30 @@ public class RtmSmartFilterLexer extends Lexer
       
    }
    
-   protected DFA23 dfa23 = new DFA23( this );
+   protected DFA24 dfa24 = new DFA24( this );
    
-   static final String DFA23_eotS = "\42\uffff\1\51\26\uffff\1\76\5\uffff";
+   static final String DFA24_eotS = "\43\uffff\1\52\26\uffff\1\77\5\uffff";
    
-   static final String DFA23_eofS = "\77\uffff";
+   static final String DFA24_eofS = "\100\uffff";
    
-   static final String DFA23_minS = "\1\11\1\151\1\157\1\uffff\1\141\1\156\1\141\1\uffff\1\165\1\157"
+   static final String DFA24_minS = "\1\11\1\151\1\157\1\uffff\1\141\1\156\1\141\1\uffff\1\165\1\157"
       + "\1\144\11\uffff\1\147\2\uffff\1\154\2\uffff\1\164\1\145\1\155\1"
-      + "\144\1\uffff\1\72\2\uffff\1\145\1\72\1\160\1\145\10\uffff\1\154"
+      + "\144\1\uffff\1\72\3\uffff\1\145\1\72\1\160\1\145\10\uffff\1\154"
       + "\1\144\1\145\1\72\1\164\4\uffff\1\145\1\144\1\72\5\uffff";
    
-   static final String DFA23_maxS = "\1\164\1\157\1\162\1\uffff\1\162\1\163\1\157\1\uffff\1\165\1\157"
+   static final String DFA24_maxS = "\1\164\1\157\1\162\1\uffff\1\162\1\163\1\157\1\uffff\1\165\1\157"
       + "\1\156\11\uffff\1\147\2\uffff\1\164\2\uffff\1\164\1\145\1\155\1"
-      + "\144\1\uffff\1\143\2\uffff\1\145\1\167\1\160\1\145\10\uffff\1\154"
+      + "\144\1\uffff\1\143\3\uffff\1\145\1\167\1\160\1\145\10\uffff\1\154"
       + "\1\144\1\145\1\167\1\164\4\uffff\1\145\1\144\1\167\5\uffff";
    
-   static final String DFA23_acceptS = "\3\uffff\1\3\3\uffff\1\13\3\uffff\1\35\1\36\1\37\1\41\1\43\1\1"
-      + "\1\7\1\2\1\31\1\uffff\1\30\1\34\1\uffff\1\33\1\11\4\uffff\1\40\1"
-      + "\uffff\1\6\1\10\4\uffff\1\4\1\5\1\12\1\42\1\14\1\15\1\16\1\17\5"
-      + "\uffff\1\24\1\25\1\26\1\27\3\uffff\1\20\1\21\1\22\1\23\1\32";
+   static final String DFA24_acceptS = "\3\uffff\1\3\3\uffff\1\14\3\uffff\1\36\1\37\1\40\1\42\1\44\1\1"
+      + "\1\7\1\2\1\32\1\uffff\1\31\1\35\1\uffff\1\34\1\12\4\uffff\1\41\1"
+      + "\uffff\1\6\1\10\1\11\4\uffff\1\4\1\5\1\13\1\43\1\15\1\16\1\17\1"
+      + "\20\5\uffff\1\25\1\26\1\27\1\30\3\uffff\1\21\1\22\1\23\1\24\1\33";
    
-   static final String DFA23_specialS = "\77\uffff}>";
+   static final String DFA24_specialS = "\100\uffff}>";
    
-   static final String[] DFA23_transitionS =
+   static final String[] DFA24_transitionS =
    {
     "\2\17\2\uffff\1\17\22\uffff\1\17\7\uffff\1\14\1\15\67\uffff"
        + "\1\12\1\uffff\1\11\1\10\1\uffff\1\13\1\uffff\1\7\1\5\2\uffff"
@@ -3126,52 +3215,52 @@ public class RtmSmartFilterLexer extends Lexer
     "\1\23\2\uffff\1\22", "", "\1\24\7\uffff\1\25\10\uffff\1\26",
     "\1\30\4\uffff\1\27", "\1\31\15\uffff\1\32", "", "\1\33", "\1\34",
     "\1\35\11\uffff\1\36", "", "", "", "", "", "", "", "", "", "\1\37", "", "",
-    "\1\41\7\uffff\1\40", "", "", "\1\42", "\1\43", "\1\44", "\1\45", "",
-    "\1\46\50\uffff\1\47", "", "", "\1\50",
-    "\1\52\46\uffff\1\53\1\54\24\uffff\1\55", "\1\56", "\1\57", "", "", "", "",
-    "", "", "", "", "\1\60", "\1\61", "\1\62",
-    "\1\63\46\uffff\1\65\1\64\24\uffff\1\66", "\1\67", "", "", "", "", "\1\70",
-    "\1\71", "\1\72\46\uffff\1\74\1\73\24\uffff\1\75", "", "", "", "", "" };
+    "\1\41\5\uffff\1\42\1\uffff\1\40", "", "", "\1\43", "\1\44", "\1\45",
+    "\1\46", "", "\1\47\50\uffff\1\50", "", "", "", "\1\51",
+    "\1\53\46\uffff\1\54\1\55\24\uffff\1\56", "\1\57", "\1\60", "", "", "", "",
+    "", "", "", "", "\1\61", "\1\62", "\1\63",
+    "\1\64\46\uffff\1\66\1\65\24\uffff\1\67", "\1\70", "", "", "", "", "\1\71",
+    "\1\72", "\1\73\46\uffff\1\75\1\74\24\uffff\1\76", "", "", "", "", "" };
    
-   static final short[] DFA23_eot = DFA.unpackEncodedString( DFA23_eotS );
+   static final short[] DFA24_eot = DFA.unpackEncodedString( DFA24_eotS );
    
-   static final short[] DFA23_eof = DFA.unpackEncodedString( DFA23_eofS );
+   static final short[] DFA24_eof = DFA.unpackEncodedString( DFA24_eofS );
    
-   static final char[] DFA23_min = DFA.unpackEncodedStringToUnsignedChars( DFA23_minS );
+   static final char[] DFA24_min = DFA.unpackEncodedStringToUnsignedChars( DFA24_minS );
    
-   static final char[] DFA23_max = DFA.unpackEncodedStringToUnsignedChars( DFA23_maxS );
+   static final char[] DFA24_max = DFA.unpackEncodedStringToUnsignedChars( DFA24_maxS );
    
-   static final short[] DFA23_accept = DFA.unpackEncodedString( DFA23_acceptS );
+   static final short[] DFA24_accept = DFA.unpackEncodedString( DFA24_acceptS );
    
-   static final short[] DFA23_special = DFA.unpackEncodedString( DFA23_specialS );
+   static final short[] DFA24_special = DFA.unpackEncodedString( DFA24_specialS );
    
-   static final short[][] DFA23_transition;
+   static final short[][] DFA24_transition;
    
    static
    {
-      int numStates = DFA23_transitionS.length;
-      DFA23_transition = new short[ numStates ][];
+      int numStates = DFA24_transitionS.length;
+      DFA24_transition = new short[ numStates ][];
       for ( int i = 0; i < numStates; i++ )
       {
-         DFA23_transition[ i ] = DFA.unpackEncodedString( DFA23_transitionS[ i ] );
+         DFA24_transition[ i ] = DFA.unpackEncodedString( DFA24_transitionS[ i ] );
       }
    }
    
    
-   class DFA23 extends DFA
+   class DFA24 extends DFA
    {
       
-      public DFA23( BaseRecognizer recognizer )
+      public DFA24( BaseRecognizer recognizer )
       {
          this.recognizer = recognizer;
-         this.decisionNumber = 23;
-         this.eot = DFA23_eot;
-         this.eof = DFA23_eof;
-         this.min = DFA23_min;
-         this.max = DFA23_max;
-         this.accept = DFA23_accept;
-         this.special = DFA23_special;
-         this.transition = DFA23_transition;
+         this.decisionNumber = 24;
+         this.eot = DFA24_eot;
+         this.eof = DFA24_eof;
+         this.min = DFA24_min;
+         this.max = DFA24_max;
+         this.accept = DFA24_accept;
+         this.special = DFA24_special;
+         this.transition = DFA24_transition;
       }
       
 
@@ -3179,7 +3268,7 @@ public class RtmSmartFilterLexer extends Lexer
       @Override
       public String getDescription()
       {
-         return "1:1: Tokens : ( OP_LIST | OP_PRIORITY | OP_STATUS | OP_TAG | OP_TAG_CONTAINS | OP_IS_TAGGED | OP_LOCATION | OP_ISLOCATED | OP_NAME | OP_NOTE_CONTAINS | OP_HAS_NOTES | OP_DUE | OP_DUE_AFTER | OP_DUE_BEFORE | OP_DUE_WITHIN | OP_COMPLETED | OP_COMPLETED_BEFORE | OP_COMPLETED_AFTER | OP_COMPLETED_WITHIN | OP_ADDED | OP_ADDED_BEFORE | OP_ADDED_AFTER | OP_ADDED_WITHIN | OP_TIME_ESTIMATE | OP_POSTPONED | COMPLETED | INCOMPLETE | TRUE | FALSE | L_PARENTH | R_PARENTH | AND | OR | NOT | WS );";
+         return "1:1: Tokens : ( OP_LIST | OP_PRIORITY | OP_STATUS | OP_TAG | OP_TAG_CONTAINS | OP_IS_TAGGED | OP_LOCATION | OP_ISLOCATED | OP_IS_REPEATING | OP_NAME | OP_NOTE_CONTAINS | OP_HAS_NOTES | OP_DUE | OP_DUE_AFTER | OP_DUE_BEFORE | OP_DUE_WITHIN | OP_COMPLETED | OP_COMPLETED_BEFORE | OP_COMPLETED_AFTER | OP_COMPLETED_WITHIN | OP_ADDED | OP_ADDED_BEFORE | OP_ADDED_AFTER | OP_ADDED_WITHIN | OP_TIME_ESTIMATE | OP_POSTPONED | COMPLETED | INCOMPLETE | TRUE | FALSE | L_PARENTH | R_PARENTH | AND | OR | NOT | WS );";
       }
    }
    

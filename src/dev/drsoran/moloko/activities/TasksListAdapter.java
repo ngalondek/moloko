@@ -88,6 +88,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       final View priority = view.findViewById( R.id.taskslist_listitem_priority );
       
       TextView description;
+      ImageView recurrent;
       TextView listName;
       TextView dueDate;
       ImageView completed;
@@ -98,6 +99,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       {
          description = (TextView) view.findViewById( R.id.taskslist_listitem_desc );
          listName = (TextView) view.findViewById( R.id.taskslist_listitem_btn_list_name );
+         recurrent = (ImageView) view.findViewById( R.id.taskslist_listitem_recurrent );
          dueDate = (TextView) view.findViewById( R.id.taskslist_listitem_due_date );
          completed = (ImageView) view.findViewById( R.id.taskslist_listitem_check );
          tagsLayout = (ViewGroup) view.findViewById( R.id.taskslist_listitem_tags );
@@ -112,6 +114,9 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       final ListTask task = getItem( position );
       
       UIUtils.setTaskDescription( description, task, now );
+      
+      if ( task.getRecurrence() != null )
+         recurrent.setVisibility( View.VISIBLE );
       
       setListName( listName, task );
       

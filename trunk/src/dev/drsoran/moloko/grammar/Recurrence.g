@@ -71,12 +71,46 @@ grammar Recurrence;
    }
    
    
+   
+   private final static class CmpOperators implements Comparator< String >
+   {
+      private final static int operatorToInt( String operator )
+      {
+         if ( operator.startsWith( OP_FREQ_LIT ) )
+            return 1;
+         else if ( operator.startsWith( OP_INTERVAL_LIT ) )
+            return 2;
+         else if ( operator.startsWith( OP_BYDAY_LIT ) )
+            return 3;
+         else if ( operator.startsWith( OP_BYMONTHDAY_LIT ) )
+            return 3;
+         else if ( operator.startsWith( OP_BYMONTH_LIT ) )
+            return 4;
+         else if ( operator.startsWith( OP_UNTIL_LIT ) )
+            return 5;
+         else if ( operator.startsWith( OP_COUNT_LIT ) )
+            return 5;
+         else
+            return Integer.MAX_VALUE;
+      }
+      
+
+
+      public int compare( String op1, String op2 )
+      {
+         return operatorToInt( op1 ) - operatorToInt( op2 );
+      }
+   }
+   
+   
 
    private final static CmpWeekday CMP_WEEKDAY  = new CmpWeekday();
+   
+   public final static CmpOperators CMP_OPERATORS = new CmpOperators();
 
    public final static String OP_BYDAY_LIT      = "BYDAY";
 
-   public final static String   OP_BYMONTH_LIT  = "BYMONTH";
+   public final static String OP_BYMONTH_LIT    = "BYMONTH";
 
    public final static String OP_BYMONTHDAY_LIT = "BYMONTHDAY";
 
@@ -97,6 +131,8 @@ grammar Recurrence;
    public final static String VAL_YEARLY_LIT    = "YEARLY";
 
    public final static String IS_EVERY          = "IS_EVERY";
+   
+   public final static String OPERATOR_SEP      = ";";
 
    public final static String BYDAY_MON         = "MO";
 
@@ -112,7 +148,7 @@ grammar Recurrence;
 
    public final static String BYDAY_SUN         = "SU";
    
-   public final static String DATE_PATTERN 		= "yyyyMMdd'T'HHmmss";
+   public final static String DATE_PATTERN      = "yyyyMMdd'T'HHmmss";
 
 
 
@@ -489,8 +525,7 @@ parseRecurrencePattern [RecurrPatternLanguage lang, boolean every] returns [Stri
           {
 	          final String formatedDate = MolokoDateUtils.formatDate( DATE_PATTERN,
                                                                      $date.text,
-                                                                       MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                     | MolokoDateUtils.FORMAT_NUMERIC );
+                                                                       MolokoDateUtils.FORMAT_WITH_YEAR );
      
              if ( formatedDate != null )
              {

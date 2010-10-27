@@ -93,16 +93,32 @@
          android:layout_width="fill_parent"
          android:layout_marginRight="?android:attr/scrollbarSize" />
 
-      <TextView
-         android:id="@+id/taskslist_listitem_due_date"
-         style="@style/TasksList_ListItem_DueDate"
+      <RelativeLayout
          android:layout_width="fill_parent"
-         android:layout_height="wrap_content"
-         android:layout_marginRight="?android:attr/scrollbarSize"
-         android:text="due_date"
-         android:singleLine="true"
-         android:gravity="right"
-         android:focusable="false" />
+         android:layout_height="wrap_content">
+
+         <ImageView
+            android:id="@+id/taskslist_listitem_recurrent"
+            android:layout_width="20dip"
+            android:layout_height="20dip"
+            android:layout_marginRight="5dip"
+            android:layout_toLeftOf="@+id/taskslist_listitem_due_date"
+            android:layout_alignWithParentIfMissing="true"
+            android:src="@drawable/ic_list_taskslist_recurrent"
+            android:focusable="false"
+            android:visibility="gone" />
+
+         <TextView
+            android:id="@+id/taskslist_listitem_due_date"
+            style="@style/TasksList_ListItem_DueDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="?android:attr/scrollbarSize"
+            android:text="due_date"
+            android:singleLine="true"
+            android:focusable="false" />
+      </RelativeLayout>
 
    </LinearLayout>
 </LinearLayout>

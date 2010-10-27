@@ -20,6 +20,7 @@
 package com.mdt.rtm.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +38,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
@@ -135,7 +137,7 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String url;
    
-   private final String recurrence;
+   private String recurrence;
    
    private boolean isEveryRecurrence;
    
@@ -186,9 +188,12 @@ public class RtmTaskSeries extends RtmData implements
          {
             isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
                                                                    "every" ) ) != 0;
+            
+            recurrence = ensureRecurrencePatternOrder( recurrence );
          }
          catch ( NumberFormatException nfe )
          {
+            recurrence = null;
             isEveryRecurrence = false;
          }
       }
@@ -413,6 +418,16 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeInt( isEveryRecurrence ? 1 : 0 );
       dest.writeStringList( tags );
       dest.writeInt( deleted ? 1 : 0 );
+   }
+   
+
+
+   private final static String ensureRecurrencePatternOrder( String recurrencePattern )
+   {
+      final String[] operators = recurrencePattern.split( RecurrenceParser.OPERATOR_SEP );
+      Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
+      
+      return TextUtils.join( RecurrenceParser.OPERATOR_SEP, operators );
    }
    
 

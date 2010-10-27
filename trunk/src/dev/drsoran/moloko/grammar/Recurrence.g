@@ -20,6 +20,8 @@ grammar Recurrence;
    import java.util.TreeSet;
    
    import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
+   import dev.drsoran.moloko.util.MolokoDateUtils;
+   import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 }
 
 @lexer::header
@@ -109,6 +111,8 @@ grammar Recurrence;
    public final static String BYDAY_SAT         = "SA";
 
    public final static String BYDAY_SUN         = "SU";
+   
+   public final static String DATE_PATTERN 		= "yyyyMMdd'T'HHmmss";
 
 
 
@@ -159,49 +163,50 @@ parseRecurrence returns[HashMap< String, Object > res]
       res.put( IS_EVERY, isEvery );
    }
    : (EVERY { isEvery = Boolean.TRUE; } | AFTER)?
-   (interval=parse_Number?
-   (
-        DAYS                                               { freq = VAL_DAILY_LIT;  }
-      | (
-             WEEKS
-           | BIWEEKLY
-             {
-                interval = 2;
-             }
-         )                                                 { freq = VAL_WEEKLY_LIT; }
-         (ON? THE? recurr_WD[weekdays, ""]
-               {
-                  resolution    = OP_BYDAY_LIT;
-                  resolutionVal = join( ",", weekdays );
-               }
-         )?
-      | MONTHS                                             { freq = VAL_MONTHLY_LIT;}
-         (ON? THE? r=recurr_Monthly[weekdays, ints]
-                   {
-                      freq          = r.freq;
-                      interval      = r.interval;
-                      resolution    = r.resolution;
-                      resolutionVal = r.resolutionVal;
-                   }
-         )?
-      | YEARS                                              { freq = VAL_YEARLY_LIT; }
-         (ON? THE? r=recurr_Monthly[weekdays, ints]
-                   {
-                      freq          = r.freq;
-                      interval      = r.interval;
-                      resolution    = r.resolution;
-                      resolutionVal = r.resolutionVal;
-                   }
-                   { r.hasWD }?=> (
-                                    (IN | OF)?
-                                     m=parse_Month
-                                     {
-                                        freq     = VAL_YEARLY_LIT;
-                                        interval = 1;
-                                        res.put( OP_BYMONTH_LIT, Integer.toString( m ) );
-                                     }
-                                  )?
-         )?
+     (
+        interval=parse_Number?
+		  (
+		      DAYS                                               { freq = VAL_DAILY_LIT;  }
+		    | (
+		           WEEKS
+		         | BIWEEKLY
+		           {
+		              interval = 2;
+		           }
+		       )                                                 { freq = VAL_WEEKLY_LIT; }
+		       (ON? THE? recurr_WD[weekdays, ""]
+		             {
+		                resolution    = OP_BYDAY_LIT;
+		                resolutionVal = join( ",", weekdays );
+		             }
+		       )?
+		    | MONTHS                                             { freq = VAL_MONTHLY_LIT;}
+		       (ON? THE? r=recurr_Monthly[weekdays, ints]
+		                 {
+		                    freq          = r.freq;
+		                    interval      = r.interval;
+		                    resolution    = r.resolution;
+		                    resolutionVal = r.resolutionVal;
+		                 }
+		       )?
+		    | YEARS                                              { freq = VAL_YEARLY_LIT; }
+		       (ON? THE? r=recurr_Monthly[weekdays, ints]
+		                 {
+		                    freq          = r.freq;
+		                    interval      = r.interval;
+		                    resolution    = r.resolution;
+		                    resolutionVal = r.resolutionVal;
+		                 }
+		                 { r.hasWD }?=> (
+		                                  (IN | OF)?
+		                                   m=parse_Month
+		                                   {
+		                                      freq     = VAL_YEARLY_LIT;
+		                                      interval = 1;
+		                                      res.put( OP_BYMONTH_LIT, Integer.toString( m ) );
+		                                   }
+		                                )?
+       )?
    )
    | recurr_Xst[ints]
      {
@@ -227,11 +232,45 @@ parseRecurrence returns[HashMap< String, Object > res]
         }
      )
    )
+   (
+        until=UNTIL
+        {           
+           final String dateTimeString = until.getText()
+                                              .toUpperCase()
+                                              .replaceFirst( OP_UNTIL_LIT +  "\\s*",
+                                                             "" );           
+           
+           final Calendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
+           
+           if ( untilDate != null )
+           {
+              	if ( !untilDate.isSet( Calendar.HOUR_OF_DAY ) )
+               {
+                  untilDate.set( Calendar.HOUR, 0 );
+                  untilDate.set( Calendar.HOUR_OF_DAY, 0 );
+                  untilDate.set( Calendar.MINUTE, 0 );
+                  untilDate.set( Calendar.SECOND, 0 );
+                  untilDate.set( Calendar.MILLISECOND, 0 );
+               }
+               
+              final SimpleDateFormat sdf = new SimpleDateFormat( DATE_PATTERN );
+              res.put( OP_UNTIL_LIT, sdf.format( untilDate.getTime() ) );
+           }    
+        }
+      | FOR count=INT
+        {
+           res.put( OP_COUNT_LIT, Integer.parseInt( $count.text ) );
+        }
+   )?
    | EOF
    ;
    catch [ RecognitionException e ]
    {
       throw e;
+   }
+   catch [ NumberFormatException nfe ]
+   {
+      throw new RecognitionException();
    }
 
 recurr_Xst [Set< Integer > res] returns [int firstEntry]
@@ -250,10 +289,6 @@ recurr_WD [Set< String > weekdays, String Xst]
    catch [ RecognitionException e ]
    {
       throw e;
-   }
-   catch [ NumberFormatException nfe ]
-   {
-      throw new RecognitionException();
    }
 
 recurr_Monthly [Set< String >  weekdays,
@@ -449,6 +484,27 @@ parseRecurrencePattern [RecurrPatternLanguage lang, boolean every] returns [Stri
              VAL_DAILY parse_PatternInterval[lang, sb, "day", every]
           )
      )
+     (
+          OP_UNTIL date=VAL_DATE
+          {
+	          final String formatedDate = MolokoDateUtils.formatDate( DATE_PATTERN,
+                                                                     $date.text,
+                                                                       MolokoDateUtils.FORMAT_WITH_YEAR
+                                                                     | MolokoDateUtils.FORMAT_NUMERIC );
+     
+             if ( formatedDate != null )
+             {
+                sb.append( " " ); lang.add( sb, "until" ); sb.append( " " );
+                sb.append( formatedDate );
+             }
+          }
+        | OP_COUNT count=INT
+          {
+             sb.append( " " ); lang.add( sb, "for" ); sb.append( " " );
+             sb.append( $count.text );
+             sb.append( " " ); lang.add( sb, "times" );
+          }
+     )?
    ;
    catch [ RecognitionException e ]
    {
@@ -626,9 +682,11 @@ OF            : 'of';
 
 THE           : 'the';
 
-UNTIL         : 'until';
+UNTIL         : 'until' STRING;
 
 FOR           : 'for';
+
+TIMES			  : 'times';
 
 DOT           : '.';
 
@@ -662,7 +720,17 @@ VAL_MONTHLY   : 'MONTHLY';
 
 VAL_YEARLY    : 'YEARLY';
 
-INT           : MINUS? '0'..'9'+;
+// yyyyMMdd'T'HHmmss
+VAL_DATE      : NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER
+                'T'
+                NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER;
+fragment
+NUMBER        : '0'..'9';
+
+INT           : MINUS? NUMBER+;
+
+fragment
+STRING 		  : (' '|.)+;
 
 WS            : (  ' '
                  | '\t'

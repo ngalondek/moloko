@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -93,6 +95,29 @@ public class MolokoDateUtils
       
       return DateFormat.format( buildPattern( true, false, dateStyle ), cal )
                        .toString();
+   }
+   
+
+
+   public final static String formatDate( String pattern,
+                                          String value,
+                                          int dateStyle )
+   {
+      final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
+      final SimpleDateFormat sdf = new SimpleDateFormat( pattern );
+      
+      sdf.setTimeZone( timeZone );
+      
+      try
+      {
+         sdf.parse( value );
+         return DateFormat.format( buildPattern( true, false, dateStyle ),
+                                   sdf.getCalendar() ).toString();
+      }
+      catch ( ParseException e )
+      {
+         return null;
+      }
    }
    
 

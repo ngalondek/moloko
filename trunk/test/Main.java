@@ -1,3 +1,5 @@
+import java.text.ParseException;
+
 
 
 public class Main
@@ -8,8 +10,16 @@ public class Main
     */
    public static void main( String[] args )
    {
-      /*DateParserTestCase.execute();
-      TimeParserTestCase.execute();*/
-      RecurrenceTestCase.execute();
+      DateParserTestCase.execute();
+      TimeParserTestCase.execute();
+      try
+      {
+         RecurrenceTestCase.execute();
+      }
+      catch ( ParseException e )
+      {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
    }
 }

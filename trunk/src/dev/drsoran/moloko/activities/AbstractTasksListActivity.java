@@ -167,18 +167,18 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
       
-      if ( getIntent().getExtras() == null )
+      if ( getIntent().getExtras() != null )
          // Put an empty bundle, this prevents null pointer checking
          // in later steps.
          getIntent().putExtras( new Bundle() );
       
       if ( savedInstanceState != null )
-         getIntent().getExtras().putAll( savedInstanceState );
+         getIntent().putExtras( savedInstanceState );
       
-      if ( !getIntent().getExtras().containsKey( TASK_SORT_ORDER ) )
+      if ( !getIntent().hasExtra( TASK_SORT_ORDER ) )
          setTaskSort( MolokoApp.getSettings().getTaskSort(), false );
       
-      handleIntent( getIntent() );
+      onNewIntent( getIntent() );
    }
    
 
@@ -222,8 +222,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       if ( state != null )
       {
-         getIntent().getExtras().clear();
-         getIntent().getExtras().putAll( state );
+         getIntent().putExtras( state );
          
          handleIntent( getIntent() );
       }
@@ -312,8 +311,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                 getString( R.string.phr_open_with_name, task.getName() ) )
           .setTitleCondensed( getString( R.string.abstaskslist_listitem_ctx_open_task ) );
       
-      final Bundle adapterConfig = getIntent().getExtras()
-                                              .getBundle( ADAPTER_CONFIG );
+      final Bundle adapterConfig = getIntent().getBundleExtra( ADAPTER_CONFIG );
       
       if ( adapterConfig == null
          || !adapterConfig.getBoolean( DISABLE_LIST_NAME ) )
@@ -740,15 +738,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    protected int getTaskSort()
    {
-      return getIntent().getExtras().getInt( TASK_SORT_ORDER,
-                                             Settings.TASK_SORT_DEFAULT );
+      return getIntent().getIntExtra( TASK_SORT_ORDER,
+                                      Settings.TASK_SORT_DEFAULT );
    }
    
 
 
    protected void setTaskSort( int taskSort, boolean refillList )
    {
-      getIntent().getExtras().putInt( TASK_SORT_ORDER, taskSort );
+      getIntent().putExtra( TASK_SORT_ORDER, taskSort );
+      
       if ( refillList )
          fillListAsync();
    }

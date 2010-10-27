@@ -53,8 +53,8 @@ Support for Android integrated search dialog. Allows searching for tasks using s
     * Groups
     * Contacts
     * Locations
-    * Write access
-    * Delete access
+    * Write access, see RTMAccessLevels
+    * Delete access, see RTMAccessLevels
 
  ==== Unsupported RTM smart search syntax operators ====
     Also used for smart lists: See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
@@ -77,4 +77,3 @@ Support for Android integrated search dialog. Allows searching for tasks using s
     * implement search auto completion (low prio)
     * RTM date format:
       * missing separator \u0020\u0068\u0020|\u6642|h
-

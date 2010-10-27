@@ -6,7 +6,6 @@ This is a collection of features which are supported and what is todo.
 
 RTM features of:
     * lists (including smart lists)
-    * locations
     * tasks
     * tags
     * notes
@@ -40,6 +39,7 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 || isTagged: || true | false ||
 || noteContains: || string ||
 || hasNotes: || true | false ||
+|| isRepeating: || true | false ||
 || AND, OR, NOT, (, ) || operator ||
 
  * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
@@ -48,21 +48,33 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.
 
 === TODO ===
+ 
+ ==== Unsupported RTM features ====
+    * Groups
+    * Contacts
+    * Locations
+    * Write access
+    * Delete access
 
- * handle reoccurred tasks
- * support for HTTPS
- * implement search auto completion (low prio)
- * RTM date format:
-   * missing separator \u0020\u0068\u0020|\u6642|h
+ ==== Unsupported RTM smart search syntax operators ====
+    Also used for smart lists: See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
+    * locationWithin:
+    * isShared:
+    * sharedWith
+    * isReceived:
+    * to:
+    * from:
+    * includeArchived
 
-Unsupported RTM smart search syntax operators. Also used for smart lists:
-See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
+ ==== Next steps ===
+    * handle reoccurred tasks (almost finished)
+    * implement task notifications 
 
- * locationWithin:
- * isRepeating:
- * isShared:
- * sharedWith
- * isReceived:
- * to:
- * from:
- * includeArchived
+ ==== later steps ===
+    * support for HTTPS
+
+ ==== nice to have ===
+    * implement search auto completion (low prio)
+    * RTM date format:
+      * missing separator \u0020\u0068\u0020|\u6642|h
+

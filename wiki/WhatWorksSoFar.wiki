@@ -67,7 +67,6 @@ Support for Android integrated search dialog. Allows searching for tasks using s
     * includeArchived
 
  ==== Next steps ===
-    * handle reoccurred tasks (almost finished)
     * implement task notifications 
 
  ==== later steps ===

@@ -642,7 +642,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             
             final Intent intent = new Intent( Intent.ACTION_VIEW,
                                               Notes.CONTENT_URI );
-            intent.putExtra( Notes.TASKSERIES_ID, task.getId() );
+            intent.putExtra( Notes.TASKSERIES_ID, task.getTaskSeriesId() );
             
             // If a startNoteId is given we use this as entry point if
             // multiple notes are available.

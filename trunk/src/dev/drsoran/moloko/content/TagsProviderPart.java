@@ -47,10 +47,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   {
-    Tags._ID,
-    Tags.TASKSERIES_ID,
-    Tags.TAG };
+   { Tags._ID, Tags.TASKSERIES_ID, Tags.TAG };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -91,14 +88,14 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    {
       ArrayList< Tag > tags = null;
       
-      if ( taskSeriesId != null )
+      if ( !TextUtils.isEmpty( taskSeriesId ) )
       {
          try
          {
             final Cursor c = client.query( Tags.CONTENT_URI,
                                            PROJECTION,
                                            Tags.TASKSERIES_ID + " = "
-                                                    + taskSeriesId,
+                                              + taskSeriesId,
                                            null,
                                            Tags.TAG );
             
@@ -142,14 +139,12 @@ public class TagsProviderPart extends AbstractRtmProviderPart
          try
          {
             final String[] projection =
-            {
-             Tags._ID,
-             Tags.TAG };
+            { Tags._ID, Tags.TAG };
             
             final Cursor c = client.query( Tags.CONTENT_URI,
                                            projection,
                                            Tags.TASKSERIES_ID + " = "
-                                                    + taskSeriesId,
+                                              + taskSeriesId,
                                            null,
                                            null );
             
@@ -190,28 +185,21 @@ public class TagsProviderPart extends AbstractRtmProviderPart
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE "
-                  + path
-                  + " ( "
-                  + Tags._ID
-                  + " INTEGER NOT NULL CONSTRAINT PK_TAGS PRIMARY KEY AUTOINCREMENT, "
-                  + Tags.TASKSERIES_ID + " INTEGER NOT NULL, " + Tags.TAG
-                  + " TEXT NOT NULL, CONSTRAINT taskseries_1 FOREIGN KEY ( "
-                  + Tags.TASKSERIES_ID + ") REFERENCES " + TaskSeries.PATH
-                  + "( "
-                  + TaskSeries._ID + " ) );" );
+      db.execSQL( "CREATE TABLE " + path + " ( " + Tags._ID
+         + " INTEGER NOT NULL CONSTRAINT PK_TAGS PRIMARY KEY AUTOINCREMENT, "
+         + Tags.TASKSERIES_ID + " INTEGER NOT NULL, " + Tags.TAG
+         + " TEXT NOT NULL, CONSTRAINT tags_taskseries_ref FOREIGN KEY ( "
+         + Tags.TASKSERIES_ID + ") REFERENCES " + TaskSeries.PATH + "( "
+         + TaskSeries._ID + " ) );" );
       
       // Trigger: Silently ignores inserts with a taskseries ID
       // and a tag that already exits
-      db.execSQL( "CREATE TRIGGER "
-                  + path
-                  + "_ignore_duplicate_insert BEFORE INSERT ON "
-                  + path
-                  + " FOR EACH ROW BEGIN SELECT RAISE ( IGNORE ) WHERE EXISTS ( SELECT "
-                  + Tags.TASKSERIES_ID + ", " + Tags.TAG + " FROM " + Tags.PATH
-                  + " WHERE " + Tags.TASKSERIES_ID + " = new."
-                  + Tags.TASKSERIES_ID
-                  + " AND " + Tags.TAG + " = new." + Tags.TAG + "); END;" );
+      db.execSQL( "CREATE TRIGGER " + path
+         + "_ignore_duplicate_insert BEFORE INSERT ON " + path
+         + " FOR EACH ROW BEGIN SELECT RAISE ( IGNORE ) WHERE EXISTS ( SELECT "
+         + Tags.TASKSERIES_ID + ", " + Tags.TAG + " FROM " + Tags.PATH
+         + " WHERE " + Tags.TASKSERIES_ID + " = new." + Tags.TASKSERIES_ID
+         + " AND " + Tags.TAG + " = new." + Tags.TAG + "); END;" );
    }
    
 

@@ -70,7 +70,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    { TaskSeries._ID, TaskSeries.TASKSERIES_CREATED_DATE,
     TaskSeries.MODIFIED_DATE, TaskSeries.TASKSERIES_NAME, TaskSeries.SOURCE,
     TaskSeries.URL, TaskSeries.RECURRENCE, TaskSeries.RECURRENCE_EVERY,
-    TaskSeries.RAW_TASK_ID, TaskSeries.LOCATION_ID, TaskSeries.LIST_ID };
+    TaskSeries.LOCATION_ID, TaskSeries.LIST_ID };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -128,8 +128,6 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          values.putNull( TaskSeries.RECURRENCE_EVERY );
       }
       
-      values.put( TaskSeries.RAW_TASK_ID, taskSeries.getTask().getId() );
-      
       if ( !TextUtils.isEmpty( taskSeries.getLocationId() ) )
          values.put( TaskSeries.LOCATION_ID, taskSeries.getLocationId() );
       else
@@ -163,21 +161,11 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          {
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
-               RtmTask task = null;
+               final String taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
                
-               if ( ok )
-               {
-                  task = RtmTasksProviderPart.getTask( client,
-                                                       c.getString( COL_INDICES.get( TaskSeries.RAW_TASK_ID ) ) );
-                  ok = task != null;
-               }
-               
-               String taskSeriesId = null;
-               
-               if ( ok )
-               {
-                  taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
-               }
+               List< RtmTask > tasks = RtmTasksProviderPart.getAllTasks( client,
+                                                                         taskSeriesId );
+               ok = tasks != null && tasks.size() > 0;
                
                List< String > tags = null;
                
@@ -229,7 +217,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                                                                       c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
                                                                       Queries.getOptString( c,
                                                                                             COL_INDICES.get( TaskSeries.SOURCE ) ),
-                                                                      task,
+                                                                      tasks,
                                                                       notes,
                                                                       locationId,
                                                                       Queries.getOptString( c,
@@ -309,20 +297,28 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       
       // Check mandatory values
       ok = ok && taskSeries.getName() != null;
-      ok = ok && taskSeries.getTask() != null;
+      ok = ok && taskSeries.getTasks() != null
+         && taskSeries.getTasks().size() > 0;
       ok = ok && listId != null;
       
       if ( ok )
       {
          operations = new ArrayList< ContentProviderOperation >();
          
-         // Insert a new RtmTask
+         // Insert a new RtmTasks
          {
-            final ContentProviderOperation inserTaskOp = RtmTasksProviderPart.insertTask( client,
-                                                                                          taskSeries.getTask() );
-            ok = inserTaskOp != null;
-            if ( ok )
-               operations.add( inserTaskOp );
+            final List< RtmTask > tasks = taskSeries.getTasks();
+            
+            for ( Iterator< RtmTask > i = tasks.iterator(); ok && i.hasNext(); )
+            {
+               final RtmTask rtmTask = i.next();
+               final ContentProviderOperation insertTaskOp = RtmTasksProviderPart.insertTask( client,
+                                                                                              rtmTask,
+                                                                                              taskSeriesId );
+               ok = insertTaskOp != null;
+               if ( ok )
+                  operations.add( insertTaskOp );
+            }
          }
          
          // Check for tags
@@ -403,16 +399,13 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + TaskSeries.TASKSERIES_NAME + " TEXT NOT NULL, " + TaskSeries.SOURCE
          + " TEXT, " + TaskSeries.URL + " TEXT, " + TaskSeries.RECURRENCE
          + " TEXT, " + TaskSeries.RECURRENCE_EVERY + " INTEGER, "
-         + TaskSeries.RAW_TASK_ID + " INTEGER NOT NULL, "
          + TaskSeries.LOCATION_ID + " INTEGER, " + TaskSeries.LIST_ID
          + " INTEGER NOT NULL, " + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \""
          + TaskSeries._ID + "\" ), " + "CONSTRAINT list FOREIGN KEY ( "
          + TaskSeries.LIST_ID + " ) REFERENCES lists ( \"" + Lists._ID
          + "\" ), " + "CONSTRAINT location FOREIGN KEY ( "
          + TaskSeries.LOCATION_ID + " ) REFERENCES locations ( \""
-         + Locations._ID + "\" )," + "CONSTRAINT task FOREIGN KEY ( "
-         + TaskSeries.RAW_TASK_ID + " ) REFERENCES tasks ( \"" + RawTasks._ID
-         + "\" ) );" );
+         + Locations._ID + "\" )" + ");" );
       
       // Triggers: If a taskseries gets deleted, we also delete:
       // - all raw tasks
@@ -422,10 +415,11 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       db.execSQL( "CREATE TRIGGER " + path
          + "_delete_taskseries AFTER DELETE ON " + path
          + " FOR EACH ROW BEGIN DELETE FROM " + RawTasks.PATH + " WHERE "
-         + RawTasks._ID + " = old." + TaskSeries.RAW_TASK_ID + "; DELETE FROM "
-         + Notes.PATH + " WHERE " + Notes.TASKSERIES_ID + " = old."
-         + TaskSeries._ID + ";" + " DELETE FROM " + Tags.PATH + " WHERE "
-         + Tags.TASKSERIES_ID + " = old." + TaskSeries._ID + ";" + " END;" );
+         + RawTasks.TASKSERIES_ID + " = old." + TaskSeries._ID
+         + "; DELETE FROM " + Notes.PATH + " WHERE " + Notes.TASKSERIES_ID
+         + " = old." + TaskSeries._ID + ";" + " DELETE FROM " + Tags.PATH
+         + " WHERE " + Tags.TASKSERIES_ID + " = old." + TaskSeries._ID + ";"
+         + " END;" );
    }
    
 

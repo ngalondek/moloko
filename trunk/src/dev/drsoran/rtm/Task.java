@@ -39,6 +39,8 @@ public class Task
 {
    private final String id;
    
+   private final String taskSeriesId;
+   
    private final String listName;
    
    private final boolean isSmartList;
@@ -97,16 +99,17 @@ public class Task
    
    
 
-   public Task( String id, String listName, boolean isSmartList, Date created,
-      Date modified, String name, String source, String url, String recurrence,
-      boolean isEveryRecurrence, String locationId, String listId, Date due,
-      boolean hasDueTime, Date added, Date completed, Date deleted,
-      Priority priority, boolean posponed, String estimate,
-      long estimateMillis, String locationName, float longitude,
-      float latitude, String address, boolean isViewable, int zoom,
-      String tags, int numNotes )
+   public Task( String id, String taskSeriesId, String listName,
+      boolean isSmartList, Date created, Date modified, String name,
+      String source, String url, String recurrence, boolean isEveryRecurrence,
+      String locationId, String listId, Date due, boolean hasDueTime,
+      Date added, Date completed, Date deleted, Priority priority,
+      boolean posponed, String estimate, long estimateMillis,
+      String locationName, float longitude, float latitude, String address,
+      boolean isViewable, int zoom, String tags, int numNotes )
    {
       this.id = id;
+      this.taskSeriesId = taskSeriesId;
       this.listName = listName;
       this.isSmartList = isSmartList;
       this.created = created;
@@ -156,16 +159,17 @@ public class Task
    
 
 
-   public Task( String id, String listName, boolean isSmartList, Date created,
-      Date modified, String name, String source, String url, String recurrence,
-      boolean isEveryRecurrence, String locationId, String listId, Date due,
-      boolean hasDueTime, Date added, Date completed, Date deleted,
-      Priority priority, boolean posponed, String estimate,
-      long estimateMillis, String locationName, float longitude,
-      float latitude, String address, boolean isViewable, int zoom,
-      List< String > tags, int numNotes )
+   public Task( String id, String taskSeriesId, String listName,
+      boolean isSmartList, Date created, Date modified, String name,
+      String source, String url, String recurrence, boolean isEveryRecurrence,
+      String locationId, String listId, Date due, boolean hasDueTime,
+      Date added, Date completed, Date deleted, Priority priority,
+      boolean posponed, String estimate, long estimateMillis,
+      String locationName, float longitude, float latitude, String address,
+      boolean isViewable, int zoom, List< String > tags, int numNotes )
    {
       this.id = id;
+      this.taskSeriesId = taskSeriesId;
       this.listName = listName;
       this.isSmartList = isSmartList;
       this.created = created;
@@ -209,6 +213,13 @@ public class Task
    public String getId()
    {
       return id;
+   }
+   
+
+
+   public String getTaskSeriesId()
+   {
+      return taskSeriesId;
    }
    
 

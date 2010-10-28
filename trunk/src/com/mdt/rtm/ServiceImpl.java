@@ -97,17 +97,14 @@ public class ServiceImpl implements Service
     * If you want to go through an HTTP proxy.
     * 
     * @param proxyHostName
-    *           the host name of the HTTP proxy machine (if <code>null</code>,
-    *           no proxy is set, and all parameters are
+    *           the host name of the HTTP proxy machine (if <code>null</code>, no proxy is set, and all parameters are
     *           ignored)
     * @param proxyPortNumber
     *           the port number the HTTP proxy listens to
     * @param proxyLogin
-    *           the account identifier against the HTTP proxy: if set to
-    *           <code>null</code>, no authentication will be
-    *           performed and the HTTP is considered working anonymously, and
-    *           the last <code>proxyPassword</code> parameter is not taken into
-    *           account
+    *           the account identifier against the HTTP proxy: if set to <code>null</code>, no authentication will be
+    *           performed and the HTTP is considered working anonymously, and the last <code>proxyPassword</code>
+    *           parameter is not taken into account
     * @param proxyPassword
     *           the previous identifier related password
     */
@@ -166,8 +163,7 @@ public class ServiceImpl implements Service
    {
       String authBaseUrl = "http://" + SERVER_HOST_NAME + "/services/auth/";
       Param[] params = new Param[]
-      {
-       new Param( "api_key", applicationInfo.getApiKey() ),
+      { new Param( "api_key", applicationInfo.getApiKey() ),
        new Param( "perms", permissions.toString() ),
        new Param( "frob", frob.getValue() ) };
       Param sig = new Param( "api_sig", invoker.calcApiSig( params ) );
@@ -429,8 +425,7 @@ public class ServiceImpl implements Service
       else if ( rtmTaskList.getSeries().size() > 1 )
       {
          throw new ServiceInternalException( "Internal error: more that one task ("
-                                             + rtmTaskList.getSeries().size()
-                                             + ") has been created" );
+            + rtmTaskList.getSeries().size() + ") has been created" );
       }
       throw new ServiceInternalException( "Internal error: no task has been created" );
    }
@@ -650,10 +645,15 @@ public class ServiceImpl implements Service
    {
       for ( RtmTaskSeries series : rtmTaskList.getSeries() )
       {
-         if ( series.getId().equals( taskSeriesId )
-              && series.getTask().getId().equals( taskId ) )
+         if ( series.getId().equals( taskSeriesId ) )
          {
-            return series;
+            final List< RtmTask > tasks = series.getTasks();
+            
+            for ( RtmTask rtmTask : tasks )
+            {
+               if ( rtmTask.getId().equals( taskId ) )
+                  return series;
+            }
          }
       }
       return null;

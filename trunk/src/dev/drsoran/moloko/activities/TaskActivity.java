@@ -282,7 +282,7 @@ public class TaskActivity extends Activity
             try
             {
                final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                               task.getId() );
+                                                                               task.getTaskSeriesId() );
                if ( rtmNotes != null )
                {
                   notes = rtmNotes.getNotes();
@@ -291,7 +291,7 @@ public class TaskActivity extends Activity
             catch ( RemoteException e )
             {
                Log.e( TAG, "Unable to retrieve notes from DB for task ID "
-                  + task.getId(), e );
+                  + task.getTaskSeriesId(), e );
             }
             
             client.release();

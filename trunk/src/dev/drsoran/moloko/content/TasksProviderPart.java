@@ -64,7 +64,7 @@ public class TasksProviderPart extends AbstractProviderPart
    { Tasks._ID, Tasks.LIST_ID, Tasks.LIST_NAME, Tasks.IS_SMART_LIST,
     Tasks.TASKSERIES_CREATED_DATE, Tasks.MODIFIED_DATE, Tasks.TASKSERIES_NAME,
     Tasks.SOURCE, Tasks.URL, Tasks.RECURRENCE, Tasks.RECURRENCE_EVERY,
-    Tasks.RAW_TASK_ID, Tasks.DUE_DATE, Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE,
+    Tasks.TASKSERIES_ID, Tasks.DUE_DATE, Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE,
     Tasks.COMPLETED_DATE, Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED,
     Tasks.ESTIMATE, Tasks.ESTIMATE_MILLIS, Tasks.LOCATION_ID,
     Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE, Tasks.ADDRESS,
@@ -95,8 +95,8 @@ public class TasksProviderPart extends AbstractProviderPart
                                                       // columns
                                                       new String[]
                                                       {
-                                                       TaskSeries.PATH + "."
-                                                          + TaskSeries._ID
+                                                       RawTasks.PATH + "."
+                                                          + RawTasks._ID
                                                           + " AS _id",
                                                        Tasks.LIST_ID,
                                                        Tasks.LIST_NAME,
@@ -107,7 +107,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        Tasks.SOURCE, Tasks.URL,
                                                        Tasks.RECURRENCE,
                                                        Tasks.RECURRENCE_EVERY,
-                                                       Tasks.RAW_TASK_ID,
+                                                       Tasks.TASKSERIES_ID,
                                                        Tasks.DUE_DATE,
                                                        Tasks.HAS_DUE_TIME,
                                                        Tasks.ADDED_DATE,
@@ -130,9 +130,11 @@ public class TasksProviderPart extends AbstractProviderPart
                                                          + " AND "
                                                          + TaskSeries.PATH
                                                          + "."
-                                                         + TaskSeries.RAW_TASK_ID
-                                                         + "=" + RawTasks.PATH
-                                                         + "." + RawTasks._ID,
+                                                         + TaskSeries._ID
+                                                         + "="
+                                                         + RawTasks.PATH
+                                                         + "."
+                                                         + RawTasks.TASKSERIES_ID,
                                                       null,
                                                       null,
                                                       null,
@@ -151,7 +153,10 @@ public class TasksProviderPart extends AbstractProviderPart
                                                            TaskSeries.PATH
                                                               + "."
                                                               + TaskSeries._ID,
-                                                           Tags.TASKSERIES_ID,
+                                                           Tags.PATH
+                                                              + "."
+                                                              + Tags.TASKSERIES_ID
+                                                              + " AS series_id",
                                                            "group_concat("
                                                               + Tags.TAG
                                                               + ",\""
@@ -184,12 +189,14 @@ public class TasksProviderPart extends AbstractProviderPart
                                                               // columns
                                                               new String[]
                                                               { "count("
+                                                                 + Notes.PATH
+                                                                 + "."
                                                                  + Notes.TASKSERIES_ID
                                                                  + ")" },
                                                               
                                                               // where
                                                               "subQuery."
-                                                                 + TaskSeries._ID
+                                                                 + RawTasks.TASKSERIES_ID
                                                                  + "="
                                                                  + Notes.PATH
                                                                  + "."
@@ -344,12 +351,11 @@ public class TasksProviderPart extends AbstractProviderPart
          final String column = projection[ i ];
          
          // In case of a join with the locations table the _id gets ambiguous.
-         // So
-         // we have to qualify it.
+         // So we have to qualify it.
          if ( !projectionContainsId && column.endsWith( Tasks._ID ) )
          {
             projectionList.set( i,
-                                new StringBuilder( "subQuery." ).append( TaskSeries._ID )
+                                new StringBuilder( "subQuery." ).append( RawTasks._ID )
                                                                 .append( " AS " )
                                                                 .append( Tasks._ID )
                                                                 .toString() );
@@ -389,16 +395,15 @@ public class TasksProviderPart extends AbstractProviderPart
       stringBuilder.append( " LEFT OUTER JOIN " )
                    .append( "(" )
                    .append( tagsSubQuery )
-                   .append( ") AS tagsSubQuery ON tagsSubQuery." )
-                   .append( Tags.TASKSERIES_ID )
+                   .append( ") AS tagsSubQuery ON tagsSubQuery.series_id" )
                    .append( " = subQuery." )
-                   .append( TaskSeries._ID );
+                   .append( Tasks.TASKSERIES_ID );
       
       // Only if the ID is given in the projection we can use it
       if ( id != null && projectionContainsId )
       {
          stringBuilder.append( " WHERE subQuery." )
-                      .append( TaskSeries._ID )
+                      .append( RawTasks._ID )
                       .append( " = " )
                       .append( id );
       }
@@ -489,6 +494,7 @@ public class TasksProviderPart extends AbstractProviderPart
    private final static Task createTask( Cursor c )
    {
       return new Task( c.getString( COL_INDICES.get( Tasks._ID ) ),
+                       c.getString( COL_INDICES.get( Tasks.TASKSERIES_ID ) ),
                        c.getString( COL_INDICES.get( Tasks.LIST_NAME ) ),
                        c.getInt( COL_INDICES.get( Tasks.IS_SMART_LIST ) ) != 0,
                        new Date( c.getLong( COL_INDICES.get( Tasks.TASKSERIES_CREATED_DATE ) ) ),

@@ -171,6 +171,7 @@ public final class UIUtils
             
             if ( configuration != null )
             {
+               // TODO: Display disabled tags in a different style.
                tagToDisable = configuration.getString( DISABLE_TAG_EQUALS );
                disableAllTags = configuration.getBoolean( DISABLE_ALL_TAGS )
                   || listener == null;

@@ -88,15 +88,14 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                                      TaskSeries.PATH
                                                                         + "."
                                                                         + TaskSeries._ID
-                                                                        + " AS _id",
+                                                                        + " AS series_id",
                                                                      TaskSeries.LIST_ID,
                                                                      RawTasks.COMPLETED_DATE },
                                                                     // where
-                                                                    TaskSeries.RAW_TASK_ID
-                                                                       + "="
+                                                                    "series_id ="
                                                                        + RawTasks.PATH
                                                                        + "."
-                                                                       + RawTasks._ID
+                                                                       + RawTasks.TASKSERIES_ID
                                                                        + " AND "
                                                                        
                                                                        // Only non-completed tasks
@@ -108,7 +107,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                                     null );
       
       QUERY = new StringBuilder( "SELECT " ).append( Lists.PATH )
-                                            .append( ".*, count( subQuery._id ) AS " )
+                                            .append( ".*, count( subQuery.series_id ) AS " )
                                             .append( ListOverviews.TASKS_COUNT )
                                             .append( " FROM " )
                                             .append( Lists.PATH )

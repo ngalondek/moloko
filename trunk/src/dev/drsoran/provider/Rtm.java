@@ -428,14 +428,6 @@ public class Rtm
       public final static String RECURRENCE_EVERY = "recurrence_every";
       
       /**
-       * The ID of the task of this taskseries.
-       * <P>
-       * Type: INTEGER (foreign key to table tasks _ID field)
-       * </P>
-       */
-      public final static String RAW_TASK_ID = "raw_task_id";
-      
-      /**
        * The ID of the location of this taskseries.
        * <P>
        * Type: INTEGER (foreign key to table locations _ID field)
@@ -483,6 +475,14 @@ public class Rtm
 
    protected static interface RawTaskColumns
    {
+      /**
+       * The ID of the taskseries referenced.
+       * <P>
+       * Type: INTEGER (foreign key to table taskseries _ID field)
+       * </P>
+       */
+      public final static String TASKSERIES_ID = "taskseries_id";
+      
       /**
        * The due date of the task
        * <P>

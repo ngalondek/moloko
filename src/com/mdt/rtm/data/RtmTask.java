@@ -19,6 +19,7 @@
  */
 package com.mdt.rtm.data;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import org.w3c.dom.Element;
@@ -37,6 +38,7 @@ import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.service.sync.util.ParamChecker;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.SyncUtils;
@@ -52,6 +54,17 @@ public class RtmTask extends RtmData implements
          IContentProviderSyncable< RtmTask >
 {
    private static final String TAG = RtmTask.class.getSimpleName();
+   
+   
+   private final static class LessIdComperator implements Comparator< RtmTask >
+   {
+      
+      public int compare( RtmTask object1, RtmTask object2 )
+      {
+         return object1.id.compareTo( object2.id );
+      }
+      
+   }
    
    public static final Parcelable.Creator< RtmTask > CREATOR = new Parcelable.Creator< RtmTask >()
    {
@@ -69,6 +82,8 @@ public class RtmTask extends RtmData implements
       }
       
    };
+   
+   public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private final String id;
    
@@ -374,12 +389,24 @@ public class RtmTask extends RtmData implements
    public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
                                                                                Object... params )
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
-                                                                       .withValues( RtmTasksProviderPart.getContentValues( this,
-                                                                                                                           true ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.INSERT );
+      ContentProviderSyncOperation operation = null;
+      
+      boolean ok = ParamChecker.checkParams( TAG,
+                                             "ContentProvider delete failed. ",
+                                             new Class[]
+                                             { String.class },
+                                             params );
+      
+      if ( ok )
+         operation = new ContentProviderSyncOperation( provider,
+                                                       ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
+                                                                               .withValues( RtmTasksProviderPart.getContentValues( this,
+                                                                                                                                   (String) params[ 0 ],
+                                                                                                                                   true ) )
+                                                                               .build(),
+                                                       IContentProviderSyncOperation.Op.INSERT );
+      
+      return operation;
    }
    
 

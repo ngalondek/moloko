@@ -37,16 +37,17 @@ public class ListTask extends Task
    
    
 
-   public ListTask( String id, String listName, boolean isSmartList,
-      Date created, Date modified, String name, String source, String url,
-      String recurrence, boolean isEveryRecurrence, String locationId,
-      String listId, Date due, boolean hasDueTime, Date added, Date completed,
-      Date deleted, Priority priority, boolean posponed, String estimate,
-      long estimateMillis, String locationName, float longitude,
-      float latitude, String address, boolean isViewable, int zoom,
-      List< String > tags, int numNotes )
+   public ListTask( String id, String taskSeriesId, String listName,
+      boolean isSmartList, Date created, Date modified, String name,
+      String source, String url, String recurrence, boolean isEveryRecurrence,
+      String locationId, String listId, Date due, boolean hasDueTime,
+      Date added, Date completed, Date deleted, Priority priority,
+      boolean posponed, String estimate, long estimateMillis,
+      String locationName, float longitude, float latitude, String address,
+      boolean isViewable, int zoom, List< String > tags, int numNotes )
    {
       super( id,
+             taskSeriesId,
              listName,
              isSmartList,
              created,
@@ -82,6 +83,7 @@ public class ListTask extends Task
    public final static ListTask fromTask( Task task )
    {
       return new ListTask( task.getId(),
+                           task.getTaskSeriesId(),
                            task.getListName(),
                            task.isSmartList(),
                            task.getCreated(),

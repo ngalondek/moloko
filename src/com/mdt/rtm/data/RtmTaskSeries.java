@@ -115,6 +115,7 @@ public class RtmTaskSeries extends RtmData implements
       return null;
    }
    
+   @SuppressWarnings( "unused" )
    private static final Logger log = Logger.getLogger( "TaskSeries" );
    
    public final static LessIdComperator LESS_ID = new LessIdComperator();
@@ -129,7 +130,7 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String source;
    
-   private final RtmTask task;
+   private final ArrayList< RtmTask > tasks;
    
    private final RtmTaskNotes notes;
    
@@ -148,9 +149,9 @@ public class RtmTaskSeries extends RtmData implements
    
 
    public RtmTaskSeries( String id, Date created, Date modified, String name,
-      String source, RtmTask task, RtmTaskNotes notes, String locationId,
-      String url, String recurrence, boolean isEveryRecurrence,
-      List< String > tags )
+      String source, List< RtmTask > tasks, RtmTaskNotes notes,
+      String locationId, String url, String recurrence,
+      boolean isEveryRecurrence, List< String > tags )
    {
       this.id = id;
       this.created = ( created != null ) ? new ParcelableDate( created ) : null;
@@ -158,7 +159,7 @@ public class RtmTaskSeries extends RtmData implements
                                           : null;
       this.name = name;
       this.source = source;
-      this.task = task;
+      this.tasks = new ArrayList< RtmTask >( tasks );
       this.notes = notes;
       this.locationId = locationId;
       this.url = url;
@@ -203,11 +204,12 @@ public class RtmTaskSeries extends RtmData implements
          isEveryRecurrence = false;
       }
       
-      task = new RtmTask( child( elt, "task" ) );
+      final List< Element > tasks = children( elt, "task" );
+      this.tasks = new ArrayList< RtmTask >( tasks.size() );
       
-      if ( children( elt, "task" ).size() > 1 )
+      for ( Element task : tasks )
       {
-         log.severe( "WARNING: Assumption incorrect: found a TaskSeries with more than one child Task." );
+         this.tasks.add( new RtmTask( task ) );
       }
       
       notes = new RtmTaskNotes( child( elt, "notes" ) );
@@ -246,8 +248,16 @@ public class RtmTaskSeries extends RtmData implements
       created = null;
       modified = null;
       name = null;
+      
+      final List< Element > tasks = children( elt, "task" );
+      this.tasks = new ArrayList< RtmTask >( tasks.size() );
+      
+      for ( Element task : tasks )
+      {
+         this.tasks.add( new RtmTask( task, deleted ) );
+      }
+      
       source = null;
-      task = new RtmTask( child( elt, "task" ), deleted );
       locationId = null;
       notes = null;
       url = null;
@@ -266,7 +276,7 @@ public class RtmTaskSeries extends RtmData implements
       modified = source.readParcelable( null );
       name = source.readString();
       this.source = source.readString();
-      task = new RtmTask( source );
+      tasks = source.createTypedArrayList( RtmTask.CREATOR );
       notes = new RtmTaskNotes( source );
       locationId = source.readString();
       url = source.readString();
@@ -313,9 +323,9 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public RtmTask getTask()
+   public List< RtmTask > getTasks()
    {
-      return task;
+      return tasks;
    }
    
 
@@ -410,7 +420,7 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeParcelable( modified, 0 );
       dest.writeString( name );
       dest.writeString( source );
-      task.writeToParcel( dest, flags );
+      dest.writeTypedList( tasks );
       notes.writeToParcel( dest, flags );
       dest.writeString( locationId );
       dest.writeString( url );
@@ -500,21 +510,15 @@ public class RtmTaskSeries extends RtmData implements
                 "ContentProvider update failed. Different RtmTaskSeries IDs." );
       }
       
-      if ( ok && !update.task.getId().equals( task.getId() ) )
-      {
-         ok = false;
-         Log.e( TAG, "ContentProvider update failed. Different RtmTask IDs." );
-      }
-      
       if ( ok )
       {
          // Update notes
-         final ContentProviderSyncableList< RtmTaskNote > syncList = new ContentProviderSyncableList< RtmTaskNote >( provider,
-                                                                                                                     notes.getNotes(),
-                                                                                                                     RtmTaskNote.LESS_ID );
+         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( provider,
+                                                                                                                          notes.getNotes(),
+                                                                                                                          RtmTaskNote.LESS_ID );
          
          final ArrayList< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( update.notes.getNotes(),
-                                                                                            syncList,
+                                                                                            syncNotesList,
                                                                                             id );
          ok = noteOperations != null;
          
@@ -537,15 +541,19 @@ public class RtmTaskSeries extends RtmData implements
                   result.add( tagOperation );
             }
             
-            // Update task
+            // Update tasks
             if ( ok )
             {
-               final IContentProviderSyncOperation taskOperation = task.computeContentProviderUpdateOperation( provider,
-                                                                                                               update.task );
-               ok = taskOperation != null;
-               if ( ok
-                  && taskOperation.getOperationType() != IContentProviderSyncOperation.Op.NOOP )
-                  result.add( taskOperation );
+               final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( provider,
+                                                                                                                        tasks );
+               
+               final ArrayList< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( update.tasks,
+                                                                                                  syncTasksList,
+                                                                                                  RtmTask.LESS_ID );
+               ok = taskOperations != null;
+               
+               if ( ok && taskOperations.size() > 0 )
+                  result.addAll( taskOperations );
             }
             
             // Update taskseries

@@ -100,7 +100,7 @@ options
 	
 	private final static String TAGS_QUERY_PREFIX
    	= "(SELECT "  + Tags.TASKSERIES_ID + " FROM " + Tags.PATH
-   	  + " WHERE " + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks._ID;	
+   	  + " WHERE " + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks.TASKSERIES_ID;	
    
    // STATUS VARIABLES
    
@@ -391,7 +391,7 @@ OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
                             .append( " WHERE " )
                             .append( Notes.TASKSERIES_ID )
                             .append( " = subQuery." )
-                            .append( Tasks._ID )
+                            .append( Tasks.TASKSERIES_ID )
                             .append( " AND " )
                             .append( Notes.NOTE_TITLE );
                       containsStringParam( s.getText() );

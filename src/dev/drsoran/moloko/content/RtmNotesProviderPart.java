@@ -53,12 +53,8 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   {
-    Notes._ID,
-    Notes.NOTE_CREATED_DATE,
-    Notes.NOTE_MODIFIED_DATE,
-    Notes.NOTE_TITLE,
-    Notes.NOTE_TEXT };
+   { Notes._ID, Notes.NOTE_CREATED_DATE, Notes.NOTE_MODIFIED_DATE,
+    Notes.NOTE_TITLE, Notes.NOTE_TEXT };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -77,7 +73,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    {
       ContentValues values = null;
       
-      if ( note != null && taskSeriesId != null )
+      if ( note != null && !TextUtils.isEmpty( taskSeriesId ) )
       {
          values = new ContentValues();
          
@@ -117,7 +113,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          final Cursor c = client.query( Notes.CONTENT_URI,
                                         PROJECTION,
                                         Notes.TASKSERIES_ID + " = "
-                                                 + taskSeriesId,
+                                           + taskSeriesId,
                                         null,
                                         null );
          
@@ -214,17 +210,14 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Notes._ID
-                  + " INTEGER NOT NULL, " + Notes.TASKSERIES_ID
-                  + " INTEGER NOT NULL, "
-                  + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
-                  + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_TITLE
-                  + " TEXT, " + Notes.NOTE_TEXT + " TEXT NOT NULL, "
-                  + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID
-                  + "\" ), "
-                  + "CONSTRAINT taskseries_ref FOREIGN KEY ( "
-                  + Notes.TASKSERIES_ID
-                  + " ) REFERENCES " + TaskSeries.PATH + " ( " + TaskSeries._ID
-                  + " ) );" );
+         + " INTEGER NOT NULL, " + Notes.TASKSERIES_ID + " INTEGER NOT NULL, "
+         + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
+         + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_TITLE
+         + " TEXT, " + Notes.NOTE_TEXT + " TEXT NOT NULL, "
+         + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID + "\" ), "
+         + "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( "
+         + Notes.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH + " ( "
+         + TaskSeries._ID + " ) );" );
    }
    
 

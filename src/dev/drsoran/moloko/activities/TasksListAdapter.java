@@ -244,7 +244,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                try
                {
                   final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                                  task.getId() );
+                                                                                  task.getTaskSeriesId() );
                   client.release();
                   
                   if ( rtmNotes != null )
@@ -256,7 +256,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                catch ( RemoteException e )
                {
                   Log.e( TAG, "Unable to retrieve notes from DB for task ID "
-                     + task.getId(), e );
+                     + task.getTaskSeriesId(), e );
                }
             }
          }

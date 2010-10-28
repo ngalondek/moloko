@@ -94,12 +94,16 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                       {
                                                        TaskSeries.PATH + "."
                                                           + TaskSeries._ID
-                                                          + " AS taskseries_id",
+                                                          + " AS series_id",
                                                        RawTasks.COMPLETED_DATE },
                                                       // where
-                                                      TaskSeries.RAW_TASK_ID
-                                                         + "=" + RawTasks.PATH
-                                                         + "." + RawTasks._ID,
+                                                      TaskSeries.PATH
+                                                         + "."
+                                                         + TaskSeries._ID
+                                                         + "="
+                                                         + RawTasks.PATH
+                                                         + "."
+                                                         + RawTasks.TASKSERIES_ID,
                                                       null,
                                                       null,
                                                       null,
@@ -221,7 +225,7 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                                         .append( query )
                                                                         .append( " LEFT OUTER JOIN (" )
                                                                         .append( subQuery )
-                                                                        .append( ") AS subQuery ON subQuery.taskseries_id = " )
+                                                                        .append( ") AS subQuery ON subQuery.series_id = " )
                                                                         .append( Tags.PATH )
                                                                         .append( "." )
                                                                         .append( Tags.TASKSERIES_ID );

@@ -22,8 +22,6 @@
 -->
 
 <resources>
-   <string name="app_version">1.0.0</string>
-   <string name="app_version_code">0</string>
 	<string name="app_name">Moloko</string>
 	<string name="app_home">Home</string>
 	<string name="app_preferences">Einstellungen</string>
@@ -70,6 +68,25 @@
    <string name="key_lang_sync_with_rtm">lang_sync_with_rtm</string>
    <string name="key_startup_view">startup_view</string>
    <string name="key_task_sort">task_sort</string>
+   <string name="key_notify_due_tasks">notify_due_tasks</string>
+   <string name="key_notify_due_tasks_before">notify_due_tasks_before</string>
+   <string name="key_notify_due_tasks_ringtone">notify_due_tasks_ringtone</string>
+   <string name="key_notify_due_tasks_vibrate">notify_due_tasks_vibrate</string>
+   <string name="key_notify_due_tasks_led">notify_due_tasks_led</string>
+   <string name="key_notify_permanent">notify_permanent</string>
+   
+   <!-- Time phrases -->
+   <string name="time_interval_15min">Alle 15 Min.</string>
+   <string name="time_interval_30min">Alle 30 Min.</string>
+   <string name="time_interval_1h">Jede Stunde</string>
+   <string name="time_interval_12h">Alle 12 Stunden</string>
+   <string name="time_interval_daily">Einmal täglich</string>
+   <string name="time_5min">5 Minuten.</string>
+   <string name="time_15min">15 Minuten</string>
+   <string name="time_30min">30 Minuten</string>
+   <string name="time_1h">1 Stunde</string>
+   <string name="time_12h">12 Stunden</string>
+   <string name="time_24h">1 Tag</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
@@ -89,6 +106,9 @@
    <string name="phr_sync">Synchronisierung</string>
    <string name="phr_do_sync">Synchronisieren</string>   
    <string name="phr_cancel_sync">Synchronisierung abbrechen</string>
+   <string name="phr_on">An</string>
+   <string name="phr_off">Aus</string>
+   <string name="phr_manuell">Manuell</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -98,7 +118,6 @@
    <string name="err_not_connected">Keine Verbindung</string>
    <string name="err_add_account_canceled">Das Hinzufügen eines neuen Kontos wurde abgebrochen</string>
    <string name="err_unexpected">Wenn Sie dies lesen LAUFEN SIE SO SCHNELL SIE KÖNNEN!</string>
-   
    
 	<!-- Global buttons -->
 	<string name="btn_ok">OK</string>
@@ -144,6 +163,9 @@
      <string name="tasklists_menu_ctx_collapse">Reduziere %1$s</string>
      <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
      <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
+     
+   <!-- NotificationManager -->
+   <string name="notification_permanent">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
@@ -220,7 +242,21 @@
    <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
    <string name="moloko_prefs_startup_view_home">@string/app_home</string>
    <string name="moloko_prefs_def_sort_title">Sortierung der Aufgaben</string>
-   <string name="moloko_prefs_def_sort_summary">nach %s</string>   
+   <string name="moloko_prefs_def_sort_summary">nach %s</string>
+   <string name="moloko_prefs_notification_title">Benachrichtigung</string>
+   <string name="moloko_prefs_notification_summary">Benachrichtigungen wählen, Töne u.s.w.</string>
+   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Aufgaben mit Fälligkeitszeit</string>
+   <string name="moloko_prefs_notification_tasks_w_due_title">Benachrichtigen</string>
+   <string name="moloko_prefs_notification_tasks_w_due_before_title">Erinnerung</string>
+   <string name="moloko_prefs_notification_tasks_w_due_before_default_value">900000</string>
+   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Benachrichtigungston</string>
+   <string name="moloko_prefs_notification_tasks_w_due_ringtone_summary">Benachrichtigungston für fällige Aufgaben</string>
+   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrieren</string>
+   <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
+   <string name="moloko_prefs_notification_permanent_cat_title">Permanente Benachrichtigungen</string>
+   <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
+   <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
+   <string name="moloko_prefs_notification_permanent_default_value">2</string>
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
 

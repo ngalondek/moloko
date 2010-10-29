@@ -45,6 +45,9 @@
 	<color name="task_overview_bgnd_stroke">#FFA6A6A6</color>
 	<color name="task_title_with_text_text">@android:color/black</color>
 
+   <color name="notification_permanent_title">@android:color/black</color>
+   <color name="notification_permanent_text">@android:color/black</color>
+
 	<color name="note_bgnd">@color/app_default_bgnd</color>
 
 	<color name="startup_bgnd">@color/app_default_bgnd</color>

@@ -30,6 +30,10 @@
    <plurals name="g_second">
       <item quantity="one">Sekunde</item>
       <item quantity="other">Sekunden</item>
+   </plurals>   
+   <plurals name="g_task">
+      <item quantity="one">Aufgabe</item>
+      <item quantity="other">Aufgaben</item>
    </plurals>
 
 	<!-- TasksList activity -->

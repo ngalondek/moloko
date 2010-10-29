@@ -15,9 +15,9 @@
 
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
-   android:versionName="@string/app_version"
    package="dev.drsoran.moloko"
-   android:versionCode="0">
+   android:versionName="0.9.0"
+   android:versionCode="1">
 
    <uses-sdk
       android:minSdkVersion="5"
@@ -46,7 +46,6 @@
          android:authorities="dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider" />
 
       <!-- Activities -->
-
       <activity
          android:label="@string/app_name"
          android:name=".activities.StartUpActivity"
@@ -255,6 +254,16 @@
          <intent-filter>
             <action
                android:name="android.intent.action.BOOT_COMPLETED" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>
+      </receiver>
+
+      <receiver
+         android:name=".receivers.DateTimeChangedReceiver">
+         <intent-filter>
+            <action
+               android:name="android.intent.action.TIME_SET" />
             <category
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>

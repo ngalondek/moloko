@@ -51,6 +51,19 @@ public final class Intents
    
 
 
+   public final static PendingIntent createNotificationIntent( Context context,
+                                                               Intent onClickIntent )
+   {
+      onClickIntent.setFlags( onClickIntent.getFlags()
+         | Intent.FLAG_ACTIVITY_CLEAR_TOP );
+      return PendingIntent.getActivity( context,
+                                        0,
+                                        onClickIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT );
+   }
+   
+
+
    public final static Intent createOpenListIntent( Context context,
                                                     String id,
                                                     String filter )
@@ -198,4 +211,5 @@ public final class Intents
       
       return intent;
    }
+   
 }

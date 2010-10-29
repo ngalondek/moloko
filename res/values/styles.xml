@@ -152,16 +152,36 @@
       <item
          name="android:textStyle">bold</item>
    </style>
-   
+
    <style
       name="App_No_List_Elements_Text"
       parent="@android:style/TextAppearance.Medium">
-      <item      
+      <item
          name="android:textColor">@color/priority_2</item>
       <item
          name="android:textStyle">italic|bold</item>
    </style>
 
+   <!-- ************ -->
+   <!-- Notification -->
+
+   <style
+      name="Notification_Permanent_Title">
+      <item
+         name="android:textSize">18sp</item>
+      <item
+         name="android:textStyle">bold</item>
+      <item
+         name="android:textColor">@color/notification_permanent_title</item>
+   </style>
+
+   <style
+      name="Notification_Permanent_Text">
+      <item
+         name="android:textSize">14sp</item>
+      <item
+         name="android:textColor">@color/notification_permanent_text</item>
+   </style>
 
    <!-- ********* -->
    <!-- Home      -->
@@ -301,7 +321,7 @@
       <item
          name="android:childDivider">@android:drawable/divider_horizontal_bright</item>
       <item
-         name="android:groupIndicator">@null</item>   
+         name="android:groupIndicator">@null</item>
    </style>
 
    <style
@@ -385,7 +405,7 @@
       <item
          name="android:singleLine">true</item>
    </style>
-   
+
    <!-- **************** -->
    <!-- TaskSearchResult -->
    <style

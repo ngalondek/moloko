@@ -392,7 +392,7 @@ public class RtmTask extends RtmData implements
       ContentProviderSyncOperation operation = null;
       
       boolean ok = ParamChecker.checkParams( TAG,
-                                             "ContentProvider delete failed. ",
+                                             "ContentProvider insert failed. ",
                                              new Class[]
                                              { String.class },
                                              params );

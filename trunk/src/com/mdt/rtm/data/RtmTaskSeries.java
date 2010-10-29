@@ -545,11 +545,12 @@ public class RtmTaskSeries extends RtmData implements
             if ( ok )
             {
                final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( provider,
-                                                                                                                        tasks );
+                                                                                                                        tasks,
+                                                                                                                        RtmTask.LESS_ID );
                
                final ArrayList< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( update.tasks,
                                                                                                   syncTasksList,
-                                                                                                  RtmTask.LESS_ID );
+                                                                                                  id );
                ok = taskOperations != null;
                
                if ( ok && taskOperations.size() > 0 )

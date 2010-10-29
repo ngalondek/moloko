@@ -2,6 +2,7 @@ var preProdFolder = Folder.selectDialog( "Select _pre_production folder",
                                          "/f/Programmierung/Projects/java/Moloko/assets/_pre_production" );
 var startFolder = Folder.selectDialog( "Select start folder", preProdFolder );
 
+var drawableFolder = null;
 var ldpiFolder = null;
 var mdpiFolder = null;
 var hdpiFolder = null;
@@ -52,18 +53,27 @@ function exportFolder( folder, prefix )
 			open( file );
 		
 			var ok = true;
-			
+         var alreadyExported = false;
+         var exportAsIs = false;
+
 			eval( script );
-			
-			if ( ok )
+
+			if ( ok && !alreadyExported )
 			{
-				exportLDPI( file, prefix );
-				exportMDPI( file, prefix );
-				exportHDPI( file, prefix );
+            if ( exportAsIs )
+            {
+               exportDrawable( file, prefix, "" );
+            }
+            else
+            {
+               exportLDPI( file, prefix, "" );
+               exportMDPI( file, prefix, "" );
+               exportHDPI( file, prefix, "" );
+            }
+            
+            activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 			}
-		
-			activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-		}		
+		}
 	}
 }
 
@@ -90,7 +100,25 @@ function loadScriptFromFolder( folder )
 	return script;
 }
 
-function exportLDPI( file, prefix )
+function exportDrawable( file, prefix, suffix )
+{	
+	if ( drawableFolder == null )
+	{
+		drawableFolder = new Folder( preProdFolder + "/../../res/drawable" );
+
+		if ( !drawableFolder.exists )
+		{
+			drawableFolder = Folder.selectDialog( "Select drawable output folder", preProdFolder.toString() );
+		}
+	}
+	
+	if ( drawableFolder != null )
+	{
+		saveForWebPNG24( drawableFolder, file, prefix, suffix );
+	}
+}
+
+function exportLDPI( file, prefix, suffix )
 {	
 	if ( ldpiFolder == null )
 	{
@@ -105,17 +133,17 @@ function exportLDPI( file, prefix )
 	if ( ldpiFolder != null )
 	{
 		var temp = activeDocument;
-   	activeDocument = activeDocument.duplicate( "temp" );
-   	
+      activeDocument = activeDocument.duplicate( "temp" );
+
 		resizeImage( 75 );
-		saveForWebPNG24( ldpiFolder, file, prefix );
+		saveForWebPNG24( ldpiFolder, file, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
-		
+
 		activeDocument = temp;
 	}
 }
 
-function exportMDPI( file, prefix )
+function exportMDPI( file, prefix, suffix )
 {	
 	if ( mdpiFolder == null )
 	{
@@ -129,11 +157,11 @@ function exportMDPI( file, prefix )
 	
 	if ( mdpiFolder != null )
 	{
-		saveForWebPNG24( mdpiFolder, file, prefix );
+		saveForWebPNG24( mdpiFolder, file, prefix, suffix );
 	}
 }
 
-function exportHDPI( file, prefix )
+function exportHDPI( file, prefix, suffix, leaveOpen )
 {	
 	if ( hdpiFolder == null )
 	{
@@ -151,7 +179,7 @@ function exportHDPI( file, prefix )
    	activeDocument = activeDocument.duplicate( "temp" );
    	
 		resizeImage( 150 );
-		saveForWebPNG24( hdpiFolder, file, prefix );		
+		saveForWebPNG24( hdpiFolder, file, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
 		activeDocument = temp;
@@ -174,9 +202,9 @@ function resizeImagePx( pixel )
 											ResampleMethod.BICUBIC );
 }
 
-function saveForWebPNG24( folder, file, prefix )
+function saveForWebPNG24( folder, file, prefix, suffix )
 {
-	var filename = folder + "/" + prefix + "_" + file.name.replace( /\.psd$/, ".png" );
+	var filename = folder + "/" + prefix + "_" + file.name.replace( /\.psd$/, "" ) + suffix + ".png";
 	
 	var idExpr = charIDToTypeID( "Expr" );
     var desc36 = new ActionDescriptor();

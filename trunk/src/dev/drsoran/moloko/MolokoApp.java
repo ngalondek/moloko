@@ -27,8 +27,12 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SyncStatusObserver;
 import android.os.Handler;
+import dev.drsoran.moloko.notification.MolokoNotificationManager;
+import dev.drsoran.moloko.receivers.TimeTickReceiver;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.SyncUtils;
@@ -38,7 +42,11 @@ import dev.drsoran.provider.Rtm;
 
 public class MolokoApp extends Application implements SyncStatusObserver
 {
-   private static Settings settings;
+   private static Settings SETTINGS;
+   
+   private static MolokoNotificationManager MOLOKO_NOTIFICATION_MANAGER;
+   
+   private final TimeTickReceiver TIME_TICK_RECEIVER = new TimeTickReceiver();
    
    private final Handler handler = new Handler();
    
@@ -51,7 +59,13 @@ public class MolokoApp extends Application implements SyncStatusObserver
    {
       super.onCreate();
       
-      settings = new Settings( this, handler );
+      SETTINGS = new Settings( this, handler );
+      
+      MOLOKO_NOTIFICATION_MANAGER = new MolokoNotificationManager( this,
+                                                                   handler );
+      
+      registerReceiver( TIME_TICK_RECEIVER,
+                        new IntentFilter( Intent.ACTION_TIME_TICK ) );
       
       syncStatHandle = ContentResolver.addStatusChangeListener( Constants.SYNC_OBSERVER_TYPE_SETTINGS,
                                                                 this );
@@ -66,6 +80,10 @@ public class MolokoApp extends Application implements SyncStatusObserver
    public void onTerminate()
    {
       super.onTerminate();
+      
+      MOLOKO_NOTIFICATION_MANAGER.shutdown();
+      
+      unregisterReceiver( TIME_TICK_RECEIVER );
       
       ContentResolver.removeStatusChangeListener( syncStatHandle );
    }
@@ -106,6 +124,13 @@ public class MolokoApp extends Application implements SyncStatusObserver
 
    public final static Settings getSettings()
    {
-      return settings;
+      return SETTINGS;
+   }
+   
+
+
+   public final static MolokoNotificationManager getMolokoNotificationManager()
+   {
+      return MOLOKO_NOTIFICATION_MANAGER;
    }
 }

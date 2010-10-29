@@ -22,11 +22,12 @@
 
 package dev.drsoran.moloko.receivers;
 
-import dev.drsoran.moloko.util.SyncUtils;
 import android.accounts.Account;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.util.SyncUtils;
 
 
 public class BootReceiver extends BroadcastReceiver
@@ -36,6 +37,7 @@ public class BootReceiver extends BroadcastReceiver
    public void onReceive( Context context, Intent intent )
    {
       scheduleSync( context );
+      setPermanentNotifications( context );
    }
    
 
@@ -49,4 +51,13 @@ public class BootReceiver extends BroadcastReceiver
          SyncUtils.scheduleSyncAlarm( context );
       }
    }
+   
+
+
+   private final static void setPermanentNotifications( Context context )
+   {
+      MolokoApp.getMolokoNotificationManager()
+               .reEvaluatePermanentNotifications();
+   }
+   
 }

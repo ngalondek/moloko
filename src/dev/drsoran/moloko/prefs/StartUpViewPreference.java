@@ -62,16 +62,15 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
       super( context, attrs );
       
       final CharSequence[] entryValues =
-      {
-       String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST ),
-        String.valueOf( Settings.STARTUP_VIEW_LISTS ),
-        String.valueOf( Settings.STARTUP_VIEW_HOME ) };
+      { String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST ),
+       String.valueOf( Settings.STARTUP_VIEW_LISTS ),
+       String.valueOf( Settings.STARTUP_VIEW_HOME ) };
       
       setEntries( createEntries() );
       setEntryValues( entryValues );
       
-      MolokoApp.getSettings()
-               .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_DEFAULTLIST,
+      MolokoApp.get( getContext() )
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DEFAULTLIST,
                                                    this );
    }
    
@@ -86,7 +85,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
       // list has
       // been set to none, we switch to the default start up view.
       if ( getValue().equals( String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST ) )
-               && MolokoApp.getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
+         && MolokoApp.getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
       {
          setValue( String.valueOf( Settings.STARTUP_VIEW_DEFAULT ) );
       }
@@ -97,11 +96,9 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
 
 
    @Override
-   protected void onPrepareForRemoval()
+   public void cleanUp()
    {
-      super.onPrepareForRemoval();
-      
-      MolokoApp.getSettings().unregisterOnSettingsChangedListener( this );
+      MolokoApp.get( getContext() ).unregisterOnSettingsChangedListener( this );
    }
    
 
@@ -120,7 +117,7 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
          // list we must open a new list dialog with all lists to select one.
          if ( String.valueOf( Settings.STARTUP_VIEW_DEFAULT_LIST )
                     .equals( newValueStr )
-                  && MolokoApp.getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
+            && MolokoApp.getSettings().getDefaultListId() == Settings.NO_DEFAULT_LIST_ID )
          {
             defListEntriesAndValues = DefaultListPreference.createEntriesAndValues( getContext() );
             
@@ -134,21 +131,21 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
                                                                             .setSingleChoiceItems( defListEntriesAndValues.entries,
                                                                                                    -1,
                                                                                                    new OnClickListener()
-                                                                            {
-                                                                               public void onClick( DialogInterface dialog,
-                                                                                                    int which )
-                                                                            {
-                                                                               chosenDefListIdx = which;
-                                                                               dialog.dismiss();
-                                                                            }
-                                                                            } )
+                                                                                                   {
+                                                                                                      public void onClick( DialogInterface dialog,
+                                                                                                                           int which )
+                                                                                                      {
+                                                                                                         chosenDefListIdx = which;
+                                                                                                         dialog.dismiss();
+                                                                                                      }
+                                                                                                   } )
                                                                             .create();
                dialog.setOnDismissListener( new OnDismissListener()
                {
                   public void onDismiss( DialogInterface dialog )
                   {
                      final boolean positive = chosenDefListIdx > EntriesAndValues.NONE_IDX
-                                              && chosenDefListIdx < defListEntriesAndValues.values.length;
+                        && chosenDefListIdx < defListEntriesAndValues.values.length;
                      
                      // Check if the client has chosen a list.
                      if ( positive )
@@ -189,12 +186,12 @@ public class StartUpViewPreference extends AutoSummaryListPreference implements
       
       return new CharSequence[]
       {
-                               ( defListName != null )
-                                                      ? resources.getString( R.string.moloko_prefs_startup_view_def_list_name,
-                                                                             defListName )
-                                                      : resources.getString( R.string.moloko_prefs_startup_view_def_list_choose ),
-                                                      resources.getString( R.string.moloko_prefs_startup_view_lists ),
-                                                      resources.getString( R.string.moloko_prefs_startup_view_home ) };
+       ( defListName != null )
+                              ? resources.getString( R.string.moloko_prefs_startup_view_def_list_name,
+                                                     defListName )
+                              : resources.getString( R.string.moloko_prefs_startup_view_def_list_choose ),
+       resources.getString( R.string.moloko_prefs_startup_view_lists ),
+       resources.getString( R.string.moloko_prefs_startup_view_home ) };
    }
    
 

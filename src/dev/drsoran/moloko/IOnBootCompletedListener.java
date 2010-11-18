@@ -20,25 +20,11 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.receivers;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import dev.drsoran.moloko.MolokoApp;
+package dev.drsoran.moloko;
 
 
-public class DateTimeChangedReceiver extends BroadcastReceiver
+
+public interface IOnBootCompletedListener
 {
-   
-   @Override
-   public void onReceive( Context context, Intent intent )
-   {
-      if ( intent.getAction().equals( Intent.ACTION_TIME_CHANGED ) )
-      {
-         MolokoApp.getMolokoNotificationManager()
-                  .reEvaluatePermanentNotifications();
-      }
-   }
-   
+   public void onBootCompleted();
 }

@@ -32,7 +32,7 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 
 
-public class InfoTextPreference extends Preference
+public class InfoTextPreference extends Preference implements IMolokoPreference
 {
    private String infoText;
    
@@ -82,6 +82,12 @@ public class InfoTextPreference extends Preference
    
 
 
+   public void cleanUp()
+   {
+   }
+   
+
+
    public String getInfoText()
    {
       return infoText;
@@ -101,4 +107,5 @@ public class InfoTextPreference extends Preference
    {
       setInfoText( getContext().getResources().getString( resId ) );
    }
+   
 }

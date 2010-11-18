@@ -31,22 +31,23 @@ import dev.drsoran.moloko.util.SyncUtils;
 
 public class SyncAlarmReceiver extends BroadcastReceiver
 {
-   public final static String TAG = SyncAlarmReceiver.class.getSimpleName();
+   @SuppressWarnings( "unused" )
+   private final static String TAG = SyncAlarmReceiver.class.getSimpleName();
    
    
 
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      final Account account = SyncUtils.isReadyToSync( context );
+      final Account account = SyncUtils.isReadyToSync( context.getApplicationContext() );
       
       if ( account != null )
       {
-         SyncUtils.requestSync( context, account, false );
+         SyncUtils.requestSync( context.getApplicationContext(), account, false );
       }
       else
       {
-         SyncUtils.stopSyncAlarm( context );
+         SyncUtils.stopSyncAlarm( context.getApplicationContext() );
       }
    }
    

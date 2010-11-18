@@ -22,10 +22,7 @@
 
 package dev.drsoran.moloko;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -36,10 +33,12 @@ import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.ContentObserver;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
+import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSettings;
@@ -47,54 +46,8 @@ import dev.drsoran.rtm.RtmSettings;
 
 public class Settings implements OnSharedPreferenceChangeListener
 {
-   private final static class ListenerEntry
-   {
-      public final int mask;
-      
-      public final WeakReference< IOnSettingsChangedListener > listener;
-      
-      
-
-      public ListenerEntry( int setting, IOnSettingsChangedListener listener )
-      {
-         this.mask = setting;
-         this.listener = new WeakReference< IOnSettingsChangedListener >( listener );
-      }
-      
-
-
-      boolean isDead()
-      {
-         return listener.get() == null;
-      }
-      
-
-
-      boolean matches( int setting )
-      {
-         return ( ( mask & setting ) != 0 );
-      }
-      
-
-
-      void notify( int setting, HashMap< Integer, Object > oldValues )
-      {
-         if ( listener.get() != null )
-            listener.get().onSettingsChanged( setting, oldValues );
-      }
-      
-
-
-      boolean notifyIfMatches( int setting, HashMap< Integer, Object > oldValues )
-      {
-         boolean ok = !isDead();
-         
-         if ( ok && matches( setting ) )
-            listener.get().onSettingsChanged( setting, oldValues );
-         
-         return ok;
-      }
-   }
+   @SuppressWarnings( "unused" )
+   private final static String TAG = Settings.class.getSimpleName();
    
    public final static int DATEFORMAT_EU = 0;
    
@@ -122,31 +75,11 @@ public class Settings implements OnSharedPreferenceChangeListener
    
    public final static int TASK_SORT_DEFAULT = TASK_SORT_PRIORITY;
    
-   // Values used for registerOnSettingsChangedListener
-   
-   public final static int SETTINGS_RTM_TIMEZONE = 1 << 0;
-   
-   public final static int SETTINGS_RTM_DATEFORMAT = 1 << 1;
-   
-   public final static int SETTINGS_RTM_TIMEFORMAT = 1 << 2;
-   
-   public final static int SETTINGS_RTM_DEFAULTLIST = 1 << 3;
-   
-   public final static int SETTINGS_RTM_LANGUAGE = 1 << 4;
-   
-   public final static int SETTINGS_TASK_SORT = 1 << 5;
-   
-   public final static int SETTINGS_ALL = Integer.MAX_VALUE;
-   
    private final Context context;
    
-   private final SharedPreferences preferences;
+   private final Handler handler;
    
-   // TODO: No check for double registration, no check for registration of same
-   // listener
-   // with different mask. In these cases the listener gets notified multiple
-   // times.
-   private final ArrayList< ListenerEntry > listeners = new ArrayList< ListenerEntry >();
+   private final SharedPreferences preferences;
    
    private RtmSettings rtmSettings;
    
@@ -166,9 +99,10 @@ public class Settings implements OnSharedPreferenceChangeListener
    
    
 
-   public Settings( Context context, Handler handler )
+   public Settings( Context context )
    {
       this.context = context;
+      this.handler = MolokoApp.get( context ).getHandler();
       
       preferences = PreferenceManager.getDefaultSharedPreferences( context );
       
@@ -187,7 +121,7 @@ public class Settings implements OnSharedPreferenceChangeListener
       context.getContentResolver()
              .registerContentObserver( dev.drsoran.provider.Rtm.Settings.CONTENT_URI,
                                        true,
-                                       new ContentObserver( handler )
+                                       new ContentObserver( this.handler )
                                        {
                                           // This should be called from the main thread,
                                           // see handler parameter.
@@ -195,31 +129,10 @@ public class Settings implements OnSharedPreferenceChangeListener
                                           public void onChange( boolean selfChange )
                                           {
                                              final HashMap< Integer, Object > oldValues = new HashMap< Integer, Object >();
-                                             notifyListeners( loadRtmSettings( oldValues ),
-                                                              oldValues );
+                                             sendSettingChangedMessage( loadRtmSettings( oldValues ),
+                                                                        oldValues );
                                           }
                                        } );
-   }
-   
-
-
-   public void registerOnSettingsChangedListener( int which,
-                                                  IOnSettingsChangedListener listener )
-   {
-      if ( listener != null )
-      {
-         listeners.add( new ListenerEntry( which, listener ) );
-      }
-   }
-   
-
-
-   public void unregisterOnSettingsChangedListener( IOnSettingsChangedListener listener )
-   {
-      if ( listener != null )
-      {
-         removeListener( listener );
-      }
    }
    
 
@@ -327,31 +240,37 @@ public class Settings implements OnSharedPreferenceChangeListener
          if ( key.equals( context.getString( R.string.key_timezone_local ) )
             || key.equals( context.getString( R.string.key_timezone_sync_with_rtm ) ) )
          {
-            notifyListeners( SETTINGS_RTM_TIMEZONE, setTimezone() );
+            sendSettingChangedMessage( IOnSettingsChangedListener.RTM_TIMEZONE,
+                                       setTimezone() );
          }
          else if ( key.equals( context.getString( R.string.key_dateformat_local ) )
             || key.equals( context.getString( R.string.key_dateformat_sync_with_rtm ) ) )
          {
-            notifyListeners( SETTINGS_RTM_DATEFORMAT, setDateformat() );
+            sendSettingChangedMessage( IOnSettingsChangedListener.RTM_DATEFORMAT,
+                                       setDateformat() );
          }
          else if ( key.equals( context.getString( R.string.key_timeformat_local ) )
             || key.equals( context.getString( R.string.key_timeformat_sync_with_rtm ) ) )
          {
-            notifyListeners( SETTINGS_RTM_TIMEFORMAT, setTimeformat() );
+            sendSettingChangedMessage( IOnSettingsChangedListener.RTM_TIMEFORMAT,
+                                       setTimeformat() );
          }
          else if ( key.equals( context.getString( R.string.key_def_list_local ) )
             || key.equals( context.getString( R.string.key_def_list_sync_with_rtm ) ) )
          {
-            notifyListeners( SETTINGS_RTM_DEFAULTLIST, setDefaultListId() );
+            sendSettingChangedMessage( IOnSettingsChangedListener.RTM_DEFAULTLIST,
+                                       setDefaultListId() );
          }
          else if ( key.equals( context.getString( R.string.key_lang_local ) )
             || key.equals( context.getString( R.string.key_lang_sync_with_rtm ) ) )
          {
-            notifyListeners( SETTINGS_RTM_LANGUAGE, setLocale() );
+            sendSettingChangedMessage( IOnSettingsChangedListener.RTM_LANGUAGE,
+                                       setLocale() );
          }
          else if ( key.equals( context.getString( R.string.key_task_sort ) ) )
          {
-            notifyListeners( SETTINGS_TASK_SORT, setTaskSort() );
+            sendSettingChangedMessage( IOnSettingsChangedListener.TASK_SORT,
+                                       setTaskSort() );
          }
       }
    }
@@ -703,22 +622,37 @@ public class Settings implements OnSharedPreferenceChangeListener
          
          settingsChanged |= addSettingIfChanged( oldValues,
                                                  setTimezone(),
-                                                 SETTINGS_RTM_TIMEZONE );
+                                                 IOnSettingsChangedListener.RTM_TIMEZONE );
          settingsChanged |= addSettingIfChanged( oldValues,
                                                  setDateformat(),
-                                                 SETTINGS_RTM_DATEFORMAT );
+                                                 IOnSettingsChangedListener.RTM_DATEFORMAT );
          settingsChanged |= addSettingIfChanged( oldValues,
                                                  setTimeformat(),
-                                                 SETTINGS_RTM_TIMEFORMAT );
+                                                 IOnSettingsChangedListener.RTM_TIMEFORMAT );
          settingsChanged |= addSettingIfChanged( oldValues,
                                                  setDefaultListId(),
-                                                 SETTINGS_RTM_DEFAULTLIST );
+                                                 IOnSettingsChangedListener.RTM_DEFAULTLIST );
          settingsChanged |= addSettingIfChanged( oldValues,
                                                  setLocale(),
-                                                 SETTINGS_RTM_LANGUAGE );
+                                                 IOnSettingsChangedListener.RTM_LANGUAGE );
       }
       
       return settingsChanged;
+   }
+   
+
+
+   private void sendSettingChangedMessage( int what, Object oldValues )
+   {
+      if ( oldValues != null )
+      {
+         final Message msg = new Message();
+         msg.what = what;
+         msg.obj = new ListenerList.MessgageObject< IOnSettingsChangedListener >( IOnSettingsChangedListener.class,
+                                                                                  oldValues );
+         
+         handler.sendMessage( msg );
+      }
    }
    
 
@@ -735,66 +669,6 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
       else
          return 0;
-   }
-   
-
-
-   private void notifyListeners( int setting, Object oldValue )
-   {
-      if ( setting > 0 && oldValue != null )
-      {
-         for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
-         {
-            ListenerEntry entry = i.next();
-            
-            // Check if we have a dead entry
-            if ( entry.isDead() )
-               i.remove();
-            else if ( entry.matches( setting ) )
-            {
-               final HashMap< Integer, Object > oldValues = new HashMap< Integer, Object >( 1 );
-               oldValues.put( setting, oldValue );
-               entry.notify( setting, oldValues );
-            }
-         }
-      }
-   }
-   
-
-
-   private void notifyListeners( int mask, HashMap< Integer, Object > oldValues )
-   {
-      if ( mask > 0 && oldValues != null && oldValues.size() > 0 )
-      {
-         for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
-         {
-            ListenerEntry entry = i.next();
-            
-            // Check if we have a dead entry
-            if ( !entry.notifyIfMatches( mask, oldValues ) )
-            {
-               i.remove();
-            }
-         }
-      }
-   }
-   
-
-
-   private boolean removeListener( IOnSettingsChangedListener listener )
-   {
-      final int size = listeners.size();
-      
-      for ( int i = 0; i < size; i++ )
-      {
-         if ( listener == listeners.get( i ).listener )
-         {
-            listeners.remove( i );
-            return true;
-         }
-      }
-      
-      return false;
    }
    
 

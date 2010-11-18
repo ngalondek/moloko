@@ -24,18 +24,18 @@
 <resources>
 	<string name="app_name">Moloko</string>
 	<string name="app_home">Home</string>
-	<string name="app_preferences">Einstellungen</string>
-	<string name="app_account_preferences">Kontoeinstellungen</string>
-	<string name="app_tasklists">Listen</string>
-	<string name="app_task">Aufgabe</string>
-	<string name="app_note">Notiz</string>
+	<string name="app_preferences">Preferences</string>
+	<string name="app_account_preferences">Account Preferences</string>
+	<string name="app_tasklists">Lists</string>
+	<string name="app_task">Task</string>
+	<string name="app_note">Note</string>
 	<string name="app_tagcloud">Tags</string>
-	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
-   <string name="app_sort_prio">Priorität</string>
-   <string name="app_sort_due_date">Fälligkeitsdatum</string>
+	<string name="app_sort_alpha">Task Name</string>
+   <string name="app_sort_prio">Priority</string>
+   <string name="app_sort_due_date">Due Date</string>
    
-   <string name="svc_sync">RTM Synchronisierung</string>	
-   <string name="svc_auth">RTM Authentifizierung</string>
+   <string name="svc_sync">RTM Synchronization</string>	
+   <string name="svc_auth">RTM Authentication</string>
    
    <string name="rec_sync">Moloko Sync-Alarm</string>
    <string name="rec_boot">Moloko boot</string>
@@ -44,10 +44,10 @@
    <string name="rtm_short">RTM</string>
    
    <!-- Global constants -->
-   <string name="g_settings_src_rtm_btn">Einstellung vom RTM Server übernehmen</string>
-   <string name="g_settings_src_rtm">Vom RTM Server geladen</string>
-   <string name="g_settings_src_local">Lokale Einstellung</string>
-   <string name="g_no_account">Keine RTM Zugangsdaten vorhanden</string>
+   <string name="g_settings_src_rtm_btn">Take settings from RTM Server</string>
+   <string name="g_settings_src_rtm">Loaded from RTM Server</string>
+   <string name="g_settings_src_local">Local setting</string>
+   <string name="g_no_account">No RTM credentials available</string>
    
    <!-- TODO: to be removed -->   
    <string name="key_api_key">api_key</string>
@@ -76,110 +76,109 @@
    <string name="key_notify_permanent">notify_permanent</string>
    
    <!-- Time phrases -->
-   <string name="time_interval_15min">Alle 15 Min.</string>
-   <string name="time_interval_30min">Alle 30 Min.</string>
-   <string name="time_interval_1h">Jede Stunde</string>
-   <string name="time_interval_12h">Alle 12 Stunden</string>
-   <string name="time_interval_daily">Einmal täglich</string>
-   <string name="time_5min">5 Minuten.</string>
-   <string name="time_15min">15 Minuten</string>
-   <string name="time_30min">30 Minuten</string>
-   <string name="time_1h">1 Stunde</string>
-   <string name="time_12h">12 Stunden</string>
-   <string name="time_24h">1 Tag</string>
+   <string name="time_interval_15min">Every 15 min.</string>
+   <string name="time_interval_30min">Every 30 min.</string>
+   <string name="time_interval_1h">Every hour</string>
+   <string name="time_interval_12h">Every 12 hours</string>
+   <string name="time_interval_daily">Once a day</string>
+   <string name="time_5min">5 minutes</string>
+   <string name="time_15min">15 minutes</string>
+   <string name="time_30min">30 minutes</string>
+   <string name="time_1h">1 hour</string>
+   <string name="time_12h">12 hours</string>
+   <string name="time_24h">1 day</string>
 
    <!-- Global phrases -->
-   <string name="phr_please_wait">Bitte warten</string>
-   <string name="phr_today">Heute</string>
-   <string name="phr_today_with_date">Heute, der %1$s</string>
-   <string name="phr_tomorrow">Morgen</string>
-   <string name="phr_tomorrow_with_date">Morgen, der %1$s</string>
-   <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
-   <string name="phr_open_with_name">Öffne %1$s</string>
-   <string name="phr_close">Schliessen</string>
-   <string name="phr_ok">OK</string>
-   <string name="phr_settings">Einstellungen</string>
-   <string name="phr_none_f">keine</string>
-   <string name="phr_none_m">keiner</string>
-   <string name="phr_none_mainly">keines</string>
-   <string name="phr_nothing">nichts</string>
-   <string name="phr_sync">Synchronisierung</string>
-   <string name="phr_do_sync">Synchronisieren</string>   
-   <string name="phr_cancel_sync">Synchronisierung abbrechen</string>
-   <string name="phr_on">An</string>
-   <string name="phr_off">Aus</string>
-   <string name="phr_manuell">Manuell</string>
+   <string name="phr_please_wait">Please wait</string>
+   <string name="phr_today">Today</string>
+   <string name="phr_today_with_date">Today the %1$s</string>
+   <string name="phr_tomorrow">Tomorrow</string>
+   <string name="phr_tomorrow_with_date">Tomorrow the %1$s</string>
+   <string name="phr_establish_connection">Establish an Internet connection to continue.</string>
+   <string name="phr_open_with_name">Open %1$s</string>
+   <string name="phr_close">Close</string>
+   <string name="phr_settings">Settings</string>
+   <string name="phr_none_f">none</string>
+   <string name="phr_none_m">none</string>
+   <string name="phr_none_mainly">none</string>
+   <string name="phr_nothing">nothing</string>
+   <string name="phr_sync">Synchronization</string>
+   <string name="phr_do_sync">Synchronize</string>   
+   <string name="phr_cancel_sync">Cancel synchronization</string>
+   <string name="phr_on">On</string>
+   <string name="phr_off">Off</string>
+   <string name="phr_manuell">Manual</string>
 
    <!-- Global errors -->
-   <string name="err_error">Fehler</string>
-   <string name="err_success">Erfolg</string>
-   <string name="err_canceled">Abgebrochen</string>   
-   <string name="err_saving_preferences">Fehler beim Speichern der Einstellungen</string>
-   <string name="err_not_connected">Keine Verbindung</string>
-   <string name="err_add_account_canceled">Das Hinzufügen eines neuen Kontos wurde abgebrochen</string>
-   <string name="err_unexpected">Wenn Sie dies lesen LAUFEN SIE SO SCHNELL SIE KÖNNEN!</string>
+   <string name="err_error">Error</string>
+   <string name="err_success">Success</string>
+   <string name="err_canceled">Canceled</string>   
+   <string name="err_saving_preferences">Error saving settings</string>
+   <string name="err_not_connected">No connection</string>
+   <string name="err_add_account_canceled">Adding a new account has been canceled</string>
+   <string name="err_unexpected">If you read this RUN AS QUICKLY AS YOU CAN!</string>
    
 	<!-- Global buttons -->
-	<string name="btn_ok">OK</string>
-	<string name="btn_continue">Weiter</string>
-	<string name="btn_cancel">Abbrechen</string>
-	<string name="btn_new_account">Neues Konto</string>
+   <string name="btn_ok">OK</string>
+   <string name="btn_continue">Continue</string>
+   <string name="btn_cancel">Cancel</string>
+   <string name="btn_new_account">New account</string>
 	
 	<!-- Global menu items -->
-	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
+   <string name="menu_opt_search_task_title">Search for tasks</string>
 	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>
-	<string name="search_hint">Suche nach Aufgaben</string>
+   <string name="search_hint">Search for tasks</string>
 	
 	<!-- Home activity -->
 	<string name="home_label_today">@string/phr_today</string>
 	<string name="home_label_tomorrow">@string/phr_tomorrow</string>
-	<string name="home_label_overdue">Überfällig</string>
+   <string name="home_label_overdue">Overdue</string>
 	
 	<!-- StartUp activity -->
-	<string name="startup_no_account">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
-	<string name="startup_no_def_list">Es kann nicht mit der Standardliste gestartet werden, da diese nicht existiert.\n\nEs wird mit der Standardansicht gestartet.</string>
-	  <!-- Toasts -->
-	  <string name="startup_toast_no_settings">Einstellungen konnten nicht geladen werden. Starte mit Standarseinstellungen.</string>	  
+   <string name="startup_no_account">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>
+   <string name="startup_no_def_list">It can not be started with the standard list because it does not exist.\n\nIt will be started with the default view.</string>
+     <!-- Toasts -->
+     <string name="startup_toast_no_settings">Settings could not be loaded. Starting with default settings.</string>   
 	
 	<!-- Task activity -->
-	<string name="task_source">von %1$s</string>
-	<string name="task_datetime_title_due">Wann</string>
-	<string name="task_datetime_title_estimate">Dauer</string>
-   <string name="task_datetime_title_recurr">Wiederholung</string>
-	<string name="task_datetime_estimate_inline">%1$s geschätzt</string>
-   <string name="task_datetime_recurr_inline">Wdh. %1$s</string>
-   <string name="task_datetime_err_recurr">Das Wiederholungsmuster konnte nicht ausgewertet werden</string>
-		
+   <string name="task_source">from %1$s</string>
+   <string name="task_datetime_title_due">When</string>
+   <string name="task_datetime_title_estimate">Duration</string>
+   <string name="task_datetime_title_recurr">Recurrence</string>
+   <string name="task_datetime_estimate_inline">%1$s estimated</string>
+   <string name="task_datetime_recurr_inline">Repeat %1$s</string>
+   <string name="task_datetime_err_recurr">The recurrence pattern could not be evaluated</string>
+   		
    <!-- TaskLists activity -->
-   <string name="tasklists_no_lists">Es existieren kein Listen</string>
-   <string name="tasklists_child_due_today">%1$s heute fällig</string>
-   <string name="tasklists_child_due_tomorrow">%1$s morgen fällig</string>
-   <string name="tasklists_child_overdue">%1$s überfällig</string>
-   <string name="tasklists_child_completed">%1$s erledigt</string>
+   <string name="tasklists_no_lists">There are no lists</string>
+   <string name="tasklists_child_due_today">%1$s due today</string>
+   <string name="tasklists_child_due_tomorrow">%1$s due tomorrow</string>
+   <string name="tasklists_child_overdue">%1$s overdue</string>
+   <string name="tasklists_child_completed">%1$s completed</string>
      <!-- Menus -->
-     <string name="tasklists_menu_ctx_expand">Erweitere %1$s</string>
-     <string name="tasklists_menu_ctx_collapse">Reduziere %1$s</string>
-     <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
-     <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
+     <string name="tasklists_menu_ctx_expand">Expand %1$s</string>
+     <string name="tasklists_menu_ctx_collapse">Reduce %1$s</string>
+     <string name="tasklists_menu_ctx_make_def_list">Set as default list</string>
+     <string name="tasklists_menu_ctx_remove_def_list">Reset as default list</string>
      
    <!-- NotificationManager -->
-   <string name="notification_permanent">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
+   <string name="notification_permanent">%1$d %2$s due, %3$d with high priority</string>
    
 	<!-- AbstractTasksList -->
-   <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
-	  <!-- Menus -->
-	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
-	  <string name="abstaskslist_listitem_ctx_open_task">Öffne Aufgabe</string>
-     <string name="abstaskslist_listitem_ctx_rename_task">Aufgabe umbenennen</string>
-     <string name="abstaskslist_listitem_ctx_set_task_completed">Setze als erledigt</string>
-     <string name="abstaskslist_listitem_ctx_set_task_incomplete">Setze als nicht erledigt</string>
-     <string name="abstaskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>
+   <string name="abstaskslist_no_tasks">No tasks to display</string>
+     <!-- Menus -->
+     <string name="abstaskslist_menu_opt_sort">Sort by</string>
+     <string name="abstaskslist_listitem_ctx_open_task">Open task</string>
+     <string name="abstaskslist_listitem_ctx_rename_task">Rename task</string>
+     <string name="abstaskslist_listitem_ctx_set_task_completed">Complete task</string>
+     <string name="abstaskslist_listitem_ctx_set_task_incomplete">Uncomplete task</string>
+     <string name="abstaskslist_listitem_ctx_open_list">Open list %1$s</string>
      <!-- Dialogs -->
-     <string name="abstaskslist_dlg_show_tags_and">und</string>
-     <string name="abstaskslist_dlg_show_tags_or">oder</string>
-     <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
+     <string name="abstaskslist_dlg_show_tags_and">and</string>
+     <string name="abstaskslist_dlg_show_tags_or">or</string>
+     <string name="abstaskslist_dlg_sort_title">Sort by...</string>
 	
 	<!-- TasksList activity -->
 	<string name="taskslist_titlebar">%1$s</string>
@@ -188,89 +187,89 @@
      
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar">%1$s</string>
-   <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>
-   <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
+   <string name="tasksearchresult_titlebar_error">Wrong syntax</string>
+   <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. Check the search syntax.</string>
      <!-- Menus -->
-     <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>   
+     <string name="tasksearchresult_menu_opt_clear_history_title">Erase search history</string>   
 	  
    <!-- Authenticator activity -->
    <string name="auth_api_key_label">API key</string>
    <string name="auth_api_shared_secret_label">Shared secret</string>
-   <string name="auth_permission_label">Berechtigung</string>
-   <string name="auth_info_text">Nach dem fortfahren werden Sie auf die Remember The Milk Website geleitet, wo Sie durch die Eingabe Ihrer Zugangsdaten die Zugriffsberechtigung auf die RTM Daten bestätigen.\n\nIhr Benutzername und Ihr Passwort werden nicht lokal gespeichert.</string>
-   <string name="auth_missing_credential">Wichtige Kontoangaben fehlen. Bitte ergänzen.</string>
-   <string name="auth_expired_auth_token">Die Zugriffsberechtigung wurde von Remember The Milk für %1$s nicht bestätigt. Bitte neu beantragen.</string>
-   <string name="auth_perm_no">Keine</string>
-   <string name="auth_perm_read">Lesen</string>
-   <string name="auth_perm_write">Lesen und Schreiben</string>
-   <string name="auth_perm_delete">Lesen, Schreiben und Löschen</string>
+   <string name="auth_permission_label">Permission</string>
+   <string name="auth_info_text">After continue you will be redirected to the Remember The Milk website. There you can confirm the access permission by entering your RTM access credentials.\n\nYour username and password will not be stored locally.</string>
+   <string name="auth_missing_credential">Important account information is missing. Please complete.</string>
+   <string name="auth_expired_auth_token">The access permission is from Remember The Milk for %1$s not confirmed. Please apply again.</string>
+   <string name="auth_perm_no">None</string>
+   <string name="auth_perm_read">Read</string>
+   <string name="auth_perm_write">Read and Write</string>
+   <string name="auth_perm_delete">Read, Write and Delete</string>
       <!-- Dialogs -->
-      <string name="auth_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene \'%1$s\'</string>
+      <string name="auth_dlg_get_auth_token">Request Auth-Token for access level \'%1$s\'</string>
       <!-- Errors -->
-      <string name="auth_err_with_cause">Fehler beim Erstellen des Kontos. Grund: %1$s</string>
-      <string name="auth_err_cause_inv_auth_token">Ungüliges Auth-Token empfangen</string>
-      <string name="auth_err_cause_scurity">Sicherheitsverletzung. </string>
-      <string name="auth_err_cause_inv_login_url">Ungültige Login-URL empfangen</string>
+      <string name="auth_err_with_cause">Failed to create the account. Reason: %1$s</string>
+      <string name="auth_err_cause_inv_auth_token">Invalid Auth-Token was received</string>
+      <string name="auth_err_cause_scurity">Security issue. </string>
+      <string name="auth_err_cause_inv_login_url">Invalid Login-URL was received</string>
       
    <!-- AccountPreferences + activity -->
-   <string name="auth_pref_title">Allgemeine Einstellungen</string>
+   <string name="auth_pref_title">General settings</string>
    <string name="auth_pref_account_tilte">@string/app_account_preferences</string>
-   <string name="auth_pref_account_summary">Synchronisierung, RTM-Zugriffsebene usw.</string>
+   <string name="auth_pref_account_summary">Synchronization, RTM access level etc.</string>
    <string name="auth_pref_sync_interval_title">@string/phr_sync</string>
    <string name="auth_pref_sync_interval_default_value">86400000</string>
-   <string name="auth_pref_perm_title">Zugriffsebene</string>
-   <string name="auth_pref_perm_value">%1$s - zum Ändern klicken</string>    
-   <string name="auth_pref_perm_has_not">Keine Zugangsberechtigung</string>      
+   <string name="auth_pref_perm_title">Access Level</string>
+   <string name="auth_pref_perm_value">%1$s - click to change</string>    
+   <string name="auth_pref_perm_has_not">No permission</string>     
    
    <!-- MolokoPreferences activity -->
-   <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
-   <string name="moloko_prefs_rtm_summary">Zeit- und Datumsformat, Standardliste usw.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen.</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken.</string>
-   <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
-   <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
-   <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(14.02.2000)</string>
-   <string name="moloko_prefs_rtm_dateformat_us">Amerikanisch\n(02/14/2000)</string>
-   <string name="moloko_prefs_rtm_timeformat_title">Zeitformat</string>
+   <string name="moloko_prefs_rtm_title">RTM Settings</string>
+   <string name="moloko_prefs_rtm_summary">Time and date format, default list etc.</string>
+   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s.</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click.</string>
+   <string name="moloko_prefs_rtm_timezone_title">Timezone</string>
+   <string name="moloko_prefs_rtm_dateformat_title">Date Format</string>
+   <string name="moloko_prefs_rtm_dateformat_eu">European\n(14.02.2000)</string>
+   <string name="moloko_prefs_rtm_dateformat_us">American\n(02/14/2000)</string>
+   <string name="moloko_prefs_rtm_timeformat_title">Time Format</string>
    <string name="moloko_prefs_rtm_timeformat_12">12h</string>
    <string name="moloko_prefs_rtm_timeformat_24">24h</string>
-   <string name="moloko_prefs_rtm_defaultlist_title">Standardliste</string>
-   <string name="moloko_prefs_rtm_language_title">Lokalisierung</string>
-   <string name="moloko_prefs_startup_view_title">Startansicht</string>
-   <string name="moloko_prefs_startup_view_def_list_choose">Standardliste wählen...</string>
-   <string name="moloko_prefs_startup_view_def_list_name">Standardliste (%1$s)</string>
+   <string name="moloko_prefs_rtm_defaultlist_title">Default List</string>
+   <string name="moloko_prefs_rtm_language_title">Localization</string>
+   <string name="moloko_prefs_startup_view_title">Start View</string>
+   <string name="moloko_prefs_startup_view_def_list_choose">Choose default list...</string>
+   <string name="moloko_prefs_startup_view_def_list_name">Default list (%1$s)</string>
    <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
    <string name="moloko_prefs_startup_view_home">@string/app_home</string>
-   <string name="moloko_prefs_def_sort_title">Sortierung der Aufgaben</string>
-   <string name="moloko_prefs_def_sort_summary">nach %s</string>
-   <string name="moloko_prefs_notification_title">Benachrichtigung</string>
-   <string name="moloko_prefs_notification_summary">Benachrichtigungen wählen, Töne u.s.w.</string>
-   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Aufgaben mit Fälligkeitszeit</string>
-   <string name="moloko_prefs_notification_tasks_w_due_title">Benachrichtigen</string>
-   <string name="moloko_prefs_notification_tasks_w_due_before_title">Erinnerung</string>
+   <string name="moloko_prefs_def_sort_title">Sort tasks</string>
+   <string name="moloko_prefs_def_sort_summary">by %s</string>
+   <string name="moloko_prefs_notification_title">Notification</string>
+   <string name="moloko_prefs_notification_summary">Choose notifications, ringtones etc</string>
+   <string name="moloko_prefs_notification_tasks_w_due_cat_title">Tasks with due time</string>
+   <string name="moloko_prefs_notification_tasks_w_due_title">Notifications</string>
+   <string name="moloko_prefs_notification_tasks_w_due_before_title">Reminders</string>
    <string name="moloko_prefs_notification_tasks_w_due_before_default_value">900000</string>
-   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Benachrichtigungston</string>
-   <string name="moloko_prefs_notification_tasks_w_due_ringtone_summary">Benachrichtigungston für fällige Aufgaben</string>
-   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrieren</string>
+   <string name="moloko_prefs_notification_tasks_w_due_ringtone_title">Notification tone</string>
+   <string name="moloko_prefs_notification_tasks_w_due_ringtone_summary">Notification tone for due tasks</string>
+   <string name="moloko_prefs_notification_tasks_w_due_vibrate_title">Vibrate</string>
    <string name="moloko_prefs_notification_tasks_w_due_led_title">Status-LED</string>
-   <string name="moloko_prefs_notification_permanent_cat_title">Permanente Benachrichtigungen</string>
-   <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
-   <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
+   <string name="moloko_prefs_notification_permanent_cat_title">Permanent notifications</string>
+   <string name="moloko_prefs_notification_permanent_today">Tasks due today</string>
+   <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
    <string name="moloko_prefs_notification_permanent_default_value">2</string>
-      <!-- Dialogs -->
-      <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
+   <!-- Dialogs -->
+      <string name="moloko_prefs_rtm_sync_dlg_message">Settings are retrieved from the RTM Server</string>
 
 	<!-- RTM service status messages -->
-	<string name="rtmSvc_state_unknown">Unbekannt</string>
-	<string name="rtmSvc_state_internal_error">Interner Service Fehler</string>
-	<string name="rtmSvc_state_connected">Verbunden</string>
-	<string name="rtmSvc_state_disconnected">Getrennt</string>
+   <string name="rtmSvc_state_unknown">Unknown</string>
+   <string name="rtmSvc_state_internal_error">Internal server error</string>
+   <string name="rtmSvc_state_connected">Connected</string>
+   <string name="rtmSvc_state_disconnected">Disconnected</string>
       <!-- Auth -->
-	   <string name="rtmSvc_auth_get_url_start">Empfange Anmelde-URL</string>
-	   <string name="rtmSvc_auth_get_url_fin">Anmelde-URL empfangen</string>
-	   <string name="rtmSvc_auth_get_token_start">Empfange Authentifiezierungs-Token</string>
-	   <string name="rtmSvc_auth_get_token_fin">Authentifiezierungs-Token empfangen</string>
-	   <string name="rtmSvc_auth_failed">Authentifizierung fehlgeschlagen</string>
+      <string name="rtmSvc_auth_get_url_start">Receiving Login-URL</string>
+      <string name="rtmSvc_auth_get_url_fin">Login-URL received</string>
+      <string name="rtmSvc_auth_get_token_start">Receiving Authentication-Token</string>
+      <string name="rtmSvc_auth_get_token_fin">Authentication-Token received</string>
+      <string name="rtmSvc_auth_failed">Authentication failed</string>
 
 	<!-- Log messages -->
 	<string name="log_e_resource_not_found">Resource not found</string>

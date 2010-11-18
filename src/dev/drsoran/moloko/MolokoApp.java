@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko;
 
+import java.lang.reflect.Method;
+
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.Application;
@@ -31,24 +33,35 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SyncStatusObserver;
 import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import dev.drsoran.moloko.notification.MolokoNotificationManager;
 import dev.drsoran.moloko.receivers.TimeTickReceiver;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.ListenerList;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm;
 
 
 public class MolokoApp extends Application implements SyncStatusObserver
 {
+   private final static String TAG = MolokoApp.class.getSimpleName();
+   
    private static Settings SETTINGS;
    
    private static MolokoNotificationManager MOLOKO_NOTIFICATION_MANAGER;
    
-   private final TimeTickReceiver TIME_TICK_RECEIVER = new TimeTickReceiver();
+   private static TimeTickReceiver TIME_TICK_RECEIVER;
    
-   private final Handler handler = new Handler();
+   private ListenerList< IOnTimeChangedListener > timeChangedListeners;
+   
+   private ListenerList< IOnSettingsChangedListener > settingsChangedListeners;
+   
+   private ListenerList< IOnBootCompletedListener > bootCompletedListeners;
    
    private Object syncStatHandle = null;
    
@@ -59,10 +72,32 @@ public class MolokoApp extends Application implements SyncStatusObserver
    {
       super.onCreate();
       
-      SETTINGS = new Settings( this, handler );
+      // NOTE: Instantiate the ListenerLists at first cause other components may register in ctor.
+      try
+      {
+         timeChangedListeners = new ListenerList< IOnTimeChangedListener >( findMethod( IOnTimeChangedListener.class,
+                                                                                        "onTimeChanged" ) );
+         settingsChangedListeners = new ListenerList< IOnSettingsChangedListener >( findMethod( IOnSettingsChangedListener.class,
+                                                                                                "onSettingsChanged" ) );
+         bootCompletedListeners = new ListenerList< IOnBootCompletedListener >( findMethod( IOnBootCompletedListener.class,
+                                                                                            "onBootCompleted" ) );
+      }
+      catch ( SecurityException e )
+      {
+         Log.e( TAG, Strings.EMPTY_STRING, e );
+         throw e;
+      }
+      catch ( NoSuchMethodException e )
+      {
+         Log.e( TAG, Strings.EMPTY_STRING, e );
+         throw new IllegalStateException();
+      }
       
-      MOLOKO_NOTIFICATION_MANAGER = new MolokoNotificationManager( this,
-                                                                   handler );
+      SETTINGS = new Settings( this );
+      
+      MOLOKO_NOTIFICATION_MANAGER = new MolokoNotificationManager( this );
+      
+      TIME_TICK_RECEIVER = new TimeTickReceiver();
       
       registerReceiver( TIME_TICK_RECEIVER,
                         new IntentFilter( Intent.ACTION_TIME_TICK ) );
@@ -97,9 +132,16 @@ public class MolokoApp extends Application implements SyncStatusObserver
       if ( context instanceof MolokoApp )
          app = (MolokoApp) context;
       else if ( context instanceof Activity )
-         app = MolokoApp.get( context.getApplicationContext() );
+         app = (MolokoApp) context.getApplicationContext();
       
       return app;
+   }
+   
+
+
+   public Handler getHandler()
+   {
+      return handler;
    }
    
 
@@ -122,9 +164,83 @@ public class MolokoApp extends Application implements SyncStatusObserver
    
 
 
+   public void registerOnSettingsChangedListener( int which,
+                                                  IOnSettingsChangedListener listener )
+   {
+      if ( listener != null )
+      {
+         settingsChangedListeners.registerListener( which, listener );
+      }
+   }
+   
+
+
+   public void unregisterOnSettingsChangedListener( IOnSettingsChangedListener listener )
+   {
+      if ( listener != null )
+      {
+         settingsChangedListeners.removeListener( listener );
+      }
+   }
+   
+
+
+   public void registerOnTimeChangedListener( int which,
+                                              IOnTimeChangedListener listener )
+   {
+      if ( listener != null )
+      {
+         timeChangedListeners.registerListener( which, listener );
+      }
+   }
+   
+
+
+   public void unregisterOnTimeChangedListener( IOnTimeChangedListener listener )
+   {
+      if ( listener != null )
+      {
+         timeChangedListeners.removeListener( listener );
+      }
+   }
+   
+
+
+   public void registerOnBootCompletedListener( IOnBootCompletedListener listener )
+   {
+      if ( listener != null )
+      {
+         bootCompletedListeners.registerListener( Integer.MAX_VALUE, listener );
+      }
+   }
+   
+
+
+   public void unregisterOnBootCompletedListener( IOnBootCompletedListener listener )
+   {
+      if ( listener != null )
+      {
+         bootCompletedListeners.removeListener( listener );
+      }
+   }
+   
+
+
    public final static Settings getSettings()
    {
       return SETTINGS;
+   }
+   
+
+
+   public final static void scheduleSync( Context context )
+   {
+      final Account account = SyncUtils.isReadyToSync( context );
+      
+      if ( account != null )
+      {
+         SyncUtils.scheduleSyncAlarm( context );
+      }
    }
    
 
@@ -133,4 +249,68 @@ public class MolokoApp extends Application implements SyncStatusObserver
    {
       return MOLOKO_NOTIFICATION_MANAGER;
    }
+   
+
+
+   @SuppressWarnings( "unchecked" )
+   private final static Method findMethod( Class cls, String name ) throws NoSuchMethodException
+   {
+      Method method = null;
+      
+      final Method[] methods = cls.getMethods();
+      
+      for ( int i = 0; i < methods.length && method == null; i++ )
+      {
+         if ( methods[ i ].getName().equals( name ) )
+            method = methods[ i ];
+      }
+      
+      if ( method == null )
+         throw new NoSuchMethodException( "The class " + cls.getName()
+            + " does not has a method " + name );
+      
+      return method;
+   }
+   
+   private final Handler handler = new Handler()
+   {
+      
+      @SuppressWarnings( "unchecked" )
+      @Override
+      public void handleMessage( Message msg )
+      {
+         boolean handled = false;
+         if ( msg.obj instanceof ListenerList.MessgageObject )
+         {
+            handled = true;
+            
+            final ListenerList.MessgageObject msgObj = (MessgageObject) msg.obj;
+            
+            if ( msgObj.type.getName()
+                            .equals( IOnTimeChangedListener.class.getName() ) )
+            {
+               timeChangedListeners.notifyListeners( msg.what );
+            }
+            else if ( msgObj.type.getName()
+                                 .equals( IOnSettingsChangedListener.class.getName() ) )
+            {
+               settingsChangedListeners.notifyListeners( msg.what,
+                                                         msgObj.oldValue );
+            }
+            else if ( msgObj.type.getName()
+                                 .equals( IOnBootCompletedListener.class.getName() ) )
+            {
+               bootCompletedListeners.notifyListeners();
+               scheduleSync( MolokoApp.this );
+            }
+            else
+               handled = false;
+         }
+         
+         if ( !handled )
+            super.handleMessage( msg );
+      }
+      
+   };
+   
 }

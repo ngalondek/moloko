@@ -108,8 +108,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
       registerForContextMenu( getExpandableListView() );
       getExpandableListView().setOnGroupClickListener( this );
       
-      MolokoApp.getSettings()
-               .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_DEFAULTLIST,
+      MolokoApp.get( this )
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DEFAULTLIST,
                                                    this );
       
       dbObserver = new ContentObserver( getExpandableListView().getHandler() )
@@ -139,7 +139,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
       
       unregisterForContextMenu( getExpandableListView() );
       
-      MolokoApp.getSettings().unregisterOnSettingsChangedListener( this );
+      MolokoApp.get( this ).unregisterOnSettingsChangedListener( this );
       
       ListOverviewsProviderPart.unregisterContentObserver( this, dbObserver );
    }

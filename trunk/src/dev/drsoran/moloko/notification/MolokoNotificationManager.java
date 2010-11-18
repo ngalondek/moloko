@@ -42,6 +42,8 @@ import android.util.Pair;
 
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.IOnBootCompletedListener;
+import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -56,11 +58,14 @@ import dev.drsoran.rtm.Task;
 
 
 public class MolokoNotificationManager implements
-         OnSharedPreferenceChangeListener
+         OnSharedPreferenceChangeListener, IOnBootCompletedListener,
+         IOnTimeChangedListener
 {
    private final static String TAG = MolokoNotificationManager.class.getName();
    
    private final static int NOTIFICATION_TYPE_PERMANENT = 1;
+   
+   private final static int NOTIFICATION_TYPE_DUE_TASK = 2;
    
    private final static int NOTIFICATION_PERM_OFF = 0;
    
@@ -75,6 +80,7 @@ public class MolokoNotificationManager implements
       public void run()
       {
          reEvaluatePermanentNotifications();
+         reEvaluateDueTaskNotifications();
       }
    };
    
@@ -84,11 +90,15 @@ public class MolokoNotificationManager implements
    
    private final PermanentNotification permanentNotification;
    
+   private final DueTaskNotification dueTaskNotification;
+   
    
 
-   public MolokoNotificationManager( Context context, final Handler handler )
+   public MolokoNotificationManager( Context context )
    {
       this.context = context;
+      
+      final Handler handler = MolokoApp.get( context ).getHandler();
       
       dbObserver = new ContentObserver( handler )
       {
@@ -102,11 +112,21 @@ public class MolokoNotificationManager implements
       
       permanentNotification = new PermanentNotification( context,
                                                          NOTIFICATION_TYPE_PERMANENT );
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
       
-      if ( prefs != null )
+      dueTaskNotification = new DueTaskNotification( context,
+                                                     NOTIFICATION_TYPE_DUE_TASK );
+      
+      MolokoApp.get( context ).registerOnBootCompletedListener( this );
+      MolokoApp.get( context )
+               .registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
+      
       {
-         prefs.registerOnSharedPreferenceChangeListener( this );
+         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+         
+         if ( prefs != null )
+         {
+            prefs.registerOnSharedPreferenceChangeListener( this );
+         }
       }
       
       TasksProviderPart.registerContentObserver( context, dbObserver );
@@ -122,11 +142,16 @@ public class MolokoNotificationManager implements
       
       TasksProviderPart.unregisterContentObserver( context, dbObserver );
       
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+      // IOnBootCompletedListener will be unregistered in onBootCompleted().
+      MolokoApp.get( context ).unregisterOnTimeChangedListener( this );
       
-      if ( prefs != null )
       {
-         prefs.unregisterOnSharedPreferenceChangeListener( this );
+         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+         
+         if ( prefs != null )
+         {
+            prefs.unregisterOnSharedPreferenceChangeListener( this );
+         }
       }
       
       shutdownExecutorService();
@@ -134,19 +159,76 @@ public class MolokoNotificationManager implements
    
 
 
+   public void onBootCompleted()
+   {
+      MolokoApp.get( context ).unregisterOnBootCompletedListener( this );
+      reEvaluatePermanentNotifications();
+      reEvaluateDueTaskNotifications();
+   }
+   
+
+
+   public void onTimeChanged( int which )
+   {
+      switch ( which )
+      {
+         case IOnTimeChangedListener.MIDNIGHT:
+            reEvaluatePermanentNotifications();
+            break;
+         case IOnTimeChangedListener.SYSTEM_TIME:
+            reEvaluatePermanentNotifications();
+            reEvaluateDueTaskNotifications();
+            break;
+         default :
+            break;
+      }
+   }
+   
+
+
    public void onSharedPreferenceChanged( final SharedPreferences sharedPreferences,
                                           final String key )
    {
-      if ( sharedPreferences != null && key != null
-         && ( key.equals( context.getString( R.string.key_notify_permanent ) ) ) )
+      if ( sharedPreferences != null && key != null )
       {
-         reEvaluatePermanentNotifications();
+         if ( key.equals( context.getString( R.string.key_notify_permanent ) ) )
+            reEvaluatePermanentNotifications();
+         else if ( key.equals( context.getString( R.string.key_notify_due_tasks ) )
+            || key.equals( context.getString( R.string.key_notify_due_tasks_before ) )
+            || key.equals( context.getString( R.string.key_notify_due_tasks_ringtone ) )
+            || key.equals( context.getString( R.string.key_notify_due_tasks_vibrate ) )
+            || key.equals( context.getString( R.string.key_notify_due_tasks_led ) ) )
+            reEvaluateDueTaskNotifications();
       }
    }
    
 
 
    public void reEvaluatePermanentNotifications()
+   {
+      executorService.execute( new Runnable()
+      {
+         public void run()
+         {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+            
+            if ( prefs != null )
+            {
+               final boolean show = prefs.getBoolean( context.getString( R.string.key_notify_due_tasks ),
+                                                      false );
+               
+               if ( show )
+                  ;
+               else
+                  dueTaskNotification.cancel();
+            }
+         }
+      } );
+   }
+   
+
+
+   private void reEvaluateDueTaskNotifications()
    {
       executorService.execute( new Runnable()
       {

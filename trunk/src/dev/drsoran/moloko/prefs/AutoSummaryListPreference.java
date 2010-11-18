@@ -34,7 +34,8 @@ import dev.drsoran.moloko.util.Strings;
 
 
 public class AutoSummaryListPreference extends ListPreference implements
-         OnSharedPreferenceChangeListener, OnPreferenceChangeListener
+         IMolokoPreference, OnSharedPreferenceChangeListener,
+         OnPreferenceChangeListener
 {
    private int clickedDialogIndex;
    
@@ -63,11 +64,8 @@ public class AutoSummaryListPreference extends ListPreference implements
    
 
 
-   @Override
-   protected void onPrepareForRemoval()
+   public void cleanUp()
    {
-      super.onPrepareForRemoval();
-      
       setOnPreferenceChangeListener( null );
       
       final SharedPreferences prefs = getSharedPreferences();
@@ -75,7 +73,6 @@ public class AutoSummaryListPreference extends ListPreference implements
       if ( prefs != null )
       {
          prefs.unregisterOnSharedPreferenceChangeListener( this );
-         setOnPreferenceChangeListener( this );
       }
    }
    
@@ -121,7 +118,7 @@ public class AutoSummaryListPreference extends ListPreference implements
    public String getClickedDialogValue()
    {
       if ( clickedDialogIndex > -1
-           && clickedDialogIndex < getEntryValues().length )
+         && clickedDialogIndex < getEntryValues().length )
          return getEntryValues()[ clickedDialogIndex ].toString();
       else
          return null;
@@ -151,11 +148,12 @@ public class AutoSummaryListPreference extends ListPreference implements
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
       if ( newValue != null && newValue instanceof String
-           && !( (String) newValue ).equals( getValue() ) )
+         && !( (String) newValue ).equals( getValue() ) )
       {
          notifyChanged();
       }
       
       return true;
    }
+   
 }

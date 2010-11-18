@@ -37,7 +37,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.content.SyncProviderPart;
-import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
@@ -47,7 +46,10 @@ import dev.drsoran.provider.Rtm.Sync;
 
 public final class SyncUtils
 {
+   private static final String TAG = SyncUtils.class.getSimpleName();
    
+   
+
    public final static void requestSync( Context context, boolean manual )
    {
       final Account account = SyncUtils.isReadyToSync( context );
@@ -199,7 +201,7 @@ public final class SyncUtils
          // Log.i( TAG, buffer.toString() );
          // }
          
-         Log.i( SyncAlarmReceiver.TAG, "Scheduled new sync alarm to go off @"
+         Log.i( TAG, "Scheduled new sync alarm to go off @"
             + MolokoDateUtils.newTime().format2445() + ", repeating every "
             + DateUtils.formatElapsedTime( interval / 1000 ) );
       }
@@ -215,7 +217,7 @@ public final class SyncUtils
       {
          alarmManager.cancel( Intents.createSyncAlarmIntent( context ) );
          
-         Log.i( SyncAlarmReceiver.TAG, "Stopped sync alarm" );
+         Log.i( TAG, "Stopped sync alarm" );
       }
    }
    

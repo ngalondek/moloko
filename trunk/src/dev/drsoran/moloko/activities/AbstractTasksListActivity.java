@@ -158,11 +158,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       registerForContextMenu( getListView() );
       
-      MolokoApp.getSettings()
-               .registerOnSettingsChangedListener( Settings.SETTINGS_RTM_TIMEZONE
-                                                      | Settings.SETTINGS_RTM_DATEFORMAT
-                                                      | Settings.SETTINGS_RTM_TIMEFORMAT
-                                                      | Settings.SETTINGS_TASK_SORT,
+      MolokoApp.get( this )
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_TIMEZONE
+                                                      | IOnSettingsChangedListener.RTM_DATEFORMAT
+                                                      | IOnSettingsChangedListener.RTM_TIMEFORMAT
+                                                      | IOnSettingsChangedListener.TASK_SORT,
                                                    this );
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
@@ -190,7 +190,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       unregisterForContextMenu( getListView() );
       
-      MolokoApp.getSettings().unregisterOnSettingsChangedListener( this );
+      MolokoApp.get( this ).unregisterOnSettingsChangedListener( this );
       
       TasksProviderPart.unregisterContentObserver( this, dbObserver );
    }
@@ -665,7 +665,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       switch ( which )
       {
-         case Settings.SETTINGS_TASK_SORT:
+         case IOnSettingsChangedListener.TASK_SORT:
             // Check if this list was sorted by now changed task sort.
             // If so, we must re-sort it.
             if ( getTaskSort() == (Integer) oldVlaues.get( Integer.valueOf( which ) ) )

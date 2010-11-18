@@ -3,84 +3,84 @@
    <!-- every -->
    <entryPl
       key="every"
-      year_1="every year"
-      year_n="every %s years" />
+      year_1="jedes Jahr"
+      year_n="alle %s Jahre" />
    <entryPl
       key="every"
-      month_1="every month"
-      month_n="every %s months" />
+      month_1="jeden Monat"
+      month_n="alle %s Monate" />
    <entryPl
       key="every"
-      week_1="every week"
-      week_n="every %s weeks" />
+      week_1="jede Woche"
+      week_n="alle %s Wochen" />
    <entryPl
       key="every"
-      day_1="daily"
-      day_n="every %s days" />
+      day_1="jeden Tag"
+      day_n="alle %s Tage" />
 
    <!-- after -->
    <entryPl
       key="after"
-      year_1="after one year"
-      year_n="after %s years" />
+      year_1="nach einem Jahr"
+      year_n="nach %s Jahren" />
    <entryPl
       key="after"
-      month_1="after one month"
-      month_n="after %s months" />
+      month_1="nach einem Monat"
+      month_n="nach %s Monaten" />
    <entryPl
       key="after"
-      week_1="after one week"
-      week_n="after %s weeks" />
+      week_1="nach einer Woche"
+      week_n="nach %s Wochen" />
    <entryPl
       key="after"
-      day_1="after one day"
-      day_n="after %s days" />
+      day_1="nach einem Tag"
+      day_n="nach %s Tagen" />
 
    <!-- Weekdays -->
    <entry
       key="MO"
-      value="Monday" />
+      value="Montag" />
    <entry
       key="TU"
-      value="Tuesday" />
+      value="Dienstag" />
    <entry
       key="WE"
-      value="Wednesday" />
+      value="Mittwoch" />
    <entry
       key="TH"
-      value="Thursday" />
+      value="Donnerstag" />
    <entry
       key="FR"
-      value="Friday" />
+      value="Freitag" />
    <entry
       key="SA"
-      value="Saturday" />
+      value="Samstag" />
    <entry
       key="SU"
-      value="Sunday" />
+      value="Sonntag" />
 
    <!-- Months -->
    <entry
       key="m1"
-      value="January" />
+      value="Januar" />
    <entry
       key="m2"
-      value="February" />
+      value="Februar" />
    <entry
       key="m3"
-      value="March" />
+      value="März" />
    <entry
       key="m4"
       value="April" />
    <entry
       key="m5"
-      value="May" />
+      value="Mai" />
    <entry
       key="m6"
-      value="June" />
+      value="Juni" />
    <entry
       key="m7"
-      value="July" />
+      value="Juli" />
    <entry
       key="m8"
       value="August" />
@@ -89,32 +89,35 @@
       value="September" />
    <entry
       key="m10"
-      value="October" />
+      value="Oktober" />
    <entry
       key="m11"
       value="November" />
    <entry
       key="m12"
-      value="December" />
+      value="Dezember" />
 
    <!-- Others -->
    <entry
       key="last"
-      value="last" />
+      value="letzten" />
+   <entry
+      key="xst"
+      value="." />
    <entry
       key="on_the"
-      value="on the" />
+      value="am" />
    <entry
       key="in"
       value="in" />
    <entry
       key="until"
-      value="until" />
+      value="bis" />
    <entry
       key="for"
-      value="for" />
+      value="für" />
    <entry
       key="times"
-      value="times" />
+      value="mal" />
 
 </RecurrencePattern>

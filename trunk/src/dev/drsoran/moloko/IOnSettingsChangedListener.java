@@ -27,6 +27,22 @@ import java.util.HashMap;
 
 public interface IOnSettingsChangedListener
 {
+   public final static int RTM_TIMEZONE = 1 << 0;
+   
+   public final static int RTM_DATEFORMAT = 1 << 1;
+   
+   public final static int RTM_TIMEFORMAT = 1 << 2;
+   
+   public final static int RTM_DEFAULTLIST = 1 << 3;
+   
+   public final static int RTM_LANGUAGE = 1 << 4;
+   
+   public final static int TASK_SORT = 1 << 5;
+   
+   public final static int ALL = Integer.MAX_VALUE;
+   
+   
+
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues );
 }

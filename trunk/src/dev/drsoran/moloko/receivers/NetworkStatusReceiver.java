@@ -52,13 +52,13 @@ public class NetworkStatusReceiver extends BroadcastReceiver
          {
             // Background data allowed
             if ( cm.getBackgroundDataSetting()
-               && ConnectionChecker.isConnected( context ) )
+               && ConnectionChecker.isConnected( context.getApplicationContext() ) )
             {
                // This respects the SYNC_INTERVAL_MANUAL setting
-               SyncUtils.scheduleSyncAlarm( context );
+               SyncUtils.scheduleSyncAlarm( context.getApplicationContext() );
             }
             
-            // Disconnected or background date forbidden
+            // Disconnected or background data forbidden
             else
             {
                stop = true;
@@ -79,13 +79,13 @@ public class NetworkStatusReceiver extends BroadcastReceiver
          // If we have connection again. This respects the SYNC_INTERVAL_MANUAL setting.
          else
          {
-            SyncUtils.scheduleSyncAlarm( context );
+            SyncUtils.scheduleSyncAlarm( context.getApplicationContext() );
          }
       }
       
       if ( stop )
       {
-         final Account account = AccountUtils.getRtmAccount( context );
+         final Account account = AccountUtils.getRtmAccount( context.getApplicationContext() );
          
          if ( account != null )
          {
@@ -96,7 +96,7 @@ public class NetworkStatusReceiver extends BroadcastReceiver
             }
          }
          
-         SyncUtils.stopSyncAlarm( context );
+         SyncUtils.stopSyncAlarm( context.getApplicationContext() );
       }
    }
 }

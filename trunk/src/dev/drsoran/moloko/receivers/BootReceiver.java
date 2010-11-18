@@ -22,42 +22,28 @@
 
 package dev.drsoran.moloko.receivers;
 
-import android.accounts.Account;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Message;
+import dev.drsoran.moloko.IOnBootCompletedListener;
 import dev.drsoran.moloko.MolokoApp;
-import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.util.ListenerList;
 
 
 public class BootReceiver extends BroadcastReceiver
 {
-   
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      scheduleSync( context );
-      setPermanentNotifications( context );
-   }
-   
-
-
-   public final static void scheduleSync( Context context )
-   {
-      final Account account = SyncUtils.isReadyToSync( context );
+      final Message msg = new Message();
+      msg.obj = new ListenerList.MessgageObject< IOnBootCompletedListener >( IOnBootCompletedListener.class,
+                                                                             null );
+      msg.what = Integer.MAX_VALUE;
       
-      if ( account != null )
-      {
-         SyncUtils.scheduleSyncAlarm( context );
-      }
-   }
-   
-
-
-   private final static void setPermanentNotifications( Context context )
-   {
-      MolokoApp.getMolokoNotificationManager()
-               .reEvaluatePermanentNotifications();
+      MolokoApp.get( context.getApplicationContext() )
+               .getHandler()
+               .sendMessage( msg );
    }
    
 }

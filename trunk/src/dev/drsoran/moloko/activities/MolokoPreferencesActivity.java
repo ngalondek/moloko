@@ -23,9 +23,12 @@
 package dev.drsoran.moloko.activities;
 
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.view.Window;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.prefs.IMolokoPreference;
 
 
 public class MolokoPreferencesActivity extends PreferenceActivity
@@ -45,4 +48,30 @@ public class MolokoPreferencesActivity extends PreferenceActivity
                                               R.drawable.ic_title_settings );
    }
    
+
+
+   @Override
+   protected void onDestroy()
+   {
+      super.onDestroy();
+      
+      cleanUpPreferences( getPreferenceScreen() );
+   }
+   
+
+
+   private void cleanUpPreferences( PreferenceGroup group )
+   {
+      final int count = group.getPreferenceCount();
+      
+      for ( int i = 0; i < count; i++ )
+      {
+         final Preference pref = group.getPreference( i );
+         
+         if ( pref instanceof PreferenceGroup )
+            cleanUpPreferences( (PreferenceGroup) pref );
+         else if ( pref instanceof IMolokoPreference )
+            ( (IMolokoPreference) pref ).cleanUp();
+      }
+   }
 }

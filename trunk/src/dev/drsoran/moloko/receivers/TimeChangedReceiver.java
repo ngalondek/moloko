@@ -26,31 +26,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Message;
-import android.text.format.Time;
 import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.util.ListenerList;
 
 
-public class TimeTickReceiver extends BroadcastReceiver
+public class TimeChangedReceiver extends BroadcastReceiver
 {
    
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      final Time now = new Time();
-      now.setToNow();
+      final Message msg = new Message();
+      msg.obj = new ListenerList.MessgageObject< IOnTimeChangedListener >( IOnTimeChangedListener.class,
+                                                                           null );
+      msg.what = IOnTimeChangedListener.SYSTEM_TIME;
       
-      if ( now.hour == 0 && now.minute == 0 )
-      {
-         final Message msg = new Message();
-         msg.obj = new ListenerList.MessgageObject< IOnTimeChangedListener >( IOnTimeChangedListener.class,
-                                                                              null );
-         msg.what = IOnTimeChangedListener.MIDNIGHT;
-         
-         MolokoApp.get( context.getApplicationContext() )
-                  .getHandler()
-                  .sendMessage( msg );
-      }
+      MolokoApp.get( context.getApplicationContext() )
+               .getHandler()
+               .sendMessage( msg );
    }
 }

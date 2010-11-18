@@ -133,10 +133,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
 
 
    @Override
-   protected void onPrepareForRemoval()
+   public void cleanUp()
    {
-      super.onPrepareForRemoval();
-      
       final AccountManager accountManager = AccountManager.get( getContext() );
       
       if ( accountManager != null )

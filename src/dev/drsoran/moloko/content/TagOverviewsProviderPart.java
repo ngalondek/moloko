@@ -46,7 +46,8 @@ import dev.drsoran.rtm.TagWithTaskCount;
 
 public class TagOverviewsProviderPart extends AbstractProviderPart
 {
-   private static final String TAG = TagOverviewsProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + TagOverviewsProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    

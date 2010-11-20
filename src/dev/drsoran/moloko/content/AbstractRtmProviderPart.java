@@ -38,7 +38,8 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
 {
    
    @SuppressWarnings( "unused" )
-   private static final String TAG = RtmTasksProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + RtmTasksProviderPart.class.getSimpleName();
    
    
 
@@ -52,7 +53,7 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
    public void upgrade( SQLiteDatabase db, int oldVersion, int newVersion ) throws SQLException
    {
       Log.w( path, "Upgrading database from version " + oldVersion + " to "
-                   + newVersion + ", which will destroy all old data" );
+         + newVersion + ", which will destroy all old data" );
       
       drop( db );
       create( db );

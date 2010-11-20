@@ -38,7 +38,8 @@ import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 
 public final class RecurrenceParsing
 {
-   private final static String TAG = RecurrenceParsing.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RecurrenceParsing.class.getSimpleName();
    
    private final static RecurrenceLexer lexer = new RecurrenceLexer();
    

@@ -40,7 +40,8 @@ import dev.drsoran.rtm.RtmSmartFilter;
 public class TaskSearchResultActivity extends TasksListActivity
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = TaskSearchResultActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + TaskSearchResultActivity.class.getSimpleName();
    
    
    protected static class OptionsMenu

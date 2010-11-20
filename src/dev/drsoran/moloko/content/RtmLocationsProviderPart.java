@@ -44,19 +44,14 @@ import dev.drsoran.provider.Rtm.Locations;
 
 public class RtmLocationsProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = RtmLocationsProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + RtmLocationsProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   {
-    Locations._ID,
-    Locations.LOCATION_NAME,
-    Locations.LONGITUDE,
-    Locations.LATITUDE,
-    Locations.ADDRESS,
-    Locations.VIEWABLE,
-    Locations.ZOOM };
+   { Locations._ID, Locations.LOCATION_NAME, Locations.LONGITUDE,
+    Locations.LATITUDE, Locations.ADDRESS, Locations.VIEWABLE, Locations.ZOOM };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -161,16 +156,13 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Locations._ID
-                  + " INTEGER NOT NULL, " + Locations.LOCATION_NAME
-                  + " NOTE_TEXT, "
-                  + Locations.LONGITUDE + " REAL NOT NULL, "
-                  + Locations.LATITUDE
-                  + " REAL NOT NULL, " + Locations.ADDRESS + " NOTE_TEXT, "
-                  + Locations.VIEWABLE + " INTEGER NOT NULL DEFAULT 1, "
-                  + Locations.ZOOM + " INTEGER, "
-                  + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + Locations._ID
-                  + "\" )"
-                  + " );" );
+         + " INTEGER NOT NULL, " + Locations.LOCATION_NAME + " NOTE_TEXT, "
+         + Locations.LONGITUDE + " REAL NOT NULL, " + Locations.LATITUDE
+         + " REAL NOT NULL, " + Locations.ADDRESS + " NOTE_TEXT, "
+         + Locations.VIEWABLE + " INTEGER NOT NULL DEFAULT 1, "
+         + Locations.ZOOM + " INTEGER, "
+         + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + Locations._ID + "\" )"
+         + " );" );
    }
    
 

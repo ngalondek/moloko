@@ -175,12 +175,12 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
                                                  date ) );
          }
          
-         widget.setImageResource( R.drawable.ic_white_refresh );
+         widget.setImageResource( R.drawable.ic_prefs_refresh );
       }
       else
       {
          setInfoText( R.string.g_no_account );
-         widget.setImageResource( R.drawable.ic_white_add );
+         widget.setImageResource( R.drawable.ic_prefs_add );
       }
       
       super.onBindView( view );

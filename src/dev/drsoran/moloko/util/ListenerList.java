@@ -34,7 +34,8 @@ import android.util.Log;
 
 public class ListenerList< T >
 {
-   private final static String TAG = ListenerList.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + ListenerList.class.getSimpleName();
    
    public final Method method;
    

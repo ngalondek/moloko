@@ -45,7 +45,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
          DialogInterface.OnClickListener
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = TasksListActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + TasksListActivity.class.getSimpleName();
    
    
    protected static class OptionsMenu

@@ -40,7 +40,8 @@ import dev.drsoran.provider.Rtm.RawTasks;
 public class RtmSmartFilter extends RtmData
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = RtmSmartFilter.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmSmartFilter.class.getSimpleName();
    
    public static final Parcelable.Creator< RtmSmartFilter > CREATOR = new Parcelable.Creator< RtmSmartFilter >()
    {

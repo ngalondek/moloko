@@ -39,7 +39,8 @@ import dev.drsoran.rtm.RtmSettings;
 
 public final class RtmSettingsSync
 {
-   private final static String TAG = RtmSettingsSync.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmSettingsSync.class.getSimpleName();
    
    
 

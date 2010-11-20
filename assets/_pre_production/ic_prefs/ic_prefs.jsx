@@ -1,6 +1,7 @@
 if ( selectLayer( activeDocument, "shape" ) )
 {
-	fillLayerGradientWhite();
+	resizeImagePx( 32 );
+   fillLayerGradientWhite();
 }
 else
 {

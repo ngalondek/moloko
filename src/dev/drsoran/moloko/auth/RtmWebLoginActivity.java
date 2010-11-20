@@ -31,7 +31,8 @@ import android.webkit.WebViewClient;
 
 public class RtmWebLoginActivity extends Activity
 {
-   private final static String TAG = RtmWebLoginActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmWebLoginActivity.class.getSimpleName();
    
    
    final public class ReqType

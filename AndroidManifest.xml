@@ -204,6 +204,25 @@
          android:label="Test RTM smart filter"
          android:excludeFromRecents="true" />
 
+      <activity
+         android:name="org.acra.CrashReportDialog"
+         android:theme="@android:style/Theme.Dialog"
+         android:launchMode="singleInstance"
+         android:excludeFromRecents="true"
+         android:finishOnTaskLaunch="true" />
+
+      <activity
+         android:name="com.xtralogic.android.logcollector.SendLogActivity"
+         android:theme="@android:style/Theme.Translucent.NoTitleBar"
+         android:excludeFromRecents="true">
+         <intent-filter>
+            <action
+               android:name="com.xtralogic.logcollector.intent.action.SEND_LOG" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+         </intent-filter>
+      </activity>
+
       <!-- Services -->
 
       <service
@@ -287,6 +306,8 @@
       android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
    <uses-permission
       android:name="android.permission.WRITE_SETTINGS" />
+   <uses-permission
+      android:name="android.permission.READ_LOGS" />
    <uses-permission
       android:name="android.permission.READ_SYNC_STATS" />
    <uses-permission

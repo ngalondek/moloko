@@ -54,7 +54,8 @@ import dev.drsoran.provider.Rtm.Notes;
 public class RtmTaskNote extends RtmData implements
          IContentProviderSyncable< RtmTaskNote >
 {
-   private final static String TAG = RtmTaskNote.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmTaskNote.class.getSimpleName();
    
    
    private final static class LessIdComperator implements
@@ -247,16 +248,16 @@ public class RtmTaskNote extends RtmData implements
                                                              IContentProviderSyncOperation.Op.UPDATE );
          
          SyncUtils.updateDate( created,
-                                     update.created,
-                                     uri,
-                                     Notes.NOTE_CREATED_DATE,
-                                     result );
+                               update.created,
+                               uri,
+                               Notes.NOTE_CREATED_DATE,
+                               result );
          
          SyncUtils.updateDate( modified,
-                                     update.modified,
-                                     uri,
-                                     Notes.NOTE_MODIFIED_DATE,
-                                     result );
+                               update.modified,
+                               uri,
+                               Notes.NOTE_MODIFIED_DATE,
+                               result );
          
          if ( Strings.hasStringChanged( title, update.title ) )
             result.add( ContentProviderOperation.newUpdate( uri )

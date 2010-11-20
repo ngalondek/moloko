@@ -40,7 +40,8 @@ import android.util.Log;
 
 public class RtmProvider extends ContentProvider
 {
-   private final static String TAG = RtmProvider.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmProvider.class.getSimpleName();
    
    private final static String DATABASE_NAME = "rtm.db";
    
@@ -118,22 +119,18 @@ public class RtmProvider extends ContentProvider
       
       // These parts allow modification in the local DB.
       mutableParts.addAll( Arrays.asList( new IRtmProviderPart[]
-      {
-       new RtmTasksProviderPart( dbHelper ),
+      { new RtmTasksProviderPart( dbHelper ),
        new RtmTaskSeriesProviderPart( dbHelper ),
-       new RtmListsProviderPart( dbHelper ),
-       new TagsProviderPart( dbHelper ),
+       new RtmListsProviderPart( dbHelper ), new TagsProviderPart( dbHelper ),
        new RtmNotesProviderPart( dbHelper ),
        new RtmLocationsProviderPart( dbHelper ),
-       new RtmSettingsProviderPart( dbHelper ),
-       new SyncProviderPart( dbHelper ) } ) );
+       new RtmSettingsProviderPart( dbHelper ), new SyncProviderPart( dbHelper ) } ) );
       
       parts.addAll( mutableParts );
       
       // These parts are immutable and allow no insert, update, deletion
       parts.addAll( Arrays.asList( new IProviderPart[]
-      {
-       new TasksProviderPart( dbHelper ),
+      { new TasksProviderPart( dbHelper ),
        new ListOverviewsProviderPart( dbHelper ),
        new TagOverviewsProviderPart( dbHelper ) } ) );
       

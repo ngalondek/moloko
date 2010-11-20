@@ -44,7 +44,8 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 
 public class TaskListsAdapter extends BaseExpandableListAdapter
 {
-   private final static String TAG = TaskListsAdapter.class.getName();
+   private final static String TAG = "Moloko."
+      + TaskListsAdapter.class.getName();
    
    private final Context context;
    

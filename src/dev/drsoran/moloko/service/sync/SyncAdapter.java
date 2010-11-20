@@ -67,7 +67,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       public final static int OUT = 1 << 1;
    }
    
-   private final static String TAG = SyncAdapter.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + SyncAdapter.class.getSimpleName();
    
    private final Context context;
    

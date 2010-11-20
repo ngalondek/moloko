@@ -54,7 +54,7 @@ import dev.drsoran.provider.Rtm.Settings;
 public class RtmSettings extends RtmData implements
          IContentProviderSyncable< RtmSettings >
 {
-   private final String TAG = RtmSettings.class.getSimpleName();
+   private final String TAG = "Moloko." + RtmSettings.class.getSimpleName();
    
    public static final Parcelable.Creator< RtmSettings > CREATOR = new Parcelable.Creator< RtmSettings >()
    {
@@ -132,9 +132,8 @@ public class RtmSettings extends RtmData implements
       
       if ( !elt.getNodeName().equals( "settings" ) )
       {
-         throw new IllegalArgumentException( "Element "
-                                             + elt.getNodeName()
-                                             + " does not represent an Settings object." );
+         throw new IllegalArgumentException( "Element " + elt.getNodeName()
+            + " does not represent an Settings object." );
       }
       
       this.timezone = textNullIfEmpty( child( elt, "timezone" ) );

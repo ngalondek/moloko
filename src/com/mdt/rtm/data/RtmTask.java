@@ -53,7 +53,7 @@ import dev.drsoran.provider.Rtm.RawTasks;
 public class RtmTask extends RtmData implements
          IContentProviderSyncable< RtmTask >
 {
-   private static final String TAG = RtmTask.class.getSimpleName();
+   private static final String TAG = "Moloko." + RtmTask.class.getSimpleName();
    
    
    private final static class LessIdComperator implements Comparator< RtmTask >

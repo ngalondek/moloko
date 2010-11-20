@@ -54,7 +54,8 @@ import dev.drsoran.rtm.Task;
 
 public class TaskActivity extends Activity
 {
-   private final static String TAG = TaskActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + TaskActivity.class.getSimpleName();
    
    private final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    

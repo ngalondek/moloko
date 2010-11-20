@@ -29,13 +29,13 @@ import android.os.IBinder;
 
 
 /**
- * Service to handle Account authentication. It instantiates the authenticator
- * and returns its IBinder.
+ * Service to handle Account authentication. It instantiates the authenticator and returns its IBinder.
  */
 public class AuthenticationService extends Service
 {
    @SuppressWarnings( "unused" )
-   private static final String TAG = AuthenticationService.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + AuthenticationService.class.getSimpleName();
    
    private Authenticator authenticator;
    
@@ -53,8 +53,8 @@ public class AuthenticationService extends Service
    public IBinder onBind( Intent intent )
    {
       if ( intent != null
-           && intent.getAction()
-                    .equals( AccountManager.ACTION_AUTHENTICATOR_INTENT ) )
+         && intent.getAction()
+                  .equals( AccountManager.ACTION_AUTHENTICATOR_INTENT ) )
       {
          return authenticator.getIBinder();
       }

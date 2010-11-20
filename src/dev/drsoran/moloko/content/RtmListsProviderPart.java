@@ -49,7 +49,8 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 public class RtmListsProviderPart extends AbstractRtmProviderPart
 {
-   private static final String TAG = RtmListsProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + RtmListsProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    

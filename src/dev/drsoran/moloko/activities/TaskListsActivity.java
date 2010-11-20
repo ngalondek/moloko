@@ -56,7 +56,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
          IOnSettingsChangedListener, OnGroupClickListener
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = TaskListsActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + TaskListsActivity.class.getSimpleName();
    
    private final Runnable queryListsRunnable = new Runnable()
    {

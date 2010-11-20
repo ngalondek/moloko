@@ -51,7 +51,8 @@ import dev.drsoran.rtm.TagWithTaskCount;
 public class TagCloudActivity extends Activity
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = TagCloudActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + TagCloudActivity.class.getSimpleName();
    
    /**
     * Relationship between task count and text size.

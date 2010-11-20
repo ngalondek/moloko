@@ -59,7 +59,8 @@ public class StartUpActivity extends Activity implements
          AccountManagerCallback< Bundle >
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = StartUpActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + StartUpActivity.class.getSimpleName();
    
    private final static String STATE_INDEX_KEY = "state_index";
    

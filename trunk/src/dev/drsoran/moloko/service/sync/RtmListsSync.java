@@ -43,7 +43,8 @@ import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 
 public final class RtmListsSync
 {
-   private final static String TAG = RtmListsSync.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmListsSync.class.getSimpleName();
    
    
 

@@ -49,7 +49,8 @@ import dev.drsoran.provider.Rtm.Locations;
 public class RtmLocation extends RtmData implements
          IContentProviderSyncable< RtmLocation >
 {
-   private final static String TAG = RtmLocation.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmLocation.class.getSimpleName();
    
    public static final Parcelable.Creator< RtmLocation > CREATOR = new Parcelable.Creator< RtmLocation >()
    {

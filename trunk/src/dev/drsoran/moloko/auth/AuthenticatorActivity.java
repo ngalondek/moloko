@@ -61,7 +61,8 @@ import dev.drsoran.moloko.util.SyncUtils;
 public class AuthenticatorActivity extends AccountAuthenticatorActivity
          implements TextWatcher
 {
-   private static final String TAG = AuthenticatorActivity.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + AuthenticatorActivity.class.getSimpleName();
    
    public static final String PARAM_AUTH_TOKEN_EXPIRED = "authTokenExpired";
    
@@ -356,7 +357,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
          catch ( SecurityException e )
          {
             messageText.setText( getErrorMessage( R.string.auth_err_cause_scurity )
-                                 + e.getLocalizedMessage() );
+               + e.getLocalizedMessage() );
          }
       }
    }
@@ -389,7 +390,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
       if ( requestCode == RtmWebLoginActivity.ReqType.OPEN_URL
-           && resultCode == RtmWebLoginActivity.ReturnCode.SUCCESS )
+         && resultCode == RtmWebLoginActivity.ReturnCode.SUCCESS )
       {
          authenticator.completeAuthentication();
       }
@@ -498,7 +499,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       final String[] rtmPermissionsVals = getResources().getStringArray( R.array.rtm_permissions_values );
       
       for ( int i = 0; i < rtmPermissionsVals.length
-                       && position == Spinner.INVALID_POSITION; i++ )
+         && position == Spinner.INVALID_POSITION; i++ )
       {
          if ( rtmPermissionsVals[ i ].equals( permissionValue ) )
             position = i;

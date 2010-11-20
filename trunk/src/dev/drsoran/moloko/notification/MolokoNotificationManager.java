@@ -61,7 +61,8 @@ public class MolokoNotificationManager implements
          OnSharedPreferenceChangeListener, IOnBootCompletedListener,
          IOnTimeChangedListener
 {
-   private final static String TAG = MolokoNotificationManager.class.getName();
+   private final static String TAG = "Moloko."
+      + MolokoNotificationManager.class.getName();
    
    private final static int NOTIFICATION_TYPE_PERMANENT = 1;
    

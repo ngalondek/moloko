@@ -36,7 +36,8 @@ import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
 public class RtmSmartFilterTestActivity extends Activity
 {
-   private static final String TAG = RtmSmartFilterTestActivity.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + RtmSmartFilterTestActivity.class.getSimpleName();
    
    private EditText filterInput;
    

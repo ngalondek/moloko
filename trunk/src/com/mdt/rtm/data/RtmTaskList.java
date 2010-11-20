@@ -49,7 +49,8 @@ import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 public class RtmTaskList extends RtmData implements
          IContentProviderSyncable< RtmTaskList >
 {
-   private static final String TAG = RtmTaskList.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + RtmTaskList.class.getSimpleName();
    
    
    private static final class LessIdComperator implements

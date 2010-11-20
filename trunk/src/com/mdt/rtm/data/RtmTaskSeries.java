@@ -62,7 +62,8 @@ import dev.drsoran.rtm.Tag;
 public class RtmTaskSeries extends RtmData implements
          IContentProviderSyncable< RtmTaskSeries >
 {
-   private final static String TAG = RtmTaskSeries.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmTaskSeries.class.getSimpleName();
    
    
    private static final class LessIdComperator implements

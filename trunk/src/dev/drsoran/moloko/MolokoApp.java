@@ -26,12 +26,12 @@ import java.lang.reflect.Method;
 
 import android.accounts.Account;
 import android.app.Activity;
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SyncStatusObserver;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -47,9 +47,11 @@ import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm;
 
 
-public class MolokoApp extends Application implements SyncStatusObserver
+public class MolokoApp extends org.acra.CrashReportingApplication implements
+         SyncStatusObserver
 {
-   private final static String TAG = MolokoApp.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + MolokoApp.class.getSimpleName();
    
    private static Settings SETTINGS;
    
@@ -248,6 +250,36 @@ public class MolokoApp extends Application implements SyncStatusObserver
    public final static MolokoNotificationManager getMolokoNotificationManager()
    {
       return MOLOKO_NOTIFICATION_MANAGER;
+   }
+   
+
+
+   @Override
+   public String getFormId()
+   {
+      return "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ";
+   }
+   
+
+
+   @Override
+   public Bundle getCrashResources()
+   {
+      final Bundle result = new Bundle();
+      result.putInt( RES_NOTIF_TICKER_TEXT,
+                     R.string.acra_crash_notif_ticker_text );
+      result.putInt( RES_NOTIF_TITLE, R.string.acra_crash_notif_title );
+      result.putInt( RES_NOTIF_TEXT, R.string.acra_crash_notif_text );
+      result.putInt( RES_DIALOG_TITLE, R.string.acra_crash_dialog_title );
+      result.putInt( RES_DIALOG_TEXT, R.string.acra_crash_dialog_text );
+      result.putInt( RES_DIALOG_COMMENT_PROMPT,
+                     R.string.acra_crash_comment_prompt ); // optional. when defined, adds a user text field input
+      // with this text resource as a label
+      result.putInt( RES_DIALOG_OK_TOAST, R.string.acra_crash_dialog_ok_toast ); // optional. Displays a Toast when the
+      // user
+      // accepts to send a report ("Thank you !"
+      // for example)
+      return result;
    }
    
 

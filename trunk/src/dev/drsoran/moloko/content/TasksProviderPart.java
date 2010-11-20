@@ -56,7 +56,8 @@ import dev.drsoran.rtm.Task;
 
 public class TasksProviderPart extends AbstractProviderPart
 {
-   private static final String TAG = TasksProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + TasksProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    

@@ -53,7 +53,8 @@ import dev.drsoran.rtm.ListTask;
 
 public class TasksListAdapter extends ArrayAdapter< ListTask >
 {
-   private final static String TAG = TasksListAdapter.class.getName();
+   private final static String TAG = "Moloko."
+      + TasksListAdapter.class.getName();
    
    private final Context context;
    

@@ -42,18 +42,14 @@ import dev.drsoran.rtm.RtmSettings;
 public class RtmSettingsProviderPart extends AbstractRtmProviderPart
 {
    @SuppressWarnings( "unused" )
-   private static final String TAG = RtmSettingsProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + RtmSettingsProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   {
-    Settings._ID,
-    Settings.SYNC_TIMESTAMP,
-    Settings.TIMEZONE,
-    Settings.DATEFORMAT,
-    Settings.TIMEFORMAT,
-    Settings.DEFAULTLIST_ID,
+   { Settings._ID, Settings.SYNC_TIMESTAMP, Settings.TIMEZONE,
+    Settings.DATEFORMAT, Settings.TIMEFORMAT, Settings.DEFAULTLIST_ID,
     Settings.LANGUAGE };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
@@ -190,20 +186,17 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE "
-                  + path
-                  + " ( "
-                  + Settings._ID
-                  + " INTEGER NOT NULL CONSTRAINT PK_SETTINGS PRIMARY KEY AUTOINCREMENT, "
-                  + Settings.SYNC_TIMESTAMP + " INTEGER NOT NULL, "
-                  + Settings.TIMEZONE
-                  + " TEXT, " + Settings.DATEFORMAT
-                  + " INTEGER NOT NULL DEFAULT 0, "
-                  + Settings.TIMEFORMAT + " INTEGER NOT NULL DEFAULT 0, "
-                  + Settings.DEFAULTLIST_ID + " INTEGER, " + Settings.LANGUAGE
-                  + " TEXT, CONSTRAINT defaultlist FOREIGN KEY ( "
-                  + Settings.DEFAULTLIST_ID + ") REFERENCES " + Lists.PATH
-                  + "( "
-                  + Lists._ID + " ) );" );
+         + path
+         + " ( "
+         + Settings._ID
+         + " INTEGER NOT NULL CONSTRAINT PK_SETTINGS PRIMARY KEY AUTOINCREMENT, "
+         + Settings.SYNC_TIMESTAMP + " INTEGER NOT NULL, " + Settings.TIMEZONE
+         + " TEXT, " + Settings.DATEFORMAT + " INTEGER NOT NULL DEFAULT 0, "
+         + Settings.TIMEFORMAT + " INTEGER NOT NULL DEFAULT 0, "
+         + Settings.DEFAULTLIST_ID + " INTEGER, " + Settings.LANGUAGE
+         + " TEXT, CONSTRAINT defaultlist FOREIGN KEY ( "
+         + Settings.DEFAULTLIST_ID + ") REFERENCES " + Lists.PATH + "( "
+         + Lists._ID + " ) );" );
    }
    
 

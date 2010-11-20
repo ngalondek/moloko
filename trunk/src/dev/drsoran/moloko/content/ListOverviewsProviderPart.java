@@ -54,7 +54,8 @@ import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 
 public class ListOverviewsProviderPart extends AbstractProviderPart
 {
-   private static final String TAG = ListOverviewsProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + ListOverviewsProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    

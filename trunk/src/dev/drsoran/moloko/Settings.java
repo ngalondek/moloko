@@ -47,7 +47,7 @@ import dev.drsoran.rtm.RtmSettings;
 public class Settings implements OnSharedPreferenceChangeListener
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = Settings.class.getSimpleName();
+   private final static String TAG = "Moloko." + Settings.class.getSimpleName();
    
    public final static int DATEFORMAT_EU = 0;
    

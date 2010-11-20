@@ -62,7 +62,8 @@ import dev.drsoran.rtm.Tag;
 public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
 {
    @SuppressWarnings( "unused" )
-   private static final String TAG = RtmTaskSeriesProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + RtmTaskSeriesProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    

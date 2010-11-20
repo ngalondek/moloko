@@ -32,7 +32,8 @@ import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 
 public class RtmListWithTaskCount
 {
-   private final static String TAG = RtmListWithTaskCount.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RtmListWithTaskCount.class.getSimpleName();
    
    
    public final static class ExtendedListInfo

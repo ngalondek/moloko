@@ -256,6 +256,11 @@
    <string name="moloko_prefs_notification_permanent_today">Tasks due today</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
    <string name="moloko_prefs_notification_permanent_default_value">2</string>
+   <string name="moloko_prefs_cat_help_dev_title">Support development</string>
+   <string name="moloko_prefs_acra_title">Disable error reporting</string>
+   <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
+   <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
+   <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>
    <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Settings are retrieved from the RTM Server</string>
 
@@ -270,6 +275,40 @@
       <string name="rtmSvc_auth_get_token_start">Receiving Authentication-Token</string>
       <string name="rtmSvc_auth_get_token_fin">Authentication-Token received</string>
       <string name="rtmSvc_auth_failed">Authentication failed</string>
+      
+   <!-- Error reporting -->   
+   <string name="acra_crash_notif_ticker_text">Moloko has or had entered an unexpected state. Please send an error report.</string>
+   <string name="acra_crash_notif_title">Moloko has or had entered an unexpected state</string>
+   <string name="acra_crash_notif_text">We apologize. Please send a report to support development.</string>
+   <string name="acra_crash_dialog_title">Moloko error report</string>
+   <string name="acra_crash_dialog_text">We apologize for any inconvenience. Please send a report to support the development and help avoiding the issue in future releases.</string>
+   <string name="acra_crash_comment_prompt">You might add your comments about the issue below:</string>
+   <string name="acra_crash_dialog_ok_toast">Your crash report has been sent. Thank you!</string>   
+   <string name="send_log_dialog_text">Creating the log file for Moloko. The collected information will be sent using an application of your choice. You also will have an opportunity to see and modify the data being sent.</string>
+   <string name="send_log_aquiring_text">Collecting Moloko dependent log information...</string>
+   <string name="send_log_chooser_title">Please select an application to send the log</string>
+   <string name="send_log_failed">Failed to collect the log data for Moloko</string>
+   <string name="send_log_address">ronny.roehricht@gmail.com</string>
+   <string name="send_log_subject">Moloko device log</string>
+   <string name="send_log_format">time</string>
+   <string name="send_log_content">
+Moloko version: %s\n
+Device model: %s\n
+Firmware version: %s\n
+Board: %s\n
+Brand: %s\n
+Device: %s\n
+Display: %s\n
+Fingerprint: %s\n
+Host: %s\n
+ID: %s\n
+Model: %s\n
+Product: %s\n
+Tags: %s\n
+Time: %s\n
+Type: %s\n
+User: %s\n
+   </string>
 
 	<!-- Log messages -->
 	<string name="log_e_resource_not_found">Resource not found</string>

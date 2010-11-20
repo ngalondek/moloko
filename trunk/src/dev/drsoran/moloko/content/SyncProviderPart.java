@@ -40,15 +40,13 @@ import dev.drsoran.provider.Rtm.Sync;
 public class SyncProviderPart extends AbstractRtmProviderPart
 {
    @SuppressWarnings( "unused" )
-   private static final String TAG = SyncProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + SyncProviderPart.class.getSimpleName();
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   {
-    Sync._ID,
-    Sync.LAST_IN,
-    Sync.LAST_OUT };
+   { Sync._ID, Sync.LAST_IN, Sync.LAST_OUT };
    
    public final static long DONT_TOUCH = -1;
    
@@ -195,12 +193,9 @@ public class SyncProviderPart extends AbstractRtmProviderPart
 
    public void create( SQLiteDatabase db ) throws SQLException
    {
-      db.execSQL( "CREATE TABLE "
-                  + path
-                  + " ( "
-                  + Sync._ID
-                  + " INTEGER NOT NULL CONSTRAINT PK_SYNC PRIMARY KEY AUTOINCREMENT, "
-                  + Sync.LAST_IN + " INTEGER, " + Sync.LAST_OUT + " INTEGER );" );
+      db.execSQL( "CREATE TABLE " + path + " ( " + Sync._ID
+         + " INTEGER NOT NULL CONSTRAINT PK_SYNC PRIMARY KEY AUTOINCREMENT, "
+         + Sync.LAST_IN + " INTEGER, " + Sync.LAST_OUT + " INTEGER );" );
    }
    
 

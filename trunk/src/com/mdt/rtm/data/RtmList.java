@@ -44,7 +44,7 @@ import dev.drsoran.rtm.RtmSmartFilter;
 public class RtmList extends RtmData implements
          IContentProviderSyncable< RtmList >
 {
-   private final static String TAG = RtmList.class.getSimpleName();
+   private final static String TAG = "Moloko." + RtmList.class.getSimpleName();
    
    public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
    {

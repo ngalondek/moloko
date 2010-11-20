@@ -39,7 +39,7 @@ import dev.drsoran.provider.Rtm.Tags;
 public class Tag implements IContentProviderSyncable< Tag >
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = Tag.class.getSimpleName();
+   private final static String TAG = "Moloko." + Tag.class.getSimpleName();
    
    private final String id;
    
@@ -105,8 +105,7 @@ public class Tag implements IContentProviderSyncable< Tag >
                                                             : true;
          
          equals = equals
-                  && !Strings.hasStringChanged( taskSeriesId,
-                                                other.taskSeriesId );
+            && !Strings.hasStringChanged( taskSeriesId, other.taskSeriesId );
          
          equals = equals && !Strings.hasStringChanged( tag, other.tag );
          

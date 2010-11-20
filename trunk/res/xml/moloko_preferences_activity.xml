@@ -112,7 +112,7 @@
             android:summary="%s"
             android:entries="@array/moloko_prefs_notification_permanent_entries"
             android:entryValues="@array/moloko_prefs_notification_permanent_values"
-            android:key="@string/key_notify_permanent"            
+            android:key="@string/key_notify_permanent"
             android:defaultValue="2" />
       </PreferenceCategory>
 
@@ -128,5 +128,20 @@
       android:summary="@string/moloko_prefs_def_sort_summary"
       android:entries="@array/app_sort_options"
       android:key="@string/key_task_sort" />
+
+   <PreferenceCategory
+      android:title="@string/moloko_prefs_cat_help_dev_title">
+      
+      <CheckBoxPreference
+         android:key="acra.disable"
+         android:title="@string/moloko_prefs_acra_title"
+         android:summaryOn="@string/moloko_prefs_acra_summary_off"
+         android:summaryOff="@string/moloko_prefs_acra_summary_on"
+         android:defaultValue="false" />
+
+      <dev.drsoran.moloko.prefs.SendLogPreference
+         moloko:infoText="@string/moloko_prefs_send_log_text"
+         moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
+   </PreferenceCategory>
 
 </PreferenceScreen>

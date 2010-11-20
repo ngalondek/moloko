@@ -35,7 +35,8 @@ import android.util.Log;
 
 public class RecurrPatternLanguage extends Language
 {
-   private final static String TAG = RecurrPatternLanguage.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + RecurrPatternLanguage.class.getSimpleName();
    
    
 

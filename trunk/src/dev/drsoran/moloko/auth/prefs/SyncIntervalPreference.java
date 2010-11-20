@@ -39,7 +39,8 @@ import dev.drsoran.provider.Rtm;
 
 public class SyncIntervalPreference extends AutoSummaryListPreference
 {
-   private final static String TAG = SyncIntervalPreference.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + SyncIntervalPreference.class.getSimpleName();
    
    
 
@@ -71,7 +72,7 @@ public class SyncIntervalPreference extends AutoSummaryListPreference
             
             if ( syncInterval != Constants.SYNC_INTERVAL_MANUAL )
                SyncUtils.scheduleSyncAlarm( getContext().getApplicationContext(),
-                                                    syncInterval );
+                                            syncInterval );
          }
       }
       else

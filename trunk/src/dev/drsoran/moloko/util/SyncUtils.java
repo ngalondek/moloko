@@ -46,7 +46,8 @@ import dev.drsoran.provider.Rtm.Sync;
 
 public final class SyncUtils
 {
-   private static final String TAG = SyncUtils.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + SyncUtils.class.getSimpleName();
    
    
 

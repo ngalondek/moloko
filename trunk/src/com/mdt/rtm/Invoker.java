@@ -73,7 +73,7 @@ import android.util.Log;
  */
 public class Invoker
 {
-   private static final String TAG = Invoker.class.getSimpleName();
+   private static final String TAG = "Moloko." + Invoker.class.getSimpleName();
    
    private static final DocumentBuilder builder;
    static

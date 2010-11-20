@@ -32,7 +32,8 @@ import dev.drsoran.moloko.util.SyncUtils;
 public class SyncAlarmReceiver extends BroadcastReceiver
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = SyncAlarmReceiver.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + SyncAlarmReceiver.class.getSimpleName();
    
    
 

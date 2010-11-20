@@ -38,7 +38,8 @@ import dev.drsoran.provider.Rtm;
 public abstract class AbstractProviderPart implements IProviderPart
 {
    @SuppressWarnings( "unused" )
-   private static final String TAG = AbstractProviderPart.class.getSimpleName();
+   private static final String TAG = "Moloko."
+      + AbstractProviderPart.class.getSimpleName();
    
    protected static final String ITEM_ID_EQUALS = BaseColumns._ID + "=";
    

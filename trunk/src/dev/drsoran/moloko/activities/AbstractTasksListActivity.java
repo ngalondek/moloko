@@ -70,7 +70,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          DialogInterface.OnClickListener, View.OnClickListener,
          IOnSettingsChangedListener
 {
-   private final static String TAG = AbstractTasksListActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + AbstractTasksListActivity.class.getSimpleName();
    
    public static final String TITLE = "title";
    

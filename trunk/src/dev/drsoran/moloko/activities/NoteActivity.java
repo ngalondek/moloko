@@ -48,7 +48,8 @@ import dev.drsoran.provider.Rtm.Notes;
 
 public class NoteActivity extends Activity
 {
-   private final static String TAG = NoteActivity.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + NoteActivity.class.getSimpleName();
    
    private List< RtmTaskNote > notes = Collections.emptyList();
    

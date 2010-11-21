@@ -56,6 +56,7 @@
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
+   <string name="phr_now">Jetzt</string>
    <string name="phr_today">Heute</string>
    <string name="phr_today_with_date">Heute, der %1$s</string>
    <string name="phr_tomorrow">Morgen</string>
@@ -63,7 +64,6 @@
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
    <string name="phr_open_with_name">Öffne %1$s</string>
    <string name="phr_close">Schliessen</string>
-   <string name="phr_ok">OK</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
    <string name="phr_none_m">keiner</string>
@@ -128,6 +128,8 @@
      
    <!-- NotificationManager -->
    <string name="notification_permanent">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
+   <string name="notification_due_ticker">%1$s fällig %2$s</string>
+   <string name="notification_due">fällig um %1$s</string>
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>

@@ -30,6 +30,7 @@ import java.util.TimeZone;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.format.DateFormat;
+import android.text.format.DateUtils;
 import android.text.format.Time;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -82,6 +83,34 @@ public class MolokoDateUtils
       
       return ( Time.getJulianDay( end, offEnd ) - Time.getJulianDay( start,
                                                                      offStart ) );
+   }
+   
+
+
+   public static long getFittingDateUtilsResolution( long time, long now )
+   {
+      final int diff = (int) ( ( ( time >= now ) ? time - now : now - time ) / 1000 );
+      
+      // 1..n days
+      if ( diff >= 3600 * 24 )
+      {
+         return DateUtils.DAY_IN_MILLIS;
+      }
+      // 1..24 hours
+      else if ( diff >= 3600 )
+      {
+         return DateUtils.HOUR_IN_MILLIS;
+      }
+      // 1..60 minutes
+      else if ( diff >= 60 )
+      {
+         return DateUtils.MINUTE_IN_MILLIS;
+      }
+      // < 1 minute
+      else
+      {
+         return DateUtils.SECOND_IN_MILLIS;
+      }
    }
    
 

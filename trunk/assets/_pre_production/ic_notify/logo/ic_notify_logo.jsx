@@ -2,10 +2,10 @@ if ( selectLayer( activeDocument, "text" ) )
 {
 	setForegroundColor( 0.0, 0.0, 0.0 );
    
-   for ( var i = 1; i < 10; ++i )
+   for ( var j = 1; j < 10; ++j )
    {
-      setText( "" + i );      
-      exportDrawable( file, prefix, "_" + i );
+      setText( "" + j );      
+      exportDrawable( file, prefix, "_" + j );
    }
    
    activeDocument.close( SaveOptions.DONOTSAVECHANGES );

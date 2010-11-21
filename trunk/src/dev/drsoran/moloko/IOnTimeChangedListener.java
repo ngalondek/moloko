@@ -22,13 +22,13 @@
 
 package dev.drsoran.moloko;
 
-
-
 public interface IOnTimeChangedListener
 {
    public final static int SYSTEM_TIME = 1 << 0;
    
    public final static int MIDNIGHT = 1 << 1;
+   
+   public final static int MINUTE_TICK = 1 << 2;
    
    public final static int ALL = Integer.MAX_VALUE;
    

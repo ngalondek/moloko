@@ -67,11 +67,10 @@ Support for Android integrated search dialog. Allows searching for tasks using s
     * includeArchived
 
  ==== Next steps ===
-    * implement task notifications 
-
- ==== later steps ===
     * support for HTTPS
     * Groups, Contacts, Locations
+
+ ==== later steps ===        
     * Write access
     * Delete access
 

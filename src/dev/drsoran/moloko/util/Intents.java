@@ -212,4 +212,12 @@ public final class Intents
       return intent;
    }
    
+
+
+   public final static Intent createOpenTaskIntent( Context context,
+                                                    String taskId )
+   {
+      return new Intent( Intent.ACTION_VIEW,
+                         Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
+   }
 }

@@ -52,5 +52,14 @@ public class TimeTickReceiver extends BroadcastReceiver
                   .getHandler()
                   .sendMessage( msg );
       }
+      
+      final Message msg = new Message();
+      msg.obj = new ListenerList.MessgageObject< IOnTimeChangedListener >( IOnTimeChangedListener.class,
+                                                                           null );
+      msg.what = IOnTimeChangedListener.MINUTE_TICK;
+      
+      MolokoApp.get( context.getApplicationContext() )
+               .getHandler()
+               .sendMessage( msg );
    }
 }

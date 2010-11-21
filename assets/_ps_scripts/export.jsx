@@ -21,11 +21,11 @@ function exportFolder( folder, prefix )
 {
 	var script = loadScriptFromFolder( folder );
 	var files = folder.getFiles();
-	 
+   
 	for ( var i = 0; i < files.length; i++ )
-	{
+	{      
 		var file = files[ i ];
-		
+      
 		if ( file instanceof Folder )
 		{
 			// Skip folder starting with ".", e.g. ".svn"
@@ -55,7 +55,7 @@ function exportFolder( folder, prefix )
 			var ok = true;
          var alreadyExported = false;
          var exportAsIs = false;
-
+         
 			eval( script );
 
 			if ( ok && !alreadyExported )

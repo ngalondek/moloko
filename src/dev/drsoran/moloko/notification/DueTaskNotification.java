@@ -25,91 +25,112 @@ package dev.drsoran.moloko.notification;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
+import android.text.format.DateUtils;
 import android.widget.RemoteViews;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.rtm.Task;
 
 
 public class DueTaskNotification
 {
    private final Context context;
    
-   private final Notification notification;
+   private final String taskId;
    
-   private final int id;
+   private final String taskName;
+   
+   private final long dueTimeMillis;
+   
+   private boolean vibrate;
+   
+   private boolean led;
+   
+   private Uri sound;
+   
+   private long remindBeforeMillis;
+   
+   /**
+    * If this reference is != null means we have already notified this {@link Notification}. We never notify an
+    * {@link Notification} twice.
+    */
+   private Notification notification;
    
    
 
-   public DueTaskNotification( Context context, int id )
+   public DueTaskNotification( Context context, Task task,
+      long remindBeforeMillis, boolean vibrate, boolean led, Uri sound )
    {
       this.context = context;
-      this.id = id;
+      this.taskId = task.getId();
+      this.taskName = task.getName();
+      this.dueTimeMillis = task.getDue().getTime();
+      this.remindBeforeMillis = remindBeforeMillis;
+      this.vibrate = vibrate;
+      this.led = led;
+      this.sound = sound;
       
-      this.notification = new Notification( R.drawable.ic_launcher,
-                                            null,
-                                            System.currentTimeMillis() );
-      
-      this.notification.flags = Notification.FLAG_AUTO_CANCEL;
-      this.notification.contentView = new RemoteViews( context.getPackageName(),
-                                                       R.layout.notification_permanent );
+      if ( isTimeToNotify() )
+         createNotification();
    }
    
 
 
-   public void update( String title,
-                       String text,
-                       Intent onClickIntent,
-                       boolean vibrate,
-                       boolean led,
-                       Uri sound )
+   public void updateMinuteTick()
    {
-      notification.defaults = 0;
-      
-      if ( vibrate )
-         notification.defaults |= Notification.DEFAULT_VIBRATE;
-      if ( led )
-         notification.defaults |= Notification.DEFAULT_LIGHTS;
-      
-      notification.sound = sound;
-      
-      notification.contentView.setTextViewText( R.id.notification_due_task_title,
-                                                title );
-      notification.contentView.setTextViewText( R.id.notification_due_task_text,
-                                                text );
-      notification.contentIntent = Intents.createNotificationIntent( context,
-                                                                     onClickIntent );
-      
-      getNotificationManager().notify( this.id, notification );
+      if ( notification == null && isTimeToNotify() )
+         createNotification();
    }
    
 
 
-   public boolean isVibrate()
+   public void update( long remindBeforeMillis )
    {
-      return ( notification.defaults & Notification.DEFAULT_VIBRATE ) != 0;
+      if ( notification == null )
+      {
+         this.remindBeforeMillis = remindBeforeMillis;
+         
+         if ( isTimeToNotify() )
+         {
+            createNotification();
+         }
+      }
    }
    
 
 
-   public boolean isLed()
+   public void update( boolean vibrate, boolean led, Uri sound )
    {
-      return ( notification.defaults & Notification.DEFAULT_LIGHTS ) != 0;
+      if ( notification == null )
+      {
+         this.vibrate = vibrate;
+         this.led = led;
+         this.sound = sound;
+      }
    }
    
 
 
-   public Uri isSound()
+   public String getTaskId()
    {
-      return notification.sound;
+      return taskId;
+   }
+   
+
+
+   public long getDueTime()
+   {
+      return dueTimeMillis;
    }
    
 
 
    public void cancel()
    {
-      getNotificationManager().cancel( id );
+      if ( notification != null )
+         getNotificationManager().cancel( taskId.hashCode() );
    }
    
 
@@ -119,4 +140,80 @@ public class DueTaskNotification
       return (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );
    }
    
+
+
+   private void createNotification()
+   {
+      this.notification = new Notification( R.drawable.ic_notify_logo_red,
+                                            context.getString( R.string.notification_due_ticker,
+                                                               taskName,
+                                                               getRelativeTimeString() ),
+                                            dueTimeMillis );
+      
+      this.notification.flags = Notification.FLAG_AUTO_CANCEL;
+      this.notification.contentView = new RemoteViews( context.getPackageName(),
+                                                       R.layout.notification_due_task );
+      this.notification.contentView.setTextViewText( R.id.notification_due_task_title,
+                                                     taskName );
+      this.notification.contentView.setTextViewText( R.id.notification_due_task_text,
+                                                     context.getString( R.string.notification_due,
+                                                                        MolokoDateUtils.formatTime( dueTimeMillis ) ) );
+      this.notification.contentIntent = Intents.createNotificationIntent( context,
+                                                                          Intents.createOpenTaskIntent( context,
+                                                                                                        taskId ) );
+      
+      this.notification.defaults = 0;
+      
+      if ( vibrate )
+         this.notification.defaults |= Notification.DEFAULT_VIBRATE;
+      if ( led )
+         this.notification.defaults |= Notification.DEFAULT_LIGHTS;
+      
+      this.notification.sound = sound;
+      
+      getNotificationManager().notify( taskId.hashCode(), notification );
+   }
+   
+
+
+   private boolean isTimeToNotify()
+   {
+      return System.currentTimeMillis() >= ( dueTimeMillis - remindBeforeMillis );
+   }
+   
+
+
+   private CharSequence getRelativeTimeString()
+   {
+      final long now = System.currentTimeMillis();
+      final long resolution = MolokoDateUtils.getFittingDateUtilsResolution( dueTimeMillis,
+                                                                             now );
+      
+      if ( resolution == DateUtils.SECOND_IN_MILLIS )
+      {
+         return context.getString( R.string.phr_now );
+      }
+      else
+      {
+         return DateUtils.getRelativeTimeSpanString( dueTimeMillis,
+                                                     now,
+                                                     resolution );
+      }
+   }
+   
+
+
+   @Override
+   public boolean equals( Object o )
+   {
+      if ( o instanceof DueTaskNotification )
+      {
+         final DueTaskNotification other = (DueTaskNotification) o;
+         
+         return other.taskId.equals( this.taskId )
+            && other.dueTimeMillis == this.dueTimeMillis;
+      }
+      else
+         return false;
+   }
 }

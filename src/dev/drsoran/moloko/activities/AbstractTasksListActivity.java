@@ -504,10 +504,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    public void onTaskClicked( int pos )
    {
-      final Intent intent = new Intent( Intent.ACTION_VIEW,
-                                        Queries.contentUriWithId( Tasks.CONTENT_URI,
-                                                                  getTask( pos ).getId() ) );
-      startActivity( intent );
+      startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
    }
    
 

@@ -48,7 +48,14 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.
 
 === TODO ===
- 
+ ==== Next steps ===
+    * support for HTTPS
+    * Groups, Contacts, Locations
+
+ ==== later steps ===        
+    * Write access
+    * Delete access
+
  ==== Unsupported RTM features ====
     * Groups
     * Contacts
@@ -65,14 +72,6 @@ Support for Android integrated search dialog. Allows searching for tasks using s
     * to:
     * from:
     * includeArchived
-
- ==== Next steps ===
-    * support for HTTPS
-    * Groups, Contacts, Locations
-
- ==== later steps ===        
-    * Write access
-    * Delete access
 
  ==== nice to have ===
     * implement search auto completion (low prio)

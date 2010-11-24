@@ -24,7 +24,7 @@
 <resources>
 	<string name="app_name">Moloko</string>
 	<string name="app_home">Home</string>
-	<string name="app_preferences">Preferences</string>
+	<string name="app_preferences">Settings</string>
 	<string name="app_account_preferences">Account Preferences</string>
 	<string name="app_tasklists">Lists</string>
 	<string name="app_task">Task</string>

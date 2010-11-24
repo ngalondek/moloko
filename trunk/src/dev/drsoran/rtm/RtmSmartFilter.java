@@ -68,7 +68,7 @@ public class RtmSmartFilter extends RtmData
 
    public RtmSmartFilter( String filter )
    {
-      this.filter = filter.replaceAll( "\\(|\\)", Strings.EMPTY_STRING );
+      this.filter = filter;
       this.evalFilter = null;
    }
    
@@ -79,8 +79,7 @@ public class RtmSmartFilter extends RtmData
       if ( elt.getChildNodes().getLength() > 0 )
       {
          final Text innerText = (Text) elt.getChildNodes().item( 0 );
-         filter = innerText.getData().replaceAll( "\\(|\\)",
-                                                  Strings.EMPTY_STRING );
+         filter = innerText.getData();
       }
       else
       {

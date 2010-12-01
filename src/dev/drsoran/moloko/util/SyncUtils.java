@@ -90,7 +90,7 @@ public final class SyncUtils
    public final static Account isReadyToSync( Context context )
    {
       // Check if we are connected.
-      boolean sync = ConnectionChecker.isConnected( context );
+      boolean sync = Connection.isConnected( context );
       
       Account account = null;
       

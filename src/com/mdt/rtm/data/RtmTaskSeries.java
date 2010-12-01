@@ -123,6 +123,8 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String id;
    
+   private final String listId;
+   
    private final ParcelableDate created;
    
    private final ParcelableDate modified;
@@ -149,12 +151,13 @@ public class RtmTaskSeries extends RtmData implements
    
    
 
-   public RtmTaskSeries( String id, Date created, Date modified, String name,
-      String source, List< RtmTask > tasks, RtmTaskNotes notes,
+   public RtmTaskSeries( String id, String listId, Date created, Date modified,
+      String name, String source, List< RtmTask > tasks, RtmTaskNotes notes,
       String locationId, String url, String recurrence,
       boolean isEveryRecurrence, List< String > tags )
    {
       this.id = id;
+      this.listId = listId;
       this.created = ( created != null ) ? new ParcelableDate( created ) : null;
       this.modified = ( modified != null ) ? new ParcelableDate( modified )
                                           : null;
@@ -172,9 +175,10 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public RtmTaskSeries( Element elt )
+   public RtmTaskSeries( Element elt, String listId )
    {
       id = textNullIfEmpty( elt, "id" );
+      this.listId = listId;
       created = parseDate( elt.getAttribute( "created" ) );
       modified = parseDate( elt.getAttribute( "modified" ) );
       name = textNullIfEmpty( elt, "name" );
@@ -243,9 +247,12 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public RtmTaskSeries( Element elt, boolean deleted )
+   public RtmTaskSeries( Element elt, String listId, boolean deleted )
    {
       id = elt.getAttribute( "id" );
+      
+      // TODO: Get list ID from surrounding element
+      this.listId = listId;
       created = null;
       modified = null;
       name = null;
@@ -273,6 +280,7 @@ public class RtmTaskSeries extends RtmData implements
    public RtmTaskSeries( Parcel source )
    {
       id = source.readString();
+      listId = source.readString();
       created = source.readParcelable( null );
       modified = source.readParcelable( null );
       name = source.readString();
@@ -292,6 +300,13 @@ public class RtmTaskSeries extends RtmData implements
    public String getId()
    {
       return id;
+   }
+   
+
+
+   public String getListId()
+   {
+      return listId;
    }
    
 
@@ -417,6 +432,7 @@ public class RtmTaskSeries extends RtmData implements
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );
+      dest.writeString( listId );
       dest.writeParcelable( created, 0 );
       dest.writeParcelable( modified, 0 );
       dest.writeString( name );
@@ -456,11 +472,13 @@ public class RtmTaskSeries extends RtmData implements
       
       if ( ok )
       {
+         final String listId = (String) params[ 0 ];
+         
          try
          {
             operation = new ContentProviderSyncOperation( provider,
                                                           RtmTaskSeriesProviderPart.insertTaskSeries( provider,
-                                                                                                      (String) params[ 0 ],
+                                                                                                      listId,
                                                                                                       this ),
                                                           IContentProviderSyncOperation.Op.INSERT );
          }
@@ -577,6 +595,12 @@ public class RtmTaskSeries extends RtmData implements
                                      uri,
                                      TaskSeries.MODIFIED_DATE,
                                      taskSeriesOperation );
+               
+               if ( Strings.hasStringChanged( listId, update.listId ) )
+                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
+                                                                   .withValue( TaskSeries.LIST_ID,
+                                                                               update.listId )
+                                                                   .build() );
                
                if ( Strings.hasStringChanged( name, update.name ) )
                   taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )

@@ -20,28 +20,36 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.rtm;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import com.mdt.rtm.data.RtmLocation;
 
 
-public final class ConnectionChecker
+public class LocationWithTaskCount
 {
-   public final static boolean isConnected( Context context )
+   private final RtmLocation location;
+   
+   private final int taskCount;
+   
+   
+
+   public LocationWithTaskCount( RtmLocation location, int taskCount )
    {
-      boolean connected = false;
-      
-      final ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService( Context.CONNECTIVITY_SERVICE );
-      
-      final NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
-      
-      for ( int i = 0; i < networkInfos.length && !connected; i++ )
-      {
-         connected = networkInfos[ i ].isConnectedOrConnecting();
-      }
-      
-      return connected;
+      this.location = location;
+      this.taskCount = taskCount;
+   }
+   
+
+
+   public RtmLocation getLocation()
+   {
+      return location;
+   }
+   
+
+
+   public int getTaskCount()
+   {
+      return taskCount;
    }
 }

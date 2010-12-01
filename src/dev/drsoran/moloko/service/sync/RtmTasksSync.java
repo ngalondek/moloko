@@ -214,8 +214,27 @@ public final class RtmTasksSync
                   // INSERT: The reference element is not contained in the target
                   // list and is not deleted.
                   if ( !refTaskSeries.isDeleted() )
-                     taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) refTaskSeries ).computeContentProviderInsertOperation( provider,
-                                                                                                                                                refElement.getId() );
+                  {
+                     // SPECIAL CASE MOVE: See Issue#9 http://code.google.com/p/moloko/issues/detail?id=9
+                     //
+                     // This applies only to incremental sync and happens if a task has moved
+                     // from one list to another. Then it appears as new in the new list but not
+                     // deleted in the old list.
+                     final RtmTaskSeries existingTaskSeries = RtmTaskSeriesProviderPart.getTaskSeries( provider,
+                                                                                                       refTaskSeries.getId() );
+                     
+                     // So check if the taskseries already exists.
+                     if ( existingTaskSeries != null )
+                     {
+                        // UPDATE
+                        taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) existingTaskSeries ).computeContentProviderUpdateOperation( provider,
+                                                                                                                                                        refTaskSeries );
+                     }
+                     else
+                        // INSERT
+                        taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) refTaskSeries ).computeContentProviderInsertOperation( provider,
+                                                                                                                                                   refElement.getId() );
+                  }
                   // We never had this taskseries.
                   else
                      taskSeriesOperation = NoopContentProviderSyncOperation.INSTANCE;
@@ -229,9 +248,7 @@ public final class RtmTasksSync
                   // DELETE: The reference element is explicitly marked as
                   // deleted.
                   if ( refTaskSeries.isDeleted() )
-                  {
                      taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) tgtTaskSeries ).computeContentProviderDeleteOperation( provider );
-                  }
                   
                   // UPDATE
                   else

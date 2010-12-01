@@ -316,6 +316,42 @@ public class Rtm
    }
    
 
+   public static final class LocationOverviews implements BaseColumns,
+            LocationColumns
+   {
+      public final static String PATH = "location_overviews";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing the settings.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.location_overviews";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.location_overviews";
+      
+      /**
+       * The number of tasks having this location set
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String TASKS_COUNT = "tasks_count";
+      
+      /**
+       * The default sort order for this table
+       */
+      public final static String DEFAULT_SORT_ORDER = LOCATION_NAME;
+   }
+   
+
    protected static interface TagColumns
    {
       /**

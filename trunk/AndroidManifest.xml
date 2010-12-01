@@ -16,8 +16,8 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"
-   android:versionName="0.9.3b"
-   android:versionCode="589827">
+   android:versionName="0.9.4b"
+   android:versionCode="589828">
 
    <uses-sdk
       android:minSdkVersion="5"

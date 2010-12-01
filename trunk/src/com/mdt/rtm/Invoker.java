@@ -43,13 +43,11 @@ import org.apache.http.HttpVersion;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpClientConnection;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.ExecutionContext;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestExecutor;
 import org.apache.http.protocol.RequestConnControl;
@@ -278,7 +276,10 @@ public class Invoker
       HttpResponse response = null;
       
       final HttpGet request = new HttpGet( requestUri.toString() );
-      request.setHeader( new BasicHeader( HTTP.CHARSET_PARAM, ENCODING ) );
+      
+      // FIX: This line caused RTM to return HTTP code 400 - Bad request
+      // request.setHeader( new BasicHeader( HTTP.CHARSET_PARAM, ENCODING ) );
+      
       final String methodUri = request.getRequestLine().getUri();
       // TODO: put that back!
       // if (proxyHostName != null)

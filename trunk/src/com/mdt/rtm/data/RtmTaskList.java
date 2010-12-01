@@ -124,7 +124,7 @@ public class RtmTaskList extends RtmData implements
             series = new ArrayList< RtmTaskSeries >( children.size() );
             for ( Element seriesElt : children )
             {
-               series.add( new RtmTaskSeries( seriesElt ) );
+               series.add( new RtmTaskSeries( seriesElt, id ) );
             }
          }
       }
@@ -145,7 +145,7 @@ public class RtmTaskList extends RtmData implements
             {
                for ( Element seriesElt : children( deletedElement, "taskseries" ) )
                {
-                  series.add( new RtmTaskSeries( seriesElt, true ) );
+                  series.add( new RtmTaskSeries( seriesElt, id, true ) );
                }
             }
          }

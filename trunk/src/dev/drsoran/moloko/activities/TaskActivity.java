@@ -30,7 +30,9 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -44,6 +46,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -101,6 +104,7 @@ public class TaskActivity extends Activity
                TextView listName;
                ViewGroup tagsLayout;
                View dateTimeSection;
+               View locationSection;
                View urlSection;
                
                try
@@ -114,6 +118,7 @@ public class TaskActivity extends Activity
                   listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
                   tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
                   dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
+                  locationSection = taskContainer.findViewById( R.id.task_location_container );
                   urlSection = taskContainer.findViewById( R.id.task_url );
                }
                catch ( ClassCastException e )
@@ -158,7 +163,7 @@ public class TaskActivity extends Activity
                
                setDateTimeSection( dateTimeSection, task );
                
-               // TODO: setLocationSection
+               setLocationSection( locationSection, task );
                
                // This is necessary due to a problem with attribute
                // autoLink="all". This causes to render the text
@@ -185,7 +190,7 @@ public class TaskActivity extends Activity
    
 
 
-   private final void setDateTimeSection( View view, Task task )
+   private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
       final boolean hasEstimate = !TextUtils.isEmpty( task.getEstimate() );
@@ -264,7 +269,63 @@ public class TaskActivity extends Activity
          UIUtils.initializeTitleWithTextLayout( view,
                                                 getString( titleId ),
                                                 textBuffer.toString() );
+      }
+   }
+   
+
+
+   private void setLocationSection( View view, final Task task )
+   {
+      if ( TextUtils.isEmpty( task.getLocationId() ) )
+      {
+         view.setVisibility( View.GONE );
+      }
+      else
+      {
+         String location = task.getLocationName();
          
+         if ( TextUtils.isEmpty( location ) )
+         {
+            location = "Lon: " + task.getLongitude() + ", Lat: "
+               + task.getLatitude();
+         }
+         
+         boolean locationIsClickable = task.isViewable();
+         
+         if ( locationIsClickable )
+         {
+            final LocationChooser locationChooser = new LocationChooser( this,
+                                                                         task );
+            
+            // Check if we can click the location
+            if ( locationChooser.hasIntents() )
+            {
+               final SpannableString clickableLocation = new SpannableString( location );
+               clickableLocation.setSpan( new ClickableSpan()
+               {
+                  @Override
+                  public void onClick( View widget )
+                  {
+                     locationChooser.showChooser();
+                  }
+               }, 0, clickableLocation.length(), 0 );
+               
+               UIUtils.initializeTitleWithTextLayout( view.findViewById( R.id.task_location ),
+                                                      getString( R.string.task_location ),
+                                                      clickableLocation );
+            }
+            else
+            {
+               locationIsClickable = false;
+            }
+         }
+         
+         if ( !locationIsClickable )
+         {
+            UIUtils.initializeTitleWithTextLayout( view.findViewById( R.id.task_location ),
+                                                   getString( R.string.task_location ),
+                                                   location );
+         }
       }
    }
    
@@ -349,4 +410,5 @@ public class TaskActivity extends Activity
          }
       }
    }
+   
 }

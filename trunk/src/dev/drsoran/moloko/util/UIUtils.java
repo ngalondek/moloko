@@ -30,9 +30,11 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.Time;
+import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.view.InflateException;
 import android.view.Menu;
@@ -42,6 +44,7 @@ import android.view.ViewGroup;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.Task;
 
@@ -272,6 +275,31 @@ public final class UIUtils
                textView.setVisibility( View.VISIBLE );
                textView.setText( text );
             }
+         }
+         catch ( ClassCastException e )
+         {
+            ok = false;
+         }
+      
+      return ok;
+   }
+   
+
+
+   public final static boolean initializeTitleWithTextLayout( View parent,
+                                                              String title,
+                                                              Spannable text )
+   {
+      boolean ok = initializeTitleWithTextLayout( parent,
+                                                  title,
+                                                  text.toString() );
+      
+      if ( ok && text != null )
+         try
+         {
+            final TextView textView = (TextView) parent.findViewById( R.id.title_with_text_text );
+            textView.setMovementMethod( LinkMovementMethod.getInstance() );
+            textView.setText( text, BufferType.SPANNABLE );
          }
          catch ( ClassCastException e )
          {

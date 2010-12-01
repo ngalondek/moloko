@@ -152,6 +152,12 @@
    <string name="task_datetime_estimate_inline">%1$s estimated</string>
    <string name="task_datetime_recurr_inline">Repeat %1$s</string>
    <string name="task_datetime_err_recurr">The recurrence pattern could not be evaluated</string>
+   <string name="task_location">Location</string>
+   <string name="task_url">URL</string>
+   <!-- Dialogs -->
+      <string name="task_dlg_choose_location_app">Open location with...</string>
+   <!-- Toasts -->
+      <string name="task_toast_no_google_maps">Location could not be displayed due to missing Google Maps App.</string>
    		
    <!-- TaskLists activity -->
    <string name="tasklists_no_lists">There are no lists</string>

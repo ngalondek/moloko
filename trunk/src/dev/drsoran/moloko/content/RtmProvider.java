@@ -132,7 +132,8 @@ public class RtmProvider extends ContentProvider
       parts.addAll( Arrays.asList( new IProviderPart[]
       { new TasksProviderPart( dbHelper ),
        new ListOverviewsProviderPart( dbHelper ),
-       new TagOverviewsProviderPart( dbHelper ) } ) );
+       new TagOverviewsProviderPart( dbHelper ),
+       new LocationOverviewsProviderPart( dbHelper ) } ) );
       
       return true;
    }

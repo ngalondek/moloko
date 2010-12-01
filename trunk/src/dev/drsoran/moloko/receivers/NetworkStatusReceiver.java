@@ -29,7 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.ConnectionChecker;
+import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm;
 
@@ -52,7 +52,7 @@ public class NetworkStatusReceiver extends BroadcastReceiver
          {
             // Background data allowed
             if ( cm.getBackgroundDataSetting()
-               && ConnectionChecker.isConnected( context.getApplicationContext() ) )
+               && Connection.isConnected( context.getApplicationContext() ) )
             {
                // This respects the SYNC_INTERVAL_MANUAL setting
                SyncUtils.scheduleSyncAlarm( context.getApplicationContext() );

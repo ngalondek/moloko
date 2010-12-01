@@ -51,7 +51,7 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.ConnectionChecker;
+import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.SyncUtils;
 
 
@@ -177,7 +177,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    {
       messageText.setText( null );
       
-      if ( ConnectionChecker.isConnected( this ) )
+      if ( Connection.isConnected( this ) )
       {
          final ApplicationInfo applicationInfo = new ApplicationInfo( apiKeyEdit.getText()
                                                                                 .toString(),

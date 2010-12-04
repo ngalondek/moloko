@@ -326,7 +326,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          final RtmListWithTaskCount rtmList = lists.get( groupPosition );
          
          final String listNameStr = rtmList.getName();
-         final int numTasks = rtmList.getIncompletedTaskCount();
+         final int numTasks = rtmList.getIncompleteTaskCount();
          
          listName.setText( listNameStr );
          

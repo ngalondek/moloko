@@ -42,7 +42,7 @@ import com.mdt.rtm.data.RtmLocation;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.LocationOverviews;
 import dev.drsoran.provider.Rtm.Locations;
-import dev.drsoran.provider.Rtm.TagOverviews;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.LocationWithTaskCount;
 
@@ -62,7 +62,9 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
-   private final static String query;
+   private final static String QUERY;
+   
+   private final static String SUBQUERY_NON_COMPLETED;
    
    static
    {
@@ -70,46 +72,57 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
                                                     PROJECTION_MAP,
                                                     COL_INDICES );
       
-      query = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                   false,
-                                                   
-                                                   // tables
-                                                   TaskSeries.PATH + ","
-                                                      + Locations.PATH,
-                                                   
-                                                   // columns
-                                                   new String[]
-                                                   {
-                                                    TaskSeries.PATH + "."
-                                                       + TaskSeries._ID,
-                                                    Locations.PATH + "."
-                                                       + Locations._ID + " AS "
-                                                       + LocationOverviews._ID,
-                                                    Locations.LOCATION_NAME,
-                                                    Locations.LONGITUDE,
-                                                    Locations.LATITUDE,
-                                                    Locations.ADDRESS,
-                                                    Locations.VIEWABLE,
-                                                    Locations.ZOOM,
-                                                    "count("
-                                                       + TaskSeries.PATH
-                                                       + "."
-                                                       + TaskSeries._ID
-                                                       + ") AS "
-                                                       + LocationOverviews.TASKS_COUNT },
-                                                   
-                                                   // where
-                                                   TaskSeries.PATH + "."
-                                                      + TaskSeries.LOCATION_ID
-                                                      + "=" + Locations.PATH
-                                                      + "." + Locations._ID,
-                                                   
-                                                   // group by
-                                                   Locations.PATH + "."
-                                                      + Locations._ID,
-                                                   null,
-                                                   null,
-                                                   null );
+      SUBQUERY_NON_COMPLETED = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                                    false,
+                                                                    
+                                                                    // tables
+                                                                    TaskSeries.PATH
+                                                                       + ","
+                                                                       + RawTasks.PATH,
+                                                                    
+                                                                    // columns
+                                                                    new String[]
+                                                                    {
+                                                                     TaskSeries.PATH
+                                                                        + "."
+                                                                        + TaskSeries._ID
+                                                                        + " AS series_id",
+                                                                     TaskSeries.LOCATION_ID,
+                                                                     RawTasks.COMPLETED_DATE },
+                                                                    
+                                                                    // where
+                                                                    "series_id ="
+                                                                       + RawTasks.PATH
+                                                                       + "."
+                                                                       + RawTasks.TASKSERIES_ID
+                                                                       + " AND "
+                                                                       
+                                                                       // Only non-completed tasks
+                                                                       + RawTasks.COMPLETED_DATE
+                                                                       + " IS NULL",
+                                                                    null,
+                                                                    null,
+                                                                    null,
+                                                                    null );
+      
+      QUERY = new StringBuilder( "SELECT " ).append( Locations.PATH )
+                                            .append( ".*, count( subQuery.series_id ) AS " )
+                                            .append( LocationOverviews.TASKS_COUNT )
+                                            .append( " FROM " )
+                                            .append( Locations.PATH )
+                                            .append( " LEFT OUTER JOIN (" )
+                                            .append( SUBQUERY_NON_COMPLETED )
+                                            .append( ") AS subQuery ON " )
+                                            .append( Locations.PATH )
+                                            .append( "." )
+                                            .append( Locations._ID )
+                                            .append( " = " )
+                                            .append( TaskSeries.LOCATION_ID )
+                                            .append( " GROUP BY " )
+                                            .append( Locations.PATH )
+                                            .append( "." )
+                                            .append( Locations._ID )
+                                            .toString();
    }
    
    
@@ -155,7 +168,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query tag overview failed. ", e );
+         Log.e( TAG, "Query location overview failed. ", e );
          location = null;
       }
       finally
@@ -170,43 +183,43 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
 
 
    public final static ArrayList< LocationWithTaskCount > getLocationsOverview( ContentProviderClient client,
-                                                                                boolean excludeCompleted )
+                                                                                String selection )
    {
       ArrayList< LocationWithTaskCount > locations = null;
       
-      // try
-      // {
-      // final Cursor c = client.query( LocationOverviews.CONTENT_URI,
-      // PROJECTION,
-      // excludeCompleted ? "subQuery."
-      // + RawTasks.COMPLETED_DATE
-      // + " IS NULL" : null,
-      // null,
-      // TagOverviews.DEFAULT_SORT_ORDER );
-      //         
-      // locations = new ArrayList< TagWithTaskCount >();
-      //         
-      // boolean ok = true;
-      //         
-      // if ( c.getCount() > 0 )
-      // {
-      // for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-      // {
-      // final TagWithTaskCount tag = createTagOverview( c );
-      // locations.add( tag );
-      // }
-      // }
-      //         
-      // if ( !ok )
-      // locations = null;
-      //         
-      // c.close();
-      // }
-      // catch ( RemoteException e )
-      // {
-      // Log.e( TAG, "Query tags overview failed. ", e );
-      // locations = null;
-      // }
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( LocationOverviews.CONTENT_URI,
+                           PROJECTION,
+                           selection,
+                           null,
+                           LocationOverviews.DEFAULT_SORT_ORDER );
+         
+         boolean ok = c != null;
+         
+         if ( ok && c.getCount() > 0 )
+         {
+            locations = new ArrayList< LocationWithTaskCount >( c.getCount() );
+            
+            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            {
+               final LocationWithTaskCount location = createLocationOverview( c );
+               locations.add( location );
+            }
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query location overviews failed. ", e );
+         locations = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
       
       return locations;
    }
@@ -215,7 +228,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
 
    public LocationOverviewsProviderPart( SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, TagOverviews.PATH );
+      super( dbAccess, LocationOverviews.PATH );
    }
    
 
@@ -229,7 +242,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
    {
       final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
                                                                         .append( " FROM (" )
-                                                                        .append( query )
+                                                                        .append( QUERY )
                                                                         .append( " )" );
       
       if ( !TextUtils.isEmpty( selection ) )
@@ -249,7 +262,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
       
       final String finalQuery = stringBuilder.toString();
       
-      // Get the database and run the query
+      // Get the database and run the QUERY
       final SQLiteDatabase db = dbAccess.getReadableDatabase();
       final Cursor cursor = db.rawQuery( finalQuery, null );
       
@@ -269,7 +282,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
    @Override
    protected String getContentType()
    {
-      return TagOverviews.CONTENT_TYPE;
+      return LocationOverviews.CONTENT_TYPE;
    }
    
 
@@ -277,7 +290,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
    @Override
    protected Uri getContentUri()
    {
-      return TagOverviews.CONTENT_URI;
+      return LocationOverviews.CONTENT_URI;
    }
    
 
@@ -285,7 +298,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
    @Override
    protected String getDefaultSortOrder()
    {
-      return TagOverviews.DEFAULT_SORT_ORDER;
+      return LocationOverviews.DEFAULT_SORT_ORDER;
    }
    
 

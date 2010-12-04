@@ -94,17 +94,51 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< RtmLocation > getAllLocations( ContentProviderClient client )
+   public final static RtmLocation getLocation( ContentProviderClient client,
+                                                String selection )
    {
-      ArrayList< RtmLocation > locations = null;
+      RtmLocation location = null;
+      Cursor c = null;
       
       try
       {
-         final Cursor c = client.query( Locations.CONTENT_URI,
-                                        PROJECTION,
-                                        null,
-                                        null,
-                                        null );
+         c = client.query( Locations.CONTENT_URI,
+                           PROJECTION,
+                           selection,
+                           null,
+                           null );
+         
+         boolean ok = c.getCount() > 0 && c.moveToFirst();
+         
+         if ( ok )
+         {
+            location = createLocation( c );
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query location failed. ", e );
+         location = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return location;
+   }
+   
+
+
+   public final static ArrayList< RtmLocation > getAllLocations( ContentProviderClient client )
+   {
+      ArrayList< RtmLocation > locations = null;
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Locations.CONTENT_URI, PROJECTION, null, null, null );
          
          locations = new ArrayList< RtmLocation >( c.getCount() );
          
@@ -114,34 +148,41 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
             
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
-               int zoom = 0;
-               
-               if ( !c.isNull( COL_INDICES.get( Locations.ZOOM ) ) )
-                  zoom = c.getInt( COL_INDICES.get( Locations.ZOOM ) );
-               
-               final RtmLocation location = new RtmLocation( c.getString( COL_INDICES.get( Locations._ID ) ),
-                                                             c.getString( COL_INDICES.get( Locations.LOCATION_NAME ) ),
-                                                             c.getFloat( COL_INDICES.get( Locations.LONGITUDE ) ),
-                                                             c.getFloat( COL_INDICES.get( Locations.LATITUDE ) ),
-                                                             Queries.getOptString( c,
-                                                                                   COL_INDICES.get( Locations.ADDRESS ) ),
-                                                             c.getInt( COL_INDICES.get( Locations.VIEWABLE ) ) == 1
-                                                                                                                   ? true
-                                                                                                                   : false,
-                                                             zoom );
+               final RtmLocation location = createLocation( c );
                locations.add( location );
             }
          }
-         
-         c.close();
       }
       catch ( RemoteException e )
       {
          Log.e( TAG, "Query locations failed. ", e );
          locations = null;
       }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
       
       return locations;
+   }
+   
+
+
+   private static RtmLocation createLocation( Cursor c )
+   {
+      return new RtmLocation( c.getString( COL_INDICES.get( Locations._ID ) ),
+                              c.getString( COL_INDICES.get( Locations.LOCATION_NAME ) ),
+                              c.getFloat( COL_INDICES.get( Locations.LONGITUDE ) ),
+                              c.getFloat( COL_INDICES.get( Locations.LATITUDE ) ),
+                              Queries.getOptString( c,
+                                                    COL_INDICES.get( Locations.ADDRESS ) ),
+                              c.getInt( COL_INDICES.get( Locations.VIEWABLE ) ) == 1
+                                                                                    ? true
+                                                                                    : false,
+                              Queries.getOptInt( c,
+                                                 COL_INDICES.get( Locations.ZOOM ),
+                                                 0 ) );
    }
    
 

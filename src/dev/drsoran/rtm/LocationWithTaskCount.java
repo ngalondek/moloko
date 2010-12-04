@@ -41,14 +41,14 @@ public class LocationWithTaskCount
    
 
 
-   public RtmLocation getLocation()
+   public RtmLocation getRtmLocation()
    {
       return location;
    }
    
 
 
-   public int getTaskCount()
+   public int getIncompleteTaskCount()
    {
       return taskCount;
    }

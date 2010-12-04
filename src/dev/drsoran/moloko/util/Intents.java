@@ -27,12 +27,17 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.mdt.rtm.data.RtmLocation;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
+import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -181,6 +186,43 @@ public final class Intents
       config.putString( UIUtils.DISABLE_TAG_EQUALS, tagText );
       
       intent.putExtra( AbstractTasksListActivity.ADAPTER_CONFIG, config );
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createOpenLocationIntentByName( Context context,
+                                                              String name )
+   {
+      Intent intent = null;
+      
+      ContentProviderClient client = context.getContentResolver()
+                                            .acquireContentProviderClient( Locations.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final RtmLocation location = RtmLocationsProviderPart.getLocation( client,
+                                                                            Locations.LOCATION_NAME
+                                                                               + " like '"
+                                                                               + name
+                                                                               + "'" );
+         
+         if ( location != null )
+         {
+            intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
+            
+            intent.putExtra( AbstractTasksListActivity.FILTER_EVALUATED,
+                             Tasks.LOCATION_ID + " = " + location.id );
+            intent.putExtra( AbstractTasksListActivity.TITLE,
+                             context.getString( R.string.taskslist_titlebar,
+                                                location.name ) );
+            intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
+                             R.drawable.ic_title_tag );
+         }
+         
+         client.release();
+      }
       
       return intent;
    }

@@ -9,6 +9,7 @@ RTM features of:
     * tasks
     * tags
     * notes
+    * locations
 
 RTM smart search syntax operators. Also used for smart lists:
 See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
@@ -45,12 +46,14 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
  * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
  * _time estimation string_ is an [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm RTM time format] string.
 
-Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.
+Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.<br>
+Support for *HTTP* and *HTTPS* access of RTM including proxy settings.
+
+
 
 === TODO ===
  ==== Next steps ===
-    * support for HTTPS
-    * Groups, Contacts, Locations
+    * Groups, Contacts
 
  ==== later steps ===        
     * Write access

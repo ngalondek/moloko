@@ -9,7 +9,7 @@ RTM features of:
     * tasks
     * tags
     * notes
-    * locations
+    * locations (including Google Maps and Navigation)
 
 RTM smart search syntax operators. Also used for smart lists:
 See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
@@ -62,7 +62,6 @@ Support for *HTTP* and *HTTPS* access of RTM including proxy settings.
  ==== Unsupported RTM features ====
     * Groups
     * Contacts
-    * Locations
     * Write access, see RTMAccessLevels
     * Delete access, see RTMAccessLevels
 

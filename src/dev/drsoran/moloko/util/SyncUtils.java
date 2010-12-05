@@ -22,7 +22,10 @@
 
 package dev.drsoran.moloko.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.net.ssl.SSLException;
 
 import android.accounts.Account;
 import android.app.AlarmManager;
@@ -31,10 +34,14 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
+
+import com.mdt.rtm.ServiceInternalException;
+
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
@@ -50,6 +57,35 @@ public final class SyncUtils
       + SyncUtils.class.getSimpleName();
    
    
+
+   public final static void handleServiceInternalException( ServiceInternalException exception,
+                                                            String tag,
+                                                            SyncResult syncResult )
+   {
+      final Exception internalException = exception.getEnclosedException();
+      
+      if ( internalException != null )
+      {
+         Log.e( TAG, exception.responseMessage, internalException );
+         
+         if ( internalException instanceof SSLException
+            || internalException instanceof IOException )
+         {
+            ++syncResult.stats.numIoExceptions;
+         }
+         else
+         {
+            ++syncResult.stats.numParseExceptions;
+         }
+      }
+      else
+      {
+         Log.e( TAG, exception.responseMessage );
+         ++syncResult.stats.numIoExceptions;
+      }
+   }
+   
+
 
    public final static void requestSync( Context context, boolean manual )
    {

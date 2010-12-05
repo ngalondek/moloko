@@ -160,7 +160,11 @@ public class Authenticator extends AbstractAccountAuthenticator
          {
             try
             {
-               new ServiceImpl( new ApplicationInfo( apiKey, sharedSecret, null ) ).auth_checkToken( authToken );
+               ServiceImpl.getInstance( context,
+                                        new ApplicationInfo( apiKey,
+                                                             sharedSecret,
+                                                             null ) )
+                          .auth_checkToken( authToken );
                
                if ( !authTokenExpired )
                {

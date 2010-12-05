@@ -52,7 +52,7 @@ public class RtmService extends Service
       {
          try
          {
-            serviceImpl = new ServiceImpl( info );
+            serviceImpl = ServiceImpl.getInstance( RtmService.this, info );
          }
          catch ( ServiceInternalException e )
          {
@@ -210,7 +210,7 @@ public class RtmService extends Service
       IBinder binder = null;
       
       if ( intent != null
-           && intent.getAction().equals( IRtmService.class.getName() ) )
+         && intent.getAction().equals( IRtmService.class.getName() ) )
       {
          binder = stub;
       }

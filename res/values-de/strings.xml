@@ -75,6 +75,7 @@
    <string name="phr_on">An</string>
    <string name="phr_off">Aus</string>
    <string name="phr_manuell">Manuell</string>
+   <string name="phr_password_set">gesetzt</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -174,11 +175,18 @@
       <string name="auth_err_cause_inv_login_url">Ungültige Login-URL empfangen</string>
       
    <!-- AccountPreferences + activity -->
-   <string name="auth_pref_title">Allgemeine Einstellungen</string>
-   <string name="auth_pref_account_summary">Synchronisierung, RTM-Zugriffsebene usw.</string>
-   <string name="auth_pref_perm_title">Zugriffsebene</string>
-   <string name="auth_pref_perm_value">%1$s - zum Ändern klicken</string>    
-   <string name="auth_pref_perm_has_not">Keine Zugangsberechtigung</string>      
+   <string name="acc_pref_title">Allgemeine Einstellungen</string>
+   <string name="acc_pref_account_summary">Synchronisierung, HTTP(S) Einstellungen</string>
+   <string name="acc_pref_perm_title">Zugriffsebene</string>
+   <string name="acc_pref_perm_value">%1$s - zum Ändern klicken</string>    
+   <string name="acc_pref_perm_has_not">Keine Zugangsberechtigung</string>
+   <string name="acc_pref_conn_cat_title">Verbindung</string>
+   <string name="acc_pref_conn_use_https">HTTPS verwenden (empfohlen)</string>
+   <string name="acc_pref_conn_use_proxy">Proxy verwenden</string>
+   <string name="acc_pref_conn_proxy_host">Hostname</string>
+   <string name="acc_pref_conn_proxy_port">Port</string>
+   <string name="acc_pref_conn_proxy_user">Benutzername</string>
+   <string name="acc_pref_conn_proxy_pass">Password</string>
    
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>

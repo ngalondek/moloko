@@ -28,6 +28,12 @@ import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
+
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmData;
 import com.mdt.rtm.data.RtmFrob;
@@ -42,6 +48,7 @@ import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.RtmSettings;
 
 
@@ -54,9 +61,14 @@ import dev.drsoran.rtm.RtmSettings;
 public class ServiceImpl implements Service
 {
    
-   public final static String SERVER_HOST_NAME = "api.rememberthemilk.com";
+   private final static String TAG = "Moloko.*"
+      + ServiceImpl.class.getSimpleName();
    
-   public final static int SERVER_PORT_NUMBER = 80;
+   public final static String SERVER_HOST_NAME = "www.rememberthemilk.com";
+   
+   public final static int SERVER_PORT_NUMBER_HTTP = 80;
+   
+   public final static int SERVER_PORT_NUMBER_HTTPS = 443;
    
    public final static String REST_SERVICE_URL_POSTFIX = "/services/rest/";
    
@@ -72,15 +84,88 @@ public class ServiceImpl implements Service
    
    
 
-   public ServiceImpl( ApplicationInfo applicationInfo )
+   public static ServiceImpl getInstance( Context context,
+                                          ApplicationInfo applicationInfo ) throws ServiceInternalException
+   {
+      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+      
+      if ( prefs == null )
+      {
+         Log.w( TAG, "Unable to access the settings." );
+      }
+      
+      final boolean useHttps = prefs == null
+         || prefs.getBoolean( context.getString( R.string.key_conn_use_https ),
+                              true );
+      
+      final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo,
+                                                       !useHttps );
+      
+      if ( prefs != null
+         && prefs.getBoolean( context.getString( R.string.key_conn_use_proxy ),
+                              false ) )
+      {
+         final String hostname = prefs.getString( context.getString( R.string.key_conn_proxy_host ),
+                                                  null );
+         final String port = prefs.getString( context.getString( R.string.key_conn_proxy_port ),
+                                              null );
+         final String user = prefs.getString( context.getString( R.string.key_conn_proxy_user ),
+                                              null );
+         final String pass = prefs.getString( context.getString( R.string.key_conn_proxy_pass ),
+                                              null );
+         
+         boolean ok = true;
+         
+         int portNum = 0;
+         
+         if ( TextUtils.isEmpty( hostname ) )
+         {
+            Log.w( TAG, "Unable to use proxy, no hostname." );
+            ok = false;
+         }
+         if ( ok && TextUtils.isEmpty( port ) )
+         {
+            Log.w( TAG, "Unable to use proxy, no port." );
+            ok = false;
+         }
+         if ( ok )
+         {
+            try
+            {
+               portNum = Integer.parseInt( port );
+            }
+            catch ( NumberFormatException nfe )
+            {
+               ok = false;
+               Log.w( TAG, "Unable to use proxy, invalid port.", nfe );
+            }
+         }
+         
+         if ( ok )
+         {
+            serviceImpl.setHttpProxySettings( hostname, portNum, user, pass );
+         }
+      }
+      
+      return serviceImpl;
+   }
+   
+
+
+   protected ServiceImpl( ApplicationInfo applicationInfo, boolean useHttp )
       throws ServiceInternalException
    {
       invoker = new Invoker( SERVER_HOST_NAME,
-                             SERVER_PORT_NUMBER,
+                             ( useHttp ) ? SERVER_PORT_NUMBER_HTTP
+                                        : SERVER_PORT_NUMBER_HTTPS,
                              REST_SERVICE_URL_POSTFIX,
                              applicationInfo );
+      
+      invoker.setUseHttp( useHttp );
+      
       this.applicationInfo = applicationInfo;
       prefs = new Prefs();
+      
       if ( applicationInfo.getAuthToken() != null )
       {
          currentAuthToken = applicationInfo.getAuthToken();

@@ -74,6 +74,12 @@
    <string name="key_notify_due_tasks_vibrate">notify_due_tasks_vibrate</string>
    <string name="key_notify_due_tasks_led">notify_due_tasks_led</string>
    <string name="key_notify_permanent">notify_permanent</string>
+   <string name="key_conn_use_https">conn_use_https</string>
+   <string name="key_conn_use_proxy">conn_use_proxy</string>
+   <string name="key_conn_proxy_host">conn_proxy_host</string>
+   <string name="key_conn_proxy_port">conn_proxy_port</string>
+   <string name="key_conn_proxy_user">conn_proxy_user</string>
+   <string name="key_conn_proxy_pass">conn_proxy_pass</string>
    
    <!-- Time phrases -->
    <string name="time_interval_15min">Every 15 min.</string>
@@ -110,6 +116,7 @@
    <string name="phr_on">On</string>
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manual</string>
+   <string name="phr_password_set">set</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>
@@ -222,14 +229,21 @@
       <string name="auth_err_cause_inv_login_url">Invalid Login-URL was received</string>
       
    <!-- AccountPreferences + activity -->
-   <string name="auth_pref_title">General settings</string>
-   <string name="auth_pref_account_tilte">@string/app_account_preferences</string>
-   <string name="auth_pref_account_summary">Synchronization, RTM access level etc.</string>
-   <string name="auth_pref_sync_interval_title">@string/phr_sync</string>
-   <string name="auth_pref_sync_interval_default_value">86400000</string>
-   <string name="auth_pref_perm_title">Access Level</string>
-   <string name="auth_pref_perm_value">%1$s - click to change</string>    
-   <string name="auth_pref_perm_has_not">No permission</string>     
+   <string name="acc_pref_title">General settings</string>
+   <string name="acc_pref_account_tilte">@string/app_account_preferences</string>
+   <string name="acc_pref_account_summary">Synchronization, HTTP(S) settings</string>
+   <string name="acc_pref_sync_interval_title">@string/phr_sync</string>
+   <string name="acc_pref_sync_interval_default_value">86400000</string>
+   <string name="acc_pref_perm_title">Access Level</string>
+   <string name="acc_pref_perm_value">%1$s - click to change</string>    
+   <string name="acc_pref_perm_has_not">No permission</string>
+   <string name="acc_pref_conn_cat_title">Connection</string>
+   <string name="acc_pref_conn_use_https">Use HTTPS (recommended)</string>
+   <string name="acc_pref_conn_use_proxy">Use Proxy</string>
+   <string name="acc_pref_conn_proxy_host">Hostname</string>
+   <string name="acc_pref_conn_proxy_port">Port</string>
+   <string name="acc_pref_conn_proxy_user">Username</string>
+   <string name="acc_pref_conn_proxy_pass">Password</string>
    
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Settings</string>

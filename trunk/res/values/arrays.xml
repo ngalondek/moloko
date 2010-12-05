@@ -61,7 +61,7 @@
    </string-array>
 
    <string-array
-      name="moloko_auth_prefs_sync_interval_entries">
+      name="moloko_acc_prefs_sync_interval_entries">
       <item>@string/phr_manuell</item>
       <item>@string/time_interval_15min</item>
       <item>@string/time_interval_30min</item>
@@ -74,7 +74,7 @@
       These values are in ms
    -->
    <string-array
-      name="moloko_auth_prefs_sync_interval_values">
+      name="moloko_acc_prefs_sync_interval_values">
       <item>-1</item>
       <item>900000</item>
       <item>1800000</item>

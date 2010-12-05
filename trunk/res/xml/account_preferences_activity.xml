@@ -18,12 +18,12 @@
    android:orderingFromXml="true">
 
    <dev.drsoran.moloko.auth.prefs.SyncIntervalPreference
-      android:title="@string/auth_pref_sync_interval_title"
+      android:title="@string/acc_pref_sync_interval_title"
       android:summary="%s"
       android:key="@string/key_sync_inverval"
-      android:entries="@array/moloko_auth_prefs_sync_interval_entries"
-      android:entryValues="@array/moloko_auth_prefs_sync_interval_values"
-      android:defaultValue="@string/auth_pref_sync_interval_default_value" />
+      android:entries="@array/moloko_acc_prefs_sync_interval_entries"
+      android:entryValues="@array/moloko_acc_prefs_sync_interval_values"
+      android:defaultValue="@string/acc_pref_sync_interval_default_value" />
 
    <!--
       This has been disabled due to lack of account API to update an authToken
@@ -32,5 +32,55 @@
       <dev.drsoran.moloko.auth.prefs.AccountAccessLevelPreference
       android:title="@string/auth_pref_perm_title" />
    -->
+
+   <PreferenceCategory
+      android:title="@string/acc_pref_conn_cat_title">
+
+      <CheckBoxPreference
+         android:title="@string/acc_pref_conn_use_https"
+         android:key="@string/key_conn_use_https"
+         android:summaryOn="@string/phr_on"
+         android:summaryOff="@string/phr_off"
+         android:defaultValue="true" />
+
+      <CheckBoxPreference
+         android:title="@string/acc_pref_conn_use_proxy"
+         android:key="@string/key_conn_use_proxy"
+         android:summaryOn="@string/phr_on"
+         android:summaryOff="@string/phr_off"
+         android:defaultValue="false" />
+
+      <dev.drsoran.moloko.prefs.AutoSummaryEditTextPreference
+         android:title="@string/acc_pref_conn_proxy_host"
+         android:summary="%s"
+         android:key="@string/key_conn_proxy_host"
+         android:hint="@string/acc_pref_conn_proxy_host"
+         android:inputType="textUri"
+         android:dependency="@string/key_conn_use_proxy" />
+
+      <dev.drsoran.moloko.prefs.AutoSummaryEditTextPreference
+         android:title="@string/acc_pref_conn_proxy_port"
+         android:summary="%s"
+         android:key="@string/key_conn_proxy_port"
+         android:hint="@string/acc_pref_conn_proxy_port"
+         android:numeric="integer"
+         android:inputType="number"
+         android:defaultValue="8080"
+         android:dependency="@string/key_conn_use_proxy" />
+
+      <dev.drsoran.moloko.prefs.AutoSummaryEditTextPreference
+         android:title="@string/acc_pref_conn_proxy_user"
+         android:summary="%s"
+         android:key="@string/key_conn_proxy_user"
+         android:hint="@string/acc_pref_conn_proxy_user"
+         android:inputType="text"
+         android:dependency="@string/key_conn_use_proxy" />
+
+      <dev.drsoran.moloko.prefs.PasswordPreference
+         android:title="@string/acc_pref_conn_proxy_pass"
+         android:key="@string/key_conn_proxy_pass"
+         android:hint="@string/acc_pref_conn_proxy_pass"
+         android:dependency="@string/key_conn_use_proxy" />
+   </PreferenceCategory>
 
 </PreferenceScreen>

@@ -31,6 +31,7 @@ import android.util.Log;
 
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
+import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
@@ -38,6 +39,7 @@ import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
+import dev.drsoran.moloko.util.SyncUtils;
 
 
 public final class RtmLocationsSync
@@ -82,7 +84,14 @@ public final class RtmLocationsSync
                ++syncResult.stats.numIoExceptions;
                break;
             default :
-               ++syncResult.stats.numParseExceptions;
+               if ( e instanceof ServiceInternalException )
+               {
+                  SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
+                                                            TAG,
+                                                            syncResult );
+               }
+               else
+                  ++syncResult.stats.numParseExceptions;
                break;
          }
          

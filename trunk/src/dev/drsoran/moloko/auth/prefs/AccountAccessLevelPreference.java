@@ -79,13 +79,13 @@ public class AccountAccessLevelPreference extends InfoTextPreference implements
             
             if ( !TextUtils.isEmpty( perm ) )
             {
-               setInfoText( getContext().getString( R.string.auth_pref_perm_value,
+               setInfoText( getContext().getString( R.string.acc_pref_perm_value,
                                                     perm ) );
             }
             else
             {
-               setInfoText( getContext().getString( R.string.auth_pref_perm_value,
-                                                    getContext().getString( R.string.auth_pref_perm_has_not ) ) );
+               setInfoText( getContext().getString( R.string.acc_pref_perm_value,
+                                                    getContext().getString( R.string.acc_pref_perm_has_not ) ) );
             }
          }
          else

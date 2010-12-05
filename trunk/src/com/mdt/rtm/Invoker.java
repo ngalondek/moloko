@@ -23,7 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,29 +31,21 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.net.ssl.SSLException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.DefaultHttpClientConnection;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.BasicHttpProcessor;
-import org.apache.http.protocol.ExecutionContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestExecutor;
-import org.apache.http.protocol.RequestConnControl;
-import org.apache.http.protocol.RequestContent;
-import org.apache.http.protocol.RequestExpectContinue;
-import org.apache.http.protocol.RequestTargetHost;
-import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -115,21 +106,15 @@ public class Invoker
    
    private String proxyPassword;
    
+   private final String hostname;
+   
+   private int port;
+   
    private String serviceRelativeUri;
    
-   private HttpHost host;
+   private BasicHttpParams httpParams;
    
-   private HttpContext context;
-   
-   private BasicHttpParams globalHttpParams;
-   
-   private DefaultConnectionReuseStrategy connectionStrategy;
-   
-   private BasicHttpProcessor httpProcessor;
-   
-   private HttpRequestExecutor httpExecutor;
-   
-   private DefaultHttpClientConnection connection;
+   private boolean useHttp = false;
    
    
 
@@ -137,29 +122,15 @@ public class Invoker
       String serviceRelativeUri, ApplicationInfo applicationInfo )
       throws ServiceInternalException
    {
+      this.hostname = serverHostName;
+      this.port = serverPortNumber;
       this.serviceRelativeUri = serviceRelativeUri;
-      host = new HttpHost( serverHostName, serverPortNumber );
-      context = new BasicHttpContext( null );
-      context.setAttribute( ExecutionContext.HTTP_TARGET_HOST, host );
-      globalHttpParams = new BasicHttpParams();
-      HttpProtocolParams.setVersion( globalHttpParams, HttpVersion.HTTP_1_1 );
-      HttpProtocolParams.setContentCharset( globalHttpParams, ENCODING );
-      HttpProtocolParams.setUserAgent( globalHttpParams,
-                                       "Jakarta-HttpComponents/1.1" );
-      HttpProtocolParams.setUseExpectContinue( globalHttpParams, true );
-      connectionStrategy = new DefaultConnectionReuseStrategy();
       
-      httpProcessor = new BasicHttpProcessor();
-      // Required protocol interceptors
-      httpProcessor.addInterceptor( new RequestContent() );
-      httpProcessor.addInterceptor( new RequestTargetHost() );
-      // Recommended protocol interceptors
-      httpProcessor.addInterceptor( new RequestConnControl() );
-      httpProcessor.addInterceptor( new RequestUserAgent() );
-      httpProcessor.addInterceptor( new RequestExpectContinue() );
-      
-      httpExecutor = new HttpRequestExecutor();
-      // httpExecutor.setParams(globalHttpParams);
+      httpParams = new BasicHttpParams();
+      HttpProtocolParams.setVersion( httpParams, HttpVersion.HTTP_1_1 );
+      HttpProtocolParams.setContentCharset( httpParams, ENCODING );
+      HttpProtocolParams.setUserAgent( httpParams, "Jakarta-HttpComponents/4.0" );
+      HttpProtocolParams.setUseExpectContinue( httpParams, true );
       
       lastInvocation = System.currentTimeMillis();
       this.applicationInfo = applicationInfo;
@@ -190,29 +161,9 @@ public class Invoker
    
 
 
-   private void prepareConnection() throws ServiceInternalException
+   public void setUseHttp( boolean use )
    {
-      connection = new DefaultHttpClientConnection();
-      
-      // We open the necessary socket connection
-      try
-      {
-         if ( connection.isOpen() == false )
-         {
-            final Socket socket = new Socket( host.getHostName(),
-                                              host.getPort() );
-            connection.bind( socket, globalHttpParams );
-         }
-      }
-      catch ( Exception exception )
-      {
-         final StringBuffer message = new StringBuffer( "Cannot open a socket connection to '" ).append( host.getHostName() )
-                                                                                                .append( "' on port number " )
-                                                                                                .append( host.getPort() )
-                                                                                                .append( ": cannot execute query" );
-         Log.e( TAG, message.toString(), exception );
-         throw new ServiceInternalException( message.toString() );
-      }
+      useHttp = use;
    }
    
 
@@ -250,8 +201,9 @@ public class Invoker
 
    public Element invoke( Param... params ) throws ServiceException
    {
-      long timeSinceLastInvocation = System.currentTimeMillis()
+      final long timeSinceLastInvocation = System.currentTimeMillis()
          - lastInvocation;
+      
       if ( timeSinceLastInvocation < INVOCATION_INTERVAL )
       {
          // In order not to invoke the RTM service too often
@@ -268,39 +220,46 @@ public class Invoker
       
       Log.d( TAG, "Invoker running at " + new Date() );
       
-      // We prepare the network socket-based connection
-      prepareConnection();
+      final HttpHost host = new HttpHost( hostname, port, ( useHttp ? "http"
+                                                                   : "https" ) );
+      
+      final DefaultHttpClient client = new DefaultHttpClient( httpParams );
       
       // We compute the URI
       final StringBuffer requestUri = computeRequestUri( params );
-      HttpResponse response = null;
-      
       final HttpGet request = new HttpGet( requestUri.toString() );
       
       // FIX: This line caused RTM to return HTTP code 400 - Bad request
       // request.setHeader( new BasicHeader( HTTP.CHARSET_PARAM, ENCODING ) );
       
-      final String methodUri = request.getRequestLine().getUri();
-      // TODO: put that back!
-      // if (proxyHostName != null)
-      // {
-      // // Sets an HTTP proxy and the credentials for authentication
-      // client.getHostConfiguration().setProxy(proxyHostName, proxyPortNumber);
-      // if (proxyLogin != null)
-      // {
-      // client.getState().setProxyCredentials(AuthScope.ANY, new
-      // UsernamePasswordCredentials(proxyLogin,
-      // proxyPassword));
-      // }
-      // }
+      if ( proxyHostName != null )
+      {
+         final HttpHost proxy = new HttpHost( proxyHostName, proxyPortNumber );
+         
+         UsernamePasswordCredentials credentials = null;
+         
+         if ( proxyLogin != null )
+            credentials = new UsernamePasswordCredentials( proxyLogin,
+                                                           proxyPassword );
+         
+         // Sets an HTTP proxy and the credentials for authentication
+         client.getCredentialsProvider()
+               .setCredentials( new AuthScope( proxyHostName, proxyPortNumber ),
+                                credentials );
+         client.getParams().setParameter( ConnRoutePNames.DEFAULT_PROXY, proxy );
+      }
       
       Element result;
+      
       try
       {
+         final String methodUri = request.getRequestLine().getUri();
          Log.i( TAG, "Executing the method:" + methodUri );
-         httpExecutor.preProcess( request, httpProcessor, context );
-         response = httpExecutor.execute( request, connection, context );
+         
+         final HttpResponse response = client.execute( host, request );
+         
          final int statusCode = response.getStatusLine().getStatusCode();
+         
          if ( statusCode != HttpStatus.SC_OK )
          {
             Log.e( TAG, "Method failed: " + response.getStatusLine() );
@@ -315,12 +274,13 @@ public class Invoker
          // "setResponseStream()" method!
          final String responseBodyAsString = EntityUtils.toString( response.getEntity() );
          Log.i( TAG, "  Invocation response:\r\n" + responseBodyAsString );
+         
          response.getEntity().consumeContent();
          
          final InputStream respContentStream = new ByteArrayInputStream( responseBodyAsString.getBytes() );
-         
          final Document responseDoc = builder.parse( respContentStream );
          final Element wrapperElt = responseDoc.getDocumentElement();
+         
          if ( !wrapperElt.getNodeName().equals( "rsp" ) )
          {
             throw new ServiceInternalException( "unexpected response returned by RTM service: "
@@ -329,6 +289,7 @@ public class Invoker
          else
          {
             String stat = wrapperElt.getAttribute( "stat" );
+            
             if ( stat.equals( "fail" ) )
             {
                Node errElt = wrapperElt.getFirstChild();
@@ -387,6 +348,10 @@ public class Invoker
             }
          }
       }
+      catch ( SSLException e )
+      {
+         throw new ServiceInternalException( "", e );
+      }
       catch ( IOException e )
       {
          throw new ServiceInternalException( "", e );
@@ -395,30 +360,8 @@ public class Invoker
       {
          throw new ServiceInternalException( "", e );
       }
-      catch ( HttpException e )
-      {
-         throw new ServiceInternalException( "", e );
-      }
       finally
       {
-         if ( connection != null
-            && ( response == null || connectionStrategy.keepAlive( response,
-                                                                   context ) == false ) )
-         {
-            try
-            {
-               connection.close();
-            }
-            catch ( IOException exception )
-            {
-               Log.w( TAG,
-                      new StringBuffer( "Could not close properly the socket connection to '" ).append( connection.getRemoteAddress() )
-                                                                                               .append( "' on port " )
-                                                                                               .append( connection.getRemotePort() )
-                                                                                               .toString(),
-                      exception );
-            }
-         }
       }
       
       lastInvocation = System.currentTimeMillis();

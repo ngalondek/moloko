@@ -188,7 +188,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
          
          try
          {
-            final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo );
+            final ServiceImpl serviceImpl = ServiceImpl.getInstance( this,
+                                                                     applicationInfo );
             authenticator = new AsyncRtmAuthenticator( this, serviceImpl );
             authenticator.beginAuthentication( getSelectedPermission() );
          }

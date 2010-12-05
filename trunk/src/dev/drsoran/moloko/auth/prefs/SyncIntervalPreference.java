@@ -104,7 +104,7 @@ public class SyncIntervalPreference extends AutoSummaryListPreference
       try
       {
          return Long.valueOf( preferences.getString( context.getString( R.string.key_sync_inverval ),
-                                                     context.getString( R.string.auth_pref_sync_interval_default_value ) ) );
+                                                     context.getString( R.string.acc_pref_sync_interval_default_value ) ) );
       }
       catch ( NumberFormatException nfe )
       {

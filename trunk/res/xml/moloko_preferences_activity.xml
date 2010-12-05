@@ -21,16 +21,14 @@
       android:title="@string/moloko_prefs_rtm_title"
       android:summary="@string/moloko_prefs_rtm_summary">
 
-      <dev.drsoran.moloko.prefs.RtmSyncStatePreference
-         moloko:infoWidget="@layout/moloko_prefs_widget_sync" />
-
-      <dev.drsoran.moloko.auth.prefs.SyncIntervalPreference
-         android:title="@string/auth_pref_sync_interval_title"
-         android:summary="%s"
-         android:key="@string/key_sync_inverval"
-         android:entries="@array/moloko_auth_prefs_sync_interval_entries"
-         android:entryValues="@array/moloko_auth_prefs_sync_interval_values"
-         android:defaultValue="@string/auth_pref_sync_interval_default_value" />
+      <PreferenceScreen
+         android:key="dev.drsoran.moloko"
+         android:title="@string/acc_pref_account_tilte"
+         android:summary="@string/acc_pref_account_summary">
+         <intent
+            android:action="dev.drsoran.moloko.auth.prefs.account.MAIN">
+         </intent>
+      </PreferenceScreen>
 
       <dev.drsoran.moloko.prefs.TimezonePreference
          android:title="@string/moloko_prefs_rtm_timezone_title"
@@ -59,6 +57,9 @@
          android:summary="%s"
          android:key="@string/key_def_list_local"
          moloko:syncWithRtmKey="@string/key_def_list_sync_with_rtm" />
+
+      <dev.drsoran.moloko.prefs.RtmSyncStatePreference
+         moloko:infoWidget="@layout/moloko_prefs_widget_sync" />
    </PreferenceScreen>
 
    <PreferenceScreen
@@ -102,8 +103,8 @@
             android:key="@string/key_notify_due_tasks_led"
             android:dependency="@string/key_notify_due_tasks"
             android:defaultValue="false" />
-
       </PreferenceCategory>
+      
       <PreferenceCategory
          android:title="@string/moloko_prefs_notification_permanent_cat_title">
 
@@ -131,7 +132,7 @@
 
    <PreferenceCategory
       android:title="@string/moloko_prefs_cat_help_dev_title">
-      
+
       <CheckBoxPreference
          android:key="acra.disable"
          android:title="@string/moloko_prefs_acra_title"

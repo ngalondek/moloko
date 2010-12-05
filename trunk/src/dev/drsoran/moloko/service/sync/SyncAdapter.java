@@ -124,10 +124,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                   }
                   else
                   {
-                     final ServiceImpl serviceImpl = new ServiceImpl( new ApplicationInfo( apiKey,
-                                                                                           sharedSecret,
-                                                                                           context.getString( R.string.app_name ),
-                                                                                           authToken ) );
+                     final ServiceImpl serviceImpl = ServiceImpl.getInstance( context,
+                                                                              new ApplicationInfo( apiKey,
+                                                                                                   sharedSecret,
+                                                                                                   context.getString( R.string.app_name ),
+                                                                                                   authToken ) );
                      
                      final ArrayList< IContentProviderSyncOperation > batch = new ArrayList< IContentProviderSyncOperation >();
                      

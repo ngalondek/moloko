@@ -54,6 +54,7 @@ Support for *HTTP* and *HTTPS* access of RTM including proxy settings.
 === TODO ===
  ==== Next steps ===
     * Groups, Contacts
+    * Renaming tasks
 
  ==== later steps ===        
     * Write access

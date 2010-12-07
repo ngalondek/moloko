@@ -243,7 +243,7 @@ public class LocationChooser
          intents[ 0 ] = new Intent( Intent.ACTION_VIEW, Uri.parse( "geo:" + lat
             + "," + lon + "?z=" + zoom ) );
          intents[ 1 ] = new Intent( Intent.ACTION_VIEW,
-                                    Uri.parse( "google.navigation:q=" + lat
+                                    Uri.parse( "google.navigation:ll=" + lat
                                        + "," + lon ) );
       }
       else if ( !TextUtils.isEmpty( address ) )

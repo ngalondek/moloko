@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g 2010-10-28 11:15:19
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RtmSmartFilterLexer.g 2010-12-07 19:25:04
 
 package dev.drsoran.moloko.grammar;
 
@@ -930,7 +930,7 @@ public class RtmSmartFilterLexer extends Lexer
             }
             
             result.append( Tasks.LOCATION_NAME );
-            equalsStringParam( s.getText() );
+            containsStringParam( s.getText() );
             
          }
          

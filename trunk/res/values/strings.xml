@@ -315,7 +315,7 @@
    <string name="send_log_address">ronny.roehricht@gmail.com</string>
    <string name="send_log_subject">Moloko device log</string>
    <string name="send_log_format">time</string>
-   <string name="send_log_content">
+   <string name="send_log_content" formatted="false">
 Moloko version: %s\n
 Device model: %s\n
 Firmware version: %s\n

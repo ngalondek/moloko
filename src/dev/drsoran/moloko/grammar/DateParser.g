@@ -84,26 +84,35 @@ options
                                             boolean  textMonth ) throws RecognitionException
    {
       try
-      {
-         SimpleDateFormat sdf = null;
-
+      {         
+         final StringBuffer pattern = new StringBuffer( "dd." );
+         
          if ( !textMonth )
          {
-            sdf = new SimpleDateFormat( "dd.MM.yyyy" );
+            pattern.append( "MM" );
          }
          else
          {
-            sdf = new SimpleDateFormat( "dd.MMM.yyyy",
-                                        LOCALE /* Locale for MMM*/ );
+            pattern.append( "MMM" );
          }
          
-         sdf.parse( day + "." + month + "." + year );
+         if ( year != null )
+         {
+            pattern.append( ".yyyy" );
+         }        
+
+         final SimpleDateFormat sdf = new SimpleDateFormat( pattern.toString(),
+                                        						   LOCALE /* Locale for MMM*/ );
+                  
+         sdf.parse( day + "." + month + ( ( year != null ) ? "." + year : "" ) );
 
 			final Calendar sdfCal = sdf.getCalendar();
 			
          cal.set( Calendar.DAY_OF_MONTH, sdfCal.get( Calendar.DAY_OF_MONTH ) );
-         cal.set( Calendar.MONTH,        sdfCal.get( Calendar.MONTH ) );         
-         cal.set( Calendar.YEAR,         sdfCal.get( Calendar.YEAR ) );
+         cal.set( Calendar.MONTH,        sdfCal.get( Calendar.MONTH ) );
+
+         if ( year != null )
+	         cal.set( Calendar.YEAR, sdfCal.get( Calendar.YEAR ) );
       }
       catch( ParseException e )
       {
@@ -186,7 +195,7 @@ options
       if ( ref == max )
       {
          // we roll to the next
-         cal.roll( field, true );
+         cal.add( field, 1 );
       }
    }
 }
@@ -285,29 +294,59 @@ parseDateWithin[boolean past] returns [Calendar epochStart, Calendar epochEnd]
    }
 
 date_full [Calendar cal]
+   @init
+   {
+      String pt1Str = null;
+      String pt2Str = null;
+      String pt3Str = null;
+   }
    : pt1=INT (DOT | MINUS | COLON | DATE_SEP)
-     m  =INT (DOT | MINUS | COLON | DATE_SEP)
-     pt3=INT
      {
-	     // year first
-	     if ( $pt1.getText().length() > 2 )
-	     {
-	        parseFullDate( $cal,
-	                       $m.getText(),
-	                       $pt3.getText(),
-	                       $pt1.getText(),
+        pt1Str = $pt1.getText();
+     }
+     pt2=INT (DOT | MINUS | COLON | DATE_SEP)
+     {
+        pt2Str = $pt2.getText();
+     }
+     (
+        pt3=INT
+        {
+           pt3Str = $pt3.getText();
+        }
+     )?
+     {
+        // check if we have all 3 parts
+        if ( pt3Str != null && pt1Str.length() > 2 )
+        {
+		     // year first
+		     parseFullDate( $cal,
+	                       pt2Str,
+	                       pt3Str,
+	                       pt1Str,
 	                       false );
 	     }
 	
-        // year last
+        // year last or only 2 parts
 	     else
 	     {
 	        parseFullDate( $cal,
-	                       $pt1.getText(),
-	                       $m.getText(),
-	                       $pt3.getText(),
+	                       pt1Str,
+	                       pt2Str,
+	                       pt3Str,
 	                       false );
-	      }
+           
+           // if year is missing and the date is
+           // befor now we roll to the next year.
+           if ( pt3Str == null )
+           {
+              final Calendar now = getLocalizedCalendar();
+           
+	           if ( cal.before( now ) )
+	           {
+	              cal.add( Calendar.YEAR, 1 );   
+	           }
+	        }
+	     }
       }
       ;
 
@@ -351,10 +390,10 @@ date_on_Xst_of_M [Calendar cal]
       {
       	// if we have a month, we roll to next year.
          if ( hasMonth )
-            cal.roll( Calendar.YEAR, true );
+            cal.add( Calendar.YEAR, 1 );
         	// if we only have a day, we roll to next month.
          else
-            cal.roll( Calendar.MONTH, true );
+            cal.add( Calendar.MONTH, 1 );
       }
    }
    ;
@@ -392,7 +431,7 @@ date_on_M_Xst [Calendar cal]
       // so we change nothing.
       if ( !hasYear && getLocalizedCalendar().after( cal ) )
          // If the date is before now we roll the year     
-	      cal.roll( Calendar.YEAR, true );
+	      cal.add( Calendar.YEAR, 1 );
    }
    ;
    catch [NumberFormatException e]
@@ -421,11 +460,11 @@ date_on_weekday [Calendar cal]
 
       // If the weekday is before today or today, we adjust to next week.
       if ( parsedWeekDay <= currentWeekDay )
-         cal.roll( Calendar.WEEK_OF_YEAR, true );
+         cal.add( Calendar.WEEK_OF_YEAR, 1 );
 
       // if the next week is explicitly enforced
       if ( nextWeek )
-         cal.roll( Calendar.WEEK_OF_YEAR, true );
+         cal.add( Calendar.WEEK_OF_YEAR, 1 );
    }
    ;
    catch[ ParseException pe ]
@@ -455,13 +494,13 @@ date_in_X_YMWD_distance [Calendar cal]
    : (   a=NUM_STR { amount = strToNumber( $a.text );      }
        | a=INT     { amount = Integer.parseInt( $a.text ); })
      (     YEARS
-       |   MONTHS  { calField = Calendar.MONTH;            }
+       |   MONTHS  { calField = Calendar.MONTH;  			  }
        |   WEEKS   { calField = Calendar.WEEK_OF_YEAR;     }
        |   DAYS    { calField = Calendar.DAY_OF_YEAR;      })
    {
       if ( amount != -1 )
       {
-         cal.roll( calField, amount );
+         cal.add( calField, amount );
       }
       else
       {

@@ -339,7 +339,7 @@ OP_IS_TAGGED    : 'istagged:'
 OP_LOCATION : 'location:' ( s=STRING | s=Q_STRING )
 					{
 						result.append( Tasks.LOCATION_NAME );
-						equalsStringParam( $s.getText() );
+						containsStringParam( $s.getText() );
 					};
 					
 // OP_LOCATED_WITHIN

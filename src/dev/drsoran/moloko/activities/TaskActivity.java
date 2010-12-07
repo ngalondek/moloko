@@ -276,17 +276,33 @@ public class TaskActivity extends Activity
 
    private void setLocationSection( View view, final Task task )
    {
-      if ( TextUtils.isEmpty( task.getLocationId() ) )
+      String locationName = null;
+      
+      boolean showSection = !TextUtils.isEmpty( task.getLocationId() );
+      
+      if ( showSection )
+      {
+         // Tasks which are received by sharing from someone else may also have
+         // a location ID set. But this ID is from the other ones DB. We identify
+         // these tasks not by looking for the ID in our DB. These tasks do not
+         // have a name and a location of 0.0, 0.0.
+         //
+         // @see: Issue 12: http://code.google.com/p/moloko/issues/detail?id=12
+         locationName = task.getLocationName();
+         
+         showSection = !TextUtils.isEmpty( locationName )
+            || ( task.getLongitude() != 0.0f || task.getLatitude() != 0.0f );
+      }
+      
+      if ( !showSection )
       {
          view.setVisibility( View.GONE );
       }
       else
       {
-         String location = task.getLocationName();
-         
-         if ( TextUtils.isEmpty( location ) )
+         if ( TextUtils.isEmpty( locationName ) )
          {
-            location = "Lon: " + task.getLongitude() + ", Lat: "
+            locationName = "Lon: " + task.getLongitude() + ", Lat: "
                + task.getLatitude();
          }
          
@@ -300,7 +316,7 @@ public class TaskActivity extends Activity
             // Check if we can click the location
             if ( locationChooser.hasIntents() )
             {
-               final SpannableString clickableLocation = new SpannableString( location );
+               final SpannableString clickableLocation = new SpannableString( locationName );
                clickableLocation.setSpan( new ClickableSpan()
                {
                   @Override
@@ -324,7 +340,7 @@ public class TaskActivity extends Activity
          {
             UIUtils.initializeTitleWithTextLayout( view.findViewById( R.id.task_location ),
                                                    getString( R.string.task_location ),
-                                                   location );
+                                                   locationName );
          }
       }
    }

@@ -16,8 +16,8 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"
-   android:versionName="0.9.5b"
-   android:versionCode="589829">
+   android:versionName="0.9.6b"
+   android:versionCode="589830">
 
    <uses-sdk
       android:minSdkVersion="5"
@@ -205,10 +205,12 @@
          android:theme="@style/Theme"
          android:excludeFromRecents="true" />
 
+      <!-- 
       <activity
          android:name=".activities.RtmSmartFilterTestActivity"
          android:label="Test RTM smart filter"
          android:excludeFromRecents="true" />
+          -->
 
       <activity
          android:name="org.acra.CrashReportDialog"

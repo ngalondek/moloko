@@ -99,14 +99,8 @@ public class HomeAdapter extends BaseAdapter
 
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      if ( convertView == null )
-      {
-         return WIDGETS[ position ];
-      }
-      else
-      {
-         return convertView;
-      }
+      // TODO: Enhancement: recycle convertView
+      return WIDGETS[ position ];
    }
    
 

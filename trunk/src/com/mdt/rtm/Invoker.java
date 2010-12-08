@@ -30,12 +30,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.SSLException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
@@ -43,15 +49,19 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import android.text.format.DateUtils;
 import android.util.Log;
 
 
@@ -92,19 +102,15 @@ public class Invoker
    
    public static final long INVOCATION_INTERVAL = 2000;
    
+   private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
+   
+   private static final String ENCODING_GZIP = "gzip";
+   
    private long lastInvocation;
    
    private final ApplicationInfo applicationInfo;
    
    private final MessageDigest digest;
-   
-   private String proxyHostName;
-   
-   private int proxyPortNumber;
-   
-   private String proxyLogin;
-   
-   private String proxyPassword;
    
    private final String hostname;
    
@@ -112,25 +118,104 @@ public class Invoker
    
    private String serviceRelativeUri;
    
+   private final HttpHost host;
+   
+   private final DefaultHttpClient client;
+   
    private BasicHttpParams httpParams;
    
-   private boolean useHttp = false;
+   
+   /**
+    * Simple {@link HttpEntityWrapper} that inflates the wrapped {@link HttpEntity} by passing it through
+    * {@link GZIPInputStream}.
+    * 
+    * Took from iosched - Google I/O Schedule App for Android
+    * http://code.google.com/p/iosched/source/browse/trunk/src/com/google/android/apps/iosched/service/SyncService.java
+    */
+   private static class InflatingEntity extends HttpEntityWrapper
+   {
+      public InflatingEntity( HttpEntity wrapped )
+      {
+         super( wrapped );
+      }
+      
+
+
+      @Override
+      public InputStream getContent() throws IOException
+      {
+         return new GZIPInputStream( wrappedEntity.getContent() );
+      }
+      
+
+
+      @Override
+      public long getContentLength()
+      {
+         return -1;
+      }
+   }
    
    
 
    public Invoker( String serverHostName, int serverPortNumber,
-      String serviceRelativeUri, ApplicationInfo applicationInfo )
-      throws ServiceInternalException
+      String serviceRelativeUri, ProxySettings proxySettings, boolean useHttp,
+      ApplicationInfo applicationInfo ) throws ServiceInternalException
    {
       this.hostname = serverHostName;
       this.port = serverPortNumber;
       this.serviceRelativeUri = serviceRelativeUri;
       
       httpParams = new BasicHttpParams();
+      HttpConnectionParams.setConnectionTimeout( httpParams,
+                                                 20 * (int) DateUtils.SECOND_IN_MILLIS );
+      HttpConnectionParams.setSoTimeout( httpParams,
+                                         20 * (int) DateUtils.SECOND_IN_MILLIS );
+      HttpConnectionParams.setSocketBufferSize( httpParams, 8192 );
       HttpProtocolParams.setVersion( httpParams, HttpVersion.HTTP_1_1 );
       HttpProtocolParams.setContentCharset( httpParams, ENCODING );
       HttpProtocolParams.setUserAgent( httpParams, "Jakarta-HttpComponents/4.0" );
       HttpProtocolParams.setUseExpectContinue( httpParams, true );
+      
+      host = new HttpHost( hostname, port, ( useHttp ? "http" : "https" ) );
+      
+      client = new DefaultHttpClient( httpParams );
+      
+      if ( proxySettings != null )
+      {
+         final String proxyHostName = proxySettings.getProxyHostName();
+         
+         if ( proxySettings.getProxyHostName() != null )
+         {
+            final int proxyPort = proxySettings.getProxyPortNumber();
+            final HttpHost proxy = new HttpHost( proxyHostName, proxyPort );
+            
+            UsernamePasswordCredentials credentials = null;
+            
+            if ( proxySettings.getProxyLogin() != null )
+               credentials = new UsernamePasswordCredentials( proxySettings.getProxyLogin(),
+                                                              proxySettings.getProxyPassword() );
+            
+            // Sets an HTTP proxy and the credentials for authentication
+            client.getCredentialsProvider()
+                  .setCredentials( new AuthScope( proxyHostName, proxyPort ),
+                                   credentials );
+            client.getParams().setParameter( ConnRoutePNames.DEFAULT_PROXY,
+                                             proxy );
+         }
+      }
+      
+      client.addRequestInterceptor( new HttpRequestInterceptor()
+      {
+         public void process( HttpRequest request, HttpContext context )
+         {
+            // Add header to accept gzip content
+            if ( !request.containsHeader( HEADER_ACCEPT_ENCODING ) )
+            {
+               request.addHeader( HEADER_ACCEPT_ENCODING, ENCODING_GZIP );
+            }
+         }
+      } );
       
       lastInvocation = System.currentTimeMillis();
       this.applicationInfo = applicationInfo;
@@ -144,26 +229,6 @@ public class Invoker
          throw new ServiceInternalException( "Could not create properly the MD5 digest",
                                              e );
       }
-   }
-   
-
-
-   public void setHttpProxySettings( String proxyHostName,
-                                     int proxyPortNumber,
-                                     String proxyLogin,
-                                     String proxyPassword )
-   {
-      this.proxyHostName = proxyHostName;
-      this.proxyPortNumber = proxyPortNumber;
-      this.proxyLogin = proxyLogin;
-      this.proxyPassword = proxyPassword;
-   }
-   
-
-
-   public void setUseHttp( boolean use )
-   {
-      useHttp = use;
    }
    
 
@@ -220,34 +285,12 @@ public class Invoker
       
       Log.d( TAG, "Invoker running at " + new Date() );
       
-      final HttpHost host = new HttpHost( hostname, port, ( useHttp ? "http"
-                                                                   : "https" ) );
-      
-      final DefaultHttpClient client = new DefaultHttpClient( httpParams );
-      
       // We compute the URI
       final StringBuffer requestUri = computeRequestUri( params );
       final HttpGet request = new HttpGet( requestUri.toString() );
       
       // FIX: This line caused RTM to return HTTP code 400 - Bad request
       // request.setHeader( new BasicHeader( HTTP.CHARSET_PARAM, ENCODING ) );
-      
-      if ( proxyHostName != null )
-      {
-         final HttpHost proxy = new HttpHost( proxyHostName, proxyPortNumber );
-         
-         UsernamePasswordCredentials credentials = null;
-         
-         if ( proxyLogin != null )
-            credentials = new UsernamePasswordCredentials( proxyLogin,
-                                                           proxyPassword );
-         
-         // Sets an HTTP proxy and the credentials for authentication
-         client.getCredentialsProvider()
-               .setCredentials( new AuthScope( proxyHostName, proxyPortNumber ),
-                                credentials );
-         client.getParams().setParameter( ConnRoutePNames.DEFAULT_PROXY, proxy );
-      }
       
       Element result;
       
@@ -265,6 +308,22 @@ public class Invoker
             Log.e( TAG, "Method failed: " + response.getStatusLine() );
             throw new ServiceInternalException( "method failed: "
                + response.getStatusLine() );
+         }
+         
+         // Inflate any responses compressed with gzip
+         final HttpEntity entity = response.getEntity();
+         final Header encoding = entity.getContentEncoding();
+         
+         if ( encoding != null )
+         {
+            for ( HeaderElement element : encoding.getElements() )
+            {
+               if ( element.getName().equalsIgnoreCase( ENCODING_GZIP ) )
+               {
+                  response.setEntity( new InflatingEntity( response.getEntity() ) );
+                  break;
+               }
+            }
          }
          
          // THINK: this method is depreciated, but the only way to get the body

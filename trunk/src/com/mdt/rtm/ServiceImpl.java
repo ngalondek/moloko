@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -98,70 +97,37 @@ public class ServiceImpl implements Service
          || prefs.getBoolean( context.getString( R.string.key_conn_use_https ),
                               true );
       
-      final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo,
-                                                       !useHttps );
-      
-      if ( prefs != null
+      final boolean useProxy = prefs != null
          && prefs.getBoolean( context.getString( R.string.key_conn_use_proxy ),
-                              false ) )
+                              false );
+      
+      ProxySettings proxySettings = null;
+      
+      if ( useProxy )
       {
-         final String hostname = prefs.getString( context.getString( R.string.key_conn_proxy_host ),
-                                                  null );
-         final String port = prefs.getString( context.getString( R.string.key_conn_proxy_port ),
-                                              null );
-         final String user = prefs.getString( context.getString( R.string.key_conn_proxy_user ),
-                                              null );
-         final String pass = prefs.getString( context.getString( R.string.key_conn_proxy_pass ),
-                                              null );
-         
-         boolean ok = true;
-         
-         int portNum = 0;
-         
-         if ( TextUtils.isEmpty( hostname ) )
-         {
-            Log.w( TAG, "Unable to use proxy, no hostname." );
-            ok = false;
-         }
-         if ( ok && TextUtils.isEmpty( port ) )
-         {
-            Log.w( TAG, "Unable to use proxy, no port." );
-            ok = false;
-         }
-         if ( ok )
-         {
-            try
-            {
-               portNum = Integer.parseInt( port );
-            }
-            catch ( NumberFormatException nfe )
-            {
-               ok = false;
-               Log.w( TAG, "Unable to use proxy, invalid port.", nfe );
-            }
-         }
-         
-         if ( ok )
-         {
-            serviceImpl.setHttpProxySettings( hostname, portNum, user, pass );
-         }
+         proxySettings = ProxySettings.loadFromPreferences( context, prefs );
       }
+      
+      final ServiceImpl serviceImpl = new ServiceImpl( applicationInfo,
+                                                       proxySettings,
+                                                       !useHttps );
       
       return serviceImpl;
    }
    
 
 
-   protected ServiceImpl( ApplicationInfo applicationInfo, boolean useHttp )
+   protected ServiceImpl( ApplicationInfo applicationInfo,
+      ProxySettings proxySettings, boolean useHttp )
       throws ServiceInternalException
    {
       invoker = new Invoker( SERVER_HOST_NAME,
                              ( useHttp ) ? SERVER_PORT_NUMBER_HTTP
                                         : SERVER_PORT_NUMBER_HTTPS,
                              REST_SERVICE_URL_POSTFIX,
+                             proxySettings,
+                             useHttp,
                              applicationInfo );
-      
-      invoker.setUseHttp( useHttp );
       
       this.applicationInfo = applicationInfo;
       prefs = new Prefs();
@@ -174,34 +140,6 @@ public class ServiceImpl implements Service
       {
          currentAuthToken = prefs.getAuthToken();
       }
-   }
-   
-
-
-   /**
-    * If you want to go through an HTTP proxy.
-    * 
-    * @param proxyHostName
-    *           the host name of the HTTP proxy machine (if <code>null</code>, no proxy is set, and all parameters are
-    *           ignored)
-    * @param proxyPortNumber
-    *           the port number the HTTP proxy listens to
-    * @param proxyLogin
-    *           the account identifier against the HTTP proxy: if set to <code>null</code>, no authentication will be
-    *           performed and the HTTP is considered working anonymously, and the last <code>proxyPassword</code>
-    *           parameter is not taken into account
-    * @param proxyPassword
-    *           the previous identifier related password
-    */
-   public void setHttpProxySettings( String proxyHostName,
-                                     int proxyPortNumber,
-                                     String proxyLogin,
-                                     String proxyPassword )
-   {
-      invoker.setHttpProxySettings( proxyHostName,
-                                    proxyPortNumber,
-                                    proxyLogin,
-                                    proxyPassword );
    }
    
 

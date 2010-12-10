@@ -244,16 +244,17 @@ public class TasksProviderPart extends AbstractProviderPart
    {
       Task task = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Queries.contentUriWithId( Rtm.Tasks.CONTENT_URI,
-                                                                  id ),
-                                        PROJECTION,
-                                        null,
-                                        null,
-                                        null );
+         c = client.query( Queries.contentUriWithId( Rtm.Tasks.CONTENT_URI, id ),
+                           PROJECTION,
+                           null,
+                           null,
+                           null );
          
-         boolean ok = c.getCount() > 0 && c.moveToFirst();
+         boolean ok = c != null && c.getCount() > 0 && c.moveToFirst();
          
          if ( ok )
          {
@@ -264,13 +265,16 @@ public class TasksProviderPart extends AbstractProviderPart
          
          if ( !ok )
             task = null;
-         
-         c.close();
       }
       catch ( RemoteException e )
       {
          Log.e( TAG, "Query tasks failed. ", e );
          task = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return task;
@@ -284,19 +288,21 @@ public class TasksProviderPart extends AbstractProviderPart
    {
       ArrayList< Task > tasks = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Rtm.Tasks.CONTENT_URI,
-                                        PROJECTION,
-                                        selection,
-                                        null,
-                                        order );
+         c = client.query( Rtm.Tasks.CONTENT_URI,
+                           PROJECTION,
+                           selection,
+                           null,
+                           order );
          
          tasks = new ArrayList< Task >();
          
-         boolean ok = true;
+         boolean ok = c != null;
          
-         if ( c.getCount() > 0 )
+         if ( ok && c.getCount() > 0 )
          {
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
@@ -311,13 +317,16 @@ public class TasksProviderPart extends AbstractProviderPart
          
          if ( !ok )
             tasks = null;
-         
-         c.close();
       }
       catch ( RemoteException e )
       {
          Log.e( TAG, "Query tasks failed. ", e );
          tasks = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return tasks;
@@ -346,6 +355,8 @@ public class TasksProviderPart extends AbstractProviderPart
       boolean projectionContainsId = false;
       boolean replacedNumNotes = false;
       
+      final StringBuilder projectionSB = new StringBuilder();
+      
       for ( int i = 0; i < projection.length
          && ( !projectionContainsId || !replacedNumNotes ); i++ )
       {
@@ -355,25 +366,31 @@ public class TasksProviderPart extends AbstractProviderPart
          // So we have to qualify it.
          if ( !projectionContainsId && column.endsWith( Tasks._ID ) )
          {
-            projectionList.set( i,
-                                new StringBuilder( "subQuery." ).append( RawTasks._ID )
-                                                                .append( " AS " )
-                                                                .append( Tasks._ID )
-                                                                .toString() );
+            projectionSB.append( "subQuery." )
+                        .append( RawTasks._ID )
+                        .append( " AS " )
+                        .append( Tasks._ID );
+            
+            projectionList.set( i, projectionSB.toString() );
             projectionContainsId = true;
+            
+            projectionSB.setLength( 0 );
          }
          
          // We have to replace the num_notes column by the numNotesSubQuery
          // expression.
          if ( !replacedNumNotes && column.equals( Tasks.NUM_NOTES ) )
          {
-            projectionList.set( i,
-                                new StringBuilder( "(" ).append( numNotesSubQuery )
-                                                        .append( ")" )
-                                                        .append( " AS " )
-                                                        .append( Tasks.NUM_NOTES )
-                                                        .toString() );
+            projectionSB.append( "(" )
+                        .append( numNotesSubQuery )
+                        .append( ")" )
+                        .append( " AS " )
+                        .append( Tasks.NUM_NOTES );
+            
+            projectionList.set( i, projectionSB.toString() );
             replacedNumNotes = true;
+            
+            projectionSB.setLength( 0 );
          }
       }
       

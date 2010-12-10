@@ -18,7 +18,7 @@ grammar Recurrence;
    import java.util.Locale;
    import java.util.Set;
    import java.util.TreeSet;
-   
+
    import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
    import dev.drsoran.moloko.util.MolokoDateUtils;
    import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
@@ -31,10 +31,10 @@ grammar Recurrence;
 
 @members
 {
-	public RecurrenceParser()
-	{
-	   super( null );
-	}
+   public RecurrenceParser()
+   {
+      super( null );
+   }
 
    private final static Locale LOCALE = Locale.ENGLISH;
 
@@ -45,7 +45,7 @@ grammar Recurrence;
          // only take the last 2 chars, the leading chars can be
          // Xst values.
          final String weekday = wd.substring( wd.length() - 2 );
-   
+
          if ( weekday.equals( BYDAY_MON ) )
             return 1;
          else if ( weekday.equals( BYDAY_TUE ) )
@@ -69,9 +69,9 @@ grammar Recurrence;
          return weekdayToInt( wd1 ) - weekdayToInt( wd2 );
       }
    }
-   
-   
-   
+
+
+
    private final static class CmpOperators implements Comparator< String >
    {
       private final static int operatorToInt( String operator )
@@ -93,7 +93,7 @@ grammar Recurrence;
          else
             return Integer.MAX_VALUE;
       }
-      
+
 
 
       public int compare( String op1, String op2 )
@@ -101,11 +101,11 @@ grammar Recurrence;
          return operatorToInt( op1 ) - operatorToInt( op2 );
       }
    }
-   
-   
+
+
 
    private final static CmpWeekday CMP_WEEKDAY  = new CmpWeekday();
-   
+
    public final static CmpOperators CMP_OPERATORS = new CmpOperators();
 
    public final static String OP_BYDAY_LIT      = "BYDAY";
@@ -131,7 +131,7 @@ grammar Recurrence;
    public final static String VAL_YEARLY_LIT    = "YEARLY";
 
    public final static String IS_EVERY          = "IS_EVERY";
-   
+
    public final static String OPERATOR_SEP      = ";";
 
    public final static String BYDAY_MON         = "MO";
@@ -147,7 +147,7 @@ grammar Recurrence;
    public final static String BYDAY_SAT         = "SA";
 
    public final static String BYDAY_SUN         = "SU";
-   
+
    public final static String DATE_PATTERN      = "yyyyMMdd'T'HHmmss";
 
 
@@ -201,47 +201,47 @@ parseRecurrence returns[HashMap< String, Object > res]
    : (EVERY { isEvery = Boolean.TRUE; } | AFTER)?
      (
         interval=parse_Number?
-		  (
-		      DAYS                                               { freq = VAL_DAILY_LIT;  }
-		    | (
-		           WEEKS
-		         | BIWEEKLY
-		           {
-		              interval = 2;
-		           }
-		       )                                                 { freq = VAL_WEEKLY_LIT; }
-		       (ON? THE? recurr_WD[weekdays, ""]
-		             {
-		                resolution    = OP_BYDAY_LIT;
-		                resolutionVal = join( ",", weekdays );
-		             }
-		       )?
-		    | MONTHS                                             { freq = VAL_MONTHLY_LIT;}
-		       (ON? THE? r=recurr_Monthly[weekdays, ints]
-		                 {
-		                    freq          = r.freq;
-		                    interval      = r.interval;
-		                    resolution    = r.resolution;
-		                    resolutionVal = r.resolutionVal;
-		                 }
-		       )?
-		    | YEARS                                              { freq = VAL_YEARLY_LIT; }
-		       (ON? THE? r=recurr_Monthly[weekdays, ints]
-		                 {
-		                    freq          = r.freq;
-		                    interval      = r.interval;
-		                    resolution    = r.resolution;
-		                    resolutionVal = r.resolutionVal;
-		                 }
-		                 { r.hasWD }?=> (
-		                                  (IN | OF)?
-		                                   m=parse_Month
-		                                   {
-		                                      freq     = VAL_YEARLY_LIT;
-		                                      interval = 1;
-		                                      res.put( OP_BYMONTH_LIT, Integer.toString( m ) );
-		                                   }
-		                                )?
+        (
+            DAYS                                               { freq = VAL_DAILY_LIT;  }
+          | (
+                 WEEKS
+               | BIWEEKLY
+                 {
+                    interval = 2;
+                 }
+             )                                                 { freq = VAL_WEEKLY_LIT; }
+             (ON? THE? recurr_WD[weekdays, ""]
+                   {
+                      resolution    = OP_BYDAY_LIT;
+                      resolutionVal = join( ",", weekdays );
+                   }
+             )?
+          | MONTHS                                             { freq = VAL_MONTHLY_LIT;}
+             (ON? THE? r=recurr_Monthly[weekdays, ints]
+                       {
+                          freq          = r.freq;
+                          interval      = r.interval;
+                          resolution    = r.resolution;
+                          resolutionVal = r.resolutionVal;
+                       }
+             )?
+          | YEARS                                              { freq = VAL_YEARLY_LIT; }
+             (ON? THE? r=recurr_Monthly[weekdays, ints]
+                       {
+                          freq          = r.freq;
+                          interval      = r.interval;
+                          resolution    = r.resolution;
+                          resolutionVal = r.resolutionVal;
+                       }
+                       { r.hasWD }?=> (
+                                        (IN | OF)?
+                                         m=parse_Month
+                                         {
+                                            freq     = VAL_YEARLY_LIT;
+                                            interval = 1;
+                                            res.put( OP_BYMONTH_LIT, Integer.toString( m ) );
+                                         }
+                                      )?
        )?
    )
    | recurr_Xst[ints]
@@ -270,17 +270,17 @@ parseRecurrence returns[HashMap< String, Object > res]
    )
    (
         until=UNTIL
-        {           
+        {
            final String dateTimeString = until.getText()
                                               .toUpperCase()
                                               .replaceFirst( OP_UNTIL_LIT +  "\\s*",
-                                                             "" );           
-           
+                                                             "" );
+
            final Calendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
-           
+
            if ( untilDate != null )
            {
-              	if ( !untilDate.isSet( Calendar.HOUR_OF_DAY ) )
+               if ( !untilDate.isSet( Calendar.HOUR_OF_DAY ) )
                {
                   untilDate.set( Calendar.HOUR, 0 );
                   untilDate.set( Calendar.HOUR_OF_DAY, 0 );
@@ -288,10 +288,10 @@ parseRecurrence returns[HashMap< String, Object > res]
                   untilDate.set( Calendar.SECOND, 0 );
                   untilDate.set( Calendar.MILLISECOND, 0 );
                }
-               
+
               final SimpleDateFormat sdf = new SimpleDateFormat( DATE_PATTERN );
               res.put( OP_UNTIL_LIT, sdf.format( untilDate.getTime() ) );
-           }    
+           }
         }
       | FOR count=INT
         {
@@ -471,12 +471,12 @@ parseRecurrencePattern [RecurrPatternLanguage lang, boolean every] returns [Stri
       sentence = sb.toString();
    }
    : OP_FREQ
-     ( 
+     (
           (
              VAL_YEARLY parse_PatternInterval[lang, sb, "year", every]
              (
                 {
-                   sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " ); 
+                   sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " );
                 }
                 (
                    (OP_BYDAY parse_PatternWeekday[lang, sb, true]
@@ -487,12 +487,12 @@ parseRecurrencePattern [RecurrPatternLanguage lang, boolean every] returns [Stri
                    OP_BYMONTH parse_PatternMonth[lang, sb]
                 )
              )?
-          )          
+          )
         | (
              VAL_MONTHLY parse_PatternInterval[lang, sb, "month", every]
              (
                 {
-                   sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " ); 
+                   sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " );
                 }
                 (
                      (
@@ -510,8 +510,8 @@ parseRecurrencePattern [RecurrPatternLanguage lang, boolean every] returns [Stri
              VAL_WEEKLY parse_PatternInterval[lang, sb, "week", every]
              (
                 {
-             	    sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " ); 
-             	 }
+                   sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " );
+                }
                 OP_BYDAY parse_PatternWeekday[lang, sb, true]
                    (COMMA { sb.append( ", " ); } parse_PatternWeekday[lang, sb, false])*
              )?
@@ -523,10 +523,10 @@ parseRecurrencePattern [RecurrPatternLanguage lang, boolean every] returns [Stri
      (
           OP_UNTIL date=VAL_DATE
           {
-	          final String formatedDate = MolokoDateUtils.formatDate( DATE_PATTERN,
+             final String formatedDate = MolokoDateUtils.formatDate( DATE_PATTERN,
                                                                      $date.text,
                                                                        MolokoDateUtils.FORMAT_WITH_YEAR );
-     
+
              if ( formatedDate != null )
              {
                 sb.append( " " ); lang.add( sb, "until" ); sb.append( " " );
@@ -545,13 +545,13 @@ parseRecurrencePattern [RecurrPatternLanguage lang, boolean every] returns [Stri
    {
       throw e;
    }
-   
+
 parse_PatternInterval [RecurrPatternLanguage lang,
                        StringBuilder         sb,
                        String                unit,
                        boolean               isEvery]
    : OP_INTERVAL interval=INT
-     {        
+     {
         if ( isEvery )
            lang.addEvery( sb, unit, $interval.text );
         else
@@ -562,14 +562,14 @@ parse_PatternInterval [RecurrPatternLanguage lang,
    {
       throw e;
    }
-   
+
 parse_PatternXst [RecurrPatternLanguage lang, StringBuilder sb]
    : x=INT
      {
         if ( sb != null )
         {
            final int xSt = Integer.parseInt( $x.text );
-              
+
            if ( xSt < 0 )
            {
               if ( xSt < -1 )
@@ -577,7 +577,7 @@ parse_PatternXst [RecurrPatternLanguage lang, StringBuilder sb]
                  lang.addStToX( sb, xSt * -1 );
                  sb.append( " " );
               }
-              
+
               lang.add( sb, "last" );
            }
            else
@@ -589,7 +589,7 @@ parse_PatternXst [RecurrPatternLanguage lang, StringBuilder sb]
    {
       throw e;
    }
-   
+
 parse_PatternWeekday [RecurrPatternLanguage lang,
                       StringBuilder         sb,
                       boolean               respectXst]
@@ -611,7 +611,7 @@ parse_PatternWeekday [RecurrPatternLanguage lang,
                | SUNDAY )
            {
               lang.add( sb, $wd.text );
-           }           
+           }
         )
      )
    ;
@@ -619,7 +619,7 @@ parse_PatternWeekday [RecurrPatternLanguage lang,
    {
       throw e;
    }
-   
+
 parse_PatternMonth [RecurrPatternLanguage lang, StringBuilder sb]
    : m=INT
      {
@@ -721,7 +721,7 @@ UNTIL         : 'until' STRING;
 
 FOR           : 'for';
 
-TIMES			  : 'times';
+TIMES         : 'times';
 
 DOT           : '.';
 
@@ -765,7 +765,7 @@ NUMBER        : '0'..'9';
 INT           : MINUS? NUMBER+;
 
 fragment
-STRING 		  : (' '|.)+;
+STRING        : (' '|.)+;
 
 WS            : (  ' '
                  | '\t'

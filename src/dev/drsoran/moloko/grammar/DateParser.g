@@ -25,9 +25,9 @@ options
 {
    public DateParser()
    {
-   	super( null );
+      super( null );
    }
-   
+
    private final static Locale LOCALE = Locale.ENGLISH;
 
    private final static HashMap< String, Integer > numberLookUp = new HashMap< String, Integer >();
@@ -50,14 +50,14 @@ options
 
    public final static Calendar getLocalizedCalendar()
    {
-	   final Calendar cal = Calendar.getInstance( LOCALE );
-	   
-	   cal.clear( Calendar.HOUR );
+      final Calendar cal = Calendar.getInstance( LOCALE );
+
+      cal.clear( Calendar.HOUR );
       cal.clear( Calendar.HOUR_OF_DAY );
       cal.clear( Calendar.MINUTE );
       cal.clear( Calendar.SECOND );
       cal.clear( Calendar.MILLISECOND );
-      
+
       return cal;
    }
 
@@ -84,9 +84,9 @@ options
                                             boolean  textMonth ) throws RecognitionException
    {
       try
-      {         
+      {
          final StringBuffer pattern = new StringBuffer( "dd." );
-         
+
          if ( !textMonth )
          {
             pattern.append( "MM" );
@@ -95,24 +95,24 @@ options
          {
             pattern.append( "MMM" );
          }
-         
+
          if ( year != null )
          {
             pattern.append( ".yyyy" );
-         }        
+         }
 
          final SimpleDateFormat sdf = new SimpleDateFormat( pattern.toString(),
-                                        						   LOCALE /* Locale for MMM*/ );
-                  
+                                                             LOCALE /* Locale for MMM*/ );
+
          sdf.parse( day + "." + month + ( ( year != null ) ? "." + year : "" ) );
 
-			final Calendar sdfCal = sdf.getCalendar();
-			
+         final Calendar sdfCal = sdf.getCalendar();
+
          cal.set( Calendar.DAY_OF_MONTH, sdfCal.get( Calendar.DAY_OF_MONTH ) );
          cal.set( Calendar.MONTH,        sdfCal.get( Calendar.MONTH ) );
 
          if ( year != null )
-	         cal.set( Calendar.YEAR, sdfCal.get( Calendar.YEAR ) );
+            cal.set( Calendar.YEAR, sdfCal.get( Calendar.YEAR ) );
       }
       catch( ParseException e )
       {
@@ -151,7 +151,7 @@ options
          if ( len < 4 )
          {
             final SimpleDateFormat sdf = new SimpleDateFormat("yy");
-      
+
             if ( len == 1 )
             {
                yearStr = "0" + yearStr;
@@ -160,7 +160,7 @@ options
             {
                yearStr = yearStr.substring( 1, len );
             }
-      
+
             sdf.parse( yearStr );
             year = sdf.getCalendar().get( Calendar.YEAR );
          }
@@ -168,7 +168,7 @@ options
          {
             year = Integer.parseInt( yearStr );
          }
-      
+
          cal.set( Calendar.YEAR, year );
       }
       catch( ParseException pe )
@@ -212,83 +212,83 @@ parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
    // It's important to clear the time fields
    // at last step cause the Calendar methods
    // will set them again.
-	{
-		if ( clearTime )
-		{		
-		   cal.clear( Calendar.HOUR );
-	      cal.clear( Calendar.HOUR_OF_DAY );
-   	   cal.clear( Calendar.MINUTE );
-      	cal.clear( Calendar.SECOND );
-	      cal.clear( Calendar.MILLISECOND );
+   {
+      if ( clearTime )
+      {
+         cal.clear( Calendar.HOUR );
+         cal.clear( Calendar.HOUR_OF_DAY );
+         cal.clear( Calendar.MINUTE );
+         cal.clear( Calendar.SECOND );
+         cal.clear( Calendar.MILLISECOND );
       }
    }
    | EOF
    {
-   	eof = true;
+      eof = true;
    }
    ;
    catch [RecognitionException e]
    {
       throw e;
    }
-   
+
 parseDateWithin[boolean past] returns [Calendar epochStart, Calendar epochEnd]
-	@init
-	{
-	   retval.epochStart = getLocalizedCalendar();
-		int amount        =  1;
-		int unit          = -1;
-	}
-	@after
-	{
-		retval.epochEnd = getLocalizedCalendar();
-		retval.epochEnd.setTimeInMillis( retval.epochStart.getTimeInMillis() );
-		retval.epochEnd.add( unit, past ? -amount : amount );
-		
-		retval.epochStart.clear( Calendar.HOUR );
+   @init
+   {
+      retval.epochStart = getLocalizedCalendar();
+      int amount        =  1;
+      int unit          = -1;
+   }
+   @after
+   {
+      retval.epochEnd = getLocalizedCalendar();
+      retval.epochEnd.setTimeInMillis( retval.epochStart.getTimeInMillis() );
+      retval.epochEnd.add( unit, past ? -amount : amount );
+
+      retval.epochStart.clear( Calendar.HOUR );
       retval.epochStart.clear( Calendar.HOUR_OF_DAY );
-  	   retval.epochStart.clear( Calendar.MINUTE );
-     	retval.epochStart.clear( Calendar.SECOND );
+      retval.epochStart.clear( Calendar.MINUTE );
+      retval.epochStart.clear( Calendar.SECOND );
       retval.epochStart.clear( Calendar.MILLISECOND );
-		retval.epochEnd.clear( Calendar.HOUR );
+      retval.epochEnd.clear( Calendar.HOUR );
       retval.epochEnd.clear( Calendar.HOUR_OF_DAY );
-  	   retval.epochEnd.clear( Calendar.MINUTE );
-     	retval.epochEnd.clear( Calendar.SECOND );
+      retval.epochEnd.clear( Calendar.MINUTE );
+      retval.epochEnd.clear( Calendar.SECOND );
       retval.epochEnd.clear( Calendar.MILLISECOND );
-	}
-	: (  a=INT
-	     {
-	        amount = Integer.parseInt( $a.text );
-	     }
-	   | n=NUM_STR
-	     {
-	        amount = strToNumber( $n.text );
-	     }
-	   | A)?
-	   (  DAYS
-	   	{
-	   	   unit = Calendar.DAY_OF_YEAR;
-	   	}
-	    | WEEKS
-	      {
-	         unit = Calendar.WEEK_OF_YEAR;
-	      }
-	    | MONTHS
-	      {
-	         unit = Calendar.MONTH;
-	      }
-	    | YEARS
-	      {
-	         unit = Calendar.YEAR;
-	      }
-	   )	   
-	   (OF parseDate[retval.epochStart, false])?
-	;
-	catch [NumberFormatException e]
+   }
+   : (  a=INT
+        {
+           amount = Integer.parseInt( $a.text );
+        }
+      | n=NUM_STR
+        {
+           amount = strToNumber( $n.text );
+        }
+      | A)?
+      (  DAYS
+         {
+            unit = Calendar.DAY_OF_YEAR;
+         }
+       | WEEKS
+         {
+            unit = Calendar.WEEK_OF_YEAR;
+         }
+       | MONTHS
+         {
+            unit = Calendar.MONTH;
+         }
+       | YEARS
+         {
+            unit = Calendar.YEAR;
+         }
+      )
+      (OF parseDate[retval.epochStart, false])?
+   ;
+   catch [NumberFormatException e]
    {
       throw new RecognitionException();
    }
-	catch [RecognitionException e]
+   catch [RecognitionException e]
    {
       throw e;
    }
@@ -315,40 +315,28 @@ date_full [Calendar cal]
         }
      )?
      {
-        // check if we have all 3 parts
-        if ( pt3Str != null && pt1Str.length() > 2 )
-        {
-		     // year first
-		     parseFullDate( $cal,
-	                       pt2Str,
-	                       pt3Str,
-	                       pt1Str,
-	                       false );
-	     }
-	
-        // year last or only 2 parts
-	     else
-	     {
-	        parseFullDate( $cal,
-	                       pt1Str,
-	                       pt2Str,
-	                       pt3Str,
-	                       false );
-           
-           // if year is missing and the date is
-           // befor now we roll to the next year.
-           if ( pt3Str == null )
-           {
-              final Calendar now = getLocalizedCalendar();
-           
-	           if ( cal.before( now ) )
-	           {
-	              cal.add( Calendar.YEAR, 1 );   
-	           }
-	        }
-	     }
-      }
-      ;
+        final boolean yearFirst
+           = pt3Str != null && pt1Str.length() > 2;
+
+        parseFullDate( $cal,
+                       yearFirst ? pt2Str : pt1Str, // day
+                       yearFirst ? pt3Str : pt2Str, // month
+                       yearFirst ? pt1Str : pt3Str, // year
+                       false );
+
+       // if year is missing and the date is
+       // befor now we roll to the next year.
+       if ( pt3Str == null )
+       {
+          final Calendar now = getLocalizedCalendar();
+
+          if ( cal.before( now ) )
+          {
+             cal.add( Calendar.YEAR, 1 );
+          }
+       }
+     }
+     ;
 
 date_on [Calendar cal]
    : ON? (   date_on_Xst_of_M[$cal]
@@ -361,20 +349,20 @@ date_on [Calendar cal]
    }
 
 date_on_Xst_of_M [Calendar cal]
-	@init
-	{
-	   final Calendar now = getLocalizedCalendar();
-	   boolean hasMonth   = false;
-	   boolean hasYear    = false;
-	}
+   @init
+   {
+      final Calendar now = getLocalizedCalendar();
+      boolean hasMonth   = false;
+      boolean hasYear    = false;
+   }
    : d=INT STs?
-       {       	 
+       {
           cal.set( Calendar.DAY_OF_MONTH, Integer.parseInt( $d.text ) );
        }
      ((OF | MINUS_A | MINUS | COMMA | DOT)?
        m=MONTH
          {
-            parseTextMonth( cal, $m.text );            
+            parseTextMonth( cal, $m.text );
             hasMonth = true;
          }
       (MINUS | DOT)?
@@ -383,15 +371,15 @@ date_on_Xst_of_M [Calendar cal]
             parseYear( cal, $y.text );
             hasYear = true;
          })?)?
-   {     
+   {
       // if we have a year we have a full qualified date.
       // so we change nothing.
       if ( !hasYear && cal.before( now ) )
       {
-      	// if we have a month, we roll to next year.
+         // if we have a month, we roll to next year.
          if ( hasMonth )
             cal.add( Calendar.YEAR, 1 );
-        	// if we only have a day, we roll to next month.
+         // if we only have a day, we roll to next month.
          else
             cal.add( Calendar.MONTH, 1 );
       }
@@ -407,10 +395,10 @@ date_on_Xst_of_M [Calendar cal]
    }
 
 date_on_M_Xst [Calendar cal]
-	@init
-	{
-	   boolean hasYear = false;
-	}
+   @init
+   {
+      boolean hasYear = false;
+   }
    : m=MONTH
        {
          parseTextMonth( cal, $m.text );
@@ -430,8 +418,8 @@ date_on_M_Xst [Calendar cal]
       // if we have a year we have a full qualified date.
       // so we change nothing.
       if ( !hasYear && getLocalizedCalendar().after( cal ) )
-         // If the date is before now we roll the year     
-	      cal.add( Calendar.YEAR, 1 );
+         // If the date is before now we roll the year
+         cal.add( Calendar.YEAR, 1 );
    }
    ;
    catch [NumberFormatException e]
@@ -494,7 +482,7 @@ date_in_X_YMWD_distance [Calendar cal]
    : (   a=NUM_STR { amount = strToNumber( $a.text );      }
        | a=INT     { amount = Integer.parseInt( $a.text ); })
      (     YEARS
-       |   MONTHS  { calField = Calendar.MONTH;  			  }
+       |   MONTHS  { calField = Calendar.MONTH;             }
        |   WEEKS   { calField = Calendar.WEEK_OF_YEAR;     }
        |   DAYS    { calField = Calendar.DAY_OF_YEAR;      })
    {
@@ -550,4 +538,3 @@ date_natural [Calendar cal]
    {
       throw e;
    }
-   

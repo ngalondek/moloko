@@ -20,15 +20,15 @@ options
 {
    public TimeParser()
    {
-   	super( null );
+      super( null );
    }
-   
+
    private final static Locale LOCALE = Locale.ENGLISH;
 
 
    public final static Calendar getLocalizedCalendar()
    {
-	   final Calendar cal = Calendar.getInstance( LOCALE );	     	   
+      final Calendar cal = Calendar.getInstance( LOCALE );
       return cal;
    }
 
@@ -67,17 +67,17 @@ options
       {
          throw new RecognitionException();
       }
-   }  
+   }
 }
 
 /** RULES **/
 
 /*
-	This parses time in the format:
-		- @|at|,? [0-9]+ :|. [0-9]+ am|pm?
-		- @|at|,? [0-9]{3,4] am|pm?
-		- @|at|,? [0-9]{1,2] am|pm?
-		
+   This parses time in the format:
+      - @|at|,? [0-9]+ :|. [0-9]+ am|pm?
+      - @|at|,? [0-9]{3,4] am|pm?
+      - @|at|,? [0-9]{1,2] am|pm?
+
    return true in case of EOF.
 */
 // adjustDay - if this parameter is false, the parser
@@ -88,19 +88,19 @@ options
 parseTime [Calendar cal, boolean adjustDay] returns [boolean eof]
    : (AT | COMMA)? time_point_in_time[$cal]
    {
-   	if ( adjustDay && getLocalizedCalendar().after( cal ) )
-   		cal.roll( Calendar.DAY_OF_WEEK, true );
+      if ( adjustDay && getLocalizedCalendar().after( cal ) )
+         cal.roll( Calendar.DAY_OF_WEEK, true );
    }
    | EOF
    {
-   	eof = true;
+      eof = true;
    }
    ;
    catch[ RecognitionException e ]
    {
       throw e;
    }
-   
+
 time_point_in_time [Calendar cal]
    : NEVER
    {
@@ -126,10 +126,10 @@ time_point_in_time [Calendar cal]
      | h=time_component (COLON|DOT) m=time_component
        {
           cal.set( Calendar.HOUR_OF_DAY, $h.value );
-      	 cal.set( Calendar.MINUTE, $m.value );
-      	 cal.set( Calendar.SECOND, 0 );
+          cal.set( Calendar.MINUTE, $m.value );
+          cal.set( Calendar.SECOND, 0 );
        }
-     )      
+     )
      am_pm[$cal]?)
    ;
    catch[ RecognitionException e ]
@@ -150,9 +150,9 @@ am_pm [Calendar cal]
    }
 
 /*
-	This parses time in the format:
-		- @|at|,? [0-9]+(:[0-9]+(:[0-9]+)?)?
-		- @|at|,? [0-9]+ h|m|s ([0-9]+ h|m|s ([0-9]+ h|m|s)?)?
+   This parses time in the format:
+      - @|at|,? [0-9]+(:[0-9]+(:[0-9]+)?)?
+      - @|at|,? [0-9]+ h|m|s ([0-9]+ h|m|s ([0-9]+ h|m|s)?)?
 
    return true in case of EOF.
 */
@@ -162,41 +162,41 @@ am_pm [Calendar cal]
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
 parseTimeSpec [Calendar cal, boolean adjustDay] returns [boolean eof]
-	@init
-	{
-    	cal.set( Calendar.HOUR_OF_DAY, 0 );
-   	cal.set( Calendar.MINUTE,      0 );
+   @init
+   {
+       cal.set( Calendar.HOUR_OF_DAY, 0 );
+      cal.set( Calendar.MINUTE,      0 );
       cal.set( Calendar.SECOND,      0 );
       cal.set( Calendar.MILLISECOND, 0 );
-	}
-	: (AT | COMMA)? (   time_separatorspec [$cal]
-	  	 					| ( time_naturalspec [$cal]
-                        ( time_naturalspec[$cal]
-	  	  	                 time_naturalspec[$cal]?)?)
-	                )
-	{
-   	if ( adjustDay && getLocalizedCalendar().after( cal ) )
-   		cal.roll( Calendar.DAY_OF_WEEK, true );
+   }
+   : (AT | COMMA)? (   time_separatorspec [$cal]
+                     | ( time_naturalspec [$cal]
+                       ( time_naturalspec[$cal]
+                         time_naturalspec[$cal]?)?)
+                   )
+   {
+      if ( adjustDay && getLocalizedCalendar().after( cal ) )
+         cal.roll( Calendar.DAY_OF_WEEK, true );
    }
    | EOF
    {
-   	eof = true;
+      eof = true;
    }
    ;
    catch[ RecognitionException e ]
    {
       throw e;
-   }	
+   }
 
 time_separatorspec [Calendar cal]
    : (h=time_component
-   	{
-   	   cal.set( Calendar.HOUR_OF_DAY, $h.value );
-   	}   
-	   (COLON m=time_component
-   	 {
-   	    cal.set( Calendar.MINUTE, $m.value );
-   	 }
+      {
+         cal.set( Calendar.HOUR_OF_DAY, $h.value );
+      }
+      (COLON m=time_component
+       {
+          cal.set( Calendar.MINUTE, $m.value );
+       }
        (COLON s=time_component
         {
            cal.set( Calendar.SECOND, $s.value );
@@ -209,50 +209,50 @@ time_separatorspec [Calendar cal]
    }
 
 time_naturalspec [Calendar cal] returns [int seconds]
-	@init
-	{
-		int calType = -1;
-	}
-	@after
-	{
-	   if ( cal != null )
-			cal.add( Calendar.SECOND, seconds );
-	}
+   @init
+   {
+      int calType = -1;
+   }
+   @after
+   {
+      if ( cal != null )
+         cal.add( Calendar.SECOND, seconds );
+   }
    :   fs=hour_floatspec
-   	 {
-   	 	seconds += fs;
-   	 }
+       {
+         seconds += fs;
+       }
      | v=INT ( HOURS
                {
-		            calType = Calendar.HOUR_OF_DAY;
-			    	}
-			   	| MINUTES
-			   	{
-			  	 	   calType = Calendar.MINUTE;
-	            }
-			   	| SECONDS
-			   	{
-	               calType = Calendar.SECOND;
-			   	}
-			    )
-	    {
-	    	int val = Integer.parseInt( $v.text );
-	    	
-	    	switch( calType )
-	    	{
-	    		case Calendar.HOUR_OF_DAY:
-	    			seconds += val * 3600;
-	    			break;
-	    		case Calendar.MINUTE:
-	    			seconds += val * 60;
-					break;
-	    		case Calendar.SECOND:
-	    			seconds += val;
-					break;
-	    		default:
-	    			throw new RecognitionException();
-	    	}
-	    }
+                  calType = Calendar.HOUR_OF_DAY;
+               }
+               | MINUTES
+               {
+                  calType = Calendar.MINUTE;
+               }
+               | SECONDS
+               {
+                  calType = Calendar.SECOND;
+               }
+             )
+       {
+         int val = Integer.parseInt( $v.text );
+
+         switch( calType )
+         {
+            case Calendar.HOUR_OF_DAY:
+               seconds += val * 3600;
+               break;
+            case Calendar.MINUTE:
+               seconds += val * 60;
+               break;
+            case Calendar.SECOND:
+               seconds += val;
+               break;
+            default:
+               throw new RecognitionException();
+         }
+       }
    ;
    catch[ NumberFormatException nfe ]
    {
@@ -266,8 +266,8 @@ time_naturalspec [Calendar cal] returns [int seconds]
 hour_floatspec returns [int seconds]
    : h=INT DOT deciHour=INT HOURS
    {
-   	seconds = Integer.parseInt( $h.text ) * 3600;
-   	seconds += Integer.parseInt( $deciHour.text ) * 360;
+      seconds = Integer.parseInt( $h.text ) * 3600;
+      seconds += Integer.parseInt( $deciHour.text ) * 360;
    }
    ;
    catch[ NumberFormatException nfe ]
@@ -278,27 +278,27 @@ hour_floatspec returns [int seconds]
    {
       throw e;
    }
-   
+
 /*
-	This parses time in the format:
-		- [0-9]+ d|h|m|s ([0-9]+ d|h|m|s ([0-9]+ d|h|m|s ([0-9]+ d|h|m|s)?)?)?
-	
+   This parses time in the format:
+      - [0-9]+ d|h|m|s ([0-9]+ d|h|m|s ([0-9]+ d|h|m|s ([0-9]+ d|h|m|s)?)?)?
+
    returns the parsed time span in milliseconds.
 */
 parseTimeEstimate returns [long span]
-	@after
-	{
-		span *= 1000;
-	}
-	: (   d=INT DAYS
-	      {
-	      	span += Integer.parseInt( $d.text ) * 3600 * 24;
-	      }
-	    | ts=time_naturalspec[null]
-	    {
-	    	 span += ts;
-	    }	    
-	  )+
+   @after
+   {
+      span *= 1000;
+   }
+   : (   d=INT DAYS
+         {
+            span += Integer.parseInt( $d.text ) * 3600 * 24;
+         }
+       | ts=time_naturalspec[null]
+       {
+         span += ts;
+       }
+     )+
    | EOF
    ;
    catch[ NumberFormatException nfe ]
@@ -308,20 +308,20 @@ parseTimeEstimate returns [long span]
    catch[ RecognitionException e ]
    {
       throw e;
-   }	   
-   
+   }
+
 time_component returns [int value]
-	: c = INT
-	{
-		String comp = $c.text;
-		
-		if ( comp.length() > 2 )
-			comp = comp.substring( 0, 2 );
-			
-		value = Integer.parseInt( comp );		
-	}
-	;
-	catch[ NumberFormatException nfe ]
+   : c = INT
+   {
+      String comp = $c.text;
+
+      if ( comp.length() > 2 )
+         comp = comp.substring( 0, 2 );
+
+      value = Integer.parseInt( comp );
+   }
+   ;
+   catch[ NumberFormatException nfe ]
    {
       throw new RecognitionException();
    }

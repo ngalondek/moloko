@@ -33,13 +33,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.util.Log;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Sync;
 
 
 public class SyncProviderPart extends AbstractRtmProviderPart
 {
-   @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + SyncProviderPart.class.getSimpleName();
    
@@ -108,6 +108,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
+         Log.e( TAG, "Query Sync failed. ", e );
       }
    }
    
@@ -117,29 +118,30 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    {
       String id = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Sync.CONTENT_URI,
-                                        PROJECTION,
-                                        null,
-                                        null,
-                                        null );
+         c = client.query( Sync.CONTENT_URI, PROJECTION, null, null, null );
          
          // We only consider the first entry cause we do not expect
          // more than 1 entry in this table
-         boolean ok = c != null && c.getCount() > 0 && c.moveToFirst();
+         boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
             id = c.getString( COL_INDICES.get( Sync._ID ) );
          }
-         
-         if ( c != null )
-            c.close();
       }
       catch ( RemoteException e )
       {
+         Log.e( TAG, "Query Sync failed. ", e );
          id = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return id;
@@ -151,17 +153,15 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    {
       ArrayList< Long > inAndOut = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Sync.CONTENT_URI,
-                                        PROJECTION,
-                                        null,
-                                        null,
-                                        null );
+         c = client.query( Sync.CONTENT_URI, PROJECTION, null, null, null );
          
          // We only consider the first entry cause we do not expect
          // more than 1 entry in this table
-         boolean ok = c != null && c.getCount() > 0 && c.moveToFirst();
+         boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
@@ -170,13 +170,16 @@ public class SyncProviderPart extends AbstractRtmProviderPart
             inAndOut.add( Queries.getOptLong( c,
                                               COL_INDICES.get( Sync.LAST_OUT ) ) );
          }
-         
-         if ( c != null )
-            c.close();
       }
       catch ( RemoteException e )
       {
+         Log.e( TAG, "Query Sync failed. ", e );
          inAndOut = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return inAndOut;

@@ -199,14 +199,17 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
          
          boolean ok = c != null;
          
-         if ( ok && c.getCount() > 0 )
+         if ( ok )
          {
             locations = new ArrayList< LocationWithTaskCount >( c.getCount() );
             
-            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            if ( c.getCount() > 0 )
             {
-               final LocationWithTaskCount location = createLocationOverview( c );
-               locations.add( location );
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final LocationWithTaskCount location = createLocationOverview( c );
+                  locations.add( location );
+               }
             }
          }
       }

@@ -152,26 +152,30 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    {
       RtmListWithTaskCount list = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Rtm.ListOverviews.CONTENT_URI,
-                                        PROJECTION,
-                                        selection,
-                                        null,
-                                        null );
+         c = client.query( Rtm.ListOverviews.CONTENT_URI,
+                           PROJECTION,
+                           selection,
+                           null,
+                           null );
          
          if ( c != null && c.getCount() > 0 && c.moveToFirst() )
          {
             list = createListOverview( client, c );
          }
-         
-         if ( c != null )
-            c.close();
       }
       catch ( RemoteException e )
       {
          Log.e( TAG, "Query lists overview failed. ", e );
          list = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return list;
@@ -184,36 +188,46 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    {
       ArrayList< RtmListWithTaskCount > lists = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Rtm.ListOverviews.CONTENT_URI,
-                                        PROJECTION,
-                                        selection,
-                                        null,
-                                        Rtm.ListOverviews.DEFAULT_SORT_ORDER );
+         c = client.query( Rtm.ListOverviews.CONTENT_URI,
+                           PROJECTION,
+                           selection,
+                           null,
+                           Rtm.ListOverviews.DEFAULT_SORT_ORDER );
          
-         lists = new ArrayList< RtmListWithTaskCount >();
+         boolean ok = c != null;
          
-         boolean ok = true;
-         
-         if ( c.getCount() > 0 )
+         if ( ok )
          {
-            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            lists = new ArrayList< RtmListWithTaskCount >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
             {
-               final RtmListWithTaskCount list = createListOverview( client, c );
-               lists.add( list );
+               
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmListWithTaskCount list = createListOverview( client,
+                                                                        c );
+                  lists.add( list );
+               }
             }
          }
          
          if ( !ok )
             lists = null;
-         
-         c.close();
       }
       catch ( RemoteException e )
       {
          Log.e( TAG, "Query lists overview failed. ", e );
          lists = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return lists;

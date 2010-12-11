@@ -267,8 +267,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                 serviceImpl,
                                                 syncResult,
                                                 batch );
-         
          Log.i( TAG, "Compute RtmLocations sync " + ( ok ? "ok" : "failed" ) );
+         
+         // Sync contacts
+         ok = ok
+            && RtmContactsSync.in_computeSync( provider,
+                                               serviceImpl,
+                                               syncResult,
+                                               batch );
+         
+         Log.i( TAG, "Compute RtmContactsSync sync " + ( ok ? "ok" : "failed" ) );
       }
       
       // Sync settings

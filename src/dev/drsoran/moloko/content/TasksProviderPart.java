@@ -47,6 +47,7 @@ import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -73,11 +74,11 @@ public class TasksProviderPart extends AbstractProviderPart
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
-   private final static String subQuery;
+   private final static String SUB_QUERY;
    
-   private final static String tagsSubQuery;
+   private final static String TAGS_SUB_QUERY;
    
-   private final static String numNotesSubQuery;
+   private final static String NUM_NOTES_SUBQUERY;
    
    static
    {
@@ -85,127 +86,130 @@ public class TasksProviderPart extends AbstractProviderPart
                                                     PROJECTION_MAP,
                                                     COL_INDICES );
       
-      subQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                      false,
-                                                      
-                                                      // tables
-                                                      TaskSeries.PATH + ","
-                                                         + Lists.PATH + ","
-                                                         + RawTasks.PATH,
-                                                      
-                                                      // columns
-                                                      new String[]
-                                                      {
-                                                       RawTasks.PATH + "."
-                                                          + RawTasks._ID
-                                                          + " AS _id",
-                                                       Tasks.LIST_ID,
-                                                       Tasks.LIST_NAME,
-                                                       Tasks.IS_SMART_LIST,
-                                                       Tasks.TASKSERIES_CREATED_DATE,
-                                                       Tasks.MODIFIED_DATE,
-                                                       Tasks.TASKSERIES_NAME,
-                                                       Tasks.SOURCE, Tasks.URL,
-                                                       Tasks.RECURRENCE,
-                                                       Tasks.RECURRENCE_EVERY,
-                                                       Tasks.TASKSERIES_ID,
-                                                       Tasks.DUE_DATE,
-                                                       Tasks.HAS_DUE_TIME,
-                                                       Tasks.ADDED_DATE,
-                                                       Tasks.COMPLETED_DATE,
-                                                       Tasks.DELETED_DATE,
-                                                       Tasks.PRIORITY,
-                                                       Tasks.POSTPONED,
-                                                       Tasks.ESTIMATE,
-                                                       Tasks.ESTIMATE_MILLIS,
-                                                       Tasks.LOCATION_ID },
-                                                      
-                                                      // where
-                                                      TaskSeries.PATH
-                                                         + "."
-                                                         + TaskSeries.LIST_ID
-                                                         + "="
-                                                         + Lists.PATH
-                                                         + "."
-                                                         + Lists._ID
-                                                         + " AND "
-                                                         + TaskSeries.PATH
-                                                         + "."
-                                                         + TaskSeries._ID
-                                                         + "="
-                                                         + RawTasks.PATH
-                                                         + "."
-                                                         + RawTasks.TASKSERIES_ID,
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null );
+      SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                       false,
+                                                       
+                                                       // tables
+                                                       TaskSeries.PATH + ","
+                                                          + Lists.PATH + ","
+                                                          + RawTasks.PATH,
+                                                       
+                                                       // columns
+                                                       new String[]
+                                                       {
+                                                        RawTasks.PATH + "."
+                                                           + RawTasks._ID
+                                                           + " AS _id",
+                                                        Tasks.LIST_ID,
+                                                        Tasks.LIST_NAME,
+                                                        Tasks.IS_SMART_LIST,
+                                                        Tasks.TASKSERIES_CREATED_DATE,
+                                                        Tasks.MODIFIED_DATE,
+                                                        Tasks.TASKSERIES_NAME,
+                                                        Tasks.SOURCE,
+                                                        Tasks.URL,
+                                                        Tasks.RECURRENCE,
+                                                        Tasks.RECURRENCE_EVERY,
+                                                        Tasks.TASKSERIES_ID,
+                                                        Tasks.DUE_DATE,
+                                                        Tasks.HAS_DUE_TIME,
+                                                        Tasks.ADDED_DATE,
+                                                        Tasks.COMPLETED_DATE,
+                                                        Tasks.DELETED_DATE,
+                                                        Tasks.PRIORITY,
+                                                        Tasks.POSTPONED,
+                                                        Tasks.ESTIMATE,
+                                                        Tasks.ESTIMATE_MILLIS,
+                                                        Tasks.LOCATION_ID },
+                                                       
+                                                       // where
+                                                       TaskSeries.PATH
+                                                          + "."
+                                                          + TaskSeries.LIST_ID
+                                                          + "="
+                                                          + Lists.PATH
+                                                          + "."
+                                                          + Lists._ID
+                                                          + " AND "
+                                                          + TaskSeries.PATH
+                                                          + "."
+                                                          + TaskSeries._ID
+                                                          + "="
+                                                          + RawTasks.PATH
+                                                          + "."
+                                                          + RawTasks.TASKSERIES_ID,
+                                                       null,
+                                                       null,
+                                                       null,
+                                                       null );
       
-      tagsSubQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                          false,
-                                                          
-                                                          // tables
-                                                          TaskSeries.PATH + ","
-                                                             + Tags.PATH,
-                                                          
-                                                          // columns
-                                                          new String[]
-                                                          {
-                                                           TaskSeries.PATH
-                                                              + "."
-                                                              + TaskSeries._ID,
-                                                           Tags.PATH
-                                                              + "."
-                                                              + Tags.TASKSERIES_ID
-                                                              + " AS series_id",
-                                                           "group_concat("
-                                                              + Tags.TAG
-                                                              + ",\""
-                                                              + Tasks.TAGS_DELIMITER
-                                                              + "\") AS "
-                                                              + Tasks.TAGS },
-                                                          
-                                                          // where
-                                                          TaskSeries.PATH
-                                                             + "."
-                                                             + TaskSeries._ID
-                                                             + "="
-                                                             + Tags.PATH
-                                                             + "."
-                                                             + Tags.TASKSERIES_ID,
-                                                          
-                                                          // group by
-                                                          TaskSeries.PATH + "."
-                                                             + TaskSeries._ID,
-                                                          null,
-                                                          null,
-                                                          null );
+      TAGS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                            false,
+                                                            
+                                                            // tables
+                                                            TaskSeries.PATH
+                                                               + ","
+                                                               + Tags.PATH,
+                                                            
+                                                            // columns
+                                                            new String[]
+                                                            {
+                                                             TaskSeries.PATH
+                                                                + "."
+                                                                + TaskSeries._ID,
+                                                             Tags.PATH
+                                                                + "."
+                                                                + Tags.TASKSERIES_ID
+                                                                + " AS series_id",
+                                                             "group_concat("
+                                                                + Tags.TAG
+                                                                + ",\""
+                                                                + Tasks.TAGS_DELIMITER
+                                                                + "\") AS "
+                                                                + Tasks.TAGS },
+                                                            
+                                                            // where
+                                                            TaskSeries.PATH
+                                                               + "."
+                                                               + TaskSeries._ID
+                                                               + "="
+                                                               + Tags.PATH
+                                                               + "."
+                                                               + Tags.TASKSERIES_ID,
+                                                            
+                                                            // group by
+                                                            TaskSeries.PATH
+                                                               + "."
+                                                               + TaskSeries._ID,
+                                                            null,
+                                                            null,
+                                                            null );
       
-      numNotesSubQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                              false,
-                                                              
-                                                              // tables
-                                                              Notes.PATH,
-                                                              
-                                                              // columns
-                                                              new String[]
-                                                              { "count("
-                                                                 + Notes.PATH
-                                                                 + "."
-                                                                 + Notes.TASKSERIES_ID
-                                                                 + ")" },
-                                                              
-                                                              // where
-                                                              "subQuery."
-                                                                 + RawTasks.TASKSERIES_ID
-                                                                 + "="
-                                                                 + Notes.PATH
-                                                                 + "."
-                                                                 + Notes.TASKSERIES_ID,
-                                                              null,
-                                                              null,
-                                                              null,
-                                                              null );
+      NUM_NOTES_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                                false,
+                                                                
+                                                                // tables
+                                                                Notes.PATH,
+                                                                
+                                                                // columns
+                                                                new String[]
+                                                                { "count("
+                                                                   + Notes.PATH
+                                                                   + "."
+                                                                   + Notes.TASKSERIES_ID
+                                                                   + ")" },
+                                                                
+                                                                // where
+                                                                "subQuery."
+                                                                   + RawTasks.TASKSERIES_ID
+                                                                   + "="
+                                                                   + Notes.PATH
+                                                                   + "."
+                                                                   + Notes.TASKSERIES_ID,
+                                                                null,
+                                                                null,
+                                                                null,
+                                                                null );
    }
    
    
@@ -228,6 +232,8 @@ public class TasksProviderPart extends AbstractProviderPart
       context.getContentResolver().registerContentObserver( Notes.CONTENT_URI,
                                                             true,
                                                             observer );
+      context.getContentResolver()
+             .registerContentObserver( Participants.CONTENT_URI, true, observer );
    }
    
 
@@ -254,7 +260,7 @@ public class TasksProviderPart extends AbstractProviderPart
                            null,
                            null );
          
-         boolean ok = c != null && c.getCount() > 0 && c.moveToFirst();
+         boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
@@ -298,20 +304,24 @@ public class TasksProviderPart extends AbstractProviderPart
                            null,
                            order );
          
-         tasks = new ArrayList< Task >();
-         
          boolean ok = c != null;
          
-         if ( ok && c.getCount() > 0 )
+         if ( ok )
          {
-            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            tasks = new ArrayList< Task >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
             {
-               final Task task = createTask( c );
                
-               ok = task != null;
-               
-               if ( ok )
-                  tasks.add( task );
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final Task task = createTask( c );
+                  
+                  ok = task != null;
+                  
+                  if ( ok )
+                     tasks.add( task );
+               }
             }
          }
          
@@ -382,7 +392,7 @@ public class TasksProviderPart extends AbstractProviderPart
          if ( !replacedNumNotes && column.equals( Tasks.NUM_NOTES ) )
          {
             projectionSB.append( "(" )
-                        .append( numNotesSubQuery )
+                        .append( NUM_NOTES_SUBQUERY )
                         .append( ")" )
                         .append( " AS " )
                         .append( Tasks.NUM_NOTES );
@@ -396,7 +406,7 @@ public class TasksProviderPart extends AbstractProviderPart
       
       final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
                                                                         .append( " FROM (" )
-                                                                        .append( subQuery )
+                                                                        .append( SUB_QUERY )
                                                                         .append( ") AS subQuery" );
       
       // Add locations columns
@@ -412,7 +422,7 @@ public class TasksProviderPart extends AbstractProviderPart
       // Add tags columns
       stringBuilder.append( " LEFT OUTER JOIN " )
                    .append( "(" )
-                   .append( tagsSubQuery )
+                   .append( TAGS_SUB_QUERY )
                    .append( ") AS tagsSubQuery ON tagsSubQuery.series_id" )
                    .append( " = subQuery." )
                    .append( Tasks.TASKSERIES_ID );

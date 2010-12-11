@@ -136,26 +136,30 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
    {
       TagWithTaskCount tag = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( TagOverviews.CONTENT_URI,
-                                        PROJECTION,
-                                        TagOverviews._ID + " = " + id,
-                                        null,
-                                        null );
+         c = client.query( TagOverviews.CONTENT_URI,
+                           PROJECTION,
+                           TagOverviews._ID + " = " + id,
+                           null,
+                           null );
          
-         if ( c != null && c.getCount() > 0 && c.moveToFirst() )
+         if ( c != null && c.moveToFirst() )
          {
             tag = createTagOverview( c );
          }
-         
-         if ( c != null )
-            c.close();
       }
       catch ( RemoteException e )
       {
          Log.e( TAG, "Query tag overview failed. ", e );
          tag = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return tag;
@@ -168,38 +172,45 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
    {
       ArrayList< TagWithTaskCount > tags = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( TagOverviews.CONTENT_URI,
-                                        PROJECTION,
-                                        excludeCompleted ? "subQuery."
-                                           + RawTasks.COMPLETED_DATE
-                                           + " IS NULL" : null,
-                                        null,
-                                        TagOverviews.DEFAULT_SORT_ORDER );
+         c = client.query( TagOverviews.CONTENT_URI,
+                           PROJECTION,
+                           excludeCompleted ? "subQuery."
+                              + RawTasks.COMPLETED_DATE + " IS NULL" : null,
+                           null,
+                           TagOverviews.DEFAULT_SORT_ORDER );
          
-         tags = new ArrayList< TagWithTaskCount >();
+         boolean ok = c != null;
          
-         boolean ok = true;
-         
-         if ( c.getCount() > 0 )
+         if ( ok )
          {
-            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            tags = new ArrayList< TagWithTaskCount >();
+            
+            if ( c.getCount() > 0 )
             {
-               final TagWithTaskCount tag = createTagOverview( c );
-               tags.add( tag );
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final TagWithTaskCount tag = createTagOverview( c );
+                  tags.add( tag );
+               }
             }
          }
          
          if ( !ok )
             tags = null;
-         
-         c.close();
       }
       catch ( RemoteException e )
       {
          Log.e( TAG, "Query tags overview failed. ", e );
          tags = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return tags;

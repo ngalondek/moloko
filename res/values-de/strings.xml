@@ -114,6 +114,7 @@
 	<string name="task_datetime_estimate_inline">%1$s geschätzt</string>
    <string name="task_datetime_recurr_inline">Wdh. %1$s</string>
    <string name="task_datetime_err_recurr">Das Wiederholungsmuster konnte nicht ausgewertet werden</string>
+   <string name="task_participants">Freigegeben für</string>
    <string name="task_location">Ort</string>
    <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Öffne Ort mit...</string>         

@@ -36,6 +36,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
@@ -47,7 +48,6 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public class RtmNotesProviderPart extends AbstractRtmProviderPart
 {
-   @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + RtmNotesProviderPart.class.getSimpleName();
    
@@ -111,30 +111,45 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
       
       if ( ok )
       {
-         final Cursor c = client.query( Notes.CONTENT_URI,
-                                        PROJECTION,
-                                        Notes.TASKSERIES_ID + " = "
-                                           + taskSeriesId,
-                                        null,
-                                        null );
+         Cursor c = null;
          
-         ok = c != null;
-         
-         if ( ok )
+         try
          {
-            ArrayList< RtmTaskNote > taskNotes = new ArrayList< RtmTaskNote >( c.getCount() );
+            c = client.query( Notes.CONTENT_URI,
+                              PROJECTION,
+                              Notes.TASKSERIES_ID + " = " + taskSeriesId,
+                              null,
+                              null );
             
-            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            ok = c != null;
+            
+            if ( ok )
             {
-               final RtmTaskNote taskNote = createNote( c );
-               taskNotes.add( taskNote );
+               ArrayList< RtmTaskNote > taskNotes = new ArrayList< RtmTaskNote >( c.getCount() );
+               
+               if ( c.getCount() > 0 )
+               {
+                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                  {
+                     final RtmTaskNote taskNote = createNote( c );
+                     taskNotes.add( taskNote );
+                  }
+                  
+                  if ( ok )
+                     notes = new RtmTaskNotes( taskNotes );
+               }
             }
-            
-            notes = new RtmTaskNotes( taskNotes );
          }
-         
-         if ( c != null )
-            c.close();
+         catch ( RemoteException e )
+         {
+            Log.e( TAG, "Query notes failed. ", e );
+            notes = null;
+         }
+         finally
+         {
+            if ( c != null )
+               c.close();
+         }
       }
       
       return notes;
@@ -147,25 +162,33 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    {
       RtmTaskNote note = null;
       
+      Cursor c = null;
+      
       boolean ok = noteId != null;
       
       if ( ok )
       {
-         final Cursor c = client.query( Notes.CONTENT_URI,
-                                        PROJECTION,
-                                        Notes._ID + " = " + noteId,
-                                        null,
-                                        null );
-         
-         ok = c != null && c.moveToFirst();
-         
-         if ( ok )
+         try
          {
-            note = createNote( c );
+            c = Queries.getItem( client, PROJECTION, Notes.CONTENT_URI, noteId );
+            
+            ok = c != null && c.moveToFirst();
+            
+            if ( ok )
+            {
+               note = createNote( c );
+            }
          }
-         
-         if ( c != null )
-            c.close();
+         catch ( RemoteException e )
+         {
+            Log.e( TAG, "Query note failed. ", e );
+            note = null;
+         }
+         finally
+         {
+            if ( c != null )
+               c.close();
+         }
       }
       
       return note;

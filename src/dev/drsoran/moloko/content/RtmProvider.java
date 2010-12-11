@@ -124,6 +124,8 @@ public class RtmProvider extends ContentProvider
        new RtmListsProviderPart( dbHelper ), new TagsProviderPart( dbHelper ),
        new RtmNotesProviderPart( dbHelper ),
        new RtmLocationsProviderPart( dbHelper ),
+       new RtmContactsProviderPart( dbHelper ),
+       new ParticipantsProviderPart( dbHelper ),
        new RtmSettingsProviderPart( dbHelper ), new SyncProviderPart( dbHelper ) } ) );
       
       parts.addAll( mutableParts );

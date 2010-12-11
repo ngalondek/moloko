@@ -100,7 +100,7 @@ public abstract class RtmData implements Parcelable
    
 
 
-   protected String text( Element elt )
+   public static String text( Element elt )
    {
       StringBuilder result = new StringBuilder();
       Node child = elt.getFirstChild();
@@ -122,7 +122,7 @@ public abstract class RtmData implements Parcelable
    
 
 
-   protected String textNullIfEmpty( Element elt )
+   public static String textNullIfEmpty( Element elt )
    {
       final String text = text( elt );
       return ( TextUtils.isEmpty( text ) ? null : text );
@@ -130,7 +130,7 @@ public abstract class RtmData implements Parcelable
    
 
 
-   protected String textNullIfEmpty( Element elt, String attribute )
+   public static String textNullIfEmpty( Element elt, String attribute )
    {
       final String text = elt.getAttribute( attribute );
       return ( TextUtils.isEmpty( text ) ? null : text );

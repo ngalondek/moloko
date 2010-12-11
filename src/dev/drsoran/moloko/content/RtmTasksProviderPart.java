@@ -37,6 +37,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -48,7 +49,6 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public class RtmTasksProviderPart extends AbstractRtmProviderPart
 {
-   @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + RtmTasksProviderPart.class.getSimpleName();
    
@@ -150,17 +150,27 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    {
       RtmTask task = null;
       
-      final Cursor c = Queries.getItem( client,
-                                        PROJECTION,
-                                        Rtm.RawTasks.CONTENT_URI,
-                                        id );
+      Cursor c = null;
       
-      if ( c.moveToFirst() )
+      try
       {
-         task = createTask( c );
+         c = Queries.getItem( client, PROJECTION, Rtm.RawTasks.CONTENT_URI, id );
+         
+         if ( c != null && c.moveToFirst() )
+         {
+            task = createTask( c );
+         }
       }
-      
-      c.close();
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query rawtask failed. ", e );
+         task = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
       
       return task;
    }
@@ -174,36 +184,43 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       
       if ( !TextUtils.isEmpty( taskSeriesId ) )
       {
+         Cursor c = null;
+         
          try
          {
-            final Cursor c = client.query( RawTasks.CONTENT_URI,
-                                           PROJECTION,
-                                           RawTasks.TASKSERIES_ID + " = "
-                                              + taskSeriesId,
-                                           null,
-                                           null );
+            c = client.query( RawTasks.CONTENT_URI,
+                              PROJECTION,
+                              RawTasks.TASKSERIES_ID + " = " + taskSeriesId,
+                              null,
+                              null );
             
-            boolean ok = c != null && c.getCount() > 0;
+            boolean ok = c != null;
             
             if ( ok )
             {
                tasks = new ArrayList< RtmTask >( c.getCount() );
                
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               if ( c.getCount() > 0 )
                {
-                  tasks.add( createTask( c ) );
+                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                  {
+                     tasks.add( createTask( c ) );
+                  }
                }
-               
-               if ( !ok )
-                  tasks = null;
             }
             
-            if ( c != null )
-               c.close();
+            if ( !ok )
+               tasks = null;
          }
          catch ( RemoteException e )
          {
+            Log.e( TAG, "Query rawtasks failed. ", e );
             tasks = null;
+         }
+         finally
+         {
+            if ( c != null )
+               c.close();
          }
       }
       

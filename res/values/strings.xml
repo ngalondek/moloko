@@ -160,6 +160,7 @@
    <string name="task_datetime_recurr_inline">Repeat %1$s</string>
    <string name="task_datetime_err_recurr">The recurrence pattern could not be evaluated</string>
    <string name="task_location">Location</string>
+   <string name="task_participants">Shared with</string>
    <string name="task_url">URL</string>
    <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Open location with...</string>

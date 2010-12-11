@@ -25,8 +25,6 @@ package dev.drsoran.moloko.util;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.net.ssl.SSLException;
-
 import android.accounts.Account;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -68,8 +66,7 @@ public final class SyncUtils
       {
          Log.e( TAG, exception.responseMessage, internalException );
          
-         if ( internalException instanceof SSLException
-            || internalException instanceof IOException )
+         if ( internalException instanceof IOException )
          {
             ++syncResult.stats.numIoExceptions;
          }

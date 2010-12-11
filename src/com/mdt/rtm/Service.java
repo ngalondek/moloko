@@ -33,6 +33,7 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
 
 
@@ -45,13 +46,10 @@ public interface Service
 {
    
    /**
-    * Checks whether the service is authorized to communicate with the RTM
-    * server. Depends on the user's login info, and
-    * whether or not that user has authorized the service wrapper to communicate
-    * with RTM.
+    * Checks whether the service is authorized to communicate with the RTM server. Depends on the user's login info, and
+    * whether or not that user has authorized the service wrapper to communicate with RTM.
     * 
-    * @return true if the service API has permission to interact with full
-    *         permissions (including delete) with RTM
+    * @return true if the service API has permission to interact with full permissions (including delete) with RTM
     * @throws ServiceException
     *            if there is a problem checking for authorization
     */
@@ -60,12 +58,10 @@ public interface Service
 
 
    /**
-    * Begins the process of obtaining authorization for the service API to
-    * communicate with RTM on behalf of a
+    * Begins the process of obtaining authorization for the service API to communicate with RTM on behalf of a
     * particular user.
     * 
-    * @return the URL that the user should be prompted to log in to to complete
-    *         authorization
+    * @return the URL that the user should be prompted to log in to to complete authorization
     * @throws ServiceException
     *            if the authorization process cannot be started
     */
@@ -74,9 +70,7 @@ public interface Service
 
 
    /**
-    * The same method as the previous
-    * {@link #beginAuthorization(com.mdt.rtm.data.RtmAuth.Perms)}, except that
-    * you need
+    * The same method as the previous {@link #beginAuthorization(com.mdt.rtm.data.RtmAuth.Perms)}, except that you need
     * to invoke yourself the {@link #auth_getFrob()} beforehand.
     * 
     * This has been introduced, in order to provide better control over the API.
@@ -86,14 +80,11 @@ public interface Service
 
 
    /**
-    * Completes the process of obtaining authorization for the service API to
-    * communicate with RTM on behalf of a
+    * Completes the process of obtaining authorization for the service API to communicate with RTM on behalf of a
     * particular user.
     * 
-    * Once this is called successfully, <code>isServiceAuthorized()</code>
-    * should return true until the user goes to RTM
-    * and explicitly denies the service access. It also might be possible for
-    * authorization to time out, in which case
+    * Once this is called successfully, <code>isServiceAuthorized()</code> should return true until the user goes to RTM
+    * and explicitly denies the service access. It also might be possible for authorization to time out, in which case
     * this process would need to be started again.
     * 
     * @return the newly created authentication token
@@ -105,8 +96,7 @@ public interface Service
 
 
    /**
-    * Same as the previous {@link #completeAuthorization()} method, except that
-    * the frob taken is implicitly given. Very
+    * Same as the previous {@link #completeAuthorization()} method, except that the frob taken is implicitly given. Very
     * useful when you need to handle multiple authentication tokens.
     */
    String completeAuthorization( RtmFrob frob ) throws ServiceException;
@@ -133,7 +123,7 @@ public interface Service
    
 
 
-   void contacts_getList() throws ServiceException;
+   RtmContacts contacts_getList() throws ServiceException;
    
 
 
@@ -261,8 +251,7 @@ public interface Service
 
 
    /**
-    * THINK: Would it not be better to have a {@link GregorianCalendar}
-    * parameter instead?
+    * THINK: Would it not be better to have a {@link GregorianCalendar} parameter instead?
     */
    RtmTaskSeries tasks_setDueDate( String timelineId,
                                    String listId,

@@ -108,7 +108,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
                            null,
                            null );
          
-         boolean ok = c.getCount() > 0 && c.moveToFirst();
+         boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
@@ -140,16 +140,19 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
       {
          c = client.query( Locations.CONTENT_URI, PROJECTION, null, null, null );
          
-         locations = new ArrayList< RtmLocation >( c.getCount() );
+         boolean ok = c != null;
          
-         if ( c.getCount() > 0 )
+         if ( ok )
          {
-            boolean ok = true;
+            locations = new ArrayList< RtmLocation >( c.getCount() );
             
-            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            if ( c.getCount() > 0 )
             {
-               final RtmLocation location = createLocation( c );
-               locations.add( location );
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmLocation location = createLocation( c );
+                  locations.add( location );
+               }
             }
          }
       }

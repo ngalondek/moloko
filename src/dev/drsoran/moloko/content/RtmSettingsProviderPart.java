@@ -33,6 +33,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Settings;
@@ -41,7 +42,6 @@ import dev.drsoran.rtm.RtmSettings;
 
 public class RtmSettingsProviderPart extends AbstractRtmProviderPart
 {
-   @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + RtmSettingsProviderPart.class.getSimpleName();
    
@@ -103,29 +103,30 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    {
       String id = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Settings.CONTENT_URI,
-                                        PROJECTION,
-                                        null,
-                                        null,
-                                        null );
+         c = client.query( Settings.CONTENT_URI, PROJECTION, null, null, null );
          
          // We only consider the first entry cause we do not expect
          // more than 1 entry in this table
-         boolean ok = c != null && c.getCount() > 0 && c.moveToFirst();
+         boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
             id = c.getString( COL_INDICES.get( Settings._ID ) );
          }
-         
-         if ( c != null )
-            c.close();
       }
       catch ( RemoteException e )
       {
          id = null;
+         Log.e( TAG, "Query settings ID failed. ", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return id;
@@ -137,17 +138,15 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    {
       RtmSettings settings = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Settings.CONTENT_URI,
-                                        PROJECTION,
-                                        null,
-                                        null,
-                                        null );
+         c = client.query( Settings.CONTENT_URI, PROJECTION, null, null, null );
          
          // We only consider the first entry cause we do not expect
          // more than 1 entry in this table
-         boolean ok = c != null && c.getCount() > 0 && c.moveToFirst();
+         boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
@@ -162,13 +161,16 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
                                         Queries.getOptString( c,
                                                               COL_INDICES.get( Settings.LANGUAGE ) ) );
          }
-         
-         if ( c != null )
-            c.close();
       }
       catch ( RemoteException e )
       {
+         Log.e( TAG, "Query settings ailed. ", e );
          settings = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return settings;

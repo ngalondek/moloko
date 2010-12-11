@@ -54,9 +54,11 @@ import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Tag;
 
 
@@ -156,7 +158,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                            null,
                            null );
          
-         boolean ok = c.getCount() > 0 && c.moveToFirst();
+         boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
@@ -165,7 +167,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Error accessing the database.", e );
+         Log.e( TAG, "Query taskseries failed. ", e );
          taskSeries = null;
       }
       finally
@@ -194,9 +196,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                            null,
                            null );
          
-         boolean ok = true;
+         boolean ok = c != null;
          
-         if ( c.getCount() > 0 )
+         if ( ok && c.getCount() > 0 )
          {
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
@@ -213,7 +215,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Error accessing the database.", e );
+         Log.e( TAG, "Query taskserieses failed.", e );
          taskList = null;
       }
       finally
@@ -347,6 +349,18 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
             }
          }
          
+         // Check for participants
+         if ( ok )
+         {
+            final ParticipantList participantList = taskSeries.getParticipants();
+            final ArrayList< ContentProviderOperation > participantsOperations = ParticipantsProviderPart.insertParticipants( client,
+                                                                                                                              participantList );
+            ok = participantsOperations != null;
+            
+            if ( ok )
+               operations.addAll( participantsOperations );
+         }
+         
          // Insert new taskseries
          if ( ok )
          {
@@ -405,16 +419,20 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          ok = notes != null;
       }
       
+      ParticipantList participantsList = null;
+      
       if ( ok )
       {
-         String locationId = null;
+         participantsList = ParticipantsProviderPart.getParticipants( client,
+                                                                      taskSeriesId );
          
-         // Check if this taskseries has a location
-         if ( !c.isNull( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) )
-         {
-            locationId = Long.toString( c.getLong( COL_INDICES.get( TaskSeries.LOCATION_ID ) ) );
-         }
-         
+         // If the taskseries has no participants, we get an empty list, but
+         // not null
+         ok = participantsList != null;
+      }
+      
+      if ( ok )
+      {
          // add the current task series to the task list.
          taskSeries = new RtmTaskSeries( taskSeriesId,
                                          c.getString( COL_INDICES.get( TaskSeries.LIST_ID ) ),
@@ -426,7 +444,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                                                                COL_INDICES.get( TaskSeries.SOURCE ) ),
                                          tasks,
                                          notes,
-                                         locationId,
+                                         Queries.getOptString( c,
+                                                               COL_INDICES.get( TaskSeries.LOCATION_ID ) ),
                                          Queries.getOptString( c,
                                                                COL_INDICES.get( TaskSeries.URL ) ),
                                          Queries.getOptString( c,
@@ -434,7 +453,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                                          Queries.getOptBool( c,
                                                              COL_INDICES.get( TaskSeries.RECURRENCE_EVERY ),
                                                              false ),
-                                         tags );
+                                         tags,
+                                         participantsList );
       }
       
       return taskSeries;
@@ -469,6 +489,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       // - all raw tasks
       // - all referenced notes
       // - all referenced tags
+      // - all referenced participants
       
       db.execSQL( "CREATE TRIGGER " + path
          + "_delete_taskseries AFTER DELETE ON " + path
@@ -476,8 +497,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + RawTasks.TASKSERIES_ID + " = old." + TaskSeries._ID
          + "; DELETE FROM " + Notes.PATH + " WHERE " + Notes.TASKSERIES_ID
          + " = old." + TaskSeries._ID + ";" + " DELETE FROM " + Tags.PATH
-         + " WHERE " + Tags.TASKSERIES_ID + " = old." + TaskSeries._ID + ";"
-         + " END;" );
+         + " WHERE " + Tags.TASKSERIES_ID + " = old." + TaskSeries._ID
+         + "; DELETE FROM " + Participants.PATH + " WHERE "
+         + Participants.TASKSERIES_ID + " = old." + TaskSeries._ID + "; END;" );
    }
    
 

@@ -74,48 +74,57 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    {
       RtmLists lists = null;
       
+      Cursor c = null;
+      
       try
       {
-         final Cursor c = client.query( Rtm.Lists.CONTENT_URI,
-                                        PROJECTION,
-                                        selection,
-                                        null,
-                                        null );
+         c = client.query( Rtm.Lists.CONTENT_URI,
+                           PROJECTION,
+                           selection,
+                           null,
+                           null );
          
-         lists = new RtmLists();
+         boolean ok = c != null;
          
-         boolean ok = true;
-         
-         if ( c.getCount() > 0 )
+         if ( ok )
          {
-            for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+            lists = new RtmLists();
+            
+            if ( c.getCount() > 0 )
             {
-               // This as to be inside the loop. Otherwise we can get old
-               // values.
-               RtmSmartFilter filter = null;
-               
-               if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
-                  filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
-               
-               final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
-                                                 c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
-                                                 c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),
-                                                 c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
-                                                 c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
-                                                 c.getInt( COL_INDICES.get( Lists.POSITION ) ),
-                                                 filter );
-               lists.add( list );
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  // This as to be inside the loop. Otherwise we can get old
+                  // values.
+                  RtmSmartFilter filter = null;
+                  
+                  if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
+                     filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
+                  
+                  final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
+                                                    c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
+                                                    c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),
+                                                    c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
+                                                    c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
+                                                    c.getInt( COL_INDICES.get( Lists.POSITION ) ),
+                                                    filter );
+                  lists.add( list );
+               }
             }
          }
+         
          if ( !ok )
             lists = null;
-         
-         c.close();
       }
       catch ( RemoteException e )
       {
          Log.e( TAG, "Query lists failed. ", e );
          lists = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return lists;

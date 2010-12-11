@@ -34,6 +34,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
+import android.util.Log;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Tag;
@@ -41,7 +42,6 @@ import dev.drsoran.rtm.Tag;
 
 public class TagsProviderPart extends AbstractRtmProviderPart
 {
-   @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + TagsProviderPart.class.getSimpleName();
    
@@ -91,37 +91,43 @@ public class TagsProviderPart extends AbstractRtmProviderPart
       
       if ( !TextUtils.isEmpty( taskSeriesId ) )
       {
+         Cursor c = null;
+         
          try
          {
-            final Cursor c = client.query( Tags.CONTENT_URI,
-                                           PROJECTION,
-                                           Tags.TASKSERIES_ID + " = "
-                                              + taskSeriesId,
-                                           null,
-                                           Tags.TAG );
+            c = client.query( Tags.CONTENT_URI, PROJECTION, Tags.TASKSERIES_ID
+               + " = " + taskSeriesId, null, Tags.TAG );
             
-            tags = new ArrayList< Tag >( c.getCount() );
+            boolean ok = c != null;
             
-            boolean ok = true;
-            
-            if ( c.getCount() > 0 )
+            if ( ok )
             {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               tags = new ArrayList< Tag >( c.getCount() );
+               
+               if ( c.getCount() > 0 )
                {
-                  tags.add( new Tag( c.getString( COL_INDICES.get( Tags._ID ) ),
-                                     c.getString( COL_INDICES.get( Tags.TASKSERIES_ID ) ),
-                                     c.getString( COL_INDICES.get( Tags.TAG ) ) ) );
+                  
+                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                  {
+                     tags.add( new Tag( c.getString( COL_INDICES.get( Tags._ID ) ),
+                                        c.getString( COL_INDICES.get( Tags.TASKSERIES_ID ) ),
+                                        c.getString( COL_INDICES.get( Tags.TAG ) ) ) );
+                  }
                }
             }
             
             if ( !ok )
                tags = null;
-            
-            c.close();
          }
          catch ( RemoteException e )
          {
+            Log.e( TAG, "Query tags failed. ", e );
             tags = null;
+         }
+         finally
+         {
+            if ( c != null )
+               c.close();
          }
       }
       
@@ -135,6 +141,8 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    {
       ArrayList< String > tags = null;
       
+      Cursor c = null;
+      
       if ( taskSeriesId != null )
       {
          try
@@ -142,33 +150,37 @@ public class TagsProviderPart extends AbstractRtmProviderPart
             final String[] projection =
             { Tags._ID, Tags.TAG };
             
-            final Cursor c = client.query( Tags.CONTENT_URI,
-                                           projection,
-                                           Tags.TASKSERIES_ID + " = "
-                                              + taskSeriesId,
-                                           null,
-                                           null );
+            c = client.query( Tags.CONTENT_URI, projection, Tags.TASKSERIES_ID
+               + " = " + taskSeriesId, null, null );
             
-            tags = new ArrayList< String >( c.getCount() );
+            boolean ok = c != null;
             
-            boolean ok = true;
-            
-            if ( c.getCount() > 0 )
+            if ( ok )
             {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               tags = new ArrayList< String >( c.getCount() );
+               
+               if ( c.getCount() > 0 )
                {
-                  tags.add( c.getString( 1 ) );
+                  
+                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                  {
+                     tags.add( c.getString( 1 ) );
+                  }
                }
             }
             
             if ( !ok )
                tags = null;
-            
-            c.close();
          }
          catch ( RemoteException e )
          {
+            Log.e( TAG, "Query tag texts failed. ", e );
             tags = null;
+         }
+         finally
+         {
+            if ( c != null )
+               c.close();
          }
       }
       

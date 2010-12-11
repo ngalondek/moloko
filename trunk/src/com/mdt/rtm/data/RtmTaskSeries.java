@@ -52,6 +52,7 @@ import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Tag;
 
 
@@ -147,6 +148,8 @@ public class RtmTaskSeries extends RtmData implements
    
    private final List< String > tags;
    
+   private final ParticipantList participants;
+   
    private final boolean deleted;
    
    
@@ -154,7 +157,8 @@ public class RtmTaskSeries extends RtmData implements
    public RtmTaskSeries( String id, String listId, Date created, Date modified,
       String name, String source, List< RtmTask > tasks, RtmTaskNotes notes,
       String locationId, String url, String recurrence,
-      boolean isEveryRecurrence, List< String > tags )
+      boolean isEveryRecurrence, List< String > tags,
+      ParticipantList participants )
    {
       this.id = id;
       this.listId = listId;
@@ -170,6 +174,7 @@ public class RtmTaskSeries extends RtmData implements
       this.recurrence = recurrence;
       this.isEveryRecurrence = isEveryRecurrence;
       this.tags = tags;
+      this.participants = participants;
       this.deleted = false;
    }
    
@@ -177,36 +182,37 @@ public class RtmTaskSeries extends RtmData implements
 
    public RtmTaskSeries( Element elt, String listId )
    {
-      id = textNullIfEmpty( elt, "id" );
+      this.id = textNullIfEmpty( elt, "id" );
       this.listId = listId;
-      created = parseDate( elt.getAttribute( "created" ) );
-      modified = parseDate( elt.getAttribute( "modified" ) );
-      name = textNullIfEmpty( elt, "name" );
-      source = textNullIfEmpty( elt, "source" );
+      this.created = parseDate( elt.getAttribute( "created" ) );
+      this.modified = parseDate( elt.getAttribute( "modified" ) );
+      this.name = textNullIfEmpty( elt, "name" );
+      this.source = textNullIfEmpty( elt, "source" );
       
       final Element recurrenceRule = child( elt, "rrule" );
+      
       if ( recurrenceRule != null
          && recurrenceRule.getChildNodes().getLength() > 0 )
       {
-         recurrence = textNullIfEmpty( recurrenceRule );
+         this.recurrence = textNullIfEmpty( recurrenceRule );
          
          try
          {
-            isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
-                                                                   "every" ) ) != 0;
+            this.isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
+                                                                        "every" ) ) != 0;
             
-            recurrence = ensureRecurrencePatternOrder( recurrence );
+            this.recurrence = ensureRecurrencePatternOrder( recurrence );
          }
          catch ( NumberFormatException nfe )
          {
-            recurrence = null;
-            isEveryRecurrence = false;
+            this.recurrence = null;
+            this.isEveryRecurrence = false;
          }
       }
       else
       {
-         recurrence = null;
-         isEveryRecurrence = false;
+         this.recurrence = null;
+         this.isEveryRecurrence = false;
       }
       
       final List< Element > tasks = children( elt, "task" );
@@ -217,21 +223,23 @@ public class RtmTaskSeries extends RtmData implements
          this.tasks.add( new RtmTask( task ) );
       }
       
-      notes = new RtmTaskNotes( child( elt, "notes" ) );
-      locationId = textNullIfEmpty( elt, "location_id" );
-      url = textNullIfEmpty( elt, "url" );
+      this.notes = new RtmTaskNotes( child( elt, "notes" ) );
+      this.locationId = textNullIfEmpty( elt, "location_id" );
+      this.url = textNullIfEmpty( elt, "url" );
       
       final Element elementTags = child( elt, "tags" );
+      
       if ( elementTags.getChildNodes().getLength() > 0 )
       {
          final List< Element > elementTagList = children( elementTags, "tag" );
-         tags = new ArrayList< String >( elementTagList.size() );
+         this.tags = new ArrayList< String >( elementTagList.size() );
+         
          for ( Element elementTag : elementTagList )
          {
             final String tag = text( elementTag );
             if ( !TextUtils.isEmpty( tag ) )
             {
-               tags.add( tag );
+               this.tags.add( tag );
             }
          }
       }
@@ -239,10 +247,21 @@ public class RtmTaskSeries extends RtmData implements
       {
          // do not use Collections.emptyList() here cause we
          // need a mutable list.
-         tags = new ArrayList< String >( 0 );
+         this.tags = new ArrayList< String >( 0 );
       }
       
-      deleted = false;
+      final Element elementParticipants = child( elt, "participants" );
+      
+      if ( elementParticipants.getChildNodes().getLength() > 0 )
+      {
+         this.participants = new ParticipantList( id, elementParticipants );
+      }
+      else
+      {
+         this.participants = new ParticipantList( id );
+      }
+      
+      this.deleted = false;
    }
    
 
@@ -251,7 +270,6 @@ public class RtmTaskSeries extends RtmData implements
    {
       id = elt.getAttribute( "id" );
       
-      // TODO: Get list ID from surrounding element
       this.listId = listId;
       created = null;
       modified = null;
@@ -272,6 +290,7 @@ public class RtmTaskSeries extends RtmData implements
       recurrence = null;
       isEveryRecurrence = false;
       tags = null;
+      participants = null;
       this.deleted = deleted;
    }
    
@@ -292,6 +311,7 @@ public class RtmTaskSeries extends RtmData implements
       recurrence = source.readString();
       isEveryRecurrence = source.readInt() != 0;
       tags = source.createStringArrayList();
+      participants = source.readParcelable( null );
       deleted = source.readInt() != 0;
    }
    
@@ -356,6 +376,13 @@ public class RtmTaskSeries extends RtmData implements
    public List< String > getTags()
    {
       return tags;
+   }
+   
+
+
+   public ParticipantList getParticipants()
+   {
+      return participants;
    }
    
 
@@ -433,8 +460,8 @@ public class RtmTaskSeries extends RtmData implements
    {
       dest.writeString( id );
       dest.writeString( listId );
-      dest.writeParcelable( created, 0 );
-      dest.writeParcelable( modified, 0 );
+      dest.writeParcelable( created, flags );
+      dest.writeParcelable( modified, flags );
       dest.writeString( name );
       dest.writeString( source );
       dest.writeTypedList( tasks );
@@ -444,6 +471,7 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeString( recurrence );
       dest.writeInt( isEveryRecurrence ? 1 : 0 );
       dest.writeStringList( tags );
+      dest.writeParcelable( participants, flags );
       dest.writeInt( deleted ? 1 : 0 );
    }
    
@@ -566,7 +594,6 @@ public class RtmTaskSeries extends RtmData implements
                final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( provider,
                                                                                                                         tasks,
                                                                                                                         RtmTask.LESS_ID );
-               
                final ArrayList< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( update.tasks,
                                                                                                   syncTasksList,
                                                                                                   id );
@@ -574,6 +601,18 @@ public class RtmTaskSeries extends RtmData implements
                
                if ( ok && taskOperations.size() > 0 )
                   result.addAll( taskOperations );
+            }
+            
+            // Update participants
+            if ( ok )
+            {
+               final IContentProviderSyncOperation partOperation = participants.computeContentProviderUpdateOperation( provider,
+                                                                                                                       update.participants );
+               ok = partOperation != null;
+               
+               if ( ok
+                  && !( partOperation instanceof NoopContentProviderSyncOperation ) )
+                  result.add( partOperation );
             }
             
             // Update taskseries

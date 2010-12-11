@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -44,6 +45,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.LocationChooser;
@@ -52,6 +54,7 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.RtmContact;
 import dev.drsoran.rtm.Task;
 
 
@@ -105,6 +108,7 @@ public class TaskActivity extends Activity
                ViewGroup tagsLayout;
                View dateTimeSection;
                View locationSection;
+               View participantsSection;
                View urlSection;
                
                try
@@ -118,7 +122,8 @@ public class TaskActivity extends Activity
                   listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
                   tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
                   dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
-                  locationSection = taskContainer.findViewById( R.id.task_location_container );
+                  locationSection = taskContainer.findViewById( R.id.task_location );
+                  participantsSection = taskContainer.findViewById( R.id.task_participants );
                   urlSection = taskContainer.findViewById( R.id.task_url );
                }
                catch ( ClassCastException e )
@@ -164,6 +169,8 @@ public class TaskActivity extends Activity
                setDateTimeSection( dateTimeSection, task );
                
                setLocationSection( locationSection, task );
+               
+               setParticipantsSection( participantsSection, task );
                
                // This is necessary due to a problem with attribute
                // autoLink="all". This causes to render the text
@@ -326,7 +333,7 @@ public class TaskActivity extends Activity
                   }
                }, 0, clickableLocation.length(), 0 );
                
-               UIUtils.initializeTitleWithTextLayout( view.findViewById( R.id.task_location ),
+               UIUtils.initializeTitleWithTextLayout( view,
                                                       getString( R.string.task_location ),
                                                       clickableLocation );
             }
@@ -338,10 +345,63 @@ public class TaskActivity extends Activity
          
          if ( !locationIsClickable )
          {
-            UIUtils.initializeTitleWithTextLayout( view.findViewById( R.id.task_location ),
+            UIUtils.initializeTitleWithTextLayout( view,
                                                    getString( R.string.task_location ),
                                                    locationName );
          }
+      }
+   }
+   
+
+
+   private void setParticipantsSection( View view, Task task )
+   {
+      boolean ok = true;
+      
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+      
+      ok = client != null;
+      
+      if ( ok )
+      {
+         final ArrayList< RtmContact > participants = ParticipantsProviderPart.getParticipatingContacts( client,
+                                                                                                         task.getTaskSeriesId() );
+         
+         ok = participants != null;
+         
+         if ( ok && participants.size() > 0 )
+         {
+            final SpannableString clickableContact = new SpannableString( participants.get( 0 )
+                                                                                      .getFullname() );
+            clickableContact.setSpan( new ClickableSpan()
+            {
+               @Override
+               public void onClick( View widget )
+               {
+                  // TODO: Open contact
+               }
+            }, 0, clickableContact.length(), 0 );
+            
+            UIUtils.initializeTitleWithTextLayout( view,
+                                                   getString( R.string.task_participants ),
+                                                   clickableContact );
+         }
+         else
+         {
+            view.setVisibility( View.GONE );
+         }
+         
+         if ( !ok )
+            Log.e( TAG, "Unable to retrieve participants from DB for task ID "
+               + task.getTaskSeriesId() );
+         
+         client.release();
+      }
+      
+      if ( !ok )
+      {
+         view.setVisibility( View.GONE );
+         // TODO: Show error
       }
    }
    

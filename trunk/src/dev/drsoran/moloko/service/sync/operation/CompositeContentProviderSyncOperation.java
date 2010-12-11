@@ -62,6 +62,23 @@ public class CompositeContentProviderSyncOperation extends
    
 
 
+   public CompositeContentProviderSyncOperation(
+      ContentProviderClient provider, int operationType,
+      ArrayList< ContentProviderOperation > operations )
+      throws NullPointerException
+   {
+      super( provider, operationType );
+      
+      this.operations = new ArrayList< IContentProviderSyncOperation >( operations.size() );
+      
+      for ( ContentProviderOperation contentProviderOperation : operations )
+      {
+         operations.add( contentProviderOperation );
+      }
+   }
+   
+
+
    public void add( IContentProviderSyncOperation operation ) throws NullPointerException
    {
       if ( operation == null )

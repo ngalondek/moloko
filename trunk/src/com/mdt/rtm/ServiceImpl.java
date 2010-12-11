@@ -48,6 +48,7 @@ import com.mdt.rtm.data.RtmTimeline;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
 
 
@@ -269,9 +270,15 @@ public class ServiceImpl implements Service
    
 
 
-   public void contacts_getList()
+   public RtmContacts contacts_getList() throws ServiceException
    {
-      throw new UnsupportedOperationException( "Not supported yet." );
+      final Element response = invoker.invoke( new Param( "method",
+                                                          "rtm.contacts.getList" ),
+                                               new Param( "auth_token",
+                                                          currentAuthToken ),
+                                               new Param( "api_key",
+                                                          applicationInfo.getApiKey() ) );
+      return new RtmContacts( response );
    }
    
 

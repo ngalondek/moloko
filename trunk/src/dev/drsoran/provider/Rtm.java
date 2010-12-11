@@ -838,4 +838,91 @@ public class Rtm
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.sync";
    }
+   
+
+   protected static interface ContactColumns
+   {
+      /**
+       * The full name of the contact
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String FULLNAME = "fullname";
+      
+      /**
+       * The RTM username of the contact
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String USERNAME = "username";
+   }
+   
+
+   public static final class Contacts implements BaseColumns, ContactColumns
+   {
+      public final static String PATH = "contacts";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing the settings.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.contact";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.contact";
+      
+      public static final String DEFAULT_SORT_ORDER = FULLNAME;
+   }
+   
+
+   protected static interface ParticipantsColumns
+   {
+      /**
+       * The contact ID of the contact who participates
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String CONTACT_ID = "contact_id";
+      
+      /**
+       * The taskseries ID the contact participates in.
+       * <P>
+       * Type: INTEGER (long)
+       * </P>
+       */
+      public final static String TASKSERIES_ID = "taskseries_id";
+   }
+   
+
+   public static final class Participants implements BaseColumns,
+            ParticipantsColumns
+   {
+      public final static String PATH = "participants";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing the settings.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.participant";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.participant";
+   }
 }

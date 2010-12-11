@@ -257,6 +257,15 @@
          name="textStyle">normal</item>
    </style>
 
+   <style
+      name="Task_TitleWithWrappingLayout"
+      parent="Task_TitleWithText">
+      <item
+         name="horizontal_spacing">5dip</item>
+      <item
+         name="vertical_spacing">5dip</item>
+   </style>
+
 
    <!-- ********* -->
    <!-- Note      -->

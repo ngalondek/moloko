@@ -144,9 +144,9 @@
                twt:title="@string/task_location"
                twt:text="Somewhere" />
 
-            <dev.drsoran.moloko.layouts.TitleWithTextLayout
+            <dev.drsoran.moloko.layouts.TitleWithWrappingLayout
                android:id="@+id/task_participants"
-               style="@style/Task_TitleWithText"
+               style="@style/Task_TitleWithWrappingLayout"
                android:layout_width="fill_parent"
                android:layout_height="wrap_content"
                android:layout_marginTop="10dip"
@@ -155,8 +155,7 @@
                android:layout_alignLeft="@id/task_overview_list_name"
                android:layout_alignWithParentIfMissing="true"
                twt:titlePaddingTop="10dip"
-               twt:title="@string/task_participants"
-               twt:text="Somebody" />
+               twt:title="@string/task_participants" />
 
             <dev.drsoran.moloko.layouts.TitleWithTextLayout
                android:id="@+id/task_url"
@@ -165,7 +164,7 @@
                android:layout_height="wrap_content"
                android:layout_marginTop="10dip"
                android:layout_marginRight="10dip"
-               android:layout_below="@id/task_location"
+               android:layout_below="@id/task_participants"
                android:layout_alignLeft="@id/task_overview_list_name"
                android:layout_alignWithParentIfMissing="true"
                twt:titlePaddingTop="10dip"

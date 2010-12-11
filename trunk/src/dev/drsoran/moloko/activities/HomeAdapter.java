@@ -49,11 +49,14 @@ public class HomeAdapter extends BaseAdapter
                                null,
                                R.string.home_label_today,
                                CalendarHomeWidget.TODAY ),
+       
        new CalendarHomeWidget( context,
                                null,
                                R.string.home_label_tomorrow,
                                CalendarHomeWidget.TOMORROW ),
+       
        new OverDueTasksHomeWidget( context, null, R.string.home_label_overdue ),
+       
        new SimpleHomeWidgetLayout( context,
                                    null,
                                    R.string.app_tasklists,
@@ -65,6 +68,12 @@ public class HomeAdapter extends BaseAdapter
                                    R.string.app_tagcloud,
                                    R.drawable.ic_home_tag,
                                    new Intent( context, TagCloudActivity.class ) ),
+       
+       new SimpleHomeWidgetLayout( context,
+                                   null,
+                                   R.string.app_contacts,
+                                   R.drawable.ic_home_user,
+                                   null ),
        
        new SimpleHomeWidgetLayout( context,
                                    null,

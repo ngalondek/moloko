@@ -298,8 +298,7 @@ public final class UIUtils
          try
          {
             final TextView textView = (TextView) parent.findViewById( R.id.title_with_text_text );
-            textView.setMovementMethod( LinkMovementMethod.getInstance() );
-            textView.setText( text, BufferType.SPANNABLE );
+            applySpannable( textView, text );
          }
          catch ( ClassCastException e )
          {
@@ -307,6 +306,14 @@ public final class UIUtils
          }
       
       return ok;
+   }
+   
+
+
+   public final static void applySpannable( TextView textView, Spannable text )
+   {
+      textView.setMovementMethod( LinkMovementMethod.getInstance() );
+      textView.setText( text, BufferType.SPANNABLE );
    }
    
 

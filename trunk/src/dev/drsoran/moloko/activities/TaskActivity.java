@@ -108,7 +108,7 @@ public class TaskActivity extends Activity
                ViewGroup tagsLayout;
                View dateTimeSection;
                View locationSection;
-               View participantsSection;
+               ViewGroup participantsSection;
                View urlSection;
                
                try
@@ -123,7 +123,7 @@ public class TaskActivity extends Activity
                   tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
                   dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
                   locationSection = taskContainer.findViewById( R.id.task_location );
-                  participantsSection = taskContainer.findViewById( R.id.task_participants );
+                  participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
                   urlSection = taskContainer.findViewById( R.id.task_url );
                }
                catch ( ClassCastException e )
@@ -354,7 +354,7 @@ public class TaskActivity extends Activity
    
 
 
-   private void setParticipantsSection( View view, Task task )
+   private void setParticipantsSection( ViewGroup view, Task task )
    {
       boolean ok = true;
       
@@ -369,22 +369,30 @@ public class TaskActivity extends Activity
          
          ok = participants != null;
          
+         // participants.add( new RtmContact( "", "Mister Fake", "mrfake" ) );
+         // participants.add( new RtmContact( "", "Mister Fake1", "mrfake1" ) );
+         // participants.add( new RtmContact( "", "Mister Fake2", "mrfake2" ) );
+         
          if ( ok && participants.size() > 0 )
          {
-            final SpannableString clickableContact = new SpannableString( participants.get( 0 )
-                                                                                      .getFullname() );
-            clickableContact.setSpan( new ClickableSpan()
+            for ( RtmContact rtmContact : participants )
             {
-               @Override
-               public void onClick( View widget )
+               final SpannableString clickableContact = new SpannableString( rtmContact.getFullname() );
+               
+               clickableContact.setSpan( new ClickableSpan()
                {
-                  // TODO: Open contact
-               }
-            }, 0, clickableContact.length(), 0 );
-            
-            UIUtils.initializeTitleWithTextLayout( view,
-                                                   getString( R.string.task_participants ),
-                                                   clickableContact );
+                  @Override
+                  public void onClick( View widget )
+                  {
+                     // TODO: Open contact
+                  }
+               }, 0, clickableContact.length(), 0 );
+               
+               final TextView textView = new TextView( this );
+               UIUtils.applySpannable( textView, clickableContact );
+               
+               view.addView( textView );
+            }
          }
          else
          {

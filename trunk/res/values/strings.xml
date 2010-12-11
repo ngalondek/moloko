@@ -30,6 +30,7 @@
 	<string name="app_task">Task</string>
 	<string name="app_note">Note</string>
 	<string name="app_tagcloud">Tags</string>
+   <string name="app_contacts">Contacts</string>
 	<string name="app_sort_alpha">Task Name</string>
    <string name="app_sort_prio">Priority</string>
    <string name="app_sort_due_date">Due Date</string>

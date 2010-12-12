@@ -1,3 +1,4 @@
+#labels Featured
 #What works and what needs to be done
 
 == Introduction ==

@@ -1,7 +1,7 @@
 #labels Featured
 == Introduction ==
 
-This page declares how to link an RTM contact to a phonebook contact.
+This page explains how to link an RTM contact to a phonebook contact.
 
 
 == How to ==

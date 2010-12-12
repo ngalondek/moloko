@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.util;
 
+
+
 public final class Strings
 {
    public final static String EMPTY_STRING = "";
@@ -32,5 +34,4 @@ public final class Strings
    {
       return ( ( current == null && update != null ) || ( current != null && !current.equals( update ) ) );
    }
-   
 }

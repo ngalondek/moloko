@@ -27,6 +27,8 @@ import java.util.HashMap;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -157,6 +159,23 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
       }
       
       return contacts;
+   }
+   
+
+
+   public final static void registerContentObserver( Context context,
+                                                     ContentObserver observer )
+   {
+      context.getContentResolver()
+             .registerContentObserver( Contacts.CONTENT_URI, true, observer );
+   }
+   
+
+
+   public final static void unregisterContentObserver( Context context,
+                                                       ContentObserver observer )
+   {
+      context.getContentResolver().unregisterContentObserver( observer );
    }
    
 

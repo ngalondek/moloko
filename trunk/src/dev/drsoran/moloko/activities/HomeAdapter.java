@@ -73,7 +73,8 @@ public class HomeAdapter extends BaseAdapter
                                    null,
                                    R.string.app_contacts,
                                    R.drawable.ic_home_user,
-                                   null ),
+                                   new Intent( context,
+                                               ContactsListActivity.class ) ),
        
        new SimpleHomeWidgetLayout( context,
                                    null,

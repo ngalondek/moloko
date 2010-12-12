@@ -209,7 +209,11 @@
    <string name="tasksearchresult_titlebar_error">Wrong syntax</string>
    <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. Check the search syntax.</string>
      <!-- Menus -->
-     <string name="tasksearchresult_menu_opt_clear_history_title">Erase search history</string>   
+     <string name="tasksearchresult_menu_opt_clear_history_title">Erase search history</string>
+     
+   <!-- ContactsList activity -->
+   <string name="contactslist_no_contacts">No contacts</string>
+   <string name="contactslist_listitem_num_tasks">%1$d %2$s</string>
 	  
    <!-- Authenticator activity -->
    <string name="auth_api_key_label">API key</string>

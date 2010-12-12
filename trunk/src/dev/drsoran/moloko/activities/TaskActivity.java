@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -45,7 +44,6 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.LocationChooser;
@@ -54,7 +52,8 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.RtmContact;
+import dev.drsoran.rtm.Participant;
+import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
@@ -356,60 +355,32 @@ public class TaskActivity extends Activity
 
    private void setParticipantsSection( ViewGroup view, Task task )
    {
-      boolean ok = true;
+      final ParticipantList participants = task.getParticipants();
       
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
-      
-      ok = client != null;
-      
-      if ( ok )
+      if ( participants != null && participants.getCount() > 0 )
       {
-         final ArrayList< RtmContact > participants = ParticipantsProviderPart.getParticipatingContacts( client,
-                                                                                                         task.getTaskSeriesId() );
-         
-         ok = participants != null;
-         
-         // participants.add( new RtmContact( "", "Mister Fake", "mrfake" ) );
-         // participants.add( new RtmContact( "", "Mister Fake1", "mrfake1" ) );
-         // participants.add( new RtmContact( "", "Mister Fake2", "mrfake2" ) );
-         
-         if ( ok && participants.size() > 0 )
+         for ( Participant participant : participants.getParticipants() )
          {
-            for ( RtmContact rtmContact : participants )
+            final SpannableString clickableContact = new SpannableString( participant.getFullname() );
+            
+            clickableContact.setSpan( new ClickableSpan()
             {
-               final SpannableString clickableContact = new SpannableString( rtmContact.getFullname() );
-               
-               clickableContact.setSpan( new ClickableSpan()
+               @Override
+               public void onClick( View widget )
                {
-                  @Override
-                  public void onClick( View widget )
-                  {
-                     // TODO: Open contact
-                  }
-               }, 0, clickableContact.length(), 0 );
-               
-               final TextView textView = new TextView( this );
-               UIUtils.applySpannable( textView, clickableContact );
-               
-               view.addView( textView );
-            }
+                  // TODO: Open contact
+               }
+            }, 0, clickableContact.length(), 0 );
+            
+            final TextView textView = new TextView( this );
+            UIUtils.applySpannable( textView, clickableContact );
+            
+            view.addView( textView );
          }
-         else
-         {
-            view.setVisibility( View.GONE );
-         }
-         
-         if ( !ok )
-            Log.e( TAG, "Unable to retrieve participants from DB for task ID "
-               + task.getTaskSeriesId() );
-         
-         client.release();
       }
-      
-      if ( !ok )
+      else
       {
          view.setVisibility( View.GONE );
-         // TODO: Show error
       }
    }
    

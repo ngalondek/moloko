@@ -158,6 +158,20 @@
       </activity>
 
       <activity
+         android:label="@string/app_contacts"
+         android:name=".activities.ContactsListActivity">
+         <intent-filter>
+            <!-- Show all contacts -->
+            <action
+               android:name="android.intent.action.VIEW" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.contact" />
+         </intent-filter>
+      </activity>
+
+      <activity
          android:label="@string/app_tagcloud"
          android:name=".activities.TagCloudActivity"
          android:theme="@style/Theme.Moloko">
@@ -205,12 +219,11 @@
          android:theme="@style/Theme"
          android:excludeFromRecents="true" />
 
-      <!-- 
-      <activity
-         android:name=".activities.RtmSmartFilterTestActivity"
-         android:label="Test RTM smart filter"
-         android:excludeFromRecents="true" />
-          -->
+      <!--
+         <activity android:name=".activities.RtmSmartFilterTestActivity"
+         android:label="Test RTM smart filter" android:excludeFromRecents="true"
+         />
+      -->
 
       <activity
          android:name="org.acra.CrashReportDialog"
@@ -326,4 +339,6 @@
       android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
    <uses-permission
       android:name="android.permission.VIBRATE" />
+   <uses-permission
+      android:name="android.permission.READ_CONTACTS" />
 </manifest> 

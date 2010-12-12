@@ -29,6 +29,8 @@ import java.util.List;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -53,7 +55,8 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Participants._ID, Participants.CONTACT_ID, Participants.TASKSERIES_ID };
+   { Participants._ID, Participants.CONTACT_ID, Participants.TASKSERIES_ID,
+    Participants.FULLNAME, Participants.USERNAME };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -67,20 +70,22 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    
 
    public final static ContentValues getContentValues( String taskSeriesId,
-                                                       String contactId,
+                                                       Participant participant,
                                                        boolean withId )
    {
       ContentValues values = null;
       
-      if ( !TextUtils.isEmpty( taskSeriesId ) && !TextUtils.isEmpty( contactId ) )
+      if ( !TextUtils.isEmpty( taskSeriesId ) && participant != null )
       {
          values = new ContentValues();
          
          if ( withId )
-            values.putNull( Participants._ID );
+            values.put( Participants._ID, participant.getId() );
          
          values.put( Participants.TASKSERIES_ID, taskSeriesId );
-         values.put( Participants.CONTACT_ID, contactId );
+         values.put( Participants.CONTACT_ID, participant.getContactId() );
+         values.put( Participants.FULLNAME, participant.getFullname() );
+         values.put( Participants.USERNAME, participant.getUsername() );
       }
       
       return values;
@@ -113,7 +118,10 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
             {
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
-                  participants.add( new Participant( c.getString( COL_INDICES.get( Participants.CONTACT_ID ) ) ) );
+                  participants.add( new Participant( c.getString( COL_INDICES.get( Participants._ID ) ),
+                                                     c.getString( COL_INDICES.get( Participants.CONTACT_ID ) ),
+                                                     c.getString( COL_INDICES.get( Participants.FULLNAME ) ),
+                                                     c.getString( COL_INDICES.get( Participants.USERNAME ) ) ) );
                }
             }
             
@@ -206,6 +214,42 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    
 
 
+   public final static int getNumTasksParticipating( ContentProviderClient client,
+                                                     String contactId )
+   {
+      int num = -1;
+      
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Participants.CONTENT_URI, new String[]
+         { Participants._ID, Participants.CONTACT_ID }, Participants.CONTACT_ID
+            + "=" + contactId, null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            num = c.getCount();
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query num tasks participating failed. ", e );
+         num = -1;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return num;
+   }
+   
+
+
    public final static ArrayList< ContentProviderOperation > insertParticipants( ContentProviderClient client,
                                                                                  ParticipantList list )
    {
@@ -217,12 +261,29 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       {
          operations.add( ContentProviderOperation.newInsert( Participants.CONTENT_URI )
                                                  .withValues( ParticipantsProviderPart.getContentValues( list.getTaskSeriesId(),
-                                                                                                         participant.getContactId(),
+                                                                                                         participant,
                                                                                                          true ) )
                                                  .build() );
       }
       
       return operations;
+   }
+   
+
+
+   public final static void registerContentObserver( Context context,
+                                                     ContentObserver observer )
+   {
+      context.getContentResolver()
+             .registerContentObserver( Participants.CONTENT_URI, true, observer );
+   }
+   
+
+
+   public final static void unregisterContentObserver( Context context,
+                                                       ContentObserver observer )
+   {
+      context.getContentResolver().unregisterContentObserver( observer );
    }
    
 
@@ -243,11 +304,13 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
          + " INTEGER NOT NULL CONSTRAINT PK_PARTICIPANTS PRIMARY KEY AUTOINCREMENT, "
          + Participants.CONTACT_ID + " TEXT NOT NULL, "
          + Participants.TASKSERIES_ID + " INTEGER NOT NULL, "
-         + "CONSTRAINT participant FOREIGN KEY ( " + Participants.TASKSERIES_ID
-         + " ) REFERENCES " + TaskSeries.PATH + " (\"" + TaskSeries._ID
-         + "\"), " + "CONSTRAINT participates FOREIGN KEY ( "
-         + Participants.CONTACT_ID + " ) REFERENCES " + Contacts.PATH + " (\""
-         + Contacts._ID + "\") " + " );" );
+         + Participants.FULLNAME + " TEXT NOT NULL, " + Participants.USERNAME
+         + " TEXT NOT NULL, " + "CONSTRAINT participant FOREIGN KEY ( "
+         + Participants.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH
+         + " (\"" + TaskSeries._ID + "\"), "
+         + "CONSTRAINT participates FOREIGN KEY ( " + Participants.CONTACT_ID
+         + " ) REFERENCES " + Contacts.PATH + " (\"" + Contacts._ID + "\") "
+         + " );" );
    }
    
 

@@ -26,15 +26,20 @@ import java.util.Comparator;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
+import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.util.ParamChecker;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Participants;
+import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public class Participant implements IContentProviderSyncable< Participant >,
@@ -73,20 +78,40 @@ public class Participant implements IContentProviderSyncable< Participant >,
    
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
+   private final String id;
+   
    private final String contactId;
+   
+   private final String fullname;
+   
+   private final String username;
    
    
 
-   public Participant( String contactId )
+   public Participant( String id, String contactId, String fullname,
+      String username )
    {
+      this.id = id;
       this.contactId = contactId;
+      this.fullname = fullname;
+      this.username = username;
    }
    
 
 
    public Participant( Parcel source )
    {
+      this.id = source.readString();
       this.contactId = source.readString();
+      this.fullname = source.readString();
+      this.username = source.readString();
+   }
+   
+
+
+   public String getId()
+   {
+      return id;
    }
    
 
@@ -94,6 +119,20 @@ public class Participant implements IContentProviderSyncable< Participant >,
    public String getContactId()
    {
       return contactId;
+   }
+   
+
+
+   public String getFullname()
+   {
+      return fullname;
+   }
+   
+
+
+   public String getUsername()
+   {
+      return username;
    }
    
 
@@ -107,7 +146,10 @@ public class Participant implements IContentProviderSyncable< Participant >,
 
    public void writeToParcel( Parcel dest, int flags )
    {
+      dest.writeString( id );
       dest.writeString( contactId );
+      dest.writeString( fullname );
+      dest.writeString( username );
    }
    
 
@@ -128,7 +170,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
          operation = new ContentProviderSyncOperation( provider,
                                                        ContentProviderOperation.newInsert( Participants.CONTENT_URI )
                                                                                .withValues( ParticipantsProviderPart.getContentValues( (String) params[ 0 ],
-                                                                                                                                       contactId,
+                                                                                                                                       this,
                                                                                                                                        true ) )
                                                                                .build(),
                                                        IContentProviderSyncOperation.Op.INSERT );
@@ -175,8 +217,34 @@ public class Participant implements IContentProviderSyncable< Participant >,
                                                                                Participant update,
                                                                                Object... params )
    {
-      // This should not change a value.
-      return NoopContentProviderSyncOperation.INSTANCE;
+      final CompositeContentProviderSyncOperation operation = new CompositeContentProviderSyncOperation( provider,
+                                                                                                         IContentProviderSyncOperation.Op.UPDATE );
+      
+      assert ( id != null );
+      
+      final Uri uri = Queries.contentUriWithId( TaskSeries.CONTENT_URI, id );
+      
+      if ( Strings.hasStringChanged( contactId, update.contactId ) )
+         operation.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Participants.CONTACT_ID,
+                                                            update.contactId )
+                                                .build() );
+      
+      if ( Strings.hasStringChanged( fullname, update.fullname ) )
+         operation.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Participants.FULLNAME,
+                                                            update.fullname )
+                                                .build() );
+      
+      if ( Strings.hasStringChanged( username, update.username ) )
+         operation.add( ContentProviderOperation.newUpdate( uri )
+                                                .withValue( Participants.USERNAME,
+                                                            update.username )
+                                                .build() );
+      
+      return ( operation.plainSize() > 0 )
+                                          ? operation
+                                          : NoopContentProviderSyncOperation.INSTANCE;
    }
    
 }

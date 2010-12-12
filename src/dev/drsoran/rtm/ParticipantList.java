@@ -103,9 +103,15 @@ public class ParticipantList implements
       for ( Element contact : contacts )
       {
          final String contactId = RtmData.textNullIfEmpty( contact, "id" );
+         final String fullname = RtmData.textNullIfEmpty( contact, "fullname" );
+         final String username = RtmData.textNullIfEmpty( contact, "username" );
          
-         if ( !TextUtils.isEmpty( contactId ) )
-            this.participants.add( new Participant( contactId ) );
+         if ( !TextUtils.isEmpty( contactId ) && !TextUtils.isEmpty( fullname )
+            && !TextUtils.isEmpty( username ) )
+            this.participants.add( new Participant( null,
+                                                    contactId,
+                                                    fullname,
+                                                    username ) );
          else
             Log.e( TAG, "Invalid attribute 'id' in participating contact. "
                + contactId );
@@ -132,6 +138,20 @@ public class ParticipantList implements
    public List< Participant > getParticipants()
    {
       return Collections.unmodifiableList( participants );
+   }
+   
+
+
+   public void addParticipant( Participant participant )
+   {
+      participants.add( participant );
+   }
+   
+
+
+   public int getCount()
+   {
+      return participants.size();
    }
    
 

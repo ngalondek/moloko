@@ -23,10 +23,10 @@
 package dev.drsoran.rtm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import android.text.TextUtils;
 
@@ -93,7 +93,9 @@ public class Task
    
    private final int zoom;
    
-   private final ArrayList< String > tags;
+   private final List< String > tags;
+   
+   private final ParticipantList participants;
    
    private final int numNotes;
    
@@ -106,7 +108,8 @@ public class Task
       Date added, Date completed, Date deleted, Priority priority,
       boolean posponed, String estimate, long estimateMillis,
       String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, String tags, int numNotes )
+      boolean isViewable, int zoom, String tags, ParticipantList participants,
+      int numNotes )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
@@ -139,21 +142,14 @@ public class Task
       
       if ( !TextUtils.isEmpty( tags ) )
       {
-         this.tags = new ArrayList< String >();
-         
-         final StringTokenizer tokenizer = new StringTokenizer( tags,
-                                                                Tasks.TAGS_DELIMITER );
-         
-         while ( tokenizer.hasMoreTokens() )
-         {
-            this.tags.add( tokenizer.nextToken() );
-         }
+         this.tags = Arrays.asList( TextUtils.split( tags, Tasks.TAGS_DELIMITER ) );
       }
       else
       {
          this.tags = null;
       }
       
+      this.participants = participants;
       this.numNotes = numNotes;
    }
    
@@ -166,7 +162,8 @@ public class Task
       Date added, Date completed, Date deleted, Priority priority,
       boolean posponed, String estimate, long estimateMillis,
       String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, List< String > tags, int numNotes )
+      boolean isViewable, int zoom, List< String > tags,
+      ParticipantList participants, int numNotes )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
@@ -196,7 +193,6 @@ public class Task
       this.address = address;
       this.isViewable = isViewable;
       this.zoom = zoom;
-      this.numNotes = numNotes;
       
       if ( tags != null && tags.size() > 0 )
       {
@@ -206,6 +202,9 @@ public class Task
       {
          this.tags = null;
       }
+      
+      this.participants = participants;
+      this.numNotes = numNotes;
    }
    
 
@@ -412,6 +411,16 @@ public class Task
          return Collections.unmodifiableList( tags );
       else
          return Collections.emptyList();
+   }
+   
+
+
+   public ParticipantList getParticipants()
+   {
+      if ( participants == null )
+         return new ParticipantList( taskSeriesId );
+      else
+         return participants;
    }
    
 

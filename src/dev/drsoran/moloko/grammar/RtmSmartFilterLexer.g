@@ -77,6 +77,10 @@ options
    public final static String OP_TIME_ESTIMATE_LIT = "timeestimate:";
 
    public final static String OP_POSTPONED_LIT = "postponed:";
+   
+   public final static String OP_IS_SHARED_LIT = "isshared:";
+   
+   public final static String OP_SHARED_WITH_LIT = "sharedwith:";   
 
    public final static String COMPLETED_LIT = "completed";
 
@@ -404,12 +408,12 @@ OP_HAS_NOTES : 'hasnotes:'
                (
                   TRUE
                   {
-                     result.append(" num_notes > 0");
+                     result.append( Tasks.NUM_NOTES + " > 0");
                   }
                   |
                   FALSE
                   {
-                     result.append(" num_notes = 0");
+                     result.append( Tasks.NUM_NOTES + " = 0");
                   }
                );
 
@@ -521,9 +525,28 @@ OP_POSTPONED : 'postponed:'
                  }
                );
 
-// OP_IS_SHARED
+OP_IS_SHARED : 'isshared:'
+               (
+                  TRUE
+                  {
+                     result.append( Tasks.PARTICIPANT_IDS + " IS NOT NULL");
+                  }
+                  |
+                  FALSE
+                  {
+                     result.append( Tasks.PARTICIPANT_IDS + " IS NULL");
+                  }
+               );
 
-// OP_SHARED_WITH
+OP_SHARED_WITH : 'sharedwith:' ( s=STRING | s=Q_STRING )
+                 {
+                    result.append( Tasks.PARTICIPANT_FULLNAMES );
+                    containsStringParam( $s.getText() );
+                    
+                    result.append( " OR " );
+                    result.append( Tasks.PARTICIPANT_USERNAMES );
+                    containsStringParam( $s.getText() );                    
+                 };
 
 // OP_IS_RECEIVED
 

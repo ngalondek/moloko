@@ -44,7 +44,8 @@ public class ListTask extends Task
       Date added, Date completed, Date deleted, Priority priority,
       boolean posponed, String estimate, long estimateMillis,
       String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, List< String > tags, int numNotes )
+      boolean isViewable, int zoom, List< String > tags,
+      ParticipantList participants, int numNotes )
    {
       super( id,
              taskSeriesId,
@@ -75,6 +76,7 @@ public class ListTask extends Task
              isViewable,
              zoom,
              tags,
+             participants,
              numNotes );
    }
    
@@ -111,6 +113,7 @@ public class ListTask extends Task
                            task.isViewable(),
                            task.getZoom(),
                            task.getTags(),
+                           task.getParticipants(),
                            task.getNumberOfNotes() );
    }
    

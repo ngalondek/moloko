@@ -658,6 +658,30 @@ public class Rtm
       public final static String NUM_NOTES = "num_notes";
       
       /**
+       * A {@link PARTICIPANTS_DELIMITER} separated list of all {@link ContactColumns} contact IDs
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String PARTICIPANT_IDS = "participant_ids";
+      
+      /**
+       * A {@link PARTICIPANTS_DELIMITER} separated list of all {@link ContactColumns} contact full names
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String PARTICIPANT_FULLNAMES = "participant_fullnames";
+      
+      /**
+       * A {@link PARTICIPANTS_DELIMITER} separated list of all {@link ContactColumns} contact user names
+       * <P>
+       * Type: STRING
+       * </P>
+       */
+      public final static String PARTICIPANT_USERNAMES = "participant_usernames";
+      
+      /**
        * Sorts result tasks by their priority
        */
       public final static String SORT_PRIORITY = PRIORITY + ", "
@@ -683,6 +707,11 @@ public class Rtm
        * The delimiter used to separate a list of tags.
        */
       public final static String TAGS_DELIMITER = ",";
+      
+      /**
+       * The delimiter used to separate a list of participant attributes.
+       */
+      public final static String PARTICIPANTS_DELIMITER = TAGS_DELIMITER;
    }
    
 
@@ -901,6 +930,22 @@ public class Rtm
        * </P>
        */
       public final static String TASKSERIES_ID = "taskseries_id";
+      
+      /**
+       * The full name of the contact participates in.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String FULLNAME = "fullname";
+      
+      /**
+       * The user name the contact participates in.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String USERNAME = "username";
    }
    
 
@@ -924,5 +969,7 @@ public class Rtm
        * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.participant";
+      
+      public static final String DEFAULT_SORT_ORDER = FULLNAME;
    }
 }

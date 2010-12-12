@@ -81,6 +81,9 @@
 	<color name="taskslist_listitem_note_text_pressed">@color/app_tag_bgnd_pressed_fill</color>
 	<color name="taskslist_listitem_note_text_bgnd">@android:color/transparent</color>
 	<color name="taskslist_listitem_note_bubble_fill">@android:color/black</color>
+   
+   <color name="contactslist_list_bgnd">@android:color/white</color>
+   <color name="contactslist_listitem_shared_tasks_text">@color/priority_2</color>
 
 	<color name="priority_none">@android:color/transparent</color>
 	<color name="priority_1">#FFEA5200</color>

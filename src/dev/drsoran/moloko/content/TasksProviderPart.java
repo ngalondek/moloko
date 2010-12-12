@@ -52,6 +52,8 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.Participant;
+import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
@@ -70,13 +72,16 @@ public class TasksProviderPart extends AbstractProviderPart
     Tasks.COMPLETED_DATE, Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED,
     Tasks.ESTIMATE, Tasks.ESTIMATE_MILLIS, Tasks.LOCATION_ID,
     Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE, Tasks.ADDRESS,
-    Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.NUM_NOTES };
+    Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.PARTICIPANT_IDS,
+    Tasks.PARTICIPANT_FULLNAMES, Tasks.PARTICIPANT_USERNAMES, Tasks.NUM_NOTES };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    private final static String SUB_QUERY;
    
    private final static String TAGS_SUB_QUERY;
+   
+   private final static String PARTICIPANTS_SUB_QUERY;
    
    private final static String NUM_NOTES_SUBQUERY;
    
@@ -184,6 +189,61 @@ public class TasksProviderPart extends AbstractProviderPart
                                                             null,
                                                             null,
                                                             null );
+      
+      PARTICIPANTS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                                    false,
+                                                                    
+                                                                    // tables
+                                                                    TaskSeries.PATH
+                                                                       + ","
+                                                                       + Participants.PATH,
+                                                                    
+                                                                    // columns
+                                                                    new String[]
+                                                                    {
+                                                                     TaskSeries.PATH
+                                                                        + "."
+                                                                        + TaskSeries._ID,
+                                                                     Participants.PATH
+                                                                        + "."
+                                                                        + Participants.TASKSERIES_ID
+                                                                        + " AS series_id",
+                                                                     "group_concat("
+                                                                        + Participants.CONTACT_ID
+                                                                        + ",\""
+                                                                        + Tasks.PARTICIPANTS_DELIMITER
+                                                                        + "\") AS "
+                                                                        + Tasks.PARTICIPANT_IDS,
+                                                                     "group_concat("
+                                                                        + Participants.FULLNAME
+                                                                        + ",\""
+                                                                        + Tasks.PARTICIPANTS_DELIMITER
+                                                                        + "\") AS "
+                                                                        + Tasks.PARTICIPANT_FULLNAMES,
+                                                                     "group_concat("
+                                                                        + Participants.USERNAME
+                                                                        + ",\""
+                                                                        + Tasks.PARTICIPANTS_DELIMITER
+                                                                        + "\") AS "
+                                                                        + Tasks.PARTICIPANT_USERNAMES },
+                                                                    
+                                                                    // where
+                                                                    TaskSeries.PATH
+                                                                       + "."
+                                                                       + TaskSeries._ID
+                                                                       + "="
+                                                                       + Participants.PATH
+                                                                       + "."
+                                                                       + Participants.TASKSERIES_ID,
+                                                                    
+                                                                    // group by
+                                                                    TaskSeries.PATH
+                                                                       + "."
+                                                                       + TaskSeries._ID,
+                                                                    null,
+                                                                    // order by
+                                                                    Participants.DEFAULT_SORT_ORDER,
+                                                                    null );
       
       NUM_NOTES_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
                                                                 false,
@@ -427,6 +487,14 @@ public class TasksProviderPart extends AbstractProviderPart
                    .append( " = subQuery." )
                    .append( Tasks.TASKSERIES_ID );
       
+      // Add participants columns
+      stringBuilder.append( " LEFT OUTER JOIN " )
+                   .append( "(" )
+                   .append( PARTICIPANTS_SUB_QUERY )
+                   .append( ") AS participantsSubQuery ON participantsSubQuery.series_id" )
+                   .append( " = subQuery." )
+                   .append( Tasks.TASKSERIES_ID );
+      
       // Only if the ID is given in the projection we can use it
       if ( id != null && projectionContainsId )
       {
@@ -521,8 +589,10 @@ public class TasksProviderPart extends AbstractProviderPart
 
    private final static Task createTask( Cursor c )
    {
+      final String taskSeriesId = c.getString( COL_INDICES.get( Tasks.TASKSERIES_ID ) );
+      
       return new Task( c.getString( COL_INDICES.get( Tasks._ID ) ),
-                       c.getString( COL_INDICES.get( Tasks.TASKSERIES_ID ) ),
+                       taskSeriesId,
                        c.getString( COL_INDICES.get( Tasks.LIST_NAME ) ),
                        c.getInt( COL_INDICES.get( Tasks.IS_SMART_LIST ) ) != 0,
                        new Date( c.getLong( COL_INDICES.get( Tasks.TASKSERIES_CREATED_DATE ) ) ),
@@ -565,6 +635,59 @@ public class TasksProviderPart extends AbstractProviderPart
                                            false ),
                        Queries.getOptInt( c, COL_INDICES.get( Tasks.ZOOM ), -1 ),
                        Queries.getOptString( c, COL_INDICES.get( Tasks.TAGS ) ),
+                       getPartitiansList( taskSeriesId, c ),
                        c.getInt( COL_INDICES.get( Tasks.NUM_NOTES ) ) );
+   }
+   
+
+
+   private final static ParticipantList getPartitiansList( String taskSeriesId,
+                                                           Cursor c )
+   {
+      ParticipantList participantList = null;
+      
+      final String partContactIds = Queries.getOptString( c,
+                                                          COL_INDICES.get( Tasks.PARTICIPANT_IDS ) );
+      if ( !TextUtils.isEmpty( partContactIds ) )
+      {
+         final String partFullnames = Queries.getOptString( c,
+                                                            COL_INDICES.get( Tasks.PARTICIPANT_FULLNAMES ) );
+         final String partUsernames = Queries.getOptString( c,
+                                                            COL_INDICES.get( Tasks.PARTICIPANT_FULLNAMES ) );
+         
+         if ( !TextUtils.isEmpty( partFullnames )
+            && !TextUtils.isEmpty( partUsernames ) )
+         {
+            final String[] splitIds = TextUtils.split( partContactIds,
+                                                       Tasks.PARTICIPANTS_DELIMITER );
+            final String[] splitFullnames = TextUtils.split( partFullnames,
+                                                             Tasks.PARTICIPANTS_DELIMITER );
+            final String[] splitUsernames = TextUtils.split( partUsernames,
+                                                             Tasks.PARTICIPANTS_DELIMITER );
+            
+            if ( splitIds.length == splitFullnames.length
+               && splitIds.length == splitUsernames.length )
+            {
+               participantList = new ParticipantList( taskSeriesId );
+               
+               for ( int i = 0; i < splitIds.length; i++ )
+               {
+                  participantList.addParticipant( new Participant( null,
+                                                                   splitIds[ i ],
+                                                                   splitFullnames[ i ],
+                                                                   splitUsernames[ i ] ) );
+               }
+            }
+            else
+            {
+               Log.e( TAG,
+                      "Expected equal lengths for participant fields. Has IDs:"
+                         + splitIds.length + ", Names:" + splitFullnames.length
+                         + ", User:" + splitUsernames.length );
+            }
+         }
+      }
+      
+      return participantList;
    }
 }

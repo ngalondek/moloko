@@ -435,4 +435,41 @@
          name="text">@string/err_error</item>
    </style>
 
+   <!-- ************ -->
+   <!-- ContactsList -->
+   <style
+      name="ContactsList_List"
+      parent="@android:style/Widget.ListView">
+      <item
+         name="android:background">@color/contactslist_list_bgnd</item>
+      <item
+         name="android:cacheColorHint">@color/contactslist_list_bgnd</item>
+   </style>
+
+   <style
+      name="ContactsList_ListItem_Picture">
+      <item
+         name="android:src">@drawable/ic_list_contactslist_user</item>
+      <item
+         name="android:scaleType">fitXY</item>
+   </style>
+
+   <style
+      name="ContactsList_ListItem_Fullname"
+      parent="TasksList_ListItem_DescriptionText" />
+
+   <style
+      name="ContactsList_ListItem_Username"
+      parent="TasksList_ListItem_ListName">
+      <item
+         name="android:textStyle">normal</item>
+   </style>
+
+   <style
+      name="ContactsList_ListItem_Num_Shared"
+      parent="TasksList_ListItem_Note">
+      <item
+         name="android:textColor">@color/contactslist_listitem_shared_tasks_text</item>
+   </style>
+
 </resources>

@@ -12,7 +12,7 @@ Moloko offers 2 possibilities to tell that a phonebook contact is the same as a 
 
   * *Implicit linkage by full name:*
 
-  Every RTM contact has a full name entered. Moloko looks for this name in the phonebook and establishes a link if the name was found and *the name is unique*. This means 2 contacts with the same name which match the RTM name ere ignored. In this case th user has to take no actions.
+  Every RTM contact has a full name entered. Moloko looks for this name in the phonebook and establishes a link if the name was found and *the name is unique*. This means 2 contacts with the same name which match the RTM name ere ignored. The correct contact has to get linked *explicitly*. See below. Otherwise the user has to take no actions.
 
 
   * *Explicit linkage by the user:*
@@ -25,4 +25,3 @@ Moloko offers 2 possibilities to tell that a phonebook contact is the same as a 
      RTM: Fris Bee
 
   Thats all. Now Moloko is linked to his phonebook contact and can, e.g. show his photo.
-

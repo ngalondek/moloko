@@ -327,7 +327,7 @@ public class ContactsListActivity extends ListActivity
          
          // Check if a contact with the same full name is in the phonebook. And that it is
          // unique.
-         if ( c != null && c.getCount() == 1 )
+         if ( c != null && c.getCount() == 1 && c.moveToFirst() )
          {
             photoId = c.getString( 1 );
             lookUpKey = c.getString( 2 );

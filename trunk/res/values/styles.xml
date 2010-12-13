@@ -73,6 +73,8 @@
       name="App_TitleBar_Text"
       parent="@android:style/TextAppearance.WindowTitle">
       <item
+         name="android:textSize">@dimen/app_titlebar_text_size</item>
+      <item
          name="android:textColor">@color/app_titlebar_text</item>
    </style>
 

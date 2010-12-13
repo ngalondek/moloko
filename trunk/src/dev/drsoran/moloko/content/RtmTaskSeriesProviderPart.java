@@ -203,7 +203,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
             for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
             {
                final RtmTaskSeries taskSeries = createRtmTaskSeries( client, c );
-               ok = taskList != null;
+               ok = taskSeries != null;
                
                if ( ok )
                   taskList.add( taskSeries );
@@ -256,6 +256,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
             if ( ok )
                tasksLists.add( taskList );
          }
+         
+         if ( !ok )
+            tasksLists = null;
       }
       
       return tasksLists;

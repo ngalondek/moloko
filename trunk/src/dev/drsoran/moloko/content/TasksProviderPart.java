@@ -325,12 +325,7 @@ public class TasksProviderPart extends AbstractProviderPart
          if ( ok )
          {
             task = createTask( c );
-            
-            ok = task != null;
          }
-         
-         if ( !ok )
-            task = null;
       }
       catch ( RemoteException e )
       {
@@ -372,21 +367,19 @@ public class TasksProviderPart extends AbstractProviderPart
             
             if ( c.getCount() > 0 )
             {
-               
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
                   final Task task = createTask( c );
-                  
                   ok = task != null;
                   
                   if ( ok )
                      tasks.add( task );
                }
             }
+            
+            if ( !ok )
+               tasks = null;
          }
-         
-         if ( !ok )
-            tasks = null;
       }
       catch ( RemoteException e )
       {

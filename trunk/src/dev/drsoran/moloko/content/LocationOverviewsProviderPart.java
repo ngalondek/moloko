@@ -208,9 +208,15 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
                   final LocationWithTaskCount location = createLocationOverview( c );
-                  locations.add( location );
+                  ok = location != null;
+                  
+                  if ( ok )
+                     locations.add( location );
                }
             }
+            
+            if ( !ok )
+               locations = null;
          }
       }
       catch ( RemoteException e )

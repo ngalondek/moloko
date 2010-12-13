@@ -204,13 +204,17 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
                {
                   for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                   {
-                     tasks.add( createTask( c ) );
+                     final RtmTask task = createTask( c );
+                     ok = task != null;
+                     
+                     if ( ok )
+                        tasks.add( task );
                   }
                }
+               
+               if ( !ok )
+                  tasks = null;
             }
-            
-            if ( !ok )
-               tasks = null;
          }
          catch ( RemoteException e )
          {

@@ -129,9 +129,6 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
                participantsList = new ParticipantList( taskSeriesId,
                                                        participants );
          }
-         
-         if ( !ok )
-            participantsList = null;
       }
       catch ( RemoteException e )
       {

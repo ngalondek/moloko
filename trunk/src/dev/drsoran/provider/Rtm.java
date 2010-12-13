@@ -685,7 +685,7 @@ public class Rtm
        * Sorts result tasks by their priority
        */
       public final static String SORT_PRIORITY = PRIORITY + ", "
-         + TASKSERIES_NAME;
+         + TASKSERIES_NAME + " COLLATE NOCASE";
       
       /**
        * Sorts result tasks by their due date
@@ -696,7 +696,8 @@ public class Rtm
       /**
        * Sorts result tasks by their name
        */
-      public final static String SORT_TASK_NAME = TASKSERIES_NAME;
+      public final static String SORT_TASK_NAME = TASKSERIES_NAME
+         + " COLLATE NOCASE";
       
       /**
        * The default sort order for this table
@@ -746,7 +747,7 @@ public class Rtm
       /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = TAG;
+      public final static String DEFAULT_SORT_ORDER = TAG + " COLLATE NOCASE";
    }
    
 
@@ -909,7 +910,8 @@ public class Rtm
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.contact";
       
-      public static final String DEFAULT_SORT_ORDER = FULLNAME;
+      public static final String DEFAULT_SORT_ORDER = FULLNAME
+         + " COLLATE NOCASE";
    }
    
 
@@ -970,6 +972,7 @@ public class Rtm
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.participant";
       
-      public static final String DEFAULT_SORT_ORDER = FULLNAME;
+      public static final String DEFAULT_SORT_ORDER = FULLNAME
+         + " COLLATE NOCASE";
    }
 }

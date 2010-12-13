@@ -114,10 +114,10 @@ public class TagsProviderPart extends AbstractRtmProviderPart
                                         c.getString( COL_INDICES.get( Tags.TAG ) ) ) );
                   }
                }
+               
+               if ( !ok )
+                  tags = null;
             }
-            
-            if ( !ok )
-               tags = null;
          }
          catch ( RemoteException e )
          {
@@ -167,10 +167,10 @@ public class TagsProviderPart extends AbstractRtmProviderPart
                      tags.add( c.getString( 1 ) );
                   }
                }
+               
+               if ( !ok )
+                  tags = null;
             }
-            
-            if ( !ok )
-               tags = null;
          }
          catch ( RemoteException e )
          {

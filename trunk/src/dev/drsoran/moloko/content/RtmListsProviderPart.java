@@ -108,6 +108,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
                                                     c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
                                                     c.getInt( COL_INDICES.get( Lists.POSITION ) ),
                                                     filter );
+                  
                   lists.add( list );
                }
             }

@@ -97,12 +97,14 @@ public final class UIUtils
          {
             bitmap = new BitmapDrawable( activity.getResources()
                                                  .openRawResource( iconResId ) );
+            
+            final int iconSize = activity.getResources()
+                                         .getDimensionPixelSize( R.dimen.app_titlebar_text_size );
+            
+            bitmap.setBounds( 0, 0, iconSize, iconSize );
          }
          
-         titleBarText.setCompoundDrawablesWithIntrinsicBounds( bitmap,
-                                                               null,
-                                                               null,
-                                                               null );
+         titleBarText.setCompoundDrawables( bitmap, null, null, null );
       }
    }
    

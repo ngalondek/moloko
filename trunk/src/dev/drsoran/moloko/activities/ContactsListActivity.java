@@ -38,11 +38,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Contacts;
@@ -230,7 +231,7 @@ public class ContactsListActivity extends ListActivity
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
-      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+      // final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
       
       switch ( item.getItemId() )
       {
@@ -259,6 +260,18 @@ public class ContactsListActivity extends ListActivity
          default :
             return super.onContextItemSelected( item );
       }
+   }
+   
+
+
+   @Override
+   protected void onListItemClick( ListView l, View v, int position, long id )
+   {
+      final Contact contact = getContact( position );
+      
+      startActivity( Intents.createOpenContactIntent( this,
+                                                      contact.getFullname(),
+                                                      contact.getUsername() ) );
    }
    
 

@@ -194,13 +194,16 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
                   final TagWithTaskCount tag = createTagOverview( c );
-                  tags.add( tag );
+                  ok = tag != null;
+                  
+                  if ( ok )
+                     tags.add( tag );
                }
             }
+            
+            if ( !ok )
+               tags = null;
          }
-         
-         if ( !ok )
-            tags = null;
       }
       catch ( RemoteException e )
       {

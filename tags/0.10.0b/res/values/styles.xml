@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <!--
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
+      free software: you can redistribute it and/or modify it under the terms of
+      the GNU General Public License as published by the Free Software
+      Foundation, either version 3 of the License, or (at your option) any later
+      version. Moloko is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+      for more details. You should have received a copy of the GNU General
+      Public License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
+
+<resources>
+
+   <!-- *********** -->
+   <!-- Application -->
+
+   <style
+      name="Theme"
+      parent="android:Theme"></style>
+
+   <style
+      name="Theme.Moloko"
+      parent="android:style/Theme.Light">
+      <item
+         name="android:windowNoTitle">true</item>
+      <item
+         name="android:windowContentOverlay">@null</item>
+   </style>
+
+   <style
+      name="Theme.Moloko.Task"
+      parent="@style/Theme">
+      <item
+         name="android:windowTitleBackgroundStyle">@style/App_Default_Title_Bgnd</item>
+      <item
+         name="android:windowContentOverlay">@null</item>
+   </style>
+
+   <style
+      name="Theme.Moloko.Note"
+      parent="Theme.Moloko.Task" />
+
+   <style
+      name="Theme.Moloko.Preferences"
+      parent="Theme">
+      <item
+         name="android:windowTitleBackgroundStyle">@style/App_Default_Title_Bgnd</item>
+   </style>
+
+   <style
+      name="App_Default_Title_Bgnd">
+      <item
+         name="android:background">@color/app_default_title_bgnd</item>
+      <item
+         name="android:paddingLeft">5dip</item>
+   </style>
+
+   <style
+      name="App_TitleBar">
+      <item
+         name="android:background">@drawable/app_titlebar_bgnd</item>
+      <item
+         name="android:layout_width">fill_parent</item>
+      <item
+         name="android:layout_height">@dimen/app_titlebar_height</item>
+   </style>
+
+   <style
+      name="App_TitleBar_Text"
+      parent="@android:style/TextAppearance.WindowTitle">
+      <item
+         name="android:textSize">@dimen/app_titlebar_text_size</item>
+      <item
+         name="android:textColor">@color/app_titlebar_text</item>
+   </style>
+
+   <style
+      name="App_TitleBar_Separator">
+      <item
+         name="android:background">@color/app_titlebar_separator</item>
+   </style>
+
+   <style
+      name="App_TitleBar_Btn">
+      <item
+         name="android:background">@drawable/app_titlebar_btn_bgnd</item>
+   </style>
+
+   <style
+      name="App_Tag">
+      <item
+         name="android:textColor">@color/app_tag_text</item>
+      <item
+         name="android:background">@drawable/app_tag_bgnd</item>
+      <item
+         name="android:singleLine">true</item>
+      <item
+         name="android:textSize">11sp</item>
+      <item
+         name="android:textStyle">bold</item>
+   </style>
+
+   <style
+      name="App_Note_Created_Date_Text"
+      parent="@android:style/TextAppearance.Small">
+      <item
+         name="android:textColor">@color/app_note_created_date_text</item>
+      <item
+         name="android:textStyle">normal</item>
+      <item
+         name="android:textSize">12sp</item>
+   </style>
+
+   <style
+      name="App_Note_TitleWithText">
+      <item
+         name="topLineColor">@color/task_overview_bgnd_stroke</item>
+      <item
+         name="topLineHeight">1dip</item>
+      <item
+         name="titleColor">@color/task_title_with_text_text</item>
+      <item
+         name="titleSize">@dimen/app_title_with_text_textSize</item>
+      <item
+         name="titleStyle">bold</item>
+      <item
+         name="textColor">@color/task_title_with_text_text</item>
+      <item
+         name="textSize">@dimen/app_title_with_text_textSize</item>
+      <item
+         name="textStyle">normal</item>
+      <item
+         name="showTopLine">false</item>
+   </style>
+
+   <style
+      name="App_ButtonBar_Bgnd">
+      <item
+         name="android:background">@color/app_buttonbar_bgnd</item>
+   </style>
+
+   <style
+      name="App_Counter_Bubble">
+      <item
+         name="android:background">@drawable/counter_bubble</item>
+      <item
+         name="android:textColor">@color/app_counter_bubble_text</item>
+      <item
+         name="android:textSize">12sp</item>
+      <item
+         name="android:textStyle">bold</item>
+   </style>
+
+   <style
+      name="App_No_List_Elements_Text"
+      parent="@android:style/TextAppearance.Medium">
+      <item
+         name="android:textColor">@color/priority_2</item>
+      <item
+         name="android:textStyle">italic|bold</item>
+   </style>
+
+   <!-- ************ -->
+   <!-- Notification -->
+
+   <style
+      name="Notification_Permanent_Title">
+      <item
+         name="android:textSize">18sp</item>
+      <item
+         name="android:textStyle">bold</item>
+      <item
+         name="android:textColor">@color/notification_permanent_title</item>
+   </style>
+
+   <style
+      name="Notification_Permanent_Text">
+      <item
+         name="android:textSize">14sp</item>
+      <item
+         name="android:textColor">@color/notification_permanent_text</item>
+   </style>
+
+   <!-- ********* -->
+   <!-- Home      -->
+
+   <style
+      name="Home_Widget_Text">
+      <item
+         name="android:textSize">18sp</item>
+      <item
+         name="android:textStyle">bold</item>
+   </style>
+
+   <style
+      name="Home_Widget_Calendar_Date">
+      <item
+         name="android:textSize">21sp</item>
+      <item
+         name="android:textStyle">bold</item>
+      <item
+         name="android:textColor">@color/app_icon_black_fill</item>
+   </style>
+
+   <!-- ********* -->
+   <!-- Task      -->
+
+   <style
+      name="Task">
+      <item
+         name="android:background">@color/task_bgnd</item>
+   </style>
+
+   <style
+      name="Task_Section">
+      <item
+         name="android:background">@drawable/task_overview_bgnd</item>
+   </style>
+
+   <style
+      name="Task_Overview_DescriptionText"
+      parent="@style/TasksList_ListItem_DescriptionText" />
+
+   <style
+      name="Task_Overview_ListName"
+      parent="@style/TasksList_ListItem_ListName" />
+
+   <style
+      name="Task_Date_Text"
+      parent="@style/App_Note_Created_Date_Text" />
+
+   <style
+      name="Task_Source_Text"
+      parent="@style/App_Note_Created_Date_Text" />
+
+   <style
+      name="Task_TitleWithText">
+      <item
+         name="showTopLine">true</item>
+      <item
+         name="topLineColor">@color/task_overview_bgnd_stroke</item>
+      <item
+         name="topLineHeight">1dip</item>
+      <item
+         name="titleColor">@color/task_title_with_text_text</item>
+      <item
+         name="titleSize">@dimen/app_title_with_text_textSize</item>
+      <item
+         name="titleStyle">bold</item>
+      <item
+         name="textColor">@color/task_title_with_text_text</item>
+      <item
+         name="textSize">@dimen/app_title_with_text_textSize</item>
+      <item
+         name="textStyle">normal</item>
+   </style>
+
+   <style
+      name="Task_TitleWithWrappingLayout"
+      parent="Task_TitleWithText">
+      <item
+         name="horizontal_spacing">5dip</item>
+      <item
+         name="vertical_spacing">5dip</item>
+   </style>
+
+
+   <!-- ********* -->
+   <!-- Note      -->
+
+   <style
+      name="Note">
+      <item
+         name="android:background">@color/note_bgnd</item>
+   </style>
+
+
+   <!-- ********* -->
+   <!-- StartUp   -->
+
+   <style
+      name="StartUp">
+      <item
+         name="android:background">@color/startup_bgnd</item>
+   </style>
+
+   <style
+      name="StartUp.Error">
+      <item
+         name="android:layout_width">fill_parent</item>
+      <item
+         name="android:layout_height">wrap_content</item>
+      <item
+         name="textSize">@dimen/app_title_with_text_textSize</item>
+      <item
+         name="textStyle">normal</item>
+      <item
+         name="showTopLine">false</item>
+      <item
+         name="imageSrc">@drawable/ic_black_error</item>
+   </style>
+
+   <style
+      name="StartUp.Error.NoAccount">
+      <item
+         name="imageSrc">@drawable/rtm</item>
+      <item
+         name="text">@string/startup_no_account</item>
+   </style>
+
+   <style
+      name="StartUp.Error.NoDefList">
+      <item
+         name="text">@string/startup_no_def_list</item>
+   </style>
+
+
+   <!-- ********* -->
+   <!-- TaskLists -->
+
+   <style
+      name="TaskLists_Lists"
+      parent="@android:style/Widget.ListView">
+      <item
+         name="android:background">@color/tasklists_lists_bgnd</item>
+      <item
+         name="android:cacheColorHint">@color/tasklists_lists_bgnd</item>
+      <item
+         name="android:childDivider">@android:drawable/divider_horizontal_bright</item>
+      <item
+         name="android:groupIndicator">@null</item>
+   </style>
+
+   <style
+      name="TaskLists_Group_ListName"
+      parent="@android:style/TextAppearance.Medium">
+      <item
+         name="android:textColor">@color/tasklists_group_listname</item>
+      <item
+         name="android:textStyle">bold</item>
+   </style>
+
+   <style
+      name="TaskLists_Group_NumTasks_Text"
+      parent="@android:style/TextAppearance.Medium">
+      <item
+         name="android:textColor">@color/tasklists_group_numtasks_text</item>
+   </style>
+
+   <style
+      name="TaskLists_Child_Text"
+      parent="@android:style/TextAppearance.Medium">
+      <item
+         name="android:textColor">@color/tasklists_child_text</item>
+   </style>
+
+
+   <!-- ********* -->
+   <!-- TasksList -->
+
+   <style
+      name="TasksList_TaskList"
+      parent="@android:style/Widget.ListView">
+      <item
+         name="android:background">@color/taskslist_tasklist_bgnd</item>
+      <item
+         name="android:cacheColorHint">@color/taskslist_tasklist_bgnd</item>
+   </style>
+
+   <style
+      name="TasksList_ListItem_Checked">
+      <item
+         name="android:src">@drawable/taskslist_listitem_checked_mark</item>
+      <item
+         name="android:scaleType">fitXY</item>
+   </style>
+
+   <style
+      name="TasksList_ListItem_DescriptionText"
+      parent="@android:style/TextAppearance.Medium">
+      <item
+         name="android:textColor">@color/taskslist_listitem_desc_text</item>
+   </style>
+
+   <style
+      name="TasksList_ListItem_ListName"
+      parent="@android:style/TextAppearance.Small">
+      <item
+         name="android:textStyle">bold</item>
+      <item
+         name="android:textColor">@drawable/taskslist_listitem_listname_text</item>
+      <item
+         name="android:background">@color/taskslist_listitem_listname_text_bgnd</item>
+   </style>
+
+   <style
+      name="TasksList_ListItem_DueDate"
+      parent="@android:style/TextAppearance.Small">
+      <item
+         name="android:textColor">@color/taskslist_listitem_due_date</item>
+   </style>
+
+   <style
+      name="TasksList_ListItem_Note"
+      parent="@android:style/TextAppearance.Small">
+      <item
+         name="android:textColor">@drawable/taskslist_listitem_note_text</item>
+      <item
+         name="android:background">@color/taskslist_listitem_note_text_bgnd</item>
+      <item
+         name="android:ellipsize">end</item>
+      <item
+         name="android:singleLine">true</item>
+   </style>
+
+   <!-- **************** -->
+   <!-- TaskSearchResult -->
+   <style
+      name="TaskSearchResult_Wrong_Syntax">
+      <item
+         name="android:layout_width">fill_parent</item>
+      <item
+         name="android:layout_height">wrap_content</item>
+      <item
+         name="textSize">@dimen/app_title_with_text_textSize</item>
+      <item
+         name="textStyle">normal</item>
+      <item
+         name="showTopLine">false</item>
+      <item
+         name="imageSrc">@drawable/ic_black_error</item>
+      <item
+         name="text">@string/err_error</item>
+   </style>
+
+   <!-- ************ -->
+   <!-- ContactsList -->
+   <style
+      name="ContactsList_List"
+      parent="@android:style/Widget.ListView">
+      <item
+         name="android:background">@color/contactslist_list_bgnd</item>
+      <item
+         name="android:cacheColorHint">@color/contactslist_list_bgnd</item>
+   </style>
+
+   <style
+      name="ContactsList_ListItem_Picture">
+      <item
+         name="android:src">@drawable/ic_list_contactslist_user</item>
+      <item
+         name="android:scaleType">fitXY</item>
+   </style>
+
+   <style
+      name="ContactsList_ListItem_Fullname"
+      parent="TasksList_ListItem_DescriptionText" />
+
+   <style
+      name="ContactsList_ListItem_Username"
+      parent="TasksList_ListItem_ListName">
+      <item
+         name="android:textStyle">normal</item>
+   </style>
+
+   <style
+      name="ContactsList_ListItem_Num_Shared"
+      parent="TasksList_ListItem_Note">
+      <item
+         name="android:textColor">@color/contactslist_listitem_shared_tasks_text</item>
+   </style>
+
+</resources>

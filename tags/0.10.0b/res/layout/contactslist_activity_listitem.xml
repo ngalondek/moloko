@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <!--
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
+      free software: you can redistribute it and/or modify it under the terms of
+      the GNU General Public License as published by the Free Software
+      Foundation, either version 3 of the License, or (at your option) any later
+      version. Moloko is distributed in the hope that it will be useful, but
+      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+      for more details. You should have received a copy of the GNU General
+      Public License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
+
+<RelativeLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/contactslist_listitem"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:minHeight="?android:attr/listPreferredItemHeight">
+
+   <ImageView
+      android:id="@+id/contactslist_listitem_contact_pic"
+      style="@style/ContactsList_ListItem_Picture"
+      android:layout_height="48dip"
+      android:layout_width="48dip"
+      android:layout_alignParentLeft="true"
+      android:layout_marginTop="5dip"
+      android:layout_marginLeft="5dip"
+      android:focusable="false" />
+
+   <TextView
+      android:id="@+id/contactslist_listitem_fullname"
+      style="@style/ContactsList_ListItem_Fullname"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_toRightOf="@id/contactslist_listitem_contact_pic"
+      android:layout_alignTop="@id/contactslist_listitem_contact_pic"
+      android:layout_marginLeft="5dip"
+      android:text="fullname"
+      android:focusable="false" />
+
+   <TextView
+      android:id="@+id/contactslist_listitem_username"
+      style="@style/ContactsList_ListItem_Username"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/contactslist_listitem_fullname"
+      android:layout_alignLeft="@id/contactslist_listitem_fullname"
+      android:layout_marginTop="3dip"
+      android:text="username"
+      android:focusable="false" />
+
+   <TextView
+      android:id="@+id/contactslist_listitem_num_shared"
+      style="@style/ContactsList_ListItem_Num_Shared"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/contactslist_listitem_username"
+      android:layout_alignLeft="@id/contactslist_listitem_fullname"
+      android:layout_marginTop="3dip"
+      android:layout_marginBottom="5dip"
+      android:text="num_shared"
+      android:focusable="false" />
+
+</RelativeLayout>

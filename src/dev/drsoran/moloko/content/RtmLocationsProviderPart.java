@@ -151,9 +151,15 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
                   final RtmLocation location = createLocation( c );
-                  locations.add( location );
+                  ok = location != null;
+                  
+                  if ( ok )
+                     locations.add( location );
                }
             }
+            
+            if ( !ok )
+               locations = null;
          }
       }
       catch ( RemoteException e )

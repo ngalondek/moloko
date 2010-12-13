@@ -142,9 +142,15 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
                   final RtmContact contact = createContact( c );
-                  contacts.add( contact );
+                  ok = contact != null;
+                  
+                  if ( ok )
+                     contacts.add( contact );
                }
             }
+            
+            if ( !ok )
+               contacts = null;
          }
       }
       catch ( RemoteException e )

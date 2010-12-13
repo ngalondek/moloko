@@ -134,10 +134,10 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                      final RtmTaskNote taskNote = createNote( c );
                      taskNotes.add( taskNote );
                   }
-                  
-                  if ( ok )
-                     notes = new RtmTaskNotes( taskNotes );
                }
+               
+               if ( ok )
+                  notes = new RtmTaskNotes( taskNotes );
             }
          }
          catch ( RemoteException e )

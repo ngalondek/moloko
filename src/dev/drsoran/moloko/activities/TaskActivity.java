@@ -27,6 +27,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -46,6 +47,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
@@ -71,14 +73,6 @@ public class TaskActivity extends Activity
    {
       super.onCreate( savedInstanceState );
       setContentView( R.layout.task_activity );
-   }
-   
-
-
-   @Override
-   protected void onResume()
-   {
-      super.onResume();
       
       final Uri taskUri = getIntent().getData();
       
@@ -359,7 +353,7 @@ public class TaskActivity extends Activity
       
       if ( participants != null && participants.getCount() > 0 )
       {
-         for ( Participant participant : participants.getParticipants() )
+         for ( final Participant participant : participants.getParticipants() )
          {
             final SpannableString clickableContact = new SpannableString( participant.getFullname() );
             
@@ -368,9 +362,21 @@ public class TaskActivity extends Activity
                @Override
                public void onClick( View widget )
                {
-                  // TODO: Open contact
+                  final Intent intent = Intents.createOpenContactIntent( TaskActivity.this,
+                                                                         participant.getFullname(),
+                                                                         participant.getUsername() );
+                  
+                  // It is possible that we came here from the ContactsListActivity
+                  // by clicking a contact, clicking a task, clicking the contact again.
+                  // So we reorder the former contact's tasks list to front.
+                  intent.addFlags( Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
+                  
+                  startActivity( intent );
                }
-            }, 0, clickableContact.length(), 0 );
+            },
+                                      0,
+                                      clickableContact.length(),
+                                      0 );
             
             final TextView textView = new TextView( this );
             UIUtils.applySpannable( textView, clickableContact );

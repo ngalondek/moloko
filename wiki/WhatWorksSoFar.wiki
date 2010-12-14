@@ -6,36 +6,38 @@
 This is a collection of features which are supported and what is todo.
 
 === This works ===
-RTM features of:
+  * RTM features of:
     * lists (including smart lists)
     * tasks
     * tags
     * notes
     * locations (including Google Maps and Navigation)
+    * contacts (support for linking RTM contacts to phone contacts. See [https://code.google.com/p/moloko/wiki/RTMContactLinking RTMContactLinking])
 
-RTM smart search syntax operators. Also used for smart lists:
-See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
-
+  * Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.<br>
+  * Support for *HTTP* and *HTTPS* access of RTM including proxy settings and compression to save data volume.
+  * RTM smart search syntax operators. Also used for smart lists: See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
+ 
 || *opearator* || *parameter* ||
 || list: || string ||
-|| name || string ||
+|| name: || string ||
 || priority: || string ||
 || status: || completed | incomplete ||
 || location: || string ||
 || isLocated: || true | false ||
-|| due: || _date string_ ||
-|| dueAfter: || _date string_ ||
-|| dueBefore: || _date string_ ||
+|| due: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| dueAfter: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| dueBefore: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
 || dueWithin: || string ||
-|| completed: || _date string_ ||
-|| completedAfter: || _date string_ ||
-|| completedBefore: || _date string_ ||
+|| completed: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| completedAfter: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| completedBefore: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
 || completedWithin: || string ||
-|| added: || _date string_ ||
-|| addedAfter: || _date string_ ||
-|| addedBefore: || _date string_ ||
+|| added: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| addedAfter: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| addedBefore: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
 || addedWithin: || string ||
-|| timeEstimate: || "(>|<)? _time estimation string_" ||
+|| timeEstimate: || "(>|<)? [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm time estimation]" ||
 || postponed: || string ||
 || tag: || string ||
 || tagContains: || string ||
@@ -43,40 +45,33 @@ See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search 
 || noteContains: || string ||
 || hasNotes: || true | false ||
 || isRepeating: || true | false ||
+|| isShared: || true | false ||
+|| sharedWith: || string ||
 || AND, OR, NOT, (, ) || operator ||
-
- * _date string_ is an [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm RTM date format] string.
- * _time estimation string_ is an [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm RTM time format] string.
-
-Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.<br>
-Support for *HTTP* and *HTTPS* access of RTM including proxy settings.
 
 
 
 === TODO ===
  ==== Next steps ===
-    * Groups, Contacts
     * Renaming tasks
 
  ==== later steps ===        
     * Write access
     * Delete access
+    * Groups
 
  ==== Unsupported RTM features ====
     * Groups
-    * Contacts
-    * Write access, see RTMAccessLevels
-    * Delete access, see RTMAccessLevels
+    * Write access, see [https://code.google.com/p/moloko/wiki/RTMAccessLevels RTMAccessLevels]
+    * Delete access, see [https://code.google.com/p/moloko/wiki/RTMAccessLevels RTMAccessLevels]
 
  ==== Unsupported RTM smart search syntax operators ====
     Also used for smart lists: See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
     * locationWithin:
-    * isShared:
-    * sharedWith
     * isReceived:
     * to:
     * from:
-    * includeArchived
+    * includeArchived:
 
  ==== nice to have ===
     * implement search auto completion (low prio)

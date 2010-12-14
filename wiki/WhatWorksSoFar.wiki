@@ -25,17 +25,17 @@ This is a collection of features which are supported and what is todo.
 || status: || completed | incomplete ||
 || location: || string ||
 || isLocated: || true | false ||
-|| due: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
-|| dueAfter: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
-|| dueBefore: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| due: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
+|| dueAfter: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
+|| dueBefore: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
 || dueWithin: || string ||
-|| completed: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
-|| completedAfter: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
-|| completedBefore: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| completed: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
+|| completedAfter: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
+|| completedBefore: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
 || completedWithin: || string ||
-|| added: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
-|| addedAfter: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
-|| addedBefore: || [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm date] ||
+|| added: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
+|| addedAfter: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
+|| addedBefore: || [http://www.rememberthemilk.com/help/answers/basics/dateformat.rtm date] ||
 || addedWithin: || string ||
 || timeEstimate: || "(>|<)? [http://www.rememberthemilk.com/help/answers/basics/timeestimateformat.rtm time estimation]" ||
 || postponed: || string ||

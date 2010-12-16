@@ -18,7 +18,7 @@ This is a collection of features which are supported and what is todo.
   * Support for *HTTP* and *HTTPS* access of RTM including proxy settings and compression to save data volume.
   * RTM smart search syntax operators. Also used for smart lists: See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
  
-|| *opearator* || *parameter* ||
+|| *operator* || *parameter* ||
 || list: || string ||
 || name: || string ||
 || priority: || string ||
@@ -47,7 +47,7 @@ This is a collection of features which are supported and what is todo.
 || isRepeating: || true | false ||
 || isShared: || true | false ||
 || sharedWith: || string ||
-|| AND, OR, NOT, (, ) || operator ||
+|| AND, OR, NOT, (, ) || *operator* ||
 
 
 

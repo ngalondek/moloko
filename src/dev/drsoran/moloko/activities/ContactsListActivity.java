@@ -39,16 +39,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.ContactOverviewsProviderPart;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.provider.Rtm.Contacts;
+import dev.drsoran.provider.Rtm.ContactOverviews;
 import dev.drsoran.rtm.Contact;
-import dev.drsoran.rtm.RtmContact;
+import dev.drsoran.rtm.RtmContactWithTaskCount;
 
 
 public class ContactsListActivity extends ListActivity
@@ -94,7 +96,9 @@ public class ContactsListActivity extends ListActivity
 
    protected static class CtxtMenu
    {
+      public final static int OPEN_TASKS = 0;
       
+      public final static int OPEN_CONTACT = 1;
    }
    
    private ContentObserver dbContactsObserver;
@@ -182,48 +186,23 @@ public class ContactsListActivity extends ListActivity
    {
       super.onCreateContextMenu( menu, v, menuInfo );
       
-      // final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) menuInfo;
-      // final RtmListWithTaskCount list = getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition )
-      // );
-      //      
-      // if ( getExpandableListView().isGroupExpanded( ExpandableListView.getPackedPositionGroup( info.packedPosition )
-      // ) )
-      // {
-      // // show collapse before open
-      // menu.add( Menu.NONE,
-      // CtxtMenu.COLLAPSE,
-      // Menu.NONE,
-      // getString( R.string.tasklists_menu_ctx_collapse,
-      // list.getName() ) );
-      // menu.add( Menu.NONE,
-      // CtxtMenu.OPEN_LIST,
-      // Menu.NONE,
-      // getString( R.string.phr_open_with_name, list.getName() ) );
-      // }
-      // else
-      // {
-      // menu.add( Menu.NONE,
-      // CtxtMenu.OPEN_LIST,
-      // Menu.NONE,
-      // getString( R.string.phr_open_with_name, list.getName() ) );
-      //         
-      // menu.add( Menu.NONE,
-      // CtxtMenu.EXPAND,
-      // Menu.NONE,
-      // getString( R.string.tasklists_menu_ctx_expand,
-      // list.getName() ) );
-      // }
-      //      
-      // if ( list.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
-      // menu.add( Menu.NONE,
-      // CtxtMenu.REMOVE_DEFAULT_LIST,
-      // Menu.NONE,
-      // getString( R.string.tasklists_menu_ctx_remove_def_list ) );
-      // else
-      // menu.add( Menu.NONE,
-      // CtxtMenu.MAKE_DEFAULT_LIST,
-      // Menu.NONE,
-      // getString( R.string.tasklists_menu_ctx_make_def_list ) );
+      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+      final Contact contact = getContact( info.position );
+      final String fullname = contact.getFullname();
+      
+      menu.add( Menu.NONE,
+                CtxtMenu.OPEN_TASKS,
+                Menu.NONE,
+                getString( R.string.contactslist_listitem_open_tasks, fullname ) );
+      
+      if ( contact.getLookUpKey() != null )
+      {
+         menu.add( Menu.NONE,
+                   CtxtMenu.OPEN_CONTACT,
+                   Menu.NONE,
+                   getString( R.string.contactslist_listitem_open_contact,
+                              fullname ) );
+      }
    }
    
 
@@ -231,35 +210,29 @@ public class ContactsListActivity extends ListActivity
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
-      // final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+      final Contact contact = getContact( info.position );
       
       switch ( item.getItemId() )
       {
-         // case CtxtMenu.OPEN_LIST:
-         // openList( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ) );
-         // return true;
-         //            
-         // case CtxtMenu.EXPAND:
-         // getExpandableListView().expandGroup( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
-         // return true;
-         //            
-         // case CtxtMenu.COLLAPSE:
-         // getExpandableListView().collapseGroup( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
-         // return true;
-         //            
-         // case CtxtMenu.MAKE_DEFAULT_LIST:
-         // MolokoApp.getSettings()
-         // .setDefaultListId( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getId() );
-         // return true;
-         //            
-         // case CtxtMenu.REMOVE_DEFAULT_LIST:
-         // MolokoApp.getSettings()
-         // .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
-         // return true;
+         case CtxtMenu.OPEN_TASKS:
+            startActivity( Intents.createOpenContactIntent( this,
+                                                            contact.getFullname(),
+                                                            contact.getUsername() ) );
+            break;
+         
+         case CtxtMenu.OPEN_CONTACT:
+            final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                              Uri.withAppendedPath( ContactsContract.Contacts.CONTENT_LOOKUP_URI,
+                                                                    contact.getLookUpKey() ) );
+            startActivity( intent );
+            break;
          
          default :
             return super.onContextItemSelected( item );
       }
+      
+      return true;
    }
    
 
@@ -278,19 +251,19 @@ public class ContactsListActivity extends ListActivity
 
    private void queryContacts()
    {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Contacts.CONTENT_URI );
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( ContactOverviews.CONTENT_URI );
       
       if ( client != null )
       {
-         final ArrayList< RtmContact > rtmContacts = RtmContactsProviderPart.getAllContacts( client,
-                                                                                             null );
+         final ArrayList< RtmContactWithTaskCount > rtmContacts = ContactOverviewsProviderPart.getContactOverviews( client,
+                                                                                                                    null );
          
          if ( rtmContacts != null )
          {
             // Try to link the RTM contacts to the phonebook contacts
             final ArrayList< Contact > contacts = new ArrayList< Contact >( rtmContacts.size() );
             
-            for ( RtmContact rtmContact : rtmContacts )
+            for ( RtmContactWithTaskCount rtmContact : rtmContacts )
             {
                contacts.add( linkRtmContact( rtmContact ) );
             }
@@ -317,15 +290,15 @@ public class ContactsListActivity extends ListActivity
    
 
 
-   private Contact linkRtmContact( RtmContact rtmContact )
+   private Contact linkRtmContact( RtmContactWithTaskCount rtmContact )
    {
-      Contact contact = new Contact( rtmContact.getId(),
-                                     rtmContact.getFullname(),
-                                     rtmContact.getUsername() );
+      Contact contact = new Contact( rtmContact );
+      
       Cursor c = null;
       
       String lookUpKey = null;
       String photoId = null;
+      boolean isLinkedByNotes = false;
       
       final ContentResolver contentResolver = getContentResolver();
       
@@ -370,6 +343,7 @@ public class ContactsListActivity extends ListActivity
             {
                photoId = c.getString( 1 );
                lookUpKey = c.getString( 4 );
+               isLinkedByNotes = true;
             }
          }
       }
@@ -384,7 +358,7 @@ public class ContactsListActivity extends ListActivity
          setContactPhoto( photoId, contact );
       }
       
-      contact.setLookUpKey( lookUpKey );
+      contact.setLookUpKey( lookUpKey, isLinkedByNotes );
       
       return contact;
    }

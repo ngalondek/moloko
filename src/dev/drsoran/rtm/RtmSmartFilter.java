@@ -127,7 +127,7 @@ public class RtmSmartFilter extends RtmData
 
    public static final String evaluate( String filter, boolean excludeCompleted )
    {
-      StringBuffer evalFilter = new StringBuffer();
+      final StringBuffer evalFilter = new StringBuffer();
       
       // a 0-length filter == "true"
       if ( filter != null )
@@ -149,6 +149,7 @@ public class RtmSmartFilter extends RtmData
             
             if ( parserRes != null )
             {
+               evalFilter.append( "( " );
                evalFilter.append( parserRes.result );
                
                // SPECIAL CASE: If the filter contains any operator 'completed',
@@ -160,6 +161,8 @@ public class RtmSmartFilter extends RtmData
                             .append( RawTasks.COMPLETED_DATE )
                             .append( " IS NULL" );
                }
+               
+               evalFilter.append( " )" );
             }
          }
       }

@@ -186,7 +186,7 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
    
 
 
-   private static RtmContact createContact( Cursor c )
+   public static RtmContact createContact( Cursor c )
    {
       return new RtmContact( c.getString( COL_INDICES.get( Contacts._ID ) ),
                              c.getString( COL_INDICES.get( Contacts.FULLNAME ) ),

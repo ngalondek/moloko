@@ -160,8 +160,11 @@
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
      
    <!-- ContactsList activity -->
-   <string name="contactslist_no_contacts">Keine Kontakte</string>   
-	  
+   <string name="contactslist_no_contacts">Keine Kontakte</string>
+   <!-- Menus -->
+      <string name="contactslist_listitem_open_tasks">Für %1$s freigegeben</string>
+      <string name="contactslist_listitem_open_contact">Details von %1$s</string>
+      
    <!-- Authenticator activity -->
    <string name="auth_permission_label">Berechtigung</string>
    <string name="auth_info_text">Nach dem Fortfahren werden Sie auf die Remember The Milk Website geleitet, wo Sie durch die Eingabe Ihrer Zugangsdaten die Zugriffsberechtigung auf die RTM Daten bestätigen.\n\nIhr Benutzername und Ihr Passwort werden nicht lokal gespeichert.</string>

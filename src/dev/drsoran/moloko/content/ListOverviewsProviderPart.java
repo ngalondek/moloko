@@ -211,7 +211,10 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                {
                   final RtmListWithTaskCount list = createListOverview( client,
                                                                         c );
-                  lists.add( list );
+                  ok = list != null;
+                  
+                  if ( ok )
+                     lists.add( list );
                }
             }
          }

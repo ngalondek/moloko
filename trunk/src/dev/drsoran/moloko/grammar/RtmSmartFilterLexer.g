@@ -251,11 +251,15 @@ options
    {
       if ( !error && result.length() == 0 )
       {
+         result.append( "( " );
+         
          hasStatusCompletedOp = false;
 
          while ( !error && nextToken() != Token.EOF_TOKEN )
          {
          }
+         
+         result.append( " )" );
       }
 
       error = error || result.length() == 0;

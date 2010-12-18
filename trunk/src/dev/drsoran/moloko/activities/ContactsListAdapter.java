@@ -24,21 +24,21 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
-import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ParticipantsProviderPart;
-import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.rtm.Contact;
-import dev.drsoran.rtm.RtmContact;
 
 
 public class ContactsListAdapter extends ArrayAdapter< Contact >
@@ -69,19 +69,24 @@ public class ContactsListAdapter extends ArrayAdapter< Contact >
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      final View view = inflater.inflate( resourceId, parent, false );
+      if ( convertView == null )
+      {
+         convertView = inflater.inflate( resourceId, parent, false );
+      }
       
       ImageView picture;
       TextView fullname;
       TextView username;
       TextView numSharedTasks;
+      View callButton;
       
       try
       {
-         picture = (ImageView) view.findViewById( R.id.contactslist_listitem_contact_pic );
-         fullname = (TextView) view.findViewById( R.id.contactslist_listitem_fullname );
-         username = (TextView) view.findViewById( R.id.contactslist_listitem_username );
-         numSharedTasks = (TextView) view.findViewById( R.id.contactslist_listitem_num_shared );
+         picture = (ImageView) convertView.findViewById( R.id.contactslist_listitem_contact_pic );
+         fullname = (TextView) convertView.findViewById( R.id.contactslist_listitem_fullname );
+         username = (TextView) convertView.findViewById( R.id.contactslist_listitem_username );
+         numSharedTasks = (TextView) convertView.findViewById( R.id.contactslist_listitem_num_shared );
+         callButton = convertView.findViewById( R.id.contactslist_listitem_btn_call );
       }
       catch ( ClassCastException e )
       {
@@ -99,38 +104,37 @@ public class ContactsListAdapter extends ArrayAdapter< Contact >
       fullname.setText( contact.getFullname() );
       username.setText( contact.getUsername() );
       
-      final int numShared = getSharedTasks( contact );
+      final int numShared = contact.getTaskCount();
       
       numSharedTasks.setText( context.getString( R.string.contactslist_listitem_num_tasks,
                                                  numShared,
                                                  context.getResources()
                                                         .getQuantityText( R.plurals.g_task,
                                                                           numShared ) ) );
-      return view;
+      
+      callButton.setVisibility( contact.getLookUpKey() != null
+                                                                ? setCallButton( callButton,
+                                                                                 contact )
+                                                                : View.GONE );
+      
+      return convertView;
    }
    
 
 
-   private int getSharedTasks( RtmContact contact )
+   private int setCallButton( final View view, final Contact contact )
    {
-      int num = 0;
-      
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Participants.CONTENT_URI );
-      
-      if ( client != null )
+      view.setOnClickListener( new OnClickListener()
       {
-         num = ParticipantsProviderPart.getNumTasksParticipating( client,
-                                                                  contact.getId() );
-         
-         client.release();
-      }
-      else
-      {
-         // TODO: Show error
-      }
+         public void onClick( final View v )
+         {
+            final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                              Uri.withAppendedPath( ContactsContract.Contacts.CONTENT_LOOKUP_URI,
+                                                                    contact.getLookUpKey() ) );
+            context.startActivity( intent );
+         }
+      } );
       
-      return num;
+      return View.VISIBLE;
    }
-   
 }

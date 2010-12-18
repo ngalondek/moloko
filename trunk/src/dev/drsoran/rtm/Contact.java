@@ -24,59 +24,69 @@ package dev.drsoran.rtm;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 
-public class Contact extends RtmContact
+public class Contact
 {
+   RtmContactWithTaskCount rtmContact;
+   
    private String lookUpKey;
    
    private Bitmap photo;
    
-   public static final Parcelable.Creator< Contact > CREATOR = new Parcelable.Creator< Contact >()
-   {
-      public Contact createFromParcel( Parcel source )
-      {
-         return new Contact( source );
-      }
-      
-
-
-      public Contact[] newArray( int size )
-      {
-         return new Contact[ size ];
-      }
-   };
+   private boolean isLinkedByNotes;
    
    
 
-   public Contact( String id, String fullname, String username )
+   public Contact( RtmContactWithTaskCount rtmContact )
    {
-      super( id, fullname, username );
+      this.rtmContact = rtmContact;
+      this.lookUpKey = null;
+      this.photo = null;
+      this.isLinkedByNotes = false;
    }
    
 
 
-   public Contact( Parcel source )
+   public String getFullname()
    {
-      super( source );
-      this.lookUpKey = source.readString();
-      this.photo = source.readParcelable( null );
+      return rtmContact.getFullname();
    }
    
 
 
-   public String getPhonebookId()
+   public String getId()
+   {
+      return rtmContact.getId();
+   }
+   
+
+
+   public int getTaskCount()
+   {
+      return rtmContact.getTaskCount();
+   }
+   
+
+
+   public String getUsername()
+   {
+      return rtmContact.getUsername();
+   }
+   
+
+
+   public String getLookUpKey()
    {
       return lookUpKey;
    }
    
 
 
-   public void setLookUpKey( String lookUpKey )
+   public void setLookUpKey( String lookUpKey, boolean linkedByNotes )
    {
       this.lookUpKey = lookUpKey;
+      this.isLinkedByNotes = linkedByNotes;
    }
    
 
@@ -95,6 +105,20 @@ public class Contact extends RtmContact
    
 
 
+   public boolean isLinkedByNotes()
+   {
+      return isLinkedByNotes;
+   }
+   
+
+
+   public void setLinkedByNotes( boolean isLinkedByNotes )
+   {
+      this.isLinkedByNotes = isLinkedByNotes;
+   }
+   
+
+
    public void setPhoto( byte[] data )
    {
       try
@@ -106,15 +130,4 @@ public class Contact extends RtmContact
          // Do nothing - the photo will appear to be missing
       }
    }
-   
-
-
-   @Override
-   public void writeToParcel( Parcel dest, int flags )
-   {
-      super.writeToParcel( dest, flags );
-      dest.writeString( lookUpKey );
-      dest.writeParcelable( photo, flags );
-   }
-   
 }

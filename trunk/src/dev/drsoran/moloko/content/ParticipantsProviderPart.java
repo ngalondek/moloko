@@ -118,10 +118,11 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
             {
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
-                  participants.add( new Participant( c.getString( COL_INDICES.get( Participants._ID ) ),
-                                                     c.getString( COL_INDICES.get( Participants.CONTACT_ID ) ),
-                                                     c.getString( COL_INDICES.get( Participants.FULLNAME ) ),
-                                                     c.getString( COL_INDICES.get( Participants.USERNAME ) ) ) );
+                  final Participant participant = createParticipant( c );
+                  ok = participant != null;
+                  
+                  if ( ok )
+                     participants.add( participant );
                }
             }
             
@@ -264,6 +265,16 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       }
       
       return operations;
+   }
+   
+
+
+   public final static Participant createParticipant( Cursor c )
+   {
+      return new Participant( c.getString( COL_INDICES.get( Participants._ID ) ),
+                              c.getString( COL_INDICES.get( Participants.CONTACT_ID ) ),
+                              c.getString( COL_INDICES.get( Participants.FULLNAME ) ),
+                              c.getString( COL_INDICES.get( Participants.USERNAME ) ) );
    }
    
 

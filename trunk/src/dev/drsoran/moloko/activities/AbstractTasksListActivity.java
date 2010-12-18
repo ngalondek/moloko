@@ -24,7 +24,6 @@ package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -42,7 +41,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -58,12 +56,15 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ListTask;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public abstract class AbstractTasksListActivity extends ListActivity implements
@@ -79,17 +80,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
    public static final String FILTER = "filter";
    
-   public static final String FILTER_EVALUATED = "filter_eval";
-   
    public static final String TASK_SORT_ORDER = "task_sort_order";
-   
-   public static final String ADAPTER_CONFIG = "adapter_config";
-   
-   /**
-    * If we have a concrete list name, then we do not need to click it. Otherwise we would call the same list again. But
-    * this only applies to non smart lists
-    */
-   public static final String DISABLE_LIST_NAME = "disable_list_name";
    
    
    protected static class OptionsMenu
@@ -112,8 +103,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    protected static class CtxtMenu
    {
-      public final static int TOGGLE_TASK_COMPLETED = 0;
-      
       public final static int OPEN_TASK = 1;
       
       public final static int RENAME_TASK = 2;
@@ -122,7 +111,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       public final static int TAGS = 4;
       
-      public final static int NOTES = 5;
+      public final static int TASKS_AT_LOCATION = 5;
+      
+      public final static int OPEN_LOCATION = 6;
+      
+      public final static int NOTES = 7;
    }
    
    protected View emptyListView;
@@ -168,7 +161,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       TasksProviderPart.registerContentObserver( this, dbObserver );
       
-      if ( getIntent().getExtras() != null )
+      if ( getIntent().getExtras() == null )
          // Put an empty bundle, this prevents null pointer checking
          // in later steps.
          getIntent().putExtras( new Bundle() );
@@ -312,10 +305,15 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                 getString( R.string.phr_open_with_name, task.getName() ) )
           .setTitleCondensed( getString( R.string.abstaskslist_listitem_ctx_open_task ) );
       
-      final Bundle adapterConfig = getIntent().getBundleExtra( ADAPTER_CONFIG );
+      final RtmSmartFilter filter = getIntent().getParcelableExtra( FILTER );
       
-      if ( adapterConfig == null
-         || !adapterConfig.getBoolean( DISABLE_LIST_NAME ) )
+      // If the list name was in the filter then we are in one list only. So no need to
+      // open it again.
+      if ( filter == null
+         || !RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
+                                                        RtmSmartFilterLexer.OP_LIST,
+                                                        task.getListName(),
+                                                        false ) )
       {
          menu.add( Menu.NONE,
                    CtxtMenu.OPEN_LIST,
@@ -327,11 +325,34 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       final int tagsCount = task.getTags().size();
       if ( tagsCount > 0 )
       {
-         menu.add( Menu.NONE,
-                   CtxtMenu.TAGS,
-                   Menu.NONE,
-                   getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
-                                                     tagsCount ) );
+         final View tagsContainer = info.targetView.findViewById( R.id.taskslist_listitem_tags );
+         
+         if ( tagsContainer.getVisibility() == View.VISIBLE )
+            menu.add( Menu.NONE,
+                      CtxtMenu.TAGS,
+                      Menu.NONE,
+                      getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
+                                                        tagsCount ) );
+      }
+      
+      final String locationName = task.getLocationName();
+      if ( !TextUtils.isEmpty( locationName ) )
+      {
+         final View locationView = info.targetView.findViewById( R.id.taskslist_listitem_location );
+         
+         if ( locationView.getVisibility() == View.VISIBLE )
+         {
+            menu.add( Menu.NONE,
+                      CtxtMenu.TASKS_AT_LOCATION,
+                      Menu.NONE,
+                      getString( R.string.abstaskslist_listitem_ctx_tasks_at_location,
+                                 locationName ) );
+            menu.add( Menu.NONE,
+                      CtxtMenu.OPEN_LOCATION,
+                      Menu.NONE,
+                      getString( R.string.abstaskslist_listitem_ctx_open_location,
+                                 locationName ) );
+         }
       }
       
       final int notesCount = task.getNumberOfNotes();
@@ -352,10 +373,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       switch ( item.getItemId() )
       {
-         case CtxtMenu.TOGGLE_TASK_COMPLETED:
-            onCompletedClicked( info.targetView.findViewById( R.id.taskslist_listitem_check ) );
-            return true;
-            
          case CtxtMenu.OPEN_TASK:
             onTaskClicked( info.position );
             return true;
@@ -375,6 +392,14 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                onTagClicked( tags.get( 0 ) );
             else
                openMultipleTags( tags );
+            return true;
+            
+         case CtxtMenu.TASKS_AT_LOCATION:
+            onLocationClicked( info.position );
+            return true;
+            
+         case CtxtMenu.OPEN_LOCATION:
+            gotoLocation( info.position );
             return true;
             
          case CtxtMenu.NOTES:
@@ -452,7 +477,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                }
             }
             
-            intent.putExtra( FILTER, filter.toString() );
+            intent.putExtra( FILTER, new RtmSmartFilter( filter.toString() ) );
             intent.putExtra( TITLE,
                              getString( R.string.taskslist_titlebar,
                                         TextUtils.join( ( andLink )
@@ -516,22 +541,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   public void onCompletedClicked( View view )
-   {
-      final CheckBox checkBox = (CheckBox) view;
-      
-      if ( checkBox.isChecked() )
-      {
-         
-      }
-      else
-      {
-         
-      }
-   }
-   
-
-
    private void onTaskRename( int pos )
    {
       
@@ -573,26 +582,27 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   public void onNoteClicked( View view )
+   public void gotoLocation( int pos )
    {
-      // get the ID of the note clicked
-      final int pos = getListView().getPositionForView( view );
-      
-      final List< RtmTaskNote > notes = getTask( pos ).getNotes();
-      
-      String id = null;
-      for ( Iterator< RtmTaskNote > i = notes.iterator(); i.hasNext()
-         && id == null; )
-      {
-         final RtmTaskNote rtmTaskNote = i.next();
-         
-         if ( rtmTaskNote.getText().equals( ( (TextView) view ).getText() ) )
-         {
-            id = rtmTaskNote.getId();
-         }
-      }
-      
-      openNotes( pos, id );
+      LocationChooser.showChooser( this, getTask( pos ).getLocationName(), true );
+   }
+   
+
+
+   public void onLocationClicked( int pos )
+   {
+      startActivity( Intents.createOpenLocationIntentByName( this,
+                                                             getTask( pos ).getLocationName() ) );
+   }
+   
+
+
+   public void onLocationClicked( View view )
+   {
+      final TextView location = (TextView) view;
+      startActivity( Intents.createOpenLocationIntentByName( this,
+                                                             location.getText()
+                                                                     .toString() ) );
    }
    
 
@@ -619,7 +629,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    public void openNotes( int position, String startNoteId )
    {
       final ListTask task = getTask( position );
-      final List< RtmTaskNote > notes = task.getNotes();
+      final List< RtmTaskNote > notes = task.getNotes( this );
       
       if ( notes.size() > 0 )
       {

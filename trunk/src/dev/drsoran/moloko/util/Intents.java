@@ -26,7 +26,6 @@ import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
@@ -138,11 +137,6 @@ public final class Intents
       {
          filterString = RtmSmartFilterLexer.OP_LIST_LIT
             + RtmSmartFilterLexer.quotify( list.getName() );
-         
-         final Bundle config = new Bundle();
-         config.putBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME, true );
-         
-         intent.putExtra( AbstractTasksListActivity.ADAPTER_CONFIG, config );
       }
       
       // if we open a smart list
@@ -159,7 +153,8 @@ public final class Intents
             filterString = filter;
       }
       
-      intent.putExtra( AbstractTasksListActivity.FILTER, filterString );
+      intent.putExtra( AbstractTasksListActivity.FILTER,
+                       new RtmSmartFilter( filterString ) );
       
       return intent;
    }
@@ -171,17 +166,12 @@ public final class Intents
    {
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
       intent.putExtra( AbstractTasksListActivity.FILTER,
-                       RtmSmartFilterLexer.OP_TAG_LIT
-                          + RtmSmartFilterLexer.quotify( tagText ) );
+                       new RtmSmartFilter( RtmSmartFilterLexer.OP_TAG_LIT
+                          + RtmSmartFilterLexer.quotify( tagText ) ) );
       intent.putExtra( AbstractTasksListActivity.TITLE,
                        context.getString( R.string.taskslist_titlebar, tagText ) );
       intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
                        R.drawable.ic_title_tag );
-      
-      final Bundle config = new Bundle();
-      config.putString( UIUtils.DISABLE_TAG_EQUALS, tagText );
-      
-      intent.putExtra( AbstractTasksListActivity.ADAPTER_CONFIG, config );
       
       return intent;
    }
@@ -194,8 +184,8 @@ public final class Intents
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
       
       intent.putExtra( AbstractTasksListActivity.FILTER,
-                       RtmSmartFilterLexer.OP_LOCATION_LIT
-                          + RtmSmartFilterLexer.quotify( name ) );
+                       new RtmSmartFilter( RtmSmartFilterLexer.OP_LOCATION_LIT
+                          + RtmSmartFilterLexer.quotify( name ) ) );
       intent.putExtra( AbstractTasksListActivity.TITLE,
                        context.getString( R.string.taskslist_titlebar, name ) );
       intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
@@ -214,8 +204,8 @@ public final class Intents
       
       // Here we take the username cause the fullname can be ambiguous.
       intent.putExtra( AbstractTasksListActivity.FILTER,
-                       RtmSmartFilterLexer.OP_SHARED_WITH_LIT
-                          + RtmSmartFilterLexer.quotify( username ) );
+                       new RtmSmartFilter( RtmSmartFilterLexer.OP_SHARED_WITH_LIT
+                          + RtmSmartFilterLexer.quotify( username ) ) );
       intent.putExtra( AbstractTasksListActivity.TITLE,
                        context.getString( R.string.taskslist_titlebar, fullname ) );
       intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
@@ -241,12 +231,7 @@ public final class Intents
       if ( iconId != -1 )
          intent.putExtra( AbstractTasksListActivity.TITLE_ICON, iconId );
       
-      if ( filter.isEvaluated() )
-         intent.putExtra( AbstractTasksListActivity.FILTER_EVALUATED,
-                          filter.getEvaluatedFilterString() );
-      else
-         intent.putExtra( AbstractTasksListActivity.FILTER,
-                          filter.getFilterString() );
+      intent.putExtra( AbstractTasksListActivity.FILTER, filter );
       
       return intent;
    }

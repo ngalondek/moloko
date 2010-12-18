@@ -22,33 +22,30 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import android.content.ContentProviderClient;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.RemoteException;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.mdt.rtm.data.RtmTaskNote;
-import com.mdt.rtm.data.RtmTaskNotes;
-
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.rtm.ListTask;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TasksListAdapter extends ArrayAdapter< ListTask >
@@ -62,22 +59,41 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
    private final LayoutInflater inflater;
    
-   private final Bundle configuration;
+   private final RtmSmartFilter filter;
    
    private final Time now = MolokoDateUtils.newTime();
+   
+   private final String[] tagsToRemove;
    
    
 
    public TasksListAdapter( Context context, int resourceId,
-      List< ListTask > tasks, Bundle configuration )
+      List< ListTask > tasks, RtmSmartFilter filter )
    {
       super( context, 0, tasks );
       
       this.context = context;
       this.resourceId = resourceId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-      this.configuration = ( configuration == null ) ? new Bundle()
-                                                    : configuration;
+      this.filter = filter;
+      
+      final ArrayList< RtmSmartFilterToken > tokens = filter.getTokens();
+      
+      {
+         final ArrayList< String > tagsToRemove = new ArrayList< String >();
+         
+         for ( RtmSmartFilterToken token : tokens )
+         {
+            if ( token.operatorType == RtmSmartFilterLexer.OP_TAG
+               && !token.isNegated )
+            {
+               tagsToRemove.add( token.value );
+            }
+         }
+         
+         this.tagsToRemove = new String[ tagsToRemove.size() ];
+         tagsToRemove.toArray( this.tagsToRemove );
+      }
    }
    
 
@@ -85,26 +101,30 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      final View view = inflater.inflate( resourceId, parent, false );
-      final View priority = view.findViewById( R.id.taskslist_listitem_priority );
+      if ( convertView == null )
+         convertView = inflater.inflate( resourceId, parent, false );
+      
+      final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
       
       TextView description;
       ImageView recurrent;
+      ImageView hasNotes;
       TextView listName;
       TextView dueDate;
       ImageView completed;
       ViewGroup tagsLayout;
-      ViewStub notesStub;
+      TextView location;
       
       try
       {
-         description = (TextView) view.findViewById( R.id.taskslist_listitem_desc );
-         listName = (TextView) view.findViewById( R.id.taskslist_listitem_btn_list_name );
-         recurrent = (ImageView) view.findViewById( R.id.taskslist_listitem_recurrent );
-         dueDate = (TextView) view.findViewById( R.id.taskslist_listitem_due_date );
-         completed = (ImageView) view.findViewById( R.id.taskslist_listitem_check );
-         tagsLayout = (ViewGroup) view.findViewById( R.id.taskslist_listitem_tags );
-         notesStub = (ViewStub) view.findViewById( R.id.taskslist_listitem_notes_stub );
+         description = (TextView) convertView.findViewById( R.id.taskslist_listitem_desc );
+         listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
+         recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
+         hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
+         dueDate = (TextView) convertView.findViewById( R.id.taskslist_listitem_due_date );
+         completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
+         tagsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_tags );
+         location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
       }
       catch ( ClassCastException e )
       {
@@ -118,6 +138,13 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       
       if ( task.getRecurrence() != null )
          recurrent.setVisibility( View.VISIBLE );
+      else
+         recurrent.setVisibility( View.GONE );
+      
+      if ( task.getNumberOfNotes() > 0 )
+         hasNotes.setVisibility( View.VISIBLE );
+      else
+         hasNotes.setVisibility( View.GONE );
       
       setListName( listName, task );
       
@@ -125,33 +152,30 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       
       UIUtils.setPriorityColor( priority, task );
       
-      UIUtils.inflateTags( context,
-                           tagsLayout,
-                           task,
-                           configuration,
-                           (OnClickListener) context );
+      setTags( tagsLayout, task );
       
-      // If we couldn't find the stub by ID it is already
-      // inflated and it's ID has been replaced.
-      if ( notesStub != null )
-         setNotes( view, notesStub, task );
+      setLocation( location, task );
       
       // Completed
       setCompleted( completed, task );
       
-      return view;
+      return convertView;
    }
    
 
 
    private final void setListName( TextView view, ListTask task )
    {
-      view.setText( task.getListName() );
-      
-      if ( configuration.getBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME ) )
+      if ( !RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
+                                                       RtmSmartFilterLexer.OP_LIST,
+                                                       task.getListName(),
+                                                       false ) )
       {
-         view.setEnabled( false );
+         view.setVisibility( View.VISIBLE );
+         view.setText( task.getListName() );
       }
+      else
+         view.setVisibility( View.GONE );
    }
    
 
@@ -161,6 +185,8 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       // if has a due date
       if ( task.getDue() != null )
       {
+         view.setVisibility( View.VISIBLE );
+         
          String dueText = null;
          
          final long dueMillis = task.getDue().getTime();
@@ -222,69 +248,40 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
 
 
-   private void setNotes( View listItem, ViewStub notesStub, ListTask task )
+   private void setLocation( TextView view, ListTask task )
    {
-      // If the task has no notes
-      if ( task.getNumberOfNotes() == 0 )
+      // If the task has no location
+      if ( TextUtils.isEmpty( task.getLocationName() )
+         || RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
+                                                       RtmSmartFilterLexer.OP_LOCATION,
+                                                       task.getLocationName(),
+                                                       false ) )
       {
-         notesStub.setVisibility( View.GONE );
+         view.setVisibility( View.GONE );
       }
-      
-      // inflate the stub and add notes
       else
       {
-         List< RtmTaskNote > notes = task.getNotes();
-         
-         if ( notes.size() == 0 )
-         {
-            final ContentProviderClient client = context.getContentResolver()
-                                                        .acquireContentProviderClient( Notes.CONTENT_URI );
-            
-            if ( client != null )
-            {
-               try
-               {
-                  final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                                  task.getTaskSeriesId() );
-                  client.release();
-                  
-                  if ( rtmNotes != null )
-                  {
-                     notes = rtmNotes.getNotes();
-                     task.setNotes( notes );
-                  }
-               }
-               catch ( RemoteException e )
-               {
-                  Log.e( TAG, "Unable to retrieve notes from DB for task ID "
-                     + task.getTaskSeriesId(), e );
-               }
-            }
-         }
-         
-         try
-         {
-            final ViewGroup notesContainer = (ViewGroup) notesStub.inflate();
-            
-            if ( notesContainer == null )
-            {
-               throw new Exception();
-            }
-            
-            for ( RtmTaskNote note : notes )
-            {
-               final TextView tagView = (TextView) View.inflate( context,
-                                                                 R.layout.taskslist_listitem_note_button,
-                                                                 null );
-               tagView.setText( note.getText() );
-               notesContainer.addView( tagView );
-            }
-         }
-         catch ( Exception e )
-         {
-            Log.e( TAG, "Invalid layout spec.", e );
-         }
+         view.setVisibility( View.VISIBLE );
+         view.setText( task.getLocationName() );
       }
+   }
+   
+
+
+   private void setTags( ViewGroup tagsLayout, ListTask task )
+   {
+      final Bundle tagsConfig = new Bundle();
+      
+      if ( tagsToRemove.length > 0 )
+      {
+         tagsConfig.putStringArray( UIUtils.REMOVE_TAGS_EQUALS, tagsToRemove );
+      }
+      
+      UIUtils.inflateTags( context,
+                           tagsLayout,
+                           task,
+                           tagsConfig,
+                           (OnClickListener) context );
    }
    
 

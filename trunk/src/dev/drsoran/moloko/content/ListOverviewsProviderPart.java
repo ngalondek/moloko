@@ -446,7 +446,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    {
       int taskCount = -1;
       
-      final String evalFilter = filter.getEvaluatedFilterString();
+      final String evalFilter = filter.getEvaluatedFilterString( false );
       
       boolean badFilter = evalFilter == null;
       

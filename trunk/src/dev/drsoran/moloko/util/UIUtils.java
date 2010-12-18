@@ -54,9 +54,13 @@ public final class UIUtils
    /**
     * If a tag has been clicked then it makes no sense to click it in the result again.
     */
-   public static final String DISABLE_TAG_EQUALS = "disable_tag_equals";
+   public static final String DISABLE_TAGS_EQUALS = "disable_tags_equals";
+   
+   public static final String REMOVE_TAGS_EQUALS = "remove_tags_equals";
    
    public static final String DISABLE_ALL_TAGS = "disable_all_tags";
+   
+   public static final String REMOVE_ALL_TAGS = "remove_all_tags";
    
    
 
@@ -159,47 +163,73 @@ public final class UIUtils
                                          Bundle configuration,
                                          OnClickListener listener ) throws InflateException
    {
-      // If the task has no tags
-      if ( task.getTags().size() == 0 )
-      {
-         container.setVisibility( View.GONE );
-      }
+      boolean anyInflated = false;
+      
+      if ( configuration == null )
+         configuration = new Bundle();
+      
+      container.removeAllViews();
       
       // inflate the stub and add tags
-      else
+      if ( task.getTags().size() > 0
+         && !configuration.containsKey( REMOVE_ALL_TAGS ) )
       {
          try
          {
-            // Check if we should leave out a tag
-            String tagToDisable = null;
-            boolean disableAllTags = false;
-            
-            if ( configuration != null )
-            {
-               // TODO: Display disabled tags in a different style.
-               tagToDisable = configuration.getString( DISABLE_TAG_EQUALS );
-               disableAllTags = configuration.getBoolean( DISABLE_ALL_TAGS )
-                  || listener == null;
-            }
-            
             final List< String > tags = task.getTags();
             
-            for ( String tagText : tags )
+            if ( configuration.containsKey( DISABLE_ALL_TAGS ) )
             {
-               final TextView tagView = (TextView) View.inflate( context,
-                                                                 R.layout.tag_button,
-                                                                 null );
-               tagView.setText( tagText );
-               container.addView( tagView );
-               
-               if ( disableAllTags
-                  || ( tagToDisable != null && tagText.equalsIgnoreCase( tagToDisable ) ) )
+               for ( String tagText : tags )
                {
+                  final TextView tagView = (TextView) View.inflate( context,
+                                                                    R.layout.tag_button,
+                                                                    null );
                   tagView.setEnabled( false );
+                  tagView.setText( tagText );
+                  container.addView( tagView );
                }
                
-               if ( listener != null )
-                  tagView.setOnClickListener( listener );
+               anyInflated = true;
+            }
+            else
+            {
+               final String[] tagsToDisable = configuration.getStringArray( DISABLE_TAGS_EQUALS );
+               final String[] tagsToRemove = configuration.getStringArray( REMOVE_TAGS_EQUALS );
+               
+               for ( String tagText : tags )
+               {
+                  boolean remove = false;
+                  
+                  if ( tagsToRemove != null )
+                     for ( int i = 0; i < tagsToRemove.length && !remove; i++ )
+                     {
+                        remove = tagsToRemove[ i ].equalsIgnoreCase( tagText );
+                     }
+                  
+                  if ( !remove )
+                  {
+                     boolean disable = false;
+                     
+                     if ( tagsToDisable != null )
+                        for ( int i = 0; i < tagsToDisable.length && !disable; i++ )
+                        {
+                           disable = tagsToDisable[ i ].equalsIgnoreCase( tagText );
+                        }
+                     
+                     final TextView tagView = (TextView) View.inflate( context,
+                                                                       R.layout.tag_button,
+                                                                       null );
+                     tagView.setEnabled( !disable );
+                     tagView.setText( tagText );
+                     container.addView( tagView );
+                     
+                     if ( !disable && listener != null )
+                        tagView.setOnClickListener( listener );
+                     
+                     anyInflated = true;
+                  }
+               }
             }
          }
          catch ( Exception e )
@@ -207,6 +237,11 @@ public final class UIUtils
             throw new InflateException( e );
          }
       }
+      
+      if ( anyInflated )
+         container.setVisibility( View.VISIBLE );
+      else
+         container.setVisibility( View.GONE );
    }
    
 

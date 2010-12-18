@@ -100,14 +100,13 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       
       if ( client != null )
       {
-         final String smartFilter = configuration.getString( FILTER );
+         final RtmSmartFilter smartFilter = configuration.getParcelable( FILTER );
+         String evaluatedFilter = null;
          
-         String evaluatedFilter = configuration.getString( FILTER_EVALUATED );
-         
-         if ( smartFilter != null && evaluatedFilter == null )
+         if ( smartFilter != null )
          {
             // try to evaluate the filter
-            evaluatedFilter = RtmSmartFilter.evaluate( smartFilter, true );
+            evaluatedFilter = smartFilter.getEvaluatedFilterString( true );
             
             if ( evaluatedFilter == null )
             {
@@ -115,6 +114,12 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                // RETURN: evaluation failed
                return;
             }
+         }
+         else
+         {
+            // TODO: Show error if no filter
+            // RETURN: no filter
+            return;
          }
          
          final ArrayList< Task > tasks = TasksProviderPart.getTasks( client,
@@ -129,7 +134,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
             setListAdapter( new TasksListAdapter( this,
                                                   R.layout.taskslist_activity_listitem,
                                                   ListTask.fromTaskList( tasks ),
-                                                  configuration.getBundle( ADAPTER_CONFIG ) ) );
+                                                  smartFilter ) );
             
             switchEmptyView( emptyListView );
          }

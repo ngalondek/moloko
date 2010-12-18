@@ -74,6 +74,7 @@
             android:layout_marginTop="3dip"
             android:text="list_name"
             android:focusable="false"
+            android:clickable="true"
             android:onClick="onListNameClicked" />
       </RelativeLayout>
 
@@ -83,19 +84,35 @@
          android:layout_width="fill_parent"
          android:layout_marginTop="5dip"
          android:layout_marginLeft="@dimen/taskslist_listitem_col_space"
-         android:layout_marginRight="?android:attr/scrollbarSize" />
+         android:layout_marginRight="?android:attr/scrollbarSize"
+         android:layout_marginBottom="3dip" />
 
-      <ViewStub
-         android:id="@+id/taskslist_listitem_notes_stub"
-         android:layout="@layout/taskslist_listitem_notes_layout"
-         android:inflatedId="@+id/taskslist_listitem_notes"
-         android:layout_height="fill_parent"
-         android:layout_width="fill_parent"
-         android:layout_marginRight="?android:attr/scrollbarSize" />
+      <TextView
+         android:id="@+id/taskslist_listitem_location"
+         style="@style/TasksList_ListItem_Location"
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_marginLeft="@dimen/taskslist_listitem_col_space"
+         android:layout_marginRight="?android:attr/scrollbarSize"
+         android:text="location"
+         android:focusable="false"
+         android:clickable="true"
+         android:onClick="onLocationClicked" />
 
       <RelativeLayout
          android:layout_width="fill_parent"
          android:layout_height="wrap_content">
+         
+         <ImageView
+            android:id="@+id/taskslist_listitem_has_notes"
+            android:layout_width="20dip"
+            android:layout_height="20dip"
+            android:layout_marginRight="5dip"
+            android:layout_toLeftOf="@+id/taskslist_listitem_recurrent"
+            android:layout_alignWithParentIfMissing="true"
+            android:src="@drawable/ic_list_taskslist_note"
+            android:focusable="false"
+            android:visibility="gone" />
 
          <ImageView
             android:id="@+id/taskslist_listitem_recurrent"

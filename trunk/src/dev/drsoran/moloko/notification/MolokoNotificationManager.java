@@ -508,7 +508,7 @@ public class MolokoNotificationManager implements
       int count = 0;
       String result = null;
       
-      final String evalFilter = filter.getEvaluatedFilterString();
+      final String evalFilter = filter.getEvaluatedFilterString( false );
       
       if ( !TextUtils.isEmpty( evalFilter ) )
       {

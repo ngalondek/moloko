@@ -26,9 +26,9 @@
 
    <item
       android:state_pressed="false"
-      android:color="@color/taskslist_listitem_note_text_normal" />
+      android:color="@color/taskslist_listitem_location_text_normal" />
    <item
       android:state_pressed="true"
-      android:color="@color/taskslist_listitem_note_text_pressed" />
+      android:color="@color/taskslist_listitem_location_text_pressed" />
 
 </selector>

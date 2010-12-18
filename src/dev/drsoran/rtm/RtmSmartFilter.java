@@ -22,6 +22,8 @@
 
 package dev.drsoran.rtm;
 
+import java.util.ArrayList;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
@@ -33,6 +35,7 @@ import com.mdt.rtm.data.RtmData;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing.RtmSmartFilterReturn;
 import dev.drsoran.provider.Rtm.RawTasks;
 
@@ -64,12 +67,15 @@ public class RtmSmartFilter extends RtmData
    
    private String evalFilter;
    
+   private ArrayList< RtmSmartFilterToken > tokens;
+   
    
 
    public RtmSmartFilter( String filter )
    {
       this.filter = filter;
       this.evalFilter = null;
+      this.tokens = null;
    }
    
 
@@ -87,6 +93,7 @@ public class RtmSmartFilter extends RtmData
       }
       
       this.evalFilter = null;
+      this.tokens = null;
    }
    
 
@@ -95,6 +102,7 @@ public class RtmSmartFilter extends RtmData
    {
       this.filter = source.readString();
       this.evalFilter = source.readString();
+      this.tokens = source.createTypedArrayList( RtmSmartFilterToken.CREATOR );
    }
    
 
@@ -106,11 +114,12 @@ public class RtmSmartFilter extends RtmData
    
 
 
-   public String getEvaluatedFilterString()
+   public String getEvaluatedFilterString( boolean collectTokens )
    {
-      if ( !isEvaluated() && filter != null )
+      if ( !isEvaluated() && filter != null || collectTokens && tokens == null )
       {
-         evalFilter = evaluate( filter, true );
+         tokens = new ArrayList< RtmSmartFilterToken >();
+         evalFilter = evaluate( filter, tokens, true );
       }
       
       return evalFilter;
@@ -125,7 +134,31 @@ public class RtmSmartFilter extends RtmData
    
 
 
+   public ArrayList< RtmSmartFilterToken > getTokens()
+   {
+      if ( tokens == null )
+      {
+         tokens = new ArrayList< RtmSmartFilterToken >();
+         
+         if ( filter != null && !isEvaluated() )
+            evaluate( filter, tokens, true );
+      }
+      
+      return tokens;
+   }
+   
+
+
    public static final String evaluate( String filter, boolean excludeCompleted )
+   {
+      return evaluate( filter, null, excludeCompleted );
+   }
+   
+
+
+   public static final String evaluate( String filter,
+                                        ArrayList< RtmSmartFilterToken > tokens,
+                                        boolean excludeCompleted )
    {
       final StringBuffer evalFilter = new StringBuffer();
       
@@ -145,14 +178,15 @@ public class RtmSmartFilter extends RtmData
             if ( !filter.contains( ":" ) )
                filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
             
-            final RtmSmartFilterReturn parserRes = RtmSmartFilterParsing.evaluateRtmSmartFilter( filter );
+            final RtmSmartFilterReturn parserRes = RtmSmartFilterParsing.evaluateRtmSmartFilter( filter,
+                                                                                                 tokens );
             
             if ( parserRes != null )
             {
                evalFilter.append( "( " );
                evalFilter.append( parserRes.result );
                
-               // SPECIAL CASE: If the filter contains any operator 'completed',
+               // SPECIAL CASE: If the filter contains any operator 'completed or status',
                // we include completed tasks. Otherwise we would never show tasks in
                // such lists. In all other cases we exclude completed tasks.
                if ( !parserRes.hasCompletedOperator && excludeCompleted )
@@ -187,6 +221,7 @@ public class RtmSmartFilter extends RtmData
    {
       dest.writeString( filter );
       dest.writeString( evalFilter );
+      dest.writeTypedList( tokens );
    }
    
 }

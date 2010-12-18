@@ -27,12 +27,23 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import android.content.ContentProviderClient;
+import android.content.Context;
+import android.os.RemoteException;
+import android.util.Log;
+
 import com.mdt.rtm.data.RtmTaskNote;
+import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTask.Priority;
+
+import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.provider.Rtm.Notes;
 
 
 public class ListTask extends Task
 {
+   private static final String TAG = "Moloko." + ListTask.class.getSimpleName();
+   
    private ArrayList< RtmTaskNote > notes;
    
    
@@ -133,19 +144,40 @@ public class ListTask extends Task
    
 
 
-   public List< RtmTaskNote > getNotes()
+   public List< RtmTaskNote > getNotes( Context context )
    {
-      if ( notes != null )
-         return Collections.unmodifiableList( notes );
-      else
-         return Collections.emptyList();
-   }
-   
-
-
-   public void setNotes( List< RtmTaskNote > notes )
-   {
-      this.notes = new ArrayList< RtmTaskNote >( notes );
+      if ( notes == null )
+      {
+         if ( getNumberOfNotes() > 0 )
+         {
+            final ContentProviderClient client = context.getContentResolver()
+                                                        .acquireContentProviderClient( Notes.CONTENT_URI );
+            
+            if ( client != null )
+            {
+               try
+               {
+                  final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
+                                                                                  getTaskSeriesId() );
+                  client.release();
+                  
+                  if ( rtmNotes != null )
+                  {
+                     notes = new ArrayList< RtmTaskNote >( rtmNotes.getNotes() );
+                  }
+               }
+               catch ( RemoteException e )
+               {
+                  Log.e( TAG, "Unable to retrieve notes from DB for task ID "
+                     + getTaskSeriesId(), e );
+               }
+            }
+         }
+         else
+            notes = new ArrayList< RtmTaskNote >( 0 );
+      }
+      
+      return Collections.unmodifiableList( notes );
    }
    
 }

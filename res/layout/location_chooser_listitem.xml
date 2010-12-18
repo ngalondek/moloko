@@ -22,21 +22,23 @@
 
    <ImageView
       android:id="@+id/location_chooser_listitem_icon"
-      android:layout_width="wrap_content"
-      android:layout_height="fill_parent"
-      android:gravity="center_vertical"
+      android:layout_width="@android:dimen/app_icon_size"
+      android:layout_height="@android:dimen/app_icon_size"
+      android:layout_centerVertical="true"
       android:src="@android:drawable/ic_dialog_map" />
 
    <TextView
       android:id="@+id/location_chooser_listitem_text"
       style="@android:style/TextAppearance.Medium"
-      android:layout_width="wrap_content"
+      android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:layout_toRightOf="@id/location_chooser_listitem_icon"
       android:paddingLeft="5dp"
       android:paddingRight="?android:attr/scrollbarSize"
       android:gravity="center_vertical"
       android:textColor="@android:color/black"
+      android:singleLine="true"
+      android:ellipsize="marquee"
       android:text="Text" />
 
 </RelativeLayout>

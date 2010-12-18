@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.util.parsing;
 
+import java.util.ArrayList;
+
 import org.antlr.runtime.RecognitionException;
 
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
@@ -51,14 +53,16 @@ public final class RtmSmartFilterParsing
    
    
 
-   public synchronized final static RtmSmartFilterReturn evaluateRtmSmartFilter( RtmSmartFilter filter )
+   public synchronized final static RtmSmartFilterReturn evaluateRtmSmartFilter( RtmSmartFilter filter,
+                                                                                 ArrayList< RtmSmartFilterToken > tokens )
    {
-      return evaluateRtmSmartFilter( filter.getFilterString() );
+      return evaluateRtmSmartFilter( filter.getFilterString(), tokens );
    }
    
 
 
-   public synchronized final static RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString )
+   public synchronized final static RtmSmartFilterReturn evaluateRtmSmartFilter( String filterString,
+                                                                                 ArrayList< RtmSmartFilterToken > tokens )
    {
       final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filterString );
       
@@ -66,7 +70,7 @@ public final class RtmSmartFilterParsing
       
       try
       {
-         final String res = rtmSmartFilterLexer.getResult();
+         final String res = rtmSmartFilterLexer.getResult( tokens );
          return new RtmSmartFilterReturn( res,
                                           rtmSmartFilterLexer.hasStatusCompletedOperator() );
       }
@@ -74,5 +78,56 @@ public final class RtmSmartFilterParsing
       {
          return null;
       }
+   }
+   
+
+
+   public final static boolean hasOperator( ArrayList< RtmSmartFilterToken > tokens,
+                                            int operator,
+                                            boolean negated )
+   {
+      for ( RtmSmartFilterToken token : tokens )
+      {
+         if ( token.operatorType == operator && token.isNegated == negated )
+            return true;
+      }
+      
+      return false;
+   }
+   
+
+
+   public final static boolean hasOperatorAndValue( ArrayList< RtmSmartFilterToken > tokens,
+                                                    int operator,
+                                                    String value,
+                                                    boolean negated )
+   {
+      for ( RtmSmartFilterToken token : tokens )
+      {
+         if ( token.operatorType == operator
+            && token.value.equalsIgnoreCase( value )
+            && negated == token.isNegated )
+            return true;
+      }
+      
+      return false;
+   }
+   
+
+
+   public final static boolean hasCompletedOperator( ArrayList< RtmSmartFilterToken > tokens )
+   {
+      for ( RtmSmartFilterToken token : tokens )
+      {
+         final int tokenType = token.operatorType;
+         if ( ( tokenType == RtmSmartFilterLexer.OP_STATUS && token.value.equalsIgnoreCase( RtmSmartFilterLexer.TRUE_LIT ) )
+            || tokenType == RtmSmartFilterLexer.OP_COMPLETED
+            || tokenType == RtmSmartFilterLexer.OP_COMPLETED_AFTER
+            || tokenType == RtmSmartFilterLexer.OP_COMPLETED_BEFORE
+            || tokenType == RtmSmartFilterLexer.OP_COMPLETED_WITHIN )
+            return true;
+      }
+      
+      return false;
    }
 }

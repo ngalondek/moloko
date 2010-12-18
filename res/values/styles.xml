@@ -405,12 +405,12 @@
    </style>
 
    <style
-      name="TasksList_ListItem_Note"
+      name="TasksList_ListItem_Location"
       parent="@android:style/TextAppearance.Small">
       <item
-         name="android:textColor">@drawable/taskslist_listitem_note_text</item>
+         name="android:textColor">@drawable/taskslist_listitem_location_text</item>
       <item
-         name="android:background">@color/taskslist_listitem_note_text_bgnd</item>
+         name="android:background">@color/taskslist_listitem_location_text_bgnd</item>
       <item
          name="android:ellipsize">end</item>
       <item
@@ -469,7 +469,7 @@
 
    <style
       name="ContactsList_ListItem_Num_Shared"
-      parent="TasksList_ListItem_Note">
+      parent="TasksList_ListItem_Location">
       <item
          name="android:textColor">@color/contactslist_listitem_shared_tasks_text</item>
    </style>

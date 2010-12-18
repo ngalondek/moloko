@@ -10,6 +10,7 @@ options
    package dev.drsoran.moloko.grammar;
 
    import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
+   import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
    import dev.drsoran.provider.Rtm.Tasks;
    import dev.drsoran.provider.Rtm.Tags;
    import dev.drsoran.provider.Rtm.Notes;
@@ -113,6 +114,10 @@ options
    private boolean hasStatusCompletedOp = false;
 
    private boolean error = false;
+   
+   private boolean op_not = false;
+   
+   private ArrayList< RtmSmartFilterToken > tokens;
 
 
 
@@ -120,10 +125,11 @@ options
    public void reset()
    {
       super.reset();
-
-      result = new StringBuffer();
+		
+      result.setLength( 0 );
       hasStatusCompletedOp = false;
       error = false;
+      tokens = null;
    }
 
 
@@ -247,14 +253,16 @@ options
    }
 
 
-   public String getResult() throws RecognitionException
+   public String getResult( ArrayList< RtmSmartFilterToken > tokens ) throws RecognitionException
    {
+      this.tokens = tokens;
+      
       if ( !error && result.length() == 0 )
       {
          result.append( "( " );
          
          hasStatusCompletedOp = false;
-
+         
          while ( !error && nextToken() != Token.EOF_TOKEN )
          {
          }
@@ -276,6 +284,14 @@ options
    {
       return hasStatusCompletedOp;
    }
+
+
+
+   private final void addRtmToken( int type, String param )
+   {
+      if ( tokens != null )
+         tokens.add( new RtmSmartFilterToken( type, unquotify( param ), op_not ) );
+   }
 }
 
 
@@ -285,12 +301,17 @@ OP_LIST     :  'list:' ( s=STRING | s=Q_STRING )
                {
                   result.append( Tasks.LIST_NAME );
                   equalsStringParam( $s.getText() );
+                  
+                  addRtmToken( OP_LIST, $s.getText() );
                };
 
 OP_PRIORITY :  'priority:' s=STRING
                {
                   result.append( Tasks.PRIORITY );
                   equalsStringParam( firstCharOf( unquotify( $s.getText() ) ) );
+                  hasStatusCompletedOp = true;
+                  
+                  addRtmToken( OP_PRIORITY, $s.getText() );
                };
 
 OP_STATUS   :  'status:'
@@ -300,13 +321,14 @@ OP_STATUS   :  'status:'
                (
                   COMPLETED
                   {
-                     hasStatusCompletedOp = true;
                      result.append(" IS NOT NULL");
+                     addRtmToken( OP_STATUS, COMPLETED_LIT );
                   }
                   |
                   INCOMPLETE
                   {
                      result.append(" IS NULL");
+                     addRtmToken( OP_STATUS, INCOMPLETE_LIT );
                   }
                );
 
@@ -317,6 +339,8 @@ OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
                        .append( Tags.TAG );
                  equalsStringParam( $s.getText() );
                  result.append( ")" );
+                 
+                 addRtmToken( OP_TAG, $s.getText() );
               };
 
 OP_TAG_CONTAINS : 'tagcontains:' ( s=STRING | s=Q_STRING )
@@ -326,6 +350,8 @@ OP_TAG_CONTAINS : 'tagcontains:' ( s=STRING | s=Q_STRING )
                           .append( Tags.TAG );
                     containsStringParam( $s.getText() );
                     result.append( ")" );
+                    
+                    addRtmToken( OP_TAG_CONTAINS, $s.getText() );
                   };
 
 OP_IS_TAGGED    : 'istagged:'
@@ -334,6 +360,7 @@ OP_IS_TAGGED    : 'istagged:'
                      {
                         result.append( TAGS_QUERY_PREFIX );
                         result.append( ")" );
+                        addRtmToken( OP_IS_TAGGED, TRUE_LIT );
                      }
                      |
                      FALSE
@@ -341,6 +368,7 @@ OP_IS_TAGGED    : 'istagged:'
                         result.append( " NOT EXISTS " );
                         result.append( TAGS_QUERY_PREFIX );
                         result.append( ")" );
+                        addRtmToken( OP_IS_TAGGED, FALSE_LIT );
                      }
                   );
 
@@ -348,6 +376,7 @@ OP_LOCATION : 'location:' ( s=STRING | s=Q_STRING )
                {
                   result.append( Tasks.LOCATION_NAME );
                   containsStringParam( $s.getText() );
+                  addRtmToken( OP_LOCATION, $s.getText() );
                };
 
 // OP_LOCATED_WITHIN
@@ -360,11 +389,13 @@ OP_ISLOCATED : 'islocated:'
                   TRUE
                   {
                      result.append(" IS NOT NULL");
+                     addRtmToken( OP_ISLOCATED, TRUE_LIT );
                   }
                   |
                   FALSE
                   {
                      result.append(" IS NULL");
+                     addRtmToken( OP_ISLOCATED, FALSE_LIT );
                   }
                );
 
@@ -376,11 +407,13 @@ OP_IS_REPEATING : 'isrepeating:'
                      TRUE
                      {
                         result.append(" IS NOT NULL");
+                        addRtmToken( OP_IS_REPEATING, TRUE_LIT );
                      }
                      |
                      FALSE
                      {
                         result.append(" IS NULL");
+                        addRtmToken( OP_IS_REPEATING, FALSE_LIT );
                      }
                   );
 
@@ -388,6 +421,7 @@ OP_NAME      : 'name:' ( s=STRING | s=Q_STRING )
                {
                   result.append( Tasks.TASKSERIES_NAME );
                   containsStringParam( $s.getText() );
+                  addRtmToken( OP_NAME, $s.getText() );
                };
 
 OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
@@ -406,6 +440,8 @@ OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
                       result.append( " OR " ).append( Notes.NOTE_TEXT );
                       containsStringParam( s.getText() );
                       result.append( ")" );
+                      
+                      addRtmToken( OP_NOTE_CONTAINS, $s.getText() );
                    };
 
 OP_HAS_NOTES : 'hasnotes:'
@@ -413,76 +449,90 @@ OP_HAS_NOTES : 'hasnotes:'
                   TRUE
                   {
                      result.append( Tasks.NUM_NOTES + " > 0");
+                     addRtmToken( OP_HAS_NOTES, TRUE_LIT );
                   }
                   |
                   FALSE
                   {
                      result.append( Tasks.NUM_NOTES + " = 0");
+                     addRtmToken( OP_HAS_NOTES, FALSE_LIT );
                   }
                );
 
 OP_DUE      :  'due:' ( s=STRING | s=Q_STRING )
                {
                   equalsTimeParam( Tasks.DUE_DATE, $s.getText() );
+                  addRtmToken( OP_DUE, $s.getText() );
                };
 
 OP_DUE_AFTER : 'dueafter:' ( s=STRING | s=Q_STRING )
                {
                   differsTimeParam( Tasks.DUE_DATE, $s.getText(), false );
+                  addRtmToken( OP_DUE_AFTER, $s.getText() );
                };
 
 OP_DUE_BEFORE : 'duebefore:' ( s=STRING | s=Q_STRING )
                 {
                    differsTimeParam( Tasks.DUE_DATE, $s.getText(), true );
+                   addRtmToken( OP_DUE_BEFORE, $s.getText() );
                 };
 
 OP_DUE_WITHIN : 'duewithin:' s=Q_STRING
                 {
                    inTimeParamRange( Tasks.DUE_DATE, $s.getText(), false );
+                   addRtmToken( OP_DUE_WITHIN, $s.getText() );
                 };
 
 OP_COMPLETED : 'completed:' ( s=STRING | s=Q_STRING )
                {
-                  hasStatusCompletedOp = true;
                   equalsTimeParam( Tasks.COMPLETED_DATE, $s.getText() );
+                  hasStatusCompletedOp = true;
+                  addRtmToken( OP_COMPLETED, $s.getText() );
                };
 
 OP_COMPLETED_BEFORE : 'completedbefore:' ( s=STRING | s=Q_STRING )
                       {
-                          hasStatusCompletedOp = true;
                           differsTimeParam( Tasks.COMPLETED_DATE, $s.getText(), true );
+                          hasStatusCompletedOp = true;
+                          addRtmToken( OP_COMPLETED_BEFORE, $s.getText() );
                       };
 
 OP_COMPLETED_AFTER : 'completedafter:' ( s=STRING | s=Q_STRING )
                      {
-                        hasStatusCompletedOp = true;
                         differsTimeParam( Tasks.COMPLETED_DATE, $s.getText(), false );
+                        hasStatusCompletedOp = true;
+                        addRtmToken( OP_COMPLETED_AFTER, $s.getText() );
                      };
 
 OP_COMPLETED_WITHIN : 'completedwithin:' s=Q_STRING
                       {
-                         hasStatusCompletedOp = true;
                          inTimeParamRange( Tasks.COMPLETED_DATE, $s.getText(), true );
+                         hasStatusCompletedOp = true;
+                         addRtmToken( OP_COMPLETED_WITHIN, $s.getText() );
                       };
 
 OP_ADDED     : 'added:' ( s=STRING | s=Q_STRING )
                {
                   equalsTimeParam( Tasks.ADDED_DATE, $s.getText() );
+                  addRtmToken( OP_ADDED, $s.getText() );
                };
 
 OP_ADDED_BEFORE : 'addedbefore:' ( s=STRING | s=Q_STRING )
                   {
                      differsTimeParam( Tasks.ADDED_DATE, $s.getText(), true );
+                     addRtmToken( OP_ADDED_BEFORE, $s.getText() );
                   };
 
 OP_ADDED_AFTER : 'addedafter:' ( s=STRING | s=Q_STRING )
                  {
                     differsTimeParam( Tasks.ADDED_DATE, $s.getText(), false );
+                    addRtmToken( OP_ADDED_AFTER, $s.getText() );
                  };
 
 OP_ADDED_WITHIN : 'addedwithin:' s=Q_STRING
                   {
                      inTimeParamRange( Tasks.ADDED_DATE, $s.getText(), true );
+                     addRtmToken( OP_ADDED_WITHIN, $s.getText() );
                   };
 
 OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
@@ -511,6 +561,8 @@ OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
                          error = true;
                       else
                          result.append( estimatedMillis );
+                         
+                      addRtmToken( OP_TIME_ESTIMATE, $s.getText() );
                    };
 
 OP_POSTPONED : 'postponed:'
@@ -527,18 +579,23 @@ OP_POSTPONED : 'postponed:'
                  {
                     result.append( unquotify( $s.getText() ) );
                  }
-               );
+               )
+               {
+                  addRtmToken( OP_POSTPONED, $s.getText() );
+               };
 
 OP_IS_SHARED : 'isshared:'
                (
                   TRUE
                   {
                      result.append( Tasks.PARTICIPANT_IDS + " IS NOT NULL");
+                     addRtmToken( OP_IS_SHARED, TRUE_LIT );
                   }
                   |
                   FALSE
                   {
                      result.append( Tasks.PARTICIPANT_IDS + " IS NULL");
+                     addRtmToken( OP_IS_SHARED, FALSE_LIT );
                   }
                );
 
@@ -549,7 +606,9 @@ OP_SHARED_WITH : 'sharedwith:' ( s=STRING | s=Q_STRING )
                     
                     result.append( " OR " );
                     result.append( Tasks.PARTICIPANT_USERNAMES );
-                    containsStringParam( $s.getText() );                    
+                    containsStringParam( $s.getText() );
+                    
+                    addRtmToken( OP_SHARED_WITH, $s.getText() );
                  };
 
 // OP_IS_RECEIVED
@@ -584,16 +643,19 @@ R_PARENTH   : ')'
 AND         : 'and'
               {
                  result.append( " AND " );
+                 op_not = false;
               };
 
 OR          : 'or'
               {
                  result.append( " OR " );
+                 op_not = false;
               };
 
 NOT         : 'not'
               {
                  result.append( " NOT " );
+                 op_not = true;
               };
 
 WS          :   ( ' '

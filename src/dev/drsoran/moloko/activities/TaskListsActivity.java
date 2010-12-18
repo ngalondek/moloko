@@ -348,20 +348,9 @@ public class TaskListsActivity extends ExpandableListActivity implements
          {
             filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_LIST_LIT
                + RtmSmartFilterLexer.quotify( listName ) );
-            
-            assert ( filter.getEvaluatedFilterString() != null );
-            
-            // We have a non-smart list. So we disable clicking the list name
-            // cause we have no tasks from different lists in the result.
-            final Bundle config = new Bundle();
-            config.putBoolean( AbstractTasksListActivity.DISABLE_LIST_NAME,
-                               true );
-            
-            intent.putExtra( AbstractTasksListActivity.ADAPTER_CONFIG, config );
          }
          
-         intent.putExtra( AbstractTasksListActivity.FILTER_EVALUATED,
-                          filter.getEvaluatedFilterString() );
+         intent.putExtra( AbstractTasksListActivity.FILTER, filter );
          
          startActivity( intent );
       }

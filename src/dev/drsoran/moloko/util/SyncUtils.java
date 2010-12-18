@@ -223,18 +223,6 @@ public final class SyncUtils
                                     interval,
                                     syncIntent );
          
-         // try
-         // {
-         // int i = 1 / 0;
-         // }
-         // catch ( Exception e )
-         // {
-         // StringWriter buffer = new StringWriter();
-         // e.printStackTrace( new PrintWriter( buffer ) );
-         //            
-         // Log.i( TAG, buffer.toString() );
-         // }
-         
          Log.i( TAG, "Scheduled new sync alarm to go off @"
             + MolokoDateUtils.newTime().format2445() + ", repeating every "
             + DateUtils.formatElapsedTime( interval / 1000 ) );

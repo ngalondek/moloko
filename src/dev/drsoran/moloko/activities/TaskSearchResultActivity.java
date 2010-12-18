@@ -108,7 +108,7 @@ public class TaskSearchResultActivity extends TasksListActivity
          final RtmSmartFilter filter = new RtmSmartFilter( intent.getStringExtra( SearchManager.QUERY ) );
          
          // try to evaluate the query
-         final String evalQuery = filter.getEvaluatedFilterString();
+         final String evalQuery = filter.getEvaluatedFilterString( true );
          
          if ( evalQuery != null )
          {

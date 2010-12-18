@@ -145,9 +145,9 @@
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
 	  <string name="abstaskslist_listitem_ctx_open_task">Öffne Aufgabe</string>
      <string name="abstaskslist_listitem_ctx_rename_task">Aufgabe umbenennen</string>
-     <string name="abstaskslist_listitem_ctx_set_task_completed">Setze als erledigt</string>
-     <string name="abstaskslist_listitem_ctx_set_task_incomplete">Setze als nicht erledigt</string>
      <string name="abstaskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>
+     <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort %1$s</string>
+     <string name="abstaskslist_listitem_ctx_open_location">Öffne Ort %1$s</string>
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>

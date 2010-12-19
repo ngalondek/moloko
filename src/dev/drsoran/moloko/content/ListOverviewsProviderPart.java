@@ -252,7 +252,8 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
          // Check if we have a smart list
          if ( filter != null )
          {
-            final String evalFilter = RtmSmartFilter.evaluate( filter, false );
+            // Here we need to collect also completed tasks since we have to count them.
+            final String evalFilter = RtmSmartFilter.evaluate( filter, false /* collect completed tasks */);
             
             if ( !TextUtils.isEmpty( evalFilter ) )
             {
@@ -278,35 +279,39 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
             
             for ( Task task : tasks )
             {
-               if ( task.getDue() != null )
+               final boolean isCompleted = task.getCompleted() != null;
+               
+               if ( !isCompleted )
                {
-                  final long dueMillis = task.getDue().getTime();
-                  final int diffToNow = MolokoDateUtils.getTimespanInDays( System.currentTimeMillis(),
-                                                                           dueMillis );
+                  if ( task.getDue() != null )
+                  {
+                     final long dueMillis = task.getDue().getTime();
+                     final int diffToNow = MolokoDateUtils.getTimespanInDays( System.currentTimeMillis(),
+                                                                              dueMillis );
+                     
+                     // Today?
+                     if ( diffToNow == 0 )
+                        ++extendedOverview.dueTodayTaskCount;
+                     
+                     // Tomorrow?
+                     else if ( diffToNow == 1 )
+                        ++extendedOverview.dueTomorrowTaskCount;
+                     
+                     // Overdue?
+                     else if ( diffToNow < 0 )
+                        ++extendedOverview.overDueTaskCount;
+                  }
                   
-                  // Today?
-                  if ( diffToNow == 0 )
-                     ++extendedOverview.dueTodayTaskCount;
+                  // Sum up estimated times
+                  final long estimateMillis = task.getEstimateMillis();
                   
-                  // Tomorrow?
-                  else if ( diffToNow == 1 )
-                     ++extendedOverview.dueTomorrowTaskCount;
-                  
-                  // Overdue?
-                  else if ( diffToNow < 0 )
-                     ++extendedOverview.overDueTaskCount;
+                  if ( estimateMillis != -1 )
+                     sumEstimated += estimateMillis;
                }
                
                // Completed?
-               if ( task.getCompleted() != null )
+               if ( isCompleted )
                   ++extendedOverview.completedTaskCount;
-               
-               // Sum up estimated times
-               
-               final long estimateMillis = task.getEstimateMillis();
-               
-               if ( estimateMillis != -1 )
-                  sumEstimated += estimateMillis;
             }
             
             if ( sumEstimated > 0 )

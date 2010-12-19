@@ -134,6 +134,15 @@ options
 
 
 
+   @Override
+   public void reportError( RecognitionException e )
+   {
+      super.reportError( e );
+      error = true;
+   }
+
+
+
    public static final String unquotify( String input )
    {
       return input.replaceAll( "(\"|')", "" );
@@ -266,7 +275,7 @@ options
          while ( !error && nextToken() != Token.EOF_TOKEN )
          {
          }
-         
+
          result.append( " )" );
       }
 
@@ -309,7 +318,6 @@ OP_PRIORITY :  'priority:' s=STRING
                {
                   result.append( Tasks.PRIORITY );
                   equalsStringParam( firstCharOf( unquotify( $s.getText() ) ) );
-                  hasStatusCompletedOp = true;
                   
                   addRtmToken( OP_PRIORITY, $s.getText() );
                };
@@ -322,6 +330,7 @@ OP_STATUS   :  'status:'
                   COMPLETED
                   {
                      result.append(" IS NOT NULL");
+                     hasStatusCompletedOp = true;
                      addRtmToken( OP_STATUS, COMPLETED_LIT );
                   }
                   |

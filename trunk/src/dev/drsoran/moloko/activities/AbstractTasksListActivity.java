@@ -59,6 +59,7 @@ import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.MultiChoiceDialog;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.provider.Rtm.Notes;
@@ -701,7 +702,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       setListAdapter( new TasksListAdapter( this,
                                             R.layout.taskslist_activity_listitem,
                                             new ArrayList< ListTask >( 0 ),
-                                            null ) );
+                                            new RtmSmartFilter( Strings.EMPTY_STRING ) ) );
       
       switchEmptyView( emptyView );
    }

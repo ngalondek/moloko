@@ -118,7 +118,9 @@ public class RtmSmartFilter extends RtmData
    {
       if ( !isEvaluated() && filter != null || collectTokens && tokens == null )
       {
-         tokens = new ArrayList< RtmSmartFilterToken >();
+         if ( collectTokens )
+            tokens = new ArrayList< RtmSmartFilterToken >();
+         
          evalFilter = evaluate( filter, tokens, true );
       }
       
@@ -206,6 +208,20 @@ public class RtmSmartFilter extends RtmData
          return null;
       
       return evalFilter.toString();
+   }
+   
+
+
+   @Override
+   public String toString()
+   {
+      return new StringBuffer( "<" ).append( RtmSmartFilter.class.getSimpleName() )
+                                    .append( ", " )
+                                    .append( filter )
+                                    .append( ", " )
+                                    .append( evalFilter )
+                                    .append( ">" )
+                                    .toString();
    }
    
 

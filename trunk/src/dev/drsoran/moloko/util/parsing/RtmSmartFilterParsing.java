@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import org.antlr.runtime.RecognitionException;
 
+import android.util.Log;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -33,6 +34,9 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 public final class RtmSmartFilterParsing
 {
+   private final static String TAG = "Moloko."
+      + RtmSmartFilterParsing.class.getSimpleName();
+   
    private final static RtmSmartFilterLexer rtmSmartFilterLexer = new RtmSmartFilterLexer();
    
    
@@ -76,6 +80,7 @@ public final class RtmSmartFilterParsing
       }
       catch ( RecognitionException e )
       {
+         Log.e( TAG, "Failed to lex " + filterString, e );
          return null;
       }
    }

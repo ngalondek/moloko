@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent"
+   android:orientation="vertical"
+   android:paddingTop="7dp"
+   android:paddingLeft="5dp"
+   android:paddingBottom="3dp">
+
+   <RelativeLayout
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="3dp">
+
+      <ImageView
+         android:id="@+id/notification_permanent_icon"
+         android:layout_width="25dp"
+         android:layout_height="25dp"
+         android:scaleType="fitCenter"
+         android:src="@drawable/ic_launcher" />
+
+      <TextView
+         android:id="@+id/notification_permanent_title"
+         style="@style/Notification_Permanent_Title"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_weight="1"
+         android:layout_alignTop="@id/notification_permanent_icon"
+         android:layout_toRightOf="@id/notification_permanent_icon"
+         android:layout_marginLeft="4dp"
+         android:singleLine="true"
+         android:ellipsize="marquee"
+         android:fadingEdge="horizontal" />
+      <TextView
+         android:id="@+id/notification_permanent_text"
+         style="@style/Notification_Permanent_Text"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_weight="1"
+         android:layout_alignLeft="@id/notification_permanent_title"
+         android:layout_below="@id/notification_permanent_title"
+         android:singleLine="true"
+         android:ellipsize="marquee"
+         android:fadingEdge="horizontal" />
+   </RelativeLayout>
+
+</LinearLayout>

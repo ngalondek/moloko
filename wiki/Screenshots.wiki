@@ -20,5 +20,5 @@ This page shows some screens taken from Moloko.
 
 <br>
 <br>
-|| *RTM contacts*<br>Show all your contacts from RTM and link them to your phonebook.<br>So call or email them right out of Moloko. For a how to see [http://http://code.google.com/p/moloko/wiki/RTMContactLinking RTMContactLinking]|| *Settings*<br>Directly use your RTM settings or override them locally by your own. ||
+|| *RTM contacts*<br>Show all your contacts from RTM and link them to your phonebook.<br>So call or email them right out of Moloko. For a how to see [http://code.google.com/p/moloko/wiki/RTMContactLinking RTMContactLinking]|| *Settings*<br>Directly use your RTM settings or override them locally by your own. ||
 || [http://moloko.googlecode.com/files/contacts.png] || [http://moloko.googlecode.com/files/settings.png] ||

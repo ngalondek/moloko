@@ -49,6 +49,7 @@ import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LocationChooser;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -265,10 +266,10 @@ public class TaskActivity extends Activity
          else
             titleId = R.string.task_datetime_title_recurr;
          
-         // TODO: Handle return value
-         UIUtils.initializeTitleWithTextLayout( view,
-                                                getString( titleId ),
-                                                textBuffer.toString() );
+         if ( !UIUtils.initializeTitleWithTextLayout( view,
+                                                      getString( titleId ),
+                                                      textBuffer.toString() ) )
+            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
       }
    }
    
@@ -338,9 +339,10 @@ public class TaskActivity extends Activity
          
          if ( !locationIsClickable )
          {
-            UIUtils.initializeTitleWithTextLayout( view,
-                                                   getString( R.string.task_location ),
-                                                   locationName );
+            if ( !UIUtils.initializeTitleWithTextLayout( view,
+                                                         getString( R.string.task_location ),
+                                                         locationName ) )
+               throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
          }
       }
    }
@@ -456,20 +458,20 @@ public class TaskActivity extends Activity
                   }
                   else
                   {
-                     // TODO: Show error
+                     throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
                   }
                }
             }
             catch ( InflateException e )
             {
                Log.e( TAG, "Invalid layout spec.", e );
+               throw e;
             }
          }
          else
          {
-            // TODO: Show error
+            LogUtils.logDBError( this, TAG, "Lists" );
          }
       }
    }
-   
 }

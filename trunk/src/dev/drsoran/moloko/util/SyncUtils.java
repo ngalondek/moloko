@@ -56,6 +56,13 @@ public final class SyncUtils
    
    
 
+   private SyncUtils()
+   {
+      throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
    public final static void handleServiceInternalException( ServiceInternalException exception,
                                                             String tag,
                                                             SyncResult syncResult )

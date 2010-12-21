@@ -45,6 +45,7 @@ import dev.drsoran.moloko.content.LocationOverviewsProviderPart;
 import dev.drsoran.moloko.content.TagOverviewsProviderPart;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LocationChooser;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.LocationOverviews;
@@ -208,14 +209,14 @@ public class TagCloudActivity extends Activity
                                                                    + " = 0" );
             if ( lists == null )
             {
-               // TODO: Show error
+               LogUtils.logDBError( this, TAG, "Lists" );
             }
             
             client.release();
          }
          else
          {
-            // TODO: Show error
+            LogUtils.logDBError( this, TAG, "Lists" );
          }
       }
       
@@ -231,14 +232,14 @@ public class TagCloudActivity extends Activity
             
             if ( tags == null )
             {
-               // TODO: Show error
+               LogUtils.logDBError( this, TAG, "Tags" );
             }
             
             client.release();
          }
          else
          {
-            // TODO: Show error
+            LogUtils.logDBError( this, TAG, "Tags" );
          }
       }
       
@@ -254,14 +255,14 @@ public class TagCloudActivity extends Activity
                                                                             null );
             if ( locations == null )
             {
-               // TODO: Show error
+               LogUtils.logDBError( this, TAG, "Locations" );
             }
             
             client.release();
          }
          else
          {
-            // TODO: Show error
+            LogUtils.logDBError( this, TAG, "Locations" );
          }
       }
       

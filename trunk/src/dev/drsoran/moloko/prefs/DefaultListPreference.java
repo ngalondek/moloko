@@ -29,6 +29,7 @@ import android.os.RemoteException;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Lists;
 
 
@@ -70,25 +71,25 @@ public class DefaultListPreference extends SyncableListPreference
       
       if ( client != null )
       {
+         Cursor c = null;
+         
          try
          {
-            final Cursor c = client.query( Lists.CONTENT_URI, new String[]
-            {
-             Lists._ID,
-             Lists.LIST_NAME }, null, null, Lists.LIST_NAME );
+            c = client.query( Lists.CONTENT_URI, new String[]
+            { Lists._ID, Lists.LIST_NAME }, null, null, Lists.LIST_NAME );
             
             boolean ok = c != null;
             
             if ( ok )
             {
                CharSequence[] entries = new CharSequence[ c.getCount() + 1 ]; // +1
-                                                                              // cause
-                                                                              // of
-                                                                              // "none"
+               // cause
+               // of
+               // "none"
                CharSequence[] entryValues = new CharSequence[ c.getCount() + 1 ]; // +1
-                                                                                  // cause
-                                                                                  // of
-                                                                                  // "none"
+               // cause
+               // of
+               // "none"
                
                entries[ EntriesAndValues.NONE_IDX ] = context.getResources()
                                                              .getString( R.string.phr_none_f );
@@ -118,8 +119,22 @@ public class DefaultListPreference extends SyncableListPreference
          }
          catch ( RemoteException e )
          {
-            // TODO: Show error
+            LogUtils.logDBError( context,
+                                 LogUtils.toTag( DefaultListPreference.class ),
+                                 "Lists",
+                                 e );
          }
+         finally
+         {
+            if ( c != null )
+               c.close();
+         }
+      }
+      else
+      {
+         LogUtils.logDBError( context,
+                              LogUtils.toTag( DefaultListPreference.class ),
+                              "Lists" );
       }
       
       return entriesAndValues;

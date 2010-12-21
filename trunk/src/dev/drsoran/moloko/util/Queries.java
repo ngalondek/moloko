@@ -40,6 +40,13 @@ public final class Queries
    
    
 
+   private Queries()
+   {
+      throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
    public final static String bindAll( String selection, String[] selectionArgs )
    {
       String result = selection;

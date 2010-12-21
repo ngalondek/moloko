@@ -50,6 +50,13 @@ public class MolokoDateUtils
    
    
 
+   private MolokoDateUtils()
+   {
+      throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
    public final static Time newTime()
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );

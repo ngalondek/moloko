@@ -33,6 +33,13 @@ import dev.drsoran.moloko.auth.Constants;
 
 public final class AccountUtils
 {
+   private AccountUtils()
+   {
+      throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
    public final static Account getRtmAccount( Context context )
    {
       final AccountManager accountManager = AccountManager.get( context );

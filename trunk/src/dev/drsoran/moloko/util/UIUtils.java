@@ -64,6 +64,13 @@ public final class UIUtils
    
    
 
+   private UIUtils()
+   {
+      throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
    public final static void setTitle( Activity activity, String text )
    {
       final View titleBarText = activity.findViewById( R.id.app_titlebar_text );

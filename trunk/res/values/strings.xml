@@ -49,6 +49,16 @@
    <string name="g_settings_src_rtm">Loaded from RTM Server</string>
    <string name="g_settings_src_local">Local setting</string>
    <string name="g_no_account">No RTM credentials available</string>
+   <string name="moloko_about_info" formatted="false">
+      &lt;a href="http://code.google.com/p/moloko/">Moloko&lt;/a> is a Remember The Milk client developed by &lt;a href="mailto://ronny.roehricht@gmail.com">Ronny Röhricht&lt;/a>.
+      &lt;br>&lt;br>Version: %1$s&lt;br>&lt;br>
+      Special thanks to David Vermeille.&lt;br>&lt;br>
+      Moloko is implemented by means of:&lt;br>
+                - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 3.2
+         &lt;br>- A modified version of &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library 0.5
+         &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library 2.0.3
+         &lt;br>- &lt;a href="http://code.google.com/p/android-log-collector/">android-log-collector&lt;/a>
+   </string>
    
    <!-- TODO: to be removed -->   
    <string name="key_api_key">api_key</string>
@@ -127,6 +137,7 @@
    <string name="err_not_connected">No connection</string>
    <string name="err_add_account_canceled">Adding a new account has been canceled</string>
    <string name="err_unexpected">If you read this RUN AS QUICKLY AS YOU CAN!</string>
+   <string name="err_db_typed">Error during database access of %1$s.</string>
    
 	<!-- Global buttons -->
    <string name="btn_ok">OK</string>
@@ -294,6 +305,7 @@
    <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
    <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
    <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>
+   <string name="moloko_about_text">About Moloko</string>
    <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Settings are retrieved from the RTM Server</string>
 

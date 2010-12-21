@@ -39,6 +39,13 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 public final class Intents
 {
+   private Intents()
+   {
+      throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
    public final static PendingIntent createSyncAlarmIntent( Context context )
    {
       final Intent intent = new Intent( context, SyncAlarmReceiver.class );

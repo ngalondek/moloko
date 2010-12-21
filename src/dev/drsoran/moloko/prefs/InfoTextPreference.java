@@ -25,9 +25,7 @@ package dev.drsoran.moloko.prefs;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.Preference;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
@@ -70,16 +68,6 @@ public class InfoTextPreference extends Preference implements IMolokoPreference
       
       if ( infoText != null )
          ( (TextView) view.findViewById( R.id.text ) ).setText( infoText );
-      
-      {
-         final CharSequence title = getTitle();
-         
-         if ( TextUtils.isEmpty( title ) )
-         {
-            ( (TextView) view.findViewById( android.R.id.title ) ).setVisibility( View.GONE );
-            ( (TextView) view.findViewById( R.id.text ) ).setGravity( Gravity.CENTER_VERTICAL );
-         }
-      }
    }
    
 

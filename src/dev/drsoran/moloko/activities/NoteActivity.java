@@ -41,6 +41,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
@@ -96,7 +97,7 @@ public class NoteActivity extends Activity
          }
          else
          {
-            // TODO: Show error
+            LogUtils.logDBError( this, TAG, "Notes" );
          }
       }
    }
@@ -167,12 +168,12 @@ public class NoteActivity extends Activity
          }
          else
          {
-            // TODO: Show error
+            LogUtils.logDBError( this, TAG, "Notes" );
          }
       }
       catch ( RemoteException e )
       {
-         // TODO: Show error
+         LogUtils.logDBError( this, TAG, "Notes", e );
       }
    }
    
@@ -208,12 +209,12 @@ public class NoteActivity extends Activity
          }
          else
          {
-            // TODO: Show error
+            LogUtils.logDBError( this, TAG, "Notes" );
          }
       }
       catch ( RemoteException e )
       {
-         // TODO: Show error
+         LogUtils.logDBError( this, TAG, "Notes", e );
       }
    }
    
@@ -236,15 +237,15 @@ public class NoteActivity extends Activity
                                                                   .getTime(),
                                                               MolokoDateUtils.FORMAT_WITH_YEAR ) );
          
-         // TODO: Handle return value
-         UIUtils.initializeTitleWithTextLayout( findViewById( R.id.note ),
-                                                note.getTitle(),
-                                                note.getText() );
+         if ( !UIUtils.initializeTitleWithTextLayout( findViewById( R.id.note ),
+                                                      note.getTitle(),
+                                                      note.getText() ) )
+            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
       }
       catch ( ClassCastException e )
       {
          Log.e( TAG, "Invalid layout spec.", e );
-         // TODO: Show error
+         throw e;
       }
    }
    

@@ -57,7 +57,8 @@ import dev.drsoran.rtm.Task;
 
 public class LocationChooser
 {
-   private final String TAG = "Moloko." + LocationChooser.class.getSimpleName();
+   private final static String TAG = "Moloko."
+      + LocationChooser.class.getSimpleName();
    
    private final Activity context;
    
@@ -195,10 +196,13 @@ public class LocationChooser
                                    String locationName,
                                    boolean onlyViewable )
    {
+      boolean ok = true;
+      
       final ContentProviderClient client = context.getContentResolver()
                                                   .acquireContentProviderClient( Locations.CONTENT_URI );
+      ok = client != null;
       
-      if ( client != null )
+      if ( ok )
       {
          final RtmLocation location = RtmLocationsProviderPart.getLocation( client,
                                                                             Locations.LOCATION_NAME
@@ -219,12 +223,13 @@ public class LocationChooser
          }
          else
          {
-            // TODO: Show error location not found
+            ok = false;
          }
       }
-      else
+      
+      if ( !ok )
       {
-         // TODO: Show error
+         LogUtils.logDBError( context, TAG, "location " + locationName );
       }
    }
    

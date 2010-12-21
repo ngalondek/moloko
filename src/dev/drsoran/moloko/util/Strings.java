@@ -22,13 +22,18 @@
 
 package dev.drsoran.moloko.util;
 
-
-
 public final class Strings
 {
    public final static String EMPTY_STRING = "";
    
    
+
+   private Strings()
+   {
+      throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
 
    public final static boolean hasStringChanged( String current, String update )
    {

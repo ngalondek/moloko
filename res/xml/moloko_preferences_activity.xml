@@ -104,7 +104,7 @@
             android:dependency="@string/key_notify_due_tasks"
             android:defaultValue="false" />
       </PreferenceCategory>
-      
+
       <PreferenceCategory
          android:title="@string/moloko_prefs_notification_permanent_cat_title">
 
@@ -143,6 +143,10 @@
       <dev.drsoran.moloko.prefs.SendLogPreference
          moloko:infoText="@string/moloko_prefs_send_log_text"
          moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
+
+      <dev.drsoran.moloko.prefs.AboutPreference
+         moloko:infoText="@string/moloko_about_text"
+         moloko:infoWidget="@layout/moloko_prefs_widget_about" />
    </PreferenceCategory>
 
 </PreferenceScreen>

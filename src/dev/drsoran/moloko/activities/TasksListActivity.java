@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -44,7 +45,6 @@ import dev.drsoran.rtm.Task;
 public class TasksListActivity extends AbstractTasksListActivity implements
          DialogInterface.OnClickListener
 {
-   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + TasksListActivity.class.getSimpleName();
    
@@ -141,7 +141,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       }
       else
       {
-         // TODO: Show error
+         LogUtils.logDBError( this, TAG, "Tasks" );
       }
    }
    

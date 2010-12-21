@@ -45,10 +45,9 @@
          android:id="@+id/text"
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
-         android:layout_below="@android:id/title"
          android:layout_alignLeft="@android:id/title"
          android:layout_alignWithParentIfMissing="true"
-         android:gravity="center_vertical"
+         android:layout_centerVertical="true"
          android:textAppearance="?android:attr/textAppearanceSmall"
          android:text="text" />
 

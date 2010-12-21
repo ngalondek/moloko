@@ -46,6 +46,7 @@ import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ContactOverviews;
@@ -55,7 +56,6 @@ import dev.drsoran.rtm.RtmContactWithTaskCount;
 
 public class ContactsListActivity extends ListActivity
 {
-   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + ContactsListActivity.class.getSimpleName();
    
@@ -274,7 +274,7 @@ public class ContactsListActivity extends ListActivity
          }
          else
          {
-            // TODO: Show error
+            LogUtils.logDBError( this, TAG, "Contacts" );
          }
          
          client.release();

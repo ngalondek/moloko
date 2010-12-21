@@ -27,6 +27,13 @@ import android.os.Handler;
 
 public class DelayedRun
 {
+   private DelayedRun()
+   {
+      throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
    public static void run( Handler handler, Runnable action, long after )
    {
       handler.removeCallbacks( action );

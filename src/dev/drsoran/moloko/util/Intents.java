@@ -196,7 +196,7 @@ public final class Intents
       intent.putExtra( AbstractTasksListActivity.TITLE,
                        context.getString( R.string.taskslist_titlebar, name ) );
       intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                       R.drawable.ic_title_tag ); // TODO: Make new icon for locations
+                       R.drawable.ic_title_location );
       
       return intent;
    }

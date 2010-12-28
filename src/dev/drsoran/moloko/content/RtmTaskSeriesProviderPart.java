@@ -158,14 +158,14 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                            null,
                            null );
          
-         boolean ok = c != null && c.moveToFirst();
+         final boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
             taskSeries = createRtmTaskSeries( client, c );
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query taskseries failed. ", e );
          taskSeries = null;
@@ -213,7 +213,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          if ( !ok )
             taskList = null;
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query taskserieses failed.", e );
          taskList = null;
@@ -245,7 +245,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          final Set< String > listIds = lists.getLists().keySet();
          
          // For each list
-         for ( Iterator< String > i = listIds.iterator(); ok && i.hasNext(); )
+         for ( final Iterator< String > i = listIds.iterator(); ok
+            && i.hasNext(); )
          {
             final String listId = i.next();
             
@@ -293,7 +294,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          {
             final List< RtmTask > tasks = taskSeries.getTasks();
             
-            for ( Iterator< RtmTask > i = tasks.iterator(); ok && i.hasNext(); )
+            for ( final Iterator< RtmTask > i = tasks.iterator(); ok
+               && i.hasNext(); )
             {
                final RtmTask rtmTask = i.next();
                final ContentProviderOperation insertTaskOp = RtmTasksProviderPart.insertTask( client,
@@ -312,7 +314,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
             
             if ( tags != null && tags.size() > 0 )
             {
-               for ( String tag : tags )
+               for ( final String tag : tags )
                {
                   final ContentProviderOperation tagOperation = ContentProviderOperation.newInsert( Tags.CONTENT_URI )
                                                                                         .withValues( TagsProviderPart.getContentValues( new Tag( null,
@@ -338,7 +340,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                
                if ( notesList != null && notesList.size() > 0 )
                {
-                  for ( RtmTaskNote rtmTaskNote : notesList )
+                  for ( final RtmTaskNote rtmTaskNote : notesList )
                   {
                      final ContentProviderOperation noteOperation = RtmNotesProviderPart.insertNote( client,
                                                                                                      rtmTaskNote,
@@ -387,8 +389,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       
       final String taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
       
-      List< RtmTask > tasks = RtmTasksProviderPart.getAllTasks( client,
-                                                                taskSeriesId );
+      final List< RtmTask > tasks = RtmTasksProviderPart.getAllTasks( client,
+                                                                      taskSeriesId );
       boolean ok = tasks != null && tasks.size() > 0;
       
       List< String > tags = null;
@@ -403,7 +405,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          {
             tags = new ArrayList< String >( tagImpls.size() );
             
-            for ( Tag tag : tagImpls )
+            for ( final Tag tag : tagImpls )
             {
                tags.add( tag.getTag() );
             }
@@ -475,13 +477,13 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + TaskSeries._ID
-         + " INTEGER NOT NULL, " + TaskSeries.TASKSERIES_CREATED_DATE
+         + " TEXT NOT NULL, " + TaskSeries.TASKSERIES_CREATED_DATE
          + " INTEGER NOT NULL, " + TaskSeries.MODIFIED_DATE + " INTEGER, "
          + TaskSeries.TASKSERIES_NAME + " TEXT NOT NULL, " + TaskSeries.SOURCE
          + " TEXT, " + TaskSeries.URL + " TEXT, " + TaskSeries.RECURRENCE
          + " TEXT, " + TaskSeries.RECURRENCE_EVERY + " INTEGER, "
-         + TaskSeries.LOCATION_ID + " INTEGER, " + TaskSeries.LIST_ID
-         + " INTEGER NOT NULL, " + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \""
+         + TaskSeries.LOCATION_ID + " TEXT, " + TaskSeries.LIST_ID
+         + " TEXT NOT NULL, " + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \""
          + TaskSeries._ID + "\" ), " + "CONSTRAINT list FOREIGN KEY ( "
          + TaskSeries.LIST_ID + " ) REFERENCES lists ( \"" + Lists._ID
          + "\" ), " + "CONSTRAINT location FOREIGN KEY ( "

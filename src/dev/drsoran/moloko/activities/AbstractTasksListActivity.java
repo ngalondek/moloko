@@ -114,9 +114,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       public final static int TASKS_AT_LOCATION = 5;
       
-      public final static int OPEN_LOCATION = 6;
-      
-      public final static int NOTES = 7;
+      public final static int NOTES = 6;
    }
    
    protected View emptyListView;
@@ -348,11 +346,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                       Menu.NONE,
                       getString( R.string.abstaskslist_listitem_ctx_tasks_at_location,
                                  locationName ) );
-            menu.add( Menu.NONE,
-                      CtxtMenu.OPEN_LOCATION,
-                      Menu.NONE,
-                      getString( R.string.abstaskslist_listitem_ctx_open_location,
-                                 locationName ) );
          }
       }
       
@@ -397,10 +390,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             
          case CtxtMenu.TASKS_AT_LOCATION:
             onLocationClicked( info.position );
-            return true;
-            
-         case CtxtMenu.OPEN_LOCATION:
-            gotoLocation( info.position );
             return true;
             
          case CtxtMenu.NOTES:
@@ -612,7 +601,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       final ArrayList< CharSequence > tmp = new ArrayList< CharSequence >();
       
-      for ( String tag : tags )
+      for ( final String tag : tags )
       {
          tmp.add( tag );
       }

@@ -111,14 +111,14 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          
          // We only consider the first entry cause we do not expect
          // more than 1 entry in this table
-         boolean ok = c != null && c.moveToFirst();
+         final boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
             id = c.getString( COL_INDICES.get( Settings._ID ) );
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          id = null;
          Log.e( TAG, "Query settings ID failed. ", e );
@@ -146,7 +146,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          
          // We only consider the first entry cause we do not expect
          // more than 1 entry in this table
-         boolean ok = c != null && c.moveToFirst();
+         final boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
@@ -162,7 +162,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
                                                               COL_INDICES.get( Settings.LANGUAGE ) ) );
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query settings ailed. ", e );
          settings = null;
@@ -195,7 +195,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
          + Settings.SYNC_TIMESTAMP + " INTEGER NOT NULL, " + Settings.TIMEZONE
          + " TEXT, " + Settings.DATEFORMAT + " INTEGER NOT NULL DEFAULT 0, "
          + Settings.TIMEFORMAT + " INTEGER NOT NULL DEFAULT 0, "
-         + Settings.DEFAULTLIST_ID + " INTEGER, " + Settings.LANGUAGE
+         + Settings.DEFAULTLIST_ID + " TEXT, " + Settings.LANGUAGE
          + " TEXT, CONSTRAINT defaultlist FOREIGN KEY ( "
          + Settings.DEFAULTLIST_ID + ") REFERENCES " + Lists.PATH + "( "
          + Lists._ID + " ) );" );

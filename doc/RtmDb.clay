@@ -7,10 +7,10 @@
 <table id="5122f2:128cb6194ba:-7fff" name="rawtasks">
 <column-list>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff8" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5b5dad:12bf1b86973:-7fdd" mandatory="true" name="taskseries_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff7" mandatory="false" name="due">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
@@ -52,7 +52,7 @@
 <table id="5122f2:128cb6194ba:-7fee" name="taskseries">
 <column-list>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fea" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7fe7" mandatory="true" name="taskseries_created">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
@@ -76,10 +76,10 @@
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7bc2" mandatory="false" name="location_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7be4" mandatory="true" name="list_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 </column-list>
 <primary-key id="5122f2:128cb6194ba:-7fed" name="PK_TASKSERIES">
@@ -97,10 +97,10 @@
 <table id="5122f2:128cb6194ba:-7f59" name="notes">
 <column-list>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f55" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="11fb115:12949b0b028:-7fcb" mandatory="true" name="taskseries_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7f54" mandatory="true" name="note_created">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
@@ -127,7 +127,7 @@
 <table id="190abb9:128ce294477:-7fe8" name="lists">
 <column-list>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe2" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7fe1" mandatory="true" name="list_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
@@ -158,7 +158,7 @@
 <table id="190abb9:128ce294477:-7f35" name="locations">
 <column-list>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2b" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="190abb9:128ce294477:-7f2a" mandatory="true" name="location_name">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
@@ -189,7 +189,7 @@
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f91" mandatory="true" name="taskseries_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f8e" mandatory="true" name="tag">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
@@ -222,7 +222,7 @@
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fe6" mandatory="false" name="defaultlist_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fe5" mandatory="false" name="language">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
@@ -278,7 +278,7 @@
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="bf1775:12cd4b4f24d:-7fc7" mandatory="true" name="taskseries_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="102f5ed:12cdb425c7c:-7fe2" mandatory="true" name="fullname">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
@@ -294,7 +294,7 @@
 <foreign-key id="bf1775:12cd4b4f24d:-7f05" name="participant" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
 <foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
 </foreign-key>
-<foreign-key id="bf1775:12cd4b4f24d:-7e4f" name="participates" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_CONTACTS" referenced-table="contacts" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
+<foreign-key id="bf1775:12cd4b4f24d:-7e4f" name="participates" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_CONTACTS" referenced-table="contacts" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="0..1" target-relationship-type="">
 <foreign-key-column column-name="contact_id" referenced-key-column-name="_id"/>
 </foreign-key>
 </foreign-key-list>
@@ -313,7 +313,7 @@
 <table-figure refid="190abb9:128ce294477:-7fe8" x="464" y="46"/>
 <table-figure refid="190abb9:128ce294477:-7f35" x="191" y="263"/>
 <table-figure refid="163c031:128fe8bf79f:-7f97" x="733" y="193"/>
-<table-figure refid="3b2fd2:12b0f7019ac:-7ff0" x="193" y="56"/>
+<table-figure refid="3b2fd2:12b0f7019ac:-7ff0" x="187" y="53"/>
 <table-figure refid="1735ee1:12b714ecdc7:-7fed" x="739" y="54"/>
 <table-figure refid="bf1775:12cd4b4f24d:-7fd8" x="201" y="689"/>
 <table-figure refid="bf1775:12cd4b4f24d:-7fcd" x="187" y="540"/>

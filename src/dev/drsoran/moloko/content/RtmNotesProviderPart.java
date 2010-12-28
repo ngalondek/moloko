@@ -125,7 +125,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
             
             if ( ok )
             {
-               ArrayList< RtmTaskNote > taskNotes = new ArrayList< RtmTaskNote >( c.getCount() );
+               final ArrayList< RtmTaskNote > taskNotes = new ArrayList< RtmTaskNote >( c.getCount() );
                
                if ( c.getCount() > 0 )
                {
@@ -140,7 +140,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                   notes = new RtmTaskNotes( taskNotes );
             }
          }
-         catch ( RemoteException e )
+         catch ( final RemoteException e )
          {
             Log.e( TAG, "Query notes failed. ", e );
             notes = null;
@@ -179,7 +179,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                note = createNote( c );
             }
          }
-         catch ( RemoteException e )
+         catch ( final RemoteException e )
          {
             Log.e( TAG, "Query note failed. ", e );
             note = null;
@@ -234,7 +234,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Notes._ID
-         + " INTEGER NOT NULL, " + Notes.TASKSERIES_ID + " INTEGER NOT NULL, "
+         + " TEXT NOT NULL, " + Notes.TASKSERIES_ID + " TEXT NOT NULL, "
          + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
          + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_TITLE
          + " TEXT, " + Notes.NOTE_TEXT + " TEXT NOT NULL, "

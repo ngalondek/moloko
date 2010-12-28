@@ -161,7 +161,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
             task = createTask( c );
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query rawtask failed. ", e );
          task = null;
@@ -216,7 +216,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
                   tasks = null;
             }
          }
-         catch ( RemoteException e )
+         catch ( final RemoteException e )
          {
             Log.e( TAG, "Query rawtasks failed. ", e );
             tasks = null;
@@ -243,14 +243,14 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + RawTasks._ID
-         + " INTEGER NOT NULL, " + RawTasks.TASKSERIES_ID
-         + " INTEGER NOT NULL, " + RawTasks.DUE_DATE + " INTEGER, "
-         + RawTasks.HAS_DUE_TIME + " INTEGER NOT NULL DEFAULT 0, "
-         + RawTasks.ADDED_DATE + " INTEGER NOT NULL, "
-         + RawTasks.COMPLETED_DATE + " INTEGER, " + RawTasks.DELETED_DATE
-         + " INTEGER, " + RawTasks.PRIORITY + " CHAR(1) NOT NULL DEFAULT 'n', "
-         + RawTasks.POSTPONED + " INTEGER DEFAULT 0, " + RawTasks.ESTIMATE
-         + " TEXT, " + RawTasks.ESTIMATE_MILLIS + " INTEGER DEFAULT -1, "
+         + " TEXT NOT NULL, " + RawTasks.TASKSERIES_ID + " TEXT NOT NULL, "
+         + RawTasks.DUE_DATE + " INTEGER, " + RawTasks.HAS_DUE_TIME
+         + " INTEGER NOT NULL DEFAULT 0, " + RawTasks.ADDED_DATE
+         + " INTEGER NOT NULL, " + RawTasks.COMPLETED_DATE + " INTEGER, "
+         + RawTasks.DELETED_DATE + " INTEGER, " + RawTasks.PRIORITY
+         + " CHAR(1) NOT NULL DEFAULT 'n', " + RawTasks.POSTPONED
+         + " INTEGER DEFAULT 0, " + RawTasks.ESTIMATE + " TEXT, "
+         + RawTasks.ESTIMATE_MILLIS + " INTEGER DEFAULT -1, "
          + "CONSTRAINT PK_TASKS PRIMARY KEY ( \"" + RawTasks._ID + "\" ), "
          + "CONSTRAINT rawtasks_taskseries_ref FOREIGN KEY ( "
          + RawTasks.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH + "( \""

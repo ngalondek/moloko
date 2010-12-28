@@ -131,7 +131,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
                                                        participants );
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query participants failed. ", e );
          participantsList = null;
@@ -196,7 +196,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
          if ( !ok )
             contacts = null;
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query participating contacts failed. ", e );
          contacts = null;
@@ -225,14 +225,14 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
          { Participants._ID, Participants.CONTACT_ID }, Participants.CONTACT_ID
             + "=" + contactId, null, null );
          
-         boolean ok = c != null;
+         final boolean ok = c != null;
          
          if ( ok )
          {
             num = c.getCount();
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query num tasks participating failed. ", e );
          num = -1;
@@ -255,7 +255,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
       
       final List< Participant > participants = list.getParticipants();
       
-      for ( Participant participant : participants )
+      for ( final Participant participant : participants )
       {
          operations.add( ContentProviderOperation.newInsert( Participants.CONTENT_URI )
                                                  .withValues( ParticipantsProviderPart.getContentValues( list.getTaskSeriesId(),
@@ -311,7 +311,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
          + Participants._ID
          + " INTEGER NOT NULL CONSTRAINT PK_PARTICIPANTS PRIMARY KEY AUTOINCREMENT, "
          + Participants.CONTACT_ID + " TEXT NOT NULL, "
-         + Participants.TASKSERIES_ID + " INTEGER NOT NULL, "
+         + Participants.TASKSERIES_ID + " TEXT NOT NULL, "
          + Participants.FULLNAME + " TEXT NOT NULL, " + Participants.USERNAME
          + " TEXT NOT NULL, " + "CONSTRAINT participant FOREIGN KEY ( "
          + Participants.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH

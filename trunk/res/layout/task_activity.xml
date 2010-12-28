@@ -22,15 +22,15 @@
 
    <ScrollView
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_marginLeft="10dip"
-      android:layout_marginRight="?android:attr/scrollbarSize">
+      android:layout_height="fill_parent">
 
       <LinearLayout
          android:id="@+id/task_container"
          android:orientation="vertical"
          android:layout_height="wrap_content"
          android:layout_width="fill_parent"
+         android:layout_marginRight="?android:attr/scrollbarSize"
+         android:paddingLeft="10dip"
          android:paddingTop="8dip"
          android:paddingBottom="8dip">
 

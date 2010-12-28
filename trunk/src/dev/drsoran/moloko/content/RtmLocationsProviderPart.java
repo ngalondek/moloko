@@ -108,14 +108,14 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
                            null,
                            null );
          
-         boolean ok = c != null && c.moveToFirst();
+         final boolean ok = c != null && c.moveToFirst();
          
          if ( ok )
          {
             location = createLocation( c );
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query location failed. ", e );
          location = null;
@@ -162,7 +162,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
                locations = null;
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query locations failed. ", e );
          locations = null;
@@ -206,7 +206,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Locations._ID
-         + " INTEGER NOT NULL, " + Locations.LOCATION_NAME + " NOTE_TEXT, "
+         + " TEXT NOT NULL, " + Locations.LOCATION_NAME + " NOTE_TEXT, "
          + Locations.LONGITUDE + " REAL NOT NULL, " + Locations.LATITUDE
          + " REAL NOT NULL, " + Locations.ADDRESS + " NOTE_TEXT, "
          + Locations.VIEWABLE + " INTEGER NOT NULL DEFAULT 1, "

@@ -120,7 +120,7 @@ public class TaskActivity extends Activity
                   participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
                   urlSection = taskContainer.findViewById( R.id.task_url );
                }
-               catch ( ClassCastException e )
+               catch ( final ClassCastException e )
                {
                   Log.e( TAG, "Invalid layout spec.", e );
                   throw e;
@@ -292,7 +292,8 @@ public class TaskActivity extends Activity
          locationName = task.getLocationName();
          
          showSection = !TextUtils.isEmpty( locationName )
-            || ( task.getLongitude() != 0.0f || task.getLatitude() != 0.0f );
+            || Float.compare( task.getLongitude(), 0.0f ) != 0
+            || Float.compare( task.getLatitude(), 0.0f ) != 0;
       }
       
       if ( !showSection )
@@ -413,7 +414,7 @@ public class TaskActivity extends Activity
                   notes = rtmNotes.getNotes();
                }
             }
-            catch ( RemoteException e )
+            catch ( final RemoteException e )
             {
                Log.e( TAG, "Unable to retrieve notes from DB for task ID "
                   + task.getTaskSeriesId(), e );
@@ -426,7 +427,7 @@ public class TaskActivity extends Activity
          {
             try
             {
-               for ( RtmTaskNote note : notes )
+               for ( final RtmTaskNote note : notes )
                {
                   final ViewGroup noteViewLayout = (ViewGroup) LayoutInflater.from( this )
                                                                              .inflate( R.layout.task_note,
@@ -444,7 +445,7 @@ public class TaskActivity extends Activity
                                                                               .getTime(),
                                                                           FULL_DATE_FLAGS ) );
                   }
-                  catch ( ClassCastException e )
+                  catch ( final ClassCastException e )
                   {
                      Log.e( TAG, "Invalid layout spec.", e );
                      throw e;
@@ -462,7 +463,7 @@ public class TaskActivity extends Activity
                   }
                }
             }
-            catch ( InflateException e )
+            catch ( final InflateException e )
             {
                Log.e( TAG, "Invalid layout spec.", e );
                throw e;

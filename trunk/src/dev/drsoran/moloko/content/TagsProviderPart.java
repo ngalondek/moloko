@@ -119,7 +119,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
                   tags = null;
             }
          }
-         catch ( RemoteException e )
+         catch ( final RemoteException e )
          {
             Log.e( TAG, "Query tags failed. ", e );
             tags = null;
@@ -172,7 +172,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
                   tags = null;
             }
          }
-         catch ( RemoteException e )
+         catch ( final RemoteException e )
          {
             Log.e( TAG, "Query tag texts failed. ", e );
             tags = null;
@@ -200,7 +200,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Tags._ID
          + " INTEGER NOT NULL CONSTRAINT PK_TAGS PRIMARY KEY AUTOINCREMENT, "
-         + Tags.TASKSERIES_ID + " INTEGER NOT NULL, " + Tags.TAG
+         + Tags.TASKSERIES_ID + " TEXT NOT NULL, " + Tags.TAG
          + " TEXT NOT NULL, CONSTRAINT tags_taskseries_ref FOREIGN KEY ( "
          + Tags.TASKSERIES_ID + ") REFERENCES " + TaskSeries.PATH + "( "
          + TaskSeries._ID + " ) );" );

@@ -117,7 +117,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          if ( !ok )
             lists = null;
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          Log.e( TAG, "Query lists failed. ", e );
          lists = null;
@@ -136,7 +136,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public final static ContentValues getContentValues( RtmList list,
                                                        boolean withId )
    {
-      ContentValues values = new ContentValues();
+      final ContentValues values = new ContentValues();
       
       if ( withId )
          values.put( Rtm.Lists._ID, list.getId() );
@@ -181,7 +181,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
                                                 .build();
          }
       }
-      catch ( RemoteException e )
+      catch ( final RemoteException e )
       {
          operation = null;
       }
@@ -210,7 +210,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Lists._ID
-         + " INTEGER NOT NULL, " + Lists.LIST_NAME + " TEXT NOT NULL, "
+         + " TEXT NOT NULL, " + Lists.LIST_NAME + " TEXT NOT NULL, "
          + Lists.LIST_DELETED + " INTEGER NOT NULL DEFAULT 0, " + Lists.LOCKED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.ARCHIVED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.POSITION

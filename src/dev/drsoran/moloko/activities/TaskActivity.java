@@ -143,7 +143,7 @@ public class TaskActivity extends Activity
                {
                   String sourceStr = task.getSource();
                   if ( sourceStr.equalsIgnoreCase( "js" ) )
-                     sourceStr = "Web";
+                     sourceStr = "web";
                   
                   source.setText( getString( R.string.task_source, sourceStr ) );
                }

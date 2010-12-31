@@ -106,7 +106,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       public final static int OPEN_TASK = 1;
       
-      public final static int RENAME_TASK = 2;
+      public final static int EDIT_TASK = 2;
       
       public final static int OPEN_LIST = 3;
       
@@ -291,18 +291,15 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       final ListTask task = getTask( info.position );
       
-      // TODO: Make this menu item dependent from the set RTM access level
-      /**
-       * menu.add( Menu.NONE, CTX_MENU_TOGGLE_TASK_COMPLETED, Menu.NONE, ( task.getCompleted() == null ) ? getString(
-       * R.string.taskslist_listitem_ctx_set_task_completed ) : getString(
-       * R.string.taskslist_listitem_ctx_set_task_incomplete ) );
-       */
-      
       menu.add( Menu.NONE,
                 CtxtMenu.OPEN_TASK,
                 Menu.NONE,
-                getString( R.string.phr_open_with_name, task.getName() ) )
-          .setTitleCondensed( getString( R.string.abstaskslist_listitem_ctx_open_task ) );
+                getString( R.string.phr_open_with_name, task.getName() ) );
+      
+      menu.add( Menu.NONE,
+                CtxtMenu.EDIT_TASK,
+                Menu.NONE,
+                getString( R.string.phr_edit_with_name, task.getName() ) );
       
       final RtmSmartFilter filter = getIntent().getParcelableExtra( FILTER );
       
@@ -371,8 +368,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             onTaskClicked( info.position );
             return true;
             
-         case CtxtMenu.RENAME_TASK:
-            onTaskRename( info.position );
+         case CtxtMenu.EDIT_TASK:
+            onTaskEdit( info.position );
             return true;
             
          case CtxtMenu.OPEN_LIST:
@@ -531,7 +528,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   private void onTaskRename( int pos )
+   private void onTaskEdit( int pos )
    {
       
    }

@@ -75,6 +75,7 @@
    <string name="phr_tomorrow_with_date">Morgen, der %1$s</string>
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
    <string name="phr_open_with_name">Öffne %1$s</string>
+   <string name="phr_edit_with_name">Bearbeite %1$s</string>
    <string name="phr_close">Schliessen</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
@@ -155,9 +156,7 @@
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
-	  <string name="abstaskslist_listitem_ctx_open_task">Öffne Aufgabe</string>
-     <string name="abstaskslist_listitem_ctx_rename_task">Aufgabe umbenennen</string>
-     <string name="abstaskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>
+	  <string name="abstaskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>
      <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort %1$s</string>
      <string name="abstaskslist_listitem_ctx_open_location">Öffne Ort %1$s</string>
      <!-- Dialogs -->

@@ -122,7 +122,8 @@ public class Rtm
       /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
+      public final static String DEFAULT_SORT_ORDER = POSITION + ", "
+         + LIST_NAME;
    }
    
 
@@ -312,7 +313,7 @@ public class Rtm
       /**
        * The default sort order for this table
        */
-      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
+      public final static String DEFAULT_SORT_ORDER = LOCATION_NAME;
    }
    
 

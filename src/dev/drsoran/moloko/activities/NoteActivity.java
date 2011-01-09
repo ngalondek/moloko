@@ -28,7 +28,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.ContentProviderClient;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -52,6 +51,8 @@ public class NoteActivity extends Activity
    private final static String TAG = "Moloko."
       + NoteActivity.class.getSimpleName();
    
+   private final static String NOTE_POS = "note_pos";
+   
    private List< RtmTaskNote > notes = Collections.emptyList();
    
    private int notePos = -1;
@@ -67,39 +68,85 @@ public class NoteActivity extends Activity
       
       final Intent intent = getIntent();
       
-      if ( intent.getAction().equals( Intent.ACTION_VIEW ) )
+      if ( !intent.getAction().equals( Intent.ACTION_VIEW ) )
       {
-         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+         UIUtils.initializeErrorWithIcon( this,
+                                          R.string.err_unsupported_intent_action,
+                                          intent.getAction() );
+      }
+   }
+   
+
+
+   @Override
+   protected void onResume()
+   {
+      super.onResume();
+      
+      boolean found = false;
+      final Intent intent = getIntent();
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         // Check if we should display a single note or all notes of a task
+         final String taskId = intent.getStringExtra( Notes.TASKSERIES_ID );
          
-         if ( client != null )
+         if ( taskId == null )
          {
-            // Check if we should display a single note or all notes of a task
-            final String taskId = intent.getStringExtra( Notes.TASKSERIES_ID );
-            
-            if ( taskId == null )
-            {
-               getSingleNote( client,
-                              String.valueOf( ContentUris.parseId( intent.getData() ) ) );
-            }
-            else
-            {
-               getAllNotesOfTask( client,
-                                  taskId,
-                                  intent.getStringExtra( Notes._ID ) );
-            }
-            
-            client.release();
-            
+            found = getSingleNote( client, intent.getData()
+                                                 .getLastPathSegment() );
+         }
+         else
+         {
+            found = getAllNotesOfTask( client,
+                                       taskId,
+                                       intent.getStringExtra( Notes._ID ) );
+         }
+         
+         client.release();
+         
+         if ( found )
+         {
             if ( notePos != -1 )
                displayNote( notes.get( notePos ) );
             
             updateUi();
          }
-         else
-         {
-            LogUtils.logDBError( this, TAG, "Notes" );
-         }
       }
+      else
+      {
+         LogUtils.logDBError( this, TAG, "Notes" );
+      }
+      
+      if ( !found )
+      {
+         UIUtils.initializeErrorWithIcon( this,
+                                          R.string.err_entity_not_found,
+                                          getString( R.string.app_note ) );
+      }
+   }
+   
+
+
+   @Override
+   protected void onSaveInstanceState( Bundle outState )
+   {
+      super.onSaveInstanceState( outState );
+      
+      if ( outState != null )
+         outState.putInt( NOTE_POS, notePos );
+   }
+   
+
+
+   @Override
+   protected void onRestoreInstanceState( Bundle savedInstanceState )
+   {
+      super.onRestoreInstanceState( savedInstanceState );
+      
+      if ( savedInstanceState != null )
+         notePos = savedInstanceState.getInt( NOTE_POS, -1 );
    }
    
 
@@ -152,8 +199,10 @@ public class NoteActivity extends Activity
    
 
 
-   private void getSingleNote( ContentProviderClient client, String noteId )
+   private boolean getSingleNote( ContentProviderClient client, String noteId )
    {
+      boolean found = false;
+      
       // Query note
       try
       {
@@ -165,6 +214,8 @@ public class NoteActivity extends Activity
             tmp.add( note );
             
             initializeNotesList( tmp );
+            
+            found = true;
          }
          else
          {
@@ -175,14 +226,18 @@ public class NoteActivity extends Activity
       {
          LogUtils.logDBError( this, TAG, "Notes", e );
       }
+      
+      return found;
    }
    
 
 
-   private void getAllNotesOfTask( ContentProviderClient client,
-                                   String taskId,
-                                   String startNoteId )
+   private boolean getAllNotesOfTask( ContentProviderClient client,
+                                      String taskId,
+                                      String startNoteId )
    {
+      boolean found = false;
+      
       // Query all notes of task
       try
       {
@@ -191,20 +246,30 @@ public class NoteActivity extends Activity
          
          if ( rtmTaskNotes != null )
          {
-            initializeNotesList( rtmTaskNotes.getNotes() );
-            
-            if ( startNoteId != null )
+            // Check if we have a notePos from a saved instance state.
+            if ( notePos != -1 && notePos < notes.size() )
             {
-               boolean found = false;
-               while ( notePos < notes.size() && !found )
-               {
-                  found = notes.get( notePos ).getId().equals( startNoteId );
-                  if ( !found )
-                     ++notePos;
-               }
+               initializeNotesList( notes, notePos );
+            }
+            else
+            {
+               initializeNotesList( rtmTaskNotes.getNotes() );
                
-               if ( !found )
-                  notePos = 0;
+               if ( startNoteId != null )
+               {
+                  boolean foundStartNote = false;
+                  while ( notePos < notes.size() && !foundStartNote )
+                  {
+                     foundStartNote = notes.get( notePos )
+                                           .getId()
+                                           .equals( startNoteId );
+                     if ( !foundStartNote )
+                        ++notePos;
+                  }
+                  
+                  if ( !foundStartNote )
+                     notePos = 0;
+               }
             }
          }
          else
@@ -216,6 +281,8 @@ public class NoteActivity extends Activity
       {
          LogUtils.logDBError( this, TAG, "Notes", e );
       }
+      
+      return found;
    }
    
 
@@ -224,6 +291,14 @@ public class NoteActivity extends Activity
    {
       this.notes = Collections.unmodifiableList( notes );
       this.notePos = 0;
+   }
+   
+
+
+   private void initializeNotesList( List< RtmTaskNote > notes, int notePos )
+   {
+      this.notes = Collections.unmodifiableList( notes );
+      this.notePos = notePos;
    }
    
 

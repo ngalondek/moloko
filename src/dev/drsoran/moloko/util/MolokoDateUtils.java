@@ -45,6 +45,13 @@ public class MolokoDateUtils
    
    public final static int FORMAT_SHOW_WEEKDAY = 1 << 2;
    
+   public final static int FORMAT_ABR_WEEKDAY = 1 << 3;
+   
+   public final static int FORMAT_ABR_MONTH = 1 << 4;
+   
+   public final static int FORMAT_ABR_ALL = FORMAT_ABR_WEEKDAY
+      | FORMAT_ABR_MONTH;
+   
    public final static int FORMAT_PARSER = FORMAT_WITH_YEAR | FORMAT_NUMERIC
       | ( 1 << 3 );
    
@@ -257,7 +264,7 @@ public class MolokoDateUtils
                                              boolean time,
                                              int flags )
    {
-      String pattern = "";
+      StringBuilder pattern = new StringBuilder();
       
       final Settings settings = MolokoApp.getSettings();
       
@@ -265,20 +272,27 @@ public class MolokoDateUtils
       if ( date )
       {
          if ( ( flags & FORMAT_SHOW_WEEKDAY ) != 0 )
-            pattern = "EEEE, ";
+            pattern.append( ( ( flags & FORMAT_ABR_WEEKDAY ) != 0 ) ? "E, "
+                                                                   : "EEEE, " );
          
          // Date EU
          if ( settings.getDateformat() == Settings.DATEFORMAT_EU )
          {
             if ( ( flags & FORMAT_NUMERIC ) != 0 )
                if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                  pattern += "d.M.yyyy";
+                  pattern.append( "d.M.yyyy" );
                else
-                  pattern += "d.M";
-            else if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-               pattern += "d. MMMM yyyy";
+                  pattern.append( "d.M" );
             else
-               pattern += "d. MMMM";
+            {
+               if ( ( flags & FORMAT_ABR_MONTH ) != 0 )
+                  pattern.append( "d. MMM" );
+               else
+                  pattern.append( "d. MMMM" );
+               
+               if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
+                  pattern.append( " yyyy" );
+            }
          }
          
          // Date US
@@ -288,15 +302,21 @@ public class MolokoDateUtils
                if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
                   // the parser needs the EU format. (day first)
                   if ( ( flags & FORMAT_PARSER ) != 0 )
-                     pattern += "d/M/yyyy";
+                     pattern.append( "d/M/yyyy" );
                   else
-                     pattern += "M/d/yyyy";
+                     pattern.append( "M/d/yyyy" );
                else
-                  pattern += "M/d";
-            else if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-               pattern += "MMMM d, yyyy";
+                  pattern.append( "M/d" );
             else
-               pattern += "MMMM d";
+            {
+               if ( ( flags & FORMAT_ABR_MONTH ) != 0 )
+                  pattern.append( "MMM d" );
+               else
+                  pattern.append( "MMMM d" );
+               
+               if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
+                  pattern.append( ", yyyy" );
+            }
          }
       }
       
@@ -307,21 +327,21 @@ public class MolokoDateUtils
          if ( settings.getTimeformat() == Settings.TIMEFORMAT_12 )
          {
             if ( date )
-               pattern += ", h:mm a";
+               pattern.append( ", h:mm a" );
             else
-               pattern += "h:mm a";
+               pattern.append( "h:mm a" );
          }
          
          // Time 24
          else
          {
             if ( date )
-               pattern += ", k:mm";
+               pattern.append( ", k:mm" );
             else
-               pattern += "k:mm";
+               pattern.append( "k:mm" );
          }
       }
       
-      return pattern;
+      return pattern.toString();
    }
 }

@@ -187,7 +187,14 @@ public class TagCloudActivity extends Activity
       UIUtils.setTitle( this,
                         getString( R.string.app_tagcloud ),
                         R.drawable.ic_title_tag );
-      
+   }
+   
+
+
+   @Override
+   protected void onResume()
+   {
+      super.onResume();
       fillContent();
    }
    
@@ -349,8 +356,10 @@ public class TagCloudActivity extends Activity
             buttons.add( cloudEntryButton );
          }
          
-         addButtons( buttons,
-                     (ViewGroup) findViewById( R.id.tagcloud_container ) );
+         final ViewGroup tagContainer = (ViewGroup) findViewById( R.id.tagcloud_container );
+         tagContainer.removeAllViews();
+         
+         addButtons( buttons, tagContainer );
       }
    }
    

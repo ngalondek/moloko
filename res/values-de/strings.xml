@@ -26,6 +26,7 @@
 	<string name="app_account_preferences">Kontoeinstellungen</string>
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
+   <string name="app_task_edit">Aufgabe bearbeiten</string>
 	<string name="app_note">Notiz</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Kontakte</string>
@@ -99,11 +100,14 @@
    <string name="err_add_account_canceled">Das Hinzufügen eines neuen Kontos wurde abgebrochen</string>
    <string name="err_unexpected">Wenn Sie dies lesen LAUFEN SIE SO SCHNELL SIE KÖNNEN!</string>
    <string name="err_db_typed">Datenbank-Zugriffsfehler beim Zugriff auf %1$s.</string>
+   <string name="err_entity_not_found">%1$s konnte nicht aus der Datenbank geladen werden.\n\nBitte überprüfen Sie ob das Element existiert.</string>
+   <string name="err_unsupported_intent_action">Die Aktion %1$s wird von dieser Activity nicht unterstützt.</string>
    
 	<!-- Global buttons -->
 	<string name="btn_continue">Weiter</string>
 	<string name="btn_cancel">Abbrechen</string>
 	<string name="btn_new_account">Neues Konto</string>
+   <string name="btn_edit">Bearbeiten</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
@@ -134,6 +138,22 @@
       <string name="task_dlg_choose_location_app">Öffne Ort mit...</string>         
    <!-- Toasts -->
      <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>
+     
+   <!-- Task Edit activity -->
+   <string name="task_edit_desc_hint">Name der Aufgabe</string>
+   <string name="task_edit_list">Liste</string>
+   <string name="task_edit_priority">Priorität</string>
+   <string name="task_edit_priority_1">1 - Hoch</string>
+   <string name="task_edit_priority_2">2 - Normal</string>
+   <string name="task_edit_priority_3">3 - Niedrig</string>
+   <string name="task_edit_priority_n">@string/phr_none_f</string>
+   <string name="task_edit_due">Fällig</string>
+   <string name="task_edit_due_never">Nie</string>
+   <string name="task_edit_recurrence">Wiederholen</string>
+   <string name="task_edit_recurrence_no">Keine Wiederholung</string>
+   <string name="task_edit_estimate">Geschätzte Dauer</string>
+   <string name="task_edit_estimate_nothing">Nichts geschätzt</string>
+   <string name="task_edit_location_no">Nirgendwo</string>
 		
    <!-- TaskLists activity -->
    <string name="tasklists_no_lists">Es existieren kein Listen</string>

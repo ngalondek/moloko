@@ -17,8 +17,8 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"
-   android:versionName="0.10.2b"
-   android:versionCode="65538">
+   android:versionName="0.11.0b"
+   android:versionCode="69632">
 
    <uses-sdk
       android:minSdkVersion="5"
@@ -128,12 +128,27 @@
       <activity
          android:label="@string/app_task"
          android:name=".activities.TaskActivity"
-         android:launchMode="singleTop"
          android:theme="@style/Theme.Moloko.Task">
          <intent-filter>
             <!-- Show a single task -->
             <action
                android:name="android.intent.action.VIEW" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
+         </intent-filter>
+      </activity>
+      
+      <activity
+         android:label="@string/app_task_edit"
+         android:name=".activities.TaskEditActivity"
+         android:launchMode="singleTop"
+         android:theme="@style/Theme.Moloko.Task">
+         <intent-filter>
+            <!-- Edit a single task -->
+            <action
+               android:name="android.intent.action.EDIT" />
             <category
                android:name="android.intent.category.DEFAULT" />
             <data

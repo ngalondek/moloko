@@ -28,22 +28,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.layouts.SimpleHomeWidgetLayout;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
+import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
 import dev.drsoran.provider.Rtm.ListOverviews;
 
 
 public class HomeAdapter extends BaseAdapter
 {
-   private final View[] WIDGETS;
+   private final IMolokoHomeWidget[] WIDGETS;
    
    
 
    public HomeAdapter( Context context )
    {
-      WIDGETS = new View[]
+      WIDGETS = new IMolokoHomeWidget[]
       {
        new CalendarHomeWidget( context,
                                null,
@@ -110,7 +110,7 @@ public class HomeAdapter extends BaseAdapter
    public View getView( int position, View convertView, ViewGroup parent )
    {
       // TODO: Enhancement: recycle convertView
-      return WIDGETS[ position ];
+      return (View) WIDGETS[ position ];
    }
    
 
@@ -121,5 +121,15 @@ public class HomeAdapter extends BaseAdapter
          return ( (IMolokoHomeWidget) WIDGETS[ position ] ).getIntent();
       else
          return null;
+   }
+   
+
+
+   public void refreshWidgets()
+   {
+      for ( int i = 0; i < WIDGETS.length; i++ )
+      {
+         WIDGETS[ i ].refresh();
+      }
    }
 }

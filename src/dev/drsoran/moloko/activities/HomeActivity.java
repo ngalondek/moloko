@@ -60,8 +60,7 @@ public class HomeActivity extends Activity implements OnItemClickListener
          {
             public void run()
             {
-               fillGrid();
-               onContentChanged();
+               refreshGrid();
             }
          }, 1000 );
       }
@@ -90,6 +89,16 @@ public class HomeActivity extends Activity implements OnItemClickListener
 
 
    @Override
+   protected void onResume()
+   {
+      super.onResume();
+      
+      refreshGrid();
+   }
+   
+
+
+   @Override
    protected void onDestroy()
    {
       super.onDestroy();
@@ -103,6 +112,20 @@ public class HomeActivity extends Activity implements OnItemClickListener
    {
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setAdapter( new HomeAdapter( this ) );
+   }
+   
+
+
+   private void refreshGrid()
+   {
+      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
+      final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
+      
+      if ( homeAdapter != null )
+      {
+         homeAdapter.refreshWidgets();
+         onContentChanged();
+      }
    }
    
 

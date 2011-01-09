@@ -31,7 +31,7 @@ import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 
 
 public class ContentProviderSyncableList< T extends IContentProviderSyncable< T > >
-         extends SyncableList< IContentProviderSyncOperation, T >
+         extends SyncableList< T >
 {
    private final ContentProviderClient provider;
    

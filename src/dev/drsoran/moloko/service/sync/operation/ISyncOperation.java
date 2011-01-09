@@ -28,4 +28,23 @@ import android.content.SyncResult;
 public interface ISyncOperation
 {
    public boolean execute( SyncResult result );
+   
+   
+   public class Op
+   {
+      public final static int NOOP = 0;
+      
+      
+
+      public static String toString( int op )
+      {
+         switch ( op )
+         {
+            case NOOP:
+               return "NOOP";
+            default :
+               return "UNKNOWN";
+         }
+      }
+   }
 }

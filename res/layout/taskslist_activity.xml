@@ -52,7 +52,7 @@
 
       <dev.drsoran.moloko.layouts.TitleWithTextLayout
          android:id="@+id/tasksearchresult_wrong_syntax"
-         style="@style/TaskSearchResult_Wrong_Syntax"
+         style="@style/Error"
          android:visibility="gone" />
    </FrameLayout>
 

@@ -25,7 +25,6 @@ package dev.drsoran.moloko.util;
 import java.util.Date;
 
 import android.content.ContentProviderClient;
-import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
@@ -73,10 +72,10 @@ public final class Queries
 
    public final static Uri contentUriWithId( Uri contentUri, String id )
    {
-      return ( !TextUtils.isEmpty( id ) )
-                                         ? ContentUris.withAppendedId( contentUri,
-                                                                       Long.parseLong( id ) )
-                                         : null;
+      
+      return ( !TextUtils.isEmpty( id ) ) ? contentUri.buildUpon()
+                                                      .appendEncodedPath( id )
+                                                      .build() : null;
    }
    
 

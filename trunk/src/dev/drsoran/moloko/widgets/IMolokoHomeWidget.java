@@ -24,7 +24,12 @@ package dev.drsoran.moloko.widgets;
 
 import android.content.Intent;
 
+
 public interface IMolokoHomeWidget
 {
    public Intent getIntent();
+   
+
+
+   public void refresh();
 }

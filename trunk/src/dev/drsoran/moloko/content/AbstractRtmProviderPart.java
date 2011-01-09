@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.content;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,6 +30,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.util.Queries;
 
 
 public abstract class AbstractRtmProviderPart extends AbstractProviderPart
@@ -76,12 +76,13 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
       {
          initialValues = getInitialValues( initialValues );
          
+         final String id = initialValues.getAsString( BaseColumns._ID );
          final SQLiteDatabase db = dbAccess.getWritableDatabase();
          final long rowId = db.insert( path, BaseColumns._ID, initialValues );
          
          if ( rowId > 0 )
          {
-            uri = ContentUris.withAppendedId( getContentUri(), rowId );
+            uri = Queries.contentUriWithId( getContentUri(), id );
          }
       }
       

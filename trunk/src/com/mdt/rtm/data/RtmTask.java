@@ -118,21 +118,16 @@ public class RtmTask extends RtmData implements
       switch ( priority )
       {
          case None:
-            return new String( new char[]
-            { 'n' } );
+            return "n";
          case Low:
-            return new String( new char[]
-            { '3' } );
+            return "3";
          case Medium:
-            return new String( new char[]
-            { '2' } );
+            return "2";
          case High:
-            return new String( new char[]
-            { '1' } );
+            return "1";
          default :
             Log.e( TAG, "Unrecognized RTM task priority: '" + priority + "'" );
-            return new String( new char[]
-            { 'n' } );
+            return "n";
       }
    }
    

@@ -251,4 +251,13 @@ public final class Intents
       return new Intent( Intent.ACTION_VIEW,
                          Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
    }
+   
+
+
+   public final static Intent createEditTaskIntent( Context context,
+                                                    String taskId )
+   {
+      return new Intent( Intent.ACTION_EDIT,
+                         Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
+   }
 }

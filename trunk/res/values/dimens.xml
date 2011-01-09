@@ -25,6 +25,8 @@
    <dimen
       name="task_overview_corner_radius">3dip</dimen>
    <dimen
+      name="task_overview_stroke_width">1dip</dimen>
+   <dimen
       name="tasklists_group_height">45dip</dimen>
    <dimen
       name="taskslist_listitem_row_space">10dip</dimen>

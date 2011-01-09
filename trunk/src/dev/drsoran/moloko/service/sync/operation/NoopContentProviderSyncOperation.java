@@ -25,17 +25,16 @@ package dev.drsoran.moloko.service.sync.operation;
 import java.util.ArrayList;
 
 import android.content.ContentProviderOperation;
-import android.content.SyncResult;
 
 
-public final class NoopContentProviderSyncOperation implements
-         IContentProviderSyncOperation
+public final class NoopContentProviderSyncOperation extends NoopSyncOperation
+         implements IContentProviderSyncOperation
 {
    public final static NoopContentProviderSyncOperation INSTANCE = new NoopContentProviderSyncOperation();
    
    
 
-   protected NoopContentProviderSyncOperation()
+   private NoopContentProviderSyncOperation()
    {
       
    }
@@ -51,14 +50,6 @@ public final class NoopContentProviderSyncOperation implements
 
    public int getOperationType()
    {
-      return Op.NOOP;
+      return NoopSyncOperation.Op.NOOP;
    }
-   
-
-
-   public boolean execute( SyncResult result )
-   {
-      return true;
-   }
-   
 }

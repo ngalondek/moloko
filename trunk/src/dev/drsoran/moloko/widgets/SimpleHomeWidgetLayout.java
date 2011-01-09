@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.layouts;
+package dev.drsoran.moloko.widgets;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 
 
 public class SimpleHomeWidgetLayout extends LinearLayout implements
@@ -70,5 +69,11 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
    public Intent getIntent()
    {
       return intent;
+   }
+   
+
+
+   public void refresh()
+   {
    }
 }

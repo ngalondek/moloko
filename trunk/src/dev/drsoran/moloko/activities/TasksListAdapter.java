@@ -225,7 +225,8 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                else
                {
                   // we show the date but w/o year
-                  dueText = MolokoDateUtils.formatDate( dueMillis, 0 );
+                  dueText = MolokoDateUtils.formatDate( dueMillis,
+                                                        MolokoDateUtils.FORMAT_ABR_MONTH );
                }
             }
             
@@ -234,7 +235,8 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
             {
                // we show the full date with year
                dueText = MolokoDateUtils.formatDate( dueMillis,
-                                                     MolokoDateUtils.FORMAT_WITH_YEAR );
+                                                     MolokoDateUtils.FORMAT_ABR_MONTH
+                                                        | MolokoDateUtils.FORMAT_WITH_YEAR );
             }
          }
          

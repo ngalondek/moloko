@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
@@ -130,7 +131,7 @@ public class TaskSearchResultActivity extends TasksListActivity
                               R.drawable.ic_title_error );
             
             final View wrongSyntaxView = findViewById( R.id.tasksearchresult_wrong_syntax );
-            final TextView text = (TextView) wrongSyntaxView.findViewById( R.id.title_with_text_text );
+            final TextView text = (TextView) wrongSyntaxView.findViewById( TitleWithTextLayout.VIEW_ID );
             
             final String msgStr = String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
                                                  filter.getFilterString() );

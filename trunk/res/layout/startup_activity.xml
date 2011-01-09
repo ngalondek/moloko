@@ -16,7 +16,7 @@
 <RelativeLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-   style="@style/StartUp"
+   style="@style/StartUp.Error"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
@@ -31,14 +31,14 @@
    <ScrollView
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:layout_below="@id/title_bar"
-      android:layout_margin="10dip">
+      android:layout_below="@id/title_bar">
 
       <LinearLayout
          android:id="@android:id/widget_frame"
          android:orientation="vertical"
          android:layout_width="fill_parent"
-         android:layout_height="fill_parent">
+         android:layout_height="fill_parent"
+         android:layout_margin="10dip">
       </LinearLayout>
    </ScrollView>
 

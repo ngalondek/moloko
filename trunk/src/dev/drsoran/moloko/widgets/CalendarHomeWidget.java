@@ -83,41 +83,9 @@ public class CalendarHomeWidget extends LinearLayout implements
 
    public View getWidgetView()
    {
-      final Context context = getContext();
-      
-      final View view = LayoutInflater.from( context )
+      final View view = LayoutInflater.from( getContext() )
                                       .inflate( R.layout.home_activity_calendar_widget,
                                                 null );
-      
-      final Calendar cal = getCalendar();
-      
-      {
-         final TextView date = (TextView) view.findViewById( R.id.home_calendar_date );
-         date.setText( String.valueOf( cal.get( Calendar.DAY_OF_MONTH ) ) );
-      }
-      
-      {
-         final TextView counterView = (TextView) view.findViewById( R.id.counter_bubble );
-         final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_LIT
-                                                              + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
-                                                                                            MolokoDateUtils.FORMAT_PARSER ),
-                                                           true );
-         
-         final Cursor c = context.getContentResolver()
-                                 .query( RawTasks.CONTENT_URI, new String[]
-                                 { RawTasks._ID }, selection, null, null );
-         
-         if ( c != null )
-         {
-            counterView.setText( String.valueOf( c.getCount() ) );
-            c.close();
-         }
-         else
-         {
-            counterView.setText( "?" );
-         }
-      }
-      
       return view;
    }
    
@@ -156,4 +124,50 @@ public class CalendarHomeWidget extends LinearLayout implements
       
       return Intents.createSmartFilterIntent( getContext(), filter, title, -1 );
    }
+   
+
+
+   public void refresh()
+   {
+      final Calendar cal = getCalendar();
+      
+      {
+         final TextView date = (TextView) findViewById( R.id.home_calendar_date );
+         date.setText( String.valueOf( cal.get( Calendar.DAY_OF_MONTH ) ) );
+      }
+      
+      {
+         final TextView counterView = (TextView) findViewById( R.id.counter_bubble );
+         final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_LIT
+                                                              + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
+                                                                                            MolokoDateUtils.FORMAT_PARSER ),
+                                                           true );
+         Cursor c = null;
+         
+         try
+         {
+            c = getContext().getContentResolver().query( RawTasks.CONTENT_URI,
+                                                         new String[]
+                                                         { RawTasks._ID },
+                                                         selection,
+                                                         null,
+                                                         null );
+            
+            if ( c != null )
+            {
+               counterView.setText( String.valueOf( c.getCount() ) );
+            }
+            else
+            {
+               counterView.setText( "?" );
+            }
+         }
+         finally
+         {
+            if ( c != null )
+               c.close();
+         }
+      }
+   }
+   
 }

@@ -35,6 +35,22 @@
       <item>write</item>
       <item>delete</item>
    </string-array>
+   
+   <string-array
+      name="rtm_priorities">
+      <item>@string/task_edit_priority_n</item>
+      <item>@string/task_edit_priority_1</item>
+      <item>@string/task_edit_priority_2</item>
+      <item>@string/task_edit_priority_3</item>
+   </string-array>
+   
+   <string-array
+      name="rtm_priority_values">
+      <item>n</item>
+      <item>1</item>
+      <item>2</item>
+      <item>3</item>
+   </string-array>
 
    <string-array
       name="moloko_prefs_rtm_dateformat">

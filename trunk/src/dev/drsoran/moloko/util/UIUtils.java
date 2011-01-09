@@ -36,6 +36,7 @@ import android.text.TextUtils;
 import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.rtm.Task;
 
 
@@ -288,17 +290,15 @@ public final class UIUtils
    
 
 
-   public final static boolean initializeTitleWithTextLayout( View parent,
-                                                              String title,
-                                                              String text )
+   public final static boolean initializeTitleWithViewLayout( View layout,
+                                                              String title )
    {
-      boolean ok = parent != null;
+      boolean ok = layout != null;
       
       if ( ok )
          try
          {
-            final TextView titleView = (TextView) parent.findViewById( R.id.title_with_text_title );
-            final TextView textView = (TextView) parent.findViewById( R.id.title_with_text_text );
+            final TextView titleView = (TextView) layout.findViewById( R.id.title_with_view_title );
             
             if ( TextUtils.isEmpty( title ) )
             {
@@ -309,6 +309,28 @@ public final class UIUtils
                titleView.setVisibility( View.VISIBLE );
                titleView.setText( title );
             }
+         }
+         catch ( ClassCastException e )
+         {
+            ok = false;
+         }
+      
+      return ok;
+   }
+   
+
+
+   public final static boolean initializeTitleWithTextLayout( View layout,
+                                                              String title,
+                                                              String text )
+   {
+      boolean ok = layout != null
+         && initializeTitleWithViewLayout( layout, title );
+      
+      if ( ok )
+         try
+         {
+            final TextView textView = (TextView) layout.findViewById( TitleWithTextLayout.VIEW_ID );
             
             if ( TextUtils.isEmpty( text ) )
             {
@@ -330,18 +352,18 @@ public final class UIUtils
    
 
 
-   public final static boolean initializeTitleWithTextLayout( View parent,
+   public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               Spannable text )
    {
-      boolean ok = initializeTitleWithTextLayout( parent,
+      boolean ok = initializeTitleWithTextLayout( layout,
                                                   title,
                                                   text.toString() );
       
       if ( ok && text != null )
          try
          {
-            final TextView textView = (TextView) parent.findViewById( R.id.title_with_text_text );
+            final TextView textView = (TextView) layout.findViewById( TitleWithTextLayout.VIEW_ID );
             applySpannable( textView, text );
          }
          catch ( ClassCastException e )
@@ -350,6 +372,20 @@ public final class UIUtils
          }
       
       return ok;
+   }
+   
+
+
+   public final static void initializeErrorWithIcon( Activity activity,
+                                                     int resId,
+                                                     Object... params )
+   {
+      activity.setContentView( R.layout.error_with_icon );
+      final TextView text = (TextView) activity.findViewById( TitleWithTextLayout.VIEW_ID );
+      final String msg = activity.getResources().getString( resId, params );
+      text.setText( msg );
+      
+      Log.e( LogUtils.toTag( Activity.class ), msg );
    }
    
 

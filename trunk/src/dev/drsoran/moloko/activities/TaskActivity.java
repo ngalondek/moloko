@@ -26,7 +26,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.ContentProviderClient;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -47,6 +46,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.LogUtils;
@@ -65,7 +65,33 @@ public class TaskActivity extends Activity
    private final static String TAG = "Moloko."
       + TaskActivity.class.getSimpleName();
    
-   private final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   
+   private Task task;
+   
+   private ViewGroup taskContainer;
+   
+   private View priorityBar;
+   
+   private TextView addedDate;
+   
+   private TextView completedDate;
+   
+   private TextView source;
+   
+   private TextView description;
+   
+   private TextView listName;
+   
+   private ViewGroup tagsLayout;
+   
+   private View dateTimeSection;
+   
+   private View locationSection;
+   
+   private ViewGroup participantsSection;
+   
+   private View urlSection;
    
    
 
@@ -73,120 +99,136 @@ public class TaskActivity extends Activity
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      setContentView( R.layout.task_activity );
       
-      final Uri taskUri = getIntent().getData();
+      final Intent intent = getIntent();
       
-      // TODO: Show error if URI or ContentProviderClient is null.
-      if ( taskUri != null )
+      if ( intent.getAction().equals( Intent.ACTION_VIEW ) )
       {
-         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+         final Uri taskUri = intent.getData();
+         String taskId = null;
          
-         if ( client != null )
+         if ( taskUri != null )
          {
-            final Task task = TasksProviderPart.getTask( client,
-                                                         String.valueOf( ContentUris.parseId( taskUri ) ) );
+            final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
             
-            client.release();
-            
-            // TODO: Show error if task could not be found.
-            if ( task != null )
+            if ( client != null )
             {
-               ViewGroup taskContainer;
-               View priorityBar;
-               TextView addedDate;
-               TextView completedDate;
-               TextView source;
-               TextView description;
-               TextView listName;
-               ViewGroup tagsLayout;
-               View dateTimeSection;
-               View locationSection;
-               ViewGroup participantsSection;
-               View urlSection;
+               taskId = taskUri.getLastPathSegment();
+               task = TasksProviderPart.getTask( client, taskId );
                
-               try
-               {
-                  taskContainer = (ViewGroup) findViewById( R.id.task_container );
-                  priorityBar = taskContainer.findViewById( R.id.task_overview_priority_bar );
-                  addedDate = (TextView) taskContainer.findViewById( R.id.task_overview_added_date );
-                  completedDate = (TextView) taskContainer.findViewById( R.id.task_overview_completed_date );
-                  source = (TextView) taskContainer.findViewById( R.id.task_overview_src );
-                  description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
-                  listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
-                  tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
-                  dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
-                  locationSection = taskContainer.findViewById( R.id.task_location );
-                  participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
-                  urlSection = taskContainer.findViewById( R.id.task_url );
-               }
-               catch ( final ClassCastException e )
-               {
-                  Log.e( TAG, "Invalid layout spec.", e );
-                  throw e;
-               }
-               
-               UIUtils.setPriorityColor( priorityBar, task );
-               
-               addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
-                                                                      .getTime(),
-                                                                  FULL_DATE_FLAGS ) );
-               
-               if ( task.getCompleted() != null )
-                  completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
-                                                                             .getTime(),
-                                                                         FULL_DATE_FLAGS ) );
-               else
-                  completedDate.setVisibility( View.GONE );
-               
-               if ( !TextUtils.isEmpty( task.getSource() ) )
-               {
-                  String sourceStr = task.getSource();
-                  if ( sourceStr.equalsIgnoreCase( "js" ) )
-                     sourceStr = "web";
-                  
-                  source.setText( getString( R.string.task_source, sourceStr ) );
-               }
-               else
-                  source.setVisibility( View.GONE );
-               
-               UIUtils.setTaskDescription( description, task, null );
-               
-               listName.setText( task.getListName() );
-               
-               if ( taskContainer.getTag( R.id.task_overview_tags ) == null )
-               {
-                  UIUtils.inflateTags( this, tagsLayout, task, null, null );
-                  taskContainer.setTag( R.id.task_overview_tags, "inflated" );
-               }
-               
-               setDateTimeSection( dateTimeSection, task );
-               
-               setLocationSection( locationSection, task );
-               
-               setParticipantsSection( participantsSection, task );
-               
-               // This is necessary due to a problem with attribute
-               // autoLink="all". This causes to render the text
-               // wrongly after orientation change. We prevent this
-               // by remember ourself if this was inflated already.
-               if ( taskContainer.getTag( R.id.task_note ) == null )
-               {
-                  inflateNotes( taskContainer, task );
-                  taskContainer.setTag( R.id.task_note, "inflated" );
-               }
-               
-               if ( !TextUtils.isEmpty( task.getUrl() ) )
-               {
-                  ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
-               }
-               else
-               {
-                  urlSection.setVisibility( View.GONE );
-               }
+               client.release();
+            }
+            else
+            {
+               LogUtils.logDBError( this, TAG, "Task" );
             }
          }
+         
+         if ( task != null )
+         {
+            setContentView( R.layout.task_activity );
+            
+            try
+            {
+               taskContainer = (ViewGroup) findViewById( R.id.task_container );
+               priorityBar = taskContainer.findViewById( R.id.task_overview_priority_bar );
+               addedDate = (TextView) taskContainer.findViewById( R.id.task_overview_added_date );
+               completedDate = (TextView) taskContainer.findViewById( R.id.task_overview_completed_date );
+               source = (TextView) taskContainer.findViewById( R.id.task_overview_src );
+               description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
+               listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
+               tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
+               dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
+               locationSection = taskContainer.findViewById( R.id.task_location );
+               participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
+               urlSection = taskContainer.findViewById( R.id.task_url );
+               
+               inflateNotes( taskContainer, task );
+            }
+            catch ( final ClassCastException e )
+            {
+               Log.e( TAG, "Invalid layout spec.", e );
+               throw e;
+            }
+         }
+         else
+         {
+            UIUtils.initializeErrorWithIcon( this,
+                                             R.string.err_entity_not_found,
+                                             getResources().getQuantityString( R.plurals.g_task,
+                                                                               1 ) );
+         }
       }
+      else
+      {
+         UIUtils.initializeErrorWithIcon( this,
+                                          R.string.err_unsupported_intent_action,
+                                          intent.getAction() );
+      }
+   }
+   
+
+
+   @Override
+   protected void onResume()
+   {
+      super.onResume();
+      
+      if ( task != null )
+      {
+         UIUtils.setPriorityColor( priorityBar, task );
+         
+         addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
+                                                                .getTime(),
+                                                            FULL_DATE_FLAGS ) );
+         
+         if ( task.getCompleted() != null )
+            completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
+                                                                       .getTime(),
+                                                                   FULL_DATE_FLAGS ) );
+         else
+            completedDate.setVisibility( View.GONE );
+         
+         if ( !TextUtils.isEmpty( task.getSource() ) )
+         {
+            String sourceStr = task.getSource();
+            if ( sourceStr.equalsIgnoreCase( "js" ) )
+               sourceStr = "web";
+            
+            source.setText( getString( R.string.task_source, sourceStr ) );
+         }
+         else
+            source.setVisibility( View.GONE );
+         
+         UIUtils.setTaskDescription( description, task, null );
+         
+         listName.setText( task.getListName() );
+         
+         UIUtils.inflateTags( this, tagsLayout, task, null, null );
+         
+         setDateTimeSection( dateTimeSection, task );
+         
+         setLocationSection( locationSection, task );
+         
+         setParticipantsSection( participantsSection, task );
+         
+         if ( !TextUtils.isEmpty( task.getUrl() ) )
+         {
+            ( (TextView) urlSection.findViewById( TitleWithTextLayout.VIEW_ID ) ).setText( task.getUrl() );
+         }
+         else
+         {
+            urlSection.setVisibility( View.GONE );
+         }
+      }
+   }
+   
+
+
+   public void onEditTask( View v )
+   {
+      if ( task != null )
+         startActivity( Intents.createEditTaskIntent( this, task.getId() ) );
    }
    
 
@@ -352,6 +394,8 @@ public class TaskActivity extends Activity
 
    private void setParticipantsSection( ViewGroup view, Task task )
    {
+      view.removeAllViews();
+      
       final ParticipantList participants = task.getParticipants();
       
       if ( participants != null && participants.getCount() > 0 )
@@ -416,8 +460,7 @@ public class TaskActivity extends Activity
             }
             catch ( final RemoteException e )
             {
-               Log.e( TAG, "Unable to retrieve notes from DB for task ID "
-                  + task.getTaskSeriesId(), e );
+               LogUtils.logDBError( this, TAG, "Notes", e );
             }
             
             client.release();
@@ -471,7 +514,7 @@ public class TaskActivity extends Activity
          }
          else
          {
-            LogUtils.logDBError( this, TAG, "Lists" );
+            LogUtils.logDBError( this, TAG, "Notes" );
          }
       }
    }

@@ -14,7 +14,7 @@
 	-->
 
 <resources>
-	<declare-styleable name="TitleWithText">
+	<declare-styleable name="TitleWithView">
 		<attr name="showTopLine" format="boolean" />
 		<attr name="topLineColor" format="reference|color" />
 		<attr name="topLineHeight" format="reference|dimension" />
@@ -27,17 +27,28 @@
 			<flag name="bold" value="1" />
 			<flag name="italic" value="2" />
 		</attr>
+      <attr name="allPadding" format="reference|dimension" />
 		<attr name="titlePaddingTop" format="reference|dimension" />
-		<attr name="text" format="reference|string" />
-		<attr name="textColor" format="reference|color" />
-		<attr name="textSize" format="reference|dimension" />
-		<attr name="textStyle">
-			<flag name="normal" value="0" />
-			<flag name="bold" value="1" />
-			<flag name="italic" value="2" />
-		</attr>
-		<attr name="textPaddingTop" format="reference|dimension" />
+      <attr name="viewMarginTop" format="reference|dimension" />
 	</declare-styleable>
+   
+   <declare-styleable name="TitleWithText">
+      <attr name="text" format="reference|string" />
+      <attr name="textColor" format="reference|color" />
+      <attr name="textSize" format="reference|dimension" />
+      <attr name="textStyle">
+         <flag name="normal" value="0" />
+         <flag name="bold" value="1" />
+         <flag name="italic" value="2" />
+      </attr>
+      <attr name="textPaddingTop" format="reference|dimension" />
+   </declare-styleable>
+   
+   <declare-styleable name="TitleWithSpinner">
+      <attr name="notingEntry" format="string|reference" />
+      <attr name="spinnerEntries" format="reference" />
+      <attr name="spinnerValues" format="reference" />
+   </declare-styleable>
 
 	<declare-styleable name="TitleBar">
 		<attr name="titleText" format="reference|string" />

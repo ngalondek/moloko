@@ -27,13 +27,16 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import dev.drsoran.moloko.service.sync.lists.SyncableList;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopSyncOperation;
 
 
 public class SyncDiffer
 {
-   public final static < O, T > ArrayList< O > diff( Collection< T > reference,
-                                                     SyncableList< O, T > target,
-                                                     Object... params ) throws NullPointerException
+   @SuppressWarnings( "unchecked" )
+   public final static < O extends ISyncOperation, T > ArrayList< O > diff( Collection< T > reference,
+                                                                            SyncableList< T > target,
+                                                                            Object... params ) throws NullPointerException
    {
       if ( reference == null || target == null )
          throw new NullPointerException();
@@ -55,18 +58,20 @@ public class SyncDiffer
          // INSERT: The reference element is not contained in the target list.
          if ( pos == -1 )
          {
-            operation = target.computeInsertOperation( refElement, params );
+            operation = (O) target.computeInsertOperation( refElement, params );
          }
          
          // UPDATE: The reference element is contained in the target list.
          else
          {
-            operation = target.computeUpdateOperation( pos, refElement, params );
+            operation = (O) target.computeUpdateOperation( pos,
+                                                           refElement,
+                                                           params );
          }
          
          ok = operation != null;
          
-         if ( ok )
+         if ( ok && !( operation instanceof NoopSyncOperation ) )
             operations.add( operation );
       }
       
@@ -79,12 +84,12 @@ public class SyncDiffer
          
          for ( T tgtElement : untouchedElements )
          {
-            final O operation = target.computeDeleteOperation( tgtElement,
-                                                               params );
+            final O operation = (O) target.computeDeleteOperation( tgtElement,
+                                                                   params );
             
             ok = operation != null;
             
-            if ( ok )
+            if ( ok && !( operation instanceof NoopSyncOperation ) )
                operations.add( operation );
          }
       }

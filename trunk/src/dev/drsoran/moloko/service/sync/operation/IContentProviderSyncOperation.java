@@ -29,10 +29,8 @@ import android.content.ContentProviderOperation;
 
 public interface IContentProviderSyncOperation extends ISyncOperation
 {
-   public final static class Op
+   public final static class Op extends ISyncOperation.Op
    {
-      public final static int NOOP = 0;
-      
       public final static int INSERT = 1;
       
       public final static int UPDATE = 2;

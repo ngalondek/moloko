@@ -33,7 +33,7 @@ import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 
 // TODO: Replace ISyncOperation parameter by more special one.
 public class ServerSyncableList< T extends IServerSyncable< T > > extends
-         SyncableList< ISyncOperation, T >
+         SyncableList< T >
 {
    
    private final Service service;

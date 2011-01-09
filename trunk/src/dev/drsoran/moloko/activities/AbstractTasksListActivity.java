@@ -530,7 +530,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    private void onTaskEdit( int pos )
    {
-      
+      startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
    }
    
 

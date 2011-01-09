@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
@@ -165,7 +164,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          case IRtmProviderPart.MATCH_ITEM_TYPE:
-            cursor = matchType.part.query( Long.toString( ContentUris.parseId( uri ) ),
+            cursor = matchType.part.query( uri.getLastPathSegment(),
                                            projection,
                                            selection,
                                            selectionArgs,
@@ -243,7 +242,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          case IRtmProviderPart.MATCH_ITEM_TYPE:
-            numDeleted = matchType.part.delete( Long.toString( ContentUris.parseId( uri ) ),
+            numDeleted = matchType.part.delete( uri.getLastPathSegment(),
                                                 where,
                                                 whereArgs );
             break;
@@ -285,7 +284,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          case IRtmProviderPart.MATCH_ITEM_TYPE:
-            numUpdated = matchType.part.update( Long.toString( ContentUris.parseId( uri ) ),
+            numUpdated = matchType.part.update( uri.getLastPathSegment(),
                                                 values,
                                                 where,
                                                 whereArgs );

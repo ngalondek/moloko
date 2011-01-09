@@ -71,33 +71,9 @@ public class OverDueTasksHomeWidget extends LinearLayout implements
 
    public View getWidgetView()
    {
-      final Context context = getContext();
-      
-      final View view = LayoutInflater.from( context )
+      final View view = LayoutInflater.from( getContext() )
                                       .inflate( R.layout.home_activity_overdue_widget,
                                                 null );
-      
-      {
-         final TextView counterView = (TextView) view.findViewById( R.id.counter_bubble );
-         final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-                                                              + "today",
-                                                           true );
-         
-         final Cursor c = context.getContentResolver()
-                                 .query( RawTasks.CONTENT_URI, new String[]
-                                 { RawTasks._ID }, selection, null, null );
-         
-         if ( c != null )
-         {
-            counterView.setText( String.valueOf( c.getCount() ) );
-            c.close();
-         }
-         else
-         {
-            counterView.setText( "?" );
-         }
-      }
-      
       return view;
    }
    
@@ -113,4 +89,40 @@ public class OverDueTasksHomeWidget extends LinearLayout implements
                                               label.getText().toString(),
                                               -1 );
    }
+   
+
+
+   public void refresh()
+   {
+      final TextView counterView = (TextView) findViewById( R.id.counter_bubble );
+      final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
+                                                           + DateParser.tokenNames[ DateParser.TODAY ],
+                                                        true );
+      Cursor c = null;
+      
+      try
+      {
+         
+         c = getContext().getContentResolver().query( RawTasks.CONTENT_URI,
+                                                      new String[]
+                                                      { RawTasks._ID },
+                                                      selection,
+                                                      null,
+                                                      null );
+         if ( c != null )
+         {
+            counterView.setText( String.valueOf( c.getCount() ) );
+         }
+         else
+         {
+            counterView.setText( "?" );
+         }
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+   }
+   
 }

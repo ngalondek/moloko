@@ -26,7 +26,6 @@ import java.util.HashMap;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -193,8 +192,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
 
    public final static ContentProviderOperation deleteList( String listId )
    {
-      return ContentProviderOperation.newDelete( ContentUris.withAppendedId( Rtm.Lists.CONTENT_URI,
-                                                                             Long.parseLong( listId ) ) )
+      return ContentProviderOperation.newDelete( Queries.contentUriWithId( Rtm.Lists.CONTENT_URI,
+                                                                           listId ) )
                                      .build();
    }
    

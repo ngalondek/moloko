@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.content;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -82,7 +83,10 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
          
          if ( rowId > 0 )
          {
-            uri = Queries.contentUriWithId( getContentUri(), id );
+            if ( TextUtils.isEmpty( id ) )
+               uri = ContentUris.withAppendedId( getContentUri(), rowId );
+            else
+               uri = Queries.contentUriWithId( getContentUri(), id );
          }
       }
       

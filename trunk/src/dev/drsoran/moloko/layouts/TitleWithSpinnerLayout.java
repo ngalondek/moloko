@@ -46,8 +46,6 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    
    private String[] values;
    
-   private String nothingValue;
-   
    
 
    public TitleWithSpinnerLayout( Context context, AttributeSet attrs )
@@ -88,36 +86,44 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    
 
 
-   public void setSelection( String value )
+   public void setSelection( String value, int notFoundIndex )
    {
       final SpinnerAdapter adapter = spinner.getAdapter();
       
       if ( adapter != null )
       {
+         boolean found = false;
          final int cnt = adapter.getCount();
          
-         for ( int i = 0; i < cnt; i++ )
+         if ( value != null )
          {
-            final Object item = adapter.getItem( i );
-            
-            String spinnerValue = null;
-            
-            if ( converter != null )
-               spinnerValue = converter.convertToString( item );
-            else if ( values != null && values.length > i )
-               spinnerValue = values[ i ];
-            else
-               spinnerValue = item.toString();
-            
-            if ( spinnerValue.equals( value ) )
+            for ( int i = 0; !found && i < cnt; i++ )
             {
-               if ( spinner.getSelectedItemPosition() != i )
+               final Object item = adapter.getItem( i );
+               
+               String spinnerValue = null;
+               
+               if ( converter != null )
+                  spinnerValue = converter.convertToString( item );
+               else if ( values != null && values.length > i )
+                  spinnerValue = values[ i ];
+               else
+                  spinnerValue = item.toString();
+               
+               if ( spinnerValue.equals( value ) )
                {
-                  spinner.setSelection( i );
+                  if ( spinner.getSelectedItemPosition() != i )
+                  {
+                     spinner.setSelection( i );
+                  }
+                  
+                  found = true;
                }
-               break;
             }
          }
+         
+         if ( !found && notFoundIndex != -1 && cnt > notFoundIndex )
+            spinner.setSelection( notFoundIndex );
       }
    }
    
@@ -129,13 +135,6 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
          return values[ pos ];
       else
          return null;
-   }
-   
-
-
-   public String getNothingValue()
-   {
-      return nothingValue;
    }
    
 
@@ -171,11 +170,6 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
       if ( valuesId != -1 )
       {
          values = context.getResources().getStringArray( valuesId );
-      }
-      
-      if ( array.hasValue( R.styleable.TitleWithSpinner_notingEntry ) )
-      {
-         nothingValue = array.getString( R.styleable.TitleWithSpinner_notingEntry );
       }
       
       array.recycle();

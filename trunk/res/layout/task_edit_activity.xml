@@ -320,8 +320,7 @@
                android:layout_below="@id/task_edit_estimate_layout"
                android:layout_alignLeft="@id/task_edit_desc"
                moloko:titlePaddingTop="8dip"
-               moloko:title="@string/task_location"
-               moloko:notingEntry="@string/task_edit_location_no" />
+               moloko:title="@string/task_location" />
 
             <dev.drsoran.moloko.layouts.TitleWithEditTextLayout
                android:id="@+id/task_edit_url"

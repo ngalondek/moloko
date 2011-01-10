@@ -152,4 +152,41 @@ public final class Queries
    {
       return c.isNull( index ) ? defValue : c.getInt( index ) != 0;
    }
+   
+
+
+   public final static String[] cursorAsStringArray( Cursor c, int columnIndex )
+   {
+      return cursorAsStringArray( c, columnIndex, null, 0 );
+   }
+   
+
+
+   public final static String[] cursorAsStringArray( Cursor c,
+                                                     int columnIndex,
+                                                     String[] array,
+                                                     int startIdx )
+   {
+      String[] res = null;
+      
+      if ( array == null || c.getCount() > array.length )
+         res = new String[ c.getCount() ];
+      else
+         res = array;
+      
+      if ( res.length > 0 )
+      {
+         boolean ok = c.moveToFirst();
+         
+         for ( int i = startIdx; ok && !c.isAfterLast(); c.moveToNext(), ++i )
+         {
+            res[ i ] = c.getString( columnIndex );
+         }
+         
+         if ( !ok )
+            res = null;
+      }
+      
+      return res;
+   }
 }

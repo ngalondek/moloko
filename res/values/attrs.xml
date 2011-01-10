@@ -45,7 +45,6 @@
    </declare-styleable>
    
    <declare-styleable name="TitleWithSpinner">
-      <attr name="notingEntry" format="string|reference" />
       <attr name="spinnerEntries" format="reference" />
       <attr name="spinnerValues" format="reference" />
    </declare-styleable>

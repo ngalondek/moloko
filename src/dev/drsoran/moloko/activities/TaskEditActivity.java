@@ -35,6 +35,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
@@ -52,9 +53,12 @@ import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -272,13 +276,13 @@ public class TaskEditActivity extends Activity
    {
       try
       {
-         Cursor c = managedQuery( Lists.CONTENT_URI,
-                                  new String[]
-                                  { Lists._ID, Lists.LIST_NAME,
-                                   Lists.IS_SMART_LIST },
-                                  Lists.IS_SMART_LIST + " = 0",
-                                  null,
-                                  Lists.DEFAULT_SORT_ORDER );
+         final Cursor c = managedQuery( Lists.CONTENT_URI,
+                                        new String[]
+                                        { Lists._ID, Lists.LIST_NAME,
+                                         Lists.IS_SMART_LIST },
+                                        Lists.IS_SMART_LIST + " = 0",
+                                        null,
+                                        Lists.DEFAULT_SORT_ORDER );
          
          if ( c != null )
          {
@@ -353,82 +357,88 @@ public class TaskEditActivity extends Activity
 
    private void initializeLocationSpinner()
    {
-      // try
-      // {
-      // Cursor c = managedQuery( Locations.CONTENT_URI,
-      // new String[]
-      // { Locations._ID, Locations.LOCATION_NAME },
-      // null,
-      // null,
-      // Locations.DEFAULT_SORT_ORDER );
-      // if ( c != null )
-      // {
-      // final SimpleCursorAdapter adapter = new SimpleCursorAdapter( this,
-      // android.R.layout.simple_spinner_item,
-      // c,
-      // new String[]
-      // { Locations.LOCATION_NAME },
-      // new int[]
-      // { android.R.id.text1 } );
-      // adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-      // adapter.setStringConversionColumn( 1 );
-      //            
-      // location.setAdapter( adapter );
-      // location.setStringConverter( new StringConverter()
-      // {
-      // public String convertToString( Object object )
-      // {
-      // return adapter.convertToString( (Cursor) object ).toString();
-      // }
-      // } );
-      //            
-      // location.setOnItemSelectedListener( new SpinnerChangedListener()
-      // {
-      // @Override
-      // public void onItemSelected( AdapterView< ? > parent,
-      // View view,
-      // int pos,
-      // long row )
-      // {
-      // final String selectedLocationName = adapter.convertToString( (Cursor) adapter.getItem( pos ) )
-      // .toString();
-      //                  
-      // if ( Strings.hasStringChanged( task.getLocationName(),
-      // selectedLocationName ) )
-      // {
-      // onLocationChanged( selectedLocationName );
-      // }
-      // }
-      // } );
-      // }
-      // else
-      // throw new Exception();
-      // }
-      // catch ( Exception e )
-      // {
-      // LogUtils.logDBError( this, TAG, "Locations", e );
-      // }
+      Cursor c = null;
+      
+      try
+      {
+         c = getContentResolver().query( Locations.CONTENT_URI,
+                                         new String[]
+                                         { Locations._ID,
+                                          Locations.LOCATION_NAME },
+                                         null,
+                                         null,
+                                         Locations.DEFAULT_SORT_ORDER );
+         if ( c != null )
+         {
+            String[] locationNames = new String[ c.getCount() + 1 ];
+            // Add the "nowhere" entry as first
+            locationNames[ 0 ] = getString( R.string.task_edit_location_no );
+            // Add the locations to the array
+            locationNames = Queries.cursorAsStringArray( c, 1, locationNames, 1 );
+            
+            if ( locationNames != null )
+            {
+               final ArrayAdapter< String > adapter = new ArrayAdapter< String >( this,
+                                                                                  android.R.layout.simple_spinner_item,
+                                                                                  android.R.id.text1,
+                                                                                  locationNames );
+               adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+               location.setAdapter( adapter );
+               location.setOnItemSelectedListener( new SpinnerChangedListener()
+               {
+                  @Override
+                  public void onItemSelected( AdapterView< ? > parent,
+                                              View view,
+                                              int pos,
+                                              long row )
+                  {
+                     final String selectedLocationName = parent.getItemAtPosition( pos )
+                                                               .toString();
+                     
+                     if ( Strings.hasStringChanged( task.getLocationName(),
+                                                    selectedLocationName ) )
+                     {
+                        onLocationChanged( selectedLocationName );
+                     }
+                  }
+               } );
+            }
+            else
+               throw new Exception();
+         }
+         else
+            throw new Exception();
+      }
+      catch ( Exception e )
+      {
+         LogUtils.logDBError( this, TAG, "Locations", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
    }
    
 
 
    private void refeshListSpinner()
    {
-      list.setSelection( task.getListName() );
+      list.setSelection( task.getListName(), -1 );
    }
    
 
 
    private void refeshPrioritySpinner()
    {
-      priority.setSelection( RtmTask.convertPriority( task.getPriority() ) );
+      priority.setSelection( RtmTask.convertPriority( task.getPriority() ), -1 );
    }
    
 
 
    private void refreshLocationSpinner()
    {
-      location.setSelection( task.getLocationName() );
+      location.setSelection( task.getLocationName(), 0 );
    }
    
 

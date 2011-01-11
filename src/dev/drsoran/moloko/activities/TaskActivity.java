@@ -46,7 +46,6 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.LogUtils;
@@ -214,7 +213,7 @@ public class TaskActivity extends Activity
          
          if ( !TextUtils.isEmpty( task.getUrl() ) )
          {
-            ( (TextView) urlSection.findViewById( TitleWithTextLayout.TEXT_VIEW_ID ) ).setText( task.getUrl() );
+            ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
          }
          else
          {

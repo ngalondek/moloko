@@ -26,12 +26,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import dev.drsoran.moloko.R;
 
 
 public class TitleWithEditTextLayout extends TitleWithViewLayout
 {
-   public final static int EDIT_TEXT_VIEW_ID = 1;
-   
    private EditText editText;
    
    
@@ -66,7 +65,7 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    {
       editText = new EditText( context, attrs );
       editText.setLayoutParams( generateDefaultLayoutParams() );
-      editText.setId( EDIT_TEXT_VIEW_ID );
+      editText.setId( R.id.title_with_edit_text );
       
       container.addView( editText );
    }

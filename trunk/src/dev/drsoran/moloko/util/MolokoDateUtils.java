@@ -45,15 +45,15 @@ public class MolokoDateUtils
    
    public final static int FORMAT_SHOW_WEEKDAY = 1 << 2;
    
-   public final static int FORMAT_ABR_WEEKDAY = 1 << 3;
+   public final static int FORMAT_PARSER = FORMAT_WITH_YEAR | FORMAT_NUMERIC
+      | ( 1 << 3 );
    
-   public final static int FORMAT_ABR_MONTH = 1 << 4;
+   public final static int FORMAT_ABR_WEEKDAY = 1 << 4;
+   
+   public final static int FORMAT_ABR_MONTH = 1 << 5;
    
    public final static int FORMAT_ABR_ALL = FORMAT_ABR_WEEKDAY
       | FORMAT_ABR_MONTH;
-   
-   public final static int FORMAT_PARSER = FORMAT_WITH_YEAR | FORMAT_NUMERIC
-      | ( 1 << 3 );
    
    
 
@@ -301,7 +301,7 @@ public class MolokoDateUtils
             if ( ( flags & FORMAT_NUMERIC ) != 0 )
                if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
                   // the parser needs the EU format. (day first)
-                  if ( ( flags & FORMAT_PARSER ) != 0 )
+                  if ( ( flags & FORMAT_PARSER ) == FORMAT_PARSER )
                      pattern.append( "d/M/yyyy" );
                   else
                      pattern.append( "M/d/yyyy" );

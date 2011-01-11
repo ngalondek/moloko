@@ -47,7 +47,6 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.rtm.Task;
 
 
@@ -330,7 +329,7 @@ public final class UIUtils
       if ( ok )
          try
          {
-            final TextView textView = (TextView) layout.findViewById( TitleWithTextLayout.TEXT_VIEW_ID );
+            final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
             
             if ( TextUtils.isEmpty( text ) )
             {
@@ -363,7 +362,7 @@ public final class UIUtils
       if ( ok && text != null )
          try
          {
-            final TextView textView = (TextView) layout.findViewById( TitleWithTextLayout.TEXT_VIEW_ID );
+            final TextView textView = (TextView) layout.findViewById( R.id.title_with_text_text );
             applySpannable( textView, text );
          }
          catch ( ClassCastException e )
@@ -381,7 +380,7 @@ public final class UIUtils
                                                      Object... params )
    {
       activity.setContentView( R.layout.error_with_icon );
-      final TextView text = (TextView) activity.findViewById( TitleWithTextLayout.TEXT_VIEW_ID );
+      final TextView text = (TextView) activity.findViewById( R.id.title_with_text_text );
       final String msg = activity.getResources().getString( resId, params );
       text.setText( msg );
       

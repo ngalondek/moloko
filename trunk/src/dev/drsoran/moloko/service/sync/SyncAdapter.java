@@ -32,12 +32,14 @@ import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProvider;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
@@ -48,7 +50,9 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.SyncProviderPart;
+import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.provider.Rtm.Sync;
@@ -148,7 +152,29 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                                           count );
                         }
                         
-                        provider.applyBatch( contentProviderOperationsBatch );
+                        {
+                           final ContentProvider contentProvider = provider.getLocalContentProvider();
+                           
+                           if ( contentProvider instanceof RtmProvider )
+                           {
+                              final TransactionalAccess transactionalAccess = ( (RtmProvider) contentProvider ).newTransactionalAccess();
+                              transactionalAccess.beginTransaction();
+                              
+                              try
+                              {
+                                 provider.applyBatch( contentProviderOperationsBatch );
+                                 transactionalAccess.setTransactionSuccessful();
+                              }
+                              finally
+                              {
+                                 transactionalAccess.endTransaction();
+                              }
+                           }
+                           else
+                           {
+                              provider.applyBatch( contentProviderOperationsBatch );
+                           }
+                        }
                         
                         // If we synced only the settings, we do not update the
                         // last sync time cause this was no full sync.
@@ -183,21 +209,31 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                       authToken );
                }
             }
-            catch ( final AuthenticatorException e )
+            catch ( SQLException e )
+            {
+               syncResult.databaseError = true;
+               Log.e( TAG, "SQLException", e );
+            }
+            catch ( IllegalStateException e )
+            {
+               syncResult.databaseError = true;
+               Log.e( TAG, "IllegalStateException", e );
+            }
+            catch ( AuthenticatorException e )
             {
                syncResult.stats.numParseExceptions++;
                Log.e( TAG, "AuthenticatorException", e );
             }
-            catch ( final OperationCanceledException e )
+            catch ( OperationCanceledException e )
             {
                Log.e( TAG, "OperationCanceledExcetpion", e );
             }
-            catch ( final IOException e )
+            catch ( IOException e )
             {
                Log.e( TAG, "IOException", e );
                syncResult.stats.numIoExceptions++;
             }
-            catch ( final ParseException e )
+            catch ( ParseException e )
             {
                syncResult.stats.numParseExceptions++;
                Log.e( TAG, "ParseException", e );

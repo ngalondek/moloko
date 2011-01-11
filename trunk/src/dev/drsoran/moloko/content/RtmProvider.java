@@ -142,6 +142,13 @@ public class RtmProvider extends ContentProvider
    
 
 
+   public TransactionalAccess newTransactionalAccess() throws SQLException
+   {
+      return TransactionalAccess.newTransactionalAccess( dbHelper );
+   }
+   
+
+
    @Override
    public Cursor query( Uri uri,
                         String[] projection,

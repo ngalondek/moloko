@@ -33,6 +33,10 @@ import dev.drsoran.moloko.R;
 
 public class TitleWithTextLayout extends TitleWithViewLayout
 {
+   public final static int TEXT_VIEW_ID = 1;
+   
+   
+
    public TitleWithTextLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -55,7 +59,7 @@ public class TitleWithTextLayout extends TitleWithViewLayout
                           ViewGroup container )
    {
       final TextView text = new TextView( context );
-      text.setId( VIEW_ID );
+      text.setId( TEXT_VIEW_ID );
       text.setAutoLinkMask( Linkify.ALL );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,

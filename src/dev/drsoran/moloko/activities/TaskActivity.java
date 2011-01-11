@@ -214,7 +214,7 @@ public class TaskActivity extends Activity
          
          if ( !TextUtils.isEmpty( task.getUrl() ) )
          {
-            ( (TextView) urlSection.findViewById( TitleWithTextLayout.VIEW_ID ) ).setText( task.getUrl() );
+            ( (TextView) urlSection.findViewById( TitleWithTextLayout.TEXT_VIEW_ID ) ).setText( task.getUrl() );
          }
          else
          {

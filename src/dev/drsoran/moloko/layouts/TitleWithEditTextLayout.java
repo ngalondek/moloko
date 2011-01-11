@@ -30,6 +30,12 @@ import android.widget.EditText;
 
 public class TitleWithEditTextLayout extends TitleWithViewLayout
 {
+   public final static int EDIT_TEXT_VIEW_ID = 1;
+   
+   private EditText editText;
+   
+   
+
    public TitleWithEditTextLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -49,7 +55,7 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
 
    public void setText( CharSequence value )
    {
-      ( (EditText) findViewById( VIEW_ID ) ).setText( value );
+      editText.setText( value );
    }
    
 
@@ -58,10 +64,10 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      final EditText text = new EditText( context, attrs );
-      text.setLayoutParams( generateDefaultLayoutParams() );
-      text.setId( VIEW_ID );
+      editText = new EditText( context, attrs );
+      editText.setLayoutParams( generateDefaultLayoutParams() );
+      editText.setId( EDIT_TEXT_VIEW_ID );
       
-      container.addView( text );
+      container.addView( editText );
    }
 }

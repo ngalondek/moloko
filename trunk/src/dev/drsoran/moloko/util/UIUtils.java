@@ -330,7 +330,7 @@ public final class UIUtils
       if ( ok )
          try
          {
-            final TextView textView = (TextView) layout.findViewById( TitleWithTextLayout.VIEW_ID );
+            final TextView textView = (TextView) layout.findViewById( TitleWithTextLayout.TEXT_VIEW_ID );
             
             if ( TextUtils.isEmpty( text ) )
             {
@@ -363,7 +363,7 @@ public final class UIUtils
       if ( ok && text != null )
          try
          {
-            final TextView textView = (TextView) layout.findViewById( TitleWithTextLayout.VIEW_ID );
+            final TextView textView = (TextView) layout.findViewById( TitleWithTextLayout.TEXT_VIEW_ID );
             applySpannable( textView, text );
          }
          catch ( ClassCastException e )
@@ -381,7 +381,7 @@ public final class UIUtils
                                                      Object... params )
    {
       activity.setContentView( R.layout.error_with_icon );
-      final TextView text = (TextView) activity.findViewById( TitleWithTextLayout.VIEW_ID );
+      final TextView text = (TextView) activity.findViewById( TitleWithTextLayout.TEXT_VIEW_ID );
       final String msg = activity.getResources().getString( resId, params );
       text.setText( msg );
       

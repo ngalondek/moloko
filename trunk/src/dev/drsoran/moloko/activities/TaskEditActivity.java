@@ -374,7 +374,7 @@ public class TaskEditActivity extends Activity
             // Add the "nowhere" entry as first
             locationNames[ 0 ] = getString( R.string.task_edit_location_no );
             // Add the locations to the array
-            locationNames = Queries.cursorAsStringArray( c, 1, locationNames, 1 );
+            locationNames = Queries.fillStringArray( c, 1, locationNames, 1 );
             
             if ( locationNames != null )
             {

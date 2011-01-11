@@ -37,6 +37,8 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
    
    private WrappingLayout wrappingLayout;
    
+   public final static int WRAPPING_VIEW_ID = 1;
+   
    
 
    public TitleWithWrappingLayout( Context context, AttributeSet attrs )
@@ -61,7 +63,7 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
                           ViewGroup container )
    {
       wrappingLayout = new WrappingLayout( context );
-      wrappingLayout.setId( VIEW_ID );
+      wrappingLayout.setId( WRAPPING_VIEW_ID );
       
       // WrappingLayout
       TypedArray array = context.obtainStyledAttributes( attrs,

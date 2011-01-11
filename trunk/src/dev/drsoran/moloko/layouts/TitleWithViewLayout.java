@@ -39,10 +39,6 @@ import dev.drsoran.moloko.R;
 
 public abstract class TitleWithViewLayout extends LinearLayout
 {
-   public final static int VIEW_ID = 1;
-   
-   
-
    protected TitleWithViewLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );

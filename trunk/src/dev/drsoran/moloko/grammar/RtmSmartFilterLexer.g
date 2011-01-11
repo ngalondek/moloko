@@ -14,6 +14,7 @@ options
    import dev.drsoran.provider.Rtm.Tasks;
    import dev.drsoran.provider.Rtm.Tags;
    import dev.drsoran.provider.Rtm.Notes;
+   import dev.drsoran.provider.Rtm.Locations;
 
    import org.antlr.runtime.RecognitionException;
 
@@ -397,7 +398,15 @@ OP_ISLOCATED : 'islocated:'
                (
                   TRUE
                   {
-                     result.append(" IS NOT NULL");
+                     // Handle the case that shared tasks have a location
+                     // ID but not from our DB.
+                     result.append(" IS NOT NULL AND ");
+                     result.append( Tasks.LOCATION_ID );
+                     result.append(" IN ( SELECT ");
+                     result.append( Locations._ID );
+                     result.append(" FROM ");
+                     result.append( Locations.PATH );
+                     result.append(" )");
                      addRtmToken( OP_ISLOCATED, TRUE_LIT );
                   }
                   |

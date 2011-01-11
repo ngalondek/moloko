@@ -157,24 +157,24 @@ public final class Queries
 
    public final static String[] cursorAsStringArray( Cursor c, int columnIndex )
    {
-      return cursorAsStringArray( c, columnIndex, null, 0 );
+      return fillStringArray( c, columnIndex, null, 0 );
    }
    
 
 
-   public final static String[] cursorAsStringArray( Cursor c,
-                                                     int columnIndex,
-                                                     String[] array,
-                                                     int startIdx )
+   public final static String[] fillStringArray( Cursor c,
+                                                 int columnIndex,
+                                                 String[] array,
+                                                 int startIdx )
    {
       String[] res = null;
       
-      if ( array == null || c.getCount() > array.length )
+      if ( array == null )
          res = new String[ c.getCount() ];
       else
          res = array;
       
-      if ( res.length > 0 )
+      if ( res.length > 0 && c.getCount() < array.length )
       {
          boolean ok = c.moveToFirst();
          

@@ -35,6 +35,9 @@ import dev.drsoran.moloko.R;
 
 public class TitleWithSpinnerLayout extends TitleWithViewLayout
 {
+   public final static int SPINNER_VIEW_ID = 1;
+   
+   
    public interface StringConverter
    {
       String convertToString( Object object );
@@ -144,7 +147,7 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
                           ViewGroup container )
    {
       spinner = new Spinner( context );
-      spinner.setId( VIEW_ID );
+      spinner.setId( SPINNER_VIEW_ID );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.TitleWithSpinner,

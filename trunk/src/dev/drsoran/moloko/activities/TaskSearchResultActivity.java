@@ -131,7 +131,7 @@ public class TaskSearchResultActivity extends TasksListActivity
                               R.drawable.ic_title_error );
             
             final View wrongSyntaxView = findViewById( R.id.tasksearchresult_wrong_syntax );
-            final TextView text = (TextView) wrongSyntaxView.findViewById( TitleWithTextLayout.VIEW_ID );
+            final TextView text = (TextView) wrongSyntaxView.findViewById( TitleWithTextLayout.TEXT_VIEW_ID );
             
             final String msgStr = String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
                                                  filter.getFilterString() );

@@ -27,6 +27,11 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+
+import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.data.RtmAuth.Perms;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 
@@ -86,5 +91,31 @@ public final class AccountUtils
       {
          return false;
       }
+   }
+   
+
+
+   public final static RtmAuth.Perms getAccessLevel( Context context )
+   {
+      RtmAuth.Perms permission = Perms.nothing;
+      
+      final AccountManager accountManager = AccountManager.get( context );
+      
+      if ( accountManager != null )
+      {
+         final Account account = getRtmAccount( accountManager );
+         
+         if ( account != null )
+         {
+            final String permStr = accountManager.getUserData( account,
+                                                               Constants.FEAT_PERMISSION );
+            if ( !TextUtils.isEmpty( permStr ) )
+            {
+               permission = RtmAuth.Perms.valueOf( permStr );
+            }
+         }
+      }
+      
+      return permission;
    }
 }

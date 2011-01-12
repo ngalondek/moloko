@@ -56,6 +56,15 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
    
 
 
+   @Override
+   public void setEnabled( boolean enabled )
+   {
+      super.setEnabled( enabled );
+      wrappingLayout.setEnabled( false );
+   }
+   
+
+
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )

@@ -42,6 +42,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
 
@@ -51,6 +52,7 @@ import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -242,31 +244,14 @@ public class TaskEditActivity extends Activity
          
          refeshListSpinner();
          refeshPrioritySpinner();
+         refeshTags();
          refreshDue();
          refreshRecurrence();
          refreshEstimate();
          refreshLocationSpinner();
          refreshUrl();
          
-         UIUtils.inflateTags( this, tagsLayout, task, null, null );
-         
-         // UIUtils.setPriorityColor( priorityBar, task );
-         
-         /*
-          * setDateTimeSection( dateTimeSection, task );
-          * 
-          * setLocationSection( locationSection, task );
-          * 
-          * setParticipantsSection( participantsSection, task );
-          * 
-          * // This is necessary due to a problem with attribute // autoLink="all". This causes to render the text //
-          * wrongly after orientation change. We prevent this // by remember ourself if this was inflated already. if (
-          * taskContainer.getTag( R.id.task_note ) == null ) { inflateNotes( taskContainer, task );
-          * taskContainer.setTag( R.id.task_note, "inflated" ); }
-          * 
-          * if ( !TextUtils.isEmpty( task.getUrl() ) ) { ( (TextView) urlSection.findViewById( R.id.title_with_text_text
-          * ) ).setText( task.getUrl() ); } else { urlSection.setVisibility( View.GONE ); }
-          */
+         evaluateRtmAccessLevel();
       }
    }
    
@@ -436,6 +421,13 @@ public class TaskEditActivity extends Activity
    
 
 
+   private void refeshTags()
+   {
+      UIUtils.inflateTags( this, tagsLayout, task, null, null );
+   }
+   
+
+
    private void refreshLocationSpinner()
    {
       location.setSelection( task.getLocationName(), 0 );
@@ -511,6 +503,50 @@ public class TaskEditActivity extends Activity
    private void refreshUrl()
    {
       url.setText( task.getUrl() );
+   }
+   
+
+
+   private void evaluateRtmAccessLevel()
+   {
+      nameEdit.setEnabled( false );
+      list.setEnabled( false );
+      priority.setEnabled( false );
+      addTagButton.setEnabled( false );
+      removeTagButton.setEnabled( false );
+      dueEdit.setEnabled( false );
+      duePickerButton.setEnabled( false );
+      recurrEdit.setEnabled( false );
+      recurrPickerButton.setEnabled( false );
+      estimateEdit.setEnabled( false );
+      estimatePickerButton.setEnabled( false );
+      location.setEnabled( false );
+      url.setEnabled( false );
+      
+      final RtmAuth.Perms permission = AccountUtils.getAccessLevel( this );
+      
+      switch ( permission )
+      {
+         case delete:
+            removeTagButton.setEnabled( true );
+         case write:
+            list.setEnabled( true );
+            priority.setEnabled( true );
+            addTagButton.setEnabled( true );
+            dueEdit.setEnabled( true );
+            duePickerButton.setEnabled( true );
+            recurrEdit.setEnabled( true );
+            recurrPickerButton.setEnabled( true );
+            estimateEdit.setEnabled( true );
+            estimatePickerButton.setEnabled( true );
+            location.setEnabled( true );
+            url.setEnabled( true );
+         case read:
+            nameEdit.setEnabled( true );
+            break;
+         default :
+            break;
+      }
    }
    
 

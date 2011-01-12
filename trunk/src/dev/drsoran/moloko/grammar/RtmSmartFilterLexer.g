@@ -197,17 +197,23 @@ options
 
       if ( cal != null )
       {
+         result.append( column );
+         
+      	// Check if we have 'NEVER'
+      	if ( !cal.isSet( Calendar.DATE ) )
+      	{      	   
+            result.append( " IS NULL" );
+      	}
+      	
          // Check if we have an explicit time
          // given.
-         if ( cal.isSet( Calendar.HOUR_OF_DAY ) )
+         else if ( cal.isSet( Calendar.HOUR_OF_DAY ) )
          {
-            result.append( column );
             result.append( " == " );
             result.append( cal.getTimeInMillis() );
          }
          else
          {
-            result.append( column );
             result.append( " >= " );
             result.append( cal.getTimeInMillis() );
             result.append( " AND " );
@@ -232,9 +238,18 @@ options
 
       if ( cal != null )
       {
-         result.append( column );
-         result.append( ( before ) ? " < " : " > " );
-         result.append( cal.getTimeInMillis() );
+	      result.append( column );
+	      
+   	   // Check if we have 'NEVER'
+      	if ( !cal.isSet( Calendar.DATE ) )
+      	{      	   
+            result.append( " IS NOT NULL" );
+      	}
+         else
+         {
+            result.append( ( before ) ? " < " : " > " );
+            result.append( cal.getTimeInMillis() );
+         }
       }
       else
          // Parser error

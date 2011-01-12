@@ -60,7 +60,7 @@ public final class TransactionalAccess
    
 
 
-   public void setTransactionSuccessful() throws IllegalStateException
+   public void setTransactionSuccessful()
    {
       database.setTransactionSuccessful();
    }

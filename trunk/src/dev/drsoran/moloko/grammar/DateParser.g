@@ -525,6 +525,10 @@ date_natural [Calendar cal]
    : (TODAY | TONIGHT)
      {
      }
+   | NEVER
+     {
+        cal.clear( Calendar.DATE );
+     }
    | TOMORROW
      {
         cal.roll( Calendar.DAY_OF_YEAR, true );

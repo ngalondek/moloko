@@ -65,6 +65,15 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    
 
 
+   @Override
+   public void setEnabled( boolean enabled )
+   {
+      super.setEnabled( enabled );
+      spinner.setEnabled( false );
+   }
+   
+
+
    public void setAdapter( SpinnerAdapter adapter )
    {
       spinner.setAdapter( adapter );

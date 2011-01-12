@@ -33,6 +33,10 @@ import dev.drsoran.moloko.R;
 
 public class TitleWithTextLayout extends TitleWithViewLayout
 {
+   private TextView textView;
+   
+   
+
    public TitleWithTextLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -50,27 +54,36 @@ public class TitleWithTextLayout extends TitleWithViewLayout
    
 
 
+   @Override
+   public void setEnabled( boolean enabled )
+   {
+      super.setEnabled( enabled );
+      textView.setEnabled( false );
+   }
+   
+
+
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      final TextView text = new TextView( context );
-      text.setId( R.id.title_with_text_text );
-      text.setAutoLinkMask( Linkify.ALL );
+      textView = new TextView( context );
+      textView.setId( R.id.title_with_text_text );
+      textView.setAutoLinkMask( Linkify.ALL );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.TitleWithText,
                                                                0,
                                                                0 );
       // Text
-      setAttr( context, text, array, new int[]
+      setAttr( context, textView, array, new int[]
       { R.styleable.TitleWithText_text, R.styleable.TitleWithText_textColor,
        R.styleable.TitleWithText_textSize, R.styleable.TitleWithText_textStyle,
        R.styleable.TitleWithText_textPaddingTop } );
       
       array.recycle();
       
-      container.addView( text );
+      container.addView( textView );
    }
    
 }

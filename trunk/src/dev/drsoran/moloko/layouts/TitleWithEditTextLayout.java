@@ -59,6 +59,15 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    
 
 
+   @Override
+   public void setEnabled( boolean enabled )
+   {
+      super.setEnabled( enabled );
+      editText.setEnabled( false );
+   }
+   
+
+
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )

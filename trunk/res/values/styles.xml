@@ -297,6 +297,12 @@
       <item
          name="android:textStyle">bold</item>
    </style>
+   
+   <style
+      name="Task_Edit_ButtonBar">
+      <item
+         name="android:background">@color/task_activity_button_bar_bgnd_fill</item>
+   </style>
 
 
    <!-- ********* -->

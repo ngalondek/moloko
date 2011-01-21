@@ -30,6 +30,11 @@ import dev.drsoran.moloko.R;
 
 public final class LogUtils
 {
+   // TODO: Check where this can be used more often.
+   public final static String GENERIC_DB_ERROR = "Error during DB access";
+   
+   
+
    private LogUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );

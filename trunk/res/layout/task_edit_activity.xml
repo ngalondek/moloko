@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
-      free software: you can redistribute it and/or modify it under the terms of
-      the GNU General Public License as published by the Free Software
-      Foundation, either version 3 of the License, or (at your option) any later
-      version. Moloko is distributed in the hope that it will be useful, but
-      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-      for more details. You should have received a copy of the GNU General
-      Public License along with Moloko. If not, see
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
       implementation
    -->
 
-<LinearLayout
+<FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    style="@style/Task"
@@ -22,13 +23,14 @@
 
    <ScrollView
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent">
+      android:layout_height="fill_parent"
+      android:paddingBottom="70dip">
 
       <LinearLayout
          android:id="@+id/task_edit_container"
          android:orientation="vertical"
-         android:layout_height="wrap_content"
-         android:layout_width="fill_parent"
+         android:layout_height="fill_parent"
+         android:layout_width="wrap_content"
          android:layout_marginRight="?android:attr/scrollbarSize"
          android:paddingLeft="10dip"
          android:paddingTop="8dip"
@@ -341,4 +343,32 @@
       </LinearLayout>
    </ScrollView>
 
-</LinearLayout>
+   <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="70dip"
+      android:background="@color/app_btnbar_bgnd_fill"
+      android:layout_gravity="bottom">
+
+      <Button
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginLeft="5dip"
+         android:layout_marginTop="5dip"
+         android:layout_marginBottom="5dip"
+         android:layout_gravity="center_vertical|left"
+         android:layout_weight="0.5"
+         android:text="@string/btn_done"
+         android:onClick="onDone" />
+
+      <Button
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginRight="5dip"
+         android:layout_marginTop="5dip"
+         android:layout_marginBottom="5dip"
+         android:layout_gravity="center_vertical|right"
+         android:layout_weight="0.5"
+         android:text="@string/btn_cancel"
+         android:onClick="onCancel" />
+   </LinearLayout>
+</FrameLayout>

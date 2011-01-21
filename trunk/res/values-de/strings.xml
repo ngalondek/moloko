@@ -108,6 +108,7 @@
 	<string name="btn_cancel">Abbrechen</string>
 	<string name="btn_new_account">Neues Konto</string>
    <string name="btn_edit">Bearbeiten</string>
+   <string name="btn_done">Fertig</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
@@ -154,6 +155,7 @@
    <string name="task_edit_estimate">Geschätzte Dauer</string>
    <string name="task_edit_estimate_nothing">Nichts geschätzt</string>
    <string name="task_edit_location_no">Nirgendwo</string>
+   <string name="task_edit_validate_empty_name">Der Name der Aufgabe darf nicht leer sein</string>
 		
    <!-- TaskLists activity -->
    <string name="tasklists_no_lists">Es existieren kein Listen</string>

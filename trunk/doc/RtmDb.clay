@@ -299,6 +299,28 @@
 </foreign-key>
 </foreign-key-list>
 </table>
+<table id="8339e4:12d9ed556c8:-7fe6" name="modifications">
+<column-list>
+<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fe0" mandatory="true" name="_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fdf" mandatory="true" name="entity_uri">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fdd" mandatory="true" name="col_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fda" mandatory="false" name="new_value">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fd9" mandatory="false" name="synced_value">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
+</column-list>
+<primary-key id="8339e4:12d9ed556c8:-7fe5" name="PK_MODIFICATIONS">
+<primary-key-column name="_id"/>
+</primary-key>
+</table>
 </table-list>
 </schema>
 </schema-list>
@@ -317,5 +339,6 @@
 <table-figure refid="1735ee1:12b714ecdc7:-7fed" x="739" y="54"/>
 <table-figure refid="bf1775:12cd4b4f24d:-7fd8" x="201" y="689"/>
 <table-figure refid="bf1775:12cd4b4f24d:-7fcd" x="187" y="540"/>
+<table-figure refid="8339e4:12d9ed556c8:-7fe6" x="723" y="575"/>
 </diagram>
 </clay-model>

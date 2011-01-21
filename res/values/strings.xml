@@ -149,6 +149,7 @@
    <string name="btn_cancel">Cancel</string>
    <string name="btn_new_account">New account</string>
    <string name="btn_edit">Edit</string>
+   <string name="btn_done">Done</string>   
 	
 	<!-- Global menu items -->
    <string name="menu_opt_search_task_title">Search for tasks</string>
@@ -200,6 +201,7 @@
    <string name="task_edit_estimate">Estimate</string>
    <string name="task_edit_estimate_nothing">Nothing estimated</string>
    <string name="task_edit_location_no">Nowhere</string>
+   <string name="task_edit_validate_empty_name">The task name must not be empty</string>
    		
    <!-- TaskLists activity -->
    <string name="tasklists_no_lists">There are no lists</string>

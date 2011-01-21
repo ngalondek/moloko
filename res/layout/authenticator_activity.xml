@@ -128,7 +128,7 @@
    <FrameLayout
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:background="#c6c3c6"
+      android:background="@color/app_btnbar_bgnd_fill"
       android:paddingTop="4dip"
       android:paddingLeft="2dip"
       android:paddingRight="2dip">

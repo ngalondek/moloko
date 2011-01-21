@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
 
 import android.app.Activity;
 import android.content.ContentProviderClient;
@@ -40,6 +42,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -47,6 +50,9 @@ import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.ModificationsProviderPart;
+import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
@@ -61,6 +67,7 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
+import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -126,6 +133,8 @@ public class TaskEditActivity extends Activity
    private TitleWithSpinnerLayout location;
    
    private TitleWithEditTextLayout url;
+   
+   private final Set< Modification< ? > > modifications = new TreeSet< Modification< ? > >();
    
    
 
@@ -253,6 +262,40 @@ public class TaskEditActivity extends Activity
          
          evaluateRtmAccessLevel();
       }
+   }
+   
+
+
+   public void onDone( View v )
+   {
+      if ( validateInput() )
+      {
+         // Task name
+         if ( Strings.hasStringChanged( task.getName(), nameEdit.getText()
+                                                                .toString() ) )
+         {
+            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                       task.getTaskSeriesId() ),
+                                                             RtmTaskSeriesProviderPart.COL_INDICES.get( TaskSeries.TASKSERIES_NAME ),
+                                                             String.class,
+                                                             nameEdit.getText()
+                                                                     .toString() ) );
+         }
+         
+         // Apply the modifications to the DB.
+         if ( modifications.size() > 0 )
+         {
+            ModificationsProviderPart.applyModifications( getContentResolver(),
+                                                          modifications );
+         }
+      }
+   }
+   
+
+
+   public void onCancel( View v )
+   {
+      finish();
    }
    
 
@@ -547,6 +590,23 @@ public class TaskEditActivity extends Activity
          default :
             break;
       }
+   }
+   
+
+
+   private boolean validateInput()
+   {
+      // Task name
+      if ( TextUtils.isEmpty( nameEdit.getText() ) )
+      {
+         Toast.makeText( this,
+                         R.string.task_edit_validate_empty_name,
+                         Toast.LENGTH_SHORT ).show();
+         nameEdit.requestFocus();
+         return false;
+      }
+      
+      return true;
    }
    
 

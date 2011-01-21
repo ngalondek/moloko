@@ -1009,4 +1009,64 @@ public class Rtm
          + " COLLATE NOCASE";
    }
    
+
+   protected static interface ModificationsColumns
+   {
+      /**
+       * Designates the entity that has been modified by it's Content URI with ID.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String ENTITY_URI = "entity_uri";
+      
+      /**
+       * The ID of the modified column of the entity.
+       * <P>
+       * Type: INTEGER
+       * </P>
+       */
+      public final static String COL_ID = "col_id";
+      
+      /**
+       * The new value.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String NEW_VALUE = "new_value";
+      
+      /**
+       * The last synchronized value with the RTM server.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String SYNCED_VALUE = "synced_value";
+   }
+   
+
+   public static final class Modifications implements BaseColumns,
+            ModificationsColumns
+   {
+      public final static String PATH = "modfications";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing the settings.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.modifictaion";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.modifications";
+      
+      public static final String DEFAULT_SORT_ORDER = null;
+   }
 }

@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -32,6 +33,10 @@ import dev.drsoran.moloko.R;
 public class TitleWithEditTextLayout extends TitleWithViewLayout
 {
    private EditText editText;
+   
+   private int imeTypeEnabled;
+   
+   private final static int imeTypeDisabled = InputType.TYPE_NULL;
    
    
 
@@ -63,7 +68,10 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    public void setEnabled( boolean enabled )
    {
       super.setEnabled( enabled );
-      editText.setEnabled( false );
+      editText.setEnabled( enabled );
+      editText.setFocusable( enabled );
+      editText.setFocusableInTouchMode( enabled );
+      editText.setInputType( enabled ? imeTypeEnabled : imeTypeDisabled );
    }
    
 
@@ -75,6 +83,8 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
       editText = new EditText( context, attrs );
       editText.setLayoutParams( generateDefaultLayoutParams() );
       editText.setId( R.id.title_with_edit_text );
+      
+      imeTypeEnabled = editText.getInputType();
       
       container.addView( editText );
    }

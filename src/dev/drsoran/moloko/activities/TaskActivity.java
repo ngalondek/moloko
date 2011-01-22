@@ -39,6 +39,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
@@ -172,7 +173,73 @@ public class TaskActivity extends Activity
    protected void onResume()
    {
       super.onResume();
-      
+      loadTask();
+   }
+   
+
+
+   public void onEditTask( View v )
+   {
+      if ( task != null )
+         startActivityForResult( Intents.createEditTaskIntent( this,
+                                                               task.getId() ),
+                                 TaskEditActivity.REQ_EDIT_TASK );
+   }
+   
+
+
+   @Override
+   protected void onActivityResult( int requestCode, int resultCode, Intent data )
+   {
+      if ( task != null )
+      {
+         switch ( requestCode )
+         {
+            case TaskEditActivity.REQ_EDIT_TASK:
+               switch ( resultCode )
+               {
+                  case TaskEditActivity.RESULT_EDIT_TASK_FAILED:
+                     Toast.makeText( this,
+                                     R.string.task_save_error,
+                                     Toast.LENGTH_LONG ).show();
+                     break;
+                  
+                  case TaskEditActivity.RESULT_EDIT_TASK_CHANGED:
+                     final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+                     
+                     if ( client != null )
+                     {
+                        final Task oldTask = task;
+                        task = TasksProviderPart.getTask( client, task.getId() );
+                        client.release();
+                        
+                        if ( task == null )
+                           task = oldTask;
+                        else
+                           Toast.makeText( this,
+                                           R.string.task_save_ok,
+                                           Toast.LENGTH_LONG ).show();
+                     }
+                     else
+                     {
+                        LogUtils.logDBError( this, TAG, "Task" );
+                     }
+                     break;
+                  
+                  default :
+                     break;
+               }
+               break;
+            default :
+               break;
+         }
+      }
+   }
+   
+
+
+   private void loadTask()
+   {
       if ( task != null )
       {
          UIUtils.setPriorityColor( priorityBar, task );
@@ -220,14 +287,6 @@ public class TaskActivity extends Activity
             urlSection.setVisibility( View.GONE );
          }
       }
-   }
-   
-
-
-   public void onEditTask( View v )
-   {
-      if ( task != null )
-         startActivity( Intents.createEditTaskIntent( this, task.getId() ) );
    }
    
 

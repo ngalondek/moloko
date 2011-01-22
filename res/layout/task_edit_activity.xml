@@ -151,8 +151,7 @@
                   android:layout_height="wrap_content"
                   android:layout_width="wrap_content"
                   android:layout_below="@id/task_edit_tags_container"
-                  android:layout_alignParentRight="true"
-                  android:layout_alignWithParentIfMissing="true"
+                  android:layout_alignParentRight="true"                  
                   android:layout_marginTop="3dip"
                   android:scaleType="fitXY"
                   android:src="@drawable/ic_button_task_remove" />
@@ -163,6 +162,7 @@
                   android:layout_width="wrap_content"
                   android:layout_alignTop="@id/task_edit_tags_btn_remove"
                   android:layout_toLeftOf="@id/task_edit_tags_btn_remove"
+                  android:layout_alignWithParentIfMissing="true"
                   android:scaleType="fitXY"
                   android:src="@drawable/ic_button_task_add" />
             </RelativeLayout>

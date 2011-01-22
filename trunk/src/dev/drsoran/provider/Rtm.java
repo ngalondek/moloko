@@ -1021,12 +1021,12 @@ public class Rtm
       public final static String ENTITY_URI = "entity_uri";
       
       /**
-       * The ID of the modified column of the entity.
+       * The name of the modified column of the entity.
        * <P>
-       * Type: INTEGER
+       * Type: TEXT
        * </P>
        */
-      public final static String COL_ID = "col_id";
+      public final static String COL_NAME = "col_name";
       
       /**
        * The new value.

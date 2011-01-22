@@ -22,19 +22,24 @@
 
 package dev.drsoran.moloko.content;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Modifications;
 
 
@@ -46,10 +51,16 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Modifications._ID, Modifications.ENTITY_URI, Modifications.COL_ID,
+   { Modifications._ID, Modifications.ENTITY_URI, Modifications.COL_NAME,
     Modifications.NEW_VALUE, Modifications.SYNCED_VALUE };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   
+   private final static String SEL_QUERY_MODIFICATION = new StringBuilder( 100 ).append( Modifications.ENTITY_URI )
+                                                                                .append( "=? AND " )
+                                                                                .append( Modifications.COL_NAME )
+                                                                                .append( "=?" )
+                                                                                .toString();
    
    static
    {
@@ -60,10 +71,11 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    
    
 
-   public final static < T > ContentValues getContentValues( Modification< T > modification,
+   public final static < T > ContentValues getContentValues( ContentResolver contentResolver,
+                                                             Modification< T > modification,
                                                              boolean withId )
    {
-      final ContentValues values = new ContentValues();
+      ContentValues values = new ContentValues();
       
       if ( withId )
          if ( !TextUtils.isEmpty( modification.getId() ) )
@@ -73,17 +85,101 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       
       values.put( Modifications.ENTITY_URI, modification.getEntityUri()
                                                         .toString() );
-      values.put( Modifications.COL_ID, modification.getColId() );
+      values.put( Modifications.COL_NAME, modification.getColName() );
       
       Modification.put( values,
                         Modifications.NEW_VALUE,
                         modification.getNewValue() );
       
-      Modification.put( values,
-                        Modifications.SYNCED_VALUE,
-                        modification.getOldValue() );
+      {
+         final ContentProviderClient entityClient = contentResolver.acquireContentProviderClient( modification.getEntityUri() );
+         
+         if ( entityClient == null )
+            throw new IllegalArgumentException( "Illegal content URI "
+               + modification.getEntityUri() );
+         
+         Cursor c = null;
+         
+         try
+         {
+            c = entityClient.query( modification.getEntityUri(), new String[]
+            { modification.getColName() }, null, null, null );
+            
+            if ( c == null || c.getCount() == 0 )
+               throw new IllegalArgumentException( "Illegal entity URI "
+                  + modification.getEntityUri() );
+            
+            if ( !c.moveToFirst() )
+               throw new SQLException( "Unable to move to 1st element" );
+            
+            Modification.put( values,
+                              Modifications.SYNCED_VALUE,
+                              Modification.get( c,
+                                                0,
+                                                modification.getValueClass() ) );
+         }
+         catch ( RemoteException e )
+         {
+            Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+            values = null;
+         }
+         finally
+         {
+            if ( c != null )
+               c.close();
+         }
+         
+         entityClient.release();
+      }
       
       return values;
+   }
+   
+
+
+   public final static < T > Modification< T > getModification( ContentProviderClient client,
+                                                                Uri entityUri,
+                                                                String colName,
+                                                                Class< T > valueClass )
+   {
+      Modification< T > modification = null;
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Modifications.CONTENT_URI,
+                           PROJECTION,
+                           SEL_QUERY_MODIFICATION,
+                           new String[]
+                           { entityUri.toString(), colName },
+                           null );
+         
+         if ( c != null && c.getCount() > 0 )
+         {
+            if ( !c.moveToFirst() )
+               throw new SQLException( "Unable to move to 1st element" );
+            
+            modification = Modification.newModification( c.getString( COL_INDICES.get( Modifications._ID ) ),
+                                                         Uri.parse( c.getString( COL_INDICES.get( Modifications.ENTITY_URI ) ) ),
+                                                         c.getString( COL_INDICES.get( Modifications.COL_NAME ) ),
+                                                         valueClass,
+                                                         Modification.get( c,
+                                                                           COL_INDICES.get( Modifications.NEW_VALUE ),
+                                                                           valueClass ) );
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         modification = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return modification;
    }
    
 
@@ -122,14 +218,51 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
             
             if ( ok )
             {
+               final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
+               
                try
                {
                   transactionalAccess.beginTransaction();
                   
                   for ( Modification< ? > modification : modifications )
                   {
+                     final Uri entityUri = modification.getEntityUri();
                      
+                     // Acquire access to the element to be modified.
+                     
+                     // Check if modification already exists
+                     final Modification< ? > existingMod = getModification( client,
+                                                                            entityUri,
+                                                                            modification.getColName(),
+                                                                            modification.getValueClass() );
+                     if ( existingMod != null )
+                     {
+                        // Update the modification with the new value.
+                        operations.add( ContentProviderOperation.newUpdate( Modifications.CONTENT_URI )
+                                                                .withValue( Modifications.NEW_VALUE,
+                                                                            modification.getNewValue() )
+                                                                .build() );
+                     }
+                     else
+                     {
+                        // Insert a new modification.
+                        operations.add( ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
+                                                                .withValues( getContentValues( contentResolver,
+                                                                                               modification,
+                                                                                               true ) )
+                                                                .build() );
+                     }
+                     
+                     // Update the entity itself
+                     operations.add( ContentProviderOperation.newUpdate( modification.getEntityUri() )
+                                                             .withValue( modification.getColName(),
+                                                                         modification.getNewValue() )
+                                                             .build() );
                   }
+                  
+                  // Apply the collected operations in a bulk.
+                  if ( operations.size() > 0 )
+                     contentResolver.applyBatch( Rtm.AUTHORITY, operations );
                   
                   transactionalAccess.setTransactionSuccessful();
                }
@@ -172,9 +305,10 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
          + " ( "
          + Modifications._ID
          + " INTEGER NOT NULL CONSTRAINT PK_MODIFICATIONS PRIMARY KEY AUTOINCREMENT, "
-         + Modifications.ENTITY_URI + " TEXT NOT NULL, " + Modifications.COL_ID
-         + " INTEGER NOT NULL, " + Modifications.NEW_VALUE + " TEXT, "
-         + Modifications.SYNCED_VALUE + " TEXT );" );
+         + Modifications.ENTITY_URI + " TEXT NOT NULL, "
+         + Modifications.COL_NAME + " TEXT NOT NULL, "
+         + Modifications.NEW_VALUE + " TEXT, " + Modifications.SYNCED_VALUE
+         + " TEXT );" );
    }
    
 

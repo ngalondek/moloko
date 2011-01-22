@@ -25,12 +25,15 @@ package dev.drsoran.moloko.activities;
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -52,7 +55,6 @@ import com.mdt.rtm.data.RtmTask.Priority;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
-import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
@@ -77,7 +79,16 @@ public class TaskEditActivity extends Activity
    private final static String TAG = "Moloko."
       + TaskEditActivity.class.getSimpleName();
    
-   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   public final static int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   
+   public final static int REQ_EDIT_TASK = 0;
+   
+   public final static int RESULT_EDIT_TASK_FAILED = 1 << 0;
+   
+   public final static int RESULT_EDIT_TASK_OK = 1 << 8;
+   
+   public final static int RESULT_EDIT_TASK_CHANGED = 1 << 9
+      | RESULT_EDIT_TASK_OK;
    
    
    private abstract class SpinnerChangedListener implements
@@ -96,9 +107,55 @@ public class TaskEditActivity extends Activity
       }
    }
    
+
+   private class ApplyModificationsTask extends AsyncTask< Void, Void, Boolean >
+   {
+      private ProgressDialog dialog;
+      
+      
+
+      @Override
+      protected void onPreExecute()
+      {
+         dialog = new ProgressDialog( TaskEditActivity.this );
+         dialog.setMessage( TaskEditActivity.this.getString( R.string.task_edit_dlg_save_task ) );
+         dialog.setCancelable( false );
+         dialog.show();
+      }
+      
+
+
+      @Override
+      protected void onPostExecute( Boolean result )
+      {
+         if ( dialog != null )
+            dialog.dismiss();
+      }
+      
+
+
+      @Override
+      protected Boolean doInBackground( Void... params )
+      {
+         if ( params.length == 0 )
+            return Boolean.TRUE;
+         
+         return Boolean.valueOf( ModificationsProviderPart.applyModifications( getContentResolver(),
+                                                                               modifications ) );
+      }
+   }
+   
    private Task task;
    
    private ViewGroup taskContainer;
+   
+   private ViewGroup tagsLayout;
+   
+   private ViewGroup dueLayout;
+   
+   private ViewGroup recurrenceLayout;
+   
+   private ViewGroup estimateLayout;
    
    private TextView addedDate;
    
@@ -112,7 +169,7 @@ public class TaskEditActivity extends Activity
    
    private TitleWithSpinnerLayout priority;
    
-   private WrappingLayout tagsLayout;
+   private WrappingLayout tagsContainer;
    
    private ImageButton addTagButton;
    
@@ -174,13 +231,17 @@ public class TaskEditActivity extends Activity
             try
             {
                taskContainer = (ViewGroup) findViewById( R.id.task_edit_container );
+               tagsLayout = (ViewGroup) findViewById( R.id.task_edit_tags_layout );
+               dueLayout = (ViewGroup) findViewById( R.id.task_edit_due_layout );
+               recurrenceLayout = (ViewGroup) findViewById( R.id.task_edit_recurrence_layout );
+               estimateLayout = (ViewGroup) findViewById( R.id.task_edit_estimate_layout );
                addedDate = (TextView) taskContainer.findViewById( R.id.task_edit_added_date );
                completedDate = (TextView) taskContainer.findViewById( R.id.task_edit_completed_date );
                source = (TextView) taskContainer.findViewById( R.id.task_edit_src );
                nameEdit = (EditText) taskContainer.findViewById( R.id.task_edit_desc );
                list = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_list );
                priority = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_priority );
-               tagsLayout = (WrappingLayout) taskContainer.findViewById( R.id.task_edit_tags_container );
+               tagsContainer = (WrappingLayout) taskContainer.findViewById( R.id.task_edit_tags_container );
                addTagButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_add );
                removeTagButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_remove );
                dueEdit = (EditText) taskContainer.findViewById( R.id.task_edit_due_text );
@@ -276,18 +337,46 @@ public class TaskEditActivity extends Activity
          {
             modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                        task.getTaskSeriesId() ),
-                                                             RtmTaskSeriesProviderPart.COL_INDICES.get( TaskSeries.TASKSERIES_NAME ),
+                                                             TaskSeries.TASKSERIES_NAME,
                                                              String.class,
                                                              nameEdit.getText()
                                                                      .toString() ) );
          }
          
+         int result = RESULT_EDIT_TASK_OK;
+         
          // Apply the modifications to the DB.
          if ( modifications.size() > 0 )
          {
-            ModificationsProviderPart.applyModifications( getContentResolver(),
-                                                          modifications );
+            // set the task modification time to now
+            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                       task.getTaskSeriesId() ),
+                                                             TaskSeries.MODIFIED_DATE,
+                                                             Long.class,
+                                                             System.currentTimeMillis() ) );
+            try
+            {
+               if ( new ApplyModificationsTask().execute( (Void) null ).get() )
+               {
+                  result = RESULT_EDIT_TASK_CHANGED;
+               }
+               else
+               {
+                  result = RESULT_EDIT_TASK_FAILED;
+               }
+            }
+            catch ( InterruptedException e )
+            {
+               result = RESULT_EDIT_TASK_FAILED;
+            }
+            catch ( ExecutionException e )
+            {
+               result = RESULT_EDIT_TASK_FAILED;
+            }
          }
+         
+         setResult( result );
+         finish();
       }
    }
    
@@ -295,6 +384,7 @@ public class TaskEditActivity extends Activity
 
    public void onCancel( View v )
    {
+      setResult( RESULT_CANCELED );
       finish();
    }
    
@@ -466,7 +556,7 @@ public class TaskEditActivity extends Activity
 
    private void refeshTags()
    {
-      UIUtils.inflateTags( this, tagsLayout, task, null, null );
+      UIUtils.inflateTags( this, tagsContainer, task, null, null );
    }
    
 
@@ -552,40 +642,34 @@ public class TaskEditActivity extends Activity
 
    private void evaluateRtmAccessLevel()
    {
-      nameEdit.setEnabled( false );
-      list.setEnabled( false );
-      priority.setEnabled( false );
-      addTagButton.setEnabled( false );
-      removeTagButton.setEnabled( false );
-      dueEdit.setEnabled( false );
-      duePickerButton.setEnabled( false );
-      recurrEdit.setEnabled( false );
-      recurrPickerButton.setEnabled( false );
-      estimateEdit.setEnabled( false );
-      estimatePickerButton.setEnabled( false );
-      location.setEnabled( false );
-      url.setEnabled( false );
+      nameEdit.setVisibility( View.GONE );
+      list.setVisibility( View.GONE );
+      priority.setVisibility( View.GONE );
+      tagsLayout.setVisibility( View.GONE );
+      removeTagButton.setVisibility( View.GONE );
+      dueLayout.setVisibility( View.GONE );
+      recurrenceLayout.setVisibility( View.GONE );
+      estimateLayout.setVisibility( View.GONE );
+      location.setVisibility( View.GONE );
+      url.setVisibility( View.GONE );
       
-      final RtmAuth.Perms permission = AccountUtils.getAccessLevel( this );
+      RtmAuth.Perms permission = AccountUtils.getAccessLevel( this );
       
       switch ( permission )
       {
          case delete:
-            removeTagButton.setEnabled( true );
+            removeTagButton.setVisibility( View.VISIBLE );
          case write:
-            list.setEnabled( true );
-            priority.setEnabled( true );
-            addTagButton.setEnabled( true );
-            dueEdit.setEnabled( true );
-            duePickerButton.setEnabled( true );
-            recurrEdit.setEnabled( true );
-            recurrPickerButton.setEnabled( true );
-            estimateEdit.setEnabled( true );
-            estimatePickerButton.setEnabled( true );
-            location.setEnabled( true );
-            url.setEnabled( true );
+            list.setVisibility( View.VISIBLE );
+            priority.setVisibility( View.VISIBLE );
+            tagsLayout.setVisibility( View.VISIBLE );
+            dueLayout.setVisibility( View.VISIBLE );
+            recurrenceLayout.setVisibility( View.VISIBLE );
+            estimateLayout.setVisibility( View.VISIBLE );
+            location.setVisibility( View.VISIBLE );
+            url.setVisibility( View.VISIBLE );
          case read:
-            nameEdit.setEnabled( true );
+            nameEdit.setVisibility( View.VISIBLE );
             break;
          default :
             break;

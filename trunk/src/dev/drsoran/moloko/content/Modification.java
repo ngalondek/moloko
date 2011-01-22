@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.content;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 
 
@@ -32,24 +33,21 @@ public class Modification< T > implements Comparable< Modification< ? > >
    
    private final Uri entityUri;
    
-   private final long colId;
+   private final String colName;
    
    private final T newValue;
-   
-   private final T oldValue;
    
    private final Class< T > valueClass;
    
    
 
-   private Modification( String id, Uri entityUri, long colId,
+   private Modification( String id, Uri entityUri, String colName,
       Class< T > valueClass, T newValue )
    {
       this.id = id;
       this.entityUri = entityUri;
-      this.colId = colId;
+      this.colName = colName;
       this.newValue = newValue;
-      this.oldValue = null;
       this.valueClass = valueClass;
    }
    
@@ -69,9 +67,9 @@ public class Modification< T > implements Comparable< Modification< ? > >
    
 
 
-   public long getColId()
+   public String getColName()
    {
-      return colId;
+      return colName;
    }
    
 
@@ -79,13 +77,6 @@ public class Modification< T > implements Comparable< Modification< ? > >
    public T getNewValue()
    {
       return newValue;
-   }
-   
-
-
-   public T getOldValue()
-   {
-      return oldValue;
    }
    
 
@@ -113,7 +104,7 @@ public class Modification< T > implements Comparable< Modification< ? > >
                                         : newValue.equals( other.newValue ) );
       equal = equal && entityUri.equals( other.entityUri );
       equal = equal && valueClass.getName().equals( other.valueClass.getName() );
-      equal = equal && colId == other.colId;
+      equal = equal && colName == other.colName;
       
       return equal;
    }
@@ -126,7 +117,7 @@ public class Modification< T > implements Comparable< Modification< ? > >
       int result = 17;
       
       result = 31 * result + entityUri.hashCode();
-      result = 31 * result + (int) ( colId ^ ( colId >>> 32 ) );
+      result = 31 * result + colName.hashCode();
       result = 31 * result + ( newValue != null ? newValue.hashCode() : 0 );
       
       return result;
@@ -140,9 +131,9 @@ public class Modification< T > implements Comparable< Modification< ? > >
       if ( cmp != 0 )
          return cmp;
       
-      final long lcmp = colId - another.colId;
-      if ( lcmp != 0 )
-         return (int) lcmp;
+      cmp = colName.compareTo( another.colName );
+      if ( cmp != 0 )
+         return cmp;
       
       return 0;
    }
@@ -151,25 +142,60 @@ public class Modification< T > implements Comparable< Modification< ? > >
 
    public final static < T > Modification< T > newModification( String id,
                                                                 Uri entityUri,
-                                                                long colId,
+                                                                String colName,
                                                                 Class< T > valueClass,
                                                                 T newValue )
    {
-      return new Modification< T >( id, entityUri, colId, valueClass, newValue );
+      return new Modification< T >( id,
+                                    entityUri,
+                                    colName,
+                                    valueClass,
+                                    newValue );
    }
    
 
 
    public final static < T > Modification< T > newModification( Uri entityUri,
-                                                                long colId,
+                                                                String colName,
                                                                 Class< T > valueClass,
                                                                 T newValue )
    {
       return new Modification< T >( null,
                                     entityUri,
-                                    colId,
+                                    colName,
                                     valueClass,
                                     newValue );
+   }
+   
+
+
+   @SuppressWarnings( "unchecked" )
+   public final static < T > T get( Cursor c, int column, Class< T > valueClass )
+   {
+      if ( c == null )
+         throw new NullPointerException( "key is null" );
+      if ( valueClass == null )
+         throw new NullPointerException( "valueType is null" );
+      
+      if ( c.isNull( column ) )
+         return null;
+      else if ( valueClass.equals( String.class ) )
+         return (T) c.getString( column );
+      else if ( valueClass.equals( Integer.class ) )
+         return (T) Integer.valueOf( c.getInt( column ) );
+      else if ( valueClass.equals( Long.class ) )
+         return (T) Long.valueOf( c.getLong( column ) );
+      else if ( valueClass.equals( Double.class ) )
+         return (T) Double.valueOf( c.getDouble( column ) );
+      else if ( valueClass.equals( Float.class ) )
+         return (T) Float.valueOf( c.getFloat( column ) );
+      else if ( valueClass.equals( Short.class ) )
+         return (T) Short.valueOf( c.getShort( column ) );
+      else if ( valueClass.equals( Boolean.class ) )
+         return (T) Boolean.valueOf( c.getInt( column ) != 0 );
+      else
+         throw new IllegalArgumentException( "Unsupported data type of valueType "
+            + valueClass.getName() );
    }
    
 
@@ -201,4 +227,5 @@ public class Modification< T > implements Comparable< Modification< ? > >
          throw new IllegalArgumentException( "Unsupported data type of value "
             + value );
    }
+   
 }

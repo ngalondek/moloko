@@ -184,6 +184,8 @@
       <string name="task_dlg_choose_location_app">Open location with...</string>
    <!-- Toasts -->
       <string name="task_toast_no_google_maps">Location could not be displayed due to missing Google Maps App.</string>
+      <string name="task_save_ok">Changes to the task have been saved.</string>
+      <string name="task_save_error">Failed to save changes to the task.</string>
       
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Task Name</string>
@@ -202,6 +204,8 @@
    <string name="task_edit_estimate_nothing">Nothing estimated</string>
    <string name="task_edit_location_no">Nowhere</string>
    <string name="task_edit_validate_empty_name">The task name must not be empty</string>
+   <!-- Dialogs -->
+      <string name="task_edit_dlg_save_task">Saving task changes...</string>
    		
    <!-- TaskLists activity -->
    <string name="tasklists_no_lists">There are no lists</string>

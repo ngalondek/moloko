@@ -54,8 +54,9 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Lists._ID, Lists.LIST_NAME, Lists.LIST_DELETED, Lists.LOCKED,
-    Lists.ARCHIVED, Lists.POSITION, Lists.IS_SMART_LIST, Lists.FILTER };
+   { Lists._ID, Lists.LIST_NAME, Lists.CREATED_DATE, Lists.MODIFIED_DATE,
+    Lists.LIST_DELETED, Lists.LOCKED, Lists.ARCHIVED, Lists.POSITION,
+    Lists.IS_SMART_LIST, Lists.FILTER };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -80,7 +81,9 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          // Only non-deleted lists
          c = client.query( Rtm.Lists.CONTENT_URI,
                            PROJECTION,
-                           new StringBuilder( "(" ).append( selection )
+                           new StringBuilder( "(" ).append( selection != null
+                                                                             ? selection
+                                                                             : "1" )
                                                    .append( " ) AND " )
                                                    .append( Lists.LIST_DELETED )
                                                    .append( "=0" )
@@ -107,12 +110,13 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
                   
                   final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
                                                     c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
+                                                    c.getLong( COL_INDICES.get( Lists.CREATED_DATE ) ),
+                                                    c.getLong( COL_INDICES.get( Lists.MODIFIED_DATE ) ),
                                                     c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),
                                                     c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
                                                     c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
                                                     c.getInt( COL_INDICES.get( Lists.POSITION ) ),
                                                     filter );
-                  
                   lists.add( list );
                }
             }
@@ -146,6 +150,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          values.put( Rtm.Lists._ID, list.getId() );
       
       values.put( Lists.LIST_NAME, list.getName() );
+      values.put( Lists.CREATED_DATE, list.getCreated().getTime() );
+      values.put( Lists.MODIFIED_DATE, list.getModified().getTime() );
       values.put( Lists.LIST_DELETED, list.getDeleted() );
       values.put( Lists.LOCKED, list.getLocked() );
       values.put( Lists.ARCHIVED, list.getArchived() );
@@ -215,6 +221,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Lists._ID
          + " TEXT NOT NULL, " + Lists.LIST_NAME + " TEXT NOT NULL, "
+         + Lists.CREATED_DATE + " INTEGER NOT NULL DEFAULT 0, "
+         + Lists.MODIFIED_DATE + " INTEGER NOT NULL DEFAULT 0, "
          + Lists.LIST_DELETED + " INTEGER NOT NULL DEFAULT 0, " + Lists.LOCKED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.ARCHIVED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.POSITION

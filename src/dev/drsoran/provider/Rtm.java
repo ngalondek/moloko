@@ -55,6 +55,22 @@ public class Rtm
    protected static interface ListColumns extends ListBaseColumns
    {
       /**
+       * The created date of the list, 0 for server created lists
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String CREATED_DATE = "list_created";
+      
+      /**
+       * The modified date of the list, 0 for server modified lists
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String MODIFIED_DATE = "list_modified";
+      
+      /**
        * Indicates if the list is deleted.
        * <P>
        * Type: INTEGER

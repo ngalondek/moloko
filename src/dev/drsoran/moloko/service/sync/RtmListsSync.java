@@ -87,11 +87,9 @@ public final class RtmListsSync
                break;
             default :
                if ( e instanceof ServiceInternalException )
-               {
                   SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
                                                             TAG,
                                                             syncResult );
-               }
                else
                   ++syncResult.stats.numParseExceptions;
                break;

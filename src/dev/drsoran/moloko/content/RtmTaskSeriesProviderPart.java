@@ -158,9 +158,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                            null,
                            null );
          
-         final boolean ok = c != null && c.moveToFirst();
-         
-         if ( ok )
+         if ( c != null && c.moveToFirst() )
          {
             taskSeries = createRtmTaskSeries( client, c );
          }
@@ -514,8 +512,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    {
       if ( !initialValues.containsKey( TaskSeries.TASKSERIES_CREATED_DATE ) )
       {
-         final Long now = Long.valueOf( System.currentTimeMillis() );
-         initialValues.put( TaskSeries.TASKSERIES_CREATED_DATE, now );
+         initialValues.put( TaskSeries.TASKSERIES_CREATED_DATE,
+                            System.currentTimeMillis() );
       }
       
       return initialValues;

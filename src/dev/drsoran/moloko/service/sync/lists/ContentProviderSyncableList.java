@@ -38,12 +38,12 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
    
 
    public ContentProviderSyncableList( ContentProviderClient provider,
-      Collection< T > elements ) throws NullPointerException
+      Collection< T > elements )
    {
       super( elements );
       
       if ( provider == null )
-         throw new NullPointerException();
+         throw new NullPointerException( "provider is null" );
       
       this.provider = provider;
    }
@@ -52,12 +52,11 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
 
    public ContentProviderSyncableList( ContentProviderClient provider,
       Collection< T > elements, Comparator< T > comparator )
-      throws NullPointerException
    {
       super( elements, comparator );
       
       if ( provider == null )
-         throw new NullPointerException();
+         throw new NullPointerException( "provider is null" );
       
       this.provider = provider;
    }

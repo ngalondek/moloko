@@ -20,6 +20,7 @@
 package com.mdt.rtm.data;
 
 import java.util.Comparator;
+import java.util.Date;
 
 import org.w3c.dom.Element;
 
@@ -30,6 +31,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
@@ -79,6 +81,10 @@ public class RtmList extends RtmData implements
    
    private final String name;
    
+   private final ParcelableDate created;
+   
+   private final ParcelableDate modified;
+   
    private final int deleted;
    
    private final int locked;
@@ -91,11 +97,14 @@ public class RtmList extends RtmData implements
    
    
 
-   public RtmList( String id, String name, int deleted, int locked,
-      int archived, int position, RtmSmartFilter smartFilter )
+   public RtmList( String id, String name, long created, long modified,
+      int deleted, int locked, int archived, int position,
+      RtmSmartFilter smartFilter )
    {
       this.id = id;
       this.name = name;
+      this.created = new ParcelableDate( created );
+      this.modified = new ParcelableDate( modified );
       this.deleted = deleted;
       this.locked = locked;
       this.archived = archived;
@@ -109,6 +118,8 @@ public class RtmList extends RtmData implements
    {
       this.id = elt.getAttribute( "id" );
       this.name = elt.getAttribute( "name" );
+      this.created = new ParcelableDate( 0 );
+      this.modified = new ParcelableDate( 0 );
       this.deleted = Integer.parseInt( elt.getAttribute( "deleted" ) );
       this.locked = Integer.parseInt( elt.getAttribute( "locked" ) );
       this.archived = Integer.parseInt( elt.getAttribute( "archived" ) );
@@ -132,6 +143,8 @@ public class RtmList extends RtmData implements
    {
       this.id = source.readString();
       this.name = source.readString();
+      this.created = source.readParcelable( null );
+      this.modified = source.readParcelable( null );
       this.deleted = source.readInt();
       this.locked = source.readInt();
       this.archived = source.readInt();
@@ -151,6 +164,20 @@ public class RtmList extends RtmData implements
    public String getName()
    {
       return name;
+   }
+   
+
+
+   public Date getCreated()
+   {
+      return created.getDate();
+   }
+   
+
+
+   public Date getModified()
+   {
+      return modified.getDate();
    }
    
 
@@ -201,6 +228,8 @@ public class RtmList extends RtmData implements
    {
       dest.writeString( id );
       dest.writeString( name );
+      dest.writeParcelable( created, flags );
+      dest.writeParcelable( modified, flags );
       dest.writeInt( deleted );
       dest.writeInt( locked );
       dest.writeInt( archived );

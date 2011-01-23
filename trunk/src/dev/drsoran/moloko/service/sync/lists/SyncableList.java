@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.service.sync.lists;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,13 +29,10 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
-import dev.drsoran.moloko.service.sync.util.PropertyAdapter;
 
 
 public abstract class SyncableList< T >
 {
-   private static final long serialVersionUID = 5137594788305624736L;
-   
    private final ArrayList< T > impl;
    
    private final Comparator< T > comparator;
@@ -46,10 +42,9 @@ public abstract class SyncableList< T >
    
 
    protected SyncableList( Collection< T > elements )
-      throws NullPointerException
    {
       if ( elements == null )
-         throw new NullPointerException();
+         throw new NullPointerException( "elements is null" );
       
       this.impl = new ArrayList< T >( elements.size() );
       this.impl.addAll( elements );
@@ -60,10 +55,9 @@ public abstract class SyncableList< T >
 
 
    protected SyncableList( Collection< T > elements, Comparator< T > comparator )
-      throws NullPointerException
    {
       if ( elements == null )
-         throw new NullPointerException();
+         throw new NullPointerException( "elements is null" );
       
       this.impl = new ArrayList< T >( elements.size() );
       this.impl.addAll( elements );
@@ -88,7 +82,7 @@ public abstract class SyncableList< T >
 
    public ArrayList< T > getUntouchedElements()
    {
-      ArrayList< T > result = new ArrayList< T >();
+      final ArrayList< T > result = new ArrayList< T >();
       
       for ( int i = 0; i < touchedElements.length; i++ )
       {
@@ -103,10 +97,10 @@ public abstract class SyncableList< T >
    
 
 
-   public int find( T element ) throws NullPointerException
+   public int find( T element )
    {
       if ( element == null )
-         throw new NullPointerException();
+         throw new NullPointerException( "element is null" );
       
       int pos = -1;
       
@@ -125,25 +119,6 @@ public abstract class SyncableList< T >
             if ( impl.get( i ).equals( element ) )
                pos = i;
          }
-      }
-      
-      return pos;
-   }
-   
-
-
-   public < V > int find( V other, PropertyAdapter< T, V > adapter ) throws NullPointerException,
-                                                                    InvocationTargetException
-   {
-      if ( adapter == null )
-         throw new NullPointerException();
-      
-      int pos = -1;
-      
-      for ( int i = 0; i < impl.size() && pos == -1; i++ )
-      {
-         if ( adapter.equals( impl.get( i ), other ) )
-            pos = i;
       }
       
       return pos;

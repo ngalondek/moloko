@@ -135,7 +135,13 @@ public class RtmLocation extends RtmData implements
       address = source.readString();
       viewable = source.readInt() == 1;
       zoom = source.readInt();
-      
+   }
+   
+
+
+   public boolean isDeleted()
+   {
+      return false;
    }
    
 

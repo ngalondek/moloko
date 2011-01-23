@@ -59,6 +59,13 @@ public class ParcelableDate implements Parcelable
    
 
 
+   public ParcelableDate( long millis )
+   {
+      this.date = new Date( millis );
+   }
+   
+
+
    public ParcelableDate( Parcel source )
    {
       date = new Date( source.readLong() );

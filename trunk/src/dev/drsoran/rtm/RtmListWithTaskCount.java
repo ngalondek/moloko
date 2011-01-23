@@ -98,6 +98,8 @@ public class RtmListWithTaskCount
    {
       this.impl = new RtmList( id,
                                name,
+                               0,
+                               0,
                                deleted,
                                locked,
                                archived,

@@ -457,7 +457,7 @@ public class RtmTask extends RtmData implements
                                RawTasks.DELETED_DATE,
                                result );
          
-         if ( priority.ordinal() != update.priority.ordinal() )
+         if ( priority.compareTo( update.priority ) != 0 )
             result.add( ContentProviderOperation.newUpdate( uri )
                                                 .withValue( RawTasks.PRIORITY,
                                                             convertPriority( update.priority ) )

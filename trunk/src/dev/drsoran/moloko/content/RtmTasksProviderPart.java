@@ -42,7 +42,6 @@ import android.util.Log;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -154,7 +153,17 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       
       try
       {
-         c = Queries.getItem( client, PROJECTION, Rtm.RawTasks.CONTENT_URI, id );
+         // Only non-deleted tasks
+         c = client.query( RawTasks.CONTENT_URI,
+                           PROJECTION,
+                           new StringBuilder( RawTasks._ID ).append( "=" )
+                                                            .append( id )
+                                                            .append( " AND " )
+                                                            .append( RawTasks.DELETED_DATE )
+                                                            .append( " IS NULL" )
+                                                            .toString(),
+                           null,
+                           null );
          
          if ( c != null && c.moveToFirst() )
          {
@@ -188,9 +197,15 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          
          try
          {
+            // Only non-deleted tasks
             c = client.query( RawTasks.CONTENT_URI,
                               PROJECTION,
-                              RawTasks.TASKSERIES_ID + " = " + taskSeriesId,
+                              new StringBuilder( RawTasks.TASKSERIES_ID ).append( "=" )
+                                                                         .append( taskSeriesId )
+                                                                         .append( " AND " )
+                                                                         .append( RawTasks.DELETED_DATE )
+                                                                         .append( " IS NULL" )
+                                                                         .toString(),
                               null,
                               null );
             

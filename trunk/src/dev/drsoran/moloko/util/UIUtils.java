@@ -276,15 +276,15 @@ public final class UIUtils
    
 
 
-   public final static StringBuffer appendAtNewLine( StringBuffer stringBuffer,
-                                                     String string )
+   public final static StringBuilder appendAtNewLine( StringBuilder stringBuilder,
+                                                      String string )
    {
-      if ( stringBuffer.length() > 0 )
-         stringBuffer.append( "\n" );
+      if ( stringBuilder.length() > 0 )
+         stringBuilder.append( "\n" );
       
-      stringBuffer.append( string );
+      stringBuilder.append( string );
       
-      return stringBuffer;
+      return stringBuilder;
    }
    
 

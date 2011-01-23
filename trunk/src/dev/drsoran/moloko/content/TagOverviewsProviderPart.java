@@ -104,7 +104,12 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                          + "="
                                                          + RawTasks.PATH
                                                          + "."
-                                                         + RawTasks.TASKSERIES_ID,
+                                                         + RawTasks.TASKSERIES_ID
+                                                         
+                                                         // Only non-deleted tasks
+                                                         + " AND "
+                                                         + RawTasks.DELETED_DATE
+                                                         + " IS NULL",
                                                       null,
                                                       null,
                                                       null,

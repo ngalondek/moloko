@@ -110,7 +110,7 @@ options
 
    // STATUS VARIABLES
 
-   private StringBuffer result = new StringBuffer();
+   private StringBuilder result = new StringBuilder();
 
    private boolean hasStatusCompletedOp = false;
 
@@ -153,7 +153,7 @@ options
 
    public static final String quotify( String input )
    {
-      return new StringBuffer( "\"").append( input ).append( "\"").toString();
+      return "\"" + input + "\"";
    }
 
 
@@ -276,6 +276,7 @@ options
         // Parser error
         error = true;
    }
+   
 
 
    public String getResult( ArrayList< RtmSmartFilterToken > tokens ) throws RecognitionException
@@ -326,7 +327,7 @@ OP_LIST     :  'list:' ( s=STRING | s=Q_STRING )
                {
                   result.append( Tasks.LIST_NAME );
                   equalsStringParam( $s.getText() );
-                  
+
                   addRtmToken( OP_LIST, $s.getText() );
                };
 

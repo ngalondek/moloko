@@ -69,7 +69,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
    private final static String QUERY;
    
-   private final static String SUBQUERY_NON_COMPLETED;
+   private final static String SUBQUERY_NON_COMPLETED_NON_DELETED;
    
    static
    {
@@ -77,35 +77,38 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                     PROJECTION_MAP,
                                                     COL_INDICES );
       
-      SUBQUERY_NON_COMPLETED = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                    false,
-                                                                    // tables
-                                                                    TaskSeries.PATH
-                                                                       + ","
-                                                                       + RawTasks.PATH,
-                                                                    // columns
-                                                                    new String[]
-                                                                    {
-                                                                     TaskSeries.PATH
-                                                                        + "."
-                                                                        + TaskSeries._ID
-                                                                        + " AS series_id",
-                                                                     TaskSeries.LIST_ID,
-                                                                     RawTasks.COMPLETED_DATE },
-                                                                    // where
-                                                                    "series_id ="
-                                                                       + RawTasks.PATH
-                                                                       + "."
-                                                                       + RawTasks.TASKSERIES_ID
-                                                                       + " AND "
-                                                                       
-                                                                       // Only non-completed tasks
-                                                                       + RawTasks.COMPLETED_DATE
-                                                                       + " IS NULL",
-                                                                    null,
-                                                                    null,
-                                                                    null,
-                                                                    null );
+      SUBQUERY_NON_COMPLETED_NON_DELETED = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                                                false,
+                                                                                // tables
+                                                                                TaskSeries.PATH
+                                                                                   + ","
+                                                                                   + RawTasks.PATH,
+                                                                                // columns
+                                                                                new String[]
+                                                                                {
+                                                                                 TaskSeries.PATH
+                                                                                    + "."
+                                                                                    + TaskSeries._ID
+                                                                                    + " AS series_id",
+                                                                                 TaskSeries.LIST_ID,
+                                                                                 RawTasks.COMPLETED_DATE },
+                                                                                // where
+                                                                                "series_id ="
+                                                                                   + RawTasks.PATH
+                                                                                   + "."
+                                                                                   + RawTasks.TASKSERIES_ID
+                                                                                   + " AND "
+                                                                                   
+                                                                                   // Only non-completed tasks
+                                                                                   + RawTasks.COMPLETED_DATE
+                                                                                   + " IS NULL AND "
+                                                                                   // Only non-deleted tasks
+                                                                                   + RawTasks.DELETED_DATE
+                                                                                   + " IS NULL",
+                                                                                null,
+                                                                                null,
+                                                                                null,
+                                                                                null );
       
       QUERY = new StringBuilder( "SELECT " ).append( Lists.PATH )
                                             .append( ".*, count( subQuery.series_id ) AS " )
@@ -113,14 +116,19 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                             .append( " FROM " )
                                             .append( Lists.PATH )
                                             .append( " LEFT OUTER JOIN (" )
-                                            .append( SUBQUERY_NON_COMPLETED )
+                                            .append( SUBQUERY_NON_COMPLETED_NON_DELETED )
                                             .append( ") AS subQuery ON " )
                                             .append( Lists.PATH )
                                             .append( "." )
                                             .append( Lists._ID )
                                             .append( " = " )
                                             .append( TaskSeries.LIST_ID )
-                                            .append( " GROUP BY " )
+                                            .append( " AND " )
+                                            .append( Lists.PATH )
+                                            .append( "." )
+                                            // Only non-deleted lists
+                                            .append( Lists.LIST_DELETED )
+                                            .append( " = 0 GROUP BY " )
                                             .append( Lists.LIST_NAME )
                                             .toString();
    }

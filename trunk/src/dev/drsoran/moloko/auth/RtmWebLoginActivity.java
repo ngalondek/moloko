@@ -76,7 +76,7 @@ public class RtmWebLoginActivity extends Activity
       
       final String uri = getIntent().toUri( 0 );
       
-      Log.d( TAG, new StringBuffer( "Open URL: " ).append( uri ).toString() );
+      Log.d( TAG, "Open URL: " + uri );
       
       webView.loadUrl( uri );
       

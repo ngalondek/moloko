@@ -132,6 +132,7 @@ public class DateParser extends Parser
    
 
 
+   @Override
    public String[] getTokenNames()
    {
       return DateParser.tokenNames;
@@ -139,6 +140,7 @@ public class DateParser extends Parser
    
 
 
+   @Override
    public String getGrammarFileName()
    {
       return "D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateParser.g";
@@ -208,7 +210,7 @@ public class DateParser extends Parser
    {
       try
       {
-         final StringBuffer pattern = new StringBuffer( "dd." );
+         final StringBuilder pattern = new StringBuilder( "dd." );
          
          if ( !textMonth )
          {

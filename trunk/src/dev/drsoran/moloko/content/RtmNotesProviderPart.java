@@ -55,7 +55,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    
    public final static String[] PROJECTION =
    { Notes._ID, Notes.NOTE_CREATED_DATE, Notes.NOTE_MODIFIED_DATE,
-    Notes.NOTE_TITLE, Notes.NOTE_TEXT };
+    Notes.NOTE_DELETED, Notes.NOTE_TITLE, Notes.NOTE_TEXT };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -89,6 +89,8 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          else
             values.putNull( Notes.NOTE_MODIFIED_DATE );
          
+         values.put( Notes.NOTE_DELETED, note.isDeleted() );
+         
          if ( !TextUtils.isEmpty( note.getTitle() ) )
             values.put( Notes.NOTE_TITLE, note.getTitle() );
          else
@@ -115,9 +117,15 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          
          try
          {
+            // Only non-deleted notes
             c = client.query( Notes.CONTENT_URI,
                               PROJECTION,
-                              Notes.TASKSERIES_ID + " = " + taskSeriesId,
+                              new StringBuilder( Notes.TASKSERIES_ID ).append( "=" )
+                                                                      .append( taskSeriesId )
+                                                                      .append( " AND " )
+                                                                      .append( Notes.NOTE_DELETED )
+                                                                      .append( "=0" )
+                                                                      .toString(),
                               null,
                               null );
             
@@ -170,7 +178,17 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
       {
          try
          {
-            c = Queries.getItem( client, PROJECTION, Notes.CONTENT_URI, noteId );
+            // Only non-deleted notes
+            c = client.query( Notes.CONTENT_URI,
+                              PROJECTION,
+                              new StringBuilder( Notes._ID ).append( "=" )
+                                                            .append( noteId )
+                                                            .append( " AND " )
+                                                            .append( Notes.NOTE_DELETED )
+                                                            .append( "=0" )
+                                                            .toString(),
+                              null,
+                              null );
             
             ok = c != null && c.moveToFirst();
             
@@ -236,8 +254,9 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
       db.execSQL( "CREATE TABLE " + path + " ( " + Notes._ID
          + " TEXT NOT NULL, " + Notes.TASKSERIES_ID + " TEXT NOT NULL, "
          + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
-         + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_TITLE
-         + " TEXT, " + Notes.NOTE_TEXT + " TEXT NOT NULL, "
+         + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_DELETED
+         + " INTEGER DEFAULT 0, " + Notes.NOTE_TITLE + " TEXT, "
+         + Notes.NOTE_TEXT + " TEXT NOT NULL, "
          + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID + "\" ), "
          + "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( "
          + Notes.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH + " ( "
@@ -319,6 +338,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                               new Date( c.getLong( COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
                               Queries.getOptDate( c,
                                                   COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ),
+                              c.getInt( COL_INDICES.get( Notes.NOTE_DELETED ) ) != 0,
                               Queries.getOptString( c,
                                                     COL_INDICES.get( Notes.NOTE_TITLE ) ),
                               c.getString( COL_INDICES.get( Notes.NOTE_TEXT ) ) );

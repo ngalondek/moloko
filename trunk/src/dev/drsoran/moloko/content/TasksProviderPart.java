@@ -142,7 +142,13 @@ public class TasksProviderPart extends AbstractProviderPart
                                                           + "="
                                                           + RawTasks.PATH
                                                           + "."
-                                                          + RawTasks.TASKSERIES_ID,
+                                                          + RawTasks.TASKSERIES_ID
+                                                          // Only non-deleted tasks
+                                                          + " AND "
+                                                          + RawTasks.PATH
+                                                          + "."
+                                                          + RawTasks.DELETED_DATE
+                                                          + " IS NULL",
                                                        null,
                                                        null,
                                                        null,
@@ -265,7 +271,13 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                    + "="
                                                                    + Notes.PATH
                                                                    + "."
-                                                                   + Notes.TASKSERIES_ID,
+                                                                   + Notes.TASKSERIES_ID
+                                                                   // Only non-deleted notes
+                                                                   + " AND "
+                                                                   + Notes.PATH
+                                                                   + "."
+                                                                   + Notes.NOTE_DELETED
+                                                                   + "=0",
                                                                 null,
                                                                 null,
                                                                 null,

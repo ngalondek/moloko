@@ -441,7 +441,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                               Tasks.CONTENT_URI );
             intent.putExtra( TITLE_ICON, R.drawable.ic_title_tag );
             
-            final StringBuffer filter = new StringBuffer();
+            final StringBuilder filter = new StringBuilder();
             
             for ( int i = 0; i < chosenTagsSize; ++i )
             {

@@ -77,9 +77,14 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       
       try
       {
+         // Only non-deleted lists
          c = client.query( Rtm.Lists.CONTENT_URI,
                            PROJECTION,
-                           selection,
+                           new StringBuilder( "(" ).append( selection )
+                                                   .append( " ) AND " )
+                                                   .append( Lists.LIST_DELETED )
+                                                   .append( "=0" )
+                                                   .toString(),
                            null,
                            null );
          

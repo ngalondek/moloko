@@ -88,25 +88,28 @@ public class RtmTaskNote extends RtmData implements
    
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
-   private String id;
+   private final String id;
    
-   private ParcelableDate created;
+   private final ParcelableDate created;
    
-   private ParcelableDate modified;
+   private final ParcelableDate modified;
    
-   private String title;
+   private final boolean deleted;
    
-   private String text;
+   private final String title;
+   
+   private final String text;
    
    
 
-   public RtmTaskNote( String id, Date created, Date modified, String title,
-      String text )
+   public RtmTaskNote( String id, Date created, Date modified, boolean deleted,
+      String title, String text )
    {
       this.id = id;
       this.created = ( created != null ) ? new ParcelableDate( created ) : null;
       this.modified = ( modified != null ) ? new ParcelableDate( modified )
                                           : null;
+      this.deleted = deleted;
       this.title = title;
       this.text = text;
    }
@@ -118,12 +121,17 @@ public class RtmTaskNote extends RtmData implements
       id = textNullIfEmpty( element, "id" );
       created = parseDate( element.getAttribute( "created" ) );
       modified = parseDate( element.getAttribute( "modified" ) );
+      deleted = false;
       title = textNullIfEmpty( element, "title" );
       
       if ( element.getChildNodes().getLength() > 0 )
       {
-         Text innerText = (Text) element.getChildNodes().item( 0 );
+         final Text innerText = (Text) element.getChildNodes().item( 0 );
          text = innerText.getData();
+      }
+      else
+      {
+         text = null;
       }
    }
    
@@ -134,6 +142,7 @@ public class RtmTaskNote extends RtmData implements
       id = source.readString();
       created = source.readParcelable( null );
       modified = source.readParcelable( null );
+      deleted = source.readInt() != 0;
       title = source.readString();
       text = source.readString();
    }
@@ -157,6 +166,13 @@ public class RtmTaskNote extends RtmData implements
    public Date getModified()
    {
       return ( modified != null ) ? modified.getDate() : null;
+   }
+   
+
+
+   public boolean isDeleted()
+   {
+      return deleted;
    }
    
 
@@ -187,6 +203,7 @@ public class RtmTaskNote extends RtmData implements
       dest.writeString( id );
       dest.writeParcelable( created, 0 );
       dest.writeParcelable( modified, 0 );
+      dest.writeInt( deleted ? 1 : 0 );
       dest.writeString( title );
       dest.writeString( text );
    }

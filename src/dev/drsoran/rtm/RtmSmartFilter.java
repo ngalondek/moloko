@@ -162,7 +162,7 @@ public class RtmSmartFilter extends RtmData
                                         ArrayList< RtmSmartFilterToken > tokens,
                                         boolean excludeCompleted )
    {
-      final StringBuffer evalFilter = new StringBuffer();
+      final StringBuilder evalFilter = new StringBuilder();
       
       // a 0-length filter == "true"
       if ( filter != null )
@@ -215,13 +215,13 @@ public class RtmSmartFilter extends RtmData
    @Override
    public String toString()
    {
-      return new StringBuffer( "<" ).append( RtmSmartFilter.class.getSimpleName() )
-                                    .append( ", " )
-                                    .append( filter )
-                                    .append( ", " )
-                                    .append( evalFilter )
-                                    .append( ">" )
-                                    .toString();
+      return new StringBuilder( "<" ).append( RtmSmartFilter.class.getSimpleName() )
+                                     .append( ", " )
+                                     .append( filter )
+                                     .append( ", " )
+                                     .append( evalFilter )
+                                     .append( ">" )
+                                     .toString();
    }
    
 

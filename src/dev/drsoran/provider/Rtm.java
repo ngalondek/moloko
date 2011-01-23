@@ -177,6 +177,15 @@ public class Rtm
       public final static String NOTE_MODIFIED_DATE = "note_modified";
       
       /**
+       * Indicates if the note is deleted.
+       * <P>
+       * Type: INTEGER
+       * </P>
+       * <LI>0 - no</LI> <LI>!= 0 - yes</LI>
+       */
+      public final static String NOTE_DELETED = "note_deleted";
+      
+      /**
        * The title of the note
        * <P>
        * Type: STRING

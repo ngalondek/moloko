@@ -256,7 +256,7 @@ public class MolokoNotificationManager implements
                      final Calendar cal = getDateOnlyCalendar( 0 );
                      
                      // Collect all tasks which due today + the reminder time span.
-                     final StringBuffer buffer = new StringBuffer( Tasks.DUE_DATE );
+                     final StringBuilder buffer = new StringBuilder( Tasks.DUE_DATE );
                      
                      buffer.append( " >= " );
                      buffer.append( cal.getTimeInMillis() );

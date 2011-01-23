@@ -304,7 +304,7 @@ public class TaskActivity extends Activity
       }
       else
       {
-         final StringBuffer textBuffer = new StringBuffer();
+         final StringBuilder textBuffer = new StringBuilder();
          
          if ( hasDue )
          {

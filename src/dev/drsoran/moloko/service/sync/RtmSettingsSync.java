@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.service.sync;
 
-import java.util.ArrayList;
-
 import android.content.ContentProviderClient;
 import android.content.SyncResult;
 import android.util.Log;
@@ -34,7 +32,7 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.rtm.RtmSettings;
 
@@ -46,10 +44,10 @@ public final class RtmSettingsSync
    
    
 
-   public static boolean in_computeSync( ContentProviderClient provider,
-                                         ServiceImpl service,
-                                         SyncResult syncResult,
-                                         ArrayList< IContentProviderSyncOperation > result )
+   public static boolean computeSync( ServiceImpl service,
+                                      ContentProviderClient provider,
+                                      SyncResult syncResult,
+                                      DirectedSyncOperations result )
    {
       RtmSettings server_Settings = null;
       
@@ -72,11 +70,9 @@ public final class RtmSettingsSync
                break;
             default :
                if ( e instanceof ServiceInternalException )
-               {
                   SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
                                                             TAG,
                                                             syncResult );
-               }
                else
                   ++syncResult.stats.numParseExceptions;
                break;
@@ -89,11 +85,13 @@ public final class RtmSettingsSync
       
       if ( local_Settings == null )
       {
-         result.add( server_Settings.computeContentProviderInsertOperation( provider ) );
+         result.getLocalOperations()
+               .add( server_Settings.computeContentProviderInsertOperation( provider ) );
       }
       else
       {
-         result.add( local_Settings.computeContentProviderUpdateOperation( provider,
+         result.getLocalOperations()
+               .add( local_Settings.computeContentProviderUpdateOperation( provider,
                                                                            server_Settings ) );
       }
       

@@ -27,6 +27,10 @@ import android.content.SyncResult;
 
 public class NoopSyncOperation implements ISyncOperation
 {
+   public final static NoopSyncOperation INSTANCE = new NoopSyncOperation();
+   
+   
+
    protected NoopSyncOperation()
    {
       

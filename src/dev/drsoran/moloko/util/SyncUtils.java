@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import android.accounts.Account;
 import android.app.AlarmManager;
@@ -37,6 +36,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.util.Pair;
 
 import com.mdt.rtm.ServiceInternalException;
 
@@ -184,16 +184,15 @@ public final class SyncUtils
       
       if ( client != null )
       {
-         final ArrayList< Long > lastSync = SyncProviderPart.getLastInAndLastOut( client );
+         final Pair< Long, Long > lastSync = SyncProviderPart.getLastInAndLastOut( client );
          
-         if ( lastSync != null && lastSync.size() > 1 )
+         if ( lastSync != null )
          {
-            final long lastSyncIn = ( lastSync.get( 0 ) != null )
-                                                                 ? lastSync.get( 0 )
-                                                                 : Long.MAX_VALUE;
-            final long lastSyncOut = ( lastSync.get( 1 ) != null )
-                                                                  ? lastSync.get( 1 )
-                                                                  : Long.MAX_VALUE;
+            final long lastSyncIn = ( lastSync.first != null ) ? lastSync.first
+                                                              : Long.MAX_VALUE;
+            final long lastSyncOut = ( lastSync.second != null )
+                                                                ? lastSync.second
+                                                                : Long.MAX_VALUE;
             
             final long earliestLastSync = Math.min( lastSyncIn, lastSyncOut );
             

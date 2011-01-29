@@ -22,31 +22,38 @@
 
 package dev.drsoran.moloko.service.sync.syncable;
 
+import java.util.Date;
+
 import android.content.ContentProviderClient;
-import android.util.Pair;
 
 import com.mdt.rtm.Service;
 
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 
 
 public interface ITwoWaySyncable< T >
 {
-   public long getModifiedDate();
+   public Date getCreatedDate();
    
 
 
-   public boolean isDeleted();
+   public Date getModifiedDate();
    
 
 
-   public ISyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                Object... params );
+   public Date getDeletedDate();
    
 
 
-   public ISyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                Object... params );
+   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
+                                                                               Object... params );
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
+                                                                               Object... params );
    
 
 
@@ -60,8 +67,12 @@ public interface ITwoWaySyncable< T >
    
 
 
-   public Pair< ISyncOperation, ISyncOperation > computeMergeOperation( Service service,
-                                                                        ContentProviderClient provider,
-                                                                        T element,
-                                                                        Object... params );
+   public DirectedSyncOperations computeMergeOperations( Service service,
+                                                         ContentProviderClient provider,
+                                                         T serverElement,
+                                                         Object... params );
+   
+
+
+   public IContentProviderSyncOperation removeModifications( ContentProviderClient client );
 }

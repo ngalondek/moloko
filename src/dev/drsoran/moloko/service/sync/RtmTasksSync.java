@@ -23,9 +23,7 @@
 package dev.drsoran.moloko.service.sync;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentProviderClient;
@@ -40,12 +38,8 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
-import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
-import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.SyncUtils;
 
@@ -57,13 +51,13 @@ public final class RtmTasksSync
    
    
 
-   public static boolean in_computeSync( ContentProviderClient provider,
-                                         ServiceImpl service,
-                                         SyncResult syncResult,
-                                         ArrayList< IContentProviderSyncOperation > operations )
+   public static boolean computeSync( ServiceImpl service,
+                                      ContentProviderClient provider,
+                                      Date lastSyncOut,
+                                      SyncResult syncResult,
+                                      DirectedSyncOperations operations )
    {
-      // Get all lists from local database
-      final RtmTasks local_Tasks = RtmTaskSeriesProviderPart.getAllTaskSeries( provider );
+      final List< RtmTaskSeries > local_Tasks = toPlainList( RtmTaskSeriesProviderPart.getAllTaskSeries( provider ) );
       
       if ( local_Tasks == null )
       {
@@ -72,26 +66,13 @@ public final class RtmTasksSync
          return false;
       }
       
-      RtmTasks server_Tasks = null;
-      
-      Date lastSync = null;
-      
-      // Check if we can shorten the list of tasks to sync
-      {
-         final ArrayList< Long > lastInAndOut = SyncProviderPart.getLastInAndLastOut( provider );
-         
-         if ( lastInAndOut != null && lastInAndOut.size() > 1 )
-         {
-            final Long lastIn = lastInAndOut.get( 0 );
-            
-            if ( lastIn != null )
-               lastSync = new Date( lastIn );
-         }
-      }
+      List< RtmTaskSeries > server_Tasks;
       
       try
       {
-         server_Tasks = service.tasks_getList( null, null, lastSync );
+         server_Tasks = toPlainList( service.tasks_getList( null,
+                                                            null,
+                                                            lastSyncOut ) );
       }
       catch ( ServiceException e )
       {
@@ -108,11 +89,9 @@ public final class RtmTasksSync
                break;
             default :
                if ( e instanceof ServiceInternalException )
-               {
                   SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
                                                             TAG,
                                                             syncResult );
-               }
                else
                   ++syncResult.stats.numParseExceptions;
                break;
@@ -121,162 +100,38 @@ public final class RtmTasksSync
          return false;
       }
       
-      boolean ok = true;
+      final DirectedSyncOperations syncOperations = SyncDiffer.twoWaydiff( server_Tasks,
+                                                                           local_Tasks,
+                                                                           RtmTaskSeries.LESS_ID,
+                                                                           service,
+                                                                           provider,
+                                                                           lastSyncOut,
+                                                                           lastSyncOut == null );
       
-      // Sync task lists
-      final ContentProviderSyncableList< RtmTaskList > local_SyncList = new ContentProviderSyncableList< RtmTaskList >( provider,
-                                                                                                                        local_Tasks.getLists(),
-                                                                                                                        RtmTaskList.LESS_ID );
-      
-      ArrayList< IContentProviderSyncOperation > syncOperations = null;
-      
-      // Check if we do a full or incremental sync
-      if ( lastSync != null )
-      {
-         syncOperations = diffIncRtmTaskList( provider,
-                                              server_Tasks.getLists(),
-                                              local_SyncList );
-      }
-      else
-      {
-         syncOperations = SyncDiffer.diff( server_Tasks.getLists(),
-                                           local_SyncList );
-      }
-      
-      ok = syncOperations != null;
-      
-      if ( ok )
+      if ( syncOperations != null )
       {
          operations.addAll( syncOperations );
       }
       
-      return ok;
+      return syncOperations != null;
    }
    
 
 
-   /**
-    * This is a special version explicitly for lists of {@link RtmTaskSeries}. This algorithm is for an incremental sync
-    * with a last sync time stamp where deleted tasks are explicitly marked as deleted and not simply missing. Hence
-    * this case is special for the direction RTM Server -> local this method uses {@link IContentProviderSyncable}
-    * operations.
-    */
-   private final static ArrayList< IContentProviderSyncOperation > diffIncRtmTaskList( ContentProviderClient provider,
-                                                                                       List< RtmTaskList > reference,
-                                                                                       ContentProviderSyncableList< RtmTaskList > target ) throws NullPointerException
+   private final static List< RtmTaskSeries > toPlainList( RtmTasks tasks )
    {
-      if ( reference == null || target == null )
-         throw new NullPointerException();
+      if ( tasks == null )
+         return null;
       
-      boolean ok = true;
+      final List< RtmTaskSeries > result = new ArrayList< RtmTaskSeries >();
       
-      ArrayList< IContentProviderSyncOperation > operations = new ArrayList< IContentProviderSyncOperation >();
+      final List< RtmTaskList > listOfLists = tasks.getLists();
       
-      // for each element of the reference list
-      for ( Iterator< RtmTaskList > i = reference.iterator(); ok && i.hasNext(); )
+      for ( RtmTaskList rtmTaskList : listOfLists )
       {
-         final RtmTaskList refElement = i.next();
-         
-         final int pos = target.find( refElement );
-         
-         // INSERT: The reference element is not contained in the target list.
-         if ( pos < 0 )
-         {
-            // Remove all deleted tasks from the reference list. These tasks
-            // we never had locally.
-            refElement.removeDeletedTaskSeries();
-            
-            final IContentProviderSyncOperation taskListOperation = target.computeInsertOperation( refElement );
-            
-            ok = taskListOperation != null;
-            
-            if ( ok
-               && !( taskListOperation instanceof NoopContentProviderSyncOperation ) )
-               operations.add( taskListOperation );
-         }
-         
-         // UPDATE: The reference element is contained in the target list. So check if something has
-         // changed in this list. If so we only have the changes.
-         else if ( refElement.getSeries().size() > 0 )
-         {
-            final ArrayList< RtmTaskSeries > refTaskSeriesList = new ArrayList< RtmTaskSeries >( refElement.getSeries() );
-            final ArrayList< RtmTaskSeries > tgtTaskSeriesList = new ArrayList< RtmTaskSeries >( target.get( pos )
-                                                                                                       .getSeries() );
-            
-            Collections.sort( refTaskSeriesList, RtmTaskSeries.LESS_ID );
-            Collections.sort( tgtTaskSeriesList, RtmTaskSeries.LESS_ID );
-            
-            // for each element of the reference list
-            for ( Iterator< RtmTaskSeries > j = refTaskSeriesList.iterator(); ok
-               && j.hasNext(); )
-            {
-               final RtmTaskSeries refTaskSeries = j.next();
-               
-               final int posTaskSeries = Collections.binarySearch( tgtTaskSeriesList,
-                                                                   refTaskSeries,
-                                                                   RtmTaskSeries.LESS_ID );
-               
-               IContentProviderSyncOperation taskSeriesOperation = null;
-               
-               if ( posTaskSeries < 0 )
-               {
-                  // INSERT: The reference element is not contained in the target
-                  // list and is not deleted.
-                  if ( !refTaskSeries.isDeleted() )
-                  {
-                     // SPECIAL CASE MOVE: See Issue#9 http://code.google.com/p/moloko/issues/detail?id=9
-                     //
-                     // This applies only to incremental sync and happens if a task has moved
-                     // from one list to another. Then it appears as new in the new list but not
-                     // deleted in the old list.
-                     final RtmTaskSeries existingTaskSeries = RtmTaskSeriesProviderPart.getTaskSeries( provider,
-                                                                                                       refTaskSeries.getId() );
-                     
-                     // So check if the taskseries already exists.
-                     if ( existingTaskSeries != null )
-                     {
-                        // UPDATE
-                        taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) existingTaskSeries ).computeContentProviderUpdateOperation( provider,
-                                                                                                                                                        refTaskSeries );
-                     }
-                     else
-                        // INSERT
-                        taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) refTaskSeries ).computeContentProviderInsertOperation( provider,
-                                                                                                                                                   refElement.getId() );
-                  }
-                  // We never had this taskseries.
-                  else
-                     taskSeriesOperation = NoopContentProviderSyncOperation.INSTANCE;
-               }
-               
-               // The reference element is contained in the target list.
-               else
-               {
-                  final RtmTaskSeries tgtTaskSeries = tgtTaskSeriesList.get( posTaskSeries );
-                  
-                  // DELETE: The reference element is explicitly marked as
-                  // deleted.
-                  if ( refTaskSeries.isDeleted() )
-                     taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) tgtTaskSeries ).computeContentProviderDeleteOperation( provider );
-                  
-                  // UPDATE
-                  else
-                     taskSeriesOperation = ( (IContentProviderSyncable< RtmTaskSeries >) tgtTaskSeries ).computeContentProviderUpdateOperation( provider,
-                                                                                                                                                refTaskSeries );
-               }
-               
-               ok = taskSeriesOperation != null;
-               
-               if ( ok
-                  && !( taskSeriesOperation instanceof NoopContentProviderSyncOperation ) )
-                  operations.add( taskSeriesOperation );
-            }
-         }
+         result.addAll( rtmTaskList.getSeries() );
       }
       
-      if ( !ok )
-         operations = null;
-      
-      return operations;
+      return result;
    }
 }

@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.service.sync;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderClient;
@@ -36,6 +37,7 @@ import com.mdt.rtm.ServiceInternalException;
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.SyncUtils;
@@ -50,10 +52,11 @@ public final class RtmContactsSync
    
    
 
-   public static boolean in_computeSync( ContentProviderClient provider,
-                                         ServiceImpl service,
-                                         SyncResult syncResult,
-                                         ArrayList< IContentProviderSyncOperation > result )
+   public static boolean computeSync( ServiceImpl service,
+                                      ContentProviderClient provider,
+                                      Date lastSyncOut,
+                                      SyncResult syncResult,
+                                      DirectedSyncOperations result )
    {
       // Get all contacts from local database
       final ArrayList< RtmContact > local_ListOfContacts = RtmContactsProviderPart.getAllContacts( provider,
@@ -87,11 +90,9 @@ public final class RtmContactsSync
                break;
             default :
                if ( e instanceof ServiceInternalException )
-               {
                   SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
                                                             TAG,
                                                             syncResult );
-               }
                else
                   ++syncResult.stats.numParseExceptions;
                break;
@@ -113,7 +114,7 @@ public final class RtmContactsSync
       
       if ( ok )
       {
-         result.addAll( syncOperations );
+         result.getLocalOperations().addAll( syncOperations );
       }
       
       return ok;

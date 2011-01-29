@@ -28,27 +28,19 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderClient;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 
 
 /**
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskList extends RtmData implements
-         IContentProviderSyncable< RtmTaskList >
+public class RtmTaskList extends RtmData
 {
+   @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + RtmTaskList.class.getSimpleName();
    
@@ -231,95 +223,4 @@ public class RtmTaskList extends RtmData implements
          + ( ( current != null ) ? "," + current.getDate().toGMTString() : "" )
          + ">";
    }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
-   {
-      CompositeContentProviderSyncOperation operation = new CompositeContentProviderSyncOperation( provider,
-                                                                                                   IContentProviderSyncOperation.Op.INSERT );
-      
-      boolean ok = true;
-      
-      // If this list should be inserted as new list, all taskseries in this
-      // list
-      // are new and they can simply be added w/o a sync.
-      for ( Iterator< RtmTaskSeries > i = series.iterator(); ok && i.hasNext(); )
-      {
-         final RtmTaskSeries taskSeries = i.next();
-         
-         final IContentProviderSyncOperation taskSeriesOperation = taskSeries.computeContentProviderInsertOperation( provider,
-                                                                                                                     id );
-         ok = taskSeriesOperation != null;
-         
-         if ( ok
-            && !( taskSeriesOperation instanceof NoopContentProviderSyncOperation ) )
-         {
-            operation.add( taskSeriesOperation );
-         }
-      }
-      
-      if ( !ok )
-         operation = null;
-      else if ( operation.plainSize() == 0 )
-         return NoopContentProviderSyncOperation.INSTANCE;
-      
-      return operation;
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
-   {
-      // RtmTaskList is no entity in our DB, so deletion would mean deleting all
-      // taskseries.
-      // But deleting a list means moving all taskseries to the 'Inbox' list
-      // (done on server side).
-      // So nothing to do here.
-      //
-      // TODO: Think about behavior if sync direction is from client to server,
-      // aka
-      // IServerSyncable.
-      return NoopContentProviderSyncOperation.INSTANCE;
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               RtmTaskList update,
-                                                                               Object... params )
-   {
-      // Here booth parties have the same list. We run a sync.
-      if ( id.equals( update.id ) )
-      {
-         // Sync taskseries
-         final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( provider,
-                                                                                                                               series,
-                                                                                                                               RtmTaskSeries.LESS_ID );
-         
-         final ArrayList< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( update.series,
-                                                                                            local_SyncList,
-                                                                                            id );
-         
-         if ( syncOperations != null )
-         {
-            if ( syncOperations.size() > 0 )
-               return new CompositeContentProviderSyncOperation( provider,
-                                                                 syncOperations,
-                                                                 IContentProviderSyncOperation.Op.UPDATE );
-            else
-               return NoopContentProviderSyncOperation.INSTANCE;
-         }
-      }
-      else
-      {
-         Log.e( TAG,
-                "ContentProvider update failed. Different RtmTaskList IDs." );
-      }
-      
-      return null;
-   }
-   
 }

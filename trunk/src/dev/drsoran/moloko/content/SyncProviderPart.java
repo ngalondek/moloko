@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.content;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
@@ -34,6 +33,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
+import android.util.Pair;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -149,9 +149,9 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< Long > getLastInAndLastOut( ContentProviderClient client )
+   public final static Pair< Long, Long > getLastInAndLastOut( ContentProviderClient client )
    {
-      ArrayList< Long > inAndOut = null;
+      Pair< Long, Long > inAndOut = new Pair< Long, Long >( null, null );
       
       Cursor c = null;
       
@@ -165,10 +165,10 @@ public class SyncProviderPart extends AbstractRtmProviderPart
          
          if ( ok )
          {
-            inAndOut = new ArrayList< Long >( 2 );
-            inAndOut.add( Queries.getOptLong( c, COL_INDICES.get( Sync.LAST_IN ) ) );
-            inAndOut.add( Queries.getOptLong( c,
-                                              COL_INDICES.get( Sync.LAST_OUT ) ) );
+            inAndOut = new Pair< Long, Long >( Queries.getOptLong( c,
+                                                                   COL_INDICES.get( Sync.LAST_IN ) ),
+                                               Queries.getOptLong( c,
+                                                                   COL_INDICES.get( Sync.LAST_OUT ) ) );
          }
       }
       catch ( RemoteException e )

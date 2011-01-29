@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 
@@ -36,6 +36,10 @@ import android.os.Parcelable;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.mdt.rtm.Service;
+
+import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
@@ -43,10 +47,12 @@ import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.service.sync.util.ParamChecker;
+import dev.drsoran.moloko.service.sync.operation.NoopSyncOperation;
+import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -61,7 +67,7 @@ import dev.drsoran.rtm.Tag;
  * @author Will Ross Jun 22, 2007
  */
 public class RtmTaskSeries extends RtmData implements
-         IContentProviderSyncable< RtmTaskSeries >
+         ITwoWaySyncable< RtmTaskSeries >
 {
    private final static String TAG = "Moloko."
       + RtmTaskSeries.class.getSimpleName();
@@ -117,9 +123,6 @@ public class RtmTaskSeries extends RtmData implements
       return null;
    }
    
-   @SuppressWarnings( "unused" )
-   private static final Logger log = Logger.getLogger( "TaskSeries" );
-   
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private final String id;
@@ -150,7 +153,7 @@ public class RtmTaskSeries extends RtmData implements
    
    private final ParticipantList participants;
    
-   private final boolean deleted;
+   private final ParcelableDate deleted;
    
    
 
@@ -175,7 +178,7 @@ public class RtmTaskSeries extends RtmData implements
       this.isEveryRecurrence = isEveryRecurrence;
       this.tags = tags;
       this.participants = participants;
-      this.deleted = false;
+      this.deleted = null;
    }
    
 
@@ -261,7 +264,7 @@ public class RtmTaskSeries extends RtmData implements
          this.participants = new ParticipantList( id );
       }
       
-      this.deleted = false;
+      this.deleted = null;
    }
    
 
@@ -291,7 +294,7 @@ public class RtmTaskSeries extends RtmData implements
       isEveryRecurrence = false;
       tags = null;
       participants = null;
-      this.deleted = deleted;
+      this.deleted = new ParcelableDate( System.currentTimeMillis() );
    }
    
 
@@ -312,7 +315,7 @@ public class RtmTaskSeries extends RtmData implements
       isEveryRecurrence = source.readInt() != 0;
       tags = source.createStringArrayList();
       participants = source.readParcelable( null );
-      deleted = source.readInt() != 0;
+      deleted = source.readParcelable( null );
    }
    
 
@@ -331,14 +334,14 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public Date getCreated()
+   public Date getCreatedDate()
    {
       return ( created != null ) ? created.getDate() : null;
    }
    
 
 
-   public Date getModified()
+   public Date getModifiedDate()
    {
       return ( modified != null ) ? modified.getDate() : null;
    }
@@ -389,7 +392,14 @@ public class RtmTaskSeries extends RtmData implements
 
    public boolean isDeleted()
    {
-      return deleted;
+      return deleted != null;
+   }
+   
+
+
+   public Date getDeletedDate()
+   {
+      return deleted != null ? deleted.getDate() : null;
    }
    
 
@@ -472,7 +482,7 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeInt( isEveryRecurrence ? 1 : 0 );
       dest.writeStringList( tags );
       dest.writeParcelable( participants, flags );
-      dest.writeInt( deleted ? 1 : 0 );
+      dest.writeParcelable( deleted, flags );
    }
    
 
@@ -490,37 +500,19 @@ public class RtmTaskSeries extends RtmData implements
    public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
                                                                                Object... params )
    {
-      ContentProviderSyncOperation operation = null;
-      
-      final boolean ok = ParamChecker.checkParams( TAG,
-                                                   "ContentProvider insert failed. ",
-                                                   new Class[]
-                                                   { String.class },
-                                                   params );
-      
-      if ( ok )
+      try
       {
-         final String listId = (String) params[ 0 ];
+         return new ContentProviderSyncOperation( provider,
+                                                  RtmTaskSeriesProviderPart.insertTaskSeries( provider,
+                                                                                              this ),
+                                                  IContentProviderSyncOperation.Op.INSERT );
          
-         try
-         {
-            operation = new ContentProviderSyncOperation( provider,
-                                                          RtmTaskSeriesProviderPart.insertTaskSeries( provider,
-                                                                                                      listId,
-                                                                                                      this ),
-                                                          IContentProviderSyncOperation.Op.INSERT );
-         }
-         catch ( NullPointerException e )
-         {
-            Log.e( TAG, "ContentProvider insert failed. ", e );
-         }
-         catch ( RemoteException e )
-         {
-            Log.e( TAG, "ContentProvider insert failed. ", e );
-         }
       }
-      
-      return operation;
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "ContentProvider insert failed. ", e );
+         return null;
+      }
    }
    
 
@@ -542,20 +534,15 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               RtmTaskSeries update,
-                                                                               Object... params )
+   public DirectedSyncOperations computeMergeOperations( Service service,
+                                                         ContentProviderClient provider,
+                                                         RtmTaskSeries serverElement,
+                                                         Object... params )
    {
-      CompositeContentProviderSyncOperation result = null;
+      final List< ISyncOperation > serverOps = new LinkedList< ISyncOperation >();
+      final List< IContentProviderSyncOperation > localOps = new LinkedList< IContentProviderSyncOperation >();
       
       boolean ok = true;
-      
-      if ( !update.id.equals( id ) )
-      {
-         ok = false;
-         Log.e( TAG,
-                "ContentProvider update failed. Different RtmTaskSeries IDs." );
-      }
       
       if ( ok )
       {
@@ -564,28 +551,25 @@ public class RtmTaskSeries extends RtmData implements
                                                                                                                           notes.getNotes(),
                                                                                                                           RtmTaskNote.LESS_ID );
          
-         final ArrayList< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( update.notes.getNotes(),
+         final ArrayList< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverElement.notes.getNotes(),
                                                                                             syncNotesList,
                                                                                             id );
          ok = noteOperations != null;
          
          if ( ok )
          {
-            result = new CompositeContentProviderSyncOperation( provider,
-                                                                IContentProviderSyncOperation.Op.UPDATE );
-            
             if ( noteOperations.size() > 0 )
-               result.addAll( noteOperations );
+               localOps.addAll( noteOperations );
             
             // Update tags
             if ( ok )
             {
                final IContentProviderSyncOperation tagOperation = updateTags( provider,
-                                                                              update );
+                                                                              serverElement );
                ok = tagOperation != null;
                if ( ok
                   && tagOperation.getOperationType() != IContentProviderSyncOperation.Op.NOOP )
-                  result.add( tagOperation );
+                  localOps.add( tagOperation );
             }
             
             // Update tasks
@@ -594,25 +578,25 @@ public class RtmTaskSeries extends RtmData implements
                final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( provider,
                                                                                                                         tasks,
                                                                                                                         RtmTask.LESS_ID );
-               final ArrayList< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( update.tasks,
+               final ArrayList< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( serverElement.tasks,
                                                                                                   syncTasksList,
                                                                                                   id );
                ok = taskOperations != null;
                
                if ( ok && taskOperations.size() > 0 )
-                  result.addAll( taskOperations );
+                  localOps.addAll( taskOperations );
             }
             
             // Update participants
             if ( ok )
             {
                final IContentProviderSyncOperation partOperation = participants.computeContentProviderUpdateOperation( provider,
-                                                                                                                       update.participants );
+                                                                                                                       serverElement.participants );
                ok = partOperation != null;
                
                if ( ok
                   && !( partOperation instanceof NoopContentProviderSyncOperation ) )
-                  result.add( partOperation );
+                  localOps.add( partOperation );
             }
             
             // Update taskseries
@@ -624,71 +608,73 @@ public class RtmTaskSeries extends RtmData implements
                final CompositeContentProviderSyncOperation taskSeriesOperation = new CompositeContentProviderSyncOperation( provider,
                                                                                                                             IContentProviderSyncOperation.Op.UPDATE );
                SyncUtils.updateDate( created,
-                                     update.created,
+                                     serverElement.created,
                                      uri,
                                      TaskSeries.TASKSERIES_CREATED_DATE,
                                      taskSeriesOperation );
                
                SyncUtils.updateDate( modified,
-                                     update.modified,
+                                     serverElement.modified,
                                      uri,
                                      TaskSeries.MODIFIED_DATE,
                                      taskSeriesOperation );
                
-               if ( Strings.hasStringChanged( listId, update.listId ) )
+               if ( Strings.hasStringChanged( listId, serverElement.listId ) )
                   taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
                                                                    .withValue( TaskSeries.LIST_ID,
-                                                                               update.listId )
+                                                                               serverElement.listId )
                                                                    .build() );
                
-               if ( Strings.hasStringChanged( name, update.name ) )
+               if ( Strings.hasStringChanged( name, serverElement.name ) )
                   taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
                                                                    .withValue( TaskSeries.TASKSERIES_NAME,
-                                                                               update.name )
+                                                                               serverElement.name )
                                                                    .build() );
                
-               if ( Strings.hasStringChanged( source, update.source ) )
+               if ( Strings.hasStringChanged( source, serverElement.source ) )
                   taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
                                                                    .withValue( TaskSeries.SOURCE,
-                                                                               update.source )
+                                                                               serverElement.source )
                                                                    .build() );
                
-               if ( Strings.hasStringChanged( locationId, update.locationId ) )
+               if ( Strings.hasStringChanged( locationId,
+                                              serverElement.locationId ) )
                   taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
                                                                    .withValue( TaskSeries.LOCATION_ID,
-                                                                               update.locationId )
+                                                                               serverElement.locationId )
                                                                    .build() );
                
-               if ( Strings.hasStringChanged( url, update.url ) )
+               if ( Strings.hasStringChanged( url, serverElement.url ) )
                   taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
                                                                    .withValue( TaskSeries.URL,
-                                                                               update.url )
+                                                                               serverElement.url )
                                                                    .build() );
                
-               if ( Strings.hasStringChanged( recurrence, update.recurrence ) )
+               if ( Strings.hasStringChanged( recurrence,
+                                              serverElement.recurrence ) )
                {
                   taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
                                                                    .withValue( TaskSeries.RECURRENCE,
-                                                                               update.recurrence )
+                                                                               serverElement.recurrence )
                                                                    .build() );
-                  if ( TextUtils.isEmpty( update.recurrence ) )
+                  if ( TextUtils.isEmpty( serverElement.recurrence ) )
                   {
                      taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
                                                                       .withValue( TaskSeries.RECURRENCE_EVERY,
                                                                                   null )
                                                                       .build() );
                   }
-                  else if ( isEveryRecurrence != update.isEveryRecurrence )
+                  else if ( isEveryRecurrence != serverElement.isEveryRecurrence )
                      taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
                                                                       .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                                  update.isEveryRecurrence
-                                                                                                          ? 1
-                                                                                                          : 0 )
+                                                                                  serverElement.isEveryRecurrence
+                                                                                                                 ? 1
+                                                                                                                 : 0 )
                                                                       .build() );
                }
                
                if ( taskSeriesOperation.plainSize() > 0 )
-                  result.add( taskSeriesOperation );
+                  localOps.add( taskSeriesOperation );
             }
          }
       }
@@ -696,9 +682,7 @@ public class RtmTaskSeries extends RtmData implements
       if ( !ok )
          return null;
       else
-         return ( result == null || result.plainSize() > 0 )
-                                                            ? result
-                                                            : NoopContentProviderSyncOperation.INSTANCE;
+         return new DirectedSyncOperations( serverOps, localOps );
    }
    
 
@@ -730,4 +714,41 @@ public class RtmTaskSeries extends RtmData implements
       return null;
    }
    
+
+
+   public ISyncOperation computeServerInsertOperation( Service service,
+                                                       Object... params )
+   {
+      return NoopSyncOperation.INSTANCE;
+   }
+   
+
+
+   public ISyncOperation computeServerDeleteOperation( Service service,
+                                                       Object... params )
+   {
+      return NoopSyncOperation.INSTANCE;
+   }
+   
+
+
+   public IContentProviderSyncOperation removeModifications( ContentProviderClient provider )
+   {
+      try
+      {
+         return ModificationsProviderPart.isModified( provider,
+                                                      Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                id ) )
+                                                                                      ? new ContentProviderSyncOperation( provider,
+                                                                                                                          ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
+                                                                                                                                                                              id ),
+                                                                                                                          IContentProviderSyncOperation.Op.DELETE )
+                                                                                      : NoopContentProviderSyncOperation.INSTANCE;
+      }
+      catch ( RemoteException e )
+      {
+         
+         return null;
+      }
+   }
 }

@@ -24,6 +24,8 @@ package dev.drsoran.moloko.service.sync;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.http.ParseException;
 
@@ -43,6 +45,7 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
+import android.util.Pair;
 
 import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.ServiceImpl;
@@ -54,6 +57,7 @@ import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -63,13 +67,6 @@ import dev.drsoran.provider.Rtm.Sync;
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter
 {
-   
-   public final static class Direction
-   {
-      public final static int IN = 1 << 0;
-      
-      public final static int OUT = 1 << 1;
-   }
    
    private final static String TAG = "Moloko."
       + SyncAdapter.class.getSimpleName();
@@ -133,8 +130,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                                                                    sharedSecret,
                                                                                                    context.getString( R.string.app_name ),
                                                                                                    authToken ) );
-                     
-                     final ArrayList< IContentProviderSyncOperation > batch = new ArrayList< IContentProviderSyncOperation >();
+                     final DirectedSyncOperations batch = new DirectedSyncOperations();
                      
                      if ( computeOperationsBatch( serviceImpl,
                                                   provider,
@@ -142,45 +138,37 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                   extras,
                                                   batch ) )
                      {
-                        final ArrayList< ContentProviderOperation > contentProviderOperationsBatch = new ArrayList< ContentProviderOperation >();
+                        final ContentProvider contentProvider = provider.getLocalContentProvider();
                         
-                        for ( IContentProviderSyncOperation contentProviderSyncOperation : batch )
+                        if ( contentProvider instanceof RtmProvider )
                         {
-                           final int count = contentProviderSyncOperation.getBatch( contentProviderOperationsBatch );
-                           ContentProviderSyncOperation.updateSyncResult( syncResult,
-                                                                          contentProviderSyncOperation.getOperationType(),
-                                                                          count );
-                        }
-                        
-                        {
-                           final ContentProvider contentProvider = provider.getLocalContentProvider();
+                           final TransactionalAccess transactionalAccess = ( (RtmProvider) contentProvider ).newTransactionalAccess();
+                           transactionalAccess.beginTransaction();
                            
-                           if ( contentProvider instanceof RtmProvider )
+                           try
                            {
-                              final TransactionalAccess transactionalAccess = ( (RtmProvider) contentProvider ).newTransactionalAccess();
-                              transactionalAccess.beginTransaction();
+                              // TODO: Apply local and the server operations in parallel in a background task.
+                              applyLocalOperations( provider,
+                                                    batch.getLocalOperations(),
+                                                    syncResult );
                               
-                              try
-                              {
-                                 provider.applyBatch( contentProviderOperationsBatch );
-                                 transactionalAccess.setTransactionSuccessful();
-                              }
-                              finally
-                              {
-                                 transactionalAccess.endTransaction();
-                              }
+                              transactionalAccess.setTransactionSuccessful();
                            }
-                           else
+                           finally
                            {
-                              provider.applyBatch( contentProviderOperationsBatch );
+                              transactionalAccess.endTransaction();
                            }
+                        }
+                        else
+                        {
+                           throw new IllegalStateException( "no local transaction support" );
                         }
                         
                         // If we synced only the settings, we do not update the
                         // last sync time cause this was no full sync.
                         if ( !extras.getBoolean( dev.drsoran.moloko.service.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
                                                  false ) )
-                           updateSyncTime( Direction.IN );
+                           updateSyncTime();
                         
                         Log.i( TAG, "Applying sync operations batch succeded. "
                            + syncResult );
@@ -269,65 +257,156 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
+   private void applyLocalOperations( ContentProviderClient provider,
+                                      List< IContentProviderSyncOperation > operations,
+                                      SyncResult syncResult ) throws RemoteException,
+                                                             OperationApplicationException
+   {
+      final ArrayList< ContentProviderOperation > contentProviderOperationsBatch = new ArrayList< ContentProviderOperation >();
+      
+      for ( IContentProviderSyncOperation contentProviderSyncOperation : operations )
+      {
+         final int count = contentProviderSyncOperation.getBatch( contentProviderOperationsBatch );
+         ContentProviderSyncOperation.updateSyncResult( syncResult,
+                                                        contentProviderSyncOperation.getOperationType(),
+                                                        count );
+      }
+      
+      provider.applyBatch( contentProviderOperationsBatch );
+   }
+   
+
+
    private boolean computeOperationsBatch( ServiceImpl serviceImpl,
                                            ContentProviderClient provider,
                                            SyncResult syncResult,
                                            Bundle extras,
-                                           ArrayList< IContentProviderSyncOperation > batch )
+                                           DirectedSyncOperations batch )
    {
       boolean ok = true;
       
       if ( !extras.getBoolean( dev.drsoran.moloko.service.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
                                false ) )
       {
-         // Sync RtmList
-         ok = RtmListsSync.in_computeSync( provider,
-                                           serviceImpl,
-                                           syncResult,
-                                           batch );
+         Date lastSyncOut = null;
          
-         Log.i( TAG, "Compute RtmLists sync " + ( ok ? "ok" : "failed" ) );
+         {
+            final Pair< Long, Long > lastSync = getSyncTime();
+            ok = lastSync != null;
+            if ( ok && lastSync.second != null )
+               lastSyncOut = new Date( lastSync.second );
+         }
+         
+         // Sync RtmList
+         ok = ok
+            && RtmListsSync.computeSync( serviceImpl,
+                                         provider,
+                                         lastSyncOut,
+                                         syncResult,
+                                         batch );
+         
+         ok = ok && logSyncStep( "RtmLists", ok );
          
          // Sync RtmTasks
          ok = ok
-            && RtmTasksSync.in_computeSync( provider,
-                                            serviceImpl,
-                                            syncResult,
-                                            batch );
+            && RtmTasksSync.computeSync( serviceImpl,
+                                         provider,
+                                         lastSyncOut,
+                                         syncResult,
+                                         batch );
          
-         Log.i( TAG, "Compute RtmTasks sync " + ( ok ? "ok" : "failed" ) );
+         ok = ok && logSyncStep( "RtmTasks", ok );
          
          // Sync locations
          ok = ok
-            && RtmLocationsSync.in_computeSync( provider,
-                                                serviceImpl,
-                                                syncResult,
-                                                batch );
-         Log.i( TAG, "Compute RtmLocations sync " + ( ok ? "ok" : "failed" ) );
+            && RtmLocationsSync.computeSync( serviceImpl,
+                                             provider,
+                                             lastSyncOut,
+                                             syncResult,
+                                             batch );
+         
+         ok = ok && logSyncStep( "RtmLocations", ok );
          
          // Sync contacts
          ok = ok
-            && RtmContactsSync.in_computeSync( provider,
-                                               serviceImpl,
-                                               syncResult,
-                                               batch );
+            && RtmContactsSync.computeSync( serviceImpl,
+                                            provider,
+                                            lastSyncOut,
+                                            syncResult,
+                                            batch );
          
-         Log.i( TAG, "Compute RtmContactsSync sync " + ( ok ? "ok" : "failed" ) );
+         ok = ok && logSyncStep( "RtmContacts", ok );
       }
       
       // Sync settings
       ok = ok
-         && RtmSettingsSync.in_computeSync( provider,
-                                            serviceImpl,
-                                            syncResult,
-                                            batch );
+         && RtmSettingsSync.computeSync( serviceImpl,
+                                         provider,
+                                         syncResult,
+                                         batch );
       
-      Log.i( TAG, "Compute RtmSettings sync " + ( ok ? "ok" : "failed" ) );
+      ok = ok && logSyncStep( "RtmSettings", ok );
       
       if ( !ok )
          batch.clear();
       
       return ok;
+   }
+   
+
+
+   private final Pair< Long, Long > getSyncTime()
+   {
+      Pair< Long, Long > result = null;
+      
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( Sync.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         result = SyncProviderPart.getLastInAndLastOut( client );
+         client.release();
+         
+         // SPECIAL CASE: We check the returned dates. In case the device clock
+         // was adjusted, we may have stored a date that is way too far in the
+         // future. This may break the incremental sync for a long time. In this case we do a
+         // full sync and store the new date.
+         if ( ( result.first != null && result.first > System.currentTimeMillis() )
+            || ( result.second != null && result.second > System.currentTimeMillis() ) )
+         {
+            result = new Pair< Long, Long >( null, null );
+         }
+      }
+      
+      return result;
+   }
+   
+
+
+   private final void updateSyncTime()
+   {
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( Sync.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final Long millis = Long.valueOf( System.currentTimeMillis() );
+         SyncProviderPart.updateSync( client, millis, millis );
+         
+         client.release();
+      }
+   }
+   
+
+
+   private final static boolean logSyncStep( String step, boolean result )
+   {
+      if ( result )
+         Log.i( TAG, "Compute " + step + " sync ok" );
+      else
+         Log.e( TAG, "Compute " + step + " sync failed" );
+      
+      return result;
    }
    
 
@@ -345,26 +424,5 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    {
       return ( bundle != null && ( bundle.containsKey( ContentResolver.SYNC_EXTRAS_INITIALIZE )
          || bundle.containsKey( ContentResolver.SYNC_EXTRAS_MANUAL ) || bundle.containsKey( dev.drsoran.moloko.service.sync.Constants.SYNC_EXTRAS_SCHEDULED ) ) );
-   }
-   
-
-
-   private final void updateSyncTime( int direction )
-   {
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Sync.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final Long millis = Long.valueOf( System.currentTimeMillis() );
-         
-         SyncProviderPart.updateSync( client,
-                                      ( ( direction & Direction.IN ) != 0 )
-                                                                           ? millis
-                                                                           : null,
-                                      ( ( direction & Direction.OUT ) != 0 )
-                                                                            ? millis
-                                                                            : null );
-      }
    }
 }

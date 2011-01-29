@@ -39,6 +39,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Modifications;
 
@@ -61,6 +62,9 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                                                                                 .append( Modifications.COL_NAME )
                                                                                 .append( "=?" )
                                                                                 .toString();
+   
+   private final static String SEL_QUERY_MODIFICATIONS = new StringBuilder( Modifications.ENTITY_URI ).append( "=?" )
+                                                                                                      .toString();
    
    static
    {
@@ -184,6 +188,39 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    
 
 
+   public final static boolean isModified( ContentProviderClient client,
+                                           Uri entityUri ) throws RemoteException
+   {
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Modifications.CONTENT_URI,
+                           PROJECTION,
+                           SEL_QUERY_MODIFICATIONS,
+                           new String[]
+                           { entityUri.toString() },
+                           null );
+         
+         if ( c == null )
+            throw new RemoteException();
+         
+         return c.getCount() > 0;
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         throw e;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+   }
+   
+
+
    public final static boolean applyModifications( ContentResolver contentResolver,
                                                    Collection< Modification< ? > > modifications )
    {
@@ -287,6 +324,21 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
       
       return ok;
+   }
+   
+
+
+   public static ContentProviderOperation getRemoveModificationOps( Uri contentUri,
+                                                                    String entityId )
+   {
+      return ContentProviderOperation.newDelete( Modifications.CONTENT_URI )
+                                     .withSelection( new StringBuilder( Modifications.ENTITY_URI ).append( " = '" )
+                                                                                                  .append( Queries.contentUriWithId( contentUri,
+                                                                                                                                     entityId ) )
+                                                                                                  .append( "'" )
+                                                                                                  .toString(),
+                                                     null )
+                                     .build();
    }
    
 

@@ -24,6 +24,7 @@ package dev.drsoran.moloko.service.sync;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import android.content.ContentProviderClient;
 import android.content.SyncResult;
@@ -38,6 +39,7 @@ import com.mdt.rtm.data.RtmLists;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.SyncUtils;
@@ -50,10 +52,11 @@ public final class RtmListsSync
    
    
 
-   public static boolean in_computeSync( ContentProviderClient provider,
-                                         ServiceImpl service,
-                                         SyncResult syncResult,
-                                         ArrayList< IContentProviderSyncOperation > result )
+   public static boolean computeSync( ServiceImpl service,
+                                      ContentProviderClient provider,
+                                      Date lastSyncOut,
+                                      SyncResult syncResult,
+                                      DirectedSyncOperations result )
    {
       // Get all lists from local database
       final RtmLists local_ListsOfLists = RtmListsProviderPart.getAllLists( provider,
@@ -114,7 +117,7 @@ public final class RtmListsSync
       
       if ( ok )
       {
-         result.addAll( syncOperations );
+         result.getLocalOperations().addAll( syncOperations );
       }
       
       return ok;

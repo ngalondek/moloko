@@ -87,7 +87,6 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
 
    public final static ContentValues getContentValues( RtmTaskSeries taskSeries,
-                                                       String listId,
                                                        boolean withId )
    {
       final ContentValues values = new ContentValues();
@@ -95,14 +94,14 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       if ( withId )
          values.put( TaskSeries._ID, taskSeries.getId() );
       
-      if ( taskSeries.getCreated() != null )
+      if ( taskSeries.getCreatedDate() != null )
          values.put( TaskSeries.TASKSERIES_CREATED_DATE,
-                     taskSeries.getCreated().getTime() );
+                     taskSeries.getCreatedDate().getTime() );
       else
          values.putNull( TaskSeries.TASKSERIES_CREATED_DATE );
       
-      if ( taskSeries.getModified() != null )
-         values.put( TaskSeries.MODIFIED_DATE, taskSeries.getModified()
+      if ( taskSeries.getModifiedDate() != null )
+         values.put( TaskSeries.MODIFIED_DATE, taskSeries.getModifiedDate()
                                                          .getTime() );
       else
          values.putNull( TaskSeries.MODIFIED_DATE );
@@ -136,7 +135,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       else
          values.putNull( TaskSeries.LOCATION_ID );
       
-      values.put( TaskSeries.LIST_ID, listId );
+      values.put( TaskSeries.LIST_ID, taskSeries.getListId() );
       
       return values;
    }
@@ -266,7 +265,6 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
 
 
    public final static ArrayList< ContentProviderOperation > insertTaskSeries( ContentProviderClient client,
-                                                                               String listId,
                                                                                RtmTaskSeries taskSeries ) throws RemoteException
    {
       ArrayList< ContentProviderOperation > operations = null;
@@ -282,7 +280,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       ok = ok && taskSeries.getName() != null;
       ok = ok && taskSeries.getTasks() != null
          && taskSeries.getTasks().size() > 0;
-      ok = ok && listId != null;
+      ok = ok && taskSeries.getListId() != null;
       
       if ( ok )
       {
@@ -369,7 +367,6 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          {
             operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
                                                     .withValues( getContentValues( taskSeries,
-                                                                                   listId,
                                                                                    true ) )
                                                     .build() );
          }

@@ -40,12 +40,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.LogUtils;
@@ -91,6 +93,8 @@ public class TaskActivity extends Activity
    private ViewGroup participantsSection;
    
    private View urlSection;
+   
+   private View editTaskBtn;
    
    
 
@@ -141,6 +145,7 @@ public class TaskActivity extends Activity
                locationSection = taskContainer.findViewById( R.id.task_location );
                participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
                urlSection = taskContainer.findViewById( R.id.task_url );
+               editTaskBtn = taskContainer.findViewById( R.id.task_buttons_edit );
                
                inflateNotes( taskContainer, task );
             }
@@ -285,6 +290,9 @@ public class TaskActivity extends Activity
          {
             urlSection.setVisibility( View.GONE );
          }
+         
+         final RtmAuth.Perms permission = AccountUtils.getAccessLevel( this );
+         permission.setEditable( editTaskBtn );
       }
    }
    

@@ -26,9 +26,9 @@ import android.content.ContentProviderClient;
 import android.content.SyncResult;
 import android.util.Log;
 
+import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
@@ -44,8 +44,8 @@ public final class RtmSettingsSync
    
    
 
-   public static boolean computeSync( ContentProviderClient provider,
-                                      RtmTimeline timeline,
+   public static boolean computeSync( Service service,
+                                      ContentProviderClient provider,
                                       SyncResult syncResult,
                                       DirectedSyncOperations result )
    {
@@ -53,7 +53,7 @@ public final class RtmSettingsSync
       
       try
       {
-         server_Settings = timeline.getService().settings_getList();
+         server_Settings = service.settings_getList();
       }
       catch ( ServiceException e )
       {

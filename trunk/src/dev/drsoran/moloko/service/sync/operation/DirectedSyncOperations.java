@@ -23,60 +23,67 @@
 package dev.drsoran.moloko.service.sync.operation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
 public final class DirectedSyncOperations
 {
-   private final List< IServerSyncOperation > serverOperations;
+   private final List< IServerSyncOperation< ? > > serverOps = new ArrayList< IServerSyncOperation< ? > >();
    
-   private final List< IContentProviderSyncOperation > localOperations;
+   private final List< IContentProviderSyncOperation > localOps = new ArrayList< IContentProviderSyncOperation >();
    
    
-
-   public DirectedSyncOperations( List< IServerSyncOperation > serverOps,
-      List< IContentProviderSyncOperation > localOps )
-   {
-      serverOperations = Collections.unmodifiableList( serverOps );
-      localOperations = Collections.unmodifiableList( localOps );
-   }
-   
-
 
    public DirectedSyncOperations()
    {
-      serverOperations = new ArrayList< IServerSyncOperation >();
-      localOperations = new ArrayList< IContentProviderSyncOperation >();
+      
    }
    
 
 
-   public void addAll( DirectedSyncOperations other )
+   public boolean addAll( DirectedSyncOperations other )
    {
-      serverOperations.addAll( other.serverOperations );
-      localOperations.addAll( other.localOperations );
+      return serverOps.addAll( other.serverOps )
+         || localOps.addAll( other.localOps );
    }
    
 
 
-   public void clear()
+   public boolean add( IServerSyncOperation< ? > op )
    {
-      serverOperations.clear();
-      localOperations.clear();
+      if ( op == null )
+         throw new NullPointerException( "op is null" );
+      
+      if ( !( op instanceof INoopSyncOperation ) )
+         return serverOps.add( op );
+      
+      return false;
    }
    
 
 
-   public List< IServerSyncOperation > getServerOperations()
+   public boolean add( IContentProviderSyncOperation op )
    {
-      return serverOperations;
+      if ( op == null )
+         throw new NullPointerException( "op is null" );
+      
+      if ( !( op instanceof INoopSyncOperation ) )
+         return localOps.add( op );
+      
+      return false;
+   }
+   
+
+
+   public List< IServerSyncOperation< ? > > getServerOperations()
+   {
+      return serverOps;
    }
    
 
 
    public List< IContentProviderSyncOperation > getLocalOperations()
    {
-      return localOperations;
+      return localOps;
    }
 }

@@ -53,8 +53,9 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Notes._ID, Notes.NOTE_CREATED_DATE, Notes.NOTE_MODIFIED_DATE,
-    Notes.NOTE_DELETED, Notes.NOTE_TITLE, Notes.NOTE_TEXT };
+   { Notes._ID, Notes.TASKSERIES_ID, Notes.NOTE_CREATED_DATE,
+    Notes.NOTE_MODIFIED_DATE, Notes.NOTE_DELETED, Notes.NOTE_TITLE,
+    Notes.NOTE_TEXT };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    

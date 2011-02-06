@@ -49,9 +49,12 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.ApplicationInfo;
+import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
+import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
@@ -65,6 +68,7 @@ import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.Sync;
@@ -115,7 +119,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                authToken = accountManager.blockingGetAuthToken( account,
                                                                 Constants.AUTH_TOKEN_TYPE,
                                                                 true /* notifyAuthFailure */);
-               
                Log.i( TAG, "Retreived auth token " + authToken );
                
                if ( authToken != null )
@@ -133,18 +136,29 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                   }
                   else
                   {
-                     final ServiceImpl serviceImpl = ServiceImpl.getInstance( context,
-                                                                              new ApplicationInfo( apiKey,
-                                                                                                   sharedSecret,
-                                                                                                   context.getString( R.string.app_name ),
-                                                                                                   authToken ) );
+                     final Service service = ServiceImpl.getInstance( context,
+                                                                      new ApplicationInfo( apiKey,
+                                                                                           sharedSecret,
+                                                                                           context.getString( R.string.app_name ),
+                                                                                           authToken ) );
                      
-                     final RtmTimeline timeLine = serviceImpl.timelines_create();
-                     Log.i( TAG, "Created new time line " + timeLine );
+                     final RtmAuth.Perms permission = AccountUtils.getAccessLevel( getContext() );
+                     Log.i( TAG, "Sync with permission " + permission );
+                     
+                     // We can only create a time line with write permission. However, we need delete
+                     // permission to make the server sync transactional.So without delete permissions
+                     // we do only an incoming sync, indicated by time line == null.
+                     RtmTimeline timeLine = null;
+                     if ( permission == Perms.delete )
+                     {
+                        timeLine = service.timelines_create();
+                        Log.i( TAG, "Created new time line " + timeLine );
+                     }
                      
                      final DirectedSyncOperations batch = new DirectedSyncOperations();
                      
-                     if ( computeOperationsBatch( provider,
+                     if ( computeOperationsBatch( service,
+                                                  provider,
                                                   timeLine,
                                                   syncResult,
                                                   extras,
@@ -154,7 +168,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                         
                         // Apply server operations at first cause as a result of these we
                         // have to update local elements.
-                        List< IContentProviderSyncOperation > localUpdates = applyServerOperations( serviceImpl,
+                        List< IContentProviderSyncOperation > localUpdates = applyServerOperations( service,
                                                                                                     batch.getServerOperations(),
                                                                                                     syncResult );
                         batch.getLocalOperations().addAll( localUpdates );
@@ -277,13 +291,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   private List< IContentProviderSyncOperation > applyServerOperations( ServiceImpl serviceImpl,
-                                                                        List< IServerSyncOperation > serverOps,
+   private List< IContentProviderSyncOperation > applyServerOperations( Service service,
+                                                                        List< IServerSyncOperation< ? > > serverOps,
                                                                         SyncResult syncResult ) throws ServiceException
    {
       final List< IContentProviderSyncOperation > contentProviderSyncOperations = new LinkedList< IContentProviderSyncOperation >();
       
-      for ( IServerSyncOperation serverSyncOperation : serverOps )
+      for ( IServerSyncOperation< ? > serverSyncOperation : serverOps )
       {
          
       }
@@ -313,7 +327,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   private boolean computeOperationsBatch( ContentProviderClient provider,
+   private boolean computeOperationsBatch( Service service,
+                                           ContentProviderClient provider,
                                            RtmTimeline timeLine,
                                            SyncResult syncResult,
                                            Bundle extras,
@@ -342,7 +357,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          // Sync RtmList
          ok = ok
-            && RtmListsSync.computeSync( provider,
+            && RtmListsSync.computeSync( service,
+                                         provider,
                                          timeLine,
                                          allModifications,
                                          lastSyncOut,
@@ -353,7 +369,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          // Sync RtmTasks
          ok = ok
-            && RtmTasksSync.computeSync( provider,
+            && RtmTasksSync.computeSync( service,
+                                         provider,
                                          timeLine,
                                          allModifications,
                                          lastSyncOut,
@@ -364,8 +381,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          // Sync locations
          ok = ok
-            && RtmLocationsSync.computeSync( provider,
-                                             timeLine,
+            && RtmLocationsSync.computeSync( service,
+                                             provider,
                                              lastSyncOut,
                                              syncResult,
                                              batch );
@@ -374,8 +391,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          // Sync contacts
          ok = ok
-            && RtmContactsSync.computeSync( provider,
-                                            timeLine,
+            && RtmContactsSync.computeSync( service,
+                                            provider,
                                             lastSyncOut,
                                             syncResult,
                                             batch );
@@ -385,12 +402,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       
       // Sync settings
       ok = ok
-         && RtmSettingsSync.computeSync( provider, timeLine, syncResult, batch );
+         && RtmSettingsSync.computeSync( service, provider, syncResult, batch );
       
       ok = ok && logSyncStep( "RtmSettings", ok );
-      
-      if ( !ok )
-         batch.clear();
       
       return ok;
    }

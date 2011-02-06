@@ -22,25 +22,15 @@
 
 package dev.drsoran.moloko.service.sync.operation;
 
-
-
 public interface ISyncOperation
 {
-   public class Op
+   public enum Op
    {
-      public final static int NOOP = 0;
-      
-      
-
-      public static String toString( int op )
-      {
-         switch ( op )
-         {
-            case NOOP:
-               return "NOOP";
-            default :
-               return "UNKNOWN";
-         }
-      }
+      NOOP, INSERT, UPDATE, DELETE
    }
+   
+   
+
+   public Op getOperationType();
+   
 }

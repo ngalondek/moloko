@@ -25,13 +25,13 @@ package dev.drsoran.moloko.service.sync.syncable;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 
 
-public interface IContentProviderSyncable< T >
+public interface IContentProviderSyncable< T extends IContentProviderSyncable< T > >
 {
    public IContentProviderSyncOperation computeContentProviderInsertOperation();
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( T update );
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( T serverElement );
    
 
 

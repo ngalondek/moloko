@@ -22,59 +22,8 @@
 
 package dev.drsoran.moloko.service.sync.syncable;
 
-import java.util.Date;
-
-import com.mdt.rtm.data.RtmTimeline;
-
-import dev.drsoran.moloko.service.sync.lists.ModificationList;
-import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
-
-
-public interface ITwoWaySyncable< T >
+public interface ITwoWaySyncable< T extends IServerSyncable< T > & IContentProviderSyncable< T > >
+         extends IContentProviderSyncable< T >, IServerSyncable< T >
 {
-   public static enum MergeDirection
-   {
-      LOCAL, SERVER, BOTH
-   }
    
-   
-
-   public Date getCreatedDate();
-   
-
-
-   public Date getModifiedDate();
-   
-
-
-   public Date getDeletedDate();
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation();
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation();
-   
-
-
-   public IServerSyncOperation computeServerInsertOperation( RtmTimeline timeLine );
-   
-
-
-   public IServerSyncOperation computeServerDeleteOperation( RtmTimeline timeLine );
-   
-
-
-   public DirectedSyncOperations computeMergeOperations( RtmTimeline timeLine,
-                                                         ModificationList modifications,
-                                                         T serverElement,
-                                                         MergeDirection mergeDirection );
-   
-
-
-   public IContentProviderSyncOperation computeRemoveModificationsOperation();
 }

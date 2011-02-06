@@ -22,9 +22,16 @@
 
 package dev.drsoran.moloko.service.sync.operation;
 
-public final class NoopServerSyncOperation implements IServerSyncOperation,
-         INoopSyncOperation
+import java.util.Collections;
+import java.util.List;
+
+import com.mdt.rtm.TimeLineMethod;
+
+
+public final class NoopServerSyncOperation< T > implements
+         IServerSyncOperation< T >, INoopSyncOperation
 {
+   @SuppressWarnings( "unchecked" )
    public final static NoopServerSyncOperation INSTANCE = new NoopServerSyncOperation();
    
    
@@ -36,9 +43,16 @@ public final class NoopServerSyncOperation implements IServerSyncOperation,
    
 
 
-   public int getOperationType()
+   public Op getOperationType()
    {
       return ISyncOperation.Op.NOOP;
+   }
+   
+
+
+   public List< TimeLineMethod< T >> getMethods()
+   {
+      return Collections.emptyList();
    }
    
 }

@@ -28,27 +28,37 @@ import java.util.Collections;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
+import android.content.SyncResult;
 
 
-public class ContentProviderSyncOperation extends
-         AbstractContentProviderSyncOperation
+public class ContentProviderSyncOperation implements
+         IContentProviderSyncOperation
+
 {
    public static class Builder
    {
-      private final int operationType;
+      private final Op operationType;
       
       private final List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
       
       
 
-      private Builder( int operationType )
+      public Builder( Op operationType )
       {
          this.operationType = operationType;
       }
       
 
 
-      private Builder( int operationType, ContentProviderOperation operation )
+      public Builder( Builder other )
+      {
+         this.operationType = other.operationType;
+         this.operations.addAll( other.operations );
+      }
+      
+
+
+      public Builder( Op operationType, ContentProviderOperation operation )
       {
          if ( operation == null )
             throw new NullPointerException();
@@ -59,20 +69,23 @@ public class ContentProviderSyncOperation extends
       
 
 
-      private Builder( int operationType,
+      public Builder( Op operationType,
          Collection< ContentProviderOperation > operations )
       {
          if ( operations == null )
             throw new NullPointerException();
          
          this.operationType = operationType;
-         operations.addAll( operations );
+         this.operations.addAll( operations );
       }
       
 
 
       public Builder add( ContentProviderOperation operation )
       {
+         if ( operation == null )
+            throw new NullPointerException( "operation is null" );
+         
          operations.add( operation );
          return this;
       }
@@ -81,14 +94,21 @@ public class ContentProviderSyncOperation extends
 
       public Builder add( IContentProviderSyncOperation operation )
       {
-         if ( operation.getOperationType() != operationType )
-            throw new IllegalArgumentException( "This operation type "
-               + operationType + " differs from argument operation type "
-               + operation.getOperationType() );
-         
-         final List< ContentProviderOperation > batch = new ArrayList< ContentProviderOperation >( operation.size() );
-         operation.getBatch( batch );
-         operations.addAll( batch );
+         if ( !( operation instanceof INoopSyncOperation ) )
+         {
+            if ( operation.getOperationType() != operationType )
+               throw new IllegalArgumentException( "This operation type "
+                  + operationType + " differs from argument operation type "
+                  + operation.getOperationType() );
+            
+            final List< ContentProviderOperation > batch = new ArrayList< ContentProviderOperation >( operation.size() );
+            operation.getBatch( batch );
+            
+            for ( ContentProviderOperation contentProviderOperation : batch )
+            {
+               add( contentProviderOperation );
+            }
+         }
          
          return this;
       }
@@ -99,7 +119,8 @@ public class ContentProviderSyncOperation extends
       {
          for ( IContentProviderSyncOperation operation : operations )
          {
-            add( operation );
+            if ( !( operation instanceof INoopSyncOperation ) )
+               add( operation );
          }
          
          return this;
@@ -118,11 +139,13 @@ public class ContentProviderSyncOperation extends
    
    private final List< ContentProviderOperation > operations;
    
+   private final Op operationType;
+   
    
 
    private ContentProviderSyncOperation( Builder builder )
    {
-      super( builder.operationType );
+      this.operationType = builder.operationType;
       this.operations = Collections.unmodifiableList( new ArrayList< ContentProviderOperation >( builder.operations ) );
    }
    
@@ -136,9 +159,38 @@ public class ContentProviderSyncOperation extends
    
 
 
+   public Op getOperationType()
+   {
+      return operationType;
+   }
+   
+
+
    public int size()
    {
       return operations.size();
+   }
+   
+
+
+   public static void updateSyncResult( SyncResult syncResult,
+                                        Op operationType,
+                                        int count )
+   {
+      switch ( operationType )
+      {
+         case INSERT:
+            syncResult.stats.numInserts += count;
+            break;
+         case UPDATE:
+            syncResult.stats.numUpdates += count;
+            break;
+         case DELETE:
+            syncResult.stats.numDeletes += count;
+            break;
+         default :
+            break;
+      }
    }
    
 
@@ -224,4 +276,5 @@ public class ContentProviderSyncOperation extends
    {
       return new Builder( Op.DELETE ).add( operation );
    }
+   
 }

@@ -49,7 +49,7 @@ public final class NoopContentProviderSyncOperation implements
    
 
 
-   public int getOperationType()
+   public Op getOperationType()
    {
       return ISyncOperation.Op.NOOP;
    }

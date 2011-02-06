@@ -25,14 +25,12 @@
    <string-array
       name="rtm_permissions">
       <item>@string/auth_perm_read</item>
-      <item>@string/auth_perm_write</item>
       <item>@string/auth_perm_delete</item>
    </string-array>
 
    <string-array
       name="rtm_permissions_values">
       <item>read</item>
-      <item>write</item>
       <item>delete</item>
    </string-array>
    

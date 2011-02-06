@@ -29,9 +29,9 @@ import android.content.ContentProviderClient;
 import android.content.SyncResult;
 import android.util.Log;
 
+import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
@@ -51,8 +51,8 @@ public final class RtmContactsSync
    
    
 
-   public static boolean computeSync( ContentProviderClient provider,
-                                      RtmTimeline timeline,
+   public static boolean computeSync( Service service,
+                                      ContentProviderClient provider,
                                       Date lastSyncOut,
                                       SyncResult syncResult,
                                       DirectedSyncOperations result )
@@ -72,7 +72,7 @@ public final class RtmContactsSync
       
       try
       {
-         server_ListOfContacts = timeline.getService().contacts_getList();
+         server_ListOfContacts = service.contacts_getList();
       }
       catch ( ServiceException e )
       {

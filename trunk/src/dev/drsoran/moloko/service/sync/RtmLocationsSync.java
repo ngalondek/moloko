@@ -29,10 +29,10 @@ import android.content.ContentProviderClient;
 import android.content.SyncResult;
 import android.util.Log;
 
+import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmLocation;
-import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
@@ -50,8 +50,8 @@ public final class RtmLocationsSync
    
    
 
-   public static boolean computeSync( ContentProviderClient provider,
-                                      RtmTimeline timeline,
+   public static boolean computeSync( Service service,
+                                      ContentProviderClient provider,
                                       Date lastSyncOut,
                                       SyncResult syncResult,
                                       DirectedSyncOperations operations )
@@ -70,7 +70,7 @@ public final class RtmLocationsSync
       
       try
       {
-         server_Locations = timeline.getService().locations_getList();
+         server_Locations = service.locations_getList();
       }
       catch ( ServiceException e )
       {

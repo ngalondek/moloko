@@ -652,19 +652,29 @@ public class ServiceImpl implements Service
                                        String listId,
                                        String taskSeriesId,
                                        String taskId,
-                                       String newName ) throws ServiceException
+                                       String newName,
+                                       MethodCallType methodCallType ) throws ServiceException
    {
-      Element elt = invoker.invoke( new Param( "method", "rtm.tasks.setName" ),
-                                    new Param( "timeline", timelineId ),
-                                    new Param( "list_id", listId ),
-                                    new Param( "taskseries_id", taskSeriesId ),
-                                    new Param( "task_id", taskId ),
-                                    new Param( "name", newName ),
-                                    new Param( "auth_token", currentAuthToken ),
-                                    new Param( "api_key",
-                                               applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( elt );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.setName" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "name", newName ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      
+      if ( methodCallType == MethodCallType.WITH_RESULT )
+      {
+         RtmTaskList rtmTaskList = new RtmTaskList( elt );
+         return findTask( taskSeriesId, taskId, rtmTaskList );
+      }
+      
+      return null;
    }
    
 
@@ -797,7 +807,7 @@ public class ServiceImpl implements Service
                                     new Param( "auth_token", currentAuthToken ),
                                     new Param( "api_key",
                                                applicationInfo.getApiKey() ) );
-      return new RtmTaskNote( elt );
+      return new RtmTaskNote( elt, taskSeriesId );
    }
    
 
@@ -814,6 +824,7 @@ public class ServiceImpl implements Service
 
 
    public RtmTaskNote tasks_notes_edit( String timelineId,
+                                        String taskSeriesId,
                                         String noteId,
                                         String title,
                                         String text ) throws ServiceException
@@ -826,7 +837,7 @@ public class ServiceImpl implements Service
                                     new Param( "auth_token", currentAuthToken ),
                                     new Param( "api_key",
                                                applicationInfo.getApiKey() ) );
-      return new RtmTaskNote( elt );
+      return new RtmTaskNote( elt, taskSeriesId );
    }
    
 
@@ -907,14 +918,15 @@ public class ServiceImpl implements Service
    
 
 
-   public String timelines_create() throws ServiceException
+   public RtmTimeline timelines_create() throws ServiceException
    {
       return new RtmTimeline( invoker.invoke( new Param( "method",
                                                          "rtm.timelines.create" ),
                                               new Param( "auth_token",
                                                          currentAuthToken ),
                                               new Param( "api_key",
-                                                         applicationInfo.getApiKey() ) ) ).getId();
+                                                         applicationInfo.getApiKey() ) ),
+                              this );
    }
    
 

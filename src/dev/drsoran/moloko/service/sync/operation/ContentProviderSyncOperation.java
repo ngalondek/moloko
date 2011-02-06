@@ -24,103 +24,111 @@ package dev.drsoran.moloko.service.sync.operation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.content.OperationApplicationException;
-import android.content.SyncResult;
-import android.os.RemoteException;
 
 
 public class ContentProviderSyncOperation extends
          AbstractContentProviderSyncOperation
 {
-   private final ArrayList< ContentProviderOperation > operations;
-   
-   
-
-   public ContentProviderSyncOperation( ContentProviderClient provider,
-      int operationType ) throws NullPointerException
+   public static class Builder
    {
-      super( provider, operationType );
+      private final int operationType;
       
-      if ( provider == null )
-         throw new NullPointerException();
+      private final List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
       
-      this.operations = new ArrayList< ContentProviderOperation >();
-   }
-   
-
-
-   public ContentProviderSyncOperation( ContentProviderClient provider,
-      ContentProviderOperation operation, int operationType )
-      throws NullPointerException
-   {
-      super( provider, operationType );
       
-      this.operations = new ArrayList< ContentProviderOperation >( 1 );
-      this.operations.add( operation );
-   }
-   
 
-
-   public ContentProviderSyncOperation( ContentProviderClient provider,
-      Collection< ContentProviderOperation > operations, int operationType )
-      throws NullPointerException
-   {
-      super( provider, operationType );
-      
-      this.operations = new ArrayList< ContentProviderOperation >( operations );
-   }
-   
-
-
-   public void add( ContentProviderOperation operation ) throws NullPointerException
-   {
-      if ( operation == null )
-         throw new NullPointerException();
-      
-      this.operations.add( operation );
-   }
-   
-
-
-   public void addAll( Collection< ContentProviderOperation > operations ) throws NullPointerException
-   {
-      if ( operations == null )
-         throw new NullPointerException();
-      
-      this.operations.addAll( operations );
-   }
-   
-
-
-   public boolean execute( SyncResult result )
-   {
-      boolean ok = true;
-      
-      try
+      private Builder( int operationType )
       {
-         provider.applyBatch( operations );
-         updateSyncResult( result, operationType, operations.isEmpty() ? 0 : 1 );
-      }
-      catch ( OperationApplicationException e )
-      {
-         ++result.stats.numIoExceptions;
-         ok = false;
-      }
-      catch ( RemoteException e )
-      {
-         ++result.stats.numIoExceptions;
-         ok = false;
+         this.operationType = operationType;
       }
       
-      return ok;
+
+
+      private Builder( int operationType, ContentProviderOperation operation )
+      {
+         if ( operation == null )
+            throw new NullPointerException();
+         
+         this.operationType = operationType;
+         operations.add( operation );
+      }
+      
+
+
+      private Builder( int operationType,
+         Collection< ContentProviderOperation > operations )
+      {
+         if ( operations == null )
+            throw new NullPointerException();
+         
+         this.operationType = operationType;
+         operations.addAll( operations );
+      }
+      
+
+
+      public Builder add( ContentProviderOperation operation )
+      {
+         operations.add( operation );
+         return this;
+      }
+      
+
+
+      public Builder add( IContentProviderSyncOperation operation )
+      {
+         if ( operation.getOperationType() != operationType )
+            throw new IllegalArgumentException( "This operation type "
+               + operationType + " differs from argument operation type "
+               + operation.getOperationType() );
+         
+         final List< ContentProviderOperation > batch = new ArrayList< ContentProviderOperation >( operation.size() );
+         operation.getBatch( batch );
+         operations.addAll( batch );
+         
+         return this;
+      }
+      
+
+
+      public Builder add( Collection< IContentProviderSyncOperation > operations )
+      {
+         for ( IContentProviderSyncOperation operation : operations )
+         {
+            add( operation );
+         }
+         
+         return this;
+      }
+      
+
+
+      public IContentProviderSyncOperation build()
+      {
+         if ( operations.size() == 0 )
+            return NoopContentProviderSyncOperation.INSTANCE;
+         else
+            return new ContentProviderSyncOperation( this );
+      }
+   }
+   
+   private final List< ContentProviderOperation > operations;
+   
+   
+
+   private ContentProviderSyncOperation( Builder builder )
+   {
+      super( builder.operationType );
+      this.operations = Collections.unmodifiableList( new ArrayList< ContentProviderOperation >( builder.operations ) );
    }
    
 
 
-   public int getBatch( ArrayList< ContentProviderOperation > batch )
+   public int getBatch( List< ContentProviderOperation > batch )
    {
       batch.addAll( operations );
       return operations.size();
@@ -128,8 +136,92 @@ public class ContentProviderSyncOperation extends
    
 
 
-   public int getOperationType()
+   public int size()
    {
-      return operationType;
+      return operations.size();
+   }
+   
+
+
+   public final static Builder newInsert()
+   {
+      return new Builder( Op.INSERT );
+   }
+   
+
+
+   public final static Builder newInsert( ContentProviderOperation operation )
+   {
+      return new Builder( Op.INSERT, operation );
+   }
+   
+
+
+   public final static Builder newInsert( Collection< ContentProviderOperation > operations )
+   {
+      return new Builder( Op.INSERT, operations );
+   }
+   
+
+
+   public final static Builder newInsert( IContentProviderSyncOperation operation )
+   {
+      return new Builder( Op.INSERT ).add( operation );
+   }
+   
+
+
+   public final static Builder newUpdate()
+   {
+      return new Builder( Op.UPDATE );
+   }
+   
+
+
+   public final static Builder newUpdate( ContentProviderOperation operation )
+   {
+      return new Builder( Op.UPDATE, operation );
+   }
+   
+
+
+   public final static Builder newUpdate( Collection< ContentProviderOperation > operations )
+   {
+      return new Builder( Op.UPDATE, operations );
+   }
+   
+
+
+   public final static Builder newUpdate( IContentProviderSyncOperation operation )
+   {
+      return new Builder( Op.UPDATE ).add( operation );
+   }
+   
+
+
+   public final static Builder newDelete()
+   {
+      return new Builder( Op.DELETE );
+   }
+   
+
+
+   public final static Builder newDelete( ContentProviderOperation operation )
+   {
+      return new Builder( Op.DELETE, operation );
+   }
+   
+
+
+   public final static Builder newDelete( Collection< ContentProviderOperation > operations )
+   {
+      return new Builder( Op.DELETE, operations );
+   }
+   
+
+
+   public final static Builder newDelete( IContentProviderSyncOperation operation )
+   {
+      return new Builder( Op.DELETE ).add( operation );
    }
 }

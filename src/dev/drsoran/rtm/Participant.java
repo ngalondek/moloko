@@ -24,20 +24,16 @@ package dev.drsoran.rtm;
 
 import java.util.Comparator;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.service.sync.util.ParamChecker;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -45,6 +41,7 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 public class Participant implements IContentProviderSyncable< Participant >,
          Parcelable
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + Participant.class.getSimpleName();
    
@@ -80,6 +77,8 @@ public class Participant implements IContentProviderSyncable< Participant >,
    
    private final String id;
    
+   private final String taskSeriesId;
+   
    private final String contactId;
    
    private final String fullname;
@@ -88,10 +87,11 @@ public class Participant implements IContentProviderSyncable< Participant >,
    
    
 
-   public Participant( String id, String contactId, String fullname,
-      String username )
+   public Participant( String id, String taskSeriesId, String contactId,
+      String fullname, String username )
    {
       this.id = id;
+      this.taskSeriesId = taskSeriesId;
       this.contactId = contactId;
       this.fullname = fullname;
       this.username = username;
@@ -102,6 +102,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
    public Participant( Parcel source )
    {
       this.id = source.readString();
+      this.taskSeriesId = source.readString();
       this.contactId = source.readString();
       this.fullname = source.readString();
       this.username = source.readString();
@@ -112,6 +113,13 @@ public class Participant implements IContentProviderSyncable< Participant >,
    public String getId()
    {
       return id;
+   }
+   
+
+
+   public String getTaskSeriesId()
+   {
+      return taskSeriesId;
    }
    
 
@@ -147,6 +155,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );
+      dest.writeString( taskSeriesId );
       dest.writeString( contactId );
       dest.writeString( fullname );
       dest.writeString( username );
@@ -154,97 +163,58 @@ public class Participant implements IContentProviderSyncable< Participant >,
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      ContentProviderSyncOperation operation = null;
-      
-      final boolean ok = ParamChecker.checkParams( TAG,
-                                                   "ContentProvider insert failed. ",
-                                                   new Class[]
-                                                   { String.class },
-                                                   params );
-      
-      if ( ok )
-      {
-         operation = new ContentProviderSyncOperation( provider,
-                                                       ContentProviderOperation.newInsert( Participants.CONTENT_URI )
-                                                                               .withValues( ParticipantsProviderPart.getContentValues( (String) params[ 0 ],
-                                                                                                                                       this,
-                                                                                                                                       true ) )
-                                                                               .build(),
-                                                       IContentProviderSyncOperation.Op.INSERT );
-      }
-      
-      return operation;
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Participants.CONTENT_URI )
+                                                                             .withValues( ParticipantsProviderPart.getContentValues( this,
+                                                                                                                                     true ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      ContentProviderSyncOperation operation = null;
-      
-      final boolean ok = ParamChecker.checkParams( TAG,
-                                                   "ContentProvider delete failed. ",
-                                                   new Class[]
-                                                   { String.class },
-                                                   params );
-      
-      if ( ok )
-      {
-         operation = new ContentProviderSyncOperation( provider,
-                                                       ContentProviderOperation.newDelete( Participants.CONTENT_URI )
-                                                                               .withSelection( Participants.TASKSERIES_ID
-                                                                                                  + " = ? AND "
-                                                                                                  + Participants.CONTACT_ID
-                                                                                                  + " = ?",
-                                                                                               new String[]
-                                                                                               {
-                                                                                                (String) params[ 0 ],
-                                                                                                contactId } )
-                                                                               .build(),
-                                                       IContentProviderSyncOperation.Op.DELETE );
-      }
-      
-      return operation;
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Participants.CONTENT_URI )
+                                                                             .withSelection( Participants.TASKSERIES_ID
+                                                                                                + " = ? AND "
+                                                                                                + Participants.CONTACT_ID
+                                                                                                + " = ?",
+                                                                                             new String[]
+                                                                                             {
+                                                                                              taskSeriesId,
+                                                                                              contactId } )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               Participant update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( Participant update )
    {
-      final CompositeContentProviderSyncOperation operation = new CompositeContentProviderSyncOperation( provider,
-                                                                                                         IContentProviderSyncOperation.Op.UPDATE );
-      
-      assert ( id != null );
-      
       final Uri uri = Queries.contentUriWithId( TaskSeries.CONTENT_URI, id );
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      if ( Strings.hasStringChanged( contactId, update.contactId ) )
-         operation.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Participants.CONTACT_ID,
-                                                            update.contactId )
-                                                .build() );
+      if ( SyncUtils.hasChanged( contactId, update.contactId ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Participants.CONTACT_ID,
+                                                         update.contactId )
+                                             .build() );
       
-      if ( Strings.hasStringChanged( fullname, update.fullname ) )
-         operation.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Participants.FULLNAME,
-                                                            update.fullname )
-                                                .build() );
+      if ( SyncUtils.hasChanged( fullname, update.fullname ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Participants.FULLNAME,
+                                                         update.fullname )
+                                             .build() );
       
-      if ( Strings.hasStringChanged( username, update.username ) )
-         operation.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Participants.USERNAME,
-                                                            update.username )
-                                                .build() );
+      if ( SyncUtils.hasChanged( username, update.username ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Participants.USERNAME,
+                                                         update.username )
+                                             .build() );
       
-      return ( operation.plainSize() > 0 )
-                                          ? operation
-                                          : NoopContentProviderSyncOperation.INSTANCE;
+      return result.build();
    }
    
 }

@@ -37,7 +37,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.provider.Rtm.Contacts;
 import dev.drsoran.provider.Rtm.Participants;
@@ -69,24 +68,21 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    
    
 
-   public final static ContentValues getContentValues( String taskSeriesId,
-                                                       Participant participant,
+   public final static ContentValues getContentValues( Participant participant,
                                                        boolean withId )
    {
-      ContentValues values = null;
+      if ( participant == null )
+         throw new NullPointerException( "participant is null" );
       
-      if ( !TextUtils.isEmpty( taskSeriesId ) && participant != null )
-      {
-         values = new ContentValues();
-         
-         if ( withId )
-            values.put( Participants._ID, participant.getId() );
-         
-         values.put( Participants.TASKSERIES_ID, taskSeriesId );
-         values.put( Participants.CONTACT_ID, participant.getContactId() );
-         values.put( Participants.FULLNAME, participant.getFullname() );
-         values.put( Participants.USERNAME, participant.getUsername() );
-      }
+      final ContentValues values = new ContentValues();
+      
+      if ( withId )
+         values.put( Participants._ID, participant.getId() );
+      
+      values.put( Participants.TASKSERIES_ID, participant.getTaskSeriesId() );
+      values.put( Participants.CONTACT_ID, participant.getContactId() );
+      values.put( Participants.FULLNAME, participant.getFullname() );
+      values.put( Participants.USERNAME, participant.getUsername() );
       
       return values;
    }
@@ -147,11 +143,10 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< RtmContact > getParticipatingContacts( ContentProviderClient client,
-                                                                         String taskSeriesId )
+   public final static List< RtmContact > getParticipatingContacts( ContentProviderClient client,
+                                                                    String taskSeriesId )
    {
-      ArrayList< RtmContact > contacts = null;
-      
+      List< RtmContact > contacts = null;
       Cursor participantsCursor = null;
       
       try
@@ -196,7 +191,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
          if ( !ok )
             contacts = null;
       }
-      catch ( final RemoteException e )
+      catch ( RemoteException e )
       {
          Log.e( TAG, "Query participating contacts failed. ", e );
          contacts = null;
@@ -216,7 +211,6 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
                                                      String contactId )
    {
       int num = -1;
-      
       Cursor c = null;
       
       try
@@ -248,18 +242,15 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< ContentProviderOperation > insertParticipants( ContentProviderClient client,
-                                                                                 ParticipantList list )
+   public final static List< ContentProviderOperation > insertParticipants( ParticipantList list )
    {
       final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
-      
       final List< Participant > participants = list.getParticipants();
       
       for ( final Participant participant : participants )
       {
          operations.add( ContentProviderOperation.newInsert( Participants.CONTENT_URI )
-                                                 .withValues( ParticipantsProviderPart.getContentValues( list.getTaskSeriesId(),
-                                                                                                         participant,
+                                                 .withValues( ParticipantsProviderPart.getContentValues( participant,
                                                                                                          true ) )
                                                  .build() );
       }
@@ -272,6 +263,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    public final static Participant createParticipant( Cursor c )
    {
       return new Participant( c.getString( COL_INDICES.get( Participants._ID ) ),
+                              c.getString( COL_INDICES.get( Participants.TASKSERIES_ID ) ),
                               c.getString( COL_INDICES.get( Participants.CONTACT_ID ) ),
                               c.getString( COL_INDICES.get( Participants.FULLNAME ) ),
                               c.getString( COL_INDICES.get( Participants.USERNAME ) ) );

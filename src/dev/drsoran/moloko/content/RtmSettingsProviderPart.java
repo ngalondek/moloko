@@ -45,6 +45,8 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    private static final String TAG = "Moloko."
       + RtmSettingsProviderPart.class.getSimpleName();
    
+   public final static String SETTINGS_ID = "1";
+   
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
@@ -71,7 +73,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
       {
          values = new ContentValues();
          
-         values.put( Settings._ID, "1" );
+         values.put( Settings._ID, SETTINGS_ID );
          values.put( Settings.SYNC_TIMESTAMP, settings.getSyncTimeStamp()
                                                       .getTime() );
          
@@ -102,7 +104,6 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    public final static String getSettingsId( ContentProviderClient client )
    {
       String id = null;
-      
       Cursor c = null;
       
       try
@@ -118,10 +119,10 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
             id = c.getString( COL_INDICES.get( Settings._ID ) );
          }
       }
-      catch ( final RemoteException e )
+      catch ( RemoteException e )
       {
-         id = null;
          Log.e( TAG, "Query settings ID failed. ", e );
+         id = null;
       }
       finally
       {
@@ -137,7 +138,6 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    public final static RtmSettings getSettings( ContentProviderClient client )
    {
       RtmSettings settings = null;
-      
       Cursor c = null;
       
       try
@@ -162,7 +162,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
                                                               COL_INDICES.get( Settings.LANGUAGE ) ) );
          }
       }
-      catch ( final RemoteException e )
+      catch ( RemoteException e )
       {
          Log.e( TAG, "Query settings ailed. ", e );
          settings = null;

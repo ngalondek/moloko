@@ -25,7 +25,6 @@ package dev.drsoran.moloko.service.sync.lists;
 import java.util.Collection;
 import java.util.Comparator;
 
-import android.content.ContentProviderClient;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 
@@ -33,62 +32,51 @@ import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 public class ContentProviderSyncableList< T extends IContentProviderSyncable< T > >
          extends SyncableList< T >
 {
-   private final ContentProviderClient provider;
-   
-   
-
-   public ContentProviderSyncableList( ContentProviderClient provider,
-      Collection< T > elements )
+   public ContentProviderSyncableList( Collection< T > elements )
    {
       super( elements );
-      
-      if ( provider == null )
-         throw new NullPointerException( "provider is null" );
-      
-      this.provider = provider;
    }
    
 
 
-   public ContentProviderSyncableList( ContentProviderClient provider,
-      Collection< T > elements, Comparator< T > comparator )
+   public ContentProviderSyncableList( Collection< T > elements,
+      Comparator< T > comparator )
    {
       super( elements, comparator );
-      
-      if ( provider == null )
-         throw new NullPointerException( "provider is null" );
-      
-      this.provider = provider;
    }
    
 
 
    @Override
-   public IContentProviderSyncOperation computeInsertOperation( T newElement,
-                                                                Object... params )
+   public IContentProviderSyncOperation computeInsertOperation( T newElement )
    {
-      return newElement.computeContentProviderInsertOperation( provider, params );
+      return newElement.computeContentProviderInsertOperation();
    }
    
 
 
    @Override
-   public IContentProviderSyncOperation computeDeleteOperation( T elementToDelete,
-                                                                Object... params )
+   public IContentProviderSyncOperation computeDeleteOperation( T elementToDelete )
    {
-      return elementToDelete.computeContentProviderDeleteOperation( provider,
-                                                                    params );
+      return elementToDelete.computeContentProviderDeleteOperation();
+   }
+   
+
+
+   @Override
+   public IContentProviderSyncOperation computeUpdateOperation( int pos,
+                                                                T updateElement )
+   {
+      return (IContentProviderSyncOperation) super.computeUpdateOperation( pos,
+                                                                           updateElement );
    }
    
 
 
    @Override
    protected IContentProviderSyncOperation internalComputeUpdateOperation( T old,
-                                                                           T updateElement,
-                                                                           Object... params )
+                                                                           T updateElement )
    {
-      return old.computeContentProviderUpdateOperation( provider,
-                                                        updateElement,
-                                                        params );
+      return old.computeContentProviderUpdateOperation( updateElement );
    }
 }

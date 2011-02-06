@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -251,7 +252,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                              String filter )
    {
       ExtendedListInfo extendedOverview = null;
-      ArrayList< Task > tasks = null;
+      List< Task > tasks = null;
       
       final ContentProviderClient client = contentResolver.acquireContentProviderClient( Tasks.CONTENT_URI );
       

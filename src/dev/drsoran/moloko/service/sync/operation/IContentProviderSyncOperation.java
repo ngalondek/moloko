@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.service.sync.operation;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentProviderOperation;
 
@@ -59,9 +59,13 @@ public interface IContentProviderSyncOperation extends ISyncOperation
    
    
 
-   public int getBatch( ArrayList< ContentProviderOperation > batch );
+   public int getBatch( List< ContentProviderOperation > batch );
    
 
 
    public int getOperationType();
+   
+
+
+   public int size();
 }

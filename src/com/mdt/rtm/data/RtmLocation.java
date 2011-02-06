@@ -23,20 +23,16 @@ import java.util.Comparator;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Locations;
 
 
@@ -49,6 +45,7 @@ import dev.drsoran.provider.Rtm.Locations;
 public class RtmLocation extends RtmData implements
          IContentProviderSyncable< RtmLocation >
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + RtmLocation.class.getSimpleName();
    
@@ -166,88 +163,73 @@ public class RtmLocation extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newInsert( Locations.CONTENT_URI )
-                                                                       .withValues( RtmLocationsProviderPart.getContentValues( this,
-                                                                                                                               true ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.INSERT );
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Locations.CONTENT_URI )
+                                                                             .withValues( RtmLocationsProviderPart.getContentValues( this,
+                                                                                                                                     true ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( Locations.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.DELETE );
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Locations.CONTENT_URI,
+                                                                                                                   id ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               RtmLocation update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmLocation update )
    {
-      CompositeContentProviderSyncOperation result = null;
+      if ( !id.equals( update.id ) )
+         throw new IllegalArgumentException( "Update id " + update.id
+            + " differs this id " + id );
       
-      if ( this.id.equals( update.id ) )
-      {
-         final Uri uri = Queries.contentUriWithId( Locations.CONTENT_URI, id );
-         
-         result = new CompositeContentProviderSyncOperation( provider,
-                                                             IContentProviderSyncOperation.Op.UPDATE );
-         
-         if ( Strings.hasStringChanged( name, update.name ) )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Locations.LOCATION_NAME,
-                                                            update.name )
-                                                .build() );
-         
-         if ( longitude != update.longitude )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Locations.LONGITUDE,
-                                                            update.longitude )
-                                                .build() );
-         
-         if ( latitude != update.latitude )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Locations.LATITUDE,
-                                                            update.latitude )
-                                                .build() );
-         
-         if ( Strings.hasStringChanged( address, update.address ) )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Locations.ADDRESS,
-                                                            update.address )
-                                                .build() );
-         
-         if ( viewable != update.viewable )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Locations.VIEWABLE,
-                                                            update.viewable )
-                                                .build() );
-         
-         if ( zoom != update.zoom )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Locations.ZOOM,
-                                                            update.zoom )
-                                                .build() );
-      }
-      else
-      {
-         Log.e( TAG,
-                "ContentProvider update failed. Different RtmLocation IDs." );
-      }
+      final Uri uri = Queries.contentUriWithId( Locations.CONTENT_URI, id );
       
-      return ( result == null || result.plainSize() > 0 )
-                                                         ? result
-                                                         : NoopContentProviderSyncOperation.INSTANCE;
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
+      
+      if ( SyncUtils.hasChanged( name, update.name ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Locations.LOCATION_NAME,
+                                                         update.name )
+                                             .build() );
+      
+      if ( longitude != update.longitude )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Locations.LONGITUDE,
+                                                         update.longitude )
+                                             .build() );
+      
+      if ( latitude != update.latitude )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Locations.LATITUDE,
+                                                         update.latitude )
+                                             .build() );
+      
+      if ( SyncUtils.hasChanged( address, update.address ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Locations.ADDRESS,
+                                                         update.address )
+                                             .build() );
+      
+      if ( viewable != update.viewable )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Locations.VIEWABLE,
+                                                         update.viewable )
+                                             .build() );
+      
+      if ( zoom != update.zoom )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Locations.ZOOM,
+                                                         update.zoom )
+                                             .build() );
+      
+      return result.build();
    }
 }

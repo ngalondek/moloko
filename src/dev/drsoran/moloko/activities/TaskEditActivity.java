@@ -64,7 +64,7 @@ import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Lists;
@@ -191,7 +191,7 @@ public class TaskEditActivity extends Activity
    
    private TitleWithEditTextLayout url;
    
-   private final Set< Modification< ? > > modifications = new TreeSet< Modification< ? > >();
+   private final Set< Modification > modifications = new TreeSet< Modification >();
    
    
 
@@ -332,13 +332,12 @@ public class TaskEditActivity extends Activity
       if ( validateInput() )
       {
          // Task name
-         if ( Strings.hasStringChanged( task.getName(), nameEdit.getText()
-                                                                .toString() ) )
+         if ( SyncUtils.hasChanged( task.getName(), nameEdit.getText()
+                                                            .toString() ) )
          {
             modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                        task.getTaskSeriesId() ),
                                                              TaskSeries.TASKSERIES_NAME,
-                                                             String.class,
                                                              nameEdit.getText()
                                                                      .toString() ) );
          }
@@ -352,7 +351,6 @@ public class TaskEditActivity extends Activity
             modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                        task.getTaskSeriesId() ),
                                                              TaskSeries.MODIFIED_DATE,
-                                                             Long.class,
                                                              System.currentTimeMillis() ) );
             try
             {
@@ -513,8 +511,8 @@ public class TaskEditActivity extends Activity
                      final String selectedLocationName = parent.getItemAtPosition( pos )
                                                                .toString();
                      
-                     if ( Strings.hasStringChanged( task.getLocationName(),
-                                                    selectedLocationName ) )
+                     if ( SyncUtils.hasChanged( task.getLocationName(),
+                                                selectedLocationName ) )
                      {
                         onLocationChanged( selectedLocationName );
                      }

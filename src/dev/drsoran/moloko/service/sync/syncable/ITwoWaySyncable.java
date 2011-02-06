@@ -24,17 +24,23 @@ package dev.drsoran.moloko.service.sync.syncable;
 
 import java.util.Date;
 
-import android.content.ContentProviderClient;
+import com.mdt.rtm.data.RtmTimeline;
 
-import com.mdt.rtm.Service;
-
+import dev.drsoran.moloko.service.sync.lists.ModificationList;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
 
 
 public interface ITwoWaySyncable< T >
 {
+   public static enum MergeDirection
+   {
+      LOCAL, SERVER, BOTH
+   }
+   
+   
+
    public Date getCreatedDate();
    
 
@@ -47,32 +53,28 @@ public interface ITwoWaySyncable< T >
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params );
+   public IContentProviderSyncOperation computeContentProviderInsertOperation();
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params );
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation();
    
 
 
-   public ISyncOperation computeServerInsertOperation( Service service,
-                                                       Object... params );
+   public IServerSyncOperation computeServerInsertOperation( RtmTimeline timeLine );
    
 
 
-   public ISyncOperation computeServerDeleteOperation( Service service,
-                                                       Object... params );
+   public IServerSyncOperation computeServerDeleteOperation( RtmTimeline timeLine );
    
 
 
-   public DirectedSyncOperations computeMergeOperations( Service service,
-                                                         ContentProviderClient provider,
+   public DirectedSyncOperations computeMergeOperations( RtmTimeline timeLine,
+                                                         ModificationList modifications,
                                                          T serverElement,
-                                                         Object... params );
+                                                         MergeDirection mergeDirection );
    
 
 
-   public IContentProviderSyncOperation removeModifications( ContentProviderClient client );
+   public IContentProviderSyncOperation computeRemoveModificationsOperation();
 }

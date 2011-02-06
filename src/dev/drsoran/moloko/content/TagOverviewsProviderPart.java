@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -140,7 +141,6 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                         String id )
    {
       TagWithTaskCount tag = null;
-      
       Cursor c = null;
       
       try
@@ -172,11 +172,10 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public final static ArrayList< TagWithTaskCount > getTagsOverview( ContentProviderClient client,
-                                                                      boolean excludeCompleted )
+   public final static List< TagWithTaskCount > getTagsOverview( ContentProviderClient client,
+                                                                 boolean excludeCompleted )
    {
-      ArrayList< TagWithTaskCount > tags = null;
-      
+      List< TagWithTaskCount > tags = null;
       Cursor c = null;
       
       try

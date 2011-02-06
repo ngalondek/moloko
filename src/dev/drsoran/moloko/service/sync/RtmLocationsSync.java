@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.service.sync;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,9 +30,9 @@ import android.content.SyncResult;
 import android.util.Log;
 
 import com.mdt.rtm.ServiceException;
-import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmLocation;
+import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
@@ -51,14 +50,14 @@ public final class RtmLocationsSync
    
    
 
-   public static boolean computeSync( ServiceImpl service,
-                                      ContentProviderClient provider,
+   public static boolean computeSync( ContentProviderClient provider,
+                                      RtmTimeline timeline,
                                       Date lastSyncOut,
                                       SyncResult syncResult,
                                       DirectedSyncOperations operations )
    {
       // Get all locations from local database
-      final ArrayList< RtmLocation > local_Locations = RtmLocationsProviderPart.getAllLocations( provider );
+      final List< RtmLocation > local_Locations = RtmLocationsProviderPart.getAllLocations( provider );
       
       if ( local_Locations == null )
       {
@@ -71,7 +70,7 @@ public final class RtmLocationsSync
       
       try
       {
-         server_Locations = service.locations_getList();
+         server_Locations = timeline.getService().locations_getList();
       }
       catch ( ServiceException e )
       {
@@ -99,23 +98,13 @@ public final class RtmLocationsSync
          return false;
       }
       
-      boolean ok = true;
-      
       // Sync location lists
-      final ContentProviderSyncableList< RtmLocation > local_SyncList = new ContentProviderSyncableList< RtmLocation >( provider,
-                                                                                                                        local_Locations,
+      final ContentProviderSyncableList< RtmLocation > local_SyncList = new ContentProviderSyncableList< RtmLocation >( local_Locations,
                                                                                                                         RtmLocation.LESS_ID );
+      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Locations,
+                                                                                    local_SyncList );
+      operations.getLocalOperations().addAll( syncOperations );
       
-      final ArrayList< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Locations,
-                                                                                         local_SyncList );
-      
-      ok = syncOperations != null;
-      
-      if ( ok )
-      {
-         operations.getLocalOperations().addAll( syncOperations );
-      }
-      
-      return ok;
+      return true;
    }
 }

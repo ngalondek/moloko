@@ -24,21 +24,18 @@ import java.util.Date;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 
@@ -46,6 +43,7 @@ import dev.drsoran.rtm.RtmSmartFilter;
 public class RtmList extends RtmData implements
          IContentProviderSyncable< RtmList >
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko." + RtmList.class.getSimpleName();
    
    public static final Parcelable.Creator< RtmList > CREATOR = new Parcelable.Creator< RtmList >()
@@ -252,118 +250,101 @@ public class RtmList extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newInsert( Lists.CONTENT_URI )
-                                                                       .withValues( RtmListsProviderPart.getContentValues( this,
-                                                                                                                           true ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.INSERT );
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Lists.CONTENT_URI )
+                                                                             .withValues( RtmListsProviderPart.getContentValues( this,
+                                                                                                                                 true ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.DELETE );
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                                                   id ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               RtmList update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmList update )
    {
-      CompositeContentProviderSyncOperation result = null;
+      if ( !id.equals( update.id ) )
+         throw new IllegalArgumentException( "Update id " + update.id
+            + " differs this id " + id );
       
-      if ( this.id.equals( update.id ) )
+      final Uri uri = Queries.contentUriWithId( Lists.CONTENT_URI, id );
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
+      
+      if ( SyncUtils.hasChanged( name, update.name ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.LIST_NAME,
+                                                         update.name )
+                                             .build() );
+      
+      if ( deleted != update.deleted )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.LIST_DELETED,
+                                                         update.deleted )
+                                             .build() );
+      
+      if ( locked != update.locked )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.LOCKED,
+                                                         update.locked )
+                                             .build() );
+      
+      if ( archived != update.archived )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.ARCHIVED,
+                                                         update.archived )
+                                             .build() );
+      
+      if ( position != update.position )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.POSITION,
+                                                         update.position )
+                                             .build() );
+      
+      // This list gets smart
+      if ( smartFilter == null && update.smartFilter != null )
       {
-         final Uri uri = Queries.contentUriWithId( Lists.CONTENT_URI, id );
-         
-         result = new CompositeContentProviderSyncOperation( provider,
-                                                             IContentProviderSyncOperation.Op.UPDATE );
-         
-         if ( Strings.hasStringChanged( name, update.name ) )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.LIST_NAME,
-                                                            update.name )
-                                                .build() );
-         
-         if ( deleted != update.deleted )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.LIST_DELETED,
-                                                            update.deleted )
-                                                .build() );
-         
-         if ( locked != update.locked )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.LOCKED,
-                                                            update.locked )
-                                                .build() );
-         
-         if ( archived != update.archived )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.ARCHIVED,
-                                                            update.archived )
-                                                .build() );
-         
-         if ( position != update.position )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.POSITION,
-                                                            update.position )
-                                                .build() );
-         
-         // This list gets smart
-         if ( smartFilter == null && update.smartFilter != null )
-         {
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.IS_SMART_LIST,
-                                                            1 )
-                                                .build() );
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.FILTER,
-                                                            update.smartFilter.getFilterString() )
-                                                .build() );
-         }
-         
-         // This list gets normal
-         else if ( smartFilter != null && update.smartFilter == null )
-         {
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.IS_SMART_LIST,
-                                                            0 )
-                                                .build() );
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.FILTER, null )
-                                                .build() );
-         }
-         
-         // Filter has changed
-         else if ( smartFilter != null
-            && update.smartFilter != null
-            && !smartFilter.getFilterString()
-                           .equals( update.smartFilter.getFilterString() ) )
-         {
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Lists.FILTER,
-                                                            update.smartFilter.getFilterString() )
-                                                .build() );
-         }
-      }
-      else
-      {
-         Log.e( TAG, "ContentProvider update failed. Different RtmList IDs." );
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.IS_SMART_LIST, 1 )
+                                             .build() );
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.FILTER,
+                                                         update.smartFilter.getFilterString() )
+                                             .build() );
       }
       
-      return ( result == null || result.plainSize() > 0 )
-                                                         ? result
-                                                         : NoopContentProviderSyncOperation.INSTANCE;
+      // This list gets normal
+      else if ( smartFilter != null && update.smartFilter == null )
+      {
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.IS_SMART_LIST, 0 )
+                                             .build() );
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.FILTER, null )
+                                             .build() );
+      }
+      
+      // Filter has changed
+      else if ( smartFilter != null
+         && update.smartFilter != null
+         && !smartFilter.getFilterString()
+                        .equals( update.smartFilter.getFilterString() ) )
+      {
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.FILTER,
+                                                         update.smartFilter.getFilterString() )
+                                             .build() );
+      }
+      
+      return result.build();
    }
 }

@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.service.sync;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,8 +30,8 @@ import android.content.SyncResult;
 import android.util.Log;
 
 import com.mdt.rtm.ServiceException;
-import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
+import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
@@ -52,15 +51,15 @@ public final class RtmContactsSync
    
    
 
-   public static boolean computeSync( ServiceImpl service,
-                                      ContentProviderClient provider,
+   public static boolean computeSync( ContentProviderClient provider,
+                                      RtmTimeline timeline,
                                       Date lastSyncOut,
                                       SyncResult syncResult,
                                       DirectedSyncOperations result )
    {
       // Get all contacts from local database
-      final ArrayList< RtmContact > local_ListOfContacts = RtmContactsProviderPart.getAllContacts( provider,
-                                                                                                   null );
+      final List< RtmContact > local_ListOfContacts = RtmContactsProviderPart.getAllContacts( provider,
+                                                                                              null );
       
       if ( local_ListOfContacts == null )
       {
@@ -73,7 +72,7 @@ public final class RtmContactsSync
       
       try
       {
-         server_ListOfContacts = service.contacts_getList();
+         server_ListOfContacts = timeline.getService().contacts_getList();
       }
       catch ( ServiceException e )
       {
@@ -103,20 +102,13 @@ public final class RtmContactsSync
       
       final List< RtmContact > server_Contacts = server_ListOfContacts.getContacts();
       
-      final ContentProviderSyncableList< RtmContact > local_SyncList = new ContentProviderSyncableList< RtmContact >( provider,
-                                                                                                                      local_ListOfContacts,
+      final ContentProviderSyncableList< RtmContact > local_SyncList = new ContentProviderSyncableList< RtmContact >( local_ListOfContacts,
                                                                                                                       RtmContact.LESS_ID );
+      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Contacts,
+                                                                                    local_SyncList );
       
-      final ArrayList< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Contacts,
-                                                                                         local_SyncList );
+      result.getLocalOperations().addAll( syncOperations );
       
-      boolean ok = syncOperations != null;
-      
-      if ( ok )
-      {
-         result.getLocalOperations().addAll( syncOperations );
-      }
-      
-      return ok;
+      return true;
    }
 }

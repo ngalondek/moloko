@@ -24,7 +24,6 @@ import java.util.Date;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
@@ -33,14 +32,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.service.sync.util.ParamChecker;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.RawTasks;
@@ -86,6 +81,8 @@ public class RtmTask extends RtmData implements
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private final String id;
+   
+   private final String taskSeriesId;
    
    private final ParcelableDate due;
    
@@ -153,11 +150,12 @@ public class RtmTask extends RtmData implements
    
 
 
-   public RtmTask( String id, Date due, int hasDueTime, Date added,
-      Date completed, Date deleted, Priority priority, int postponed,
-      String estimate, long estimateMillis )
+   public RtmTask( String id, String taskSeriesId, Date due, int hasDueTime,
+      Date added, Date completed, Date deleted, Priority priority,
+      int postponed, String estimate, long estimateMillis )
    {
       this.id = id;
+      this.taskSeriesId = taskSeriesId;
       this.due = ( due != null ) ? new ParcelableDate( due ) : null;
       this.hasDueTime = hasDueTime;
       this.added = ( added != null ) ? new ParcelableDate( added ) : null;
@@ -172,9 +170,10 @@ public class RtmTask extends RtmData implements
    
 
 
-   public RtmTask( Element elt )
+   public RtmTask( Element elt, String taskSeriesId )
    {
       id = elt.getAttribute( "id" );
+      this.taskSeriesId = taskSeriesId;
       due = parseDate( textNullIfEmpty( elt, "due" ) );
       hasDueTime = Integer.parseInt( elt.getAttribute( "has_due_time" ) );
       added = parseDate( textNullIfEmpty( elt, "added" ) );
@@ -227,9 +226,10 @@ public class RtmTask extends RtmData implements
    
 
 
-   public RtmTask( Element elt, boolean deleted )
+   public RtmTask( Element elt, String taskSeriesId, boolean deleted )
    {
       id = elt.getAttribute( "id" );
+      this.taskSeriesId = taskSeriesId;
       this.deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
       due = null;
       hasDueTime = 0;
@@ -246,6 +246,7 @@ public class RtmTask extends RtmData implements
    public RtmTask( Parcel source )
    {
       this.id = source.readString();
+      this.taskSeriesId = source.readString();
       this.due = source.readParcelable( null );
       this.hasDueTime = source.readInt();
       this.added = source.readParcelable( null );
@@ -262,6 +263,13 @@ public class RtmTask extends RtmData implements
    public String getId()
    {
       return id;
+   }
+   
+
+
+   public String getTaskSeriesId()
+   {
+      return taskSeriesId;
    }
    
 
@@ -354,6 +362,7 @@ public class RtmTask extends RtmData implements
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );
+      dest.writeString( taskSeriesId );
       dest.writeParcelable( due, flags );
       dest.writeInt( hasDueTime );
       dest.writeParcelable( added, flags );
@@ -381,115 +390,89 @@ public class RtmTask extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      ContentProviderSyncOperation operation = null;
-      
-      boolean ok = ParamChecker.checkParams( TAG,
-                                             "ContentProvider insert failed. ",
-                                             new Class[]
-                                             { String.class },
-                                             params );
-      
-      if ( ok )
-         operation = new ContentProviderSyncOperation( provider,
-                                                       ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
-                                                                               .withValues( RtmTasksProviderPart.getContentValues( this,
-                                                                                                                                   (String) params[ 0 ],
-                                                                                                                                   true ) )
-                                                                               .build(),
-                                                       IContentProviderSyncOperation.Op.INSERT );
-      
-      return operation;
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
+                                                                             .withValues( RtmTasksProviderPart.getContentValues( this,
+                                                                                                                                 true ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.DELETE );
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                                   id ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               RtmTask update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTask update )
    {
-      CompositeContentProviderSyncOperation result = null;
+      if ( !id.equals( update.id ) )
+         throw new IllegalArgumentException( "Update id " + update.id
+            + " differs this id " + id );
       
-      if ( this.id.equals( update.id ) )
+      final Uri uri = Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
+      
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
+      
+      SyncUtils.updateDate( due, update.due, uri, RawTasks.DUE_DATE, result );
+      
+      if ( hasDueTime != update.hasDueTime )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( RawTasks.HAS_DUE_TIME,
+                                                         update.hasDueTime )
+                                             .build() );
+      
+      SyncUtils.updateDate( added,
+                            update.added,
+                            uri,
+                            RawTasks.ADDED_DATE,
+                            result );
+      
+      SyncUtils.updateDate( completed,
+                            update.completed,
+                            uri,
+                            RawTasks.COMPLETED_DATE,
+                            result );
+      
+      SyncUtils.updateDate( deleted,
+                            update.deleted,
+                            uri,
+                            RawTasks.DELETED_DATE,
+                            result );
+      
+      if ( priority.compareTo( update.priority ) != 0 )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( RawTasks.PRIORITY,
+                                                         convertPriority( update.priority ) )
+                                             .build() );
+      
+      if ( postponed != update.postponed )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( RawTasks.POSTPONED,
+                                                         update.postponed )
+                                             .build() );
+      
+      if ( SyncUtils.hasChanged( estimate, update.estimate ) )
       {
-         final Uri uri = Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( RawTasks.ESTIMATE,
+                                                         update.estimate )
+                                             .build() );
          
-         result = new CompositeContentProviderSyncOperation( provider,
-                                                             IContentProviderSyncOperation.Op.UPDATE );
-         
-         SyncUtils.updateDate( due, update.due, uri, RawTasks.DUE_DATE, result );
-         
-         if ( hasDueTime != update.hasDueTime )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( RawTasks.HAS_DUE_TIME,
-                                                            update.hasDueTime )
-                                                .build() );
-         
-         SyncUtils.updateDate( added,
-                               update.added,
-                               uri,
-                               RawTasks.ADDED_DATE,
-                               result );
-         
-         SyncUtils.updateDate( completed,
-                               update.completed,
-                               uri,
-                               RawTasks.COMPLETED_DATE,
-                               result );
-         
-         SyncUtils.updateDate( deleted,
-                               update.deleted,
-                               uri,
-                               RawTasks.DELETED_DATE,
-                               result );
-         
-         if ( priority.compareTo( update.priority ) != 0 )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( RawTasks.PRIORITY,
-                                                            convertPriority( update.priority ) )
-                                                .build() );
-         
-         if ( postponed != update.postponed )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( RawTasks.POSTPONED,
-                                                            update.postponed )
-                                                .build() );
-         
-         if ( Strings.hasStringChanged( estimate, update.estimate ) )
-         {
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( RawTasks.ESTIMATE,
-                                                            update.estimate )
-                                                .build() );
-            
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( RawTasks.ESTIMATE_MILLIS,
-                                                            update.estimateMillis )
-                                                .build() );
-         }
-      }
-      else
-      {
-         Log.e( TAG, "ContentProvider update failed. Different RtmRawTask IDs." );
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( RawTasks.ESTIMATE_MILLIS,
+                                                         update.estimateMillis )
+                                             .build() );
       }
       
-      return ( result == null || result.plainSize() > 0 )
-                                                         ? result
-                                                         : NoopContentProviderSyncOperation.INSTANCE;
+      return result.build();
    }
    
 }

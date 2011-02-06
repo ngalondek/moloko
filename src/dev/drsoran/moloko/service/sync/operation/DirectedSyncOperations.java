@@ -29,13 +29,13 @@ import java.util.List;
 
 public final class DirectedSyncOperations
 {
-   private final List< ISyncOperation > serverOperations;
+   private final List< IServerSyncOperation > serverOperations;
    
    private final List< IContentProviderSyncOperation > localOperations;
    
    
 
-   public DirectedSyncOperations( List< ISyncOperation > serverOps,
+   public DirectedSyncOperations( List< IServerSyncOperation > serverOps,
       List< IContentProviderSyncOperation > localOps )
    {
       serverOperations = Collections.unmodifiableList( serverOps );
@@ -46,7 +46,7 @@ public final class DirectedSyncOperations
 
    public DirectedSyncOperations()
    {
-      serverOperations = new ArrayList< ISyncOperation >();
+      serverOperations = new ArrayList< IServerSyncOperation >();
       localOperations = new ArrayList< IContentProviderSyncOperation >();
    }
    
@@ -54,7 +54,7 @@ public final class DirectedSyncOperations
 
    public void addAll( DirectedSyncOperations other )
    {
-      serverOperations.addAll( other.localOperations );
+      serverOperations.addAll( other.serverOperations );
       localOperations.addAll( other.localOperations );
    }
    
@@ -68,7 +68,7 @@ public final class DirectedSyncOperations
    
 
 
-   public List< ISyncOperation > getServerOperations()
+   public List< IServerSyncOperation > getServerOperations()
    {
       return serverOperations;
    }

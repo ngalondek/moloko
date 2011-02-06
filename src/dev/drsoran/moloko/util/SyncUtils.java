@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.util;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 import android.accounts.Account;
 import android.app.AlarmManager;
@@ -41,10 +43,14 @@ import android.util.Pair;
 import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
+import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.Constants;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.lists.ModificationList;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable.MergeDirection;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -255,7 +261,7 @@ public final class SyncUtils
                                         ParcelableDate update,
                                         Uri uri,
                                         String column,
-                                        CompositeContentProviderSyncOperation result )
+                                        ContentProviderSyncOperation.Builder result )
    {
       if ( ( current == null && update != null )
          || ( current != null && update != null && current.getDate().getTime() != update.getDate()
@@ -276,4 +282,105 @@ public final class SyncUtils
       }
    }
    
+
+
+   public final static < V > boolean hasChanged( V oldVal, V newVal )
+   {
+      return ( oldVal == null && newVal != null )
+         || ( oldVal != null && !oldVal.equals( newVal ) );
+   }
+   
+   
+   public final static class MergeProperties
+   {
+      public final MergeDirection mergeDirection;
+      
+      public final Date serverModDate;
+      
+      public final Date localModDate;
+      
+      public final Uri uri;
+      
+      public final ModificationList modifications;
+      
+      public final List< IContentProviderSyncOperation > operations;
+      
+      
+
+      public MergeProperties( MergeDirection mergeDirection,
+         Date serverModDate, Date localModDate, Uri uri,
+         ModificationList modifications,
+         List< IContentProviderSyncOperation > operations )
+      {
+         this.mergeDirection = mergeDirection;
+         this.serverModDate = serverModDate;
+         this.localModDate = localModDate;
+         this.uri = uri;
+         this.modifications = modifications;
+         this.operations = operations;
+      }
+   }
+   
+
+   public static enum MergeResultDirection
+   {
+      NOTHING, LOCAL, SERVER
+   }
+   
+   
+
+   public final static < V > MergeResultDirection mergeModification( MergeProperties properties,
+                                                                     String columnName,
+                                                                     V serverValue,
+                                                                     V localValue,
+                                                                     Class< V > valueClass )
+   {
+      MergeResultDirection mergeDir = MergeResultDirection.NOTHING;
+      
+      if ( !serverValue.equals( localValue ) )
+      {
+         final Modification modification = properties.modifications.find( properties.uri,
+                                                                          columnName );
+         // Check if the local value was modified
+         if ( modification != null )
+         {
+            final V syncedValue = modification.getSyncedValue( valueClass );
+            
+            // Check if the server value has changed compared to the last synced value.
+            if ( hasChanged( syncedValue, serverValue ) )
+            {
+               // CONFLICT: Local and server element has changed.
+               // Let the modified date of the elements decide in which direction to sync.
+               //
+               // In case of equal dates we take the server value cause this
+               // value we have transferred already.
+               if ( properties.localModDate.getTime() > properties.serverModDate.getTime() )
+                  // LOCAL UPDATE: The server element was modified after the local value.
+                  mergeDir = MergeResultDirection.LOCAL;
+               else
+                  // SERVER UPDATE: The local element was modified after the server element.
+                  mergeDir = MergeResultDirection.SERVER;
+            }
+            else
+               // SERVER UPDATE: The server value has not been changed since last sync,
+               // so use local modified value.
+               mergeDir = MergeResultDirection.SERVER;
+         }
+         
+         // LOCAL UPDATE: The local value was not modified. So take server value.
+         else
+         {
+            mergeDir = MergeResultDirection.LOCAL;
+         }
+         
+         if ( mergeDir == MergeResultDirection.LOCAL )
+            properties.operations.add( ContentProviderSyncOperation.newUpdate( ContentProviderOperation.newUpdate( properties.uri )
+                                                                                                       .withValue( columnName,
+                                                                                                                   serverValue )
+                                                                                                       .build() )
+                                                                   .build() );
+      }
+      
+      return mergeDir;
+   }
 }

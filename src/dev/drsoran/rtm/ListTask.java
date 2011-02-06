@@ -29,7 +29,6 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmTaskNote;
@@ -37,6 +36,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
 
@@ -155,21 +155,17 @@ public class ListTask extends Task
             
             if ( client != null )
             {
-               try
+               final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
+                                                                               getTaskSeriesId() );
+               client.release();
+               
+               if ( rtmNotes != null )
                {
-                  final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                                  getTaskSeriesId() );
-                  client.release();
-                  
-                  if ( rtmNotes != null )
-                  {
-                     notes = new ArrayList< RtmTaskNote >( rtmNotes.getNotes() );
-                  }
+                  notes = new ArrayList< RtmTaskNote >( rtmNotes.getNotes() );
                }
-               catch ( RemoteException e )
+               else
                {
-                  Log.e( TAG, "Unable to retrieve notes from DB for task ID "
-                     + getTaskSeriesId(), e );
+                  Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
                }
             }
          }

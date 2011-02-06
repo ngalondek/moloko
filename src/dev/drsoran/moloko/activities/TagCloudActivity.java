@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -202,7 +203,7 @@ public class TagCloudActivity extends Activity
 
    private void fillContent()
    {
-      ArrayList< RtmListWithTaskCount > lists = null;
+      List< RtmListWithTaskCount > lists = null;
       
       // Fetch all lists and their task count
       {
@@ -227,7 +228,7 @@ public class TagCloudActivity extends Activity
          }
       }
       
-      ArrayList< TagWithTaskCount > tags = null;
+      List< TagWithTaskCount > tags = null;
       
       // Fetch all Tags and their task count
       {
@@ -250,7 +251,7 @@ public class TagCloudActivity extends Activity
          }
       }
       
-      ArrayList< LocationWithTaskCount > locations = null;
+      List< LocationWithTaskCount > locations = null;
       
       // Fetch all Locations and their task count
       {
@@ -277,8 +278,7 @@ public class TagCloudActivity extends Activity
       
       if ( count > 0 )
       {
-         
-         final ArrayList< CloudEntry > cloudEntries = new ArrayList< CloudEntry >( count );
+         final List< CloudEntry > cloudEntries = new ArrayList< CloudEntry >( count );
          
          for ( RtmListWithTaskCount list : lists )
          {

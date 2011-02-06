@@ -22,22 +22,22 @@
 
 package dev.drsoran.rtm;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Tags;
 
 
-public class Tag implements IContentProviderSyncable< Tag >
+public class Tag implements IContentProviderSyncable< Tag >, Parcelable
 {
+   
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko." + Tag.class.getSimpleName();
    
@@ -46,6 +46,21 @@ public class Tag implements IContentProviderSyncable< Tag >
    private final String taskSeriesId;
    
    private final String tag;
+   
+   public static final Parcelable.Creator< Tag > CREATOR = new Parcelable.Creator< Tag >()
+   {
+      public Tag createFromParcel( Parcel source )
+      {
+         return new Tag( source );
+      }
+      
+
+
+      public Tag[] newArray( int size )
+      {
+         return new Tag[ size ];
+      }
+   };
    
    
 
@@ -63,6 +78,15 @@ public class Tag implements IContentProviderSyncable< Tag >
       this.id = id;
       this.taskSeriesId = taskSeriesId;
       this.tag = tag;
+   }
+   
+
+
+   public Tag( Parcel source )
+   {
+      id = source.readString();
+      taskSeriesId = source.readString();
+      tag = source.readString();
    }
    
 
@@ -88,11 +112,27 @@ public class Tag implements IContentProviderSyncable< Tag >
    
 
 
+   public int describeContents()
+   {
+      return 0;
+   }
+   
+
+
+   public void writeToParcel( Parcel dest, int flags )
+   {
+      dest.writeString( id );
+      dest.writeString( taskSeriesId );
+      dest.writeString( tag );
+   }
+   
+
+
    @Override
    public boolean equals( Object o )
    {
       if ( !( o instanceof Tag ) )
-         return super.equals( o );
+         return false;
       else
       {
          final Tag other = (Tag) o;
@@ -105,9 +145,9 @@ public class Tag implements IContentProviderSyncable< Tag >
                                                             : true;
          
          equals = equals
-            && !Strings.hasStringChanged( taskSeriesId, other.taskSeriesId );
+            && !SyncUtils.hasChanged( taskSeriesId, other.taskSeriesId );
          
-         equals = equals && !Strings.hasStringChanged( tag, other.tag );
+         equals = equals && !SyncUtils.hasChanged( tag, other.tag );
          
          return equals;
       }
@@ -115,53 +155,43 @@ public class Tag implements IContentProviderSyncable< Tag >
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newInsert( Tags.CONTENT_URI )
-                                                                       .withValues( TagsProviderPart.getContentValues( this,
-                                                                                                                       true ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.INSERT );
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Tags.CONTENT_URI )
+                                                                             .withValues( TagsProviderPart.getContentValues( this,
+                                                                                                                             true ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( Tags.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.DELETE );
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Tags.CONTENT_URI,
+                                                                                                                   id ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               Tag update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( Tag update )
    {
       final Uri uri = Queries.contentUriWithId( Tags.CONTENT_URI, id );
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      final CompositeContentProviderSyncOperation result = new CompositeContentProviderSyncOperation( provider,
-                                                                                                      IContentProviderSyncOperation.Op.UPDATE );
-      
-      if ( Strings.hasStringChanged( taskSeriesId, update.taskSeriesId ) )
+      if ( SyncUtils.hasChanged( taskSeriesId, update.taskSeriesId ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Tags.TASKSERIES_ID,
                                                          update.taskSeriesId )
                                              .build() );
       
-      if ( Strings.hasStringChanged( tag, update.tag ) )
+      if ( SyncUtils.hasChanged( tag, update.tag ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Tags.TAG, update.tag )
                                              .build() );
       
-      return ( result.plainSize() > 0 )
-                                       ? result
-                                       : NoopContentProviderSyncOperation.INSTANCE;
+      return result.build();
    }
 }

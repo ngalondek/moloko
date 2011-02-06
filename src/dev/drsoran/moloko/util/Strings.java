@@ -33,10 +33,4 @@ public final class Strings
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
-   public final static boolean hasStringChanged( String current, String update )
-   {
-      return ( ( current == null && update != null ) || ( current != null && !current.equals( update ) ) );
-   }
 }

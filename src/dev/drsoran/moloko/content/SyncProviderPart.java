@@ -65,9 +65,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
 
    public final static ContentValues getContentValues( Long lastIn, Long lastOut )
    {
-      ContentValues values = null;
-      
-      values = new ContentValues();
+      final ContentValues values = new ContentValues();
       
       values.put( Sync._ID, FIX_ID );
       
@@ -117,7 +115,6 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    public final static String getSyncId( ContentProviderClient client )
    {
       String id = null;
-      
       Cursor c = null;
       
       try
@@ -152,7 +149,6 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    public final static Pair< Long, Long > getLastInAndLastOut( ContentProviderClient client )
    {
       Pair< Long, Long > inAndOut = new Pair< Long, Long >( null, null );
-      
       Cursor c = null;
       
       try

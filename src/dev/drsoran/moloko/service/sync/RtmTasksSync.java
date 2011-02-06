@@ -31,14 +31,15 @@ import android.content.SyncResult;
 import android.util.Log;
 
 import com.mdt.rtm.ServiceException;
-import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
+import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
+import dev.drsoran.moloko.service.sync.lists.ModificationList;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.SyncUtils;
@@ -51,8 +52,9 @@ public final class RtmTasksSync
    
    
 
-   public static boolean computeSync( ServiceImpl service,
-                                      ContentProviderClient provider,
+   public static boolean computeSync( ContentProviderClient provider,
+                                      RtmTimeline timeline,
+                                      ModificationList modifications,
                                       Date lastSyncOut,
                                       SyncResult syncResult,
                                       DirectedSyncOperations operations )
@@ -70,9 +72,10 @@ public final class RtmTasksSync
       
       try
       {
-         server_Tasks = toPlainList( service.tasks_getList( null,
-                                                            null,
-                                                            lastSyncOut ) );
+         server_Tasks = toPlainList( timeline.getService()
+                                             .tasks_getList( null,
+                                                             null,
+                                                             lastSyncOut ) );
       }
       catch ( ServiceException e )
       {
@@ -103,17 +106,13 @@ public final class RtmTasksSync
       final DirectedSyncOperations syncOperations = SyncDiffer.twoWaydiff( server_Tasks,
                                                                            local_Tasks,
                                                                            RtmTaskSeries.LESS_ID,
-                                                                           service,
-                                                                           provider,
+                                                                           modifications,
+                                                                           timeline,
                                                                            lastSyncOut,
                                                                            lastSyncOut == null );
+      operations.addAll( syncOperations );
       
-      if ( syncOperations != null )
-      {
-         operations.addAll( syncOperations );
-      }
-      
-      return syncOperations != null;
+      return true;
    }
    
 
@@ -124,7 +123,6 @@ public final class RtmTasksSync
          return null;
       
       final List< RtmTaskSeries > result = new ArrayList< RtmTaskSeries >();
-      
       final List< RtmTaskList > listOfLists = tasks.getLists();
       
       for ( RtmTaskList rtmTaskList : listOfLists )

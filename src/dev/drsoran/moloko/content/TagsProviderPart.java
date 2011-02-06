@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
@@ -84,10 +85,10 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< Tag > getAllTags( ContentProviderClient client,
-                                                    String taskSeriesId )
+   public final static List< Tag > getAllTags( ContentProviderClient client,
+                                               String taskSeriesId )
    {
-      ArrayList< Tag > tags = null;
+      List< Tag > tags = null;
       
       if ( !TextUtils.isEmpty( taskSeriesId ) )
       {
@@ -136,11 +137,10 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< String > getAllTagTexts( ContentProviderClient client,
-                                                           String taskSeriesId )
+   public final static List< String > getAllTagTexts( ContentProviderClient client,
+                                                      String taskSeriesId )
    {
-      ArrayList< String > tags = null;
-      
+      List< String > tags = null;
       Cursor c = null;
       
       if ( taskSeriesId != null )

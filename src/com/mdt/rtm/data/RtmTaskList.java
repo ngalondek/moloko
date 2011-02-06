@@ -76,7 +76,7 @@ public class RtmTaskList extends RtmData
    
    private final String id;
    
-   private List< RtmTaskSeries > series;
+   private final List< RtmTaskSeries > series;
    
    private final ParcelableDate current;
    
@@ -106,18 +106,15 @@ public class RtmTaskList extends RtmData
    public RtmTaskList( Element elt )
    {
       id = elt.getAttribute( "id" );
+      series = new ArrayList< RtmTaskSeries >();
       
       // Look for taskseries element
       {
          final List< Element > children = children( elt, "taskseries" );
          
-         if ( children.size() > 0 )
+         for ( Element seriesElt : children )
          {
-            series = new ArrayList< RtmTaskSeries >( children.size() );
-            for ( Element seriesElt : children )
-            {
-               series.add( new RtmTaskSeries( seriesElt, id ) );
-            }
+            series.add( new RtmTaskSeries( seriesElt, id ) );
          }
       }
       
@@ -126,35 +123,20 @@ public class RtmTaskList extends RtmData
       {
          final List< Element > deleted = children( elt, "deleted" );
          
-         if ( deleted.size() > 0 )
+         for ( Element deletedElement : deleted )
          {
-            if ( series == null )
+            for ( Element seriesElt : children( deletedElement, "taskseries" ) )
             {
-               series = new ArrayList< RtmTaskSeries >( deleted.size() );
-            }
-            
-            for ( Element deletedElement : deleted )
-            {
-               for ( Element seriesElt : children( deletedElement, "taskseries" ) )
-               {
-                  series.add( new RtmTaskSeries( seriesElt, id, true ) );
-               }
+               series.add( new RtmTaskSeries( seriesElt, id, true ) );
             }
          }
-      }
-      
-      if ( series == null )
-      {
-         // do not use Collections.emptyList() here cause we
-         // need a mutable list.
-         series = new ArrayList< RtmTaskSeries >( 0 );
       }
       
       current = parseDate( textNullIfEmpty( elt, "current" ) );
       
       if ( TextUtils.isEmpty( id ) )
       {
-         throw new RuntimeException( "No id found in task list." );
+         throw new IllegalStateException( "No id found in task list." );
       }
    }
    

@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.DialogInterface;
@@ -122,10 +122,9 @@ public class TasksListActivity extends AbstractTasksListActivity implements
             return;
          }
          
-         final ArrayList< Task > tasks = TasksProviderPart.getTasks( client,
-                                                                     evaluatedFilter,
-                                                                     Settings.resolveTaskSortToSqlite( getTaskSort() ) );
-         
+         final List< Task > tasks = TasksProviderPart.getTasks( client,
+                                                                evaluatedFilter,
+                                                                Settings.resolveTaskSortToSqlite( getTaskSort() ) );
          client.release();
          
          // TODO: Handle null. Show error?

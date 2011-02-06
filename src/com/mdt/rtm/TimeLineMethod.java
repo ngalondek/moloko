@@ -20,26 +20,21 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.service.sync.operation;
+package com.mdt.rtm;
 
-import android.content.SyncResult;
+import java.util.concurrent.Callable;
+
+import com.mdt.rtm.Service.MethodCallType;
 
 
-public class NoopSyncOperation implements ISyncOperation
+public abstract class TimeLineMethod< V > implements Callable< V >
 {
-   public final static NoopSyncOperation INSTANCE = new NoopSyncOperation();
-   
-   
-
-   protected NoopSyncOperation()
+   public V call() throws ServiceException
    {
-      
+      return call( MethodCallType.WITH_RESULT );
    }
    
 
 
-   public boolean execute( SyncResult result )
-   {
-      return true;
-   }
+   abstract public V call( MethodCallType callType ) throws ServiceException;
 }

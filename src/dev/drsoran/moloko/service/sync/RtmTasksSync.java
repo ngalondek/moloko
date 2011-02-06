@@ -30,6 +30,7 @@ import android.content.ContentProviderClient;
 import android.content.SyncResult;
 import android.util.Log;
 
+import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmTaskList;
@@ -52,7 +53,8 @@ public final class RtmTasksSync
    
    
 
-   public static boolean computeSync( ContentProviderClient provider,
+   public static boolean computeSync( Service service,
+                                      ContentProviderClient provider,
                                       RtmTimeline timeline,
                                       ModificationList modifications,
                                       Date lastSyncOut,
@@ -72,10 +74,9 @@ public final class RtmTasksSync
       
       try
       {
-         server_Tasks = toPlainList( timeline.getService()
-                                             .tasks_getList( null,
-                                                             null,
-                                                             lastSyncOut ) );
+         server_Tasks = toPlainList( service.tasks_getList( null,
+                                                            null,
+                                                            lastSyncOut ) );
       }
       catch ( ServiceException e )
       {

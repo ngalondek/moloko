@@ -59,13 +59,12 @@ public class RtmTimeline
    
 
 
-   public Service getService()
-   {
-      return service;
-   }
+   // public Service getService()
+   // {
+   // return service;
+   // }
+   //   
    
-
-
    @Override
    public String toString()
    {

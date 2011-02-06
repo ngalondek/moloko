@@ -48,7 +48,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
 
@@ -60,7 +59,6 @@ import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -320,8 +318,6 @@ public class TaskEditActivity extends Activity
          refreshEstimate();
          refreshLocationSpinner();
          refreshUrl();
-         
-         evaluateRtmAccessLevel();
       }
    }
    
@@ -634,44 +630,6 @@ public class TaskEditActivity extends Activity
    private void refreshUrl()
    {
       url.setText( task.getUrl() );
-   }
-   
-
-
-   private void evaluateRtmAccessLevel()
-   {
-      nameEdit.setVisibility( View.GONE );
-      list.setVisibility( View.GONE );
-      priority.setVisibility( View.GONE );
-      tagsLayout.setVisibility( View.GONE );
-      removeTagButton.setVisibility( View.GONE );
-      dueLayout.setVisibility( View.GONE );
-      recurrenceLayout.setVisibility( View.GONE );
-      estimateLayout.setVisibility( View.GONE );
-      location.setVisibility( View.GONE );
-      url.setVisibility( View.GONE );
-      
-      RtmAuth.Perms permission = AccountUtils.getAccessLevel( this );
-      
-      switch ( permission )
-      {
-         case delete:
-            removeTagButton.setVisibility( View.VISIBLE );
-         case write:
-            list.setVisibility( View.VISIBLE );
-            priority.setVisibility( View.VISIBLE );
-            tagsLayout.setVisibility( View.VISIBLE );
-            dueLayout.setVisibility( View.VISIBLE );
-            recurrenceLayout.setVisibility( View.VISIBLE );
-            estimateLayout.setVisibility( View.VISIBLE );
-            location.setVisibility( View.VISIBLE );
-            url.setVisibility( View.VISIBLE );
-         case read:
-            nameEdit.setVisibility( View.VISIBLE );
-            break;
-         default :
-            break;
-      }
    }
    
 

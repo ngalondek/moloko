@@ -23,6 +23,7 @@ import org.w3c.dom.Element;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.view.View;
 
 
 /**
@@ -31,10 +32,42 @@ import android.os.Parcelable;
  */
 public class RtmAuth extends RtmData
 {
-   
-   public enum Perms
+   public interface ISetEditable
    {
-         nothing, read, write, delete
+      public void setEditable( View view );
+   }
+   
+
+   public enum Perms implements ISetEditable
+   {
+      nothing
+      {
+         public void setEditable( View view )
+         {
+            view.setEnabled( false );
+         }
+      },
+      read
+      {
+         public void setEditable( View view )
+         {
+            view.setEnabled( false );
+         }
+      },
+      write
+      {
+         public void setEditable( View view )
+         {
+            view.setEnabled( true );
+         }
+      },
+      delete
+      {
+         public void setEditable( View view )
+         {
+            view.setEnabled( true );
+         }
+      };
    }
    
    public static final Parcelable.Creator< RtmAuth > CREATOR = new Parcelable.Creator< RtmAuth >()
@@ -75,9 +108,8 @@ public class RtmAuth extends RtmData
    {
       if ( !elt.getNodeName().equals( "auth" ) )
       {
-         throw new IllegalArgumentException( "Element "
-                                             + elt.getNodeName()
-                                             + " does not represent an Auth object." );
+         throw new IllegalArgumentException( "Element " + elt.getNodeName()
+            + " does not represent an Auth object." );
       }
       
       this.token = text( child( elt, "token" ) );

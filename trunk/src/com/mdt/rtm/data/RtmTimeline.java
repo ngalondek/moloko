@@ -21,51 +21,33 @@ package com.mdt.rtm.data;
 
 import org.w3c.dom.Element;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import com.mdt.rtm.Service;
+import com.mdt.rtm.ServiceException;
+import com.mdt.rtm.TimeLineMethod;
+import com.mdt.rtm.Service.MethodCallType;
 
 
-public class RtmTimeline extends RtmData
+public class RtmTimeline
 {
-   
-   public static final Parcelable.Creator< RtmTimeline > CREATOR = new Parcelable.Creator< RtmTimeline >()
-   {
-      
-      public RtmTimeline createFromParcel( Parcel source )
-      {
-         return new RtmTimeline( source );
-      }
-      
-
-
-      public RtmTimeline[] newArray( int size )
-      {
-         return new RtmTimeline[ size ];
-      }
-      
-   };
    
    private final String id;
    
+   private final Service service;
+   
    
 
-   public RtmTimeline( String id )
+   public RtmTimeline( String id, Service service )
    {
       this.id = id;
+      this.service = service;
    }
    
 
 
-   public RtmTimeline( Element elt )
+   public RtmTimeline( Element elt, Service service )
    {
-      id = text( elt );
-   }
-   
-
-
-   public RtmTimeline( Parcel source )
-   {
-      id = source.readString();
+      id = RtmData.text( elt );
+      this.service = service;
    }
    
 
@@ -77,15 +59,39 @@ public class RtmTimeline extends RtmData
    
 
 
-   public int describeContents()
+   public Service getService()
    {
-      return 0;
+      return service;
    }
    
 
 
-   public void writeToParcel( Parcel dest, int flags )
+   @Override
+   public String toString()
    {
-      dest.writeString( id );
+      return "<id=" + id + ">";
    }
+   
+
+
+   public TimeLineMethod< RtmTaskSeries > tasks_setName( final String listId,
+                                                         final String taskSeriesId,
+                                                         final String taskId,
+                                                         final String newName )
+   {
+      return new TimeLineMethod< RtmTaskSeries >()
+      {
+         @Override
+         public RtmTaskSeries call( MethodCallType callType ) throws ServiceException
+         {
+            return service.tasks_setName( id,
+                                          listId,
+                                          taskSeriesId,
+                                          taskId,
+                                          newName,
+                                          callType );
+         }
+      };
+   }
+   
 }

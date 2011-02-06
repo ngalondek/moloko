@@ -26,29 +26,26 @@ import java.util.Comparator;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Contacts;
 
 
 public class RtmContact extends RtmData implements
          IContentProviderSyncable< RtmContact >
 {
+   @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + RtmContact.class.getSimpleName();
    
@@ -159,64 +156,50 @@ public class RtmContact extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newInsert( Contacts.CONTENT_URI )
-                                                                       .withValues( RtmContactsProviderPart.getContentValues( this,
-                                                                                                                              true ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.INSERT );
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Contacts.CONTENT_URI )
+                                                                             .withValues( RtmContactsProviderPart.getContentValues( this,
+                                                                                                                                    true ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
 
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( Contacts.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.DELETE );
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Contacts.CONTENT_URI,
+                                                                                                                   id ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               RtmContact update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmContact update )
    {
-      CompositeContentProviderSyncOperation result = null;
+      if ( !id.equals( update.id ) )
+         throw new IllegalArgumentException( "Update id " + update.id
+            + " differs this id " + id );
       
-      if ( this.id.equals( update.id ) )
-      {
-         final Uri uri = Queries.contentUriWithId( Contacts.CONTENT_URI, id );
-         
-         result = new CompositeContentProviderSyncOperation( provider,
-                                                             IContentProviderSyncOperation.Op.UPDATE );
-         
-         if ( Strings.hasStringChanged( fullname, update.fullname ) )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Contacts.FULLNAME,
-                                                            update.fullname )
-                                                .build() );
-         
-         if ( Strings.hasStringChanged( username, update.username ) )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Contacts.USERNAME,
-                                                            update.fullname )
-                                                .build() );
-      }
-      else
-      {
-         Log.e( TAG, "ContentProvider update failed. Different RtmContact IDs." );
-      }
+      final Uri uri = Queries.contentUriWithId( Contacts.CONTENT_URI, id );
       
-      return ( result == null || result.plainSize() > 0 )
-                                                         ? result
-                                                         : NoopContentProviderSyncOperation.INSTANCE;
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
+      
+      if ( SyncUtils.hasChanged( fullname, update.fullname ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Contacts.FULLNAME,
+                                                         update.fullname )
+                                             .build() );
+      
+      if ( SyncUtils.hasChanged( username, update.username ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Contacts.USERNAME,
+                                                         update.fullname )
+                                             .build() );
+      
+      return result.build();
    }
 }

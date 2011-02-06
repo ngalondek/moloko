@@ -22,12 +22,14 @@
 
 package dev.drsoran.moloko.content;
 
+import java.util.Comparator;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
 
-public class Modification< T > implements Comparable< Modification< ? > >
+public class Modification implements Comparable< Modification >
 {
    private final String id;
    
@@ -35,20 +37,35 @@ public class Modification< T > implements Comparable< Modification< ? > >
    
    private final String colName;
    
-   private final T newValue;
+   private final String newValue;
    
-   private final Class< T > valueClass;
+   private final String syncedValue;
+   
+   private final boolean synedValueSet;
+   
+   
+   private final static class SortColumnName implements
+            Comparator< Modification >
+   {
+      public int compare( Modification object1, Modification object2 )
+      {
+         return object1.colName.compareTo( object2.colName );
+      }
+   }
+   
+   public final static SortColumnName SORT_COLUMN_NAME = new SortColumnName();
    
    
 
    private Modification( String id, Uri entityUri, String colName,
-      Class< T > valueClass, T newValue )
+      String newValue, String syncedValue, boolean syncedValueSet )
    {
       this.id = id;
       this.entityUri = entityUri;
       this.colName = colName;
       this.newValue = newValue;
-      this.valueClass = valueClass;
+      this.syncedValue = syncedValue;
+      this.synedValueSet = syncedValueSet;
    }
    
 
@@ -74,21 +91,41 @@ public class Modification< T > implements Comparable< Modification< ? > >
    
 
 
-   public T getNewValue()
+   public String getNewValue()
    {
       return newValue;
    }
    
 
 
-   public Class< T > getValueClass()
+   public < T > T getNewValue( Class< T > valueClass )
    {
-      return valueClass;
+      return fromString( newValue, valueClass );
    }
    
 
 
-   @SuppressWarnings( "unchecked" )
+   public String getSyncedValue()
+   {
+      return syncedValue;
+   }
+   
+
+
+   public < T > T getSyncedValue( Class< T > valueClass )
+   {
+      return fromString( syncedValue, valueClass );
+   }
+   
+
+
+   public boolean isSyncedValueSet()
+   {
+      return synedValueSet;
+   }
+   
+
+
    @Override
    public boolean equals( Object o )
    {
@@ -103,8 +140,7 @@ public class Modification< T > implements Comparable< Modification< ? > >
       boolean equal = ( newValue == null ? other.newValue == null
                                         : newValue.equals( other.newValue ) );
       equal = equal && entityUri.equals( other.entityUri );
-      equal = equal && valueClass.getName().equals( other.valueClass.getName() );
-      equal = equal && colName == other.colName;
+      equal = equal && colName.equals( other.colName );
       
       return equal;
    }
@@ -125,7 +161,7 @@ public class Modification< T > implements Comparable< Modification< ? > >
    
 
 
-   public int compareTo( Modification< ? > another )
+   public int compareTo( Modification another )
    {
       int cmp = entityUri.compareTo( another.entityUri );
       if ( cmp != 0 )
@@ -140,62 +176,45 @@ public class Modification< T > implements Comparable< Modification< ? > >
    
 
 
-   public final static < T > Modification< T > newModification( String id,
-                                                                Uri entityUri,
-                                                                String colName,
-                                                                Class< T > valueClass,
-                                                                T newValue )
+   public final static < T > Modification newModification( String id,
+                                                           Uri entityUri,
+                                                           String colName,
+                                                           T newValue,
+                                                           T syncedValue )
    {
-      return new Modification< T >( id,
-                                    entityUri,
-                                    colName,
-                                    valueClass,
-                                    newValue );
+      return new Modification( id,
+                               entityUri,
+                               colName,
+                               toString( newValue ),
+                               toString( syncedValue ),
+                               true );
    }
    
 
 
-   public final static < T > Modification< T > newModification( Uri entityUri,
-                                                                String colName,
-                                                                Class< T > valueClass,
-                                                                T newValue )
+   public final static < T > Modification newModification( Uri entityUri,
+                                                           String colName,
+                                                           T newValue )
    {
-      return new Modification< T >( null,
-                                    entityUri,
-                                    colName,
-                                    valueClass,
-                                    newValue );
+      return new Modification( null,
+                               entityUri,
+                               colName,
+                               toString( newValue ),
+                               null,
+                               false );
    }
    
 
 
-   @SuppressWarnings( "unchecked" )
    public final static < T > T get( Cursor c, int column, Class< T > valueClass )
    {
       if ( c == null )
          throw new NullPointerException( "key is null" );
-      if ( valueClass == null )
-         throw new NullPointerException( "valueType is null" );
       
       if ( c.isNull( column ) )
          return null;
-      else if ( valueClass.equals( String.class ) )
-         return (T) c.getString( column );
-      else if ( valueClass.equals( Integer.class ) )
-         return (T) Integer.valueOf( c.getInt( column ) );
-      else if ( valueClass.equals( Long.class ) )
-         return (T) Long.valueOf( c.getLong( column ) );
-      else if ( valueClass.equals( Double.class ) )
-         return (T) Double.valueOf( c.getDouble( column ) );
-      else if ( valueClass.equals( Float.class ) )
-         return (T) Float.valueOf( c.getFloat( column ) );
-      else if ( valueClass.equals( Short.class ) )
-         return (T) Short.valueOf( c.getShort( column ) );
-      else if ( valueClass.equals( Boolean.class ) )
-         return (T) Boolean.valueOf( c.getInt( column ) != 0 );
-      else
-         throw new IllegalArgumentException( "Unsupported data type of valueType "
-            + valueClass.getName() );
+      
+      return fromString( c.getString( column ), valueClass );
    }
    
 
@@ -209,23 +228,61 @@ public class Modification< T > implements Comparable< Modification< ? > >
       
       if ( value == null )
          contentValues.putNull( key );
-      else if ( value instanceof String )
-         contentValues.put( key, (String) value );
-      else if ( value instanceof Integer )
-         contentValues.put( key, (Integer) value );
-      else if ( value instanceof Long )
-         contentValues.put( key, (Long) value );
-      else if ( value instanceof Double )
-         contentValues.put( key, (Double) value );
-      else if ( value instanceof Float )
-         contentValues.put( key, (Double) value );
-      else if ( value instanceof Short )
-         contentValues.put( key, (Short) value );
-      else if ( value instanceof Boolean )
-         contentValues.put( key, (Boolean) value );
       else
-         throw new IllegalArgumentException( "Unsupported data type of value "
-            + value );
+         contentValues.put( key, toString( value ) );
    }
    
+
+
+   @SuppressWarnings( "unchecked" )
+   private final static < T > T fromString( String value, Class< T > valueClass )
+   {
+      if ( valueClass == null )
+         throw new NullPointerException( "valueClass is null" );
+      
+      if ( value == null )
+         return null;
+      else if ( valueClass.equals( String.class ) )
+         return (T) value;
+      else if ( valueClass.equals( Integer.class ) )
+         return (T) Integer.valueOf( value );
+      else if ( valueClass.equals( Long.class ) )
+         return (T) Long.valueOf( value );
+      else if ( valueClass.equals( Double.class ) )
+         return (T) Double.valueOf( value );
+      else if ( valueClass.equals( Float.class ) )
+         return (T) Float.valueOf( value );
+      else if ( valueClass.equals( Short.class ) )
+         return (T) Short.valueOf( value );
+      else if ( valueClass.equals( Boolean.class ) )
+         return (T) Boolean.valueOf( ( Integer.valueOf( value ) != 0 ) );
+      else
+         throw new IllegalArgumentException( "Unsupported data type of valueType "
+            + valueClass.getName() );
+   }
+   
+
+
+   private final static < T > String toString( T value )
+   {
+      if ( value == null )
+         return null;
+      else if ( value instanceof String )
+         return (String) value;
+      else if ( value instanceof Integer )
+         return Integer.toString( (Integer) value );
+      else if ( value instanceof Long )
+         return Long.toString( (Long) value );
+      else if ( value instanceof Double )
+         return Double.toString( (Double) value );
+      else if ( value instanceof Float )
+         return Float.toString( (Float) value );
+      else if ( value instanceof Short )
+         return Short.toString( (Short) value );
+      else if ( value instanceof Boolean )
+         return ( (Boolean) value ) ? "1" : "0";
+      else
+         throw new IllegalArgumentException( "Unsupported data type of value "
+            + value.getClass().getName() );
+   }
 }

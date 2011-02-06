@@ -29,7 +29,6 @@ import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
@@ -507,18 +506,15 @@ public class TaskActivity extends Activity
          
          if ( client != null )
          {
-            try
+            final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
+                                                                            task.getTaskSeriesId() );
+            if ( rtmNotes != null )
             {
-               final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                               task.getTaskSeriesId() );
-               if ( rtmNotes != null )
-               {
-                  notes = rtmNotes.getNotes();
-               }
+               notes = rtmNotes.getNotes();
             }
-            catch ( final RemoteException e )
+            else
             {
-               LogUtils.logDBError( this, TAG, "Notes", e );
+               LogUtils.logDBError( this, TAG, "Notes" );
             }
             
             client.release();

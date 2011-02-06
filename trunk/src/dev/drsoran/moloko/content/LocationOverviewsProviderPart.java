@@ -150,7 +150,6 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
                                                                   String id )
    {
       LocationWithTaskCount location = null;
-      
       Cursor c = null;
       
       try

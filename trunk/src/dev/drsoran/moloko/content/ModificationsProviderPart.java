@@ -25,6 +25,7 @@ package dev.drsoran.moloko.content;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
@@ -75,9 +76,9 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    
    
 
-   public final static < T > ContentValues getContentValues( ContentResolver contentResolver,
-                                                             Modification< T > modification,
-                                                             boolean withId )
+   public final static ContentValues getContentValues( ContentResolver contentResolver,
+                                                       Modification modification,
+                                                       boolean withId )
    {
       ContentValues values = new ContentValues();
       
@@ -95,6 +96,9 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                         Modifications.NEW_VALUE,
                         modification.getNewValue() );
       
+      String syncedValue = null;
+      
+      if ( !modification.isSyncedValueSet() )
       {
          final ContentProviderClient entityClient = contentResolver.acquireContentProviderClient( modification.getEntityUri() );
          
@@ -116,11 +120,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
             if ( !c.moveToFirst() )
                throw new SQLException( "Unable to move to 1st element" );
             
-            Modification.put( values,
-                              Modifications.SYNCED_VALUE,
-                              Modification.get( c,
-                                                0,
-                                                modification.getValueClass() ) );
+            syncedValue = c.getString( 0 );
          }
          catch ( RemoteException e )
          {
@@ -135,18 +135,23 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
          
          entityClient.release();
       }
+      else
+      {
+         syncedValue = modification.getSyncedValue();
+      }
+      
+      Modification.put( values, Modifications.SYNCED_VALUE, syncedValue );
       
       return values;
    }
    
 
 
-   public final static < T > Modification< T > getModification( ContentProviderClient client,
-                                                                Uri entityUri,
-                                                                String colName,
-                                                                Class< T > valueClass )
+   public final static Modification getModification( ContentProviderClient client,
+                                                     Uri entityUri,
+                                                     String colName )
    {
-      Modification< T > modification = null;
+      Modification modification = null;
       Cursor c = null;
       
       try
@@ -163,13 +168,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
             if ( !c.moveToFirst() )
                throw new SQLException( "Unable to move to 1st element" );
             
-            modification = Modification.newModification( c.getString( COL_INDICES.get( Modifications._ID ) ),
-                                                         Uri.parse( c.getString( COL_INDICES.get( Modifications.ENTITY_URI ) ) ),
-                                                         c.getString( COL_INDICES.get( Modifications.COL_NAME ) ),
-                                                         valueClass,
-                                                         Modification.get( c,
-                                                                           COL_INDICES.get( Modifications.NEW_VALUE ),
-                                                                           valueClass ) );
+            modification = createModification( c );
          }
       }
       catch ( RemoteException e )
@@ -184,6 +183,62 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
       
       return modification;
+   }
+   
+
+
+   public final static List< Modification > getModifications( ContentProviderClient client,
+                                                              Uri entityUri )
+   {
+      List< Modification > modifications = null;
+      Cursor c = null;
+      
+      try
+      {
+         if ( entityUri == null )
+            c = client.query( Modifications.CONTENT_URI,
+                              PROJECTION,
+                              null,
+                              null,
+                              null );
+         else
+            c = client.query( Modifications.CONTENT_URI,
+                              PROJECTION,
+                              SEL_QUERY_MODIFICATIONS,
+                              new String[]
+                              { entityUri.toString() },
+                              null );
+         
+         boolean ok = c != null;
+         if ( ok )
+         {
+            modifications = new ArrayList< Modification >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final Modification modification = createModification( c );
+                  ok = modification != null;
+                  
+                  if ( ok )
+                     modifications.add( modification );
+               }
+            }
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         modifications = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return modifications;
    }
    
 
@@ -222,7 +277,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
 
 
    public final static boolean applyModifications( ContentResolver contentResolver,
-                                                   Collection< Modification< ? > > modifications )
+                                                   Collection< Modification > modifications )
    {
       boolean ok = true;
       
@@ -261,17 +316,16 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                {
                   transactionalAccess.beginTransaction();
                   
-                  for ( Modification< ? > modification : modifications )
+                  for ( Modification modification : modifications )
                   {
                      final Uri entityUri = modification.getEntityUri();
                      
                      // Acquire access to the element to be modified.
                      
                      // Check if modification already exists
-                     final Modification< ? > existingMod = getModification( client,
-                                                                            entityUri,
-                                                                            modification.getColName(),
-                                                                            modification.getValueClass() );
+                     final Modification existingMod = getModification( client,
+                                                                       entityUri,
+                                                                       modification.getColName() );
                      if ( existingMod != null )
                      {
                         // Update the modification with the new value.
@@ -339,6 +393,19 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                                                                                                   .toString(),
                                                      null )
                                      .build();
+   }
+   
+
+
+   private static Modification createModification( Cursor c )
+   {
+      return Modification.newModification( c.getString( COL_INDICES.get( Modifications._ID ) ),
+                                           Uri.parse( c.getString( COL_INDICES.get( Modifications.ENTITY_URI ) ) ),
+                                           c.getString( COL_INDICES.get( Modifications.COL_NAME ) ),
+                                           Queries.getOptString( c,
+                                                                 COL_INDICES.get( Modifications.NEW_VALUE ) ),
+                                           Queries.getOptString( c,
+                                                                 COL_INDICES.get( Modifications.SYNCED_VALUE ) ) );
    }
    
 

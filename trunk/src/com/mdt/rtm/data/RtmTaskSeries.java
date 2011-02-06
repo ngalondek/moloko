@@ -21,6 +21,7 @@ package com.mdt.rtm.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
@@ -28,35 +29,34 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.mdt.rtm.Service;
+import com.mdt.rtm.TimeLineMethod;
 
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
-import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.lists.ModificationList;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.INoopSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.util.SyncUtils.MergeProperties;
+import dev.drsoran.moloko.util.SyncUtils.MergeResultDirection;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Tag;
@@ -84,7 +84,6 @@ public class RtmTaskSeries extends RtmData implements
    
    public static final Parcelable.Creator< RtmTaskSeries > CREATOR = new Parcelable.Creator< RtmTaskSeries >()
    {
-      
       public RtmTaskSeries createFromParcel( Parcel source )
       {
          return new RtmTaskSeries( source );
@@ -96,7 +95,6 @@ public class RtmTaskSeries extends RtmData implements
       {
          return new RtmTaskSeries[ size ];
       }
-      
    };
    
    
@@ -149,7 +147,7 @@ public class RtmTaskSeries extends RtmData implements
    
    private boolean isEveryRecurrence;
    
-   private final List< String > tags;
+   private final List< Tag > tags;
    
    private final ParticipantList participants;
    
@@ -176,7 +174,7 @@ public class RtmTaskSeries extends RtmData implements
       this.url = url;
       this.recurrence = recurrence;
       this.isEveryRecurrence = isEveryRecurrence;
-      this.tags = tags;
+      this.tags = createTags( tags );
       this.participants = participants;
       this.deleted = null;
    }
@@ -203,13 +201,14 @@ public class RtmTaskSeries extends RtmData implements
          {
             this.isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
                                                                         "every" ) ) != 0;
-            
             this.recurrence = ensureRecurrencePatternOrder( recurrence );
          }
          catch ( NumberFormatException nfe )
          {
             this.recurrence = null;
             this.isEveryRecurrence = false;
+            
+            Log.e( TAG, "Error reading recurrence pattern from XML", nfe );
          }
       }
       else
@@ -223,46 +222,36 @@ public class RtmTaskSeries extends RtmData implements
       
       for ( Element task : tasks )
       {
-         this.tasks.add( new RtmTask( task ) );
+         this.tasks.add( new RtmTask( task, id ) );
       }
       
-      this.notes = new RtmTaskNotes( child( elt, "notes" ) );
+      this.notes = new RtmTaskNotes( child( elt, "notes" ), id );
       this.locationId = textNullIfEmpty( elt, "location_id" );
       this.url = textNullIfEmpty( elt, "url" );
       
       final Element elementTags = child( elt, "tags" );
+      this.tags = new ArrayList< Tag >();
       
       if ( elementTags.getChildNodes().getLength() > 0 )
       {
          final List< Element > elementTagList = children( elementTags, "tag" );
-         this.tags = new ArrayList< String >( elementTagList.size() );
          
          for ( Element elementTag : elementTagList )
          {
             final String tag = text( elementTag );
             if ( !TextUtils.isEmpty( tag ) )
             {
-               this.tags.add( tag );
+               this.tags.add( new Tag( id, tag ) );
             }
          }
-      }
-      else
-      {
-         // do not use Collections.emptyList() here cause we
-         // need a mutable list.
-         this.tags = new ArrayList< String >( 0 );
       }
       
       final Element elementParticipants = child( elt, "participants" );
       
       if ( elementParticipants.getChildNodes().getLength() > 0 )
-      {
          this.participants = new ParticipantList( id, elementParticipants );
-      }
       else
-      {
          this.participants = new ParticipantList( id );
-      }
       
       this.deleted = null;
    }
@@ -283,7 +272,7 @@ public class RtmTaskSeries extends RtmData implements
       
       for ( Element task : tasks )
       {
-         this.tasks.add( new RtmTask( task, deleted ) );
+         this.tasks.add( new RtmTask( task, id, deleted ) );
       }
       
       source = null;
@@ -313,7 +302,7 @@ public class RtmTaskSeries extends RtmData implements
       url = source.readString();
       recurrence = source.readString();
       isEveryRecurrence = source.readInt() != 0;
-      tags = source.createStringArrayList();
+      tags = source.createTypedArrayList( Tag.CREATOR );
       participants = source.readParcelable( null );
       deleted = source.readParcelable( null );
    }
@@ -371,21 +360,41 @@ public class RtmTaskSeries extends RtmData implements
 
    public RtmTaskNotes getNotes()
    {
-      return notes;
+      return notes == null ? new RtmTaskNotes() : notes;
    }
    
 
 
-   public List< String > getTags()
+   public List< Tag > getTags()
    {
-      return tags;
+      if ( tags == null )
+         return Collections.emptyList();
+      else
+         return tags;
+   }
+   
+
+
+   public List< String > getTagStrings()
+   {
+      if ( tags == null )
+         return Collections.emptyList();
+      else
+      {
+         final List< String > tagStrings = new ArrayList< String >( tags.size() );
+         for ( Tag tag : tags )
+         {
+            tagStrings.add( tag.getTag() );
+         }
+         return tagStrings;
+      }
    }
    
 
 
    public ParticipantList getParticipants()
    {
-      return participants;
+      return participants == null ? new ParticipantList( id ) : participants;
    }
    
 
@@ -400,25 +409,6 @@ public class RtmTaskSeries extends RtmData implements
    public Date getDeletedDate()
    {
       return deleted != null ? deleted.getDate() : null;
-   }
-   
-
-
-   public ArrayList< Tag > getTagObjects()
-   {
-      ArrayList< Tag > tags = new ArrayList< Tag >( this.tags != null
-                                                                     ? this.tags.size()
-                                                                     : 0 );
-      
-      if ( this.tags != null && this.tags.size() > 0 )
-      {
-         for ( String tagStr : this.tags )
-         {
-            tags.add( new Tag( id, tagStr ) );
-         }
-      }
-      
-      return tags;
    }
    
 
@@ -480,9 +470,23 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeString( url );
       dest.writeString( recurrence );
       dest.writeInt( isEveryRecurrence ? 1 : 0 );
-      dest.writeStringList( tags );
+      dest.writeTypedList( tags );
       dest.writeParcelable( participants, flags );
       dest.writeParcelable( deleted, flags );
+   }
+   
+
+
+   private final List< Tag > createTags( List< String > tagStrings )
+   {
+      final List< Tag > tags = new ArrayList< Tag >( tagStrings.size() );
+      
+      for ( String tagStr : tagStrings )
+      {
+         tags.add( new Tag( id, tagStr ) );
+      }
+      
+      return tags;
    }
    
 
@@ -497,258 +501,206 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      try
-      {
-         return new ContentProviderSyncOperation( provider,
-                                                  RtmTaskSeriesProviderPart.insertTaskSeries( provider,
-                                                                                              this ),
-                                                  IContentProviderSyncOperation.Op.INSERT );
-         
-      }
-      catch ( RemoteException e )
-      {
-         Log.e( TAG, "ContentProvider insert failed. ", e );
-         return null;
-      }
+      return ContentProviderSyncOperation.newInsert( RtmTaskSeriesProviderPart.insertTaskSeries( this ) )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       // Referenced parts like RawTasks and Notes are deleted by a DB trigger.
       // @see RtmTaskSeriesPart::create
       //
       // These deletions have not to be counted cause they are implementation
       // details that all belong to a taskseries.
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.DELETE );
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                                                   id ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public DirectedSyncOperations computeMergeOperations( Service service,
-                                                         ContentProviderClient provider,
+   public DirectedSyncOperations computeMergeOperations( RtmTimeline timeLine,
+                                                         ModificationList modifications,
                                                          RtmTaskSeries serverElement,
-                                                         Object... params )
+                                                         MergeDirection mergeDirection )
    {
-      final List< ISyncOperation > serverOps = new LinkedList< ISyncOperation >();
-      final List< IContentProviderSyncOperation > localOps = new LinkedList< IContentProviderSyncOperation >();
+      if ( modifications == null && mergeDirection != MergeDirection.LOCAL )
+         throw new NullPointerException( "modifications are null" );
       
-      boolean ok = true;
+      DirectedSyncOperations operations = new DirectedSyncOperations();
       
-      if ( ok )
+      final List< IContentProviderSyncOperation > localOps = operations.getLocalOperations();
+      
+      // Update notes
       {
-         // Update notes
-         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( provider,
-                                                                                                                          notes.getNotes(),
+         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( notes.getNotes(),
                                                                                                                           RtmTaskNote.LESS_ID );
+         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverElement.notes.getNotes(),
+                                                                                       syncNotesList );
+         localOps.addAll( noteOperations );
+      }
+      
+      // Update tags
+      {
+         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( tags );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( serverElement.tags,
+                                                                                       syncList );
+         localOps.addAll( syncOperations );
+      }
+      
+      // Update tasks
+      {
+         final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( tasks,
+                                                                                                                  RtmTask.LESS_ID );
+         final List< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( serverElement.tasks,
+                                                                                       syncTasksList );
+         localOps.addAll( taskOperations );
+      }
+      
+      // Update participants
+      {
+         final IContentProviderSyncOperation partOperation = participants.computeContentProviderUpdateOperation( serverElement.participants );
+         if ( !( partOperation instanceof INoopSyncOperation ) )
+            localOps.add( partOperation );
+      }
+      
+      // Update taskseries
+      {
+         final Uri uri = Queries.contentUriWithId( TaskSeries.CONTENT_URI, id );
          
-         final ArrayList< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverElement.notes.getNotes(),
-                                                                                            syncNotesList,
-                                                                                            id );
-         ok = noteOperations != null;
+         final MergeProperties mergeProperties = new MergeProperties( mergeDirection,
+                                                                      serverElement.getModifiedDate(),
+                                                                      this.getModifiedDate(),
+                                                                      uri,
+                                                                      modifications,
+                                                                      localOps );
          
-         if ( ok )
+         List< TimeLineMethod< RtmTaskSeries > > taskSeriesServerOps = null;
+         
+         if ( mergeDirection != MergeDirection.LOCAL )
+            taskSeriesServerOps = new LinkedList< TimeLineMethod< RtmTaskSeries > >();
+         
+         // TOOD: Do we need this commented code?
+         //
+         // SyncUtils.updateDate( created,
+         // serverElement.created,
+         // uri,
+         // TaskSeries.TASKSERIES_CREATED_DATE,
+         // taskSeriesOperation );
+         //               
+         // SyncUtils.updateDate( modified,
+         // serverElement.modified,
+         // uri,
+         // TaskSeries.MODIFIED_DATE,
+         // taskSeriesOperation );
+         
+         if ( SyncUtils.hasChanged( name, serverElement.name )
+            && SyncUtils.MergeResultDirection.SERVER == SyncUtils.mergeModification( mergeProperties,
+                                                                                     TaskSeries.TASKSERIES_NAME,
+                                                                                     serverElement.name,
+                                                                                     this.name,
+                                                                                     String.class ) )
          {
-            if ( noteOperations.size() > 0 )
-               localOps.addAll( noteOperations );
-            
-            // Update tags
-            if ( ok )
+            for ( RtmTask task : tasks )
             {
-               final IContentProviderSyncOperation tagOperation = updateTags( provider,
-                                                                              serverElement );
-               ok = tagOperation != null;
-               if ( ok
-                  && tagOperation.getOperationType() != IContentProviderSyncOperation.Op.NOOP )
-                  localOps.add( tagOperation );
-            }
-            
-            // Update tasks
-            if ( ok )
-            {
-               final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( provider,
-                                                                                                                        tasks,
-                                                                                                                        RtmTask.LESS_ID );
-               final ArrayList< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( serverElement.tasks,
-                                                                                                  syncTasksList,
-                                                                                                  id );
-               ok = taskOperations != null;
-               
-               if ( ok && taskOperations.size() > 0 )
-                  localOps.addAll( taskOperations );
-            }
-            
-            // Update participants
-            if ( ok )
-            {
-               final IContentProviderSyncOperation partOperation = participants.computeContentProviderUpdateOperation( provider,
-                                                                                                                       serverElement.participants );
-               ok = partOperation != null;
-               
-               if ( ok
-                  && !( partOperation instanceof NoopContentProviderSyncOperation ) )
-                  localOps.add( partOperation );
-            }
-            
-            // Update taskseries
-            if ( ok )
-            {
-               final Uri uri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                         id );
-               
-               final CompositeContentProviderSyncOperation taskSeriesOperation = new CompositeContentProviderSyncOperation( provider,
-                                                                                                                            IContentProviderSyncOperation.Op.UPDATE );
-               SyncUtils.updateDate( created,
-                                     serverElement.created,
-                                     uri,
-                                     TaskSeries.TASKSERIES_CREATED_DATE,
-                                     taskSeriesOperation );
-               
-               SyncUtils.updateDate( modified,
-                                     serverElement.modified,
-                                     uri,
-                                     TaskSeries.MODIFIED_DATE,
-                                     taskSeriesOperation );
-               
-               if ( Strings.hasStringChanged( listId, serverElement.listId ) )
-                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
-                                                                   .withValue( TaskSeries.LIST_ID,
-                                                                               serverElement.listId )
-                                                                   .build() );
-               
-               if ( Strings.hasStringChanged( name, serverElement.name ) )
-                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
-                                                                   .withValue( TaskSeries.TASKSERIES_NAME,
-                                                                               serverElement.name )
-                                                                   .build() );
-               
-               if ( Strings.hasStringChanged( source, serverElement.source ) )
-                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
-                                                                   .withValue( TaskSeries.SOURCE,
-                                                                               serverElement.source )
-                                                                   .build() );
-               
-               if ( Strings.hasStringChanged( locationId,
-                                              serverElement.locationId ) )
-                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
-                                                                   .withValue( TaskSeries.LOCATION_ID,
-                                                                               serverElement.locationId )
-                                                                   .build() );
-               
-               if ( Strings.hasStringChanged( url, serverElement.url ) )
-                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
-                                                                   .withValue( TaskSeries.URL,
-                                                                               serverElement.url )
-                                                                   .build() );
-               
-               if ( Strings.hasStringChanged( recurrence,
-                                              serverElement.recurrence ) )
-               {
-                  taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
-                                                                   .withValue( TaskSeries.RECURRENCE,
-                                                                               serverElement.recurrence )
-                                                                   .build() );
-                  if ( TextUtils.isEmpty( serverElement.recurrence ) )
-                  {
-                     taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
-                                                                      .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                                  null )
-                                                                      .build() );
-                  }
-                  else if ( isEveryRecurrence != serverElement.isEveryRecurrence )
-                     taskSeriesOperation.add( ContentProviderOperation.newUpdate( uri )
-                                                                      .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                                  serverElement.isEveryRecurrence
-                                                                                                                 ? 1
-                                                                                                                 : 0 )
-                                                                      .build() );
-               }
-               
-               if ( taskSeriesOperation.plainSize() > 0 )
-                  localOps.add( taskSeriesOperation );
+               taskSeriesServerOps.add( timeLine.tasks_setName( listId,
+                                                                id,
+                                                                task.getId(),
+                                                                serverElement.name ) );
             }
          }
-      }
-      
-      if ( !ok )
-         return null;
-      else
-         return new DirectedSyncOperations( serverOps, localOps );
-   }
-   
-
-
-   private IContentProviderSyncOperation updateTags( ContentProviderClient provider,
-                                                     RtmTaskSeries update )
-   {
-      final ArrayList< Tag > tags = TagsProviderPart.getAllTags( provider, id );
-      
-      if ( tags != null )
-      {
-         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( provider,
-                                                                                                     tags );
          
-         final ArrayList< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( update.getTagObjects(),
-                                                                                            syncList );
+         if ( SyncUtils.hasChanged( listId, serverElement.listId ) )
+            SyncUtils.mergeModification( mergeProperties,
+                                         TaskSeries.LIST_ID,
+                                         serverElement.listId,
+                                         this.listId,
+                                         String.class );
          
-         if ( syncOperations != null )
+         // This can not be changed locally
+         if ( SyncUtils.hasChanged( source, serverElement.source ) )
+            localOps.add( ContentProviderSyncOperation.newUpdate( ContentProviderOperation.newUpdate( uri )
+                                                                                          .withValue( TaskSeries.SOURCE,
+                                                                                                      serverElement.source )
+                                                                                          .build() )
+                                                      .build() );
+         
+         if ( SyncUtils.hasChanged( locationId, serverElement.locationId ) )
+            SyncUtils.mergeModification( mergeProperties,
+                                         TaskSeries.LOCATION_ID,
+                                         serverElement.locationId,
+                                         this.locationId,
+                                         String.class );
+         
+         if ( SyncUtils.hasChanged( url, serverElement.url ) )
+            SyncUtils.mergeModification( mergeProperties,
+                                         TaskSeries.URL,
+                                         serverElement.url,
+                                         this.url,
+                                         String.class );
+         
+         if ( SyncUtils.hasChanged( recurrence, serverElement.recurrence ) )
          {
-            if ( syncOperations.size() > 0 )
-               return new CompositeContentProviderSyncOperation( provider,
-                                                                 syncOperations,
-                                                                 IContentProviderSyncOperation.Op.UPDATE );
-            else
-               return NoopContentProviderSyncOperation.INSTANCE;
+            final MergeResultDirection mergeRes = SyncUtils.mergeModification( mergeProperties,
+                                                                               TaskSeries.RECURRENCE,
+                                                                               serverElement.recurrence,
+                                                                               this.recurrence,
+                                                                               String.class );
+            
+            // If we take the server value we must correctly set the local flags.
+            if ( mergeRes == MergeResultDirection.LOCAL )
+            {
+               if ( TextUtils.isEmpty( serverElement.recurrence ) )
+                  localOps.add( ContentProviderSyncOperation.newUpdate( ContentProviderOperation.newUpdate( uri )
+                                                                                                .withValue( TaskSeries.RECURRENCE_EVERY,
+                                                                                                            null )
+                                                                                                .build() )
+                                                            .build() );
+               else if ( isEveryRecurrence != serverElement.isEveryRecurrence )
+                  localOps.add( ContentProviderSyncOperation.newUpdate( ContentProviderOperation.newUpdate( uri )
+                                                                                                .withValue( TaskSeries.RECURRENCE_EVERY,
+                                                                                                            serverElement.isEveryRecurrence
+                                                                                                                                           ? 1
+                                                                                                                                           : 0 )
+                                                                                                .build() )
+                                                            .build() );
+            }
          }
+         
+         // Is null if the sync direction is local ony
+         if ( taskSeriesServerOps != null && taskSeriesServerOps.size() > 0 )
+            operations.getServerOperations()
+                      .add( ServerSyncOperation.newUpate( taskSeriesServerOps ) );
       }
       
-      return null;
+      return operations;
    }
    
 
 
-   public ISyncOperation computeServerInsertOperation( Service service,
-                                                       Object... params )
+   public IServerSyncOperation computeServerInsertOperation( RtmTimeline timeLine )
    {
-      return NoopSyncOperation.INSTANCE;
+      return NoopServerSyncOperation.INSTANCE;
    }
    
 
 
-   public ISyncOperation computeServerDeleteOperation( Service service,
-                                                       Object... params )
+   public IServerSyncOperation computeServerDeleteOperation( RtmTimeline timeLine )
    {
-      return NoopSyncOperation.INSTANCE;
+      return NoopServerSyncOperation.INSTANCE;
    }
    
 
 
-   public IContentProviderSyncOperation removeModifications( ContentProviderClient provider )
+   public IContentProviderSyncOperation computeRemoveModificationsOperation()
    {
-      try
-      {
-         return ModificationsProviderPart.isModified( provider,
-                                                      Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                id ) )
-                                                                                      ? new ContentProviderSyncOperation( provider,
-                                                                                                                          ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
-                                                                                                                                                                              id ),
-                                                                                                                          IContentProviderSyncOperation.Op.DELETE )
-                                                                                      : NoopContentProviderSyncOperation.INSTANCE;
-      }
-      catch ( RemoteException e )
-      {
-         
-         return null;
-      }
+      return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
+                                                                                                         id ) )
+                                         .build();
    }
 }

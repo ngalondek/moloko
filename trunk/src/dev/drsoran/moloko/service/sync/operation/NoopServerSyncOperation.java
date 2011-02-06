@@ -20,26 +20,25 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.service.sync.syncable;
+package dev.drsoran.moloko.service.sync.operation;
 
-import com.mdt.rtm.Service;
-
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
-
-
-public interface IServerSyncable< T >
+public final class NoopServerSyncOperation implements IServerSyncOperation,
+         INoopSyncOperation
 {
-   public ISyncOperation computeServerInsertOperation( Service service,
-                                                       Object... params );
+   public final static NoopServerSyncOperation INSTANCE = new NoopServerSyncOperation();
+   
+   
+
+   private NoopServerSyncOperation()
+   {
+      
+   }
    
 
 
-   public ISyncOperation computeServerUpdateOperation( Service service,
-                                                       T update,
-                                                       Object... params );
+   public int getOperationType()
+   {
+      return ISyncOperation.Op.NOOP;
+   }
    
-
-
-   public ISyncOperation computeServerDeleteOperation( Service service,
-                                                       Object... params );
 }

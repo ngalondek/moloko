@@ -65,18 +65,21 @@ public class RtmTaskNotes extends RtmData
 
    public RtmTaskNotes( List< RtmTaskNote > notes )
    {
+      if ( notes == null )
+         throw new NullPointerException( "notes is null" );
+      
       this.notes = notes;
    }
    
 
 
-   public RtmTaskNotes( Element element )
+   public RtmTaskNotes( Element element, String taskSeriesId )
    {
       final List< Element > children = children( element, "note" );
       notes = new ArrayList< RtmTaskNote >( children.size() );
       for ( Element child : children )
       {
-         notes.add( new RtmTaskNote( child ) );
+         notes.add( new RtmTaskNote( child, taskSeriesId ) );
       }
    }
    
@@ -98,7 +101,10 @@ public class RtmTaskNotes extends RtmData
 
    public void setNotes( List< RtmTaskNote > notes )
    {
-      this.notes = notes;
+      if ( notes == null )
+         throw new NullPointerException( "notes is null" );
+      
+      this.notes = new ArrayList< RtmTaskNote >( notes );
    }
    
 

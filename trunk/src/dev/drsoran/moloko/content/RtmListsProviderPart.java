@@ -25,7 +25,6 @@ package dev.drsoran.moloko.content;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
-import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -38,7 +37,6 @@ import android.util.Log;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Settings;
@@ -69,11 +67,44 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
    
 
+   public final static ContentValues getContentValues( RtmList list,
+                                                       boolean withId )
+   {
+      final ContentValues values = new ContentValues();
+      
+      if ( withId )
+         values.put( Rtm.Lists._ID, list.getId() );
+      
+      values.put( Lists.LIST_NAME, list.getName() );
+      values.put( Lists.CREATED_DATE, list.getCreated().getTime() );
+      values.put( Lists.MODIFIED_DATE, list.getModified().getTime() );
+      values.put( Lists.LIST_DELETED, list.getDeleted() );
+      values.put( Lists.LOCKED, list.getLocked() );
+      values.put( Lists.ARCHIVED, list.getArchived() );
+      values.put( Lists.POSITION, list.getPosition() );
+      
+      final RtmSmartFilter filter = list.getSmartFilter();
+      
+      if ( filter != null )
+      {
+         values.put( Lists.IS_SMART_LIST, 1 );
+         values.put( Lists.FILTER, filter.getFilterString() );
+      }
+      else
+      {
+         values.put( Lists.IS_SMART_LIST, 0 );
+         values.putNull( Lists.FILTER );
+      }
+      
+      return values;
+   }
+   
+
+
    public final static RtmLists getAllLists( ContentProviderClient client,
                                              String selection )
    {
       RtmLists lists = null;
-      
       Cursor c = null;
       
       try
@@ -125,7 +156,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          if ( !ok )
             lists = null;
       }
-      catch ( final RemoteException e )
+      catch ( RemoteException e )
       {
          Log.e( TAG, "Query lists failed. ", e );
          lists = null;
@@ -137,75 +168,6 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       }
       
       return lists;
-   }
-   
-
-
-   public final static ContentValues getContentValues( RtmList list,
-                                                       boolean withId )
-   {
-      final ContentValues values = new ContentValues();
-      
-      if ( withId )
-         values.put( Rtm.Lists._ID, list.getId() );
-      
-      values.put( Lists.LIST_NAME, list.getName() );
-      values.put( Lists.CREATED_DATE, list.getCreated().getTime() );
-      values.put( Lists.MODIFIED_DATE, list.getModified().getTime() );
-      values.put( Lists.LIST_DELETED, list.getDeleted() );
-      values.put( Lists.LOCKED, list.getLocked() );
-      values.put( Lists.ARCHIVED, list.getArchived() );
-      values.put( Lists.POSITION, list.getPosition() );
-      
-      final RtmSmartFilter filter = list.getSmartFilter();
-      
-      if ( filter != null )
-      {
-         values.put( Lists.IS_SMART_LIST, 1 );
-         values.put( Lists.FILTER, filter.getFilterString() );
-      }
-      else
-      {
-         values.put( Lists.IS_SMART_LIST, 0 );
-         values.putNull( Lists.FILTER );
-      }
-      
-      return values;
-   }
-   
-
-
-   public final static ContentProviderOperation insert( ContentProviderClient client,
-                                                        RtmList list )
-   {
-      ContentProviderOperation operation = null;
-      
-      try
-      {
-         if ( list.getId() != null && list.getName() != null
-            && !Queries.exists( client, Lists.CONTENT_URI, list.getId() ) )
-         {
-            operation = ContentProviderOperation.newInsert( Rtm.Lists.CONTENT_URI )
-                                                .withValues( getContentValues( list,
-                                                                               true ) )
-                                                .build();
-         }
-      }
-      catch ( final RemoteException e )
-      {
-         operation = null;
-      }
-      
-      return operation;
-   }
-   
-
-
-   public final static ContentProviderOperation deleteList( String listId )
-   {
-      return ContentProviderOperation.newDelete( Queries.contentUriWithId( Rtm.Lists.CONTENT_URI,
-                                                                           listId ) )
-                                     .build();
    }
    
 

@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.service.sync.operation;
 
-import android.content.ContentProviderClient;
 import android.content.SyncResult;
 
 
@@ -30,19 +29,12 @@ public abstract class AbstractContentProviderSyncOperation implements
          IContentProviderSyncOperation
 {
    
-   protected final int operationType;
-   
-   protected final ContentProviderClient provider;
+   private final int operationType;
    
    
 
-   public AbstractContentProviderSyncOperation( ContentProviderClient provider,
-      int operationType ) throws NullPointerException
+   protected AbstractContentProviderSyncOperation( int operationType )
    {
-      if ( provider == null )
-         throw new NullPointerException();
-      
-      this.provider = provider;
       this.operationType = operationType;
    }
    

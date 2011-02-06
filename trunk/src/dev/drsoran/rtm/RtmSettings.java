@@ -28,7 +28,6 @@ import java.util.Locale;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.net.Uri;
@@ -41,13 +40,12 @@ import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Settings;
 
 
@@ -237,35 +235,29 @@ public class RtmSettings extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       return NoopContentProviderSyncOperation.INSTANCE;
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newInsert( Settings.CONTENT_URI )
-                                                                       .withValues( RtmSettingsProviderPart.getContentValues( this ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.INSERT );
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Settings.CONTENT_URI )
+                                                                             .withValues( RtmSettingsProviderPart.getContentValues( this ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               RtmSettings update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmSettings update )
    {
       final Uri settingsUri = Queries.contentUriWithId( Settings.CONTENT_URI,
-                                                        RtmSettingsProviderPart.getSettingsId( provider ) );
+                                                        RtmSettingsProviderPart.SETTINGS_ID );
       
-      final CompositeContentProviderSyncOperation result = new CompositeContentProviderSyncOperation( provider,
-                                                                                                      IContentProviderSyncOperation.Op.UPDATE );
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
       result.add( ContentProviderOperation.newUpdate( settingsUri )
                                           .withValue( Settings.SYNC_TIMESTAMP,
@@ -273,7 +265,7 @@ public class RtmSettings extends RtmData implements
                                                             .getTime() )
                                           .build() );
       
-      if ( Strings.hasStringChanged( timezone, update.timezone ) )
+      if ( SyncUtils.hasChanged( timezone, update.timezone ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.TIMEZONE,
                                                          update.timezone )
@@ -291,19 +283,19 @@ public class RtmSettings extends RtmData implements
                                                          update.timeFormat )
                                              .build() );
       
-      if ( Strings.hasStringChanged( defaultListId, update.defaultListId ) )
+      if ( SyncUtils.hasChanged( defaultListId, update.defaultListId ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.DEFAULTLIST_ID,
                                                          update.defaultListId )
                                              .build() );
       
-      if ( Strings.hasStringChanged( language, update.language ) )
+      if ( SyncUtils.hasChanged( language, update.language ) )
          result.add( ContentProviderOperation.newUpdate( settingsUri )
                                              .withValue( Settings.LANGUAGE,
                                                          update.language )
                                              .build() );
       
-      return result;
+      return result.build();
    }
    
 }

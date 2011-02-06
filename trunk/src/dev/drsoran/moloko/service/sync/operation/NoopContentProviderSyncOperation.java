@@ -23,12 +23,13 @@
 package dev.drsoran.moloko.service.sync.operation;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentProviderOperation;
 
 
-public final class NoopContentProviderSyncOperation extends NoopSyncOperation
-         implements IContentProviderSyncOperation
+public final class NoopContentProviderSyncOperation implements
+         IContentProviderSyncOperation, INoopSyncOperation
 {
    public final static NoopContentProviderSyncOperation INSTANCE = new NoopContentProviderSyncOperation();
    
@@ -50,6 +51,20 @@ public final class NoopContentProviderSyncOperation extends NoopSyncOperation
 
    public int getOperationType()
    {
-      return NoopSyncOperation.Op.NOOP;
+      return ISyncOperation.Op.NOOP;
+   }
+   
+
+
+   public int getBatch( List< ContentProviderOperation > batch )
+   {
+      return 0;
+   }
+   
+
+
+   public int size()
+   {
+      return 0;
    }
 }

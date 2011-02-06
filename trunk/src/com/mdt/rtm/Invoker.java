@@ -114,15 +114,15 @@ public class Invoker
    
    private final String hostname;
    
-   private int port;
+   private final int port;
    
-   private String serviceRelativeUri;
+   private final String serviceRelativeUri;
    
    private final HttpHost host;
    
    private final DefaultHttpClient client;
    
-   private BasicHttpParams httpParams;
+   private final BasicHttpParams httpParams;
    
    
    /**

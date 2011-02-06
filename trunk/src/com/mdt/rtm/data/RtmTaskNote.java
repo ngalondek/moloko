@@ -25,22 +25,16 @@ import java.util.Date;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.service.sync.util.ParamChecker;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
@@ -54,6 +48,7 @@ import dev.drsoran.provider.Rtm.Notes;
 public class RtmTaskNote extends RtmData implements
          IContentProviderSyncable< RtmTaskNote >
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + RtmTaskNote.class.getSimpleName();
    
@@ -90,6 +85,8 @@ public class RtmTaskNote extends RtmData implements
    
    private final String id;
    
+   private final String taskSeriesId;
+   
    private final ParcelableDate created;
    
    private final ParcelableDate modified;
@@ -102,10 +99,11 @@ public class RtmTaskNote extends RtmData implements
    
    
 
-   public RtmTaskNote( String id, Date created, Date modified, boolean deleted,
-      String title, String text )
+   public RtmTaskNote( String id, String taskSeriesId, Date created,
+      Date modified, boolean deleted, String title, String text )
    {
       this.id = id;
+      this.taskSeriesId = taskSeriesId;
       this.created = ( created != null ) ? new ParcelableDate( created ) : null;
       this.modified = ( modified != null ) ? new ParcelableDate( modified )
                                           : null;
@@ -116,9 +114,10 @@ public class RtmTaskNote extends RtmData implements
    
 
 
-   public RtmTaskNote( Element element )
+   public RtmTaskNote( Element element, String taskSeriesId )
    {
       id = textNullIfEmpty( element, "id" );
+      this.taskSeriesId = taskSeriesId;
       created = parseDate( element.getAttribute( "created" ) );
       modified = parseDate( element.getAttribute( "modified" ) );
       deleted = false;
@@ -140,6 +139,7 @@ public class RtmTaskNote extends RtmData implements
    public RtmTaskNote( Parcel source )
    {
       id = source.readString();
+      taskSeriesId = source.readString();
       created = source.readParcelable( null );
       modified = source.readParcelable( null );
       deleted = source.readInt() != 0;
@@ -152,6 +152,13 @@ public class RtmTaskNote extends RtmData implements
    public String getId()
    {
       return id;
+   }
+   
+
+
+   public String getTaskSeriesId()
+   {
+      return taskSeriesId;
    }
    
 
@@ -201,6 +208,7 @@ public class RtmTaskNote extends RtmData implements
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );
+      dest.writeString( taskSeriesId );
       dest.writeParcelable( created, 0 );
       dest.writeParcelable( modified, 0 );
       dest.writeInt( deleted ? 1 : 0 );
@@ -210,92 +218,62 @@ public class RtmTaskNote extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      ContentProviderSyncOperation operation = null;
-      
-      final boolean ok = ParamChecker.checkParams( TAG,
-                                                   "ContentProvider insert failed. ",
-                                                   new Class[]
-                                                   { String.class },
-                                                   params );
-      
-      if ( ok )
-      {
-         final String taskSeriesId = (String) params[ 0 ];
-         
-         operation = new ContentProviderSyncOperation( provider,
-                                                       ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                                                               .withValues( RtmNotesProviderPart.getContentValues( this,
-                                                                                                                                   taskSeriesId,
-                                                                                                                                   true ) )
-                                                                               .build(),
-                                                       IContentProviderSyncOperation.Op.INSERT );
-      }
-      
-      return operation;
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                                                             .withValues( RtmNotesProviderPart.getContentValues( this,
+                                                                                                                                 true ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return new ContentProviderSyncOperation( provider,
-                                               ContentProviderOperation.newDelete( Queries.contentUriWithId( Notes.CONTENT_URI,
-                                                                                                             id ) )
-                                                                       .build(),
-                                               IContentProviderSyncOperation.Op.DELETE );
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                                   id ) )
+                                                                             .build() )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               RtmTaskNote update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTaskNote update )
    {
-      CompositeContentProviderSyncOperation result = null;
+      if ( !id.equals( update.id ) )
+         throw new IllegalArgumentException( "Update id " + update.id
+            + " differs this id " + id );
       
-      if ( id.equals( update.id ) )
-      {
-         final Uri uri = Queries.contentUriWithId( Notes.CONTENT_URI, id );
-         
-         result = new CompositeContentProviderSyncOperation( provider,
-                                                             IContentProviderSyncOperation.Op.UPDATE );
-         
-         SyncUtils.updateDate( created,
-                               update.created,
-                               uri,
-                               Notes.NOTE_CREATED_DATE,
-                               result );
-         
-         SyncUtils.updateDate( modified,
-                               update.modified,
-                               uri,
-                               Notes.NOTE_MODIFIED_DATE,
-                               result );
-         
-         if ( Strings.hasStringChanged( title, update.title ) )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Notes.NOTE_TITLE,
-                                                            update.title )
-                                                .build() );
-         
-         if ( Strings.hasStringChanged( text, update.text ) )
-            result.add( ContentProviderOperation.newUpdate( uri )
-                                                .withValue( Notes.NOTE_TEXT,
-                                                            update.text )
-                                                .build() );
-      }
-      else
-      {
-         Log.e( TAG, "ContentProvider update failed. Different RtmNote IDs." );
-      }
+      final Uri uri = Queries.contentUriWithId( Notes.CONTENT_URI, id );
       
-      return ( result == null || result.plainSize() > 0 )
-                                                         ? result
-                                                         : NoopContentProviderSyncOperation.INSTANCE;
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
+      
+      SyncUtils.updateDate( created,
+                            update.created,
+                            uri,
+                            Notes.NOTE_CREATED_DATE,
+                            result );
+      
+      SyncUtils.updateDate( modified,
+                            update.modified,
+                            uri,
+                            Notes.NOTE_MODIFIED_DATE,
+                            result );
+      
+      if ( SyncUtils.hasChanged( title, update.title ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_TITLE,
+                                                         update.title )
+                                             .build() );
+      
+      if ( SyncUtils.hasChanged( text, update.text ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_TEXT,
+                                                         update.text )
+                                             .build() );
+      
+      return result.build();
    }
    
 }

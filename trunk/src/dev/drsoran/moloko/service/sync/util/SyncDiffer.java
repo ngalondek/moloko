@@ -26,20 +26,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.content.ContentProviderClient;
+import com.mdt.rtm.data.RtmTimeline;
 
-import com.mdt.rtm.Service;
-
-import dev.drsoran.moloko.service.sync.lists.SyncableList;
+import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
+import dev.drsoran.moloko.service.sync.lists.ModificationList;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.INoopSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable.MergeDirection;
 
 
 public class SyncDiffer
@@ -52,69 +52,55 @@ public class SyncDiffer
    
 
 
-   @SuppressWarnings( "unchecked" )
-   public final static < O extends ISyncOperation, T > ArrayList< O > diff( Iterable< T > reference,
-                                                                            SyncableList< T > target,
-                                                                            Object... params )
+   public final static < T extends IContentProviderSyncable< T >> List< IContentProviderSyncOperation > diff( Iterable< T > reference,
+                                                                                                              ContentProviderSyncableList< T > target )
    {
       if ( reference == null || target == null )
          throw new NullPointerException();
       
-      boolean ok = true;
-      
-      ArrayList< O > operations = new ArrayList< O >();
+      final List< IContentProviderSyncOperation > operations = new ArrayList< IContentProviderSyncOperation >();
       
       // for each element of the reference list
-      for ( Iterator< T > iterator = reference.iterator(); ok
-         && iterator.hasNext(); )
+      for ( T refElement : reference )
       {
-         final T refElement = iterator.next();
-         
          final int pos = target.find( refElement );
          
-         O operation = null;
+         IContentProviderSyncOperation operation = null;
          
          // INSERT: The reference element is not contained in the target list.
          if ( pos == -1 )
          {
-            operation = (O) target.computeInsertOperation( refElement, params );
+            operation = target.computeInsertOperation( refElement );
          }
          
          // UPDATE: The reference element is contained in the target list.
          else
          {
-            operation = (O) target.computeUpdateOperation( pos,
-                                                           refElement,
-                                                           params );
+            operation = target.computeUpdateOperation( pos, refElement );
          }
          
-         ok = operation != null;
+         if ( operation == null )
+            throw new NullPointerException( "operation is null" );
          
-         if ( ok && !( operation instanceof NoopSyncOperation ) )
+         if ( !( operation instanceof INoopSyncOperation ) )
             operations.add( operation );
       }
       
-      if ( ok )
-      {
-         // DELETE: Get all elements which have not been touched during the
-         // diff.
-         // These elements are not in the reference list.
-         final ArrayList< T > untouchedElements = target.getUntouchedElements();
-         
-         for ( T tgtElement : untouchedElements )
-         {
-            final O operation = (O) target.computeDeleteOperation( tgtElement,
-                                                                   params );
-            
-            ok = operation != null;
-            
-            if ( ok && !( operation instanceof NoopSyncOperation ) )
-               operations.add( operation );
-         }
-      }
+      // DELETE: Get all elements which have not been touched during the
+      // diff.
+      // These elements are not in the reference list.
+      final List< T > untouchedElements = target.getUntouchedElements();
       
-      if ( !ok )
-         operations = null;
+      for ( T tgtElement : untouchedElements )
+      {
+         final IContentProviderSyncOperation operation = target.computeDeleteOperation( tgtElement );
+         
+         if ( operation == null )
+            throw new NullPointerException( "operation is null" );
+         
+         if ( !( operation instanceof INoopSyncOperation ) )
+            operations.add( operation );
+      }
       
       return operations;
    }
@@ -124,31 +110,26 @@ public class SyncDiffer
    public final static < T extends ITwoWaySyncable< T > > DirectedSyncOperations twoWaydiff( List< T > serverList,
                                                                                              List< T > localList,
                                                                                              Comparator< ? super T > comp,
-                                                                                             Service service,
-                                                                                             ContentProviderClient provider,
+                                                                                             ModificationList modifications,
+                                                                                             RtmTimeline timeLine,
                                                                                              Date lastSync,
-                                                                                             boolean fullSync,
-                                                                                             Object... params )
+                                                                                             boolean fullSync )
    {
       if ( serverList == null || localList == null || comp == null
-         || service == null || provider == null )
+         || timeLine == null )
          throw new NullPointerException();
-      
-      boolean ok = true;
       
       Collections.sort( serverList, comp );
       Collections.sort( localList, comp );
       
-      final LinkedList< ISyncOperation > serverOps = new LinkedList< ISyncOperation >();
+      final LinkedList< IServerSyncOperation > serverOps = new LinkedList< IServerSyncOperation >();
       final LinkedList< IContentProviderSyncOperation > localOps = new LinkedList< IContentProviderSyncOperation >();
       
       final boolean[] localTouchedElements = new boolean[ localList.size() ];
       
       // for each element of the server list
-      for ( Iterator< T > iterator = serverList.iterator(); ok
-         && iterator.hasNext(); )
+      for ( T serverElement : serverList )
       {
-         final T serverElement = iterator.next();
          final Date serverElementDeleted = serverElement.getDeletedDate();
          
          final int pos = Collections.binarySearch( localList,
@@ -160,14 +141,8 @@ public class SyncDiffer
          {
             if ( serverElementDeleted == null )
             {
-               // TODO: SPECIAL CASE MOVE: See Issue#9 http://code.google.com/p/moloko/issues/detail?id=9
-               //
-               // This applies only to incremental sync and happens if an element has moved.
-               // Then it appears as new in the new list but not deleted in the old list.
-               final IContentProviderSyncOperation operation = serverElement.computeContentProviderInsertOperation( provider,
-                                                                                                                    params );
-               ok = operation != null;
-               if ( ok && operation != NoopSyncOperation.INSTANCE )
+               final IContentProviderSyncOperation operation = serverElement.computeContentProviderInsertOperation();
+               if ( !( operation instanceof INoopSyncOperation ) )
                   localOps.add( operation );
             }
             
@@ -185,21 +160,16 @@ public class SyncDiffer
             // EXPLICIT LOCAL DELETE: The server element is marked as deleted.
             if ( serverElementDeleted != null )
             {
-               IContentProviderSyncOperation operation = localElement.computeContentProviderDeleteOperation( provider,
-                                                                                                             params );
-               ok = operation != null;
-               if ( ok )
-               {
-                  if ( operation != NoopSyncOperation.INSTANCE )
-                     localOps.add( operation );
-                  
-                  // Remove all modifications of the local task since it gets deleted.
-                  operation = localElement.removeModifications( provider );
-                  
-                  ok = operation != null;
-                  if ( ok && operation != NoopSyncOperation.INSTANCE )
-                     localOps.add( operation );
-               }
+               IContentProviderSyncOperation operation = localElement.computeContentProviderDeleteOperation();
+               
+               if ( !( operation instanceof INoopSyncOperation ) )
+                  localOps.add( operation );
+               
+               // Remove all modifications of the local task since it gets deleted.
+               operation = localElement.computeRemoveModificationsOperation();
+               
+               if ( !( operation instanceof INoopSyncOperation ) )
+                  localOps.add( operation );
             }
             
             else
@@ -212,84 +182,72 @@ public class SyncDiffer
                if ( localElementDeleted != null
                   && localElementDeleted.after( serverElementModified ) )
                {
-                  final ISyncOperation serverOperation = serverElement.computeServerDeleteOperation( service,
-                                                                                                     params );
-                  ok = serverOperation != null;
-                  if ( ok )
-                  {
-                     if ( serverOperation != NoopSyncOperation.INSTANCE )
-                        serverOps.add( serverOperation );
-                     
-                     final IContentProviderSyncOperation localOperation = localElement.computeContentProviderDeleteOperation( provider,
-                                                                                                                              params );
-                     ok = localOperation != null;
-                     if ( ok && localOperation != NoopSyncOperation.INSTANCE )
-                        localOps.add( localOperation );
-                  }
+                  final IServerSyncOperation serverOperation = serverElement.computeServerDeleteOperation( timeLine );
+                  
+                  if ( !( serverOperation instanceof INoopSyncOperation ) )
+                     serverOps.add( serverOperation );
+                  
+                  final IContentProviderSyncOperation localOperation = localElement.computeContentProviderDeleteOperation();
+                  
+                  if ( !( localOperation instanceof INoopSyncOperation ) )
+                     localOps.add( localOperation );
                }
                
-               // MERGE: The locally deleted element is not deleted or deleted before server modification.
+               // MERGE: The local element is not deleted or deleted before server modification.
                else
                {
-                  final DirectedSyncOperations operations = localElement.computeMergeOperations( service,
-                                                                                                 provider,
+                  final DirectedSyncOperations operations = localElement.computeMergeOperations( timeLine,
+                                                                                                 modifications,
                                                                                                  serverElement,
-                                                                                                 params );
-                  ok = operations != null;
-                  if ( ok )
-                  {
-                     // No check for NoopSyncOperation since this are lists. We assume them to be empty in this case.
+                                                                                                 MergeDirection.BOTH );
+                  // No check for NoopSyncOperation since this are lists. We assume them to be empty in this case.
+                  //
+                  // Check if NO server operations have been computed by the merge. This means we have only local
+                  // updates. If we have server operations we retrieve an up-to-date version of the element by
+                  // applying the change to the server. So we drop the local computed operations.
+                  // We use this retrieved version to update the local element then. This should contain all changes
+                  // merged.
+                  // This done cause this is the only way to keep modification time stamps in sync with the server.
+                  if ( !serverOps.addAll( operations.getServerOperations() ) )
                      localOps.addAll( operations.getLocalOperations() );
-                     serverOps.addAll( operations.getServerOperations() );
-                  }
                }
             }
          }
       }
       
-      if ( ok )
+      // Get all local elements which have not been touched during the diff.
+      for ( int i = 0; i < localTouchedElements.length; i++ )
       {
-         // Get all local elements which have not been touched during the diff.
-         for ( int i = 0; ok && i < localTouchedElements.length; i++ )
+         if ( !localTouchedElements[ i ] )
          {
-            if ( !localTouchedElements[ i ] )
+            final T localElement = localList.get( i );
+            final Date localElementCreated = localElement.getCreatedDate();
+            
+            // SERVER INSERT: The local element has been created after the last sync.
+            if ( localElementCreated != null
+               && ( lastSync == null || lastSync.before( localElementCreated ) ) )
             {
-               final T localElement = localList.get( i );
-               final Date localElementCreated = localElement.getCreatedDate();
+               localTouchedElements[ i ] = true;
                
-               // SERVER INSERT: The local element has been created after the last sync.
-               if ( localElementCreated != null
-                  && ( lastSync == null || lastSync.before( localElementCreated ) ) )
-               {
-                  localTouchedElements[ i ] = true;
-                  
-                  final ISyncOperation operation = localList.get( i )
-                                                            .computeServerInsertOperation( service,
-                                                                                           params );
-                  ok = operation != null;
-                  if ( ok && operation != NoopSyncOperation.INSTANCE )
-                     serverOps.add( operation );
-               }
-               
-               // LOCAL DELETE: The local element wasn't in the server list and is not new created.
-               // Precondition: We can only judge if this is a full sync. Otherwise non-changed
-               // sever elements are not there and are interpreted as deleted.
-               else if ( fullSync )
-               {
-                  final IContentProviderSyncOperation operation = localList.get( i )
-                                                                           .computeContentProviderDeleteOperation( provider,
-                                                                                                                   params );
-                  ok = operation != null;
-                  if ( ok && operation != NoopSyncOperation.INSTANCE )
-                     localOps.add( operation );
-               }
+               final IServerSyncOperation operation = localList.get( i )
+                                                               .computeServerInsertOperation( timeLine );
+               if ( !( operation instanceof INoopSyncOperation ) )
+                  serverOps.add( operation );
+            }
+            
+            // LOCAL DELETE: The local element wasn't in the server list and is not new created.
+            // Precondition: We can only judge if this is a full sync. Otherwise non-changed
+            // sever elements are not there and are interpreted as deleted.
+            else if ( fullSync )
+            {
+               final IContentProviderSyncOperation operation = localList.get( i )
+                                                                        .computeContentProviderDeleteOperation();
+               if ( !( operation instanceof INoopSyncOperation ) )
+                  localOps.add( operation );
             }
          }
       }
       
-      if ( ok )
-         return new DirectedSyncOperations( serverOps, localOps );
-      else
-         return null;
+      return new DirectedSyncOperations( serverOps, localOps );
    }
 }

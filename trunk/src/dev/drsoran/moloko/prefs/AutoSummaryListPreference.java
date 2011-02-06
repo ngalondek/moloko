@@ -30,7 +30,7 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.SyncUtils;
 
 
 public class AutoSummaryListPreference extends ListPreference implements
@@ -135,7 +135,7 @@ public class AutoSummaryListPreference extends ListPreference implements
          final String persistedValue = sharedPreferences.getString( key,
                                                                     currentValue );
          
-         if ( Strings.hasStringChanged( currentValue, persistedValue ) )
+         if ( SyncUtils.hasChanged( currentValue, persistedValue ) )
          {
             setValue( persistedValue );
             notifyChanged();

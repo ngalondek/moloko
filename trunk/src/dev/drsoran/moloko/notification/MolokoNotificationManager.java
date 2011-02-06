@@ -27,6 +27,7 @@ import java.util.BitSet;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -280,16 +281,16 @@ public class MolokoNotificationManager implements
                      buffer.append( Tasks.COMPLETED_DATE );
                      buffer.append( " IS NULL" );
                      
-                     final ArrayList< Task > tasks = TasksProviderPart.getTasks( client,
-                                                                                 buffer.toString(),
-                                                                                 null );
+                     final List< Task > tasks = TasksProviderPart.getTasks( client,
+                                                                            buffer.toString(),
+                                                                            null );
                      if ( tasks != null )
                      {
                         if ( tasks.size() > 0 )
                         {
                            // first: Tasks which tasks are new notifications.
                            // second: DueTaskNotifications which must be canceled(false) or not.
-                           final Pair< ArrayList< Task >, BitSet > diff = diffDueNotifications( tasks );
+                           final Pair< List< Task >, BitSet > diff = diffDueNotifications( tasks );
                            
                            // Cancel no longer active DueTaskNotifications
                            for ( int i = 0; i < dueTaskNotifications.size(); ++i )
@@ -512,9 +513,9 @@ public class MolokoNotificationManager implements
       
       if ( !TextUtils.isEmpty( evalFilter ) )
       {
-         final ArrayList< Task > tasks = TasksProviderPart.getTasks( client,
-                                                                     evalFilter,
-                                                                     null );
+         final List< Task > tasks = TasksProviderPart.getTasks( client,
+                                                                evalFilter,
+                                                                null );
          if ( tasks != null )
          {
             int numHighPrioTasks = 0;
@@ -579,12 +580,12 @@ public class MolokoNotificationManager implements
    
 
 
-   private Pair< ArrayList< Task >, BitSet > diffDueNotifications( ArrayList< Task > tasks )
+   private Pair< List< Task >, BitSet > diffDueNotifications( List< Task > tasks )
    {
       // first: Tasks which tasks are new notifications.
       // second: DueTaskNotifications which have been found or not.
-      final Pair< ArrayList< Task >, BitSet > result = new Pair< ArrayList< Task >, BitSet >( new ArrayList< Task >(),
-                                                                                              new BitSet( dueTaskNotifications.size() ) );
+      final Pair< List< Task >, BitSet > result = new Pair< List< Task >, BitSet >( new ArrayList< Task >(),
+                                                                                    new BitSet( dueTaskNotifications.size() ) );
       
       result.second.clear();
       

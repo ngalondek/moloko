@@ -321,7 +321,6 @@ public class TasksProviderPart extends AbstractProviderPart
    public final static Task getTask( ContentProviderClient client, String id )
    {
       Task task = null;
-      
       Cursor c = null;
       
       try
@@ -341,7 +340,7 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       catch ( RemoteException e )
       {
-         Log.e( TAG, "Query tasks failed. ", e );
+         Log.e( TAG, "Query task failed. ", e );
          task = null;
       }
       finally
@@ -355,12 +354,11 @@ public class TasksProviderPart extends AbstractProviderPart
    
 
 
-   public final static ArrayList< Task > getTasks( ContentProviderClient client,
-                                                   String selection,
-                                                   String order )
+   public final static List< Task > getTasks( ContentProviderClient client,
+                                              String selection,
+                                              String order )
    {
-      ArrayList< Task > tasks = null;
-      
+      List< Task > tasks = null;
       Cursor c = null;
       
       try
@@ -678,6 +676,7 @@ public class TasksProviderPart extends AbstractProviderPart
                for ( int i = 0; i < splitIds.length; i++ )
                {
                   participantList.addParticipant( new Participant( null,
+                                                                   taskSeriesId,
                                                                    splitIds[ i ],
                                                                    splitFullnames[ i ],
                                                                    splitUsernames[ i ] ) );

@@ -30,7 +30,6 @@ import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -204,27 +203,20 @@ public class NoteActivity extends Activity
       boolean found = false;
       
       // Query note
-      try
+      final RtmTaskNote note = RtmNotesProviderPart.getNote( client, noteId );
+      
+      if ( note != null )
       {
-         final RtmTaskNote note = RtmNotesProviderPart.getNote( client, noteId );
+         final ArrayList< RtmTaskNote > tmp = new ArrayList< RtmTaskNote >( 1 );
+         tmp.add( note );
          
-         if ( note != null )
-         {
-            final ArrayList< RtmTaskNote > tmp = new ArrayList< RtmTaskNote >( 1 );
-            tmp.add( note );
-            
-            initializeNotesList( tmp );
-            
-            found = true;
-         }
-         else
-         {
-            LogUtils.logDBError( this, TAG, "Notes" );
-         }
+         initializeNotesList( tmp );
+         
+         found = true;
       }
-      catch ( RemoteException e )
+      else
       {
-         LogUtils.logDBError( this, TAG, "Notes", e );
+         LogUtils.logDBError( this, TAG, "Notes" );
       }
       
       return found;
@@ -239,47 +231,40 @@ public class NoteActivity extends Activity
       boolean found = false;
       
       // Query all notes of task
-      try
+      final RtmTaskNotes rtmTaskNotes = RtmNotesProviderPart.getAllNotes( client,
+                                                                          taskId );
+      
+      if ( rtmTaskNotes != null )
       {
-         final RtmTaskNotes rtmTaskNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                             taskId );
-         
-         if ( rtmTaskNotes != null )
+         // Check if we have a notePos from a saved instance state.
+         if ( notePos != -1 && notePos < notes.size() )
          {
-            // Check if we have a notePos from a saved instance state.
-            if ( notePos != -1 && notePos < notes.size() )
-            {
-               initializeNotesList( notes, notePos );
-            }
-            else
-            {
-               initializeNotesList( rtmTaskNotes.getNotes() );
-               
-               if ( startNoteId != null )
-               {
-                  boolean foundStartNote = false;
-                  while ( notePos < notes.size() && !foundStartNote )
-                  {
-                     foundStartNote = notes.get( notePos )
-                                           .getId()
-                                           .equals( startNoteId );
-                     if ( !foundStartNote )
-                        ++notePos;
-                  }
-                  
-                  if ( !foundStartNote )
-                     notePos = 0;
-               }
-            }
+            initializeNotesList( notes, notePos );
          }
          else
          {
-            LogUtils.logDBError( this, TAG, "Notes" );
+            initializeNotesList( rtmTaskNotes.getNotes() );
+            
+            if ( startNoteId != null )
+            {
+               boolean foundStartNote = false;
+               while ( notePos < notes.size() && !foundStartNote )
+               {
+                  foundStartNote = notes.get( notePos )
+                                        .getId()
+                                        .equals( startNoteId );
+                  if ( !foundStartNote )
+                     ++notePos;
+               }
+               
+               if ( !foundStartNote )
+                  notePos = 0;
+            }
          }
       }
-      catch ( RemoteException e )
+      else
       {
-         LogUtils.logDBError( this, TAG, "Notes", e );
+         LogUtils.logDBError( this, TAG, "Notes" );
       }
       
       return found;

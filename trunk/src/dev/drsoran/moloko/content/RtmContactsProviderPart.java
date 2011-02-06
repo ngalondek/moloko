@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
@@ -117,10 +118,10 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< RtmContact > getAllContacts( ContentProviderClient client,
-                                                               String selection )
+   public final static List< RtmContact > getAllContacts( ContentProviderClient client,
+                                                          String selection )
    {
-      ArrayList< RtmContact > contacts = null;
+      List< RtmContact > contacts = null;
       Cursor c = null;
       
       try

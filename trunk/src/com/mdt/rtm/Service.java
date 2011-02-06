@@ -31,6 +31,7 @@ import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
+import com.mdt.rtm.data.RtmTimeline;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.rtm.RtmContacts;
@@ -44,6 +45,14 @@ import dev.drsoran.rtm.RtmSettings;
  */
 public interface Service
 {
+   enum MethodCallType
+   {
+      NO_RESULT, WITH_RESULT
+   }
+   
+   
+
+   // ////// AUTHORIZATION /////////////////////////////
    
    /**
     * Checks whether the service is authorized to communicate with the RTM server. Depends on the user's login info, and
@@ -115,6 +124,8 @@ public interface Service
    
 
 
+   // ////// CONTACTS /////////////////////////////
+   
    void contacts_add() throws ServiceException;
    
 
@@ -147,6 +158,8 @@ public interface Service
    
 
 
+   // ////// LISTS /////////////////////////////
+   
    RtmList lists_add( String timelineId, String listName ) throws ServiceException;
    
 
@@ -179,6 +192,8 @@ public interface Service
    
 
 
+   // ////// REFLECTION /////////////////////////////
+   
    void reflection_getMethodInfo() throws ServiceException;
    
 
@@ -187,10 +202,14 @@ public interface Service
    
 
 
+   // ////// SETTINGS /////////////////////////////
+   
    RtmSettings settings_getList() throws ServiceException;
    
 
 
+   // ////// TASKS /////////////////////////////
+   
    RtmTaskSeries tasks_add( String timelineId, String listId, String name ) throws ServiceException;
    
 
@@ -270,7 +289,8 @@ public interface Service
                                 String listId,
                                 String taskSeriesId,
                                 String taskId,
-                                String newName ) throws ServiceException;
+                                String newName,
+                                MethodCallType callType ) throws ServiceException;
    
 
 
@@ -305,6 +325,8 @@ public interface Service
    
 
 
+   // ////// NOTES /////////////////////////////
+   
    RtmTaskNote tasks_notes_add( String timelineId,
                                 String listId,
                                 String taskSeriesId,
@@ -319,6 +341,7 @@ public interface Service
 
 
    RtmTaskNote tasks_notes_edit( String timelineId,
+                                 String taskSeriesId,
                                  String noteId,
                                  String title,
                                  String text ) throws ServiceException;
@@ -341,6 +364,8 @@ public interface Service
    
 
 
+   // ////// OTHER STUFF /////////////////////////////
+   
    void test_echo() throws ServiceException;
    
 
@@ -357,7 +382,7 @@ public interface Service
    
 
 
-   String timelines_create() throws ServiceException;
+   RtmTimeline timelines_create() throws ServiceException;
    
 
 
@@ -369,6 +394,8 @@ public interface Service
    
 
 
+   // ////// LOCATIONS /////////////////////////////
+   
    List< RtmLocation > locations_getList() throws ServiceException;
    
 }

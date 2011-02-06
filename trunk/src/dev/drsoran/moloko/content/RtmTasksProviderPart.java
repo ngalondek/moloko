@@ -71,7 +71,6 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
 
    public final static ContentValues getContentValues( RtmTask task,
-                                                       String taskSeriesId,
                                                        boolean withId )
    {
       final ContentValues values = new ContentValues();
@@ -79,7 +78,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       if ( withId )
          values.put( RawTasks._ID, task.getId() );
       
-      values.put( RawTasks.TASKSERIES_ID, taskSeriesId );
+      values.put( RawTasks.TASKSERIES_ID, task.getTaskSeriesId() );
       
       if ( task.getDue() != null )
          values.put( RawTasks.DUE_DATE, task.getDue().getTime() );
@@ -119,36 +118,21 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ContentProviderOperation insertTask( ContentProviderClient client,
-                                                            RtmTask task,
-                                                            String taskSeriesId ) throws RemoteException
+   public final static ContentProviderOperation insertTask( RtmTask task )
    {
-      ContentProviderOperation operation = null;
+      if ( task.getId() == null )
+         throw new NullPointerException( "task ID is null" );
       
-      // Only insert if not exists
-      boolean ok = !Queries.exists( client, RawTasks.CONTENT_URI, task.getId() );
-      
-      // Check mandatory attributes
-      ok = ok && task.getId() != null;
-      
-      if ( ok )
-      {
-         operation = ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
-                                             .withValues( getContentValues( task,
-                                                                            taskSeriesId,
-                                                                            true ) )
-                                             .build();
-      }
-      
-      return operation;
+      return ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
+                                     .withValues( getContentValues( task, true ) )
+                                     .build();
    }
    
 
 
-   public final static RtmTask getTask( ContentProviderClient client, String id ) throws RemoteException
+   public final static RtmTask getTask( ContentProviderClient client, String id )
    {
       RtmTask task = null;
-      
       Cursor c = null;
       
       try
@@ -170,7 +154,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
             task = createTask( c );
          }
       }
-      catch ( final RemoteException e )
+      catch ( RemoteException e )
       {
          Log.e( TAG, "Query rawtask failed. ", e );
          task = null;
@@ -187,7 +171,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
 
 
    public final static List< RtmTask > getAllTasks( ContentProviderClient client,
-                                                    String taskSeriesId ) throws RemoteException
+                                                    String taskSeriesId )
    {
       ArrayList< RtmTask > tasks = null;
       
@@ -346,6 +330,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    private final static RtmTask createTask( Cursor c )
    {
       return new RtmTask( c.getString( COL_INDICES.get( RawTasks._ID ) ),
+                          c.getString( COL_INDICES.get( RawTasks.TASKSERIES_ID ) ),
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.DUE_DATE ) ),
                           c.getInt( COL_INDICES.get( RawTasks.HAS_DUE_TIME ) ),

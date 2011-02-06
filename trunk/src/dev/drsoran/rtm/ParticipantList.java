@@ -28,8 +28,6 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderClient;
-import android.content.ContentProviderOperation;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -39,7 +37,7 @@ import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.CompositeContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
@@ -109,6 +107,7 @@ public class ParticipantList implements
          if ( !TextUtils.isEmpty( contactId ) && !TextUtils.isEmpty( fullname )
             && !TextUtils.isEmpty( username ) )
             this.participants.add( new Participant( null,
+                                                    taskSeriesId,
                                                     contactId,
                                                     fullname,
                                                     username ) );
@@ -171,76 +170,39 @@ public class ParticipantList implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderInsertOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      CompositeContentProviderSyncOperation operation = null;
-      
-      if ( participants.size() > 0 )
-      {
-         final ArrayList< ContentProviderOperation > ops = ParticipantsProviderPart.insertParticipants( provider,
-                                                                                                        this );
-         if ( ops != null )
-            operation = new CompositeContentProviderSyncOperation( provider,
-                                                                   IContentProviderSyncOperation.Op.INSERT,
-                                                                   ops );
-      }
-      else
-      {
-         return NoopContentProviderSyncOperation.INSTANCE;
-      }
-      
-      return operation;
+      return ContentProviderSyncOperation.newInsert( ParticipantsProviderPart.insertParticipants( this ) )
+                                         .build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation( ContentProviderClient provider,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      CompositeContentProviderSyncOperation operation = null;
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newDelete();
       
-      if ( participants.size() > 0 )
+      for ( Participant participant : participants )
       {
-         operation = new CompositeContentProviderSyncOperation( provider,
-                                                                IContentProviderSyncOperation.Op.DELETE );
-         
-         for ( Participant participant : participants )
-         {
-            operation.add( participant.computeContentProviderDeleteOperation( provider,
-                                                                              taskSeriesId ) );
-         }
-      }
-      else
-      {
-         return NoopContentProviderSyncOperation.INSTANCE;
+         result.add( participant.computeContentProviderDeleteOperation() );
       }
       
-      return operation;
+      return result.build();
    }
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ContentProviderClient provider,
-                                                                               ParticipantList update,
-                                                                               Object... params )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ParticipantList update )
    {
-      final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( provider,
-                                                                                                                  participants,
+      final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( participants,
                                                                                                                   Participant.LESS_ID );
-      final ArrayList< IContentProviderSyncOperation > operations = SyncDiffer.diff( update.participants,
-                                                                                     syncList,
-                                                                                     taskSeriesId );
-      if ( operations != null )
-      {
-         if ( operations.size() > 0 )
-            return new CompositeContentProviderSyncOperation( provider,
-                                                              operations,
-                                                              IContentProviderSyncOperation.Op.UPDATE );
-         else
-            return NoopContentProviderSyncOperation.INSTANCE;
-      }
+      final List< IContentProviderSyncOperation > operations = SyncDiffer.diff( update.participants,
+                                                                                syncList );
+      if ( operations.size() > 0 )
+         return ContentProviderSyncOperation.newUpdate()
+                                            .add( operations )
+                                            .build();
       else
-         return null;
+         return NoopContentProviderSyncOperation.INSTANCE;
    }
 }

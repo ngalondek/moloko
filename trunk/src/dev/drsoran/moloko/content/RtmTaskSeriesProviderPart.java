@@ -146,7 +146,6 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                                                     String id )
    {
       RtmTaskSeries taskSeries = null;
-      
       Cursor c = null;
       
       try
@@ -182,7 +181,6 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                                                             String listId )
    {
       RtmTaskList taskList = new RtmTaskList( listId );
-      
       Cursor c = null;
       
       try
@@ -264,112 +262,67 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< ContentProviderOperation > insertTaskSeries( ContentProviderClient client,
-                                                                               RtmTaskSeries taskSeries ) throws RemoteException
+   public final static List< ContentProviderOperation > insertTaskSeries( RtmTaskSeries taskSeries )
    {
-      ArrayList< ContentProviderOperation > operations = null;
+      if ( taskSeries == null )
+         throw new NullPointerException( "taskSeries is null" );
       
-      final String taskSeriesId = taskSeries.getId();
+      if ( taskSeries.getTasks() == null )
+         throw new NullPointerException( "taskSeries tasks is null" );
       
-      boolean ok = taskSeriesId != null;
+      if ( taskSeries.getTasks().size() == 0 )
+         throw new IllegalStateException( "taskSeries has no tasks" );
       
-      // Only insert if does not exists
-      ok = ok && !Queries.exists( client, TaskSeries.CONTENT_URI, taskSeriesId );
+      List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
       
-      // Check mandatory values
-      ok = ok && taskSeries.getName() != null;
-      ok = ok && taskSeries.getTasks() != null
-         && taskSeries.getTasks().size() > 0;
-      ok = ok && taskSeries.getListId() != null;
-      
-      if ( ok )
+      // Insert new RtmTasks
       {
-         operations = new ArrayList< ContentProviderOperation >();
+         final List< RtmTask > tasks = taskSeries.getTasks();
          
-         // Insert a new RtmTasks
+         for ( RtmTask task : tasks )
          {
-            final List< RtmTask > tasks = taskSeries.getTasks();
-            
-            for ( final Iterator< RtmTask > i = tasks.iterator(); ok
-               && i.hasNext(); )
-            {
-               final RtmTask rtmTask = i.next();
-               final ContentProviderOperation insertTaskOp = RtmTasksProviderPart.insertTask( client,
-                                                                                              rtmTask,
-                                                                                              taskSeriesId );
-               ok = insertTaskOp != null;
-               if ( ok )
-                  operations.add( insertTaskOp );
-            }
+            operations.add( RtmTasksProviderPart.insertTask( task ) );
          }
+      }
+      
+      // Check for tags
+      {
+         final List< Tag > tags = taskSeries.getTags();
          
-         // Check for tags
-         if ( ok )
+         for ( Tag tag : tags )
          {
-            final List< String > tags = taskSeries.getTags();
-            
-            if ( tags != null && tags.size() > 0 )
-            {
-               for ( final String tag : tags )
-               {
-                  final ContentProviderOperation tagOperation = ContentProviderOperation.newInsert( Tags.CONTENT_URI )
-                                                                                        .withValues( TagsProviderPart.getContentValues( new Tag( null,
-                                                                                                                                                 taskSeriesId,
-                                                                                                                                                 tag ),
-                                                                                                                                        true ) )
-                                                                                        .build();
-                  ok = tagOperation != null;
-                  if ( ok )
-                     operations.add( tagOperation );
-               }
-            }
-         }
-         
-         // Check for notes
-         if ( ok )
-         {
-            final RtmTaskNotes notes = taskSeries.getNotes();
-            
-            if ( notes != null )
-            {
-               final List< RtmTaskNote > notesList = notes.getNotes();
-               
-               if ( notesList != null && notesList.size() > 0 )
-               {
-                  for ( final RtmTaskNote rtmTaskNote : notesList )
-                  {
-                     final ContentProviderOperation noteOperation = RtmNotesProviderPart.insertNote( client,
-                                                                                                     rtmTaskNote,
-                                                                                                     taskSeriesId );
-                     
-                     ok = noteOperation != null;
-                     if ( ok )
-                        operations.add( noteOperation );
-                  }
-               }
-            }
-         }
-         
-         // Check for participants
-         if ( ok )
-         {
-            final ParticipantList participantList = taskSeries.getParticipants();
-            final ArrayList< ContentProviderOperation > participantsOperations = ParticipantsProviderPart.insertParticipants( client,
-                                                                                                                              participantList );
-            ok = participantsOperations != null;
-            
-            if ( ok )
-               operations.addAll( participantsOperations );
-         }
-         
-         // Insert new taskseries
-         if ( ok )
-         {
-            operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
-                                                    .withValues( getContentValues( taskSeries,
-                                                                                   true ) )
+            operations.add( ContentProviderOperation.newInsert( Tags.CONTENT_URI )
+                                                    .withValues( TagsProviderPart.getContentValues( tag,
+                                                                                                    true ) )
                                                     .build() );
          }
+      }
+      
+      // Check for notes
+      {
+         final List< RtmTaskNote > notesList = taskSeries.getNotes().getNotes();
+         
+         for ( final RtmTaskNote rtmTaskNote : notesList )
+         {
+            operations.add( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                                    .withValues( RtmNotesProviderPart.getContentValues( rtmTaskNote,
+                                                                                                        true ) )
+                                                    .build() );
+         }
+      }
+      
+      // Check for participants
+      {
+         final ParticipantList participantList = taskSeries.getParticipants();
+         operations.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
+      }
+      
+      // Insert new taskseries
+      {
+         operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
+                                                 .withValues( getContentValues( taskSeries,
+                                                                                true ) )
+                                                 .build() );
       }
       
       return operations;
@@ -378,24 +331,24 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
 
 
    private final static RtmTaskSeries createRtmTaskSeries( ContentProviderClient client,
-                                                           Cursor c ) throws RemoteException
+                                                           Cursor c )
    {
-      RtmTaskSeries taskSeries = null;
-      
       final String taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
       
       final List< RtmTask > tasks = RtmTasksProviderPart.getAllTasks( client,
                                                                       taskSeriesId );
-      boolean ok = tasks != null && tasks.size() > 0;
+      
+      boolean ok = tasks != null;
+      
+      if ( ok && tasks.size() == 0 )
+         throw new IllegalStateException( "taskSeries has no tasks" );
       
       List< String > tags = null;
-      
       if ( ok )
       {
-         final ArrayList< Tag > tagImpls = TagsProviderPart.getAllTags( client,
-                                                                        taskSeriesId );
+         final List< Tag > tagImpls = TagsProviderPart.getAllTags( client,
+                                                                   taskSeriesId );
          ok = tagImpls != null;
-         
          if ( ok )
          {
             tags = new ArrayList< String >( tagImpls.size() );
@@ -408,56 +361,47 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       }
       
       RtmTaskNotes notes = null;
-      
       if ( ok )
       {
-         // Get all notes this taskseries references
          notes = RtmNotesProviderPart.getAllNotes( client, taskSeriesId );
-         
-         // If the taskseries has no notes, we get an empty list, but
-         // not null
          ok = notes != null;
       }
       
       ParticipantList participantsList = null;
-      
       if ( ok )
       {
          participantsList = ParticipantsProviderPart.getParticipants( client,
                                                                       taskSeriesId );
-         
-         // If the taskseries has no participants, we get an empty list, but
-         // not null
          ok = participantsList != null;
       }
       
       if ( ok )
       {
          // add the current task series to the task list.
-         taskSeries = new RtmTaskSeries( taskSeriesId,
-                                         c.getString( COL_INDICES.get( TaskSeries.LIST_ID ) ),
-                                         new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
-                                         Queries.getOptDate( c,
-                                                             COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ),
-                                         c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
-                                         Queries.getOptString( c,
-                                                               COL_INDICES.get( TaskSeries.SOURCE ) ),
-                                         tasks,
-                                         notes,
-                                         Queries.getOptString( c,
-                                                               COL_INDICES.get( TaskSeries.LOCATION_ID ) ),
-                                         Queries.getOptString( c,
-                                                               COL_INDICES.get( TaskSeries.URL ) ),
-                                         Queries.getOptString( c,
-                                                               COL_INDICES.get( TaskSeries.RECURRENCE ) ),
-                                         Queries.getOptBool( c,
-                                                             COL_INDICES.get( TaskSeries.RECURRENCE_EVERY ),
-                                                             false ),
-                                         tags,
-                                         participantsList );
+         return new RtmTaskSeries( taskSeriesId,
+                                   c.getString( COL_INDICES.get( TaskSeries.LIST_ID ) ),
+                                   new Date( c.getLong( COL_INDICES.get( TaskSeries.TASKSERIES_CREATED_DATE ) ) ),
+                                   Queries.getOptDate( c,
+                                                       COL_INDICES.get( TaskSeries.MODIFIED_DATE ) ),
+                                   c.getString( COL_INDICES.get( TaskSeries.TASKSERIES_NAME ) ),
+                                   Queries.getOptString( c,
+                                                         COL_INDICES.get( TaskSeries.SOURCE ) ),
+                                   tasks,
+                                   notes,
+                                   Queries.getOptString( c,
+                                                         COL_INDICES.get( TaskSeries.LOCATION_ID ) ),
+                                   Queries.getOptString( c,
+                                                         COL_INDICES.get( TaskSeries.URL ) ),
+                                   Queries.getOptString( c,
+                                                         COL_INDICES.get( TaskSeries.RECURRENCE ) ),
+                                   Queries.getOptBool( c,
+                                                       COL_INDICES.get( TaskSeries.RECURRENCE_EVERY ),
+                                                       false ),
+                                   tags,
+                                   participantsList );
       }
-      
-      return taskSeries;
+      else
+         return null;
    }
    
 

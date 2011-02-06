@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import android.content.ContentProviderClient;
-import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -69,35 +68,29 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    
 
    public final static ContentValues getContentValues( RtmTaskNote note,
-                                                       String taskSeriesId,
                                                        boolean withId )
    {
-      ContentValues values = null;
+      final ContentValues values = new ContentValues();
       
-      if ( note != null && !TextUtils.isEmpty( taskSeriesId ) )
-      {
-         values = new ContentValues();
-         
-         if ( withId )
-            values.put( Notes._ID, note.getId() );
-         
-         values.put( Notes.TASKSERIES_ID, taskSeriesId );
-         values.put( Notes.NOTE_CREATED_DATE, note.getCreated().getTime() );
-         
-         if ( note.getModified() != null )
-            values.put( Notes.NOTE_MODIFIED_DATE, note.getModified().getTime() );
-         else
-            values.putNull( Notes.NOTE_MODIFIED_DATE );
-         
-         values.put( Notes.NOTE_DELETED, note.isDeleted() );
-         
-         if ( !TextUtils.isEmpty( note.getTitle() ) )
-            values.put( Notes.NOTE_TITLE, note.getTitle() );
-         else
-            values.putNull( Notes.NOTE_TITLE );
-         
-         values.put( Notes.NOTE_TEXT, note.getText() );
-      }
+      if ( withId )
+         values.put( Notes._ID, note.getId() );
+      
+      values.put( Notes.TASKSERIES_ID, note.getTaskSeriesId() );
+      values.put( Notes.NOTE_CREATED_DATE, note.getCreated().getTime() );
+      
+      if ( note.getModified() != null )
+         values.put( Notes.NOTE_MODIFIED_DATE, note.getModified().getTime() );
+      else
+         values.putNull( Notes.NOTE_MODIFIED_DATE );
+      
+      values.put( Notes.NOTE_DELETED, note.isDeleted() );
+      
+      if ( !TextUtils.isEmpty( note.getTitle() ) )
+         values.put( Notes.NOTE_TITLE, note.getTitle() );
+      else
+         values.putNull( Notes.NOTE_TITLE );
+      
+      values.put( Notes.NOTE_TEXT, note.getText() );
       
       return values;
    }
@@ -105,59 +98,53 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
 
 
    public final static RtmTaskNotes getAllNotes( ContentProviderClient client,
-                                                 String taskSeriesId ) throws RemoteException
+                                                 String taskSeriesId )
    {
       RtmTaskNotes notes = null;
+      Cursor c = null;
       
-      boolean ok = taskSeriesId != null;
-      
-      if ( ok )
+      try
       {
-         Cursor c = null;
+         // Only non-deleted notes
+         c = client.query( Notes.CONTENT_URI,
+                           PROJECTION,
+                           new StringBuilder( Notes.TASKSERIES_ID ).append( "=" )
+                                                                   .append( taskSeriesId )
+                                                                   .append( " AND " )
+                                                                   .append( Notes.NOTE_DELETED )
+                                                                   .append( "=0" )
+                                                                   .toString(),
+                           null,
+                           null );
          
-         try
+         boolean ok = c != null;
+         
+         if ( ok )
          {
-            // Only non-deleted notes
-            c = client.query( Notes.CONTENT_URI,
-                              PROJECTION,
-                              new StringBuilder( Notes.TASKSERIES_ID ).append( "=" )
-                                                                      .append( taskSeriesId )
-                                                                      .append( " AND " )
-                                                                      .append( Notes.NOTE_DELETED )
-                                                                      .append( "=0" )
-                                                                      .toString(),
-                              null,
-                              null );
+            final ArrayList< RtmTaskNote > taskNotes = new ArrayList< RtmTaskNote >( c.getCount() );
             
-            ok = c != null;
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmTaskNote taskNote = createNote( c );
+                  taskNotes.add( taskNote );
+               }
+            }
             
             if ( ok )
-            {
-               final ArrayList< RtmTaskNote > taskNotes = new ArrayList< RtmTaskNote >( c.getCount() );
-               
-               if ( c.getCount() > 0 )
-               {
-                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-                  {
-                     final RtmTaskNote taskNote = createNote( c );
-                     taskNotes.add( taskNote );
-                  }
-               }
-               
-               if ( ok )
-                  notes = new RtmTaskNotes( taskNotes );
-            }
+               notes = new RtmTaskNotes( taskNotes );
          }
-         catch ( final RemoteException e )
-         {
-            Log.e( TAG, "Query notes failed. ", e );
-            notes = null;
-         }
-         finally
-         {
-            if ( c != null )
-               c.close();
-         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query notes failed. ", e );
+         notes = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return notes;
@@ -166,78 +153,44 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
 
 
    public final static RtmTaskNote getNote( ContentProviderClient client,
-                                            String noteId ) throws RemoteException
+                                            String noteId )
    {
       RtmTaskNote note = null;
-      
       Cursor c = null;
       
-      boolean ok = noteId != null;
-      
-      if ( ok )
+      try
       {
-         try
+         // Only non-deleted notes
+         c = client.query( Notes.CONTENT_URI,
+                           PROJECTION,
+                           new StringBuilder( Notes._ID ).append( "=" )
+                                                         .append( noteId )
+                                                         .append( " AND " )
+                                                         .append( Notes.NOTE_DELETED )
+                                                         .append( "=0" )
+                                                         .toString(),
+                           null,
+                           null );
+         
+         boolean ok = c != null && c.moveToFirst();
+         
+         if ( ok )
          {
-            // Only non-deleted notes
-            c = client.query( Notes.CONTENT_URI,
-                              PROJECTION,
-                              new StringBuilder( Notes._ID ).append( "=" )
-                                                            .append( noteId )
-                                                            .append( " AND " )
-                                                            .append( Notes.NOTE_DELETED )
-                                                            .append( "=0" )
-                                                            .toString(),
-                              null,
-                              null );
-            
-            ok = c != null && c.moveToFirst();
-            
-            if ( ok )
-            {
-               note = createNote( c );
-            }
+            note = createNote( c );
          }
-         catch ( final RemoteException e )
-         {
-            Log.e( TAG, "Query note failed. ", e );
-            note = null;
-         }
-         finally
-         {
-            if ( c != null )
-               c.close();
-         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query note failed. ", e );
+         note = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
       }
       
       return note;
-   }
-   
-
-
-   public final static ContentProviderOperation insertNote( ContentProviderClient client,
-                                                            RtmTaskNote note,
-                                                            String taskSeriesId ) throws RemoteException
-   {
-      ContentProviderOperation operation = null;
-      
-      // Only insert if not exists
-      boolean ok = !Queries.exists( client, Notes.CONTENT_URI, note.getId() );
-      
-      // Check mandatory attributes
-      ok = ok && note.getId() != null;
-      ok = ok && taskSeriesId != null;
-      ok = ok && note.getText() != null;
-      
-      if ( ok )
-      {
-         operation = ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                             .withValues( getContentValues( note,
-                                                                            taskSeriesId,
-                                                                            true ) )
-                                             .build();
-      }
-      
-      return operation;
    }
    
 
@@ -335,6 +288,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    private final static RtmTaskNote createNote( Cursor c )
    {
       return new RtmTaskNote( c.getString( COL_INDICES.get( Notes._ID ) ),
+                              c.getString( COL_INDICES.get( Notes.TASKSERIES_ID ) ),
                               new Date( c.getLong( COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
                               Queries.getOptDate( c,
                                                   COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ),

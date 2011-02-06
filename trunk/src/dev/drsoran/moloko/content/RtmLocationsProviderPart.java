@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
@@ -131,9 +132,9 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ArrayList< RtmLocation > getAllLocations( ContentProviderClient client )
+   public final static List< RtmLocation > getAllLocations( ContentProviderClient client )
    {
-      ArrayList< RtmLocation > locations = null;
+      List< RtmLocation > locations = null;
       Cursor c = null;
       
       try
@@ -162,7 +163,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
                locations = null;
          }
       }
-      catch ( final RemoteException e )
+      catch ( RemoteException e )
       {
          Log.e( TAG, "Query locations failed. ", e );
          locations = null;

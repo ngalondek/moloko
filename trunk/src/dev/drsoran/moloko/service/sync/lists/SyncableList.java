@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 
@@ -80,9 +81,9 @@ public abstract class SyncableList< T >
    
 
 
-   public ArrayList< T > getUntouchedElements()
+   public List< T > getUntouchedElements()
    {
-      final ArrayList< T > result = new ArrayList< T >();
+      final List< T > result = new ArrayList< T >();
       
       for ( int i = 0; i < touchedElements.length; i++ )
       {
@@ -161,30 +162,23 @@ public abstract class SyncableList< T >
    
 
 
-   public abstract ISyncOperation computeInsertOperation( T newElement,
-                                                          Object... params );
+   public abstract ISyncOperation computeInsertOperation( T newElement );
    
 
 
-   public ISyncOperation computeUpdateOperation( int pos,
-                                                 T updateElement,
-                                                 Object... params )
+   public ISyncOperation computeUpdateOperation( int pos, T updateElement )
    {
       touchedElements[ pos ] = true;
       
-      return internalComputeUpdateOperation( impl.get( pos ),
-                                             updateElement,
-                                             params );
+      return internalComputeUpdateOperation( impl.get( pos ), updateElement );
    }
    
 
 
-   public abstract ISyncOperation computeDeleteOperation( T elementToDelete,
-                                                          Object... params );
+   public abstract ISyncOperation computeDeleteOperation( T elementToDelete );
    
 
 
    protected abstract ISyncOperation internalComputeUpdateOperation( T old,
-                                                                     T updateElement,
-                                                                     Object... params );
+                                                                     T updateElement );
 }

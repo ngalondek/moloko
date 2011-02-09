@@ -30,8 +30,8 @@ import java.util.List;
 
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.lists.ModificationList;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.INoopSyncOperation;
@@ -106,15 +106,16 @@ public class SyncDiffer
    
 
 
-   public final static < T extends ITwoWaySyncable< T > > DirectedSyncOperations twoWaydiff( List< T > serverList,
-                                                                                             List< T > localList,
+   public final static < T extends ITwoWaySyncable< T > > DirectedSyncOperations twoWaydiff( List< ? extends T > serverList,
+                                                                                             List< ? extends T > localList,
                                                                                              Comparator< ? super T > comp,
                                                                                              ModificationList modifications,
                                                                                              RtmTimeline timeLine,
                                                                                              Date lastSync,
                                                                                              boolean fullSync )
    {
-      if ( serverList == null || localList == null || comp == null )
+      if ( serverList == null || localList == null || comp == null
+         || timeLine == null )
          throw new NullPointerException();
       
       Collections.sort( serverList, comp );
@@ -156,8 +157,6 @@ public class SyncDiffer
             if ( serverElementDeleted != null )
             {
                operations.add( localElement.computeContentProviderDeleteOperation() );
-               // Remove all modifications of the local task since it gets deleted.
-               operations.add( localElement.computeRemoveModificationsOperation() );
             }
             
             else
@@ -170,12 +169,7 @@ public class SyncDiffer
                if ( localElementDeleted != null
                   && localElementDeleted.after( serverElementModified ) )
                {
-                  // Check if we have server delete permission
-                  if ( timeLine != null )
-                  {
-                     operations.add( serverElement.computeServerDeleteOperation( timeLine ) );
-                  }
-                  
+                  operations.add( serverElement.computeServerDeleteOperation( timeLine ) );
                   operations.add( localElement.computeContentProviderDeleteOperation() );
                }
                
@@ -185,18 +179,15 @@ public class SyncDiffer
                   final TypedDirectedSyncOperations< T > mergeOps = localElement.computeMergeOperations( timeLine,
                                                                                                          modifications,
                                                                                                          serverElement,
-                                                                                                         timeLine != null
-                                                                                                                         ? MergeDirection.BOTH
-                                                                                                                         : MergeDirection.LOCAL_ONLY );
+                                                                                                         MergeDirection.BOTH );
                   
                   // Check if NO server operations have been computed by the merge. This means we have only local
-                  // updates. If we have server operations we retrieve an up-to-date version of the element by
+                  // updates. If we had server operations we would retrieve an up-to-date version of the element by
                   // applying the change to the server. So we drop the local computed operations.
                   // We use this retrieved version to update the local element then. This should contain all changes
                   // merged.
-                  // This done cause this is the only way to keep modification time stamps in sync with the server.
-                  if ( timeLine == null
-                     || !operations.add( mergeOps.getServerOperation() ) )
+                  // This is done because this is the only way to keep modification time stamps in sync with the server.
+                  if ( !operations.add( mergeOps.getServerOperation() ) )
                      operations.add( mergeOps.getLocalOperation() );
                }
             }
@@ -216,43 +207,32 @@ public class SyncDiffer
                && ( lastSync == null || lastSync.before( localElementCreated ) ) )
             {
                localTouchedElements[ i ] = true;
-               
-               // Check if we have server write access
-               if ( timeLine != null )
-               {
-                  operations.add( localList.get( i )
-                                           .computeServerInsertOperation( timeLine ) );
-               }
+               operations.add( localList.get( i )
+                                        .computeServerInsertOperation( timeLine ) );
+            }
+            
+            // LOCAL DELETE: The local element wasn't in the server list and is not new created.
+            // Precondition: We can only judge if this is a full sync. Otherwise non-changed
+            // sever elements are not in the serverList and are interpreted as deleted.
+            else if ( fullSync )
+            {
+               operations.add( localList.get( i )
+                                        .computeContentProviderDeleteOperation() );
             }
             
             else
             {
                final Date localElementModified = localElement.getModifiedDate();
                
-               // MERGE: The local element was modified since the last sync.
+               // SERVER UPDATE: The local element was modified since the last sync and the
+               // server element was not seen.
                if ( localElementModified != null
                   && ( lastSync == null || lastSync.before( localElementModified ) ) )
                {
                   localTouchedElements[ i ] = true;
                   
-                  // Check if we have server write access
-                  if ( timeLine != null )
-                  {
-                     final TypedDirectedSyncOperations< T > mergeOps = localElement.computeMergeOperations( timeLine,
-                                                                                                            modifications,
-                                                                                                            localElement,
-                                                                                                            MergeDirection.SERVER_ONLY );
-                     operations.add( mergeOps.getServerOperation() );
-                  }
-               }
-               
-               // LOCAL DELETE: The local element wasn't in the server list and is not new created.
-               // Precondition: We can only judge if this is a full sync. Otherwise non-changed
-               // sever elements are not there and are interpreted as deleted.
-               else if ( fullSync )
-               {
-                  operations.add( localList.get( i )
-                                           .computeContentProviderDeleteOperation() );
+                  operations.add( localElement.computeServerUpdateOperation( timeLine,
+                                                                             modifications ) );
                }
             }
          }

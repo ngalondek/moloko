@@ -25,7 +25,6 @@ package dev.drsoran.moloko.service.sync;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.ParseException;
@@ -35,7 +34,6 @@ import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProvider;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
@@ -52,6 +50,9 @@ import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
+import com.mdt.rtm.ServiceInternalException;
+import com.mdt.rtm.TimeLineMethod;
+import com.mdt.rtm.TimeLineMethod.Transaction;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTimeline;
 import com.mdt.rtm.data.RtmAuth.Perms;
@@ -59,18 +60,24 @@ import com.mdt.rtm.data.RtmAuth.Perms;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
+import dev.drsoran.moloko.content.Rollback;
+import dev.drsoran.moloko.content.RollbacksProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
-import dev.drsoran.moloko.service.sync.lists.ModificationList;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Modifications;
+import dev.drsoran.provider.Rtm.Rollbacks;
 import dev.drsoran.provider.Rtm.Sync;
 
 
@@ -105,6 +112,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    {
       if ( shouldProcessRequest( extras ) )
       {
+         RtmProvider contentProvider = null;
+         
+         if ( provider.getLocalContentProvider() instanceof RtmProvider )
+            contentProvider = (RtmProvider) provider.getLocalContentProvider();
+         else
+            throw new IllegalStateException( "no ContentProvider transaction support" );
+         
          Log.i( TAG, "Precessing sync with extras " + extras );
          
          String authToken = null;
@@ -145,9 +159,20 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                      final RtmAuth.Perms permission = AccountUtils.getAccessLevel( getContext() );
                      Log.i( TAG, "Sync with permission " + permission );
                      
+                     // Rollback any failed sync changes, if any.
+                     rollbackFailedSync( service, provider, permission );
+                     
+                     // Retrieve all modifications done so far.
+                     final ModificationList modifictaions = getAllModifications();
+                     if ( modifictaions == null )
+                        throw new SQLException( "Retrieving the modifications failed" );
+                     else
+                        Log.i( TAG, "Retrieved " + modifictaions.size()
+                           + " modifications" );
+                     
                      // We can only create a time line with write permission. However, we need delete
-                     // permission to make the server sync transactional.So without delete permissions
-                     // we do only an incoming sync, indicated by time line == null.
+                     // permission to make the server sync transactional. So without delete permissions
+                     // we do only an incoming sync, indicated by timeLine == null.
                      RtmTimeline timeLine = null;
                      if ( permission == Perms.delete )
                      {
@@ -160,6 +185,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                      if ( computeOperationsBatch( service,
                                                   provider,
                                                   timeLine,
+                                                  modifictaions,
                                                   syncResult,
                                                   extras,
                                                   batch ) )
@@ -168,34 +194,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                         
                         // Apply server operations at first cause as a result of these we
                         // have to update local elements.
-                        List< IContentProviderSyncOperation > localUpdates = applyServerOperations( service,
-                                                                                                    batch.getServerOperations(),
-                                                                                                    syncResult );
-                        batch.getLocalOperations().addAll( localUpdates );
+                        final IContentProviderSyncOperation localUpdates = applyServerOperations( service,
+                                                                                                  contentProvider,
+                                                                                                  batch.getServerOperations(),
+                                                                                                  modifictaions,
+                                                                                                  syncResult );
+                        batch.getLocalOperations().add( localUpdates );
                         
-                        final ContentProvider contentProvider = provider.getLocalContentProvider();
+                        final TransactionalAccess transactionalAccess = contentProvider.newTransactionalAccess();
+                        transactionalAccess.beginTransaction();
                         
-                        if ( contentProvider instanceof RtmProvider )
+                        try
                         {
-                           final TransactionalAccess transactionalAccess = ( (RtmProvider) contentProvider ).newTransactionalAccess();
-                           transactionalAccess.beginTransaction();
+                           applyLocalOperations( provider,
+                                                 batch.getLocalOperations(),
+                                                 syncResult );
                            
-                           try
-                           {
-                              applyLocalOperations( provider,
-                                                    batch.getLocalOperations(),
-                                                    syncResult );
-                              
-                              transactionalAccess.setTransactionSuccessful();
-                           }
-                           finally
-                           {
-                              transactionalAccess.endTransaction();
-                           }
+                           transactionalAccess.setTransactionSuccessful();
                         }
-                        else
+                        finally
                         {
-                           throw new IllegalStateException( "no ContentProvider transaction support" );
+                           transactionalAccess.endTransaction();
                         }
                         
                         // If we synced only the settings, we do not update the
@@ -262,8 +281,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             }
             catch ( ServiceException e )
             {
-               syncResult.stats.numIoExceptions++;
-               Log.e( TAG, "ServiceInternalException", e );
+               if ( e instanceof ServiceInternalException )
+                  SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
+                                                            TAG,
+                                                            syncResult );
+               else
+               {
+                  syncResult.stats.numIoExceptions++;
+                  Log.e( TAG, "ServiceException", e );
+               }
             }
             catch ( RemoteException e )
             {
@@ -291,24 +317,81 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   private List< IContentProviderSyncOperation > applyServerOperations( Service service,
-                                                                        List< IServerSyncOperation< ? > > serverOps,
-                                                                        SyncResult syncResult ) throws ServiceException
+   private IContentProviderSyncOperation applyServerOperations( Service service,
+                                                                RtmProvider rtmProvider,
+                                                                List< ? extends IServerSyncOperation< ? > > serverOps,
+                                                                ModificationList modifications,
+                                                                SyncResult syncResult ) throws ServiceException
    {
-      final List< IContentProviderSyncOperation > contentProviderSyncOperations = new LinkedList< IContentProviderSyncOperation >();
+      final ContentProviderSyncOperation.Builder localOpsBuilder = ContentProviderSyncOperation.newUpdate();
       
-      for ( IServerSyncOperation< ? > serverSyncOperation : serverOps )
+      for ( IServerSyncOperation< ? extends IServerSyncable< ? > > serverSyncOperation : serverOps )
       {
+         try
+         {
+            // Execute the server operation and retrieve the local updates as result.
+            localOpsBuilder.add( serverSyncOperation.execute() );
+         }
+         catch ( ServiceException e )
+         {
+            Log.e( TAG,
+                   "Applying server operation failed. Initiating rollback.",
+                   e );
+            
+            // If something fails while reverting the changes, we receive a list of all
+            // non-reverted changes and store them for later reverting.
+            final List< TimeLineMethod.Transaction > nonReverted = serverSyncOperation.revert( service );
+            
+            Log.i( TAG, "Rollback finished with " + nonReverted.size()
+               + " non-reverted changes" );
+            
+            if ( nonReverted.size() > 0 )
+            {
+               final ArrayList< ContentProviderOperation > transactionBatch = new ArrayList< ContentProviderOperation >( nonReverted.size() );
+               
+               // Store all non-reverted changes for later rollback.
+               for ( Transaction transaction : nonReverted )
+               {
+                  transactionBatch.add( ContentProviderOperation.newInsert( Rollbacks.CONTENT_URI )
+                                                                .withValues( RollbacksProviderPart.getContentValues( transaction ) )
+                                                                .build() );
+               }
+               
+               final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
+               transactionalAccess.beginTransaction();
+               
+               try
+               {
+                  rtmProvider.applyBatch( transactionBatch );
+                  transactionalAccess.setTransactionSuccessful();
+               }
+               catch ( OperationApplicationException oae )
+               {
+                  Log.e( TAG,
+                         "Storing transactions for later rollback failed",
+                         oae );
+               }
+               finally
+               {
+                  transactionalAccess.endTransaction();
+               }
+            }
+            
+            throw e;
+         }
          
+         // Remove possible modifications which lead to the server update after
+         // successfully applying the server operation.
+         localOpsBuilder.add( serverSyncOperation.removeModification( modifications ) );
       }
       
-      return contentProviderSyncOperations;
+      return localOpsBuilder.build();
    }
    
 
 
    private void applyLocalOperations( ContentProviderClient provider,
-                                      List< IContentProviderSyncOperation > operations,
+                                      List< ? extends IContentProviderSyncOperation > operations,
                                       SyncResult syncResult ) throws RemoteException,
                                                              OperationApplicationException
    {
@@ -327,9 +410,61 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
+   private void rollbackFailedSync( Service service,
+                                    ContentProviderClient provider,
+                                    RtmAuth.Perms permission ) throws RemoteException
+   {
+      final List< Rollback > rollbacks = RollbacksProviderPart.getRollbacks( provider );
+      
+      if ( rollbacks != null )
+      {
+         if ( rollbacks.size() > 0 )
+         {
+            // We can only revert with delete permissions
+            if ( permission == Perms.delete )
+            {
+               for ( Rollback rollback : rollbacks )
+               {
+                  try
+                  {
+                     service.transactions_undo( rollback.getTimeLineId(),
+                                                rollback.getTransactionId() );
+                     Log.e( TAG, "Rolled back change " + rollback );
+                  }
+                  catch ( ServiceException e )
+                  {
+                     Log.e( TAG,
+                            "Rolling back change " + rollback + " failed",
+                            e );
+                  }
+               }
+            }
+            else
+            {
+               Log.w( TAG,
+                      "Couldn't rollback changes due to lack of RTM access right" );
+            }
+            
+            // Remove all stored rollbacks netherless they succeeded or not. If
+            // we couldn't revert them then we have no hope.
+            //
+            // Here we use no transaction cause this is a single operation.
+            provider.delete( Rollbacks.CONTENT_URI, "1", null );
+         }
+      }
+      else
+      {
+         Log.e( TAG, "Retrieving rollbacks failed" );
+         throw new RemoteException();
+      }
+   }
+   
+
+
    private boolean computeOperationsBatch( Service service,
                                            ContentProviderClient provider,
                                            RtmTimeline timeLine,
+                                           ModificationList modifications,
                                            SyncResult syncResult,
                                            Bundle extras,
                                            DirectedSyncOperations batch )
@@ -348,19 +483,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                lastSyncOut = new Date( lastSync.second );
          }
          
-         ModificationList allModifications = null;
-         
-         if ( ok )
-            allModifications = getAllModifications();
-         
-         ok = ok && allModifications != null;
-         
          // Sync RtmList
          ok = ok
             && RtmListsSync.computeSync( service,
                                          provider,
                                          timeLine,
-                                         allModifications,
+                                         modifications,
                                          lastSyncOut,
                                          syncResult,
                                          batch );
@@ -372,7 +500,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             && RtmTasksSync.computeSync( service,
                                          provider,
                                          timeLine,
-                                         allModifications,
+                                         modifications,
                                          lastSyncOut,
                                          syncResult,
                                          batch );
@@ -508,8 +636,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   private final static boolean shouldProcessRequest( Bundle bundle )
+   private final boolean shouldProcessRequest( Bundle bundle )
    {
+      if ( !Connection.isConnected( getContext() ) )
+      {
+         Log.i( TAG, "No active connection found" );
+         return false;
+      }
+      
       return ( bundle != null && ( bundle.containsKey( ContentResolver.SYNC_EXTRAS_INITIALIZE )
          || bundle.containsKey( ContentResolver.SYNC_EXTRAS_MANUAL ) || bundle.containsKey( dev.drsoran.moloko.service.sync.Constants.SYNC_EXTRAS_SCHEDULED ) ) );
    }

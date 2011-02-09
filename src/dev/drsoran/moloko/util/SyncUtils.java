@@ -44,10 +44,10 @@ import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.Constants;
-import dev.drsoran.moloko.service.sync.lists.ModificationList;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
@@ -309,8 +309,8 @@ public final class SyncUtils
       if ( timeLine == null && mergeDirection != MergeDirection.LOCAL_ONLY )
          throw new NullPointerException( "timeLine is null" );
       
-      // if BOTH we need the modifications
-      if ( modifications == null && mergeDirection == MergeDirection.BOTH )
+      // if we update the server we need the modifications
+      if ( modifications == null && mergeDirection != MergeDirection.LOCAL_ONLY )
          throw new NullPointerException( "modifications are null" );
    }
    
@@ -412,38 +412,28 @@ public final class SyncUtils
             // Check if the local value was modified
             if ( modification != null )
             {
-               // SERVER UPDATE: If the local element was modified, put the local version
-               // to the server
-               if ( properties.mergeDirection == MergeDirection.SERVER_ONLY )
-               {
-                  mergeDir = MergeResultDirection.SERVER;
-               }
-               
                // MERGE
-               else
+               final V syncedValue = modification.getSyncedValue( valueClass );
+               
+               // Check if the server value has changed compared to the last synced value.
+               if ( hasChanged( syncedValue, serverValue ) )
                {
-                  final V syncedValue = modification.getSyncedValue( valueClass );
-                  
-                  // Check if the server value has changed compared to the last synced value.
-                  if ( hasChanged( syncedValue, serverValue ) )
-                  {
-                     // CONFLICT: Local and server element has changed.
-                     // Let the modified date of the elements decide in which direction to sync.
-                     //
-                     // In case of equal dates we take the server value cause this
-                     // value we have transferred already.
-                     if ( properties.localModDate.getTime() > properties.serverModDate.getTime() )
-                        // LOCAL UPDATE: The server element was modified after the local value.
-                        mergeDir = MergeResultDirection.LOCAL;
-                     else
-                        // SERVER UPDATE: The local element was modified after the server element.
-                        mergeDir = MergeResultDirection.SERVER;
-                  }
+                  // CONFLICT: Local and server element has changed.
+                  // Let the modified date of the elements decide in which direction to sync.
+                  //
+                  // In case of equal dates we take the server value cause this
+                  // value we have transferred already.
+                  if ( properties.serverModDate.getTime() >= properties.localModDate.getTime() )
+                     // LOCAL UPDATE: The server element was modified after the local value.
+                     mergeDir = MergeResultDirection.LOCAL;
                   else
-                     // SERVER UPDATE: The server value has not been changed since last sync,
-                     // so use local modified value.
+                     // SERVER UPDATE: The local element was modified after the server element.
                      mergeDir = MergeResultDirection.SERVER;
                }
+               else
+                  // SERVER UPDATE: The server value has not been changed since last sync,
+                  // so use local modified value.
+                  mergeDir = MergeResultDirection.SERVER;
             }
             
             // LOCAL UPDATE: If the element has not locally changed, take the server version

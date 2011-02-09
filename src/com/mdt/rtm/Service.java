@@ -285,12 +285,12 @@ public interface Service
    
 
 
-   RtmTaskSeries tasks_setName( String timelineId,
-                                String listId,
-                                String taskSeriesId,
-                                String taskId,
-                                String newName,
-                                MethodCallType callType ) throws ServiceException;
+   TimeLineMethod.Result< RtmTaskSeries > tasks_setName( String timelineId,
+                                                         String listId,
+                                                         String taskSeriesId,
+                                                         String taskId,
+                                                         String newName,
+                                                         MethodCallType callType ) throws ServiceException;
    
 
 
@@ -390,7 +390,7 @@ public interface Service
    
 
 
-   void transactions_undo() throws ServiceException;
+   void transactions_undo( String timeline, String transactionId ) throws ServiceException;
    
 
 

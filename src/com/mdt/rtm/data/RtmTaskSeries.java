@@ -34,15 +34,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.lists.ModificationList;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
@@ -549,128 +550,142 @@ public class RtmTaskSeries extends RtmData implements
       switch ( mergeDirection )
       {
          case LOCAL_ONLY:
-         {
-            // Update notes
-            {
-               final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( notes.getNotes(),
-                                                                                                                                RtmTaskNote.LESS_ID );
-               final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( updateElement.notes.getNotes(),
-                                                                                             syncNotesList );
-               mergeProperties.localBuilder.add( noteOperations );
-            }
-            
-            // Update tags
-            {
-               final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( tags );
-               final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( updateElement.tags,
-                                                                                             syncList );
-               mergeProperties.localBuilder.add( syncOperations );
-            }
-            
-            // Update tasks
-            {
-               final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( tasks,
-                                                                                                                        RtmTask.LESS_ID );
-               final List< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( updateElement.tasks,
-                                                                                             syncTasksList );
-               mergeProperties.localBuilder.add( taskOperations );
-            }
-            
-            // Update participants
-            {
-               mergeProperties.localBuilder.add( participants.computeContentProviderUpdateOperation( updateElement.participants ) );
-            }
-            
-            // Update taskseries
-            {
-               SyncUtils.updateDate( created,
-                                     updateElement.created,
-                                     uri,
-                                     TaskSeries.TASKSERIES_CREATED_DATE,
-                                     mergeProperties.localBuilder );
-               
-               SyncUtils.updateDate( modified,
-                                     updateElement.modified,
-                                     uri,
-                                     TaskSeries.MODIFIED_DATE,
-                                     mergeProperties.localBuilder );
-               
-               // This can not be changed locally
-               if ( SyncUtils.hasChanged( source, updateElement.source ) )
-                  mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
-                                                                            .withValue( TaskSeries.SOURCE,
-                                                                                        updateElement.source )
-                                                                            .build() );
-            }
-         }
-            
-         case SERVER_ONLY:
+            mergeLocal( updateElement, uri, mergeProperties );
+            break;
          case BOTH:
-            // Update taskseries
-         {
-            if ( SyncUtils.MergeResultDirection.SERVER == SyncUtils.mergeModification( mergeProperties,
-                                                                                       TaskSeries.TASKSERIES_NAME,
-                                                                                       updateElement.name,
-                                                                                       this.name,
-                                                                                       String.class ) )
-            {
-               for ( RtmTask task : tasks )
-               {
-                  mergeProperties.serverBuilder.add( timeLine.tasks_setName( listId,
-                                                                             id,
-                                                                             task.getId(),
-                                                                             updateElement.name ) );
-               }
-            }
-            
-            SyncUtils.mergeModification( mergeProperties,
-                                         TaskSeries.LIST_ID,
-                                         updateElement.listId,
-                                         this.listId,
-                                         String.class );
-            
-            SyncUtils.mergeModification( mergeProperties,
-                                         TaskSeries.LOCATION_ID,
-                                         updateElement.locationId,
-                                         this.locationId,
-                                         String.class );
-            
-            SyncUtils.mergeModification( mergeProperties,
-                                         TaskSeries.URL,
-                                         updateElement.url,
-                                         this.url,
-                                         String.class );
-            
-            {
-               final MergeResultDirection mergeRes = SyncUtils.mergeModification( mergeProperties,
-                                                                                  TaskSeries.RECURRENCE,
-                                                                                  updateElement.recurrence,
-                                                                                  this.recurrence,
-                                                                                  String.class );
-               
-               // If we take the server value we must correctly set the local flags.
-               if ( mergeRes == MergeResultDirection.LOCAL )
-               {
-                  if ( TextUtils.isEmpty( updateElement.recurrence ) )
-                     mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
-                                                                               .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                                           null )
-                                                                               .build() );
-                  else if ( isEveryRecurrence != updateElement.isEveryRecurrence )
-                     mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
-                                                                               .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                                           updateElement.isEveryRecurrence
-                                                                                                                          ? 1
-                                                                                                                          : 0 )
-                                                                               .build() );
-               }
-            }
-         }
-            
+            mergeLocal( updateElement, uri, mergeProperties );
+         case SERVER_ONLY:
+            mergeServer( timeLine, updateElement, uri, mergeProperties );
             break;
       }
       
       return mergeProperties.getOperations();
+   }
+   
+
+
+   private void mergeServer( RtmTimeline timeLine,
+                             RtmTaskSeries updateElement,
+                             Uri uri,
+                             MergeProperties< RtmTaskSeries > mergeProperties )
+   {
+      if ( SyncUtils.MergeResultDirection.SERVER == SyncUtils.mergeModification( mergeProperties,
+                                                                                 TaskSeries.TASKSERIES_NAME,
+                                                                                 updateElement.name,
+                                                                                 this.name,
+                                                                                 String.class ) )
+      {
+         for ( RtmTask task : tasks )
+         {
+            mergeProperties.serverBuilder.add( timeLine.tasks_setName( listId,
+                                                                       id,
+                                                                       task.getId(),
+                                                                       updateElement.name ) );
+         }
+      }
+      
+      SyncUtils.mergeModification( mergeProperties,
+                                   TaskSeries.LIST_ID,
+                                   updateElement.listId,
+                                   this.listId,
+                                   String.class );
+      
+      SyncUtils.mergeModification( mergeProperties,
+                                   TaskSeries.LOCATION_ID,
+                                   updateElement.locationId,
+                                   this.locationId,
+                                   String.class );
+      
+      SyncUtils.mergeModification( mergeProperties,
+                                   TaskSeries.URL,
+                                   updateElement.url,
+                                   this.url,
+                                   String.class );
+      
+      {
+         final MergeResultDirection mergeRes = SyncUtils.mergeModification( mergeProperties,
+                                                                            TaskSeries.RECURRENCE,
+                                                                            updateElement.recurrence,
+                                                                            this.recurrence,
+                                                                            String.class );
+         
+         // If we take the server value we must correctly set the local flags.
+         if ( mergeRes == MergeResultDirection.LOCAL )
+         {
+            if ( TextUtils.isEmpty( updateElement.recurrence ) )
+               mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
+                                                                         .withValue( TaskSeries.RECURRENCE_EVERY,
+                                                                                     null )
+                                                                         .build() );
+            else if ( isEveryRecurrence != updateElement.isEveryRecurrence )
+               mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
+                                                                         .withValue( TaskSeries.RECURRENCE_EVERY,
+                                                                                     updateElement.isEveryRecurrence
+                                                                                                                    ? 1
+                                                                                                                    : 0 )
+                                                                         .build() );
+         }
+      }
+   }
+   
+
+
+   private void mergeLocal( RtmTaskSeries updateElement,
+                            Uri uri,
+                            MergeProperties< RtmTaskSeries > mergeProperties )
+   {
+      // Update notes
+      {
+         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( notes.getNotes(),
+                                                                                                                          RtmTaskNote.LESS_ID );
+         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( updateElement.notes.getNotes(),
+                                                                                       syncNotesList );
+         mergeProperties.localBuilder.add( noteOperations );
+      }
+      
+      // Update tags
+      {
+         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( tags );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( updateElement.tags,
+                                                                                       syncList );
+         mergeProperties.localBuilder.add( syncOperations );
+      }
+      
+      // Update tasks
+      {
+         final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( tasks,
+                                                                                                                  RtmTask.LESS_ID );
+         final List< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( updateElement.tasks,
+                                                                                       syncTasksList );
+         mergeProperties.localBuilder.add( taskOperations );
+      }
+      
+      // Update participants
+      {
+         mergeProperties.localBuilder.add( participants.computeContentProviderUpdateOperation( updateElement.participants ) );
+      }
+      
+      // Update taskseries
+      {
+         SyncUtils.updateDate( created,
+                               updateElement.created,
+                               uri,
+                               TaskSeries.TASKSERIES_CREATED_DATE,
+                               mergeProperties.localBuilder );
+         
+         SyncUtils.updateDate( modified,
+                               updateElement.modified,
+                               uri,
+                               TaskSeries.MODIFIED_DATE,
+                               mergeProperties.localBuilder );
+         
+         // This can not be changed locally
+         if ( SyncUtils.hasChanged( source, updateElement.source ) )
+            mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
+                                                                      .withValue( TaskSeries.SOURCE,
+                                                                                  updateElement.source )
+                                                                      .build() );
+      }
    }
    
 
@@ -692,20 +707,24 @@ public class RtmTaskSeries extends RtmData implements
 
 
    public IServerSyncOperation< RtmTaskSeries > computeServerUpdateOperation( RtmTimeline timeLine,
-                                                                              RtmTaskSeries localElement )
+                                                                              ModificationList modifications )
    {
       return computeMergeOperations( timeLine,
-                                     null,
-                                     localElement,
+                                     modifications,
+                                     this,
                                      MergeDirection.SERVER_ONLY ).getServerOperation();
    }
    
 
 
-   public IContentProviderSyncOperation computeRemoveModificationsOperation()
+   public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
    {
-      return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
-                                                                                                         id ) )
-                                         .build();
+      if ( modifications.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                    id ) ) )
+         return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
+                                                                                                            id ) )
+                                            .build();
+      else
+         return NoopContentProviderSyncOperation.INSTANCE;
    }
 }

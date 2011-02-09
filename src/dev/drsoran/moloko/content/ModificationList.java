@@ -20,17 +20,17 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.service.sync.lists;
+package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
 import android.net.Uri;
-import dev.drsoran.moloko.content.Modification;
 
 
 public class ModificationList implements List< Modification >
@@ -230,6 +230,14 @@ public class ModificationList implements List< Modification >
    
 
 
+   @Override
+   public String toString()
+   {
+      return impl.toString();
+   }
+   
+
+
    public Modification find( Uri entityUri, String columnName )
    {
       for ( Modification modification : impl )
@@ -240,5 +248,47 @@ public class ModificationList implements List< Modification >
       }
       
       return null;
+   }
+   
+
+
+   public boolean hasModification( Uri entityUri )
+   {
+      for ( Modification modification : impl )
+      {
+         if ( modification.getEntityUri().equals( entityUri ) )
+            return true;
+      }
+      
+      return false;
+   }
+   
+
+
+   public boolean hasModification( Uri entityUri, String columnName )
+   {
+      for ( Modification modification : impl )
+      {
+         if ( modification.getEntityUri().equals( entityUri )
+            && modification.getColName().equals( columnName ) )
+            return true;
+      }
+      
+      return false;
+   }
+   
+
+
+   public List< Modification > getModifications( Uri entityUri )
+   {
+      List< Modification > result = new LinkedList< Modification >();
+      
+      for ( Modification modification : impl )
+      {
+         if ( modification.getEntityUri().equals( entityUri ) )
+            result.add( modification );
+      }
+      
+      return Collections.unmodifiableList( result );
    }
 }

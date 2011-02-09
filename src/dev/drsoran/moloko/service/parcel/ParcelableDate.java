@@ -80,6 +80,14 @@ public class ParcelableDate implements Parcelable
    
 
 
+   @Override
+   public String toString()
+   {
+      return date.toString();
+   }
+   
+
+
    public int describeContents()
    {
       return 0;

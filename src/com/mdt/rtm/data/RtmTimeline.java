@@ -81,7 +81,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskSeries >()
       {
          @Override
-         public RtmTaskSeries call( MethodCallType callType ) throws ServiceException
+         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
          {
             return service.tasks_setName( id,
                                           listId,

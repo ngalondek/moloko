@@ -43,6 +43,8 @@ public class Modification implements Comparable< Modification >
    
    private final boolean synedValueSet;
    
+   private final boolean persistent;
+   
    
    private final static class SortColumnName implements
             Comparator< Modification >
@@ -58,7 +60,8 @@ public class Modification implements Comparable< Modification >
    
 
    private Modification( String id, Uri entityUri, String colName,
-      String newValue, String syncedValue, boolean syncedValueSet )
+      String newValue, String syncedValue, boolean syncedValueSet,
+      boolean persistent )
    {
       this.id = id;
       this.entityUri = entityUri;
@@ -66,6 +69,7 @@ public class Modification implements Comparable< Modification >
       this.newValue = newValue;
       this.syncedValue = syncedValue;
       this.synedValueSet = syncedValueSet;
+      this.persistent = persistent;
    }
    
 
@@ -122,6 +126,13 @@ public class Modification implements Comparable< Modification >
    public boolean isSyncedValueSet()
    {
       return synedValueSet;
+   }
+   
+
+
+   public boolean isPersistent()
+   {
+      return persistent;
    }
    
 
@@ -187,6 +198,7 @@ public class Modification implements Comparable< Modification >
                                colName,
                                toString( newValue ),
                                toString( syncedValue ),
+                               true,
                                true );
    }
    
@@ -201,6 +213,22 @@ public class Modification implements Comparable< Modification >
                                colName,
                                toString( newValue ),
                                null,
+                               false,
+                               true );
+   }
+   
+
+
+   public final static < T > Modification newNonPersistentModification( Uri entityUri,
+                                                                        String colName,
+                                                                        T newValue )
+   {
+      return new Modification( null,
+                               entityUri,
+                               colName,
+                               toString( newValue ),
+                               null,
+                               false,
                                false );
    }
    

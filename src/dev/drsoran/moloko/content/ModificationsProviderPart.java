@@ -320,28 +320,31 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                   {
                      final Uri entityUri = modification.getEntityUri();
                      
-                     // Acquire access to the element to be modified.
-                     
-                     // Check if modification already exists
-                     final Modification existingMod = getModification( client,
-                                                                       entityUri,
-                                                                       modification.getColName() );
-                     if ( existingMod != null )
+                     // Check id the modification should be stored or simply modify
+                     // the entity.
+                     if ( modification.isPersistent() )
                      {
-                        // Update the modification with the new value.
-                        operations.add( ContentProviderOperation.newUpdate( Modifications.CONTENT_URI )
-                                                                .withValue( Modifications.NEW_VALUE,
-                                                                            modification.getNewValue() )
-                                                                .build() );
-                     }
-                     else
-                     {
-                        // Insert a new modification.
-                        operations.add( ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
-                                                                .withValues( getContentValues( contentResolver,
-                                                                                               modification,
-                                                                                               true ) )
-                                                                .build() );
+                        // Check if modification already exists
+                        final Modification existingMod = getModification( client,
+                                                                          entityUri,
+                                                                          modification.getColName() );
+                        if ( existingMod != null )
+                        {
+                           // Update the modification with the new value.
+                           operations.add( ContentProviderOperation.newUpdate( Modifications.CONTENT_URI )
+                                                                   .withValue( Modifications.NEW_VALUE,
+                                                                               modification.getNewValue() )
+                                                                   .build() );
+                        }
+                        else
+                        {
+                           // Insert a new modification.
+                           operations.add( ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
+                                                                   .withValues( getContentValues( contentResolver,
+                                                                                                  modification,
+                                                                                                  true ) )
+                                                                   .build() );
+                        }
                      }
                      
                      // Update the entity itself

@@ -27,9 +27,9 @@ import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 
 public final class TypedDirectedSyncOperations< T extends IServerSyncable< T >>
 {
-   private ServerSyncOperation.Builder< T > serverOperationBuilder;
+   private final ServerSyncOperation.Builder< T > serverOperationBuilder;
    
-   private ContentProviderSyncOperation.Builder localOperationBuilder;
+   private final ContentProviderSyncOperation.Builder localOperationBuilder;
    
    
 

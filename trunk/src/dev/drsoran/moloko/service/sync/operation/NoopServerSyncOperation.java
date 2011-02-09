@@ -25,11 +25,16 @@ package dev.drsoran.moloko.service.sync.operation;
 import java.util.Collections;
 import java.util.List;
 
+import com.mdt.rtm.Service;
+import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 
+import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 
-public final class NoopServerSyncOperation< T > implements
-         IServerSyncOperation< T >, INoopSyncOperation
+
+public final class NoopServerSyncOperation< T extends IServerSyncable< T >>
+         implements IServerSyncOperation< T >, INoopSyncOperation
 {
    @SuppressWarnings( "unchecked" )
    public final static NoopServerSyncOperation INSTANCE = new NoopServerSyncOperation();
@@ -55,4 +60,31 @@ public final class NoopServerSyncOperation< T > implements
       return Collections.emptyList();
    }
    
+
+
+   public IContentProviderSyncOperation execute() throws ServiceException
+   {
+      return NoopContentProviderSyncOperation.INSTANCE;
+   }
+   
+
+
+   public List< TimeLineMethod.Transaction > revert( Service service )
+   {
+      return Collections.emptyList();
+   }
+   
+
+
+   public T getResultElement()
+   {
+      return null;
+   }
+   
+
+
+   public IContentProviderSyncOperation removeModification( ModificationList modifications )
+   {
+      return NoopContentProviderSyncOperation.INSTANCE;
+   }
 }

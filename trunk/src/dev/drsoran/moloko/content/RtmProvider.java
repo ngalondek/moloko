@@ -127,7 +127,8 @@ public class RtmProvider extends ContentProvider
        new ParticipantsProviderPart( dbHelper ),
        new RtmSettingsProviderPart( dbHelper ),
        new SyncProviderPart( dbHelper ),
-       new ModificationsProviderPart( dbHelper ) } ) );
+       new ModificationsProviderPart( dbHelper ),
+       new RollbacksProviderPart( dbHelper ) } ) );
       
       parts.addAll( mutableParts );
       

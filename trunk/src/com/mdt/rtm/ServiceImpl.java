@@ -648,12 +648,12 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmTaskSeries tasks_setName( String timelineId,
-                                       String listId,
-                                       String taskSeriesId,
-                                       String taskId,
-                                       String newName,
-                                       MethodCallType methodCallType ) throws ServiceException
+   public TimeLineMethod.Result< RtmTaskSeries > tasks_setName( String timelineId,
+                                                                String listId,
+                                                                String taskSeriesId,
+                                                                String taskId,
+                                                                String newName,
+                                                                MethodCallType methodCallType ) throws ServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.setName" ),
@@ -671,10 +671,14 @@ public class ServiceImpl implements Service
       if ( methodCallType == MethodCallType.WITH_RESULT )
       {
          RtmTaskList rtmTaskList = new RtmTaskList( elt );
-         return findTask( taskSeriesId, taskId, rtmTaskList );
+         return TimeLineMethod.newResult( elt,
+                                          timelineId,
+                                          findTask( taskSeriesId,
+                                                    taskId,
+                                                    rtmTaskList ) );
       }
-      
-      return null;
+      else
+         return TimeLineMethod.newResult( elt, timelineId );
    }
    
 
@@ -938,9 +942,13 @@ public class ServiceImpl implements Service
    
 
 
-   public void transactions_undo()
+   public void transactions_undo( String timeline, String transactionId ) throws ServiceException
    {
-      throw new UnsupportedOperationException( "Not supported yet." );
+      invoker.invoke( new Param( "method", "rtm.transactions.undo" ),
+                      new Param( "auth_token", currentAuthToken ),
+                      new Param( "api_key", applicationInfo.getApiKey() ),
+                      new Param( "timeline", timeline ),
+                      new Param( "transaction_id ", transactionId ) );
    }
    
 
@@ -953,6 +961,7 @@ public class ServiceImpl implements Service
                                                   currentAuthToken ),
                                        new Param( "api_key",
                                                   applicationInfo.getApiKey() ) );
+      
       List< RtmLocation > locations = new ArrayList< RtmLocation >();
       for ( Element child : RtmData.children( result, "location" ) )
       {

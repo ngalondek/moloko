@@ -24,11 +24,32 @@ package dev.drsoran.moloko.service.sync.operation;
 
 import java.util.List;
 
+import com.mdt.rtm.Service;
+import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 
+import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 
-public interface IServerSyncOperation< T > extends ISyncOperation
+
+public interface IServerSyncOperation< T extends IServerSyncable< T > > extends
+         ISyncOperation
 {
+   public IContentProviderSyncOperation execute() throws ServiceException;
    
+
+
+   public List< TimeLineMethod.Transaction > revert( Service service );
+   
+
+
+   public IContentProviderSyncOperation removeModification( ModificationList modifications );
+   
+
+
    public List< TimeLineMethod< T > > getMethods();
+   
+
+
+   public T getResultElement();
 }

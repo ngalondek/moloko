@@ -1083,14 +1083,66 @@ public class Rtm
          + "/" + PATH );
       
       /**
-       * The MIME type of {@link #CONTENT_URI} providing the settings.
+       * The MIME type of {@link #CONTENT_URI} providing the modifications.
        */
       public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.modifictaion";
       
       /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of modifications.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.modifications";
+      
+      public static final String DEFAULT_SORT_ORDER = null;
+   }
+   
+
+   protected static interface RollbacksColumns
+   {
+      /**
+       * The RTM timeline ID of the rollback.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String TIMELINE_ID = "timeline_id";
+      
+      /**
+       * The RTM transaction ID in the timeline of the rollback.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String TRANSACTION_ID = "transaction_id";
+      
+      /**
+       * The point of time when the rollback was inserted.
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String TIMESTAMP = "timestamp";
+   }
+   
+
+   public static final class Rollbacks implements BaseColumns, RollbacksColumns
+   {
+      public final static String PATH = "rollbacks";
+      
+      /**
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing the rollback.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.rollback";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of rollbacks.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.rollbacks";
       
       public static final String DEFAULT_SORT_ORDER = null;
    }

@@ -344,10 +344,10 @@ public class TaskEditActivity extends Activity
          if ( modifications.size() > 0 )
          {
             // set the task modification time to now
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.MODIFIED_DATE,
-                                                             System.currentTimeMillis() ) );
+            modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                                    task.getTaskSeriesId() ),
+                                                                          TaskSeries.MODIFIED_DATE,
+                                                                          System.currentTimeMillis() ) );
             try
             {
                if ( new ApplyModificationsTask().execute( (Void) null ).get() )

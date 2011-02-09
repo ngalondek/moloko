@@ -38,10 +38,12 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
-import dev.drsoran.moloko.service.sync.lists.ModificationList;
+import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
+import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.SyncUtils;
 
@@ -104,14 +106,28 @@ public final class RtmTasksSync
          return false;
       }
       
-      final DirectedSyncOperations syncOperations = SyncDiffer.twoWaydiff( server_Tasks,
-                                                                           local_Tasks,
-                                                                           RtmTaskSeries.LESS_ID,
-                                                                           modifications,
-                                                                           timeline,
-                                                                           lastSyncOut,
-                                                                           lastSyncOut == null );
-      operations.addAll( syncOperations );
+      // Check if we have server write access
+      if ( timeline != null )
+      {
+         // Do a 2-way diff
+         final DirectedSyncOperations syncOperations = SyncDiffer.twoWaydiff( server_Tasks,
+                                                                              local_Tasks,
+                                                                              RtmTaskSeries.LESS_ID,
+                                                                              modifications,
+                                                                              timeline,
+                                                                              lastSyncOut,
+                                                                              lastSyncOut == null );
+         operations.addAll( syncOperations );
+      }
+      else
+      {
+         // Only sync incoming
+         final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( local_Tasks,
+                                                                                                                               RtmTaskSeries.LESS_ID );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Tasks,
+                                                                                       local_SyncList );
+         operations.getLocalOperations().addAll( syncOperations );
+      }
       
       return true;
    }

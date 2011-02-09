@@ -129,7 +129,7 @@ public class Invoker
     * Simple {@link HttpEntityWrapper} that inflates the wrapped {@link HttpEntity} by passing it through
     * {@link GZIPInputStream}.
     * 
-    * Took from iosched - Google I/O Schedule App for Android
+    * Taken from iosched - Google I/O Schedule App for Android
     * http://code.google.com/p/iosched/source/browse/trunk/src/com/google/android/apps/iosched/service/SyncService.java
     */
    private static class InflatingEntity extends HttpEntityWrapper
@@ -373,8 +373,7 @@ public class Invoker
             {
                Node dataElt = wrapperElt.getFirstChild();
                while ( dataElt != null
-                  && ( dataElt.getNodeType() != Node.ELEMENT_NODE || dataElt.getNodeName()
-                                                                            .equals( "transaction" ) == true ) )
+                  && ( dataElt.getNodeType() != Node.ELEMENT_NODE ) )
                {
                   try
                   {

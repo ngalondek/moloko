@@ -26,12 +26,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import android.util.Log;
+
+import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.Service.MethodCallType;
 
+import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection;
 
@@ -39,6 +44,10 @@ import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection;
 public class ServerSyncOperation< T extends IServerSyncable< T > > implements
          IServerSyncOperation< T >
 {
+   private final static String TAG = "Moloko."
+      + ServerSyncOperation.class.getSimpleName();
+   
+   
    public static class Builder< T extends IServerSyncable< T >>
    {
       private final Op operationType;
@@ -139,6 +148,10 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
    
    private final List< TimeLineMethod< T > > serviceMethods;
    
+   private T resultElement;
+   
+   private List< TimeLineMethod.Transaction > transactions;
+   
    
 
    private ServerSyncOperation( Builder< T > builder )
@@ -151,29 +164,71 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
 
    public IContentProviderSyncOperation execute() throws ServiceException
    {
-      T element = null;
+      transactions = new LinkedList< TimeLineMethod.Transaction >();
       
       for ( Iterator< TimeLineMethod< T > > i = serviceMethods.iterator(); i.hasNext(); )
       {
          final TimeLineMethod< T > method = i.next();
          
-         // We retrieve the result only for the last element.
-         element = method.call( i.hasNext() ? MethodCallType.NO_RESULT
-                                           : MethodCallType.WITH_RESULT );
+         if ( i.hasNext() )
+            // We retrieve the result only for the last element.
+            transactions.add( method.call( MethodCallType.NO_RESULT ).transaction );
+         else
+         {
+            final TimeLineMethod.Result< T > res = method.call( MethodCallType.WITH_RESULT );
+            resultElement = res.element;
+            transactions.add( res.transaction );
+         }
       }
       
-      if ( element != null )
+      if ( resultElement == null )
+         throw new IllegalStateException( "Service method did not produced a result element" );
+      
+      return resultElement.computeMergeOperations( null,
+                                                   null,
+                                                   resultElement,
+                                                   MergeDirection.LOCAL_ONLY )
+                          .getLocalOperation();
+   }
+   
+
+
+   public List< TimeLineMethod.Transaction > revert( Service service )
+   {
+      if ( transactions == null )
+         throw new IllegalStateException( "Service method not yet executed" );
+      
+      for ( Iterator< TimeLineMethod.Transaction > i = transactions.iterator(); i.hasNext(); )
       {
-         return element.computeMergeOperations( null,
-                                                null,
-                                                element,
-                                                MergeDirection.LOCAL_ONLY )
-                       .getLocalOperation();
+         final TimeLineMethod.Transaction transaction = i.next();
+         
+         try
+         {
+            if ( transaction.undoable )
+               service.transactions_undo( transaction.timelineId,
+                                          transaction.transactionId );
+            
+            // if the transaction could be reverted, we remove it from the list.
+            i.remove();
+         }
+         catch ( ServiceException e )
+         {
+            Log.e( TAG, "Error reverting transaction", e );
+         }
       }
-      else
-      {
-         return null;
-      }
+      
+      // Return a list of remaining transactions which could not be reverted.
+      return Collections.unmodifiableList( transactions );
+   }
+   
+
+
+   public IContentProviderSyncOperation removeModification( ModificationList modifications )
+   {
+      if ( resultElement == null )
+         throw new IllegalStateException( "Service method not yet executed" );
+      
+      return resultElement.computeRemoveModificationsOperation( modifications );
    }
    
 
@@ -188,6 +243,13 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
    public List< TimeLineMethod< T >> getMethods()
    {
       return this.serviceMethods;
+   }
+   
+
+
+   public T getResultElement()
+   {
+      return resultElement;
    }
    
 

@@ -202,7 +202,7 @@ public class RtmTaskList extends RtmData
    public String toString()
    {
       return "RtmTaskList<" + id + ",#" + series.size()
-         + ( ( current != null ) ? "," + current.getDate().toGMTString() : "" )
+         + ( ( current != null ) ? "," + current.getDate() : "" )
          + ">";
    }
 }

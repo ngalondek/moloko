@@ -163,6 +163,7 @@ public final class SyncUtils
       final Account account = AccountUtils.getRtmAccount( context );
       
       return account != null
+         && !ContentResolver.isSyncPending( account, Rtm.AUTHORITY )
          && ContentResolver.isSyncActive( account, Rtm.AUTHORITY );
    }
    

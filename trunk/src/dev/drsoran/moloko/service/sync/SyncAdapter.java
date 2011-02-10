@@ -194,12 +194,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                         
                         // Apply server operations at first cause as a result of these we
                         // have to update local elements.
-                        final IContentProviderSyncOperation localUpdates = applyServerOperations( service,
-                                                                                                  contentProvider,
-                                                                                                  batch.getServerOperations(),
-                                                                                                  modifictaions,
-                                                                                                  syncResult );
-                        batch.getLocalOperations().add( localUpdates );
+                        final List< IContentProviderSyncOperation > localUpdates = applyServerOperations( service,
+                                                                                                          contentProvider,
+                                                                                                          batch.getServerOperations(),
+                                                                                                          modifictaions,
+                                                                                                          syncResult );
+                        batch.getLocalOperations().addAll( localUpdates );
                         
                         final TransactionalAccess transactionalAccess = contentProvider.newTransactionalAccess();
                         transactionalAccess.beginTransaction();
@@ -317,20 +317,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   private IContentProviderSyncOperation applyServerOperations( Service service,
-                                                                RtmProvider rtmProvider,
-                                                                List< ? extends IServerSyncOperation< ? > > serverOps,
-                                                                ModificationList modifications,
-                                                                SyncResult syncResult ) throws ServiceException
+   private List< IContentProviderSyncOperation > applyServerOperations( Service service,
+                                                                        RtmProvider rtmProvider,
+                                                                        List< ? extends IServerSyncOperation< ? > > serverOps,
+                                                                        ModificationList modifications,
+                                                                        SyncResult syncResult ) throws ServiceException
    {
-      final ContentProviderSyncOperation.Builder localOpsBuilder = ContentProviderSyncOperation.newUpdate();
+      final ContentProviderSyncOperation.Builder localUpdatesBuilder = ContentProviderSyncOperation.newUpdate();
+      final ContentProviderSyncOperation.Builder localDeletesBuilder = ContentProviderSyncOperation.newDelete();
       
       for ( IServerSyncOperation< ? extends IServerSyncable< ? > > serverSyncOperation : serverOps )
       {
          try
          {
             // Execute the server operation and retrieve the local updates as result.
-            localOpsBuilder.add( serverSyncOperation.execute() );
+            localUpdatesBuilder.add( serverSyncOperation.execute() );
          }
          catch ( ServiceException e )
          {
@@ -382,10 +383,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          // Remove possible modifications which lead to the server update after
          // successfully applying the server operation.
-         localOpsBuilder.add( serverSyncOperation.removeModification( modifications ) );
+         localDeletesBuilder.add( serverSyncOperation.removeModification( modifications ) );
       }
       
-      return localOpsBuilder.build();
+      // Here we need a list cause we updates and deletes
+      final List< IContentProviderSyncOperation > localOps = new ArrayList< IContentProviderSyncOperation >( 2 );
+      localOps.add( localUpdatesBuilder.build() );
+      localOps.add( localDeletesBuilder.build() );
+      
+      return localOps;
    }
    
 

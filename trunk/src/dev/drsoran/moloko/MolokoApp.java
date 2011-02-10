@@ -92,7 +92,7 @@ public class MolokoApp extends org.acra.CrashReportingApplication implements
       catch ( NoSuchMethodException e )
       {
          Log.e( TAG, Strings.EMPTY_STRING, e );
-         throw new IllegalStateException();
+         throw new IllegalStateException( e );
       }
       
       SETTINGS = new Settings( this );
@@ -284,8 +284,7 @@ public class MolokoApp extends org.acra.CrashReportingApplication implements
    
 
 
-   @SuppressWarnings( "unchecked" )
-   private final static Method findMethod( Class cls, String name ) throws NoSuchMethodException
+   private final static < T > Method findMethod( Class< T > cls, String name ) throws NoSuchMethodException
    {
       Method method = null;
       
@@ -306,17 +305,15 @@ public class MolokoApp extends org.acra.CrashReportingApplication implements
    
    private final Handler handler = new Handler()
    {
-      
-      @SuppressWarnings( "unchecked" )
       @Override
       public void handleMessage( Message msg )
       {
          boolean handled = false;
-         if ( msg.obj instanceof ListenerList.MessgageObject )
+         if ( msg.obj instanceof ListenerList.MessgageObject< ? > )
          {
             handled = true;
             
-            final ListenerList.MessgageObject msgObj = (MessgageObject) msg.obj;
+            final ListenerList.MessgageObject< ? > msgObj = (MessgageObject< ? >) msg.obj;
             
             if ( msgObj.type.getName()
                             .equals( IOnTimeChangedListener.class.getName() ) )

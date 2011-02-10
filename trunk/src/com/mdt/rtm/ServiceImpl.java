@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -667,40 +668,11 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      
-      if ( methodCallType == MethodCallType.WITH_RESULT )
-      {
-         RtmTaskList rtmTaskList = new RtmTaskList( elt );
-         return TimeLineMethod.newResult( elt,
-                                          timelineId,
-                                          findTask( taskSeriesId,
-                                                    taskId,
-                                                    rtmTaskList ) );
-      }
-      else
-         return TimeLineMethod.newResult( elt, timelineId );
-   }
-   
-
-
-   private RtmTaskSeries findTask( String taskSeriesId,
-                                   String taskId,
-                                   RtmTaskList rtmTaskList )
-   {
-      for ( RtmTaskSeries series : rtmTaskList.getSeries() )
-      {
-         if ( series.getId().equals( taskSeriesId ) )
-         {
-            final List< RtmTask > tasks = series.getTasks();
-            
-            for ( RtmTask rtmTask : tasks )
-            {
-               if ( rtmTask.getId().equals( taskId ) )
-                  return series;
-            }
-         }
-      }
-      return null;
+      return newTaskResult( timelineId,
+                            taskSeriesId,
+                            taskId,
+                            methodCallType,
+                            elt );
    }
    
 
@@ -968,6 +940,57 @@ public class ServiceImpl implements Service
          locations.add( new RtmLocation( child ) );
       }
       return locations;
+   }
+   
+
+
+   private final static TimeLineMethod.Result< RtmTaskSeries > newTaskResult( String timelineId,
+                                                                              String taskSeriesId,
+                                                                              String taskId,
+                                                                              MethodCallType methodCallType,
+                                                                              final Element elt ) throws ServiceException
+   {
+      if ( methodCallType == MethodCallType.WITH_RESULT )
+      {
+         final Node node = elt.getNextSibling();
+         if ( node != null && node.getNodeType() == Node.ELEMENT_NODE )
+         {
+            final RtmTaskList rtmTaskList = new RtmTaskList( (Element) elt.getNextSibling() );
+            return TimeLineMethod.newResult( elt,
+                                             timelineId,
+                                             findTask( taskSeriesId,
+                                                       taskId,
+                                                       rtmTaskList ) );
+         }
+         else
+         {
+            throw new ServiceInternalException( "No element node in response" );
+         }
+      }
+      else
+         return TimeLineMethod.newResult( elt, timelineId );
+   }
+   
+
+
+   private final static RtmTaskSeries findTask( String taskSeriesId,
+                                                String taskId,
+                                                RtmTaskList rtmTaskList )
+   {
+      for ( RtmTaskSeries series : rtmTaskList.getSeries() )
+      {
+         if ( series.getId().equals( taskSeriesId ) )
+         {
+            final List< RtmTask > tasks = series.getTasks();
+            
+            for ( RtmTask rtmTask : tasks )
+            {
+               if ( rtmTask.getId().equals( taskId ) )
+                  return series;
+            }
+         }
+      }
+      return null;
    }
    
 }

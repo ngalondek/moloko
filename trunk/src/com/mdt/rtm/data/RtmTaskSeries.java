@@ -550,12 +550,10 @@ public class RtmTaskSeries extends RtmData implements
       switch ( mergeDirection )
       {
          case LOCAL_ONLY:
-            mergeLocal( updateElement, uri, mergeProperties );
-            break;
          case BOTH:
             mergeLocal( updateElement, uri, mergeProperties );
          case SERVER_ONLY:
-            mergeServer( timeLine, updateElement, uri, mergeProperties );
+            mergeCommon( timeLine, updateElement, uri, mergeProperties );
             break;
       }
       
@@ -564,7 +562,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private void mergeServer( RtmTimeline timeLine,
+   private void mergeCommon( RtmTimeline timeLine,
                              RtmTaskSeries updateElement,
                              Uri uri,
                              MergeProperties< RtmTaskSeries > mergeProperties )

@@ -130,6 +130,7 @@
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manual</string>
    <string name="phr_password_set">set</string>
+   <string name="phr_loading">Loading...</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>

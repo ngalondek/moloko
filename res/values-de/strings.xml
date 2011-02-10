@@ -90,6 +90,7 @@
    <string name="phr_off">Aus</string>
    <string name="phr_manuell">Manuell</string>
    <string name="phr_password_set">gesetzt</string>
+   <string name="phr_loading">Lade...</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -162,7 +163,7 @@
       <string name="task_edit_dlg_save_task">Speichere Änderungen...</string>
 		
    <!-- TaskLists activity -->
-   <string name="tasklists_no_lists">Es existieren kein Listen</string>
+   <string name="tasklists_no_lists">Es existieren keine Listen</string>
    <string name="tasklists_child_due_today">%1$s heute fällig</string>
    <string name="tasklists_child_due_tomorrow">%1$s morgen fällig</string>
    <string name="tasklists_child_overdue">%1$s überfällig</string>

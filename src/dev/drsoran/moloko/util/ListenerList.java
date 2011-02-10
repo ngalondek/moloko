@@ -25,9 +25,10 @@ package dev.drsoran.moloko.util;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.util.Log;
 
@@ -40,7 +41,7 @@ public class ListenerList< T >
    public final Method method;
    
    
-   public static class MessgageObject< T >
+   public final static class MessgageObject< T >
    {
       public final Class< T > type;
       
@@ -191,7 +192,7 @@ public class ListenerList< T >
    // listener
    // with different mask. In these cases the listener gets notified multiple
    // times.
-   private final ArrayList< ListenerEntry > listeners = new ArrayList< ListenerEntry >();
+   private final List< ListenerEntry > listeners = new CopyOnWriteArrayList< ListenerEntry >();
    
    
 
@@ -226,15 +227,13 @@ public class ListenerList< T >
    {
       for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
       {
-         ListenerEntry entry = i.next();
+         final ListenerEntry entry = i.next();
          
          // Check if we have a dead entry
          if ( entry.isDead() )
             i.remove();
          else
-         {
             entry.notifyEmpty();
-         }
       }
    }
    
@@ -244,15 +243,13 @@ public class ListenerList< T >
    {
       for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
       {
-         ListenerEntry entry = i.next();
+         final ListenerEntry entry = i.next();
          
          // Check if we have a dead entry
          if ( entry.isDead() )
             i.remove();
          else if ( entry.matches( mask ) )
-         {
             entry.notify( mask );
-         }
       }
    }
    
@@ -264,7 +261,7 @@ public class ListenerList< T >
       {
          for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
          {
-            ListenerEntry entry = i.next();
+            final ListenerEntry entry = i.next();
             
             // Check if we have a dead entry
             if ( entry.isDead() )
@@ -287,13 +284,11 @@ public class ListenerList< T >
       {
          for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
          {
-            ListenerEntry entry = i.next();
+            final ListenerEntry entry = i.next();
             
             // Check if we have a dead entry
             if ( !entry.notifyIfMatches( mask, oldValues ) )
-            {
                i.remove();
-            }
          }
       }
    }

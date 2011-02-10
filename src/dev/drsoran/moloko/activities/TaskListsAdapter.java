@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
@@ -74,7 +75,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    
 
    public TaskListsAdapter( Context context, int groupId, int childId,
-      ArrayList< RtmListWithTaskCount > lists )
+      List< RtmListWithTaskCount > lists )
    {
       super();
       
@@ -85,7 +86,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       this.groupId = groupId;
       this.childId = childId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-      this.lists = lists;
+      this.lists = new ArrayList< RtmListWithTaskCount >( lists );
    }
    
 

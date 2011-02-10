@@ -23,13 +23,17 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.HashMap;
+import java.util.List;
 
 import android.app.ExpandableListActivity;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.ContentObserver;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.AsyncTask.Status;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,19 +59,63 @@ import dev.drsoran.rtm.RtmSmartFilter;
 public class TaskListsActivity extends ExpandableListActivity implements
          IOnSettingsChangedListener, OnGroupClickListener
 {
-   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + TaskListsActivity.class.getSimpleName();
+   
+   
+   private final class AsyncQueryLists extends
+            AsyncTask< ContentResolver, Void, List< RtmListWithTaskCount > >
+   {
+      
+      @Override
+      protected List< RtmListWithTaskCount > doInBackground( ContentResolver... params )
+      {
+         final ContentProviderClient client = params[ 0 ].acquireContentProviderClient( ListOverviews.CONTENT_URI );
+         
+         if ( client != null )
+         {
+            final List< RtmListWithTaskCount > res = ListOverviewsProviderPart.getListsOverview( client,
+                                                                                                 null );
+            client.release();
+            return res;
+         }
+         
+         return null;
+      }
+      
+
+
+      @Override
+      protected void onPostExecute( List< RtmListWithTaskCount > result )
+      {
+         final TaskListsActivity activity = TaskListsActivity.this;
+         
+         activity.getExpandableListView()
+                 .setEmptyView( activity.findViewById( R.id.tasklists_activity_no_lists ) );
+         activity.setListAdapter( new TaskListsAdapter( activity,
+                                                        R.layout.tasklists_activity_group,
+                                                        R.layout.tasklists_activity_child,
+                                                        result ) );
+      }
+   }
    
    private final Runnable queryListsRunnable = new Runnable()
    {
       public void run()
       {
-         TaskListsActivity.this.queryLists();
+         if ( asyncQueryLists.getStatus() != AsyncTask.Status.FINISHED )
+         {
+            Log.w( TAG, "Canceled AsyncQueryLists task." );
+            asyncQueryLists.cancel( true );
+         }
+         
+         asyncQueryLists.execute( getContentResolver() );
       }
    };
    
    private ContentObserver dbObserver;
+   
+   private final AsyncQueryLists asyncQueryLists = new AsyncQueryLists();
    
    
    protected static class OptionsMenu
@@ -128,7 +176,18 @@ public class TaskListsActivity extends ExpandableListActivity implements
       ListOverviewsProviderPart.registerContentObserver( this, dbObserver );
       
       if ( !( getExpandableListAdapter() instanceof TaskListsAdapter ) )
-         queryLists();
+         asyncQueryLists.execute( getContentResolver() );
+   }
+   
+
+
+   @Override
+   protected void onStop()
+   {
+      super.onStop();
+      
+      if ( asyncQueryLists.getStatus() != Status.FINISHED )
+         asyncQueryLists.cancel( true );
    }
    
 
@@ -314,7 +373,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
-      new Handler().post( new Runnable()
+      getExpandableListView().getHandler().post( new Runnable()
       {
          public void run()
          {
@@ -353,23 +412,6 @@ public class TaskListsActivity extends ExpandableListActivity implements
          intent.putExtra( AbstractTasksListActivity.FILTER, filter );
          
          startActivity( intent );
-      }
-   }
-   
-
-
-   private void queryLists()
-   {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( ListOverviews.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         setListAdapter( new TaskListsAdapter( this,
-                                               R.layout.tasklists_activity_group,
-                                               R.layout.tasklists_activity_child,
-                                               ListOverviewsProviderPart.getListsOverview( client,
-                                                                                           null ) ) );
-         client.release();
       }
    }
    

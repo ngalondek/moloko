@@ -25,6 +25,7 @@ package dev.drsoran.moloko.activities;
 import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -78,24 +79,9 @@ public class TasksListActivity extends AbstractTasksListActivity implements
 
 
    @Override
-   protected void fillList()
+   protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
+                                                  Bundle configuration )
    {
-      final Bundle configuration = getIntent().getExtras();
-      
-      final String title = configuration.getString( TITLE );
-      
-      final int titleIconId = configuration.getInt( TITLE_ICON, -1 );
-      
-      if ( title != null )
-      {
-         UIUtils.setTitle( this, title, titleIconId );
-      }
-      else
-      {
-         UIUtils.setTitle( this, getString( R.string.taskslist_titlebar,
-                                            getString( R.string.app_name ) ) );
-      }
-      
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
       
       if ( client != null )
@@ -112,35 +98,64 @@ public class TasksListActivity extends AbstractTasksListActivity implements
             {
                // TODO: Show error if eval of filter failed
                // RETURN: evaluation failed
-               return;
+               return null;
             }
          }
          else
          {
             // TODO: Show error if no filter
             // RETURN: no filter
-            return;
+            return null;
          }
+         
+         // Don't call getTaskSort() cause this runs not in the UI thread.
+         final int taskSort = configuration.getInt( TASK_SORT_ORDER,
+                                                    Settings.TASK_SORT_DEFAULT );
          
          final List< Task > tasks = TasksProviderPart.getTasks( client,
                                                                 evaluatedFilter,
-                                                                Settings.resolveTaskSortToSqlite( getTaskSort() ) );
+                                                                Settings.resolveTaskSortToSqlite( taskSort ) );
          client.release();
          
          // TODO: Handle null. Show error?
-         if ( tasks != null )
-         {
-            setListAdapter( new TasksListAdapter( this,
-                                                  R.layout.taskslist_activity_listitem,
-                                                  ListTask.fromTaskList( tasks ),
-                                                  smartFilter ) );
-            
-            switchEmptyView( emptyListView );
-         }
+         return new AsyncFillListResult( ListTask.fromTaskList( tasks ),
+                                         smartFilter,
+                                         configuration );
       }
       else
       {
          LogUtils.logDBError( this, TAG, "Tasks" );
+         return null;
+      }
+   }
+   
+
+
+   @Override
+   protected void setTasksResult( AsyncFillListResult result )
+   {
+      switchEmptyView( emptyListView );
+      
+      if ( result != null )
+      {
+         final String title = result.configuration.getString( TITLE );
+         
+         final int titleIconId = result.configuration.getInt( TITLE_ICON, -1 );
+         
+         if ( title != null )
+         {
+            UIUtils.setTitle( this, title, titleIconId );
+         }
+         else
+         {
+            UIUtils.setTitle( this, getString( R.string.taskslist_titlebar,
+                                               getString( R.string.app_name ) ) );
+         }
+         
+         setListAdapter( new TasksListAdapter( this,
+                                               R.layout.taskslist_activity_listitem,
+                                               result.tasks,
+                                               result.filter ) );
       }
    }
    
@@ -149,7 +164,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    @Override
    protected void handleIntent( Intent intent )
    {
-      fillList();
+      fillListAsync();
    }
    
 

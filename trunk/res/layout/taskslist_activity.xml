@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
-      free software: you can redistribute it and/or modify it under the terms of
-      the GNU General Public License as published by the Free Software
-      Foundation, either version 3 of the License, or (at your option) any later
-      version. Moloko is distributed in the hope that it will be useful, but
-      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-      for more details. You should have received a copy of the GNU General
-      Public License along with Moloko. If not, see
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
       implementation
    -->
@@ -28,8 +29,8 @@
       moloko:showButton="home|search" />
 
    <!--
-      The frame layout is here since we will be showing either the empty view or
-      the list view.
+      The frame layout is here since we will be showing either the empty
+      view or the list view.
    -->
    <FrameLayout
       android:layout_width="fill_parent"
@@ -43,7 +44,7 @@
          android:layout_height="fill_parent" />
 
       <TextView
-         android:id="@+id/empty"
+         android:id="@+id/taskslist_activity_no_elements"
          style="@style/App_No_List_Elements_Text"
          android:layout_width="fill_parent"
          android:layout_height="fill_parent"
@@ -54,6 +55,11 @@
          android:id="@+id/tasksearchresult_wrong_syntax"
          style="@style/Error"
          android:visibility="gone" />
+
+      <include
+         android:id="@id/android:empty"
+         layout="@layout/app_loading_spinner" />
+
    </FrameLayout>
 
 </LinearLayout>

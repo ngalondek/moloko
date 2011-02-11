@@ -130,9 +130,9 @@ public class ListTask extends Task
    
 
 
-   public final static ArrayList< ListTask > fromTaskList( List< Task > list )
+   public final static List< ListTask > fromTaskList( List< Task > list )
    {
-      ArrayList< ListTask > listTaskList = new ArrayList< ListTask >( list.size() );
+      List< ListTask > listTaskList = new ArrayList< ListTask >( list.size() );
       
       for ( Task task : list )
       {

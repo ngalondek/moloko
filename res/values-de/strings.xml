@@ -90,7 +90,7 @@
    <string name="phr_off">Aus</string>
    <string name="phr_manuell">Manuell</string>
    <string name="phr_password_set">gesetzt</string>
-   <string name="phr_loading">Lade...</string>
+   <string name="phr_loading">Lädt gerade...</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>

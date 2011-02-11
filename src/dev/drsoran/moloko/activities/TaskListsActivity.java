@@ -92,10 +92,12 @@ public class TaskListsActivity extends ExpandableListActivity implements
          
          activity.getExpandableListView()
                  .setEmptyView( activity.findViewById( R.id.tasklists_activity_no_lists ) );
-         activity.setListAdapter( new TaskListsAdapter( activity,
-                                                        R.layout.tasklists_activity_group,
-                                                        R.layout.tasklists_activity_child,
-                                                        result ) );
+         
+         if ( result != null )
+            activity.setListAdapter( new TaskListsAdapter( activity,
+                                                           R.layout.tasklists_activity_group,
+                                                           R.layout.tasklists_activity_child,
+                                                           result ) );
       }
    }
    

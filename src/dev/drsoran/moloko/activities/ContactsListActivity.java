@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.ListActivity;
 import android.content.ContentProviderClient;
@@ -31,8 +32,11 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,11 +63,73 @@ public class ContactsListActivity extends ListActivity
    private final static String TAG = "Moloko."
       + ContactsListActivity.class.getSimpleName();
    
+   
+   private final class AsyncQueryContacts extends
+            AsyncTask< ContentResolver, Void, List< Contact > >
+   {
+      
+      @Override
+      protected List< Contact > doInBackground( ContentResolver... params )
+      {
+         List< Contact > contacts = null;
+         
+         final ContentProviderClient client = ( params[ 0 ] ).acquireContentProviderClient( ContactOverviews.CONTENT_URI );
+         
+         if ( client != null )
+         {
+            final List< RtmContactWithTaskCount > rtmContacts = ContactOverviewsProviderPart.getContactOverviews( client,
+                                                                                                                  null );
+            client.release();
+            
+            if ( rtmContacts != null )
+            {
+               // Try to link the RTM contacts to the phonebook contacts
+               contacts = new ArrayList< Contact >( rtmContacts.size() );
+               
+               for ( RtmContactWithTaskCount rtmContact : rtmContacts )
+               {
+                  contacts.add( linkRtmContact( rtmContact ) );
+               }
+            }
+            else
+            {
+               LogUtils.logDBError( ContactsListActivity.this, TAG, "Contacts" );
+            }
+         }
+         
+         return contacts;
+      }
+      
+
+
+      @Override
+      protected void onPostExecute( List< Contact > result )
+      {
+         final ContactsListActivity activity = ContactsListActivity.this;
+         
+         activity.getListView()
+                 .setEmptyView( activity.findViewById( R.id.contactslist_activity_no_contacts ) );
+         
+         if ( result != null )
+         {
+            setListAdapter( new ContactsListAdapter( activity,
+                                                     R.layout.contactslist_activity_listitem,
+                                                     result ) );
+         }
+      }
+   }
+   
    private final Runnable queryContactsRunnable = new Runnable()
    {
       public void run()
       {
-         ContactsListActivity.this.queryContacts();
+         if ( asyncQueryContacts.getStatus() != AsyncTask.Status.FINISHED )
+         {
+            Log.w( TAG, "Canceled AsyncQueryContacts task." );
+            asyncQueryContacts.cancel( true );
+         }
+         
+         asyncQueryContacts.execute( getContentResolver() );
       }
    };
    
@@ -103,6 +169,10 @@ public class ContactsListActivity extends ListActivity
    
    private ContentObserver dbContactsObserver;
    
+   private final AsyncQueryContacts asyncQueryContacts = new AsyncQueryContacts();
+   
+   private final Handler handler = new Handler();
+   
    
 
    @Override
@@ -131,7 +201,18 @@ public class ContactsListActivity extends ListActivity
                                                         dbContactsObserver );
       
       if ( !( getListAdapter() instanceof ContactsListAdapter ) )
-         queryContacts();
+         asyncQueryContacts();
+   }
+   
+
+
+   @Override
+   protected void onStop()
+   {
+      super.onStop();
+      
+      if ( asyncQueryContacts.getStatus() != AsyncTask.Status.FINISHED )
+         asyncQueryContacts.cancel( true );
    }
    
 
@@ -249,36 +330,9 @@ public class ContactsListActivity extends ListActivity
    
 
 
-   private void queryContacts()
+   private void asyncQueryContacts()
    {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( ContactOverviews.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final ArrayList< RtmContactWithTaskCount > rtmContacts = ContactOverviewsProviderPart.getContactOverviews( client,
-                                                                                                                    null );
-         
-         if ( rtmContacts != null )
-         {
-            // Try to link the RTM contacts to the phonebook contacts
-            final ArrayList< Contact > contacts = new ArrayList< Contact >( rtmContacts.size() );
-            
-            for ( RtmContactWithTaskCount rtmContact : rtmContacts )
-            {
-               contacts.add( linkRtmContact( rtmContact ) );
-            }
-            
-            setListAdapter( new ContactsListAdapter( this,
-                                                     R.layout.contactslist_activity_listitem,
-                                                     contacts ) );
-         }
-         else
-         {
-            LogUtils.logDBError( this, TAG, "Contacts" );
-         }
-         
-         client.release();
-      }
+      handler.post( queryContactsRunnable );
    }
    
 

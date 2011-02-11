@@ -23,15 +23,18 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.ContentObserver;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -75,6 +78,77 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    private final static String TAG = "Moloko."
       + AbstractTasksListActivity.class.getSimpleName();
    
+   
+   protected final static class AsyncFillListResult
+   {
+      public final List< ListTask > tasks;
+      
+      public final RtmSmartFilter filter;
+      
+      public final Bundle configuration;
+      
+      
+
+      public AsyncFillListResult( List< ListTask > tasks,
+         RtmSmartFilter filter, Bundle configuration )
+      {
+         this.tasks = tasks;
+         this.filter = filter;
+         this.configuration = configuration;
+      }
+   }
+   
+
+   protected class AsyncFillList extends
+            AsyncTask< Object, Void, AsyncFillListResult >
+   {
+      
+      @Override
+      protected void onPreExecute()
+      {
+         UIUtils.setTitle( AbstractTasksListActivity.this, R.string.phr_loading );
+      }
+      
+
+
+      @Override
+      protected AsyncFillListResult doInBackground( Object... params )
+      {
+         if ( params.length < 2 )
+            throw new IllegalArgumentException( "Expected 2 parameters" );
+         
+         if ( !( params[ 0 ] instanceof ContentResolver ) )
+            throw new IllegalArgumentException( "Expected ContentResolver" );
+         
+         if ( !( params[ 1 ] instanceof Bundle ) )
+            throw new IllegalArgumentException( "Expected Bundle" );
+         
+         return queryTasksAsync( (ContentResolver) params[ 0 ],
+                                 (Bundle) params[ 1 ] );
+      }
+      
+
+
+      @Override
+      protected void onPostExecute( AsyncFillListResult result )
+      {
+         setTasksResult( result );
+      }
+   }
+   
+
+   protected class ClearAndAsyncFillList extends AsyncFillList
+   {
+      @Override
+      protected void onPreExecute()
+      {
+         super.onPreExecute();
+         
+         // Show loading spinner
+         clearList( AbstractTasksListActivity.this.findViewById( android.R.id.empty ) );
+      }
+   }
+   
    public static final String TITLE = "title";
    
    public static final String TITLE_ICON = "title_icon";
@@ -117,15 +191,25 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public final static int NOTES = 6;
    }
    
-   protected View emptyListView;
-   
-   protected final Runnable fillListRunnable = new Runnable()
+   protected final Runnable dontClearAndfillListRunnable = new Runnable()
    {
       public void run()
       {
-         AbstractTasksListActivity.this.fillList();
+         if ( asyncFillList != null
+            && asyncFillList.getStatus() != AsyncTask.Status.FINISHED )
+         {
+            Log.w( TAG, "Canceled AsyncFillList task." );
+            asyncFillList.cancel( true );
+         }
+         
+         asyncFillList = new AsyncFillList();
+         asyncFillList.execute( getContentResolver(), getIntent().getExtras() );
       }
    };
+   
+   protected View emptyListView;
+   
+   protected AsyncFillList asyncFillList;
    
    protected final Handler handler = new Handler();
    
@@ -135,7 +219,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public void onChange( boolean selfChange )
       {
          // Aggregate several calls to a single update.
-         DelayedRun.run( handler, fillListRunnable, 1000 );
+         DelayedRun.run( handler, dontClearAndfillListRunnable, 1000 );
       }
    };
    
@@ -147,7 +231,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       super.onCreate( savedInstanceState );
       setContentView( R.layout.taskslist_activity );
       
-      emptyListView = findViewById( R.id.empty );
+      emptyListView = findViewById( R.id.taskslist_activity_no_elements );
       
       registerForContextMenu( getListView() );
       
@@ -172,6 +256,18 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          setTaskSort( MolokoApp.getSettings().getTaskSort(), false );
       
       onNewIntent( getIntent() );
+   }
+   
+
+
+   @Override
+   protected void onStop()
+   {
+      super.onStop();
+      
+      if ( asyncFillList != null
+         && asyncFillList.getStatus() != AsyncTask.Status.FINISHED )
+         asyncFillList.cancel( true );
    }
    
 
@@ -679,19 +775,20 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   abstract protected void fillList();
+   /**
+    * Note: This will run in a background thread.
+    * 
+    * @param params
+    */
+   abstract protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
+                                                           Bundle configuration );
    
 
 
-   protected void clearList( View emptyView )
-   {
-      setListAdapter( new TasksListAdapter( this,
-                                            R.layout.taskslist_activity_listitem,
-                                            new ArrayList< ListTask >( 0 ),
-                                            new RtmSmartFilter( Strings.EMPTY_STRING ) ) );
-      
-      switchEmptyView( emptyView );
-   }
+   /**
+    * Note: This will run in the GUI thread.
+    */
+   abstract protected void setTasksResult( AsyncFillListResult result );
    
 
 
@@ -699,9 +796,36 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
+   protected void clearList( View emptyView )
+   {
+      setListAdapter( new TasksListAdapter( this,
+                                            R.layout.taskslist_activity_listitem,
+                                            Collections.< ListTask > emptyList(),
+                                            new RtmSmartFilter( Strings.EMPTY_STRING ) ) );
+      
+      switchEmptyView( emptyView );
+   }
+   
+
+
    protected void fillListAsync()
    {
-      handler.post( fillListRunnable );
+      handler.post( new Runnable()
+      {
+         public void run()
+         {
+            if ( asyncFillList != null
+               && asyncFillList.getStatus() != AsyncTask.Status.FINISHED )
+            {
+               Log.w( TAG, "Canceled AsyncFillList task." );
+               asyncFillList.cancel( true );
+            }
+            
+            asyncFillList = new ClearAndAsyncFillList();
+            asyncFillList.execute( getContentResolver(),
+                                   getIntent().getExtras() );
+         }
+      } );
    }
    
 

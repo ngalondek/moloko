@@ -30,8 +30,10 @@ import java.util.TreeMap;
 
 import android.app.Activity;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -60,6 +62,184 @@ public class TagCloudActivity extends Activity
 {
    private final static String TAG = "Moloko."
       + TagCloudActivity.class.getSimpleName();
+   
+   
+   private final class AsyncFillCloud extends
+            AsyncTask< ContentResolver, Void, List< CloudEntry > >
+   {
+      @Override
+      protected List< CloudEntry > doInBackground( ContentResolver... params )
+      {
+         List< RtmListWithTaskCount > lists = null;
+         
+         // Fetch all lists and their task count
+         {
+            final ContentProviderClient client = getContentResolver().acquireContentProviderClient( ListOverviews.CONTENT_URI );
+            
+            if ( client != null )
+            {
+               // get all non smart lists
+               lists = ListOverviewsProviderPart.getListsOverview( client,
+                                                                   ListOverviews.IS_SMART_LIST
+                                                                      + " = 0" );
+               if ( lists == null )
+               {
+                  LogUtils.logDBError( TagCloudActivity.this, TAG, "Lists" );
+               }
+               
+               client.release();
+            }
+            else
+            {
+               LogUtils.logDBError( TagCloudActivity.this, TAG, "Lists" );
+            }
+         }
+         
+         List< TagWithTaskCount > tags = null;
+         
+         // Fetch all Tags and their task count
+         {
+            final ContentProviderClient client = getContentResolver().acquireContentProviderClient( TagOverviews.CONTENT_URI );
+            
+            if ( client != null )
+            {
+               tags = TagOverviewsProviderPart.getTagsOverview( client, true /* exclude completed */);
+               
+               if ( tags == null )
+               {
+                  LogUtils.logDBError( TagCloudActivity.this, TAG, "Tags" );
+               }
+               
+               client.release();
+            }
+            else
+            {
+               LogUtils.logDBError( TagCloudActivity.this, TAG, "Tags" );
+            }
+         }
+         
+         List< LocationWithTaskCount > locations = null;
+         
+         // Fetch all Locations and their task count
+         {
+            final ContentProviderClient client = getContentResolver().acquireContentProviderClient( LocationOverviews.CONTENT_URI );
+            
+            if ( client != null )
+            {
+               locations = LocationOverviewsProviderPart.getLocationsOverview( client,
+                                                                               null );
+               if ( locations == null )
+               {
+                  LogUtils.logDBError( TagCloudActivity.this, TAG, "Locations" );
+               }
+               
+               client.release();
+            }
+            else
+            {
+               LogUtils.logDBError( TagCloudActivity.this, TAG, "Locations" );
+            }
+         }
+         
+         final int count = lists.size() + tags.size() + locations.size();
+         final List< CloudEntry > cloudEntries = new ArrayList< CloudEntry >( count );
+         
+         for ( RtmListWithTaskCount list : lists )
+         {
+            if ( list.getIncompleteTaskCount() > 0 )
+               cloudEntries.add( new CloudEntry( CloudEntry.LIST,
+                                                 list.getName(),
+                                                 list.getIncompleteTaskCount() ) );
+         }
+         
+         for ( TagWithTaskCount tag : tags )
+         {
+            cloudEntries.add( new CloudEntry( CloudEntry.TAG,
+                                              tag.getTag(),
+                                              tag.getTaskCount() ) );
+         }
+         
+         for ( LocationWithTaskCount location : locations )
+         {
+            if ( location.getIncompleteTaskCount() > 0 )
+               cloudEntries.add( new CloudEntry( CloudEntry.LOCATION,
+                                                 location.getRtmLocation().name,
+                                                 location.getIncompleteTaskCount() ) );
+         }
+         
+         return cloudEntries;
+      }
+      
+
+
+      @Override
+      protected void onPostExecute( List< CloudEntry > result )
+      {
+         final TagCloudActivity activity = TagCloudActivity.this;
+         final View spinner = TagCloudActivity.this.findViewById( android.R.id.empty );
+         spinner.setVisibility( View.INVISIBLE );
+         
+         if ( result != null && result.size() > 0 )
+         {
+            // Sort all cloud entries by their name
+            Collections.sort( result );
+            
+            final Resources resources = getResources();
+            
+            final int size = result.size();
+            final List< Button > buttons = new ArrayList< Button >( size );
+            
+            for ( int i = 0; i < size; ++i )
+            {
+               final CloudEntry cloudEntry = result.get( i );
+               
+               final Button cloudEntryButton = new Button( activity );
+               cloudEntryButton.setId( i );
+               cloudEntryButton.setText( cloudEntry.name );
+               
+               switch ( cloudEntry.type )
+               {
+                  case CloudEntry.LIST:
+                     cloudEntryButton.setOnClickListener( listClickListener );
+                     cloudEntryButton.setBackgroundResource( R.drawable.tagcloud_list_bgnd );
+                     cloudEntryButton.setTextColor( resources.getColor( R.color.tagcloud_listname_text_normal ) );
+                     break;
+                  
+                  case CloudEntry.TAG:
+                     cloudEntryButton.setOnClickListener( tagClickListener );
+                     cloudEntryButton.setBackgroundResource( R.drawable.tagcloud_tag_bgnd );
+                     cloudEntryButton.setTextColor( resources.getColor( R.color.tagcloud_tag_text_normal ) );
+                     break;
+                  
+                  case CloudEntry.LOCATION:
+                     cloudEntryButton.setOnClickListener( locationClickListener );
+                     cloudEntryButton.setLongClickable( true );
+                     cloudEntryButton.setOnLongClickListener( locationLongClickListener );
+                     cloudEntryButton.setBackgroundResource( R.drawable.tagcloud_tag_bgnd );
+                     cloudEntryButton.setTextColor( resources.getColor( R.color.tagcloud_tag_text_normal ) );
+                     break;
+                  
+                  default :
+                     Log.e( TAG, "Unknown CloudEntry type " + cloudEntry.type );
+                     break;
+               }
+               
+               cloudEntryButton.setTextSize( 14.0f * getMagnifyFactor( cloudEntry.count ) );
+               
+               if ( cloudEntry.count >= 2 )
+               {
+                  cloudEntryButton.setTypeface( Typeface.DEFAULT_BOLD );
+               }
+               
+               buttons.add( cloudEntryButton );
+            }
+            
+            final ViewGroup tagContainer = (ViewGroup) activity.findViewById( R.id.tagcloud_container );
+            
+            addButtons( buttons, tagContainer );
+         }
+      }
+   }
    
    /**
     * Relationship between task count and text size.
@@ -120,7 +300,7 @@ public class TagCloudActivity extends Activity
    }
    
    
-   private class CloudEntry implements Comparable< CloudEntry >
+   private static class CloudEntry implements Comparable< CloudEntry >
    {
       public final static int LIST = 0;
       
@@ -138,7 +318,6 @@ public class TagCloudActivity extends Activity
 
       public CloudEntry( int type, String name, int count )
       {
-         super();
          this.type = type;
          this.name = name;
          this.count = count;
@@ -176,6 +355,8 @@ public class TagCloudActivity extends Activity
       }
    }
    
+   private final AsyncFillCloud asyncFillCloud = new AsyncFillCloud();
+   
    
 
    @Override
@@ -188,184 +369,24 @@ public class TagCloudActivity extends Activity
       UIUtils.setTitle( this,
                         getString( R.string.app_tagcloud ),
                         R.drawable.ic_title_tag );
+      
+      asyncFillCloud.execute( getContentResolver() );
    }
    
 
 
    @Override
-   protected void onResume()
+   protected void onStop()
    {
-      super.onResume();
-      fillContent();
+      super.onStop();
+      
+      if ( asyncFillCloud.getStatus() != AsyncTask.Status.FINISHED )
+         asyncFillCloud.cancel( true );
    }
    
 
 
-   private void fillContent()
-   {
-      List< RtmListWithTaskCount > lists = null;
-      
-      // Fetch all lists and their task count
-      {
-         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( ListOverviews.CONTENT_URI );
-         
-         if ( client != null )
-         {
-            // get all non smart lists
-            lists = ListOverviewsProviderPart.getListsOverview( client,
-                                                                ListOverviews.IS_SMART_LIST
-                                                                   + " = 0" );
-            if ( lists == null )
-            {
-               LogUtils.logDBError( this, TAG, "Lists" );
-            }
-            
-            client.release();
-         }
-         else
-         {
-            LogUtils.logDBError( this, TAG, "Lists" );
-         }
-      }
-      
-      List< TagWithTaskCount > tags = null;
-      
-      // Fetch all Tags and their task count
-      {
-         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( TagOverviews.CONTENT_URI );
-         
-         if ( client != null )
-         {
-            tags = TagOverviewsProviderPart.getTagsOverview( client, true /* exclude completed */);
-            
-            if ( tags == null )
-            {
-               LogUtils.logDBError( this, TAG, "Tags" );
-            }
-            
-            client.release();
-         }
-         else
-         {
-            LogUtils.logDBError( this, TAG, "Tags" );
-         }
-      }
-      
-      List< LocationWithTaskCount > locations = null;
-      
-      // Fetch all Locations and their task count
-      {
-         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( LocationOverviews.CONTENT_URI );
-         
-         if ( client != null )
-         {
-            locations = LocationOverviewsProviderPart.getLocationsOverview( client,
-                                                                            null );
-            if ( locations == null )
-            {
-               LogUtils.logDBError( this, TAG, "Locations" );
-            }
-            
-            client.release();
-         }
-         else
-         {
-            LogUtils.logDBError( this, TAG, "Locations" );
-         }
-      }
-      
-      final int count = lists.size() + tags.size() + locations.size();
-      
-      if ( count > 0 )
-      {
-         final List< CloudEntry > cloudEntries = new ArrayList< CloudEntry >( count );
-         
-         for ( RtmListWithTaskCount list : lists )
-         {
-            if ( list.getIncompleteTaskCount() > 0 )
-               cloudEntries.add( new CloudEntry( CloudEntry.LIST,
-                                                 list.getName(),
-                                                 list.getIncompleteTaskCount() ) );
-         }
-         
-         for ( TagWithTaskCount tag : tags )
-         {
-            cloudEntries.add( new CloudEntry( CloudEntry.TAG,
-                                              tag.getTag(),
-                                              tag.getTaskCount() ) );
-         }
-         
-         for ( LocationWithTaskCount location : locations )
-         {
-            if ( location.getIncompleteTaskCount() > 0 )
-               cloudEntries.add( new CloudEntry( CloudEntry.LOCATION,
-                                                 location.getRtmLocation().name,
-                                                 location.getIncompleteTaskCount() ) );
-         }
-         
-         // Sort all cloud entries by their name
-         Collections.sort( cloudEntries );
-         
-         final Resources resources = getResources();
-         
-         final int size = cloudEntries.size();
-         final ArrayList< Button > buttons = new ArrayList< Button >( size );
-         
-         for ( int i = 0; i < size; ++i )
-         {
-            final CloudEntry cloudEntry = cloudEntries.get( i );
-            
-            final Button cloudEntryButton = new Button( this );
-            cloudEntryButton.setId( i );
-            cloudEntryButton.setText( cloudEntry.name );
-            
-            switch ( cloudEntry.type )
-            {
-               case CloudEntry.LIST:
-                  cloudEntryButton.setOnClickListener( listClickListener );
-                  cloudEntryButton.setBackgroundResource( R.drawable.tagcloud_list_bgnd );
-                  cloudEntryButton.setTextColor( resources.getColor( R.color.tagcloud_listname_text_normal ) );
-                  break;
-               
-               case CloudEntry.TAG:
-                  cloudEntryButton.setOnClickListener( tagClickListener );
-                  cloudEntryButton.setBackgroundResource( R.drawable.tagcloud_tag_bgnd );
-                  cloudEntryButton.setTextColor( resources.getColor( R.color.tagcloud_tag_text_normal ) );
-                  break;
-               
-               case CloudEntry.LOCATION:
-                  cloudEntryButton.setOnClickListener( locationClickListener );
-                  cloudEntryButton.setLongClickable( true );
-                  cloudEntryButton.setOnLongClickListener( locationLongClickListener );
-                  cloudEntryButton.setBackgroundResource( R.drawable.tagcloud_tag_bgnd );
-                  cloudEntryButton.setTextColor( resources.getColor( R.color.tagcloud_tag_text_normal ) );
-                  break;
-               
-               default :
-                  Log.e( TAG, "Unknown CloudEntry type " + cloudEntry.type );
-                  break;
-            }
-            
-            cloudEntryButton.setTextSize( 14.0f * getMagnifyFactor( cloudEntry.count ) );
-            
-            if ( cloudEntry.count >= 2 )
-            {
-               cloudEntryButton.setTypeface( Typeface.DEFAULT_BOLD );
-            }
-            
-            buttons.add( cloudEntryButton );
-         }
-         
-         final ViewGroup tagContainer = (ViewGroup) findViewById( R.id.tagcloud_container );
-         tagContainer.removeAllViews();
-         
-         addButtons( buttons, tagContainer );
-      }
-   }
-   
-
-
-   private final static void addButtons( ArrayList< Button > buttons,
+   private final static void addButtons( List< Button > buttons,
                                          ViewGroup container )
    {
       final int size = buttons.size();

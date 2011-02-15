@@ -234,7 +234,7 @@ public class TagsProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Tags.CONTENT_URI;
    }

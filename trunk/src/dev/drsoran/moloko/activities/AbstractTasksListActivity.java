@@ -133,6 +133,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       protected void onPostExecute( AsyncFillListResult result )
       {
          setTasksResult( result );
+         AbstractTasksListActivity.this.asyncFillList = null;
       }
    }
    
@@ -195,8 +196,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       public void run()
       {
-         if ( asyncFillList != null
-            && asyncFillList.getStatus() != AsyncTask.Status.FINISHED )
+         if ( asyncFillList != null )
          {
             Log.w( TAG, "Canceled AsyncFillList task." );
             asyncFillList.cancel( true );
@@ -265,9 +265,10 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       super.onStop();
       
-      if ( asyncFillList != null
-         && asyncFillList.getStatus() != AsyncTask.Status.FINISHED )
+      if ( asyncFillList != null )
          asyncFillList.cancel( true );
+      
+      asyncFillList = null;
    }
    
 
@@ -814,8 +815,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       {
          public void run()
          {
-            if ( asyncFillList != null
-               && asyncFillList.getStatus() != AsyncTask.Status.FINISHED )
+            if ( asyncFillList != null )
             {
                Log.w( TAG, "Canceled AsyncFillList task." );
                asyncFillList.cancel( true );

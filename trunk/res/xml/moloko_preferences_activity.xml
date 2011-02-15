@@ -143,10 +143,15 @@
       <dev.drsoran.moloko.prefs.SendLogPreference
          moloko:infoText="@string/moloko_prefs_send_log_text"
          moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
+         
+      <dev.drsoran.moloko.prefs.ClearDbPreference
+         moloko:infoText="@string/moloko_prefs_clear_db_text"
+         moloko:infoWidget="@layout/moloko_prefs_widget_clear_db" />
 
       <dev.drsoran.moloko.prefs.AboutPreference
          moloko:infoText="@string/moloko_about_text"
          moloko:infoWidget="@layout/moloko_prefs_widget_about" />
+
    </PreferenceCategory>
 
 </PreferenceScreen>

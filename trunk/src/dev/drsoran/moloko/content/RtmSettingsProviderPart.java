@@ -220,7 +220,7 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Settings.CONTENT_URI;
    }

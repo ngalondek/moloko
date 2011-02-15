@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,6 +37,8 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
 {
    private final Intent intent;
    
+   private final Runnable runnable;
+   
    
 
    public SimpleHomeWidgetLayout( Context context, AttributeSet attrs,
@@ -45,23 +46,23 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
    {
       super( context, attrs );
       
-      setOrientation( LinearLayout.VERTICAL );
-      
-      LayoutInflater.from( context )
-                    .inflate( R.layout.home_activity_simple_widget, this, true );
-      
-      ( (ImageView) findViewById( R.id.widget_simple_image ) ).setImageResource( imgId );
-      ( (TextView) findViewById( R.id.text ) ).setText( labelId );
+      initUi( context, labelId, imgId );
       
       this.intent = intent;
+      this.runnable = null;
    }
    
 
 
-   public void onClick( View v )
+   public SimpleHomeWidgetLayout( Context context, AttributeSet attrs,
+      int labelId, int imgId, Runnable runnable )
    {
-      if ( intent != null )
-         getContext().startActivity( intent );
+      super( context, attrs );
+      
+      initUi( context, labelId, imgId );
+      
+      this.intent = null;
+      this.runnable = runnable;
    }
    
 
@@ -73,7 +74,40 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
    
 
 
+   public Runnable getRunnable()
+   {
+      return runnable;
+   }
+   
+
+
+   public void start()
+   {
+   }
+   
+
+
    public void refresh()
    {
    }
+   
+
+
+   public void stop()
+   {
+   }
+   
+
+
+   private void initUi( Context context, int labelId, int imgId )
+   {
+      setOrientation( LinearLayout.VERTICAL );
+      
+      LayoutInflater.from( context )
+                    .inflate( R.layout.home_activity_simple_widget, this, true );
+      
+      ( (ImageView) findViewById( R.id.widget_simple_image ) ).setImageResource( imgId );
+      ( (TextView) findViewById( R.id.text ) ).setText( labelId );
+   }
+   
 }

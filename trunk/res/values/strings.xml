@@ -163,6 +163,7 @@
 	<string name="home_label_today">@string/phr_today</string>
 	<string name="home_label_tomorrow">@string/phr_tomorrow</string>
    <string name="home_label_overdue">Overdue</string>
+   <string name="home_label_sync">@string/phr_do_sync</string>
 	
 	<!-- StartUp activity -->
    <string name="startup_no_account">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>
@@ -332,9 +333,16 @@
    <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
    <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
    <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>
+   <string name="moloko_prefs_clear_db_text">Clear the database and swipe all data</string>
    <string name="moloko_about_text">About Moloko</string>
    <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Settings are retrieved from the RTM Server</string>
+      <string name="moloko_prefs_clear_db_dlg_title">Swipe database</string>
+      <string name="moloko_prefs_clear_db_dlg_text">Delete all data irreversible from the database?</string>
+      <string name="moloko_prefs_clear_db_dlg_clearing">Clearing database...</string>
+      <!-- Toasts -->
+      <string name="moloko_prefs_clear_db_toast_cleared">Database cleared</string>
+      <string name="moloko_prefs_clear_db_toast_clearing_failed">Clearing the database failed</string>
 
 	<!-- RTM service status messages -->
    <string name="rtmSvc_state_unknown">Unknown</string>

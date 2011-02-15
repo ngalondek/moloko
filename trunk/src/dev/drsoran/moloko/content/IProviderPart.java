@@ -53,6 +53,10 @@ public interface IProviderPart
    
 
 
+   public Uri getContentUri();
+   
+
+
    public String getType( Uri uri );
    
 

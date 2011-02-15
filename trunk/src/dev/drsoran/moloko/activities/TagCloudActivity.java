@@ -238,6 +238,8 @@ public class TagCloudActivity extends Activity
             
             addButtons( buttons, tagContainer );
          }
+         
+         activity.asyncFillCloud = null;
       }
    }
    
@@ -355,7 +357,7 @@ public class TagCloudActivity extends Activity
       }
    }
    
-   private final AsyncFillCloud asyncFillCloud = new AsyncFillCloud();
+   private AsyncFillCloud asyncFillCloud;
    
    
 
@@ -370,6 +372,7 @@ public class TagCloudActivity extends Activity
                         getString( R.string.app_tagcloud ),
                         R.drawable.ic_title_tag );
       
+      asyncFillCloud = new AsyncFillCloud();
       asyncFillCloud.execute( getContentResolver() );
    }
    
@@ -380,8 +383,10 @@ public class TagCloudActivity extends Activity
    {
       super.onStop();
       
-      if ( asyncFillCloud.getStatus() != AsyncTask.Status.FINISHED )
+      if ( asyncFillCloud != null )
          asyncFillCloud.cancel( true );
+      
+      asyncFillCloud = null;
    }
    
 

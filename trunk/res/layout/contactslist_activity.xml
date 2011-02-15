@@ -29,7 +29,7 @@
       moloko:showButton="home|search" />
 
    <ListView
-      android:id="@+id/android:list"
+      android:id="@id/android:list"
       style="@style/ContactsList_List"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent" />
@@ -39,9 +39,10 @@
       style="@style/App_No_List_Elements_Text"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:text="@string/contactslist_no_contacts" />
+      android:text="@string/contactslist_no_contacts"
+      android:visibility="gone" />
 
    <include
-      android:id="@android:id/empty"
+      android:id="@id/android:empty"
       layout="@layout/app_loading_spinner" />
 </LinearLayout>

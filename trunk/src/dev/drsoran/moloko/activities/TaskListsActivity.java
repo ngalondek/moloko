@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +33,6 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -90,14 +90,18 @@ public class TaskListsActivity extends ExpandableListActivity implements
       {
          final TaskListsActivity activity = TaskListsActivity.this;
          
+         activity.setListAdapter( new TaskListsAdapter( activity,
+                                                        R.layout.tasklists_activity_group,
+                                                        R.layout.tasklists_activity_child,
+                                                        result != null
+                                                                      ? result
+                                                                      : Collections.< RtmListWithTaskCount > emptyList() ) );
+         
+         activity.findViewById( android.R.id.empty ).setVisibility( View.GONE );
          activity.getExpandableListView()
                  .setEmptyView( activity.findViewById( R.id.tasklists_activity_no_lists ) );
          
-         if ( result != null )
-            activity.setListAdapter( new TaskListsAdapter( activity,
-                                                           R.layout.tasklists_activity_group,
-                                                           R.layout.tasklists_activity_child,
-                                                           result ) );
+         activity.asyncQueryLists = null;
       }
    }
    
@@ -105,19 +109,20 @@ public class TaskListsActivity extends ExpandableListActivity implements
    {
       public void run()
       {
-         if ( asyncQueryLists.getStatus() != AsyncTask.Status.FINISHED )
+         if ( asyncQueryLists != null )
          {
             Log.w( TAG, "Canceled AsyncQueryLists task." );
             asyncQueryLists.cancel( true );
          }
          
+         asyncQueryLists = new AsyncQueryLists();
          asyncQueryLists.execute( getContentResolver() );
       }
    };
    
    private ContentObserver dbObserver;
    
-   private final AsyncQueryLists asyncQueryLists = new AsyncQueryLists();
+   private AsyncQueryLists asyncQueryLists;
    
    
    protected static class OptionsMenu
@@ -178,7 +183,10 @@ public class TaskListsActivity extends ExpandableListActivity implements
       ListOverviewsProviderPart.registerContentObserver( this, dbObserver );
       
       if ( !( getExpandableListAdapter() instanceof TaskListsAdapter ) )
+      {
+         asyncQueryLists = new AsyncQueryLists();
          asyncQueryLists.execute( getContentResolver() );
+      }
    }
    
 
@@ -188,8 +196,10 @@ public class TaskListsActivity extends ExpandableListActivity implements
    {
       super.onStop();
       
-      if ( asyncQueryLists.getStatus() != Status.FINISHED )
+      if ( asyncQueryLists != null )
          asyncQueryLists.cancel( true );
+      
+      asyncQueryLists = null;
    }
    
 

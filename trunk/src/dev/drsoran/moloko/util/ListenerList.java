@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -225,32 +226,50 @@ public class ListenerList< T >
 
    public void notifyListeners()
    {
+      List< ListenerEntry > deadEntries = null;
+      
       for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
       {
          final ListenerEntry entry = i.next();
          
          // Check if we have a dead entry
          if ( entry.isDead() )
-            i.remove();
+         {
+            if ( deadEntries == null )
+               deadEntries = new LinkedList< ListenerEntry >();
+            deadEntries.add( entry );
+         }
          else
             entry.notifyEmpty();
       }
+      
+      if ( deadEntries != null )
+         listeners.removeAll( deadEntries );
    }
    
 
 
    public void notifyListeners( int mask )
    {
+      List< ListenerEntry > deadEntries = null;
+      
       for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
       {
          final ListenerEntry entry = i.next();
          
          // Check if we have a dead entry
          if ( entry.isDead() )
-            i.remove();
+         {
+            if ( deadEntries == null )
+               deadEntries = new LinkedList< ListenerEntry >();
+            deadEntries.add( entry );
+         }
          else if ( entry.matches( mask ) )
             entry.notify( mask );
       }
+      
+      if ( deadEntries != null )
+         listeners.removeAll( deadEntries );
    }
    
 
@@ -259,13 +278,19 @@ public class ListenerList< T >
    {
       if ( mask > 0 )
       {
+         List< ListenerEntry > deadEntries = null;
+         
          for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
          {
             final ListenerEntry entry = i.next();
             
             // Check if we have a dead entry
             if ( entry.isDead() )
-               i.remove();
+            {
+               if ( deadEntries == null )
+                  deadEntries = new LinkedList< ListenerEntry >();
+               deadEntries.add( entry );
+            }
             else if ( entry.matches( mask ) )
             {
                final HashMap< Integer, Object > oldValues = new HashMap< Integer, Object >( 1 );
@@ -273,6 +298,9 @@ public class ListenerList< T >
                entry.notify( mask, oldValues );
             }
          }
+         
+         if ( deadEntries != null )
+            listeners.removeAll( deadEntries );
       }
    }
    
@@ -282,14 +310,23 @@ public class ListenerList< T >
    {
       if ( mask > 0 )
       {
+         List< ListenerEntry > deadEntries = null;
+         
          for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext(); )
          {
             final ListenerEntry entry = i.next();
             
             // Check if we have a dead entry
             if ( !entry.notifyIfMatches( mask, oldValues ) )
-               i.remove();
+            {
+               if ( deadEntries == null )
+                  deadEntries = new LinkedList< ListenerEntry >();
+               deadEntries.add( entry );
+            }
          }
+         
+         if ( deadEntries != null )
+            listeners.removeAll( deadEntries );
       }
    }
    
@@ -297,17 +334,17 @@ public class ListenerList< T >
 
    public boolean removeListener( T listener )
    {
-      final int size = listeners.size();
+      ListenerEntry entryToRemove = null;
       
-      for ( int i = 0; i < size; i++ )
+      for ( Iterator< ListenerEntry > i = listeners.iterator(); i.hasNext()
+         && entryToRemove == null; )
       {
-         if ( listener == listeners.get( i ).listener )
-         {
-            listeners.remove( i );
-            return true;
-         }
+         final ListenerEntry entry = i.next();
+         
+         if ( listener == entry.listener )
+            entryToRemove = entry;
       }
       
-      return false;
+      return listeners.remove( entryToRemove );
    }
 }

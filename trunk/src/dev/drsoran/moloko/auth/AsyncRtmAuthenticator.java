@@ -28,6 +28,7 @@ import android.os.AsyncTask;
 
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
+import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
@@ -279,10 +280,12 @@ public class AsyncRtmAuthenticator
       {
          return ( (RtmServiceException) e ).rtmCause;
       }
-      else
+      else if ( e instanceof ServiceInternalException )
       {
-         return e.getMessage();
+         return ( (ServiceInternalException) e ).getResponseMessage();
       }
+      else
+         return e.getMessage();
    }
    
 

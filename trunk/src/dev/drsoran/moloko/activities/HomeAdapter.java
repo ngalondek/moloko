@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
@@ -41,7 +42,7 @@ public class HomeAdapter extends BaseAdapter
    
    
 
-   public HomeAdapter( Context context )
+   public HomeAdapter( final Context context )
    {
       WIDGETS = new IMolokoHomeWidget[]
       {
@@ -63,6 +64,7 @@ public class HomeAdapter extends BaseAdapter
                                    R.drawable.ic_home_list_detailed,
                                    new Intent( Intent.ACTION_VIEW,
                                                ListOverviews.CONTENT_URI ) ),
+       
        new SimpleHomeWidgetLayout( context,
                                    null,
                                    R.string.app_tagcloud,
@@ -75,6 +77,18 @@ public class HomeAdapter extends BaseAdapter
                                    R.drawable.ic_home_user,
                                    new Intent( context,
                                                ContactsListActivity.class ) ),
+       
+       new SimpleHomeWidgetLayout( context,
+                                   null,
+                                   R.string.home_label_sync,
+                                   R.drawable.ic_home_refresh,
+                                   new Runnable()
+                                   {
+                                      public void run()
+                                      {
+                                         SyncUtils.requestSync( context, true );
+                                      }
+                                   } ),
        
        new SimpleHomeWidgetLayout( context,
                                    null,
@@ -118,9 +132,29 @@ public class HomeAdapter extends BaseAdapter
    public Intent getIntentForWidget( int position )
    {
       if ( position < WIDGETS.length )
-         return ( (IMolokoHomeWidget) WIDGETS[ position ] ).getIntent();
+         return ( WIDGETS[ position ] ).getIntent();
       else
          return null;
+   }
+   
+
+
+   public Runnable getRunnableForWidget( int position )
+   {
+      if ( position < WIDGETS.length )
+         return ( WIDGETS[ position ] ).getRunnable();
+      else
+         return null;
+   }
+   
+
+
+   public void startWidgets()
+   {
+      for ( int i = 0; i < WIDGETS.length; i++ )
+      {
+         WIDGETS[ i ].start();
+      }
    }
    
 
@@ -130,6 +164,16 @@ public class HomeAdapter extends BaseAdapter
       for ( int i = 0; i < WIDGETS.length; i++ )
       {
          WIDGETS[ i ].refresh();
+      }
+   }
+   
+
+
+   public void stopWidgets()
+   {
+      for ( int i = 0; i < WIDGETS.length; i++ )
+      {
+         WIDGETS[ i ].stop();
       }
    }
 }

@@ -289,7 +289,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return ContactOverviews.CONTENT_URI;
    }

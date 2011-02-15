@@ -250,7 +250,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Notes.CONTENT_URI;
    }

@@ -452,7 +452,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Modifications.CONTENT_URI;
    }

@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -69,6 +70,15 @@ public class ContactsListActivity extends ListActivity
    {
       
       @Override
+      protected void onPreExecute()
+      {
+         ContactsListActivity.this.getListView()
+                                  .setEmptyView( ContactsListActivity.this.findViewById( android.R.id.empty ) );
+      }
+      
+
+
+      @Override
       protected List< Contact > doInBackground( ContentResolver... params )
       {
          List< Contact > contacts = null;
@@ -107,15 +117,15 @@ public class ContactsListActivity extends ListActivity
       {
          final ContactsListActivity activity = ContactsListActivity.this;
          
+         setListAdapter( new ContactsListAdapter( activity,
+                                                  R.layout.contactslist_activity_listitem,
+                                                  result != null
+                                                                ? result
+                                                                : Collections.< Contact > emptyList() ) );
          activity.getListView()
                  .setEmptyView( activity.findViewById( R.id.contactslist_activity_no_contacts ) );
          
-         if ( result != null )
-         {
-            setListAdapter( new ContactsListAdapter( activity,
-                                                     R.layout.contactslist_activity_listitem,
-                                                     result ) );
-         }
+         activity.asyncQueryContacts = null;
       }
    }
    
@@ -123,13 +133,14 @@ public class ContactsListActivity extends ListActivity
    {
       public void run()
       {
-         if ( asyncQueryContacts.getStatus() != AsyncTask.Status.FINISHED )
+         if ( asyncQueryContacts != null )
          {
             Log.w( TAG, "Canceled AsyncQueryContacts task." );
             asyncQueryContacts.cancel( true );
          }
          
-         asyncQueryContacts.execute( getContentResolver() );
+         asyncQueryContacts = new AsyncQueryContacts();
+         asyncQueryContacts.execute( ContactsListActivity.this.getContentResolver() );
       }
    };
    
@@ -169,7 +180,7 @@ public class ContactsListActivity extends ListActivity
    
    private ContentObserver dbContactsObserver;
    
-   private final AsyncQueryContacts asyncQueryContacts = new AsyncQueryContacts();
+   private AsyncQueryContacts asyncQueryContacts;
    
    private final Handler handler = new Handler();
    
@@ -184,7 +195,7 @@ public class ContactsListActivity extends ListActivity
       
       registerForContextMenu( getListView() );
       
-      dbContactsObserver = new ContentObserver( getListView().getHandler() )
+      dbContactsObserver = new ContentObserver( handler )
       {
          @Override
          public void onChange( boolean selfChange )
@@ -211,8 +222,10 @@ public class ContactsListActivity extends ListActivity
    {
       super.onStop();
       
-      if ( asyncQueryContacts.getStatus() != AsyncTask.Status.FINISHED )
+      if ( asyncQueryContacts != null )
          asyncQueryContacts.cancel( true );
+      
+      asyncQueryContacts = null;
    }
    
 

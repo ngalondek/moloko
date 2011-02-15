@@ -207,12 +207,11 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       
       // Trigger: A locked list should always exist and cannot be
       // deleted.
-      db.execSQL( "CREATE TRIGGER "
-         + path
-         + "_locked_must_survive BEFORE DELETE ON "
-         + path
-         + " BEGIN SELECT RAISE ( ABORT, 'A locked list must always exist' ) WHERE EXISTS ( SELECT 1 FROM "
-         + path + " WHERE old." + Lists.LOCKED + " != 0 ); END;" );
+      /*
+       * db.execSQL( "CREATE TRIGGER " + path + "_locked_must_survive BEFORE DELETE ON " + path +
+       * " BEGIN SELECT RAISE ( ABORT, 'A locked list must always exist' ) WHERE EXISTS ( SELECT 1 FROM " + path +
+       * " WHERE old." + Lists.LOCKED + " != 0 ); END;" );
+       */
    }
    
 
@@ -234,7 +233,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Lists.CONTENT_URI;
    }

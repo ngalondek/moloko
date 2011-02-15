@@ -235,7 +235,7 @@ public class RtmLocationsProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Locations.CONTENT_URI;
    }

@@ -291,7 +291,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return RawTasks.CONTENT_URI;
    }

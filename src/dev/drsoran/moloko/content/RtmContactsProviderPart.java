@@ -238,7 +238,7 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Contacts.CONTENT_URI;
    }

@@ -34,15 +34,21 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent" />
 
-   <include
-      android:id="@id/android:empty"
-      layout="@layout/app_loading_spinner" />
-
-   <TextView
-      android:id="@+id/tasklists_activity_no_lists"
-      style="@style/App_No_List_Elements_Text"
+   <FrameLayout
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:text="@string/tasklists_no_lists" />
+      android:layout_height="fill_parent">
+      
+      <include
+         android:id="@id/android:empty"
+         layout="@layout/app_loading_spinner" />
+
+      <TextView
+         android:id="@+id/tasklists_activity_no_lists"
+         style="@style/App_No_List_Elements_Text"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent"
+         android:text="@string/tasklists_no_lists"
+         android:visibility="gone" />
+   </FrameLayout>
 
 </LinearLayout>

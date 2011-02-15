@@ -269,9 +269,16 @@
    <string name="moloko_prefs_acra_title">Keine Fehlerberichte senden</string>
    <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>
    <string name="moloko_prefs_acra_summary_off">Bitte unterstützen Sie die Entwicklung durch das Senden von Fehlerberichten</string>
-   <string name="moloko_prefs_send_log_text">Moloko Geräte-Log an Entwickler senden</string>   
+   <string name="moloko_prefs_send_log_text">Moloko Geräte-Log an Entwickler senden</string> 
+   <string name="moloko_prefs_clear_db_text">Alle Daten aus der Datenbank entfernen</string>  
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
+      <string name="moloko_prefs_clear_db_dlg_title">Datenbank säubern</string>
+      <string name="moloko_prefs_clear_db_dlg_text">Wirklich alle Daten der Datenbank unwiederruflich löschen?</string>
+      <string name="moloko_prefs_clear_db_dlg_clearing">Säubere Datenbank...</string>
+      <!-- Toasts -->
+      <string name="moloko_prefs_clear_db_toast_cleared">Datenbank gesäubert</string>
+      <string name="moloko_prefs_clear_db_toast_clearing_failed">Säubern der Datenbank fehlgeschlagen</string>
 
 	<!-- RTM service status messages -->
 	<string name="rtmSvc_state_unknown">Unbekannt</string>

@@ -296,7 +296,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return LocationOverviews.CONTENT_URI;
    }

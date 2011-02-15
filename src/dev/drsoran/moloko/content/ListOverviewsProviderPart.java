@@ -396,7 +396,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return ListOverviews.CONTENT_URI;
    }

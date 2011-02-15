@@ -103,6 +103,7 @@
                android:layout_marginRight="10dip"
                android:layout_below="@id/task_edit_desc"
                android:layout_alignLeft="@id/task_edit_desc"
+               android:visibility="gone"
                moloko:titlePaddingTop="8dip"
                moloko:title="@string/task_edit_list" />
 
@@ -115,6 +116,7 @@
                android:layout_marginRight="10dip"
                android:layout_below="@id/task_edit_list"
                android:layout_alignLeft="@id/task_edit_desc"
+               android:visibility="gone"
                moloko:title="@string/task_edit_priority"
                moloko:spinnerEntries="@array/rtm_priorities"
                moloko:spinnerValues="@array/rtm_priority_values" />
@@ -126,7 +128,8 @@
                android:layout_height="wrap_content"
                android:layout_below="@id/task_edit_priority"
                android:layout_alignLeft="@id/task_edit_desc"
-               android:layout_marginRight="10dip">
+               android:layout_marginRight="10dip"
+               android:visibility="gone">
 
                <TextView
                   android:id="@+id/task_edit_tags_title"
@@ -175,7 +178,8 @@
                android:layout_below="@id/task_edit_tags_layout"
                android:layout_alignLeft="@id/task_edit_desc"
                android:layout_marginTop="10dip"
-               android:layout_marginRight="10dip">
+               android:layout_marginRight="10dip"
+               android:visibility="gone">
 
                <View
                   android:id="@+id/task_edit_due_top_line"
@@ -229,7 +233,8 @@
                android:layout_below="@id/task_edit_due_layout"
                android:layout_alignLeft="@id/task_edit_desc"
                android:layout_marginTop="10dip"
-               android:layout_marginRight="10dip">
+               android:layout_marginRight="10dip"
+               android:visibility="gone">
 
                <TextView
                   android:id="@+id/task_edit_recurrence_title"
@@ -275,7 +280,8 @@
                android:layout_below="@id/task_edit_recurrence_layout"
                android:layout_alignLeft="@id/task_edit_desc"
                android:layout_marginTop="10dip"
-               android:layout_marginRight="10dip">
+               android:layout_marginRight="10dip"
+               android:visibility="gone">
 
                <TextView
                   android:id="@+id/task_edit_estimate_title"
@@ -321,6 +327,7 @@
                android:layout_marginRight="10dip"
                android:layout_below="@id/task_edit_estimate_layout"
                android:layout_alignLeft="@id/task_edit_desc"
+               android:visibility="gone"
                moloko:titlePaddingTop="8dip"
                moloko:title="@string/task_location" />
 
@@ -336,6 +343,7 @@
                android:inputType="text|textUri"
                android:imeOptions="actionDone"
                android:selectAllOnFocus="true"
+               android:visibility="gone"
                moloko:titlePaddingTop="8dip"
                moloko:title="@string/task_url" />
 

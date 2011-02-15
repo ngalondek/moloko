@@ -294,7 +294,7 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return TagOverviews.CONTENT_URI;
    }

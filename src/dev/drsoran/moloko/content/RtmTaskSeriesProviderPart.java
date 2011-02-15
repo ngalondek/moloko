@@ -479,7 +479,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return TaskSeries.CONTENT_URI;
    }

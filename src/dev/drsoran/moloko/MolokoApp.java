@@ -141,6 +141,17 @@ public class MolokoApp extends org.acra.CrashReportingApplication implements
    
 
 
+   public static Handler getHandler( Context context )
+   {
+      final MolokoApp app = MolokoApp.get( context );
+      if ( app != null )
+         return app.getHandler();
+      else
+         return null;
+   }
+   
+
+
    public Handler getHandler()
    {
       return handler;

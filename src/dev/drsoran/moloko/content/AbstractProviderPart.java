@@ -142,6 +142,10 @@ public abstract class AbstractProviderPart implements IProviderPart
    
 
 
+   public abstract Uri getContentUri();
+   
+
+
    protected void addUris()
    {
       uriMatcher.addURI( Rtm.AUTHORITY, path, DIR );
@@ -165,10 +169,6 @@ public abstract class AbstractProviderPart implements IProviderPart
 
 
    protected abstract String getDefaultSortOrder();
-   
-
-
-   protected abstract Uri getContentUri();
    
 
 

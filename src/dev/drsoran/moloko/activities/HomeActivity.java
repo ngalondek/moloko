@@ -24,7 +24,6 @@ package dev.drsoran.moloko.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -32,8 +31,6 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -50,22 +47,6 @@ public class HomeActivity extends Activity implements OnItemClickListener
    
    protected final Handler handler = new Handler();
    
-   protected final ContentObserver dbObserver = new ContentObserver( handler )
-   {
-      @Override
-      public void onChange( boolean selfChange )
-      {
-         // Aggregate several calls to a single update.
-         DelayedRun.run( handler, new Runnable()
-         {
-            public void run()
-            {
-               refreshGrid();
-            }
-         }, 1000 );
-      }
-   };
-   
    
 
    @Override
@@ -77,8 +58,6 @@ public class HomeActivity extends Activity implements OnItemClickListener
       UIUtils.setTitle( this,
                         getString( R.string.app_home ),
                         R.drawable.ic_title_home );
-      
-      TasksProviderPart.registerContentObserver( this, dbObserver );
       
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setOnItemClickListener( this );
@@ -93,31 +72,6 @@ public class HomeActivity extends Activity implements OnItemClickListener
    {
       super.onResume();
       
-      refreshGrid();
-   }
-   
-
-
-   @Override
-   protected void onDestroy()
-   {
-      super.onDestroy();
-      
-      TasksProviderPart.unregisterContentObserver( this, dbObserver );
-   }
-   
-
-
-   private void fillGrid()
-   {
-      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
-      gridview.setAdapter( new HomeAdapter( this ) );
-   }
-   
-
-
-   private void refreshGrid()
-   {
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
       
@@ -130,14 +84,50 @@ public class HomeActivity extends Activity implements OnItemClickListener
    
 
 
+   @Override
+   protected void onDestroy()
+   {
+      super.onStop();
+      
+      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
+      final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
+      
+      if ( homeAdapter != null )
+      {
+         homeAdapter.stopWidgets();
+      }
+   }
+   
+
+
+   private void fillGrid()
+   {
+      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
+      final HomeAdapter adapter = new HomeAdapter( this );
+      
+      gridview.setAdapter( adapter );
+      adapter.startWidgets();
+   }
+   
+
+
    public void onItemClick( AdapterView< ? > adapterView,
                             View view,
                             int pos,
                             long id )
    {
-      final Intent intent = ( (HomeAdapter) ( (GridView) adapterView ).getAdapter() ).getIntentForWidget( pos );
+      final HomeAdapter adapter = (HomeAdapter) ( (GridView) adapterView ).getAdapter();
+      
+      final Intent intent = adapter.getIntentForWidget( pos );
       
       if ( intent != null )
          startActivity( intent );
+      else
+      {
+         final Runnable runnable = adapter.getRunnableForWidget( pos );
+         
+         if ( runnable != null )
+            handler.post( runnable );
+      }
    }
 }

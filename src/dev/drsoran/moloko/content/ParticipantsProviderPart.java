@@ -332,7 +332,7 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Participants.CONTENT_URI;
    }

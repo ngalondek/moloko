@@ -351,7 +351,7 @@ public class TaskEditActivity extends Activity
                                                                           System.currentTimeMillis() ) );
             try
             {
-               if ( new ApplyModificationsTask().execute( (Void) null ).get() )
+               if ( new ApplyModificationsTask().execute().get() )
                {
                   result = RESULT_EDIT_TASK_CHANGED;
                }

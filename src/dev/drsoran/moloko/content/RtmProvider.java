@@ -24,10 +24,13 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -46,9 +49,9 @@ public class RtmProvider extends ContentProvider
    
    private final static int DATABASE_VERSION = 1;
    
-   private final static ArrayList< IProviderPart > parts = new ArrayList< IProviderPart >();
+   private final static List< IProviderPart > parts = new ArrayList< IProviderPart >();
    
-   private final static ArrayList< IRtmProviderPart > mutableParts = new ArrayList< IRtmProviderPart >();
+   private final static List< IRtmProviderPart > mutableParts = new ArrayList< IRtmProviderPart >();
    
    
    private static class RtmProviderOpenHelper extends SQLiteOpenHelper
@@ -276,6 +279,39 @@ public class RtmProvider extends ContentProvider
    
 
 
+   public synchronized void clear() throws OperationApplicationException
+   {
+      final ArrayList< ContentProviderOperation > deleteOps = new ArrayList< ContentProviderOperation >();
+      
+      for ( IRtmProviderPart part : mutableParts )
+      {
+         deleteOps.add( ContentProviderOperation.newDelete( part.getContentUri() )
+                                                .build() );
+      }
+      
+      final TransactionalAccess transactionalAccess = newTransactionalAccess();
+      
+      try
+      {
+         transactionalAccess.beginTransaction();
+         
+         applyBatch( deleteOps );
+         
+         transactionalAccess.setTransactionSuccessful();
+      }
+      catch ( Throwable e )
+      {
+         Log.e( TAG, "Clearing database failed", e );
+         throw new OperationApplicationException( e );
+      }
+      finally
+      {
+         transactionalAccess.endTransaction();
+      }
+   }
+   
+
+
    @Override
    public int update( Uri uri,
                       ContentValues values,
@@ -319,7 +355,7 @@ public class RtmProvider extends ContentProvider
    
 
 
-   private < T extends IProviderPart > MatchType< T > matchUriToPart( ArrayList< T > parts,
+   private < T extends IProviderPart > MatchType< T > matchUriToPart( List< T > parts,
                                                                       Uri uri )
    {
       MatchType< T > matchType = new MatchType< T >();

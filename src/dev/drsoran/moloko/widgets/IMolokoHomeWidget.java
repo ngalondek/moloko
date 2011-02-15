@@ -31,5 +31,17 @@ public interface IMolokoHomeWidget
    
 
 
+   public Runnable getRunnable();
+   
+
+
+   public void start();
+   
+
+
    public void refresh();
+   
+
+
+   public void stop();
 }

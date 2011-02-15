@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.Collections;
 import java.util.List;
 
 import android.content.ContentProviderClient;
@@ -35,6 +36,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -136,27 +138,28 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    {
       switchEmptyView( emptyListView );
       
-      if ( result != null )
+      final String title = result.configuration.getString( TITLE );
+      
+      final int titleIconId = result.configuration.getInt( TITLE_ICON, -1 );
+      
+      if ( title != null )
       {
-         final String title = result.configuration.getString( TITLE );
-         
-         final int titleIconId = result.configuration.getInt( TITLE_ICON, -1 );
-         
-         if ( title != null )
-         {
-            UIUtils.setTitle( this, title, titleIconId );
-         }
-         else
-         {
-            UIUtils.setTitle( this, getString( R.string.taskslist_titlebar,
-                                               getString( R.string.app_name ) ) );
-         }
-         
-         setListAdapter( new TasksListAdapter( this,
-                                               R.layout.taskslist_activity_listitem,
-                                               result.tasks,
-                                               result.filter ) );
+         UIUtils.setTitle( this, title, titleIconId );
       }
+      else
+      {
+         UIUtils.setTitle( this, getString( R.string.taskslist_titlebar,
+                                            getString( R.string.app_name ) ) );
+      }
+      
+      setListAdapter( new TasksListAdapter( this,
+                                            R.layout.taskslist_activity_listitem,
+                                            result != null
+                                                          ? result.tasks
+                                                          : Collections.< ListTask > emptyList(),
+                                            result != null
+                                                          ? result.filter
+                                                          : new RtmSmartFilter( Strings.EMPTY_STRING ) ) );
    }
    
 

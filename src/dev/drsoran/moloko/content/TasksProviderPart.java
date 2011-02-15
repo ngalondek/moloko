@@ -554,7 +554,7 @@ public class TasksProviderPart extends AbstractProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Tasks.CONTENT_URI;
    }

@@ -216,7 +216,7 @@ public class SyncProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected Uri getContentUri()
+   public Uri getContentUri()
    {
       return Sync.CONTENT_URI;
    }

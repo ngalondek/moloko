@@ -6,13 +6,16 @@
 This is a collection of features which are supported and what is todo.
 
 === This works ===
-  * RTM features of:
+  * Reading access for RTM features:    
     * lists (including smart lists)
     * tasks
     * tags
     * notes
     * locations (including Google Maps and Navigation)
     * contacts (support for linking RTM contacts to phone contacts. See [https://code.google.com/p/moloko/wiki/RTMContactLinking RTMContactLinking])
+
+  * Writing/Deleting access for RTM features:
+    * Rename tasks
 
   * Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.<br>
   * Support for *HTTP* and *HTTPS* access of RTM including proxy settings and compression to save data volume.
@@ -53,11 +56,15 @@ This is a collection of features which are supported and what is todo.
 
 === TODO ===
  ==== Next steps ===
-    * Renaming tasks
+    * Moving tasks
+    * Setting task priority
+    * Setting task location
+    * Setting task URL
+    * Postpone task
 
- ==== later steps ===        
-    * Write access
-    * Delete access
+ ==== later steps ===   
+    * Setting task tags
+    * Renaming lists    
     * Groups
 
  ==== Unsupported RTM features ====

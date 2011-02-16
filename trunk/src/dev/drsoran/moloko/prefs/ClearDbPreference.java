@@ -76,6 +76,8 @@ public class ClearDbPreference extends InfoTextPreference
       {
          private Dialog dialog;
          
+         private boolean failed = false;
+         
          
 
          @Override
@@ -107,10 +109,7 @@ public class ClearDbPreference extends InfoTextPreference
                }
                catch ( OperationApplicationException e )
                {
-                  Toast.makeText( getContext(),
-                                  R.string.moloko_prefs_clear_db_toast_clearing_failed,
-                                  Toast.LENGTH_LONG )
-                       .show();
+                  failed = true;
                }
                
                client.release();
@@ -130,8 +129,11 @@ public class ClearDbPreference extends InfoTextPreference
             dialog = null;
             
             Toast.makeText( getContext(),
-                            R.string.moloko_prefs_clear_db_toast_cleared,
-                            Toast.LENGTH_LONG ).show();
+                            failed
+                                  ? R.string.moloko_prefs_clear_db_toast_clearing_failed
+                                  : R.string.moloko_prefs_clear_db_toast_cleared,
+                            Toast.LENGTH_LONG )
+                 .show();
          }
          
       }.execute();

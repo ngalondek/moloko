@@ -6,7 +6,7 @@
 This is a collection of features which are supported and what is todo.
 
 === This works ===
-  * Reading access for RTM features:    
+  * Reading access for RTM features: see [https://code.google.com/p/moloko/wiki/RTMAccessLevels RTMAccessLevels]   
     * lists (including smart lists)
     * tasks
     * tags
@@ -14,7 +14,7 @@ This is a collection of features which are supported and what is todo.
     * locations (including Google Maps and Navigation)
     * contacts (support for linking RTM contacts to phone contacts. See [https://code.google.com/p/moloko/wiki/RTMContactLinking RTMContactLinking])
 
-  * Writing/Deleting access for RTM features:
+  * Writing/Deleting access for RTM features: see [https://code.google.com/p/moloko/wiki/RTMAccessLevels RTMAccessLevels]
     * Rename tasks
 
   * Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.<br>
@@ -69,9 +69,9 @@ This is a collection of features which are supported and what is todo.
 
  ==== Unsupported RTM features ====
     * Groups
-    * Write access, see [https://code.google.com/p/moloko/wiki/RTMAccessLevels RTMAccessLevels]
-    * Delete access, see [https://code.google.com/p/moloko/wiki/RTMAccessLevels RTMAccessLevels]
-
+    * adding, deleting a task or list
+    * set task due, recurrence, estimation
+    
  ==== Unsupported RTM smart search syntax operators ====
     Also used for smart lists: See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]
     * locationWithin:

@@ -141,7 +141,8 @@ public class RtmProvider extends ContentProvider
        new ListOverviewsProviderPart( dbHelper ),
        new TagOverviewsProviderPart( dbHelper ),
        new LocationOverviewsProviderPart( dbHelper ),
-       new ContactOverviewsProviderPart( dbHelper ) } ) );
+       new ContactOverviewsProviderPart( dbHelper ),
+       new SyncTasksProviderPart( dbHelper ) } ) );
       
       return true;
    }

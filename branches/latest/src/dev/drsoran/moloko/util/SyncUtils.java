@@ -23,7 +23,9 @@
 package dev.drsoran.moloko.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.accounts.Account;
 import android.app.AlarmManager;
@@ -35,11 +37,14 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.ServiceInternalException;
+import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
@@ -49,13 +54,15 @@ import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
-import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection;
+import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
+import dev.drsoran.provider.Rtm.SyncTasks;
+import dev.drsoran.rtm.SyncTask;
 
 
 public final class SyncUtils
@@ -452,5 +459,83 @@ public final class SyncUtils
       }
       
       return mergeDir;
+   }
+   
+
+
+   public final static List< SyncTask > flatten( RtmTaskSeries taskSeries )
+   {
+      final List< RtmTask > rtmTasks = taskSeries.getTasks();
+      final List< SyncTask > tasks = new ArrayList< SyncTask >( rtmTasks.size() );
+      
+      for ( RtmTask rtmTask : rtmTasks )
+      {
+         tasks.add( new SyncTask( rtmTask.getId(),
+                                  taskSeries.getId(),
+                                  taskSeries.getCreatedDate(),
+                                  taskSeries.getModifiedDate(),
+                                  taskSeries.getName(),
+                                  taskSeries.getSource(),
+                                  taskSeries.getURL(),
+                                  taskSeries.getRecurrence(),
+                                  taskSeries.isEveryRecurrence(),
+                                  taskSeries.getLocationId(),
+                                  taskSeries.getListId(),
+                                  rtmTask.getDue(),
+                                  rtmTask.getHasDueTime(),
+                                  rtmTask.getAdded(),
+                                  rtmTask.getCompleted(),
+                                  rtmTask.getDeleted(),
+                                  rtmTask.getPriority(),
+                                  rtmTask.getPostponed(),
+                                  rtmTask.getEstimate(),
+                                  rtmTask.getEstimateMillis(),
+                                  TextUtils.join( SyncTasks.TAGS_DELIMITER,
+                                                  taskSeries.getTagStrings() ),
+                                  taskSeries.getParticipants() ) );
+      }
+      
+      return tasks;
+   }
+   
+
+
+   public final static RtmTaskSeries toRtmTaskSeries( List< SyncTask > tasks )
+   {
+      if ( tasks.size() < 1 )
+         throw new IllegalArgumentException( "need at least on RtmTask for a RtmTaskSeries" );
+      
+      final List< RtmTask > rtmTasks = new ArrayList< RtmTask >( tasks.size() );
+      
+      for ( SyncTask syncTask : tasks )
+      {
+         rtmTasks.add( new RtmTask( syncTask.getId(),
+                                    syncTask.getTaskSeriesId(),
+                                    syncTask.getDueDate(),
+                                    syncTask.hasDueTime(),
+                                    syncTask.getAddedDate(),
+                                    syncTask.getCompletedDate(),
+                                    syncTask.getDeletedDate(),
+                                    syncTask.getPriority(),
+                                    syncTask.getPosponed(),
+                                    syncTask.getEstimate(),
+                                    syncTask.getEstimateMillis() ) );
+      }
+      final SyncTask firstTask = tasks.get( 0 );
+      
+      return new RtmTaskSeries( firstTask.getTaskSeriesId(),
+                                firstTask.getListId(),
+                                firstTask.getCreatedDate(),
+                                firstTask.getModifiedDate(),
+                                firstTask.getName(),
+                                firstTask.getSource(),
+                                rtmTasks,
+                                null,
+                                firstTask.getLocationId(),
+                                firstTask.getUrl(),
+                                firstTask.getRecurrence(),
+                                firstTask.isEveryRecurrence(),
+                                firstTask.getTags(),
+                                firstTask.getParticipants() );
    }
 }

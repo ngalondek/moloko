@@ -141,6 +141,13 @@ public final class Queries
    
 
 
+   public final static long getOptLong( Cursor c, int index, int defValue )
+   {
+      return c.isNull( index ) ? defValue : c.getLong( index );
+   }
+   
+
+
    public final static Long getOptLong( Cursor c, int index )
    {
       return c.isNull( index ) ? null : c.getLong( index );

@@ -320,14 +320,14 @@ public class RtmTaskSeries extends RtmData implements
 
    public Date getCreatedDate()
    {
-      return ( created != null ) ? created.getDate() : null;
+      return ( created != null ) ? created.getDate() : new Date( 0 );
    }
    
 
 
    public Date getModifiedDate()
    {
-      return ( modified != null ) ? modified.getDate() : null;
+      return ( modified != null ) ? modified.getDate() : new Date( 0 );
    }
    
 

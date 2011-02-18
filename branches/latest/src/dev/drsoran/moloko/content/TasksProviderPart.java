@@ -52,8 +52,6 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.Participant;
-import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
@@ -79,9 +77,9 @@ public class TasksProviderPart extends AbstractProviderPart
    
    private final static String SUB_QUERY;
    
-   private final static String TAGS_SUB_QUERY;
+   private final static String TAGS_SUB_QUERY = SyncTasksProviderPart.TAGS_SUB_QUERY;
    
-   private final static String PARTICIPANTS_SUB_QUERY;
+   private final static String PARTICIPANTS_SUB_QUERY = SyncTasksProviderPart.PARTICIPANTS_SUB_QUERY;
    
    private final static String NUM_NOTES_SUBQUERY;
    
@@ -92,7 +90,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                       false,
+      false,
                                                        
                                                        // tables
                                                        TaskSeries.PATH + ","
@@ -154,105 +152,8 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        null,
                                                        null );
       
-      TAGS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                            false,
-                                                            
-                                                            // tables
-                                                            TaskSeries.PATH
-                                                               + ","
-                                                               + Tags.PATH,
-                                                            
-                                                            // columns
-                                                            new String[]
-                                                            {
-                                                             TaskSeries.PATH
-                                                                + "."
-                                                                + TaskSeries._ID,
-                                                             Tags.PATH
-                                                                + "."
-                                                                + Tags.TASKSERIES_ID
-                                                                + " AS series_id",
-                                                             "group_concat("
-                                                                + Tags.TAG
-                                                                + ",\""
-                                                                + Tasks.TAGS_DELIMITER
-                                                                + "\") AS "
-                                                                + Tasks.TAGS },
-                                                            
-                                                            // where
-                                                            TaskSeries.PATH
-                                                               + "."
-                                                               + TaskSeries._ID
-                                                               + "="
-                                                               + Tags.PATH
-                                                               + "."
-                                                               + Tags.TASKSERIES_ID,
-                                                            
-                                                            // group by
-                                                            TaskSeries.PATH
-                                                               + "."
-                                                               + TaskSeries._ID,
-                                                            null,
-                                                            null,
-                                                            null );
-      
-      PARTICIPANTS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                    false,
-                                                                    
-                                                                    // tables
-                                                                    TaskSeries.PATH
-                                                                       + ","
-                                                                       + Participants.PATH,
-                                                                    
-                                                                    // columns
-                                                                    new String[]
-                                                                    {
-                                                                     TaskSeries.PATH
-                                                                        + "."
-                                                                        + TaskSeries._ID,
-                                                                     Participants.PATH
-                                                                        + "."
-                                                                        + Participants.TASKSERIES_ID
-                                                                        + " AS series_id",
-                                                                     "group_concat("
-                                                                        + Participants.CONTACT_ID
-                                                                        + ",\""
-                                                                        + Tasks.PARTICIPANTS_DELIMITER
-                                                                        + "\") AS "
-                                                                        + Tasks.PARTICIPANT_IDS,
-                                                                     "group_concat("
-                                                                        + Participants.FULLNAME
-                                                                        + ",\""
-                                                                        + Tasks.PARTICIPANTS_DELIMITER
-                                                                        + "\") AS "
-                                                                        + Tasks.PARTICIPANT_FULLNAMES,
-                                                                     "group_concat("
-                                                                        + Participants.USERNAME
-                                                                        + ",\""
-                                                                        + Tasks.PARTICIPANTS_DELIMITER
-                                                                        + "\") AS "
-                                                                        + Tasks.PARTICIPANT_USERNAMES },
-                                                                    
-                                                                    // where
-                                                                    TaskSeries.PATH
-                                                                       + "."
-                                                                       + TaskSeries._ID
-                                                                       + "="
-                                                                       + Participants.PATH
-                                                                       + "."
-                                                                       + Participants.TASKSERIES_ID,
-                                                                    
-                                                                    // group by
-                                                                    TaskSeries.PATH
-                                                                       + "."
-                                                                       + TaskSeries._ID,
-                                                                    null,
-                                                                    // order by
-                                                                    Participants.DEFAULT_SORT_ORDER,
-                                                                    null );
-      
       NUM_NOTES_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                false,
+      false,
                                                                 
                                                                 // tables
                                                                 Notes.PATH,
@@ -638,60 +539,9 @@ public class TasksProviderPart extends AbstractProviderPart
                                            false ),
                        Queries.getOptInt( c, COL_INDICES.get( Tasks.ZOOM ), -1 ),
                        Queries.getOptString( c, COL_INDICES.get( Tasks.TAGS ) ),
-                       getPartitiansList( taskSeriesId, c ),
+                       SyncTasksProviderPart.createPartitiansList( taskSeriesId,
+                                                                   c ),
                        c.getInt( COL_INDICES.get( Tasks.NUM_NOTES ) ) );
    }
    
-
-
-   private final static ParticipantList getPartitiansList( String taskSeriesId,
-                                                           Cursor c )
-   {
-      ParticipantList participantList = null;
-      
-      final String partContactIds = Queries.getOptString( c,
-                                                          COL_INDICES.get( Tasks.PARTICIPANT_IDS ) );
-      if ( !TextUtils.isEmpty( partContactIds ) )
-      {
-         final String partFullnames = Queries.getOptString( c,
-                                                            COL_INDICES.get( Tasks.PARTICIPANT_FULLNAMES ) );
-         final String partUsernames = Queries.getOptString( c,
-                                                            COL_INDICES.get( Tasks.PARTICIPANT_FULLNAMES ) );
-         
-         if ( !TextUtils.isEmpty( partFullnames )
-            && !TextUtils.isEmpty( partUsernames ) )
-         {
-            final String[] splitIds = TextUtils.split( partContactIds,
-                                                       Tasks.PARTICIPANTS_DELIMITER );
-            final String[] splitFullnames = TextUtils.split( partFullnames,
-                                                             Tasks.PARTICIPANTS_DELIMITER );
-            final String[] splitUsernames = TextUtils.split( partUsernames,
-                                                             Tasks.PARTICIPANTS_DELIMITER );
-            
-            if ( splitIds.length == splitFullnames.length
-               && splitIds.length == splitUsernames.length )
-            {
-               participantList = new ParticipantList( taskSeriesId );
-               
-               for ( int i = 0; i < splitIds.length; i++ )
-               {
-                  participantList.addParticipant( new Participant( null,
-                                                                   taskSeriesId,
-                                                                   splitIds[ i ],
-                                                                   splitFullnames[ i ],
-                                                                   splitUsernames[ i ] ) );
-               }
-            }
-            else
-            {
-               Log.e( TAG,
-                      "Expected equal lengths for participant fields. Has IDs:"
-                         + splitIds.length + ", Names:" + splitFullnames.length
-                         + ", User:" + splitUsernames.length );
-            }
-         }
-      }
-      
-      return participantList;
-   }
 }

@@ -276,7 +276,7 @@ public class RtmTask extends RtmData implements
 
    public Date getDue()
    {
-      return ( due != null ) ? due.getDate() : null;
+      return ( due != null ) ? due.getDate() : new Date( 0 );
    }
    
 
@@ -290,21 +290,21 @@ public class RtmTask extends RtmData implements
 
    public Date getAdded()
    {
-      return ( added != null ) ? added.getDate() : null;
+      return ( added != null ) ? added.getDate() : new Date( 0 );
    }
    
 
 
    public Date getCompleted()
    {
-      return ( completed != null ) ? completed.getDate() : null;
+      return ( completed != null ) ? completed.getDate() : new Date( 0 );
    }
    
 
 
    public Date getDeleted()
    {
-      return ( deleted != null ) ? deleted.getDate() : null;
+      return ( deleted != null ) ? deleted.getDate() : new Date( 0 );
    }
    
 

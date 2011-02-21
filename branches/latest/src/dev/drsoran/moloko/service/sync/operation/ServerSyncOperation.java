@@ -32,13 +32,13 @@ import java.util.List;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
+import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.Service.MethodCallType;
 
 import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
-import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection;
 
 
 public class ServerSyncOperation< T extends IServerSyncable< T > > implements
@@ -54,11 +54,17 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
       
       private final List< TimeLineMethod< T > > methods = new ArrayList< TimeLineMethod< T > >();
       
+      private final T sourceElement;
+      
       
 
-      public Builder( Op operationType )
+      public Builder( Op operationType, T sourceElement )
       {
+         if ( sourceElement == null )
+            throw new NullPointerException( "sourceElement is null" );
+         
          this.operationType = operationType;
+         this.sourceElement = sourceElement;
       }
       
 
@@ -67,23 +73,25 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
       {
          this.operationType = other.operationType;
          this.methods.addAll( other.methods );
+         this.sourceElement = other.sourceElement;
       }
       
 
 
-      public Builder( Op operationType, TimeLineMethod< T > method )
+      public Builder( Op operationType, T sourceElement,
+         TimeLineMethod< T > method )
       {
+         this( operationType, sourceElement );
          add( method );
-         this.operationType = operationType;
       }
       
 
 
-      public Builder( Op operationType,
+      public Builder( Op operationType, T sourceElement,
          Collection< TimeLineMethod< T > > methods )
       {
+         this( operationType, sourceElement );
          add( methods );
-         this.operationType = operationType;
       }
       
 
@@ -99,7 +107,7 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
       
 
 
-      public Builder< T > add( Collection< TimeLineMethod< T > > methods )
+      public Builder< T > add( Collection< ? extends TimeLineMethod< T > > methods )
       {
          if ( methods == null )
             throw new NullPointerException( "methods are null" );
@@ -118,11 +126,6 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
       {
          if ( !( operation instanceof INoopSyncOperation ) )
          {
-            if ( operation.getOperationType() != operationType )
-               throw new IllegalArgumentException( "This operation type "
-                  + operationType + " differs from argument operation type "
-                  + operation.getOperationType() );
-            
             for ( TimeLineMethod< T > method : operation.getMethods() )
             {
                add( method );
@@ -140,13 +143,15 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
          if ( methods.size() == 0 )
             return NoopServerSyncOperation.INSTANCE;
          else
-            return new ServerSyncOperation( this );
+            return new ServerSyncOperation< T >( this );
       }
    }
    
    private final Op operationType;
    
    private final List< TimeLineMethod< T > > serviceMethods;
+   
+   private T sourceElement;
    
    private T resultElement;
    
@@ -184,11 +189,21 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
       if ( resultElement == null )
          throw new IllegalStateException( "Service method did not produced a result element" );
       
-      return resultElement.computeMergeOperations( null,
-                                                   null,
-                                                   resultElement,
-                                                   MergeDirection.LOCAL_ONLY )
-                          .getLocalOperation();
+      if ( sourceElement instanceof IContentProviderSyncable
+         && resultElement instanceof IContentProviderSyncable )
+      {
+         @SuppressWarnings( "rawtypes" )
+         final IContentProviderSyncable sourceSyncable = (IContentProviderSyncable) sourceElement;
+         @SuppressWarnings( "rawtypes" )
+         final IContentProviderSyncable resultSyncable = (IContentProviderSyncable) resultElement;
+         
+         @SuppressWarnings( "unchecked" )
+         final IContentProviderSyncOperation computeContentProviderUpdateOperation = sourceSyncable.computeContentProviderUpdateOperation( resultSyncable );
+         
+         return computeContentProviderUpdateOperation;
+      }
+      else
+         return NoopContentProviderSyncOperation.INSTANCE;
    }
    
 
@@ -254,85 +269,94 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newInsert()
+   public final static < T extends IServerSyncable< T > > Builder< T > newInsert( T sourceElement )
    {
-      return new Builder< T >( Op.INSERT );
+      return new Builder< T >( Op.INSERT, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newInsert( IServerSyncOperation< T > operation )
+   public final static < T extends IServerSyncable< T > > Builder< T > newInsert( T sourceElement,
+                                                                                  IServerSyncOperation< T > operation )
    {
-      return new Builder< T >( Op.INSERT ).add( operation );
+      return new Builder< T >( Op.INSERT, sourceElement ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newInsert( TimeLineMethod< T > method )
+   public final static < T extends IServerSyncable< T > > Builder< T > newInsert( T sourceElement,
+                                                                                  TimeLineMethod< T > method )
    {
-      return new Builder< T >( Op.INSERT, method );
+      return new Builder< T >( Op.INSERT, sourceElement, method );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newInsert( Collection< TimeLineMethod< T > > methods )
+   public final static < T extends IServerSyncable< T > > Builder< T > newInsert( T sourceElement,
+                                                                                  Collection< TimeLineMethod< T > > methods )
    {
-      return new Builder< T >( Op.INSERT, methods );
+      return new Builder< T >( Op.INSERT, sourceElement, methods );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newUpdate()
+   public final static < T extends IServerSyncable< T > > Builder< T > newUpdate( T sourceElement )
    {
-      return new Builder< T >( Op.UPDATE );
+      return new Builder< T >( Op.UPDATE, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newUpdate( IServerSyncOperation< T > operation )
+   public final static < T extends IServerSyncable< T > > Builder< T > newUpdate( T sourceElement,
+                                                                                  IServerSyncOperation< T > operation )
    {
-      return new Builder< T >( Op.UPDATE ).add( operation );
+      return new Builder< T >( Op.UPDATE, sourceElement ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newUpdate( TimeLineMethod< T > method )
+   public final static < T extends IServerSyncable< T > > Builder< T > newUpdate( T sourceElement,
+                                                                                  TimeLineMethod< T > method )
    {
-      return new Builder< T >( Op.UPDATE, method );
+      return new Builder< T >( Op.UPDATE, sourceElement, method );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newUpdate( Collection< TimeLineMethod< T > > methods )
+   public final static < T extends IServerSyncable< T > > Builder< T > newUpdate( T sourceElement,
+                                                                                  Collection< TimeLineMethod< T > > methods )
    {
-      return new Builder< T >( Op.UPDATE, methods );
+      return new Builder< T >( Op.UPDATE, sourceElement, methods );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newDelete()
+   public final static < T extends IServerSyncable< T > > Builder< T > newDelete( T sourceElement )
    {
-      return new Builder< T >( Op.DELETE );
+      return new Builder< T >( Op.DELETE, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newDelete( IServerSyncOperation< T > operation )
+   public final static < T extends IServerSyncable< T > > Builder< T > newDelete( T sourceElement,
+                                                                                  IServerSyncOperation< T > operation )
    {
-      return new Builder< T >( Op.DELETE ).add( operation );
+      return new Builder< T >( Op.DELETE, sourceElement ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newDelete( TimeLineMethod< T > method )
+   public final static < T extends IServerSyncable< T > > Builder< T > newDelete( T sourceElement,
+                                                                                  TimeLineMethod< T > method )
    {
-      return new Builder< T >( Op.DELETE, method );
+      return new Builder< T >( Op.DELETE, sourceElement, method );
    }
    
 
 
-   public final static < T extends IServerSyncable< T > > Builder< T > newDelete( Collection< TimeLineMethod< T > > methods )
+   public final static < T extends IServerSyncable< T > > Builder< T > newDelete( T sourceElement,
+                                                                                  Collection< TimeLineMethod< T > > methods )
    {
-      return new Builder< T >( Op.DELETE, methods );
+      return new Builder< T >( Op.DELETE, sourceElement, methods );
    }
 }

@@ -33,9 +33,10 @@ public final class TypedDirectedSyncOperations< T extends IServerSyncable< T >>
    
    
 
-   public TypedDirectedSyncOperations( ISyncOperation.Op type )
+   public TypedDirectedSyncOperations( ISyncOperation.Op type, T sourceElement )
    {
-      serverOperationBuilder = new ServerSyncOperation.Builder< T >( type );
+      serverOperationBuilder = new ServerSyncOperation.Builder< T >( type,
+                                                                     sourceElement );
       localOperationBuilder = new ContentProviderSyncOperation.Builder( type );
    }
    

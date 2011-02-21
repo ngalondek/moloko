@@ -22,14 +22,16 @@
 
 package dev.drsoran.moloko.prefs;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.OperationApplicationException;
 import android.content.DialogInterface.OnClickListener;
+import android.content.OperationApplicationException;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.widget.Toast;
@@ -76,7 +78,7 @@ public class ClearDbPreference extends InfoTextPreference
       {
          private Dialog dialog;
          
-         private boolean failed = false;
+         private final AtomicBoolean failed = new AtomicBoolean();
          
          
 
@@ -109,7 +111,7 @@ public class ClearDbPreference extends InfoTextPreference
                }
                catch ( OperationApplicationException e )
                {
-                  failed = true;
+                  failed.set( true );
                }
                
                client.release();
@@ -129,9 +131,9 @@ public class ClearDbPreference extends InfoTextPreference
             dialog = null;
             
             Toast.makeText( getContext(),
-                            failed
-                                  ? R.string.moloko_prefs_clear_db_toast_clearing_failed
-                                  : R.string.moloko_prefs_clear_db_toast_cleared,
+                            failed.get()
+                                        ? R.string.moloko_prefs_clear_db_toast_clearing_failed
+                                        : R.string.moloko_prefs_clear_db_toast_cleared,
                             Toast.LENGTH_LONG )
                  .show();
          }

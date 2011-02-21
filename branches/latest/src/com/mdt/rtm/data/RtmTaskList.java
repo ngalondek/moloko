@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -163,18 +162,6 @@ public class RtmTaskList extends RtmData
    
 
 
-   public void removeDeletedTaskSeries()
-   {
-      for ( Iterator< RtmTaskSeries > i = series.iterator(); i.hasNext(); )
-      {
-         final RtmTaskSeries taskSeries = i.next();
-         if ( taskSeries.isDeleted() )
-            i.remove();
-      }
-   }
-   
-
-
    public Date getCurrent()
    {
       return ( current != null ) ? current.getDate() : null;
@@ -202,7 +189,6 @@ public class RtmTaskList extends RtmData
    public String toString()
    {
       return "RtmTaskList<" + id + ",#" + series.size()
-         + ( ( current != null ) ? "," + current.getDate() : "" )
-         + ">";
+         + ( ( current != null ) ? "," + current.getDate() : "" ) + ">";
    }
 }

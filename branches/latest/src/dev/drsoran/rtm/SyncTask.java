@@ -28,11 +28,11 @@ import java.util.List;
 import android.content.ContentProviderOperation;
 
 import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
@@ -46,7 +46,10 @@ import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.util.SyncUtils.SyncProperties;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -93,9 +96,37 @@ public class SyncTask implements ITwoWaySyncable< SyncTask >
    
 
 
+   public static SyncResultDirection syncCreatedDate( SyncProperties< SyncTask > properties,
+                                                      Date serverValue,
+                                                      Date localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           TaskSeries.TASKSERIES_CREATED_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           Date.class );
+      return dir;
+   }
+   
+
+
    public Date getModifiedDate()
    {
       return taskSeries.getModifiedDate();
+   }
+   
+
+
+   public static SyncResultDirection syncModifiedDate( SyncProperties< SyncTask > properties,
+                                                       Date serverValue,
+                                                       Date localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           TaskSeries.MODIFIED_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           Date.class );
+      return dir;
    }
    
 
@@ -107,9 +138,37 @@ public class SyncTask implements ITwoWaySyncable< SyncTask >
    
 
 
+   public static SyncResultDirection syncDueDate( SyncProperties< SyncTask > properties,
+                                                  Date serverValue,
+                                                  Date localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.DUE_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           Date.class );
+      return dir;
+   }
+   
+
+
    public int hasDueTime()
    {
       return task.getHasDueTime();
+   }
+   
+
+
+   public static SyncResultDirection syncHasDueTime( SyncProperties< SyncTask > properties,
+                                                     int serverValue,
+                                                     int localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.HAS_DUE_TIME,
+                                                           serverValue,
+                                                           localValue,
+                                                           Integer.class );
+      return dir;
    }
    
 
@@ -121,9 +180,37 @@ public class SyncTask implements ITwoWaySyncable< SyncTask >
    
 
 
+   public static SyncResultDirection syncAddedDate( SyncProperties< SyncTask > properties,
+                                                    Date serverValue,
+                                                    Date localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.ADDED_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           Date.class );
+      return dir;
+   }
+   
+
+
    public Date getCompletedDate()
    {
       return task.getCompleted();
+   }
+   
+
+
+   public static SyncResultDirection syncCompletedDate( SyncProperties< SyncTask > properties,
+                                                        Date serverValue,
+                                                        Date localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.COMPLETED_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           Date.class );
+      return dir;
    }
    
 
@@ -135,6 +222,20 @@ public class SyncTask implements ITwoWaySyncable< SyncTask >
    
 
 
+   public static SyncResultDirection syncDeletedDate( SyncProperties< SyncTask > properties,
+                                                      Date serverValue,
+                                                      Date localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.DELETED_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           Date.class );
+      return dir;
+   }
+   
+
+
    public int getPosponed()
    {
       return task.getPostponed();
@@ -142,9 +243,37 @@ public class SyncTask implements ITwoWaySyncable< SyncTask >
    
 
 
+   public static SyncResultDirection syncPostponed( SyncProperties< SyncTask > properties,
+                                                    int serverValue,
+                                                    int localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.POSTPONED,
+                                                           serverValue,
+                                                           localValue,
+                                                           Integer.class );
+      return dir;
+   }
+   
+
+
    public String getName()
    {
       return taskSeries.getName();
+   }
+   
+
+
+   public static SyncResultDirection syncName( SyncProperties< SyncTask > properties,
+                                               String serverValue,
+                                               String localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           TaskSeries.TASKSERIES_NAME,
+                                                           serverValue,
+                                                           localValue,
+                                                           String.class );
+      return dir;
    }
    
 
@@ -329,7 +458,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask >
    public TypedDirectedSyncOperations< SyncTask > computeMergeOperations( RtmTimeline timeLine,
                                                                           ModificationList modifications,
                                                                           SyncTask updateElement,
-                                                                          MergeDirection mergeDirection )
+                                                                          SyncDirection mergeDirection )
    {
       // TODO Auto-generated method stub
       return null;

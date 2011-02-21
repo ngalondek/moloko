@@ -23,9 +23,7 @@
 package dev.drsoran.moloko.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import android.accounts.Account;
 import android.app.AlarmManager;
@@ -42,8 +40,6 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
@@ -53,14 +49,14 @@ import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.SyncDirection;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
-import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
-import dev.drsoran.rtm.SyncTask;
 
 
 public final class SyncUtils
@@ -266,6 +262,7 @@ public final class SyncUtils
    
 
 
+   @Deprecated
    public final static void updateDate( ParcelableDate current,
                                         ParcelableDate update,
                                         Uri uri,
@@ -296,34 +293,34 @@ public final class SyncUtils
    public final static < V > boolean hasChanged( V oldVal, V newVal )
    {
       return ( oldVal == null && newVal != null )
-         || ( oldVal != null && !oldVal.equals( newVal ) );
+         || ( oldVal != null && newVal == null ) || !oldVal.equals( newVal );
    }
    
 
 
-   public final static void doMergePreCheck( String thisId,
-                                             String otherId,
-                                             RtmTimeline timeLine,
-                                             ModificationList modifications,
-                                             MergeDirection mergeDirection )
+   public final static < T > void doPreSyncCheck( String thisId,
+                                                  String otherId,
+                                                  SyncProperties< ? extends T > properties )
    {
       if ( !thisId.equals( otherId ) )
          throw new IllegalArgumentException( "Other id " + otherId
             + " differs this id " + thisId );
       
       // if SERVER_ONLY or BOTH we need a time line
-      if ( timeLine == null && mergeDirection != MergeDirection.LOCAL_ONLY )
+      if ( properties.timeline == null
+         && properties.syncDirection != SyncDirection.LOCAL_ONLY )
          throw new NullPointerException( "timeLine is null" );
       
       // if we update the server we need the modifications
-      if ( modifications == null && mergeDirection != MergeDirection.LOCAL_ONLY )
+      if ( properties.modifications == null
+         && properties.syncDirection != SyncDirection.LOCAL_ONLY )
          throw new NullPointerException( "modifications are null" );
    }
    
    
-   public final static class MergeProperties< T extends ITwoWaySyncable< T >>
+   public final static class SyncProperties< T extends ITwoWaySyncable< T >>
    {
-      public final MergeDirection mergeDirection;
+      public final SyncDirection syncDirection;
       
       public final Date serverModDate;
       
@@ -333,23 +330,31 @@ public final class SyncUtils
       
       public final ModificationList modifications;
       
+      public final RtmTimeline timeline;
+      
       public final ServerSyncOperation.Builder< T > serverBuilder;
       
       public final ContentProviderSyncOperation.Builder localBuilder;
       
       
 
-      private MergeProperties( MergeDirection mergeDirection,
-         Date serverModDate, Date localModDate, Uri uri,
-         ModificationList modifications )
+      private SyncProperties( SyncDirection syncDirection, Date serverModDate,
+         T localElement, Uri uri, ModificationList modifications,
+         RtmTimeline timeline )
       {
-         this.mergeDirection = mergeDirection;
+         this.syncDirection = syncDirection;
          this.serverModDate = serverModDate;
-         this.localModDate = localModDate;
+         this.localModDate = localElement.getModifiedDate();
          this.uri = uri;
          this.modifications = modifications;
-         this.serverBuilder = new ServerSyncOperation.Builder< T >( Op.UPDATE );
-         this.localBuilder = new ContentProviderSyncOperation.Builder( Op.UPDATE );
+         this.timeline = timeline;
+         this.serverBuilder = syncDirection != SyncDirection.LOCAL_ONLY
+                                                                       ? new ServerSyncOperation.Builder< T >( Op.UPDATE,
+                                                                                                               localElement )
+                                                                       : null;
+         this.localBuilder = syncDirection != SyncDirection.SERVER_ONLY
+                                                                       ? new ContentProviderSyncOperation.Builder( Op.UPDATE )
+                                                                       : null;
       }
       
 
@@ -362,59 +367,68 @@ public final class SyncUtils
       
 
 
-      public final static < T extends ITwoWaySyncable< T >> MergeProperties< T > newInstance( MergeDirection mergeDirection,
-                                                                                              T thisElement,
-                                                                                              T updateElement,
-                                                                                              Uri uri,
-                                                                                              ModificationList modifications )
+      public final static < T extends ITwoWaySyncable< T >> SyncProperties< T > newInstance( SyncDirection syncDirection,
+                                                                                             T serverElement,
+                                                                                             T localElement,
+                                                                                             Uri uri,
+                                                                                             ModificationList modifications,
+                                                                                             RtmTimeline timeline )
       {
-         return new MergeProperties< T >( mergeDirection,
-                                          thisElement.getModifiedDate(),
-                                          updateElement.getModifiedDate(),
-                                          uri,
-                                          modifications );
+         return new SyncProperties< T >( syncDirection,
+                                         serverElement.getModifiedDate(),
+                                         localElement,
+                                         uri,
+                                         modifications,
+                                         timeline );
+      }
+      
+
+
+      public final static < T extends ITwoWaySyncable< T >> SyncProperties< T > newLocalOnlyInstance( T serverElement,
+                                                                                                      T localElement,
+                                                                                                      Uri uri )
+      {
+         return new SyncProperties< T >( SyncDirection.LOCAL_ONLY,
+                                         serverElement.getModifiedDate(),
+                                         localElement,
+                                         uri,
+                                         null,
+                                         null );
       }
    }
    
-
-   public static enum MergeResultDirection
-   {
-      NOTHING, LOCAL, SERVER
-   }
-   
    
 
-   public final static < T extends ITwoWaySyncable< T >, V > MergeResultDirection mergeModification( MergeProperties< T > properties,
-                                                                                                     String columnName,
-                                                                                                     V serverValue,
-                                                                                                     V localValue,
-                                                                                                     Class< V > valueClass )
+   public final static < T extends ITwoWaySyncable< T >, V > IServerSyncable.SyncResultDirection syncValue( SyncProperties< T > properties,
+                                                                                                            String columnName,
+                                                                                                            V serverValue,
+                                                                                                            V localValue,
+                                                                                                            Class< V > valueClass )
    {
-      MergeResultDirection mergeDir = MergeResultDirection.NOTHING;
+      IServerSyncable.SyncResultDirection syncDir = IServerSyncable.SyncResultDirection.NOTHING;
       
       // SERVER UPDATE: We put the local modification
       // to the server
-      if ( properties.mergeDirection == MergeDirection.SERVER_ONLY )
+      if ( properties.syncDirection == SyncDirection.SERVER_ONLY )
       {
          final Modification modification = properties.modifications.find( properties.uri,
                                                                           columnName );
          
          if ( modification != null )
-            mergeDir = MergeResultDirection.SERVER;
+            syncDir = IServerSyncable.SyncResultDirection.SERVER;
       }
       
       else if ( hasChanged( serverValue, localValue ) )
       {
          // LOCAL UPDATE: If the element has changed, take the server version
-         if ( properties.mergeDirection == MergeDirection.LOCAL_ONLY )
+         if ( properties.syncDirection == SyncDirection.LOCAL_ONLY )
          {
-            mergeDir = MergeResultDirection.LOCAL;
+            syncDir = IServerSyncable.SyncResultDirection.LOCAL;
          }
          else
          {
             final Modification modification = properties.modifications.find( properties.uri,
                                                                              columnName );
-            
             // Check if the local value was modified
             if ( modification != null )
             {
@@ -431,88 +445,86 @@ public final class SyncUtils
                   // value we have transferred already.
                   if ( properties.serverModDate.getTime() >= properties.localModDate.getTime() )
                      // LOCAL UPDATE: The server element was modified after the local value.
-                     mergeDir = MergeResultDirection.LOCAL;
+                     syncDir = IServerSyncable.SyncResultDirection.LOCAL;
                   else
                      // SERVER UPDATE: The local element was modified after the server element.
-                     mergeDir = MergeResultDirection.SERVER;
+                     syncDir = IServerSyncable.SyncResultDirection.SERVER;
                }
                else
                   // SERVER UPDATE: The server value has not been changed since last sync,
                   // so use local modified value.
-                  mergeDir = MergeResultDirection.SERVER;
+                  syncDir = IServerSyncable.SyncResultDirection.SERVER;
             }
             
             // LOCAL UPDATE: If the element has not locally changed, take the server version
             else
             {
-               mergeDir = MergeResultDirection.LOCAL;
+               syncDir = IServerSyncable.SyncResultDirection.LOCAL;
             }
          }
          
-         if ( mergeDir == MergeResultDirection.LOCAL )
+         if ( syncDir == IServerSyncable.SyncResultDirection.LOCAL )
             properties.localBuilder.add( ContentProviderOperation.newUpdate( properties.uri )
                                                                  .withValue( columnName,
                                                                              serverValue )
                                                                  .build() );
       }
       
-      return mergeDir;
+      return syncDir;
    }
    
-
-
-   public final static List< SyncTask > flatten( RtmTaskSeries taskSeries )
-   {
-      final List< RtmTask > rtmTasks = taskSeries.getTasks();
-      final List< SyncTask > tasks = new ArrayList< SyncTask >( rtmTasks.size() );
-      
-      for ( RtmTask rtmTask : rtmTasks )
-      {
-         tasks.add( new SyncTask( taskSeries, rtmTask ) );
-      }
-      
-      return tasks;
-   }
-   
-
-
-   public final static RtmTaskSeries toRtmTaskSeries( List< SyncTask > tasks )
-   {
-      if ( tasks.size() < 1 )
-         throw new IllegalArgumentException( "need at least on RtmTask for a RtmTaskSeries" );
-      
-      final List< RtmTask > rtmTasks = new ArrayList< RtmTask >( tasks.size() );
-      
-      for ( SyncTask syncTask : tasks )
-      {
-         rtmTasks.add( new RtmTask( syncTask.getId(),
-                                    syncTask.getTaskSeriesId(),
-                                    syncTask.getDueDate(),
-                                    syncTask.hasDueTime(),
-                                    syncTask.getAddedDate(),
-                                    syncTask.getCompletedDate(),
-                                    syncTask.getDeletedDate(),
-                                    syncTask.getPriority(),
-                                    syncTask.getPosponed(),
-                                    syncTask.getEstimate(),
-                                    syncTask.getEstimateMillis() ) );
-      }
-      
-      final SyncTask firstTask = tasks.get( 0 );
-      
-      return new RtmTaskSeries( firstTask.getTaskSeriesId(),
-                                firstTask.getListId(),
-                                firstTask.getCreatedDate(),
-                                firstTask.getModifiedDate(),
-                                firstTask.getName(),
-                                firstTask.getSource(),
-                                rtmTasks,
-                                firstTask.getNotes(),
-                                firstTask.getLocationId(),
-                                firstTask.getUrl(),
-                                firstTask.getRecurrence(),
-                                firstTask.isEveryRecurrence(),
-                                firstTask.getTags(),
-                                firstTask.getParticipants() );
-   }
+   // public final static List< SyncTask > flatten( RtmTaskSeries taskSeries )
+   // {
+   // final List< RtmTask > rtmTasks = taskSeries.getTasks();
+   // final List< SyncTask > tasks = new ArrayList< SyncTask >( rtmTasks.size() );
+   //
+   // for ( RtmTask rtmTask : rtmTasks )
+   // {
+   // tasks.add( new SyncTask( taskSeries, rtmTask ) );
+   // }
+   //
+   // return tasks;
+   // }
+   //
+   //
+   //
+   // public final static RtmTaskSeries toRtmTaskSeries( List< SyncTask > tasks )
+   // {
+   // if ( tasks.size() < 1 )
+   // throw new IllegalArgumentException( "need at least on RtmTask for a RtmTaskSeries" );
+   //
+   // final List< RtmTask > rtmTasks = new ArrayList< RtmTask >( tasks.size() );
+   //
+   // for ( SyncTask syncTask : tasks )
+   // {
+   // rtmTasks.add( new RtmTask( syncTask.getId(),
+   // syncTask.getTaskSeriesId(),
+   // syncTask.getDueDate(),
+   // syncTask.hasDueTime(),
+   // syncTask.getAddedDate(),
+   // syncTask.getCompletedDate(),
+   // syncTask.getDeletedDate(),
+   // syncTask.getPriority(),
+   // syncTask.getPosponed(),
+   // syncTask.getEstimate(),
+   // syncTask.getEstimateMillis() ) );
+   // }
+   //
+   // final SyncTask firstTask = tasks.get( 0 );
+   //
+   // return new RtmTaskSeries( firstTask.getTaskSeriesId(),
+   // firstTask.getListId(),
+   // firstTask.getCreatedDate(),
+   // firstTask.getModifiedDate(),
+   // firstTask.getName(),
+   // firstTask.getSource(),
+   // rtmTasks,
+   // firstTask.getNotes(),
+   // firstTask.getLocationId(),
+   // firstTask.getUrl(),
+   // firstTask.getRecurrence(),
+   // firstTask.isEveryRecurrence(),
+   // firstTask.getTags(),
+   // firstTask.getParticipants() );
+   // }
 }

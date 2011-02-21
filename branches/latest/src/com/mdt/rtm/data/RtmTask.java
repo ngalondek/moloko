@@ -43,7 +43,7 @@ import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.SyncUtils;
-import dev.drsoran.moloko.util.SyncUtils.MergeProperties;
+import dev.drsoran.moloko.util.SyncUtils.SyncProperties;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.RawTasks;
 
@@ -282,7 +282,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
 
    public Date getDue()
    {
-      return ( due != null ) ? due.getDate() : new Date( 0 );
+      return ( due != null ) ? due.getDate() : null;
    }
    
 
@@ -296,21 +296,21 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
 
    public Date getAdded()
    {
-      return ( added != null ) ? added.getDate() : new Date( 0 );
+      return ( added != null ) ? added.getDate() : null;
    }
    
 
 
    public Date getCompleted()
    {
-      return ( completed != null ) ? completed.getDate() : new Date( 0 );
+      return ( completed != null ) ? completed.getDate() : null;
    }
    
 
 
    public Date getDeleted()
    {
-      return ( deleted != null ) ? deleted.getDate() : new Date( 0 );
+      return ( deleted != null ) ? deleted.getDate() : null;
    }
    
 
@@ -422,7 +422,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
       return computeMergeOperations( null,
                                      null,
                                      serverElement,
-                                     MergeDirection.LOCAL_ONLY ).getLocalOperation();
+                                     SyncDirection.LOCAL_ONLY ).getLocalOperation();
    }
    
 
@@ -430,9 +430,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    public TypedDirectedSyncOperations< RtmTask > computeMergeOperations( RtmTimeline timeLine,
                                                                          ModificationList modifications,
                                                                          RtmTask updateElement,
-                                                                         MergeDirection mergeDirection )
+                                                                         SyncDirection mergeDirection )
    {
-      SyncUtils.doMergePreCheck( id,
+      SyncUtils.doPreSyncCheck( id,
                                  updateElement.id,
                                  timeLine,
                                  modifications,
@@ -440,11 +440,11 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
       
       final Uri uri = Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
       
-      final MergeProperties< RtmTask > mergeProperties = MergeProperties.newInstance( mergeDirection,
-                                                                                      this,
-                                                                                      updateElement,
-                                                                                      uri,
-                                                                                      modifications );
+      final SyncProperties< RtmTask > mergeProperties = SyncProperties.newInstance( mergeDirection,
+                                                                                    this,
+                                                                                    updateElement,
+                                                                                    uri,
+                                                                                    modifications );
       
       SyncUtils.updateDate( due, update.due, uri, RawTasks.DUE_DATE, result );
       
@@ -524,7 +524,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
       return computeMergeOperations( timeLine,
                                      modifications,
                                      this,
-                                     MergeDirection.SERVER_ONLY ).getServerOperation();
+                                     SyncDirection.SERVER_ONLY ).getServerOperation();
    }
    
 

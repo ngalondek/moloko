@@ -111,11 +111,6 @@ public class ContentProviderSyncOperation implements
       {
          if ( !( operation instanceof INoopSyncOperation ) )
          {
-            if ( operation.getOperationType() != operationType )
-               throw new IllegalArgumentException( "This operation type "
-                  + operationType + " differs from argument operation type "
-                  + operation.getOperationType() );
-            
             final List< ContentProviderOperation > batch = new ArrayList< ContentProviderOperation >( operation.size() );
             operation.getBatch( batch );
             

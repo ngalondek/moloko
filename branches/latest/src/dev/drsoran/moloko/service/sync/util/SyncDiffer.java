@@ -38,7 +38,6 @@ import dev.drsoran.moloko.service.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
-import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection;
 
 
 public class SyncDiffer
@@ -196,8 +195,7 @@ public class SyncDiffer
                   final TypedDirectedSyncOperations< T > mergeOps = localElement.computeMergeOperations( timeLine,
                                                                                                          modifications,
                                                                                                          serverElement,
-                                                                                                         localElement,
-                                                                                                         MergeDirection.BOTH );
+                                                                                                         localElement );
                   
                   // Check if NO server operations have been computed by the merge. This means we have only local
                   // updates. If we had server operations we would retrieve an up-to-date version of the element by

@@ -81,6 +81,22 @@ public class ParcelableDate implements Parcelable
 
 
    @Override
+   public boolean equals( Object o )
+   {
+      return date.equals( o );
+   }
+   
+
+
+   @Override
+   public int hashCode()
+   {
+      return date.hashCode();
+   }
+   
+
+
+   @Override
    public String toString()
    {
       return date.toString();

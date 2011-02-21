@@ -34,9 +34,15 @@ import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 
 public interface IServerSyncable< T extends IServerSyncable< T > >
 {
-   public static enum MergeDirection
+   public static enum SyncDirection
    {
       LOCAL_ONLY, SERVER_ONLY, BOTH
+   }
+   
+
+   public static enum SyncResultDirection
+   {
+      NOTHING, LOCAL, SERVER
    }
    
    
@@ -53,23 +59,23 @@ public interface IServerSyncable< T extends IServerSyncable< T > >
    
 
 
-   public IServerSyncOperation< T > computeServerInsertOperation( RtmTimeline timeLine );
+   public IServerSyncOperation< T > computeServerInsertOperation( RtmTimeline timeline );
    
 
 
-   public IServerSyncOperation< T > computeServerDeleteOperation( RtmTimeline timeLine );
+   public IServerSyncOperation< T > computeServerDeleteOperation( RtmTimeline timeline );
    
 
 
-   public IServerSyncOperation< T > computeServerUpdateOperation( RtmTimeline timeLine,
-                                                                  ModificationList modifictaions );
+   public IServerSyncOperation< T > computeServerUpdateOperation( RtmTimeline timeline,
+                                                                  ModificationList modifications );
    
 
 
-   public TypedDirectedSyncOperations< T > computeMergeOperations( RtmTimeline timeLine,
+   public TypedDirectedSyncOperations< T > computeMergeOperations( RtmTimeline timeline,
                                                                    ModificationList modifications,
-                                                                   T updateElement,
-                                                                   MergeDirection mergeDirection );
+                                                                   T serverElement,
+                                                                   T localElement );
    
 
 

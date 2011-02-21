@@ -37,7 +37,6 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -54,14 +53,13 @@ import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
-import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
-import dev.drsoran.provider.Rtm.SyncTasks;
 import dev.drsoran.rtm.SyncTask;
 
 
@@ -470,29 +468,7 @@ public final class SyncUtils
       
       for ( RtmTask rtmTask : rtmTasks )
       {
-         tasks.add( new SyncTask( rtmTask.getId(),
-                                  taskSeries.getId(),
-                                  taskSeries.getCreatedDate(),
-                                  taskSeries.getModifiedDate(),
-                                  taskSeries.getName(),
-                                  taskSeries.getSource(),
-                                  taskSeries.getURL(),
-                                  taskSeries.getRecurrence(),
-                                  taskSeries.isEveryRecurrence(),
-                                  taskSeries.getLocationId(),
-                                  taskSeries.getListId(),
-                                  rtmTask.getDue(),
-                                  rtmTask.getHasDueTime(),
-                                  rtmTask.getAdded(),
-                                  rtmTask.getCompleted(),
-                                  rtmTask.getDeleted(),
-                                  rtmTask.getPriority(),
-                                  rtmTask.getPostponed(),
-                                  rtmTask.getEstimate(),
-                                  rtmTask.getEstimateMillis(),
-                                  TextUtils.join( SyncTasks.TAGS_DELIMITER,
-                                                  taskSeries.getTagStrings() ),
-                                  taskSeries.getParticipants() ) );
+         tasks.add( new SyncTask( taskSeries, rtmTask ) );
       }
       
       return tasks;
@@ -521,6 +497,7 @@ public final class SyncUtils
                                     syncTask.getEstimate(),
                                     syncTask.getEstimateMillis() ) );
       }
+      
       final SyncTask firstTask = tasks.get( 0 );
       
       return new RtmTaskSeries( firstTask.getTaskSeriesId(),
@@ -530,7 +507,7 @@ public final class SyncUtils
                                 firstTask.getName(),
                                 firstTask.getSource(),
                                 rtmTasks,
-                                null,
+                                firstTask.getNotes(),
                                 firstTask.getLocationId(),
                                 firstTask.getUrl(),
                                 firstTask.getRecurrence(),

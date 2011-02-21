@@ -93,4 +93,41 @@ public class RtmTimeline
       };
    }
    
+
+
+   public TimeLineMethod< RtmTaskSeries > tasks_movePriority( final String listId,
+                                                              final String taskSeriesId,
+                                                              final String taskId )
+   {
+      return new TimeLineMethod< RtmTaskSeries >()
+      {
+         @Override
+         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         {
+            return service.tasks_movePriority( id, callType );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskSeries > tasks_moveTo( final String fromListId,
+                                                        final String toListId,
+                                                        final String taskSeriesId,
+                                                        final String taskId )
+   {
+      return new TimeLineMethod< RtmTaskSeries >()
+      {
+         @Override
+         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         {
+            return service.tasks_moveTo( id,
+                                         fromListId,
+                                         toListId,
+                                         taskSeriesId,
+                                         taskId,
+                                         callType );
+         }
+      };
+   }
 }

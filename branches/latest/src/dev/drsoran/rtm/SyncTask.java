@@ -22,312 +22,279 @@
 
 package dev.drsoran.rtm;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import android.text.TextUtils;
+import android.content.ContentProviderOperation;
 
-import com.mdt.rtm.data.RtmTask.Priority;
+import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTaskNote;
+import com.mdt.rtm.data.RtmTaskNotes;
+import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ParticipantsProviderPart;
+import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
+import dev.drsoran.moloko.content.RtmTasksProviderPart;
+import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.Tags;
+import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public class SyncTask implements ITwoWaySyncable< SyncTask >
 {
-   private final String id;
+   private final RtmTaskSeries taskSeries;
    
-   private final String taskSeriesId;
-   
-   private final Date created;
-   
-   private final Date modified;
-   
-   private final String name;
-   
-   private final String source;
-   
-   private final String url;
-   
-   private final String recurrence;
-   
-   private final boolean isEveryRecurrence;
-   
-   private final String locationId;
-   
-   private final String listId;
-   
-   private final Date due;
-   
-   private final int hasDueTime;
-   
-   private final Date added;
-   
-   private final Date completed;
-   
-   private final Date deleted;
-   
-   private final Priority priority;
-   
-   private final int posponed;
-   
-   private final String estimate;
-   
-   private final long estimateMillis;
-   
-   private final List< String > tags;
-   
-   private final ParticipantList participants;
+   private final RtmTask task;
    
    
 
-   public SyncTask( String id, String taskSeriesId, Date created,
-      Date modified, String name, String source, String url, String recurrence,
-      boolean isEveryRecurrence, String locationId, String listId, Date due,
-      int hasDueTime, Date added, Date completed, Date deleted,
-      Priority priority, int posponed, String estimate, long estimateMillis,
-      String tags, ParticipantList participants )
+   public SyncTask( RtmTaskSeries taskSeries, RtmTask task )
    {
-      this.id = id;
-      this.taskSeriesId = taskSeriesId;
-      this.created = created;
-      this.modified = modified;
-      this.name = name;
-      this.source = source;
-      this.url = url;
-      this.recurrence = recurrence;
-      this.isEveryRecurrence = isEveryRecurrence;
-      this.locationId = locationId;
-      this.listId = listId;
-      this.due = due;
-      this.hasDueTime = hasDueTime;
-      this.added = added;
-      this.completed = completed;
-      this.deleted = deleted;
-      this.priority = priority;
-      this.posponed = posponed;
-      this.estimate = estimate;
-      this.estimateMillis = estimateMillis;
+      if ( taskSeries == null )
+         throw new NullPointerException( "taskseries is null" );
+      if ( task == null )
+         throw new NullPointerException( "task is null" );
       
-      if ( !TextUtils.isEmpty( tags ) )
-      {
-         this.tags = Collections.unmodifiableList( Arrays.asList( TextUtils.split( tags,
-                                                                                   Tasks.TAGS_DELIMITER ) ) );
-      }
-      else
-      {
-         this.tags = Collections.emptyList();
-      }
-      
-      this.participants = participants;
+      this.taskSeries = taskSeries;
+      this.task = task;
    }
    
 
 
    public String getId()
    {
-      return id;
+      return task.getId();
    }
    
 
 
    public String getTaskSeriesId()
    {
-      return taskSeriesId;
+      return taskSeries.getId();
    }
    
 
 
    public Date getCreatedDate()
    {
-      return created;
+      return taskSeries.getCreatedDate();
    }
    
 
 
    public Date getModifiedDate()
    {
-      return modified;
+      return taskSeries.getModifiedDate();
    }
    
 
 
    public Date getDueDate()
    {
-      return due;
-   }
-   
-
-
-   public int isHasDueTime()
-   {
-      return hasDueTime;
-   }
-   
-
-
-   public Date getAddedDate()
-   {
-      return added;
-   }
-   
-
-
-   public Date getCompletedDate()
-   {
-      return completed;
-   }
-   
-
-
-   public Date getDeletedDate()
-   {
-      return deleted;
-   }
-   
-
-
-   public int getPosponed()
-   {
-      return posponed;
-   }
-   
-
-
-   public String getName()
-   {
-      return name;
-   }
-   
-
-
-   public String getSource()
-   {
-      return source;
-   }
-   
-
-
-   public String getUrl()
-   {
-      return url;
-   }
-   
-
-
-   public String getRecurrence()
-   {
-      return recurrence;
-   }
-   
-
-
-   public boolean isEveryRecurrence()
-   {
-      return isEveryRecurrence;
-   }
-   
-
-
-   public String getLocationId()
-   {
-      return locationId;
-   }
-   
-
-
-   public String getListId()
-   {
-      return listId;
+      return task.getDue();
    }
    
 
 
    public int hasDueTime()
    {
-      return hasDueTime;
+      return task.getHasDueTime();
+   }
+   
+
+
+   public Date getAddedDate()
+   {
+      return task.getAdded();
+   }
+   
+
+
+   public Date getCompletedDate()
+   {
+      return task.getCompleted();
+   }
+   
+
+
+   public Date getDeletedDate()
+   {
+      return task.getDeleted();
+   }
+   
+
+
+   public int getPosponed()
+   {
+      return task.getPostponed();
+   }
+   
+
+
+   public String getName()
+   {
+      return taskSeries.getName();
+   }
+   
+
+
+   public String getSource()
+   {
+      return taskSeries.getSource();
+   }
+   
+
+
+   public String getUrl()
+   {
+      return taskSeries.getURL();
+   }
+   
+
+
+   public String getRecurrence()
+   {
+      return taskSeries.getRecurrence();
+   }
+   
+
+
+   public boolean isEveryRecurrence()
+   {
+      return taskSeries.isEveryRecurrence();
+   }
+   
+
+
+   public String getLocationId()
+   {
+      return taskSeries.getLocationId();
+   }
+   
+
+
+   public String getListId()
+   {
+      return taskSeries.getListId();
    }
    
 
 
    public Priority getPriority()
    {
-      return priority;
+      return task.getPriority();
    }
    
 
 
    public String getEstimate()
    {
-      return estimate;
+      return task.getEstimate();
    }
    
 
 
    public long getEstimateMillis()
    {
-      return estimateMillis;
+      return task.getEstimateMillis();
    }
    
 
 
    public List< String > getTags()
    {
-      return tags;
+      return taskSeries.getTagStrings();
+   }
+   
+
+
+   public RtmTaskNotes getNotes()
+   {
+      return taskSeries.getNotes();
    }
    
 
 
    public ParticipantList getParticipants()
    {
-      if ( participants == null )
-         return new ParticipantList( taskSeriesId );
-      else
-         return participants;
+      return taskSeries.getParticipants();
    }
    
 
 
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
-      return NoopContentProviderSyncOperation.INSTANCE;
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( SyncTask serverElement )
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
-   {
-      // TODO Auto-generated method stub
-      return null;
+      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newInsert();
+      
+      // Insert new taskseries
+      {
+         operation.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
+                                                .withValues( RtmTaskSeriesProviderPart.getContentValues( taskSeries,
+                                                                                                         true ) )
+                                                .build() );
+      }
+      
+      // Insert new RtmTask
+      {
+         operation.add( RtmTasksProviderPart.insertTask( task ) );
+      }
+      
+      // Check for tags
+      {
+         final List< Tag > tags = taskSeries.getTags();
+         
+         for ( Tag tag : tags )
+         {
+            operation.add( ContentProviderOperation.newInsert( Tags.CONTENT_URI )
+                                                   .withValues( TagsProviderPart.getContentValues( tag,
+                                                                                                   true ) )
+                                                   .build() );
+         }
+      }
+      
+      // Check for notes
+      {
+         final List< RtmTaskNote > notesList = taskSeries.getNotes().getNotes();
+         
+         for ( final RtmTaskNote rtmTaskNote : notesList )
+         {
+            operation.add( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                                   .withValues( RtmNotesProviderPart.getContentValues( rtmTaskNote,
+                                                                                                       true ) )
+                                                   .build() );
+         }
+      }
+      
+      // Check for participants
+      {
+         final ParticipantList participantList = taskSeries.getParticipants();
+         operation.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
+      }
+      
+      return operation.build();
    }
    
 
 
    public IServerSyncOperation< SyncTask > computeServerInsertOperation( RtmTimeline timeLine )
    {
-      // TODO Auto-generated method stub
-      return null;
+      return NoopServerSyncOperation.INSTANCE;
    }
    
 
 
-   public IServerSyncOperation< SyncTask > computeServerDeleteOperation( RtmTimeline timeLine )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( SyncTask serverElement )
    {
       // TODO Auto-generated method stub
       return null;
@@ -344,10 +311,25 @@ public class SyncTask implements ITwoWaySyncable< SyncTask >
    
 
 
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+   
+
+
+   public IServerSyncOperation< SyncTask > computeServerDeleteOperation( RtmTimeline timeLine )
+   {
+      return NoopServerSyncOperation.INSTANCE;
+   }
+   
+
+
    public TypedDirectedSyncOperations< SyncTask > computeMergeOperations( RtmTimeline timeLine,
                                                                           ModificationList modifications,
                                                                           SyncTask updateElement,
-                                                                          dev.drsoran.moloko.service.sync.syncable.IServerSyncable.MergeDirection mergeDirection )
+                                                                          MergeDirection mergeDirection )
    {
       // TODO Auto-generated method stub
       return null;

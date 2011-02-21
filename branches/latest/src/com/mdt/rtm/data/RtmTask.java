@@ -30,13 +30,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
+import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.util.SyncUtils.MergeProperties;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.RawTasks;
 
@@ -45,8 +52,7 @@ import dev.drsoran.provider.Rtm.RawTasks;
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class RtmTask extends RtmData implements
-         IContentProviderSyncable< RtmTask >
+public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
 {
    private static final String TAG = "Moloko." + RtmTask.class.getSimpleName();
    
@@ -411,15 +417,34 @@ public class RtmTask extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTask update )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTask serverElement )
    {
-      if ( !id.equals( update.id ) )
-         throw new IllegalArgumentException( "Update id " + update.id
-            + " differs this id " + id );
+      return computeMergeOperations( null,
+                                     null,
+                                     serverElement,
+                                     MergeDirection.LOCAL_ONLY ).getLocalOperation();
+   }
+   
+
+
+   public TypedDirectedSyncOperations< RtmTask > computeMergeOperations( RtmTimeline timeLine,
+                                                                         ModificationList modifications,
+                                                                         RtmTask updateElement,
+                                                                         MergeDirection mergeDirection )
+   {
+      SyncUtils.doMergePreCheck( id,
+                                 updateElement.id,
+                                 timeLine,
+                                 modifications,
+                                 mergeDirection );
       
       final Uri uri = Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
       
-      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
+      final MergeProperties< RtmTask > mergeProperties = MergeProperties.newInstance( mergeDirection,
+                                                                                      this,
+                                                                                      updateElement,
+                                                                                      uri,
+                                                                                      modifications );
       
       SyncUtils.updateDate( due, update.due, uri, RawTasks.DUE_DATE, result );
       
@@ -472,7 +497,46 @@ public class RtmTask extends RtmData implements
                                              .build() );
       }
       
-      return result.build();
+      return mergeProperties.getOperations();
    }
    
+
+
+   @SuppressWarnings( "unchecked" )
+   public IServerSyncOperation< RtmTask > computeServerInsertOperation( RtmTimeline timeLine )
+   {
+      return NoopServerSyncOperation.INSTANCE;
+   }
+   
+
+
+   @SuppressWarnings( "unchecked" )
+   public IServerSyncOperation< RtmTask > computeServerDeleteOperation( RtmTimeline timeLine )
+   {
+      return NoopServerSyncOperation.INSTANCE;
+   }
+   
+
+
+   public IServerSyncOperation< RtmTask > computeServerUpdateOperation( RtmTimeline timeLine,
+                                                                        ModificationList modifications )
+   {
+      return computeMergeOperations( timeLine,
+                                     modifications,
+                                     this,
+                                     MergeDirection.SERVER_ONLY ).getServerOperation();
+   }
+   
+
+
+   public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
+   {
+      if ( modifications.hasModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                    id ) ) )
+         return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( RawTasks.CONTENT_URI,
+                                                                                                            id ) )
+                                            .build();
+      else
+         return NoopContentProviderSyncOperation.INSTANCE;
+   }
 }

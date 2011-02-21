@@ -249,15 +249,17 @@ public interface Service
    
 
 
-   void tasks_movePriority() throws ServiceException;
+   TimeLineMethod.Result< RtmTaskSeries > tasks_movePriority( String timelineId,
+                                                              MethodCallType methodCallType ) throws ServiceException;
    
 
 
-   RtmTaskSeries tasks_moveTo( String timelineId,
-                               String fromListId,
-                               String toListId,
-                               String taskSeriesId,
-                               String taskId ) throws ServiceException;
+   TimeLineMethod.Result< RtmTaskSeries > tasks_moveTo( String timelineId,
+                                                        String fromListId,
+                                                        String toListId,
+                                                        String taskSeriesId,
+                                                        String taskId,
+                                                        MethodCallType methodCallType ) throws ServiceException;
    
 
 

@@ -110,6 +110,23 @@ public class SyncDiffer
                                                                                              List< ? extends T > localList,
                                                                                              Comparator< ? super T > comp,
                                                                                              ModificationList modifications,
+                                                                                             RtmTimeline timeLine )
+   {
+      return twoWaydiff( serverList,
+                         localList,
+                         comp,
+                         modifications,
+                         timeLine,
+                         null,
+                         true );
+   }
+   
+
+
+   public final static < T extends ITwoWaySyncable< T > > DirectedSyncOperations twoWaydiff( List< ? extends T > serverList,
+                                                                                             List< ? extends T > localList,
+                                                                                             Comparator< ? super T > comp,
+                                                                                             ModificationList modifications,
                                                                                              RtmTimeline timeLine,
                                                                                              Date lastSync,
                                                                                              boolean fullSync )
@@ -179,6 +196,7 @@ public class SyncDiffer
                   final TypedDirectedSyncOperations< T > mergeOps = localElement.computeMergeOperations( timeLine,
                                                                                                          modifications,
                                                                                                          serverElement,
+                                                                                                         localElement,
                                                                                                          MergeDirection.BOTH );
                   
                   // Check if NO server operations have been computed by the merge. This means we have only local

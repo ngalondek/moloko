@@ -92,6 +92,21 @@ public class ContentProviderSyncOperation implements
       
 
 
+      public Builder addAll( Collection< ? extends ContentProviderOperation > operations )
+      {
+         if ( operations == null )
+            throw new NullPointerException( "operations are null" );
+         
+         for ( ContentProviderOperation contentProviderOperation : operations )
+         {
+            add( contentProviderOperation );
+         }
+         
+         return this;
+      }
+      
+
+
       public Builder add( IContentProviderSyncOperation operation )
       {
          if ( !( operation instanceof INoopSyncOperation ) )
@@ -115,7 +130,7 @@ public class ContentProviderSyncOperation implements
       
 
 
-      public Builder add( Collection< IContentProviderSyncOperation > operations )
+      public Builder add( Collection< ? extends IContentProviderSyncOperation > operations )
       {
          for ( IContentProviderSyncOperation operation : operations )
          {

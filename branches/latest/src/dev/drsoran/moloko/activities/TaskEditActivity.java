@@ -67,6 +67,7 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -408,8 +409,10 @@ public class TaskEditActivity extends Activity
                                                                          { android.R.id.text1 } );
             adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
             adapter.setStringConversionColumn( 1 );
-            
             list.setAdapter( adapter );
+            
+            list.setValues( c, 0 );
+            
             list.setStringConverter( new StringConverter()
             {
                public String convertToString( Object object )
@@ -426,13 +429,13 @@ public class TaskEditActivity extends Activity
                                            int pos,
                                            long row )
                {
-                  final String selectedListName = adapter.convertToString( (Cursor) adapter.getItem( pos ) )
-                                                         .toString();
+                  final String selectedListId = list.getValueAtPos( pos );
                   
-                  if ( !TaskEditActivity.this.task.getListName()
-                                                  .equals( selectedListName ) )
+                  if ( selectedListId != null
+                     && !TaskEditActivity.this.task.getListId()
+                                                   .equals( selectedListId ) )
                   {
-                     onListChanged( selectedListName );
+                     onListChanged( selectedListId );
                   }
                }
             } );
@@ -440,7 +443,7 @@ public class TaskEditActivity extends Activity
          else
             throw new Exception();
       }
-      catch ( Exception e )
+      catch ( Throwable e )
       {
          LogUtils.logDBError( this, TAG, "Lists", e );
       }
@@ -537,14 +540,15 @@ public class TaskEditActivity extends Activity
 
    private void refeshListSpinner()
    {
-      list.setSelection( task.getListName(), -1 );
+      list.setSelectionByValue( task.getListId(), -1 );
    }
    
 
 
    private void refeshPrioritySpinner()
    {
-      priority.setSelection( RtmTask.convertPriority( task.getPriority() ), -1 );
+      priority.setSelectionByValue( RtmTask.convertPriority( task.getPriority() ),
+                                    -1 );
    }
    
 
@@ -565,7 +569,7 @@ public class TaskEditActivity extends Activity
 
    private void refreshLocationSpinner()
    {
-      location.setSelection( task.getLocationName(), 0 );
+      location.setSelectionByEntry( task.getLocationName(), 0 );
    }
    
 
@@ -659,16 +663,22 @@ public class TaskEditActivity extends Activity
    
 
 
-   private void onListChanged( String newListName )
+   private void onListChanged( String newListId )
    {
-      
+      modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                 task.getTaskSeriesId() ),
+                                                       TaskSeries.LIST_ID,
+                                                       newListId ) );
    }
    
 
 
    private void onPriorityChanged( RtmTask.Priority newPriority )
    {
-      
+      modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                 task.getId() ),
+                                                       RawTasks.PRIORITY,
+                                                       RtmTask.convertPriority( newPriority ) ) );
    }
    
 

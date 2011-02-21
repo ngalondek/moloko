@@ -103,7 +103,6 @@
                android:layout_marginRight="10dip"
                android:layout_below="@id/task_edit_desc"
                android:layout_alignLeft="@id/task_edit_desc"
-               android:visibility="gone"
                moloko:titlePaddingTop="8dip"
                moloko:title="@string/task_edit_list" />
 
@@ -116,7 +115,6 @@
                android:layout_marginRight="10dip"
                android:layout_below="@id/task_edit_list"
                android:layout_alignLeft="@id/task_edit_desc"
-               android:visibility="gone"
                moloko:title="@string/task_edit_priority"
                moloko:spinnerEntries="@array/rtm_priorities"
                moloko:spinnerValues="@array/rtm_priority_values" />

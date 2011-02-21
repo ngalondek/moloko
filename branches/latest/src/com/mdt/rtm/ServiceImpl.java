@@ -560,30 +560,38 @@ public class ServiceImpl implements Service
    
 
 
-   public void tasks_movePriority()
+   public TimeLineMethod.Result< RtmTaskSeries > tasks_movePriority( String timelineId,
+                                                                     MethodCallType methodCallType )
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
 
 
-   public RtmTaskSeries tasks_moveTo( String timelineId,
-                                      String fromListId,
-                                      String toListId,
-                                      String taskSeriesId,
-                                      String taskId ) throws ServiceException
+   public TimeLineMethod.Result< RtmTaskSeries > tasks_moveTo( String timelineId,
+                                                               String fromListId,
+                                                               String toListId,
+                                                               String taskSeriesId,
+                                                               String taskId,
+                                                               MethodCallType methodCallType ) throws ServiceException
    {
-      Element elt = invoker.invoke( new Param( "method", "rtm.tasks.moveTo" ),
-                                    new Param( "timeline", timelineId ),
-                                    new Param( "from_list_id", fromListId ),
-                                    new Param( "to_list_id", toListId ),
-                                    new Param( "taskseries_id", taskSeriesId ),
-                                    new Param( "task_id", taskId ),
-                                    new Param( "auth_token", currentAuthToken ),
-                                    new Param( "api_key",
-                                               applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( elt );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.moveTo" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "from_list_id", fromListId ),
+                                          new Param( "to_list_id", toListId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId,
+                            taskSeriesId,
+                            taskId,
+                            methodCallType,
+                            elt );
    }
    
 

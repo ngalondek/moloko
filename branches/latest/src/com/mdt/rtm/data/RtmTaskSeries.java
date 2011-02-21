@@ -41,6 +41,7 @@ import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
@@ -524,6 +525,7 @@ public class RtmTaskSeries extends RtmData implements
       return computeMergeOperations( null,
                                      null,
                                      serverElement,
+                                     this,
                                      MergeDirection.LOCAL_ONLY ).getLocalOperation();
    }
    
@@ -531,11 +533,12 @@ public class RtmTaskSeries extends RtmData implements
 
    public TypedDirectedSyncOperations< RtmTaskSeries > computeMergeOperations( RtmTimeline timeLine,
                                                                                ModificationList modifications,
-                                                                               RtmTaskSeries updateElement,
+                                                                               RtmTaskSeries serverElement,
+                                                                               RtmTaskSeries localElement,
                                                                                MergeDirection mergeDirection )
    {
-      SyncUtils.doMergePreCheck( id,
-                                 updateElement.id,
+      SyncUtils.doMergePreCheck( localElement.id,
+                                 serverElement.id,
                                  timeLine,
                                  modifications,
                                  mergeDirection );
@@ -562,11 +565,29 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private void mergeCommon( RtmTimeline timeLine,
-                             RtmTaskSeries updateElement,
-                             Uri uri,
-                             MergeProperties< RtmTaskSeries > mergeProperties )
+   private static void mergeCommon( RtmTimeline timeLine,
+                                    RtmTaskSeries serverElement,
+                                    RtmTaskSeries localElement,
+                                    Uri uri,
+                                    MergeProperties< RtmTaskSeries > mergeProperties )
    {
+      // Update tasks
+      {
+         final List< RtmTask > serverTasks = mergeProperties.mergeDirection != MergeDirection.SERVER_ONLY
+                                                                                                         ? updateElement.tasks
+                                                                                                         : this.tasks;
+         final List< RtmTask > localTasks = mergeProperties.mergeDirection != MergeDirection.SERVER_ONLY
+                                                                                                        ? this.tasks
+                                                                                                        : updateElement.tasks;
+         final DirectedSyncOperations syncOperations = SyncDiffer.twoWaydiff( serverTasks,
+                                                                              localTasks,
+                                                                              RtmTask.LESS_ID,
+                                                                              mergeProperties.modifications,
+                                                                              timeLine );
+         mergeProperties.localBuilder.add( syncOperations.getLocalOperations() );
+         mergeProperties.serverBuilder.add( syncOperations.getServerOperations() );
+      }
+      
       if ( SyncUtils.MergeResultDirection.SERVER == SyncUtils.mergeModification( mergeProperties,
                                                                                  TaskSeries.TASKSERIES_NAME,
                                                                                  updateElement.name,
@@ -574,19 +595,24 @@ public class RtmTaskSeries extends RtmData implements
                                                                                  String.class ) )
       {
          for ( RtmTask task : tasks )
-         {
             mergeProperties.serverBuilder.add( timeLine.tasks_setName( listId,
                                                                        id,
                                                                        task.getId(),
                                                                        updateElement.name ) );
-         }
       }
       
-      SyncUtils.mergeModification( mergeProperties,
-                                   TaskSeries.LIST_ID,
-                                   updateElement.listId,
-                                   this.listId,
-                                   String.class );
+      if ( SyncUtils.MergeResultDirection.SERVER == SyncUtils.mergeModification( mergeProperties,
+                                                                                 TaskSeries.LIST_ID,
+                                                                                 updateElement.listId,
+                                                                                 this.listId,
+                                                                                 String.class ) )
+      {
+         for ( RtmTask task : tasks )
+            mergeProperties.serverBuilder.add( timeLine.tasks_moveTo( listId,
+                                                                      updateElement.listId,
+                                                                      id,
+                                                                      task.getId() ) );
+      }
       
       SyncUtils.mergeModification( mergeProperties,
                                    TaskSeries.LOCATION_ID,
@@ -628,45 +654,37 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private void mergeLocal( RtmTaskSeries updateElement,
-                            Uri uri,
-                            MergeProperties< RtmTaskSeries > mergeProperties )
+   private static void mergeLocal( RtmTaskSeries serverElement,
+                                   RtmTaskSeries localElement,
+                                   Uri uri,
+                                   MergeProperties< RtmTaskSeries > mergeProperties )
    {
       // Update notes
       {
-         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( notes.getNotes(),
+         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( localElement.notes.getNotes(),
                                                                                                                           RtmTaskNote.LESS_ID );
-         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( updateElement.notes.getNotes(),
+         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverElement.notes.getNotes(),
                                                                                        syncNotesList );
          mergeProperties.localBuilder.add( noteOperations );
       }
       
       // Update tags
       {
-         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( tags );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( updateElement.tags,
+         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( localElement.tags );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( serverElement.tags,
                                                                                        syncList );
          mergeProperties.localBuilder.add( syncOperations );
       }
       
-      // Update tasks
-      {
-         final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( tasks,
-                                                                                                                  RtmTask.LESS_ID );
-         final List< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( updateElement.tasks,
-                                                                                       syncTasksList );
-         mergeProperties.localBuilder.add( taskOperations );
-      }
-      
       // Update participants
       {
-         mergeProperties.localBuilder.add( participants.computeContentProviderUpdateOperation( updateElement.participants ) );
+         mergeProperties.localBuilder.add( localElement.participants.computeContentProviderUpdateOperation( serverElement.participants ) );
       }
       
       // Update taskseries
       {
-         SyncUtils.updateDate( created,
-                               updateElement.created,
+         SyncUtils.updateDate( localElement.created,
+                               serverElement.created,
                                uri,
                                TaskSeries.TASKSERIES_CREATED_DATE,
                                mergeProperties.localBuilder );
@@ -710,6 +728,7 @@ public class RtmTaskSeries extends RtmData implements
       return computeMergeOperations( timeLine,
                                      modifications,
                                      this,
+                                     null,
                                      MergeDirection.SERVER_ONLY ).getServerOperation();
    }
    

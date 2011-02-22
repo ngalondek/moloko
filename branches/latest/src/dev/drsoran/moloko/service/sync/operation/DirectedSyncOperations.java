@@ -23,7 +23,14 @@
 package dev.drsoran.moloko.service.sync.operation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import android.content.ContentProviderOperation;
+
+import com.mdt.rtm.TimeLineMethod;
+
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 
 
 public final class DirectedSyncOperations
@@ -34,13 +41,6 @@ public final class DirectedSyncOperations
    
    
 
-   public DirectedSyncOperations()
-   {
-      
-   }
-   
-
-
    public boolean addAll( DirectedSyncOperations other )
    {
       return serverOps.addAll( other.serverOps )
@@ -49,7 +49,7 @@ public final class DirectedSyncOperations
    
 
 
-   public boolean add( IServerSyncOperation< ? > op )
+   public < T extends IServerSyncable< T > > boolean add( IServerSyncOperation< T > op )
    {
       if ( op == null )
          throw new NullPointerException( "op is null" );
@@ -58,6 +58,30 @@ public final class DirectedSyncOperations
          return serverOps.add( op );
       
       return false;
+   }
+   
+
+
+   public < T extends IServerSyncable< T > > boolean add( TimeLineMethod< T > op,
+                                                          ISyncOperation.Op type,
+                                                          T sourceElement )
+   {
+      if ( op == null )
+         throw new NullPointerException( "op is null" );
+      
+      return serverOps.add( ServerSyncOperation.fromType( type, sourceElement )
+                                               .add( op )
+                                               .build() );
+   }
+   
+
+
+   public boolean addAllServerOps( Collection< IServerSyncOperation< ? > > operations )
+   {
+      if ( operations == null )
+         throw new NullPointerException( "operations is null" );
+      
+      return serverOps.addAll( operations );
    }
    
 
@@ -71,6 +95,28 @@ public final class DirectedSyncOperations
          return localOps.add( op );
       
       return false;
+   }
+   
+
+
+   public boolean add( ContentProviderOperation op, ISyncOperation.Op type )
+   {
+      if ( op == null )
+         throw new NullPointerException( "op is null" );
+      
+      return localOps.add( ContentProviderSyncOperation.fromType( type )
+                                                       .add( op )
+                                                       .build() );
+   }
+   
+
+
+   public boolean addAllLocalOps( Collection< IContentProviderSyncOperation > operations )
+   {
+      if ( operations == null )
+         throw new NullPointerException( "operations is null" );
+      
+      return localOps.addAll( operations );
    }
    
 

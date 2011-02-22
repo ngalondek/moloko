@@ -12,6 +12,9 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5b5dad:12bf1b86973:-7fdd" mandatory="true" name="taskseries_id">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="7210ec:12e4da4cd75:-7fe2" mandatory="true" name="list_id">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff7" mandatory="false" name="due">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
@@ -357,7 +360,7 @@
 </schema-list>
 </database-model>
 <diagram>
-<table-figure height="181" refid="5122f2:128cb6194ba:-7fff" width="177" x="428" y="572"/>
+<table-figure height="215" refid="5122f2:128cb6194ba:-7fff" width="177" x="428" y="572"/>
 <table-figure refid="5122f2:128cb6194ba:-7fee" x="436" y="250"/>
 <table-figure refid="5122f2:128cb6194ba:-7f59" x="724" y="402"/>
 <fk-figure refid="11fb115:12949b0b028:-7f74">

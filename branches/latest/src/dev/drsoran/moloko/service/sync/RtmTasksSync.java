@@ -115,8 +115,7 @@ public final class RtmTasksSync
                                                                               RtmTaskSeries.LESS_ID,
                                                                               modifications,
                                                                               timeline,
-                                                                              lastSyncOut,
-                                                                              lastSyncOut == null );
+                                                                              lastSyncOut );
          operations.addAll( syncOperations );
       }
       else

@@ -23,13 +23,14 @@
 package dev.drsoran.moloko.service.sync.syncable;
 
 import java.util.Date;
+import java.util.List;
 
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 
 
 public interface IServerSyncable< T extends IServerSyncable< T > >
@@ -67,15 +68,17 @@ public interface IServerSyncable< T extends IServerSyncable< T > >
    
 
 
-   public IServerSyncOperation< T > computeServerUpdateOperation( RtmTimeline timeline,
-                                                                  ModificationList modifications );
+   public List< IServerSyncOperation< ? > > computeServerUpdateOperations( Date lastSync,
+                                                                          RtmTimeline timeline,
+                                                                          ModificationList modifications );
    
 
 
-   public TypedDirectedSyncOperations< T > computeMergeOperations( RtmTimeline timeline,
-                                                                   ModificationList modifications,
-                                                                   T serverElement,
-                                                                   T localElement );
+   public DirectedSyncOperations computeMergeOperations( Date lastSync,
+                                                         RtmTimeline timeline,
+                                                         ModificationList modifications,
+                                                         T serverElement,
+                                                         T localElement );
    
 
 

@@ -23,6 +23,8 @@
 package dev.drsoran.rtm;
 
 import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.net.Uri;
@@ -191,7 +193,8 @@ public class Participant implements IContentProviderSyncable< Participant >,
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( Participant update )
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
+                                                                                        Participant update )
    {
       final Uri uri = Queries.contentUriWithId( TaskSeries.CONTENT_URI, id );
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
@@ -214,7 +217,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
                                                          update.username )
                                              .build() );
       
-      return result.build();
+      return result.asList();
    }
    
 }

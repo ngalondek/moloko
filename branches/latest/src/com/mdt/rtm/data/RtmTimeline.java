@@ -22,9 +22,9 @@ package com.mdt.rtm.data;
 import org.w3c.dom.Element;
 
 import com.mdt.rtm.Service;
+import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.Service.MethodCallType;
 
 
 public class RtmTimeline
@@ -63,7 +63,7 @@ public class RtmTimeline
    // {
    // return service;
    // }
-   //   
+   //
    
    @Override
    public String toString()
@@ -97,14 +97,20 @@ public class RtmTimeline
 
    public TimeLineMethod< RtmTaskSeries > tasks_movePriority( final String listId,
                                                               final String taskSeriesId,
-                                                              final String taskId )
+                                                              final String taskId,
+                                                              final boolean up )
    {
       return new TimeLineMethod< RtmTaskSeries >()
       {
          @Override
          public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
          {
-            return service.tasks_movePriority( id, callType );
+            return service.tasks_movePriority( id,
+                                               listId,
+                                               taskSeriesId,
+                                               taskId,
+                                               up,
+                                               callType );
          }
       };
    }

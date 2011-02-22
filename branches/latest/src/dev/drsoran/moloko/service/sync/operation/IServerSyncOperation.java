@@ -35,7 +35,7 @@ import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 public interface IServerSyncOperation< T extends IServerSyncable< T > > extends
          ISyncOperation
 {
-   public IContentProviderSyncOperation execute() throws ServiceException;
+   public List< IContentProviderSyncOperation > execute() throws ServiceException;
    
 
 

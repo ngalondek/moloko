@@ -36,7 +36,8 @@ import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
 public final class NoopServerSyncOperation< T extends IServerSyncable< T >>
          implements IServerSyncOperation< T >, INoopSyncOperation
 {
-   @SuppressWarnings( "unchecked" )
+   
+   @SuppressWarnings( "rawtypes" )
    public final static NoopServerSyncOperation INSTANCE = new NoopServerSyncOperation();
    
    
@@ -62,9 +63,9 @@ public final class NoopServerSyncOperation< T extends IServerSyncable< T >>
    
 
 
-   public IContentProviderSyncOperation execute() throws ServiceException
+   public List< IContentProviderSyncOperation > execute() throws ServiceException
    {
-      return NoopContentProviderSyncOperation.INSTANCE;
+      return Collections.emptyList();
    }
    
 

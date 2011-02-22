@@ -21,6 +21,7 @@ package com.mdt.rtm.data;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -34,11 +35,11 @@ import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.SyncUtils;
@@ -84,6 +85,8 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    private final String id;
    
    private final String taskSeriesId;
+   
+   private final String listId;
    
    private final ParcelableDate due;
    
@@ -153,12 +156,13 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   public RtmTask( String id, String taskSeriesId, Date due, int hasDueTime,
-      Date added, Date modified, Date completed, Date deleted,
+   public RtmTask( String id, String taskSeriesId, String listId, Date due,
+      int hasDueTime, Date added, Date modified, Date completed, Date deleted,
       Priority priority, int postponed, String estimate, long estimateMillis )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
+      this.listId = listId;
       this.due = ( due != null ) ? new ParcelableDate( due ) : null;
       this.hasDueTime = hasDueTime;
       this.added = ( added != null ) ? new ParcelableDate( added ) : null;
@@ -175,10 +179,12 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   public RtmTask( Element elt, String taskSeriesId, ParcelableDate modified )
+   public RtmTask( Element elt, String taskSeriesId, String listId,
+      ParcelableDate modified )
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
+      this.listId = listId;
       due = parseDate( textNullIfEmpty( elt, "due" ) );
       hasDueTime = Integer.parseInt( elt.getAttribute( "has_due_time" ) );
       added = parseDate( textNullIfEmpty( elt, "added" ) );
@@ -232,10 +238,12 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   public RtmTask( Element elt, String taskSeriesId, boolean deleted )
+   public RtmTask( Element elt, String taskSeriesId, String listId,
+      boolean deleted )
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
+      this.listId = listId;
       this.deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
       due = null;
       hasDueTime = 0;
@@ -254,6 +262,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    {
       this.id = source.readString();
       this.taskSeriesId = source.readString();
+      this.listId = source.readString();
       this.due = source.readParcelable( null );
       this.hasDueTime = source.readInt();
       this.added = source.readParcelable( null );
@@ -278,6 +287,13 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    public String getTaskSeriesId()
    {
       return taskSeriesId;
+   }
+   
+
+
+   public String getListId()
+   {
+      return listId;
    }
    
 
@@ -407,9 +423,11 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            RawTasks.PRIORITY,
-                                                           serverValue,
-                                                           localValue,
-                                                           Priority.class );
+                                                           convertPriority( serverValue ),
+                                                           convertPriority( localValue ),
+                                                           String.class );
+      if ( dir == SyncResultDirection.SERVER )
+         ;
       return dir;
    }
    
@@ -497,6 +515,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    {
       dest.writeString( id );
       dest.writeString( taskSeriesId );
+      dest.writeString( listId );
       dest.writeParcelable( due, flags );
       dest.writeInt( hasDueTime );
       dest.writeParcelable( added, flags );
@@ -545,45 +564,51 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTask serverElement )
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
+                                                                                        RtmTask serverElement )
    {
-      final SyncProperties< RtmTask > properties = SyncProperties.newLocalOnlyInstance( serverElement,
+      final SyncProperties< RtmTask > properties = SyncProperties.newLocalOnlyInstance( lastSync,
+                                                                                        serverElement,
                                                                                         this,
                                                                                         Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                                   id ) );
-      return syncImpl( serverElement, this, properties ).localBuilder.build();
+      return syncImpl( serverElement, this, properties ).operations.getLocalOperations();
    }
    
 
 
-   public TypedDirectedSyncOperations< RtmTask > computeMergeOperations( RtmTimeline timeline,
-                                                                         ModificationList modifications,
-                                                                         RtmTask serverElement,
-                                                                         RtmTask localElement )
+   public DirectedSyncOperations computeMergeOperations( Date lastSync,
+                                                         RtmTimeline timeline,
+                                                         ModificationList modifications,
+                                                         RtmTask serverElement,
+                                                         RtmTask localElement )
    {
       final SyncProperties< RtmTask > properties = SyncProperties.newInstance( SyncDirection.BOTH,
+                                                                               lastSync,
                                                                                serverElement,
                                                                                localElement,
                                                                                Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                          id ),
                                                                                modifications,
                                                                                timeline );
-      return syncImpl( serverElement, localElement, properties ).getOperations();
+      return syncImpl( serverElement, localElement, properties ).operations;
    }
    
 
 
-   public IServerSyncOperation< RtmTask > computeServerUpdateOperation( RtmTimeline timeline,
-                                                                        ModificationList modifications )
+   public List< IServerSyncOperation< ? > > computeServerUpdateOperations( Date lastSync,
+                                                                           RtmTimeline timeline,
+                                                                           ModificationList modifications )
    {
       final SyncProperties< RtmTask > properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
+                                                                               lastSync,
                                                                                this,
                                                                                this,
                                                                                Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                          id ),
                                                                                modifications,
                                                                                timeline );
-      return syncImpl( this, this, properties ).serverBuilder.build();
+      return syncImpl( this, this, properties ).operations.getServerOperations();
    }
    
 

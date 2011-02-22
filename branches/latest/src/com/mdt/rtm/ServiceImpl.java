@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,12 +41,12 @@ import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.RtmContacts;
@@ -561,9 +561,30 @@ public class ServiceImpl implements Service
 
 
    public TimeLineMethod.Result< RtmTaskSeries > tasks_movePriority( String timelineId,
-                                                                     MethodCallType methodCallType )
+                                                                     String listId,
+                                                                     String taskSeriesId,
+                                                                     String taskId,
+                                                                     boolean up,
+                                                                     MethodCallType methodCallType ) throws ServiceException
    {
-      throw new UnsupportedOperationException( "Not supported yet." );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.moveTo" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "direction", up ? "up"
+                                                                    : "down" ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId,
+                            taskSeriesId,
+                            taskId,
+                            methodCallType,
+                            elt );
    }
    
 

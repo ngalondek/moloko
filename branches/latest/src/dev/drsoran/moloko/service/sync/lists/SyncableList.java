@@ -26,15 +26,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation;
 
-
-public abstract class SyncableList< T >
+public abstract class SyncableList< T, O >
 {
-   private final ArrayList< T > impl;
+   private final List< T > impl;
    
    private final Comparator< T > comparator;
    
@@ -162,23 +161,28 @@ public abstract class SyncableList< T >
    
 
 
-   public abstract ISyncOperation computeInsertOperation( T newElement );
+   public abstract O computeInsertOperation( T newElement );
    
 
 
-   public ISyncOperation computeUpdateOperation( int pos, T updateElement )
+   public List< O > computeUpdateOperation( int pos,
+                                            T updateElement,
+                                            Date lastSync )
    {
       touchedElements[ pos ] = true;
       
-      return internalComputeUpdateOperation( impl.get( pos ), updateElement );
+      return internalComputeUpdateOperation( impl.get( pos ),
+                                             updateElement,
+                                             lastSync );
    }
    
 
 
-   public abstract ISyncOperation computeDeleteOperation( T elementToDelete );
+   public abstract O computeDeleteOperation( T elementToDelete );
    
 
 
-   protected abstract ISyncOperation internalComputeUpdateOperation( T old,
-                                                                     T updateElement );
+   protected abstract List< O > internalComputeUpdateOperation( T old,
+                                                                T updateElement,
+                                                                Date lastSync );
 }

@@ -35,7 +35,6 @@ import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.INoopSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 
@@ -72,25 +71,21 @@ public class SyncDiffer
       {
          final int pos = target.find( refElement );
          
-         IContentProviderSyncOperation operation = null;
-         
          // INSERT: The reference element is not contained in the target list.
          if ( pos == -1 )
          {
-            operation = target.computeInsertOperation( refElement );
+            final IContentProviderSyncOperation operation = target.computeInsertOperation( refElement );
+            if ( !( operation instanceof INoopSyncOperation ) )
+               operations.add( operation );
          }
          
          // UPDATE: The reference element is contained in the target list.
          else
          {
-            operation = target.computeUpdateOperation( pos, refElement );
+            operations.addAll( target.computeUpdateOperation( pos,
+                                                              refElement,
+                                                              lastSync ) );
          }
-         
-         if ( operation == null )
-            throw new NullPointerException( "operation is null" );
-         
-         if ( !( operation instanceof INoopSyncOperation ) )
-            operations.add( operation );
       }
       
       // Check if we have a full sync. Otherwise we would delete elements
@@ -204,10 +199,11 @@ public class SyncDiffer
                // MERGE: The local element is not deleted or deleted before server modification.
                else
                {
-                  final TypedDirectedSyncOperations< T > mergeOps = localElement.computeMergeOperations( timeLine,
-                                                                                                         modifications,
-                                                                                                         serverElement,
-                                                                                                         localElement );
+                  final DirectedSyncOperations mergeOps = localElement.computeMergeOperations( lastSync,
+                                                                                               timeLine,
+                                                                                               modifications,
+                                                                                               serverElement,
+                                                                                               localElement );
                   
                   // Check if NO server operations have been computed by the merge. This means we have only local
                   // updates. If we had server operations we would retrieve an up-to-date version of the element by
@@ -215,8 +211,8 @@ public class SyncDiffer
                   // We use this retrieved version to update the local element then. This should contain all changes
                   // merged.
                   // This is done because this is the only way to keep modification time stamps in sync with the server.
-                  if ( !operations.add( mergeOps.getServerOperation() ) )
-                     operations.add( mergeOps.getLocalOperation() );
+                  if ( !operations.addAllServerOps( mergeOps.getServerOperations() ) )
+                     operations.addAllLocalOps( mergeOps.getLocalOperations() );
                }
             }
          }
@@ -258,9 +254,9 @@ public class SyncDiffer
                   && ( lastSync == null || lastSync.before( localElementModified ) ) )
                {
                   localTouchedElements[ i ] = true;
-                  
-                  operations.add( localElement.computeServerUpdateOperation( timeLine,
-                                                                             modifications ) );
+                  operations.addAllServerOps( localElement.computeServerUpdateOperations( lastSync,
+                                                                                         timeLine,
+                                                                                         modifications ) );
                }
             }
          }

@@ -24,13 +24,15 @@ package dev.drsoran.moloko.service.sync.lists;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 
 
 public class ContentProviderSyncableList< T extends IContentProviderSyncable< T > >
-         extends SyncableList< T >
+         extends SyncableList< T, IContentProviderSyncOperation >
 {
    public ContentProviderSyncableList( Collection< T > elements )
    {
@@ -64,19 +66,21 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
 
 
    @Override
-   public IContentProviderSyncOperation computeUpdateOperation( int pos,
-                                                                T updateElement )
+   public List< IContentProviderSyncOperation > computeUpdateOperation( int pos,
+                                                                        T updateElement,
+                                                                        Date lastSync )
    {
-      return (IContentProviderSyncOperation) super.computeUpdateOperation( pos,
-                                                                           updateElement );
+      return super.computeUpdateOperation( pos, updateElement, lastSync );
    }
    
 
 
    @Override
-   protected IContentProviderSyncOperation internalComputeUpdateOperation( T old,
-                                                                           T updateElement )
+   protected List< IContentProviderSyncOperation > internalComputeUpdateOperation( T old,
+                                                                                   T updateElement,
+                                                                                   Date lastSync )
    {
-      return old.computeContentProviderUpdateOperation( updateElement );
+      return old.computeContentProviderUpdateOperations( lastSync,
+                                                         updateElement );
    }
 }

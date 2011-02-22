@@ -145,6 +145,16 @@ public class ContentProviderSyncOperation implements
          else
             return new ContentProviderSyncOperation( this );
       }
+      
+
+
+      public List< IContentProviderSyncOperation > asList()
+      {
+         if ( operations.size() == 0 )
+            return Collections.emptyList();
+         else
+            return Collections.singletonList( build() );
+      }
    }
    
    private final List< ContentProviderOperation > operations;
@@ -200,6 +210,23 @@ public class ContentProviderSyncOperation implements
             break;
          default :
             break;
+      }
+   }
+   
+
+
+   public final static Builder fromType( ISyncOperation.Op type )
+   {
+      switch ( type )
+      {
+         case INSERT:
+            return newInsert();
+         case UPDATE:
+            return newUpdate();
+         case DELETE:
+            return newDelete();
+         default :
+            return null;
       }
    }
    

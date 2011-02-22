@@ -24,6 +24,7 @@ package dev.drsoran.rtm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -39,7 +40,6 @@ import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 
@@ -192,17 +192,11 @@ public class ParticipantList implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ParticipantList update )
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
+                                                                                        ParticipantList update )
    {
       final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( participants,
                                                                                                                   Participant.LESS_ID );
-      final List< IContentProviderSyncOperation > operations = SyncDiffer.diff( update.participants,
-                                                                                syncList );
-      if ( operations.size() > 0 )
-         return ContentProviderSyncOperation.newUpdate()
-                                            .add( operations )
-                                            .build();
-      else
-         return NoopContentProviderSyncOperation.INSTANCE;
+      return SyncDiffer.diff( update.participants, syncList );
    }
 }

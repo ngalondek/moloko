@@ -85,13 +85,12 @@ public final class RtmSettingsSync
       
       if ( local_Settings == null )
       {
-         result.getLocalOperations()
-               .add( server_Settings.computeContentProviderInsertOperation() );
+         result.add( server_Settings.computeContentProviderInsertOperation() );
       }
       else
       {
-         result.getLocalOperations()
-               .add( local_Settings.computeContentProviderUpdateOperation( server_Settings ) );
+         result.addAllLocalOps( local_Settings.computeContentProviderUpdateOperations( null,
+                                                                                       server_Settings ) );
       }
       
       return true;

@@ -49,12 +49,11 @@ import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
-import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.SyncDirection;
+import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -322,6 +321,8 @@ public final class SyncUtils
    {
       public final SyncDirection syncDirection;
       
+      public final Date lastSyncDate;
+      
       public final Date serverModDate;
       
       public final Date localModDate;
@@ -332,42 +333,27 @@ public final class SyncUtils
       
       public final RtmTimeline timeline;
       
-      public final ServerSyncOperation.Builder< T > serverBuilder;
-      
-      public final ContentProviderSyncOperation.Builder localBuilder;
+      public final DirectedSyncOperations operations = new DirectedSyncOperations();
       
       
 
-      private SyncProperties( SyncDirection syncDirection, Date serverModDate,
-         T localElement, Uri uri, ModificationList modifications,
-         RtmTimeline timeline )
+      private SyncProperties( SyncDirection syncDirection, Date lastSyncDate,
+         Date serverModDate, T localElement, Uri uri,
+         ModificationList modifications, RtmTimeline timeline )
       {
          this.syncDirection = syncDirection;
+         this.lastSyncDate = lastSyncDate;
          this.serverModDate = serverModDate;
          this.localModDate = localElement.getModifiedDate();
          this.uri = uri;
          this.modifications = modifications;
          this.timeline = timeline;
-         this.serverBuilder = syncDirection != SyncDirection.LOCAL_ONLY
-                                                                       ? new ServerSyncOperation.Builder< T >( Op.UPDATE,
-                                                                                                               localElement )
-                                                                       : null;
-         this.localBuilder = syncDirection != SyncDirection.SERVER_ONLY
-                                                                       ? new ContentProviderSyncOperation.Builder( Op.UPDATE )
-                                                                       : null;
-      }
-      
-
-
-      public final TypedDirectedSyncOperations< T > getOperations()
-      {
-         return new TypedDirectedSyncOperations< T >( serverBuilder,
-                                                      localBuilder );
       }
       
 
 
       public final static < T extends ITwoWaySyncable< T >> SyncProperties< T > newInstance( SyncDirection syncDirection,
+                                                                                             Date lastSyncDate,
                                                                                              T serverElement,
                                                                                              T localElement,
                                                                                              Uri uri,
@@ -375,6 +361,7 @@ public final class SyncUtils
                                                                                              RtmTimeline timeline )
       {
          return new SyncProperties< T >( syncDirection,
+                                         lastSyncDate,
                                          serverElement.getModifiedDate(),
                                          localElement,
                                          uri,
@@ -384,11 +371,13 @@ public final class SyncUtils
       
 
 
-      public final static < T extends ITwoWaySyncable< T >> SyncProperties< T > newLocalOnlyInstance( T serverElement,
+      public final static < T extends ITwoWaySyncable< T >> SyncProperties< T > newLocalOnlyInstance( Date lastSyncDate,
+                                                                                                      T serverElement,
                                                                                                       T localElement,
                                                                                                       Uri uri )
       {
          return new SyncProperties< T >( SyncDirection.LOCAL_ONLY,
+                                         lastSyncDate,
                                          serverElement.getModifiedDate(),
                                          localElement,
                                          uri,
@@ -464,10 +453,11 @@ public final class SyncUtils
          }
          
          if ( syncDir == IServerSyncable.SyncResultDirection.LOCAL )
-            properties.localBuilder.add( ContentProviderOperation.newUpdate( properties.uri )
-                                                                 .withValue( columnName,
-                                                                             serverValue )
-                                                                 .build() );
+            properties.operations.add( ContentProviderOperation.newUpdate( properties.uri )
+                                                               .withValue( columnName,
+                                                                           serverValue )
+                                                               .build(),
+                                       Op.UPDATE );
       }
       
       return syncDir;

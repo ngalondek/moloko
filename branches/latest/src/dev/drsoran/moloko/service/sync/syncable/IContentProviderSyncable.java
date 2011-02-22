@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.service.sync.syncable;
 
+import java.util.Date;
+import java.util.List;
+
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 
 
@@ -31,7 +34,8 @@ public interface IContentProviderSyncable< T extends IContentProviderSyncable< T
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( T serverElement );
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
+                                                                                        T serverElement );
    
 
 

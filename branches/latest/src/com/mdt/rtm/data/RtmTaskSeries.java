@@ -40,11 +40,12 @@ import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.Queries;
@@ -213,7 +214,7 @@ public class RtmTaskSeries extends RtmData implements
       
       for ( Element task : tasks )
       {
-         this.tasks.add( new RtmTask( task, id, modified ) );
+         this.tasks.add( new RtmTask( task, id, listId, modified ) );
       }
       
       this.notes = new RtmTaskNotes( child( elt, "notes" ), id );
@@ -261,7 +262,7 @@ public class RtmTaskSeries extends RtmData implements
       
       for ( Element task : tasks )
       {
-         this.tasks.add( new RtmTask( task, id, deleted ) );
+         this.tasks.add( new RtmTask( task, id, listId, deleted ) );
       }
       
       source = null;
@@ -321,10 +322,12 @@ public class RtmTaskSeries extends RtmData implements
                                                            String.class );
       if ( dir == SyncResultDirection.SERVER )
          for ( RtmTask task : tasks )
-            properties.serverBuilder.add( properties.timeline.tasks_moveTo( localValue,
-                                                                            serverValue,
-                                                                            id,
-                                                                            task.getId() ) );
+            properties.operations.add( properties.timeline.tasks_moveTo( localValue,
+                                                                         serverValue,
+                                                                         id,
+                                                                         task.getId() ),
+                                       Op.UPDATE,
+                                       this );
       return dir;
    }
    
@@ -399,10 +402,12 @@ public class RtmTaskSeries extends RtmData implements
                                                            String.class );
       if ( dir == SyncResultDirection.SERVER )
          for ( RtmTask task : tasks )
-            properties.serverBuilder.add( properties.timeline.tasks_setName( listId,
-                                                                             id,
-                                                                             task.getId(),
-                                                                             localValue ) );
+            properties.operations.add( properties.timeline.tasks_setName( listId,
+                                                                          id,
+                                                                          task.getId(),
+                                                                          localValue ),
+                                       Op.UPDATE,
+                                       this );
       return dir;
    }
    
@@ -447,11 +452,22 @@ public class RtmTaskSeries extends RtmData implements
             final ContentProviderSyncableList< RtmTask > syncList = new ContentProviderSyncableList< RtmTask >( localValues,
                                                                                                                 RtmTask.LESS_ID );
             final List< IContentProviderSyncOperation > operations = SyncDiffer.diff( serverValues,
-                                                                                      syncList );
-            properties.localBuilder.add( operations );
+                                                                                      syncList,
+                                                                                      properties.lastSyncDate );
+            properties.operations.addAllLocalOps( operations );
          }
             break;
+         
          default :
+         {
+            final DirectedSyncOperations syncOperations = SyncDiffer.twoWaydiff( serverValues,
+                                                                                 localValues,
+                                                                                 RtmTask.LESS_ID,
+                                                                                 properties.modifications,
+                                                                                 properties.timeline,
+                                                                                 properties.lastSyncDate );
+            properties.operations.addAll( syncOperations );
+         }
             break;
       }
    }
@@ -477,7 +493,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                                                                              RtmTaskNote.LESS_ID );
             final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverValues,
                                                                                           syncNotesList );
-            properties.localBuilder.add( noteOperations );
+            properties.operations.addAllLocalOps( noteOperations );
          }
             break;
          default :
@@ -525,7 +541,7 @@ public class RtmTaskSeries extends RtmData implements
             final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( localValues );
             final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( serverValues,
                                                                                           syncList );
-            properties.localBuilder.add( syncOperations );
+            properties.operations.addAllLocalOps( syncOperations );
          }
             break;
          default :
@@ -550,7 +566,8 @@ public class RtmTaskSeries extends RtmData implements
       {
          case LOCAL_ONLY:
          {
-            properties.localBuilder.add( localValues.computeContentProviderUpdateOperation( serverValues ) );
+            properties.operations.addAllLocalOps( localValues.computeContentProviderUpdateOperations( properties.lastSyncDate,
+                                                                                                      serverValues ) );
          }
             break;
          default :
@@ -726,45 +743,51 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTaskSeries serverElement )
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
+                                                                                        RtmTaskSeries serverElement )
    {
-      final SyncProperties< RtmTaskSeries > properties = SyncProperties.newLocalOnlyInstance( serverElement,
+      final SyncProperties< RtmTaskSeries > properties = SyncProperties.newLocalOnlyInstance( lastSync,
+                                                                                              serverElement,
                                                                                               this,
                                                                                               Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                                         id ) );
-      return syncImpl( serverElement, this, properties ).localBuilder.build();
+      return syncImpl( serverElement, this, properties ).operations.getLocalOperations();
    }
    
 
 
-   public TypedDirectedSyncOperations< RtmTaskSeries > computeMergeOperations( RtmTimeline timeline,
-                                                                               ModificationList modifications,
-                                                                               RtmTaskSeries serverElement,
-                                                                               RtmTaskSeries localElement )
+   public DirectedSyncOperations computeMergeOperations( Date lastSync,
+                                                         RtmTimeline timeline,
+                                                         ModificationList modifications,
+                                                         RtmTaskSeries serverElement,
+                                                         RtmTaskSeries localElement )
    {
       final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.BOTH,
+                                                                                     lastSync,
                                                                                      serverElement,
                                                                                      localElement,
                                                                                      Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                                id ),
                                                                                      modifications,
                                                                                      timeline );
-      return syncImpl( serverElement, localElement, properties ).getOperations();
+      return syncImpl( serverElement, localElement, properties ).operations;
    }
    
 
 
-   public IServerSyncOperation< RtmTaskSeries > computeServerUpdateOperation( RtmTimeline timeline,
-                                                                              ModificationList modifications )
+   public List< IServerSyncOperation< ? > > computeServerUpdateOperations( Date lastSync,
+                                                                           RtmTimeline timeline,
+                                                                           ModificationList modifications )
    {
       final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
+                                                                                     lastSync,
                                                                                      this,
                                                                                      this,
                                                                                      Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                                id ),
                                                                                      modifications,
                                                                                      timeline );
-      return syncImpl( this, this, properties ).serverBuilder.build();
+      return syncImpl( this, this, properties ).operations.getServerOperations();
    }
    
 
@@ -816,7 +839,7 @@ public class RtmTaskSeries extends RtmData implements
       
       syncSource( properties, serverElement.source, localElement.source );
       
-      // TODO: sync tasks
+      syncTasks( properties, serverElement.tasks, localElement.tasks );
       
       syncNotes( properties,
                  serverElement.notes.getNotes(),

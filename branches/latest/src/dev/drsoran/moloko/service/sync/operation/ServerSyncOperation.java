@@ -25,6 +25,7 @@ package dev.drsoran.moloko.service.sync.operation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -167,7 +168,7 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
    
 
 
-   public IContentProviderSyncOperation execute() throws ServiceException
+   public List< IContentProviderSyncOperation > execute() throws ServiceException
    {
       transactions = new LinkedList< TimeLineMethod.Transaction >();
       
@@ -198,12 +199,13 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
          final IContentProviderSyncable resultSyncable = (IContentProviderSyncable) resultElement;
          
          @SuppressWarnings( "unchecked" )
-         final IContentProviderSyncOperation computeContentProviderUpdateOperation = sourceSyncable.computeContentProviderUpdateOperation( resultSyncable );
-         
-         return computeContentProviderUpdateOperation;
+         // Do NO full sync since we only get the changes back, not the full set.
+         final List< IContentProviderSyncOperation > computeContentProviderUpdateOperation = sourceSyncable.computeContentProviderUpdateOperations( new Date(),
+                                                                                                                                                    resultSyncable );
+         return Collections.unmodifiableList( computeContentProviderUpdateOperation );
       }
       else
-         return NoopContentProviderSyncOperation.INSTANCE;
+         return Collections.emptyList();
    }
    
 
@@ -265,6 +267,24 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
    public T getResultElement()
    {
       return resultElement;
+   }
+   
+
+
+   public final static < T extends IServerSyncable< T > > Builder< T > fromType( ISyncOperation.Op type,
+                                                                                 T sourceElement )
+   {
+      switch ( type )
+      {
+         case INSERT:
+            return newInsert( sourceElement );
+         case UPDATE:
+            return newUpdate( sourceElement );
+         case DELETE:
+            return newDelete( sourceElement );
+         default :
+            return null;
+      }
    }
    
 

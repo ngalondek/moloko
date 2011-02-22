@@ -570,6 +570,14 @@ public class Rtm
       public final static String ADDED_DATE = "added";
       
       /**
+       * The date when the task was last modified
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String TASK_MODIFIED_DATE = "task_modified";
+      
+      /**
        * The date when the task has been completed
        * <P>
        * Type: INTEGER(long)

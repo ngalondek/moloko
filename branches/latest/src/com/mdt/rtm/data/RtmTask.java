@@ -25,7 +25,6 @@ import java.util.Date;
 import org.w3c.dom.Element;
 
 import android.content.ContentProviderOperation;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -59,17 +58,14 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
    private final static class LessIdComperator implements Comparator< RtmTask >
    {
-      
       public int compare( RtmTask object1, RtmTask object2 )
       {
          return object1.id.compareTo( object2.id );
       }
-      
    }
    
    public static final Parcelable.Creator< RtmTask > CREATOR = new Parcelable.Creator< RtmTask >()
    {
-      
       public RtmTask createFromParcel( Parcel source )
       {
          return new RtmTask( source );
@@ -81,7 +77,6 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
       {
          return new RtmTask[ size ];
       }
-      
    };
    
    public final static LessIdComperator LESS_ID = new LessIdComperator();
@@ -95,6 +90,8 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    private final int hasDueTime;
    
    private final ParcelableDate added;
+   
+   private final ParcelableDate modified;
    
    private final ParcelableDate completed;
    
@@ -157,14 +154,16 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
 
 
    public RtmTask( String id, String taskSeriesId, Date due, int hasDueTime,
-      Date added, Date completed, Date deleted, Priority priority,
-      int postponed, String estimate, long estimateMillis )
+      Date added, Date modified, Date completed, Date deleted,
+      Priority priority, int postponed, String estimate, long estimateMillis )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
       this.due = ( due != null ) ? new ParcelableDate( due ) : null;
       this.hasDueTime = hasDueTime;
       this.added = ( added != null ) ? new ParcelableDate( added ) : null;
+      this.modified = ( modified != null ) ? new ParcelableDate( modified )
+                                          : null;
       this.completed = ( completed != null ) ? new ParcelableDate( completed )
                                             : null;
       this.deleted = ( deleted != null ) ? new ParcelableDate( deleted ) : null;
@@ -176,13 +175,14 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   public RtmTask( Element elt, String taskSeriesId )
+   public RtmTask( Element elt, String taskSeriesId, ParcelableDate modified )
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
       due = parseDate( textNullIfEmpty( elt, "due" ) );
       hasDueTime = Integer.parseInt( elt.getAttribute( "has_due_time" ) );
       added = parseDate( textNullIfEmpty( elt, "added" ) );
+      this.modified = modified;
       completed = parseDate( textNullIfEmpty( elt, "completed" ) );
       deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
       
@@ -240,6 +240,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
       due = null;
       hasDueTime = 0;
       added = null;
+      modified = null;
       completed = null;
       priority = Priority.None;
       postponed = 0;
@@ -256,6 +257,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
       this.due = source.readParcelable( null );
       this.hasDueTime = source.readInt();
       this.added = source.readParcelable( null );
+      this.modified = source.readParcelable( null );
       this.completed = source.readParcelable( null );
       this.deleted = source.readParcelable( null );
       this.priority = Priority.valueOf( source.readString() );
@@ -287,9 +289,37 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
+   private static SyncResultDirection syncDueDate( SyncProperties< RtmTask > properties,
+                                                   ParcelableDate serverValue,
+                                                   ParcelableDate localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.DUE_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           ParcelableDate.class );
+      return dir;
+   }
+   
+
+
    public int getHasDueTime()
    {
       return hasDueTime;
+   }
+   
+
+
+   private static SyncResultDirection syncHasDueTime( SyncProperties< RtmTask > properties,
+                                                      int serverValue,
+                                                      int localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.HAS_DUE_TIME,
+                                                           serverValue,
+                                                           localValue,
+                                                           Integer.class );
+      return dir;
    }
    
 
@@ -301,6 +331,20 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
+   private static SyncResultDirection syncAddedDate( SyncProperties< RtmTask > properties,
+                                                     ParcelableDate serverValue,
+                                                     ParcelableDate localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.ADDED_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           ParcelableDate.class );
+      return dir;
+   }
+   
+
+
    public Date getCompleted()
    {
       return ( completed != null ) ? completed.getDate() : null;
@@ -308,7 +352,35 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   public Date getDeleted()
+   private static SyncResultDirection syncCompletedDate( SyncProperties< RtmTask > properties,
+                                                         ParcelableDate serverValue,
+                                                         ParcelableDate localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.COMPLETED_DATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           ParcelableDate.class );
+      return dir;
+   }
+   
+
+
+   public Date getCreatedDate()
+   {
+      return getAdded();
+   }
+   
+
+
+   public Date getModifiedDate()
+   {
+      return ( modified != null ) ? modified.getDate() : null;
+   }
+   
+
+
+   public Date getDeletedDate()
    {
       return ( deleted != null ) ? deleted.getDate() : null;
    }
@@ -329,9 +401,37 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
+   private static SyncResultDirection syncPriority( SyncProperties< RtmTask > properties,
+                                                    Priority serverValue,
+                                                    Priority localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.PRIORITY,
+                                                           serverValue,
+                                                           localValue,
+                                                           Priority.class );
+      return dir;
+   }
+   
+
+
    public int getPostponed()
    {
       return postponed;
+   }
+   
+
+
+   private static SyncResultDirection syncPostponed( SyncProperties< RtmTask > properties,
+                                                     int serverValue,
+                                                     int localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.POSTPONED,
+                                                           serverValue,
+                                                           localValue,
+                                                           Integer.class );
+      return dir;
    }
    
 
@@ -343,9 +443,37 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
+   private static SyncResultDirection syncEstimate( SyncProperties< RtmTask > properties,
+                                                    String serverValue,
+                                                    String localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.ESTIMATE,
+                                                           serverValue,
+                                                           localValue,
+                                                           String.class );
+      return dir;
+   }
+   
+
+
    public long getEstimateMillis()
    {
       return estimateMillis;
+   }
+   
+
+
+   private static SyncResultDirection syncEstimateMillis( SyncProperties< RtmTask > properties,
+                                                          long serverValue,
+                                                          long localValue )
+   {
+      final SyncResultDirection dir = SyncUtils.syncValue( properties,
+                                                           RawTasks.ESTIMATE_MILLIS,
+                                                           serverValue,
+                                                           localValue,
+                                                           Long.class );
+      return dir;
    }
    
 
@@ -419,85 +547,43 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
 
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTask serverElement )
    {
-      return computeMergeOperations( null,
-                                     null,
-                                     serverElement,
-                                     SyncDirection.LOCAL_ONLY ).getLocalOperation();
+      final SyncProperties< RtmTask > properties = SyncProperties.newLocalOnlyInstance( serverElement,
+                                                                                        this,
+                                                                                        Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                                  id ) );
+      return syncImpl( serverElement, this, properties ).localBuilder.build();
    }
    
 
 
-   public TypedDirectedSyncOperations< RtmTask > computeMergeOperations( RtmTimeline timeLine,
+   public TypedDirectedSyncOperations< RtmTask > computeMergeOperations( RtmTimeline timeline,
                                                                          ModificationList modifications,
-                                                                         RtmTask updateElement,
-                                                                         SyncDirection mergeDirection )
+                                                                         RtmTask serverElement,
+                                                                         RtmTask localElement )
    {
-      SyncUtils.doPreSyncCheck( id,
-                                 updateElement.id,
-                                 timeLine,
-                                 modifications,
-                                 mergeDirection );
-      
-      final Uri uri = Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
-      
-      final SyncProperties< RtmTask > mergeProperties = SyncProperties.newInstance( mergeDirection,
-                                                                                    this,
-                                                                                    updateElement,
-                                                                                    uri,
-                                                                                    modifications );
-      
-      SyncUtils.updateDate( due, update.due, uri, RawTasks.DUE_DATE, result );
-      
-      if ( hasDueTime != update.hasDueTime )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.HAS_DUE_TIME,
-                                                         update.hasDueTime )
-                                             .build() );
-      
-      SyncUtils.updateDate( added,
-                            update.added,
-                            uri,
-                            RawTasks.ADDED_DATE,
-                            result );
-      
-      SyncUtils.updateDate( completed,
-                            update.completed,
-                            uri,
-                            RawTasks.COMPLETED_DATE,
-                            result );
-      
-      SyncUtils.updateDate( deleted,
-                            update.deleted,
-                            uri,
-                            RawTasks.DELETED_DATE,
-                            result );
-      
-      if ( priority.compareTo( update.priority ) != 0 )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.PRIORITY,
-                                                         convertPriority( update.priority ) )
-                                             .build() );
-      
-      if ( postponed != update.postponed )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.POSTPONED,
-                                                         update.postponed )
-                                             .build() );
-      
-      if ( SyncUtils.hasChanged( estimate, update.estimate ) )
-      {
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.ESTIMATE,
-                                                         update.estimate )
-                                             .build() );
-         
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.ESTIMATE_MILLIS,
-                                                         update.estimateMillis )
-                                             .build() );
-      }
-      
-      return mergeProperties.getOperations();
+      final SyncProperties< RtmTask > properties = SyncProperties.newInstance( SyncDirection.BOTH,
+                                                                               serverElement,
+                                                                               localElement,
+                                                                               Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                         id ),
+                                                                               modifications,
+                                                                               timeline );
+      return syncImpl( serverElement, localElement, properties ).getOperations();
+   }
+   
+
+
+   public IServerSyncOperation< RtmTask > computeServerUpdateOperation( RtmTimeline timeline,
+                                                                        ModificationList modifications )
+   {
+      final SyncProperties< RtmTask > properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
+                                                                               this,
+                                                                               this,
+                                                                               Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                         id ),
+                                                                               modifications,
+                                                                               timeline );
+      return syncImpl( this, this, properties ).serverBuilder.build();
    }
    
 
@@ -518,17 +604,6 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   public IServerSyncOperation< RtmTask > computeServerUpdateOperation( RtmTimeline timeLine,
-                                                                        ModificationList modifications )
-   {
-      return computeMergeOperations( timeLine,
-                                     modifications,
-                                     this,
-                                     SyncDirection.SERVER_ONLY ).getServerOperation();
-   }
-   
-
-
    public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
    {
       if ( modifications.hasModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
@@ -538,5 +613,40 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
                                             .build();
       else
          return NoopContentProviderSyncOperation.INSTANCE;
+   }
+   
+
+
+   private SyncProperties< RtmTask > syncImpl( RtmTask serverElement,
+                                               RtmTask localElement,
+                                               SyncProperties< RtmTask > properties )
+   {
+      SyncUtils.doPreSyncCheck( localElement.id, serverElement.id, properties );
+      
+      syncDueDate( properties, serverElement.due, localElement.due );
+      
+      syncHasDueTime( properties,
+                      serverElement.hasDueTime,
+                      localElement.hasDueTime );
+      
+      syncAddedDate( properties, serverElement.added, localElement.added );
+      
+      syncCompletedDate( properties,
+                         serverElement.completed,
+                         localElement.completed );
+      
+      syncPriority( properties, serverElement.priority, localElement.priority );
+      
+      syncPostponed( properties,
+                     serverElement.postponed,
+                     localElement.postponed );
+      
+      syncEstimate( properties, serverElement.estimate, localElement.estimate );
+      
+      syncEstimateMillis( properties,
+                          serverElement.estimateMillis,
+                          localElement.estimateMillis );
+      
+      return properties;
    }
 }

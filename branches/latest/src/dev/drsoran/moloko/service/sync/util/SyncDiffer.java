@@ -53,6 +53,15 @@ public class SyncDiffer
    public final static < T extends IContentProviderSyncable< T >> List< IContentProviderSyncOperation > diff( Iterable< T > reference,
                                                                                                               ContentProviderSyncableList< T > target )
    {
+      return diff( reference, target, null );
+   }
+   
+
+
+   public final static < T extends IContentProviderSyncable< T >> List< IContentProviderSyncOperation > diff( Iterable< T > reference,
+                                                                                                              ContentProviderSyncableList< T > target,
+                                                                                                              Date lastSync )
+   {
       if ( reference == null || target == null )
          throw new NullPointerException();
       
@@ -84,20 +93,25 @@ public class SyncDiffer
             operations.add( operation );
       }
       
-      // DELETE: Get all elements which have not been touched during the
-      // diff.
-      // These elements are not in the reference list.
-      final List< T > untouchedElements = target.getUntouchedElements();
-      
-      for ( T tgtElement : untouchedElements )
+      // Check if we have a full sync. Otherwise we would delete elements
+      // which have not changed.
+      if ( lastSync == null )
       {
-         final IContentProviderSyncOperation operation = target.computeDeleteOperation( tgtElement );
+         // DELETE: Get all elements which have not been touched during the
+         // diff.
+         // These elements are not in the reference list.
+         final List< T > untouchedElements = target.getUntouchedElements();
          
-         if ( operation == null )
-            throw new NullPointerException( "operation is null" );
-         
-         if ( !( operation instanceof INoopSyncOperation ) )
-            operations.add( operation );
+         for ( T tgtElement : untouchedElements )
+         {
+            final IContentProviderSyncOperation operation = target.computeDeleteOperation( tgtElement );
+            
+            if ( operation == null )
+               throw new NullPointerException( "operation is null" );
+            
+            if ( !( operation instanceof INoopSyncOperation ) )
+               operations.add( operation );
+         }
       }
       
       return operations;
@@ -116,8 +130,7 @@ public class SyncDiffer
                          comp,
                          modifications,
                          timeLine,
-                         null,
-                         true );
+                         null );
    }
    
 
@@ -127,8 +140,7 @@ public class SyncDiffer
                                                                                              Comparator< ? super T > comp,
                                                                                              ModificationList modifications,
                                                                                              RtmTimeline timeLine,
-                                                                                             Date lastSync,
-                                                                                             boolean fullSync )
+                                                                                             Date lastSync )
    {
       if ( serverList == null || localList == null || comp == null
          || timeLine == null )
@@ -230,7 +242,7 @@ public class SyncDiffer
             // LOCAL DELETE: The local element wasn't in the server list and is not new created.
             // Precondition: We can only judge if this is a full sync. Otherwise non-changed
             // sever elements are not in the serverList and are interpreted as deleted.
-            else if ( fullSync )
+            else if ( lastSync == null )
             {
                operations.add( localList.get( i )
                                         .computeContentProviderDeleteOperation() );

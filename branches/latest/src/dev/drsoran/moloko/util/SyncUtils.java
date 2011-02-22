@@ -49,12 +49,12 @@ import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.service.parcel.ParcelableDate;
 import dev.drsoran.moloko.service.sync.Constants;
 import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
-import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.SyncDirection;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.SyncDirection;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
 

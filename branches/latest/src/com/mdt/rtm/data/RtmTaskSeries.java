@@ -213,7 +213,7 @@ public class RtmTaskSeries extends RtmData implements
       
       for ( Element task : tasks )
       {
-         this.tasks.add( new RtmTask( task, id ) );
+         this.tasks.add( new RtmTask( task, id, modified ) );
       }
       
       this.notes = new RtmTaskNotes( child( elt, "notes" ), id );
@@ -432,6 +432,28 @@ public class RtmTaskSeries extends RtmData implements
    public List< RtmTask > getTasks()
    {
       return tasks;
+   }
+   
+
+
+   private static void syncTasks( SyncProperties< RtmTaskSeries > properties,
+                                  List< RtmTask > serverValues,
+                                  List< RtmTask > localValues )
+   {
+      switch ( properties.syncDirection )
+      {
+         case LOCAL_ONLY:
+         {
+            final ContentProviderSyncableList< RtmTask > syncList = new ContentProviderSyncableList< RtmTask >( localValues,
+                                                                                                                RtmTask.LESS_ID );
+            final List< IContentProviderSyncOperation > operations = SyncDiffer.diff( serverValues,
+                                                                                      syncList );
+            properties.localBuilder.add( operations );
+         }
+            break;
+         default :
+            break;
+      }
    }
    
 

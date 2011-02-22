@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,9 +54,9 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
    public final static String[] PROJECTION =
    { RawTasks._ID, RawTasks.TASKSERIES_ID, RawTasks.DUE_DATE,
-    RawTasks.HAS_DUE_TIME, RawTasks.ADDED_DATE, RawTasks.COMPLETED_DATE,
-    RawTasks.DELETED_DATE, RawTasks.PRIORITY, RawTasks.POSTPONED,
-    RawTasks.ESTIMATE, RawTasks.ESTIMATE_MILLIS };
+    RawTasks.HAS_DUE_TIME, RawTasks.ADDED_DATE, RawTasks.TASK_MODIFIED_DATE,
+    RawTasks.COMPLETED_DATE, RawTasks.DELETED_DATE, RawTasks.PRIORITY,
+    RawTasks.POSTPONED, RawTasks.ESTIMATE, RawTasks.ESTIMATE_MILLIS };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -86,19 +85,16 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          values.putNull( RawTasks.DUE_DATE );
       
       values.put( RawTasks.HAS_DUE_TIME, task.getHasDueTime() );
-      
-      if ( task.getAdded() != null )
-         values.put( RawTasks.ADDED_DATE, task.getAdded().getTime() );
-      else
-         values.putNull( RawTasks.ADDED_DATE );
+      values.put( RawTasks.ADDED_DATE, task.getAdded().getTime() );
+      values.put( RawTasks.TASK_MODIFIED_DATE, task.getModifiedDate().getTime() );
       
       if ( task.getCompleted() != null )
          values.put( RawTasks.COMPLETED_DATE, task.getCompleted().getTime() );
       else
          values.putNull( RawTasks.COMPLETED_DATE );
       
-      if ( task.getDeleted() != null )
-         values.put( RawTasks.DELETED_DATE, task.getDeleted().getTime() );
+      if ( task.getDeletedDate() != null )
+         values.put( RawTasks.DELETED_DATE, task.getDeletedDate().getTime() );
       else
          values.putNull( RawTasks.DELETED_DATE );
       
@@ -245,6 +241,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          + " TEXT NOT NULL, " + RawTasks.TASKSERIES_ID + " TEXT NOT NULL, "
          + RawTasks.DUE_DATE + " INTEGER, " + RawTasks.HAS_DUE_TIME
          + " INTEGER NOT NULL DEFAULT 0, " + RawTasks.ADDED_DATE
+         + " INTEGER NOT NULL, " + RawTasks.TASK_MODIFIED_DATE
          + " INTEGER NOT NULL, " + RawTasks.COMPLETED_DATE + " INTEGER, "
          + RawTasks.DELETED_DATE + " INTEGER, " + RawTasks.PRIORITY
          + " CHAR(1) NOT NULL DEFAULT 'n', " + RawTasks.POSTPONED
@@ -334,7 +331,10 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.DUE_DATE ) ),
                           c.getInt( COL_INDICES.get( RawTasks.HAS_DUE_TIME ) ),
-                          new Date( c.getLong( COL_INDICES.get( RawTasks.ADDED_DATE ) ) ),
+                          Queries.getOptDate( c,
+                                              COL_INDICES.get( RawTasks.ADDED_DATE ) ),
+                          Queries.getOptDate( c,
+                                              COL_INDICES.get( RawTasks.TASK_MODIFIED_DATE ) ),
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.COMPLETED_DATE ) ),
                           Queries.getOptDate( c,

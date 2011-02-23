@@ -95,7 +95,14 @@ public class HomeAdapter extends BaseAdapter
                                    R.string.app_preferences,
                                    R.drawable.ic_home_settings,
                                    new Intent( context,
-                                               MolokoPreferencesActivity.class ) ) };
+                                               MolokoPreferencesActivity.class ) ),
+       
+       new SimpleHomeWidgetLayout( context,
+                                   null,
+                                   android.R.string.untitled,
+                                   R.drawable.ic_home_settings,
+                                   new Intent( context,
+                                               RtmSmartFilterTestActivity.class ) ) };
    }
    
 

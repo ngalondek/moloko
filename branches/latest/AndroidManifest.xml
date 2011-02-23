@@ -230,8 +230,10 @@
          android:theme="@style/Theme"
          android:excludeFromRecents="true" />
 
-      <!-- <activity android:name=".activities.RtmSmartFilterTestActivity" 
-         android:label="Test RTM smart filter" android:excludeFromRecents="true" /> -->
+      <activity
+         android:name=".activities.RtmSmartFilterTestActivity"
+         android:label="Grammar tests"
+         android:excludeFromRecents="true" />
 
       <activity
          android:name="org.acra.CrashReportDialog"

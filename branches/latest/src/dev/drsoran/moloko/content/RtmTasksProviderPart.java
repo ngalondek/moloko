@@ -53,7 +53,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { RawTasks._ID, RawTasks.TASKSERIES_ID, RawTasks.DUE_DATE,
+   { RawTasks._ID, RawTasks.TASKSERIES_ID, RawTasks.LIST_ID, RawTasks.DUE_DATE,
     RawTasks.HAS_DUE_TIME, RawTasks.ADDED_DATE, RawTasks.TASK_MODIFIED_DATE,
     RawTasks.COMPLETED_DATE, RawTasks.DELETED_DATE, RawTasks.PRIORITY,
     RawTasks.POSTPONED, RawTasks.ESTIMATE, RawTasks.ESTIMATE_MILLIS };
@@ -78,6 +78,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          values.put( RawTasks._ID, task.getId() );
       
       values.put( RawTasks.TASKSERIES_ID, task.getTaskSeriesId() );
+      values.put( RawTasks.LIST_ID, task.getListId() );
       
       if ( task.getDue() != null )
          values.put( RawTasks.DUE_DATE, task.getDue().getTime() );
@@ -239,7 +240,8 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + RawTasks._ID
          + " TEXT NOT NULL, " + RawTasks.TASKSERIES_ID + " TEXT NOT NULL, "
-         + RawTasks.DUE_DATE + " INTEGER, " + RawTasks.HAS_DUE_TIME
+         + RawTasks.LIST_ID + " TEXT NOT NULL, " + RawTasks.DUE_DATE
+         + " INTEGER, " + RawTasks.HAS_DUE_TIME
          + " INTEGER NOT NULL DEFAULT 0, " + RawTasks.ADDED_DATE
          + " INTEGER NOT NULL, " + RawTasks.TASK_MODIFIED_DATE
          + " INTEGER NOT NULL, " + RawTasks.COMPLETED_DATE + " INTEGER, "
@@ -251,6 +253,15 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          + "CONSTRAINT rawtasks_taskseries_ref FOREIGN KEY ( "
          + RawTasks.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH + "( \""
          + TaskSeries._ID + "\" )" + " );" );
+      
+      // TRIGGER: If a RawTask gets deleted, also delete the associated
+      // taskseries if it contains no RawTasks anymore
+      db.execSQL( "CREATE TRIGGER " + path + "_delete_rawtask AFTER DELETE ON "
+         + path + " FOR EACH ROW BEGIN DELETE FROM " + TaskSeries.PATH
+         + " WHERE " + TaskSeries.PATH + "." + TaskSeries._ID + " = old."
+         + RawTasks.TASKSERIES_ID + " AND NOT EXISTS (SELECT " + RawTasks._ID
+         + " FROM " + path + " WHERE old." + RawTasks.TASKSERIES_ID + " = "
+         + RawTasks.TASKSERIES_ID + "; END;" );
    }
    
 
@@ -328,6 +339,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    {
       return new RtmTask( c.getString( COL_INDICES.get( RawTasks._ID ) ),
                           c.getString( COL_INDICES.get( RawTasks.TASKSERIES_ID ) ),
+                          c.getString( COL_INDICES.get( RawTasks.LIST_ID ) ),
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.DUE_DATE ) ),
                           c.getInt( COL_INDICES.get( RawTasks.HAS_DUE_TIME ) ),

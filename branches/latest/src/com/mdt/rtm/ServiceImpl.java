@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,12 +41,12 @@ import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.RtmContacts;
@@ -706,11 +706,12 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmTaskSeries tasks_setPriority( String timelineId,
-                                           String listId,
-                                           String taskSeriesId,
-                                           String taskId,
-                                           Priority priority ) throws ServiceException
+   public TimeLineMethod.Result< RtmTaskSeries > tasks_setPriority( String timelineId,
+                                                                    String listId,
+                                                                    String taskSeriesId,
+                                                                    String taskId,
+                                                                    Priority priority,
+                                                                    MethodCallType methodCallType ) throws ServiceException
    {
       Element elt = invoker.invoke( new Param( "method",
                                                "rtm.tasks.setPriority" ),
@@ -723,8 +724,11 @@ public class ServiceImpl implements Service
                                     new Param( "auth_token", currentAuthToken ),
                                     new Param( "api_key",
                                                applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( elt );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      return newTaskResult( timelineId,
+                            taskSeriesId,
+                            taskId,
+                            methodCallType,
+                            elt );
    }
    
 

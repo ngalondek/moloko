@@ -52,8 +52,8 @@ import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.syncable.IServerSyncable;
-import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.SyncDirection;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.service.sync.syncable.IServerSyncable.SyncDirection;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -292,7 +292,7 @@ public final class SyncUtils
    public final static < V > boolean hasChanged( V oldVal, V newVal )
    {
       return ( oldVal == null && newVal != null )
-         || ( oldVal != null && newVal == null ) || !oldVal.equals( newVal );
+         || ( oldVal != null && ( newVal == null || !oldVal.equals( newVal ) ) );
    }
    
 

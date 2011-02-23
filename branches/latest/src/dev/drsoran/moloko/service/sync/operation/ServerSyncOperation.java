@@ -33,9 +33,9 @@ import java.util.List;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
-import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
+import com.mdt.rtm.Service.MethodCallType;
 
 import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
@@ -190,12 +190,12 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
       if ( resultElement == null )
          throw new IllegalStateException( "Service method did not produced a result element" );
       
-      if ( sourceElement instanceof IContentProviderSyncable
-         && resultElement instanceof IContentProviderSyncable )
+      if ( sourceElement instanceof IContentProviderSyncable< ? >
+         && resultElement instanceof IContentProviderSyncable< ? > )
       {
-         @SuppressWarnings( "rawtypes" )
+         @SuppressWarnings( "unchecked" )
          final IContentProviderSyncable sourceSyncable = (IContentProviderSyncable) sourceElement;
-         @SuppressWarnings( "rawtypes" )
+         @SuppressWarnings( "unchecked" )
          final IContentProviderSyncable resultSyncable = (IContentProviderSyncable) resultElement;
          
          @SuppressWarnings( "unchecked" )

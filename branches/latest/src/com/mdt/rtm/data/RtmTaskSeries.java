@@ -43,9 +43,9 @@ import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
+import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.service.sync.util.SyncDiffer;
 import dev.drsoran.moloko.util.Queries;
@@ -346,9 +346,9 @@ public class RtmTaskSeries extends RtmData implements
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            TaskSeries.TASKSERIES_CREATED_DATE,
-                                                           serverValue,
-                                                           localValue,
-                                                           ParcelableDate.class );
+                                                           ParcelableDate.getTime( serverValue ),
+                                                           ParcelableDate.getTime( localValue ),
+                                                           Long.class );
       return dir;
    }
    
@@ -367,9 +367,9 @@ public class RtmTaskSeries extends RtmData implements
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            TaskSeries.MODIFIED_DATE,
-                                                           serverValue,
-                                                           localValue,
-                                                           ParcelableDate.class );
+                                                           ParcelableDate.getTime( serverValue ),
+                                                           ParcelableDate.getTime( localValue ),
+                                                           Long.class );
       return dir;
    }
    

@@ -500,7 +500,7 @@ public class Rtm
       /**
        * The ID of the list this taskseries is in.
        * <P>
-       * Type: INTEGER (foreign key to table lists _ID field)
+       * Type: TEXT (foreign key to table lists _ID field)
        * </P>
        */
       public final static String LIST_ID = "list_id";
@@ -646,6 +646,14 @@ public class Rtm
        * The MIME type of a {@link #CONTENT_URI} sub-directory of a single raw task.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.rawtask";
+      
+      /**
+       * The ID of the list this RawTask is in.
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String LIST_ID = "list_id";
       
       /**
        * The default sort order for this table

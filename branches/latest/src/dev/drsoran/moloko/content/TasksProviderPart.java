@@ -105,7 +105,10 @@ public class TasksProviderPart extends AbstractProviderPart
                                                         RawTasks.PATH + "."
                                                            + RawTasks._ID
                                                            + " AS _id",
-                                                        Tasks.LIST_ID,
+                                                        TaskSeries.PATH + "."
+                                                           + TaskSeries.LIST_ID
+                                                           + " AS "
+                                                           + Tasks.LIST_ID,
                                                         Tasks.LIST_NAME,
                                                         Tasks.IS_SMART_LIST,
                                                         Tasks.TASKSERIES_CREATED_DATE,

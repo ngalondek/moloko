@@ -91,7 +91,11 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                                                     + "."
                                                                                     + TaskSeries._ID
                                                                                     + " AS series_id",
-                                                                                 TaskSeries.LIST_ID,
+                                                                                 TaskSeries.PATH
+                                                                                    + "."
+                                                                                    + TaskSeries.LIST_ID
+                                                                                    + " AS "
+                                                                                    + TaskSeries.LIST_ID,
                                                                                  RawTasks.COMPLETED_DATE },
                                                                                 // where
                                                                                 "series_id ="

@@ -40,13 +40,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
@@ -57,8 +57,8 @@ import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.layouts.WrappingLayout;
+import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -136,7 +136,7 @@ public class TaskEditActivity extends Activity
       @Override
       protected Boolean doInBackground( Void... params )
       {
-         if ( params.length == 0 )
+         if ( modifications.size() == 0 )
             return Boolean.TRUE;
          
          return Boolean.valueOf( ModificationsProviderPart.applyModifications( getContentResolver(),

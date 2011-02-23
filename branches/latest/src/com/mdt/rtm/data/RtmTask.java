@@ -311,9 +311,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            RawTasks.DUE_DATE,
-                                                           serverValue,
-                                                           localValue,
-                                                           ParcelableDate.class );
+                                                           ParcelableDate.getTime( serverValue ),
+                                                           ParcelableDate.getTime( localValue ),
+                                                           Long.class );
       return dir;
    }
    
@@ -353,9 +353,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            RawTasks.ADDED_DATE,
-                                                           serverValue,
-                                                           localValue,
-                                                           ParcelableDate.class );
+                                                           ParcelableDate.getTime( serverValue ),
+                                                           ParcelableDate.getTime( localValue ),
+                                                           Long.class );
       return dir;
    }
    
@@ -374,9 +374,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            RawTasks.COMPLETED_DATE,
-                                                           serverValue,
-                                                           localValue,
-                                                           ParcelableDate.class );
+                                                           ParcelableDate.getTime( serverValue ),
+                                                           ParcelableDate.getTime( localValue ),
+                                                           Long.class );
       return dir;
    }
    
@@ -423,9 +423,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            RawTasks.PRIORITY,
-                                                           convertPriority( serverValue ),
-                                                           convertPriority( localValue ),
-                                                           String.class );
+                                                           serverValue,
+                                                           localValue,
+                                                           Priority.class );
       if ( dir == SyncResultDirection.SERVER )
          ;
       return dir;

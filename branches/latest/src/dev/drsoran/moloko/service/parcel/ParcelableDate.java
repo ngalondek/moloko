@@ -80,6 +80,13 @@ public class ParcelableDate implements Parcelable
    
 
 
+   public long getTime()
+   {
+      return date.getTime();
+   }
+   
+
+
    @Override
    public boolean equals( Object o )
    {
@@ -116,4 +123,17 @@ public class ParcelableDate implements Parcelable
       dest.writeLong( date.getTime() );
    }
    
+
+
+   public final static Date getDate( ParcelableDate parcelableDate )
+   {
+      return parcelableDate != null ? parcelableDate.getDate() : null;
+   }
+   
+
+
+   public final static Long getTime( ParcelableDate parcelableDate )
+   {
+      return parcelableDate != null ? parcelableDate.getTime() : null;
+   }
 }

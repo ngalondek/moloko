@@ -343,18 +343,6 @@
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Database cleared</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Clearing the database failed</string>
-
-	<!-- RTM service status messages -->
-   <string name="rtmSvc_state_unknown">Unknown</string>
-   <string name="rtmSvc_state_internal_error">Internal server error</string>
-   <string name="rtmSvc_state_connected">Connected</string>
-   <string name="rtmSvc_state_disconnected">Disconnected</string>
-      <!-- Auth -->
-      <string name="rtmSvc_auth_get_url_start">Receiving Login-URL</string>
-      <string name="rtmSvc_auth_get_url_fin">Login-URL received</string>
-      <string name="rtmSvc_auth_get_token_start">Receiving Authentication-Token</string>
-      <string name="rtmSvc_auth_get_token_fin">Authentication-Token received</string>
-      <string name="rtmSvc_auth_failed">Authentication failed</string>
       
    <!-- Error reporting -->   
    <string name="acra_crash_notif_ticker_text">Moloko has or had entered an unexpected state. Please send an error report.</string>

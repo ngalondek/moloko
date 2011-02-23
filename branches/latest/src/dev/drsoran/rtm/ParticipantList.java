@@ -37,11 +37,11 @@ import android.util.Log;
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
-import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.service.sync.util.SyncDiffer;
+import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.util.SyncDiffer;
 
 
 public class ParticipantList implements

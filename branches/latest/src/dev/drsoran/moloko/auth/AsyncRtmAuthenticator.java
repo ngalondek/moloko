@@ -32,8 +32,6 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
-import dev.drsoran.moloko.service.RtmServiceException;
-
 
 public class AsyncRtmAuthenticator
 {
@@ -41,8 +39,7 @@ public class AsyncRtmAuthenticator
    
    private final ServiceImpl rtmServiceImpl;
    
-   @SuppressWarnings( "unchecked" )
-   private AsyncTask runningTask;
+   private AsyncTask< ?, Void, ? > runningTask;
    
    
    private abstract class RtmAsyncAuthTask< Param, Result > extends
@@ -276,29 +273,11 @@ public class AsyncRtmAuthenticator
 
    public static String getExceptionCause( final Exception e )
    {
-      if ( e instanceof RtmServiceException )
-      {
-         return ( (RtmServiceException) e ).rtmCause;
-      }
-      else if ( e instanceof ServiceInternalException )
+      if ( e instanceof ServiceInternalException )
       {
          return ( (ServiceInternalException) e ).getResponseMessage();
       }
       else
          return e.getMessage();
-   }
-   
-
-
-   public static int getExceptionCode( final Exception e )
-   {
-      if ( e instanceof RtmServiceException )
-      {
-         return ( (RtmServiceException) e ).errorCode;
-      }
-      else
-      {
-         return 0;
-      }
    }
 }

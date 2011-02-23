@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.text.format.Time;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
+import dev.drsoran.rtm.ParcelableDate;
 
 
 /**

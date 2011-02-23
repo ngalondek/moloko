@@ -33,19 +33,19 @@ import android.util.Log;
 import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
+import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.sync.util.SyncUtils.SyncProperties;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.SyncUtils;
-import dev.drsoran.moloko.util.SyncUtils.SyncProperties;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.rtm.ParcelableDate;
 
 
 /**

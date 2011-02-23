@@ -195,14 +195,14 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       {
          if ( syncStatusHandle == null )
          {
-            syncStatusHandle = ContentResolver.addStatusChangeListener( dev.drsoran.moloko.service.sync.Constants.SYNC_OBSERVER_TYPE_STATUS,
+            syncStatusHandle = ContentResolver.addStatusChangeListener( dev.drsoran.moloko.sync.Constants.SYNC_OBSERVER_TYPE_STATUS,
                                                                         this );
             
             if ( syncStatusHandle != null )
             {
                final Bundle bundle = new Bundle();
                bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
-               bundle.putBoolean( dev.drsoran.moloko.service.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
+               bundle.putBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
                                   true );
                
                ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );

@@ -37,21 +37,21 @@ import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.DirectedSyncOperations;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.ISyncOperation.Op;
-import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
-import dev.drsoran.moloko.service.sync.util.SyncDiffer;
+import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
+import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.sync.util.SyncDiffer;
+import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.sync.util.SyncUtils.SyncProperties;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.SyncUtils;
-import dev.drsoran.moloko.util.SyncUtils.SyncProperties;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Tag;
 
@@ -129,7 +129,7 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String source;
    
-   private final ArrayList< RtmTask > tasks;
+   private final List< RtmTask > tasks;
    
    private final RtmTaskNotes notes;
    
@@ -584,15 +584,23 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static SyncResultDirection syncLocationId( SyncProperties< RtmTaskSeries > properties,
-                                                      String serverValue,
-                                                      String localValue )
+   private SyncResultDirection syncLocationId( SyncProperties< RtmTaskSeries > properties,
+                                               String serverValue,
+                                               String localValue )
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            TaskSeries.LOCATION_ID,
                                                            serverValue,
                                                            localValue,
                                                            String.class );
+      if ( dir == SyncResultDirection.SERVER )
+         for ( RtmTask task : tasks )
+            properties.operations.add( properties.timeline.tasks_setLocation( listId,
+                                                                              id,
+                                                                              task.getId(),
+                                                                              localValue ),
+                                       Op.UPDATE,
+                                       this );
       return dir;
    }
    
@@ -605,15 +613,23 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static SyncResultDirection syncUrl( SyncProperties< RtmTaskSeries > properties,
-                                               String serverValue,
-                                               String localValue )
+   private SyncResultDirection syncUrl( SyncProperties< RtmTaskSeries > properties,
+                                        String serverValue,
+                                        String localValue )
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            TaskSeries.URL,
                                                            serverValue,
                                                            localValue,
                                                            String.class );
+      if ( dir == SyncResultDirection.SERVER )
+         for ( RtmTask task : tasks )
+            properties.operations.add( properties.timeline.tasks_setURL( listId,
+                                                                         id,
+                                                                         task.getId(),
+                                                                         localValue ),
+                                       Op.UPDATE,
+                                       this );
       return dir;
    }
    

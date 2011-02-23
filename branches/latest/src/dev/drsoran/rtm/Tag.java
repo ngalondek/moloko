@@ -30,11 +30,11 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Tags;
 
 

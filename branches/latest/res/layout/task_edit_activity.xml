@@ -325,7 +325,6 @@
                android:layout_marginRight="10dip"
                android:layout_below="@id/task_edit_estimate_layout"
                android:layout_alignLeft="@id/task_edit_desc"
-               android:visibility="gone"
                moloko:titlePaddingTop="8dip"
                moloko:title="@string/task_location" />
 
@@ -341,7 +340,6 @@
                android:inputType="text|textUri"
                android:imeOptions="actionDone"
                android:selectAllOnFocus="true"
-               android:visibility="gone"
                moloko:titlePaddingTop="8dip"
                moloko:title="@string/task_url" />
 

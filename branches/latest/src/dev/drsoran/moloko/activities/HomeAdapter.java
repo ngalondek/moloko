@@ -28,7 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;

@@ -28,11 +28,11 @@ import com.mdt.rtm.data.RtmFrob;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
@@ -321,7 +321,21 @@ public interface Service
    
 
 
-   void tasks_setURL() throws ServiceException;
+   TimeLineMethod.Result< RtmTaskSeries > tasks_setLocation( String timelineId,
+                                                             String listId,
+                                                             String taskSeriesId,
+                                                             String taskId,
+                                                             String locationId,
+                                                             MethodCallType callType ) throws ServiceException;
+   
+
+
+   TimeLineMethod.Result< RtmTaskSeries > tasks_setURL( String timelineId,
+                                                        String listId,
+                                                        String taskSeriesId,
+                                                        String taskId,
+                                                        String url,
+                                                        MethodCallType callType ) throws ServiceException;
    
 
 
@@ -352,22 +366,6 @@ public interface Service
                                  String noteId,
                                  String title,
                                  String text ) throws ServiceException;
-   
-
-
-   RtmTaskSeries tasks_setLocation( String timelineId,
-                                    String listId,
-                                    String taskSeriesId,
-                                    String taskId,
-                                    String locationId ) throws ServiceException;
-   
-
-
-   RtmTaskSeries tasks_setURL( String timelineId,
-                               String listId,
-                               String taskSeriesId,
-                               String taskId,
-                               String url ) throws ServiceException;
    
 
 

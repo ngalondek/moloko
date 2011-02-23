@@ -26,7 +26,7 @@ import android.accounts.Account;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 
 
 public class SyncAlarmReceiver extends BroadcastReceiver

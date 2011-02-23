@@ -22,9 +22,9 @@ package com.mdt.rtm.data;
 import org.w3c.dom.Element;
 
 import com.mdt.rtm.Service;
+import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 
@@ -155,6 +155,50 @@ public class RtmTimeline
                                          toListId,
                                          taskSeriesId,
                                          taskId,
+                                         callType );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskSeries > tasks_setLocation( final String listId,
+                                                             final String taskSeriesId,
+                                                             final String taskId,
+                                                             final String locationId )
+   {
+      return new TimeLineMethod< RtmTaskSeries >()
+      {
+         @Override
+         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         {
+            return service.tasks_setLocation( id,
+                                              listId,
+                                              taskSeriesId,
+                                              taskId,
+                                              locationId,
+                                              callType );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskSeries > tasks_setURL( final String listId,
+                                                        final String taskSeriesId,
+                                                        final String taskId,
+                                                        final String url )
+   {
+      return new TimeLineMethod< RtmTaskSeries >()
+      {
+         @Override
+         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         {
+            return service.tasks_setURL( id,
+                                         listId,
+                                         taskSeriesId,
+                                         taskId,
+                                         url,
                                          callType );
          }
       };

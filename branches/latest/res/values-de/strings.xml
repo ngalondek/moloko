@@ -279,18 +279,6 @@
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Datenbank gesäubert</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Säubern der Datenbank fehlgeschlagen</string>
-
-	<!-- RTM service status messages -->
-	<string name="rtmSvc_state_unknown">Unbekannt</string>
-	<string name="rtmSvc_state_internal_error">Interner Service Fehler</string>
-	<string name="rtmSvc_state_connected">Verbunden</string>
-	<string name="rtmSvc_state_disconnected">Getrennt</string>
-      <!-- Auth -->
-	   <string name="rtmSvc_auth_get_url_start">Empfange Anmelde-URL</string>
-	   <string name="rtmSvc_auth_get_url_fin">Anmelde-URL empfangen</string>
-	   <string name="rtmSvc_auth_get_token_start">Empfange Authentifiezierungs-Token</string>
-	   <string name="rtmSvc_auth_get_token_fin">Authentifiezierungs-Token empfangen</string>
-	   <string name="rtmSvc_auth_failed">Authentifizierung fehlgeschlagen</string>
     
    <!-- Error reporting -->   
    <string name="acra_crash_notif_ticker_text">Moloko ist oder war in einem fehlerhaften Zustand. Bitte senden Sie den Bericht</string>

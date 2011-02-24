@@ -37,14 +37,15 @@ import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
+import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -724,10 +725,10 @@ public class RtmTaskSeries extends RtmData implements
 
    private final static String ensureRecurrencePatternOrder( String recurrencePattern )
    {
-      final String[] operators = recurrencePattern.split( RecurrenceParser.OPERATOR_SEP );
+      final String[] operators = recurrencePattern.split( RecurrencePatternParser.OPERATOR_SEP );
       Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
       
-      return TextUtils.join( RecurrenceParser.OPERATOR_SEP, operators );
+      return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
    }
    
 

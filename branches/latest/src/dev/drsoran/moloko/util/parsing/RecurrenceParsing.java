@@ -31,8 +31,8 @@ import org.antlr.runtime.RecognitionException;
 import android.content.res.Resources;
 import android.util.Log;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.grammar.RecurrenceLexer;
-import dev.drsoran.moloko.grammar.RecurrenceParser;
+import dev.drsoran.moloko.grammar.RecurrencePatternLexer;
+import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 
 
@@ -41,9 +41,9 @@ public final class RecurrenceParsing
    private final static String TAG = "Moloko."
       + RecurrenceParsing.class.getSimpleName();
    
-   private final static RecurrenceLexer lexer = new RecurrenceLexer();
+   private static RecurrencePatternLexer patternLexer;
    
-   private final static RecurrenceParser parser = new RecurrenceParser();
+   private static RecurrencePatternParser patternParser;
    
    private static RecurrPatternLanguage lang;
    
@@ -72,13 +72,19 @@ public final class RecurrenceParsing
       
       if ( lang != null )
       {
-         lexer.setCharStream( new ANTLRStringStream( pattern ) );
-         final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-         parser.setTokenStream( antlrTokens );
+         if ( patternLexer == null )
+            patternLexer = new RecurrencePatternLexer();
+         
+         if ( patternParser == null )
+            patternParser = new RecurrencePatternParser();
+         
+         patternLexer.setCharStream( new ANTLRStringStream( pattern ) );
+         final CommonTokenStream antlrTokens = new CommonTokenStream( patternLexer );
+         patternParser.setTokenStream( antlrTokens );
          
          try
          {
-            result = parser.parseRecurrencePattern( lang, isEvery );
+            result = patternParser.parseRecurrencePattern( lang, isEvery );
          }
          catch ( RecognitionException e )
          {

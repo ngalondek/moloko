@@ -22,9 +22,10 @@ package com.mdt.rtm.data;
 import org.w3c.dom.Element;
 
 import com.mdt.rtm.Service;
-import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
+import com.mdt.rtm.TimeLineResult;
+import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 
@@ -82,7 +83,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskSeries >()
       {
          @Override
-         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         public TimeLineResult< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
          {
             return service.tasks_setName( id,
                                           listId,
@@ -104,7 +105,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskSeries >()
       {
          @Override
-         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         public TimeLineResult< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
          {
             return service.tasks_movePriority( id,
                                                listId,
@@ -126,7 +127,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskSeries >()
       {
          @Override
-         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         public TimeLineResult< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
          {
             return service.tasks_setPriority( id,
                                               listId,
@@ -148,7 +149,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskSeries >()
       {
          @Override
-         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         public TimeLineResult< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
          {
             return service.tasks_moveTo( id,
                                          fromListId,
@@ -170,7 +171,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskSeries >()
       {
          @Override
-         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         public TimeLineResult< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
          {
             return service.tasks_setLocation( id,
                                               listId,
@@ -192,7 +193,7 @@ public class RtmTimeline
       return new TimeLineMethod< RtmTaskSeries >()
       {
          @Override
-         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         public TimeLineResult< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
          {
             return service.tasks_setURL( id,
                                          listId,

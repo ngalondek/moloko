@@ -51,11 +51,11 @@ import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.TimeLineMethod.Transaction;
+import com.mdt.rtm.TimeLineResult;
+import com.mdt.rtm.TimeLineResult.Transaction;
 import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmAuth.Perms;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
@@ -348,7 +348,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                
                // If something fails while reverting the changes, we receive a list of all
                // non-reverted changes and store them for later reverting.
-               final List< TimeLineMethod.Transaction > nonReverted = serverSyncOperation.revert( service );
+               final List< TimeLineResult.Transaction > nonReverted = serverSyncOperation.revert( service );
                
                Log.i( TAG, "Rollback finished with " + nonReverted.size()
                   + " non-reverted changes" );

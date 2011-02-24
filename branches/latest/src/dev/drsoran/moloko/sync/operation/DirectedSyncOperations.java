@@ -63,13 +63,12 @@ public final class DirectedSyncOperations
 
 
    public < T extends IServerSyncable< T > > boolean add( TimeLineMethod< T > op,
-                                                          ISyncOperation.Op type,
-                                                          T sourceElement )
+                                                          ISyncOperation.Op type )
    {
       if ( op == null )
          throw new NullPointerException( "op is null" );
       
-      return serverOps.add( ServerSyncOperation.fromType( type, sourceElement )
+      return serverOps.add( ServerSyncOperation.< T > fromType( type )
                                                .add( op )
                                                .build() );
    }

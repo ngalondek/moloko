@@ -303,7 +303,7 @@ public final class SyncUtils
 
    public final static < T > void doPreSyncCheck( String thisId,
                                                   String otherId,
-                                                  SyncProperties< ? extends T > properties )
+                                                  SyncProperties properties )
    {
       if ( !thisId.equals( otherId ) )
          throw new IllegalArgumentException( "Other id " + otherId
@@ -321,7 +321,7 @@ public final class SyncUtils
    }
    
    
-   public final static class SyncProperties< T extends ITwoWaySyncable< T >>
+   public final static class SyncProperties
    {
       public final SyncDirection syncDirection;
       
@@ -342,7 +342,7 @@ public final class SyncUtils
       
 
       private SyncProperties( SyncDirection syncDirection, Date lastSyncDate,
-         Date serverModDate, T localElement, Uri uri,
+         Date serverModDate, IServerSyncable< ? > localElement, Uri uri,
          ModificationList modifications, RtmTimeline timeline )
       {
          this.syncDirection = syncDirection;
@@ -356,47 +356,47 @@ public final class SyncUtils
       
 
 
-      public final static < T extends ITwoWaySyncable< T >> SyncProperties< T > newInstance( SyncDirection syncDirection,
-                                                                                             Date lastSyncDate,
-                                                                                             T serverElement,
-                                                                                             T localElement,
-                                                                                             Uri uri,
-                                                                                             ModificationList modifications,
-                                                                                             RtmTimeline timeline )
+      public final static < T extends ITwoWaySyncable< T >> SyncProperties newInstance( SyncDirection syncDirection,
+                                                                                        Date lastSyncDate,
+                                                                                        T serverElement,
+                                                                                        T localElement,
+                                                                                        Uri uri,
+                                                                                        ModificationList modifications,
+                                                                                        RtmTimeline timeline )
       {
-         return new SyncProperties< T >( syncDirection,
-                                         lastSyncDate,
-                                         serverElement.getModifiedDate(),
-                                         localElement,
-                                         uri,
-                                         modifications,
-                                         timeline );
+         return new SyncProperties( syncDirection,
+                                    lastSyncDate,
+                                    serverElement.getModifiedDate(),
+                                    localElement,
+                                    uri,
+                                    modifications,
+                                    timeline );
       }
       
 
 
-      public final static < T extends ITwoWaySyncable< T >> SyncProperties< T > newLocalOnlyInstance( Date lastSyncDate,
-                                                                                                      T serverElement,
-                                                                                                      T localElement,
-                                                                                                      Uri uri )
+      public final static < T extends ITwoWaySyncable< T >> SyncProperties newLocalOnlyInstance( Date lastSyncDate,
+                                                                                                 T serverElement,
+                                                                                                 T localElement,
+                                                                                                 Uri uri )
       {
-         return new SyncProperties< T >( SyncDirection.LOCAL_ONLY,
-                                         lastSyncDate,
-                                         serverElement.getModifiedDate(),
-                                         localElement,
-                                         uri,
-                                         null,
-                                         null );
+         return new SyncProperties( SyncDirection.LOCAL_ONLY,
+                                    lastSyncDate,
+                                    serverElement.getModifiedDate(),
+                                    localElement,
+                                    uri,
+                                    null,
+                                    null );
       }
    }
    
    
 
-   public final static < T extends ITwoWaySyncable< T >, V > IServerSyncable.SyncResultDirection syncValue( SyncProperties< T > properties,
-                                                                                                            String columnName,
-                                                                                                            V serverValue,
-                                                                                                            V localValue,
-                                                                                                            Class< V > valueClass )
+   public final static < V > IServerSyncable.SyncResultDirection syncValue( SyncProperties properties,
+                                                                            String columnName,
+                                                                            V serverValue,
+                                                                            V localValue,
+                                                                            Class< V > valueClass )
    {
       IServerSyncable.SyncResultDirection syncDir = IServerSyncable.SyncResultDirection.NOTHING;
       

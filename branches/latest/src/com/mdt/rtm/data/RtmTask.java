@@ -39,6 +39,7 @@ import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncProperties;
@@ -305,7 +306,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncDueDate( SyncProperties< RtmTask > properties,
+   private static SyncResultDirection syncDueDate( SyncProperties properties,
                                                    ParcelableDate serverValue,
                                                    ParcelableDate localValue )
    {
@@ -326,7 +327,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncHasDueTime( SyncProperties< RtmTask > properties,
+   private static SyncResultDirection syncHasDueTime( SyncProperties properties,
                                                       int serverValue,
                                                       int localValue )
    {
@@ -347,7 +348,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncAddedDate( SyncProperties< RtmTask > properties,
+   private static SyncResultDirection syncAddedDate( SyncProperties properties,
                                                      ParcelableDate serverValue,
                                                      ParcelableDate localValue )
    {
@@ -368,7 +369,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncCompletedDate( SyncProperties< RtmTask > properties,
+   private static SyncResultDirection syncCompletedDate( SyncProperties properties,
                                                          ParcelableDate serverValue,
                                                          ParcelableDate localValue )
    {
@@ -417,9 +418,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncPriority( SyncProperties< RtmTask > properties,
-                                                    Priority serverValue,
-                                                    Priority localValue )
+   private SyncResultDirection syncPriority( SyncProperties properties,
+                                             Priority serverValue,
+                                             Priority localValue )
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            RawTasks.PRIORITY,
@@ -427,7 +428,11 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
                                                            localValue,
                                                            Priority.class );
       if ( dir == SyncResultDirection.SERVER )
-         ;
+         properties.operations.add( properties.timeline.tasks_setPriority( listId,
+                                                                           taskSeriesId,
+                                                                           id,
+                                                                           priority ),
+                                    Op.UPDATE );
       return dir;
    }
    
@@ -440,7 +445,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncPostponed( SyncProperties< RtmTask > properties,
+   private static SyncResultDirection syncPostponed( SyncProperties properties,
                                                      int serverValue,
                                                      int localValue )
    {
@@ -461,7 +466,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncEstimate( SyncProperties< RtmTask > properties,
+   private static SyncResultDirection syncEstimate( SyncProperties properties,
                                                     String serverValue,
                                                     String localValue )
    {
@@ -482,7 +487,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncEstimateMillis( SyncProperties< RtmTask > properties,
+   private static SyncResultDirection syncEstimateMillis( SyncProperties properties,
                                                           long serverValue,
                                                           long localValue )
    {
@@ -567,11 +572,11 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
                                                                                         RtmTask serverElement )
    {
-      final SyncProperties< RtmTask > properties = SyncProperties.newLocalOnlyInstance( lastSync,
-                                                                                        serverElement,
-                                                                                        this,
-                                                                                        Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                                                  id ) );
+      final SyncProperties properties = SyncProperties.newLocalOnlyInstance( lastSync,
+                                                                             serverElement,
+                                                                             this,
+                                                                             Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                       id ) );
       return syncImpl( serverElement, this, properties ).operations.getLocalOperations();
    }
    
@@ -583,14 +588,14 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
                                                          RtmTask serverElement,
                                                          RtmTask localElement )
    {
-      final SyncProperties< RtmTask > properties = SyncProperties.newInstance( SyncDirection.BOTH,
-                                                                               lastSync,
-                                                                               serverElement,
-                                                                               localElement,
-                                                                               Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                                         id ),
-                                                                               modifications,
-                                                                               timeline );
+      final SyncProperties properties = SyncProperties.newInstance( SyncDirection.BOTH,
+                                                                    lastSync,
+                                                                    serverElement,
+                                                                    localElement,
+                                                                    Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                              id ),
+                                                                    modifications,
+                                                                    timeline );
       return syncImpl( serverElement, localElement, properties ).operations;
    }
    
@@ -600,14 +605,14 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
                                                                            RtmTimeline timeline,
                                                                            ModificationList modifications )
    {
-      final SyncProperties< RtmTask > properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
-                                                                               lastSync,
-                                                                               this,
-                                                                               this,
-                                                                               Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                                         id ),
-                                                                               modifications,
-                                                                               timeline );
+      final SyncProperties properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
+                                                                    lastSync,
+                                                                    this,
+                                                                    this,
+                                                                    Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                              id ),
+                                                                    modifications,
+                                                                    timeline );
       return syncImpl( this, this, properties ).operations.getServerOperations();
    }
    
@@ -642,9 +647,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private SyncProperties< RtmTask > syncImpl( RtmTask serverElement,
-                                               RtmTask localElement,
-                                               SyncProperties< RtmTask > properties )
+   private SyncProperties syncImpl( RtmTask serverElement,
+                                    RtmTask localElement,
+                                    SyncProperties properties )
    {
       SyncUtils.doPreSyncCheck( localElement.id, serverElement.id, properties );
       

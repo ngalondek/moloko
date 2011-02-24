@@ -13,8 +13,8 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"
-   android:versionName="0.11.0b"
-   android:versionCode="69632">
+   android:versionName="0.12.0b"
+   android:versionCode="73728">
 
    <uses-sdk
       android:minSdkVersion="5"
@@ -270,7 +270,7 @@
       </service>
 
       <service
-         android:name=".service.sync.SyncService"
+         android:name=".sync.SyncService"
          android:label="@string/svc_sync"
          android:exported="true">
          <intent-filter>

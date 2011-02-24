@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,12 +41,12 @@ import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.RtmContacts;
@@ -560,12 +560,12 @@ public class ServiceImpl implements Service
    
 
 
-   public TimeLineMethod.Result< RtmTaskSeries > tasks_movePriority( String timelineId,
-                                                                     String listId,
-                                                                     String taskSeriesId,
-                                                                     String taskId,
-                                                                     boolean up,
-                                                                     MethodCallType methodCallType ) throws ServiceException
+   public TimeLineResult< RtmTaskSeries > tasks_movePriority( String timelineId,
+                                                              String listId,
+                                                              String taskSeriesId,
+                                                              String taskId,
+                                                              boolean up,
+                                                              MethodCallType methodCallType ) throws ServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.moveTo" ),
@@ -589,12 +589,12 @@ public class ServiceImpl implements Service
    
 
 
-   public TimeLineMethod.Result< RtmTaskSeries > tasks_moveTo( String timelineId,
-                                                               String fromListId,
-                                                               String toListId,
-                                                               String taskSeriesId,
-                                                               String taskId,
-                                                               MethodCallType methodCallType ) throws ServiceException
+   public TimeLineResult< RtmTaskSeries > tasks_moveTo( String timelineId,
+                                                        String fromListId,
+                                                        String toListId,
+                                                        String taskSeriesId,
+                                                        String taskId,
+                                                        MethodCallType methodCallType ) throws ServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.moveTo" ),
@@ -678,12 +678,12 @@ public class ServiceImpl implements Service
    
 
 
-   public TimeLineMethod.Result< RtmTaskSeries > tasks_setName( String timelineId,
-                                                                String listId,
-                                                                String taskSeriesId,
-                                                                String taskId,
-                                                                String newName,
-                                                                MethodCallType methodCallType ) throws ServiceException
+   public TimeLineResult< RtmTaskSeries > tasks_setName( String timelineId,
+                                                         String listId,
+                                                         String taskSeriesId,
+                                                         String taskId,
+                                                         String newName,
+                                                         MethodCallType methodCallType ) throws ServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.setName" ),
@@ -706,12 +706,12 @@ public class ServiceImpl implements Service
    
 
 
-   public TimeLineMethod.Result< RtmTaskSeries > tasks_setPriority( String timelineId,
-                                                                    String listId,
-                                                                    String taskSeriesId,
-                                                                    String taskId,
-                                                                    Priority priority,
-                                                                    MethodCallType methodCallType ) throws ServiceException
+   public TimeLineResult< RtmTaskSeries > tasks_setPriority( String timelineId,
+                                                             String listId,
+                                                             String taskSeriesId,
+                                                             String taskId,
+                                                             Priority priority,
+                                                             MethodCallType methodCallType ) throws ServiceException
    {
       Element elt = invoker.invoke( new Param( "method",
                                                "rtm.tasks.setPriority" ),
@@ -770,12 +770,12 @@ public class ServiceImpl implements Service
    
 
 
-   public TimeLineMethod.Result< RtmTaskSeries > tasks_setLocation( String timelineId,
-                                                                    String listId,
-                                                                    String taskSeriesId,
-                                                                    String taskId,
-                                                                    String locationId,
-                                                                    MethodCallType methodCallType ) throws ServiceException
+   public TimeLineResult< RtmTaskSeries > tasks_setLocation( String timelineId,
+                                                             String listId,
+                                                             String taskSeriesId,
+                                                             String taskId,
+                                                             String locationId,
+                                                             MethodCallType methodCallType ) throws ServiceException
    {
       Element elt = invoker.invoke( new Param( "method",
                                                "rtm.tasks.setLocation" ),
@@ -796,12 +796,12 @@ public class ServiceImpl implements Service
    
 
 
-   public TimeLineMethod.Result< RtmTaskSeries > tasks_setURL( String timelineId,
-                                                               String listId,
-                                                               String taskSeriesId,
-                                                               String taskId,
-                                                               String url,
-                                                               MethodCallType methodCallType ) throws ServiceException
+   public TimeLineResult< RtmTaskSeries > tasks_setURL( String timelineId,
+                                                        String listId,
+                                                        String taskSeriesId,
+                                                        String taskId,
+                                                        String url,
+                                                        MethodCallType methodCallType ) throws ServiceException
    {
       Element elt = invoker.invoke( new Param( "method", "rtm.tasks.setURL" ),
                                     new Param( "timeline", timelineId ),
@@ -973,11 +973,11 @@ public class ServiceImpl implements Service
    
 
 
-   private final static TimeLineMethod.Result< RtmTaskSeries > newTaskResult( String timelineId,
-                                                                              String taskSeriesId,
-                                                                              String taskId,
-                                                                              MethodCallType methodCallType,
-                                                                              final Element elt ) throws ServiceException
+   private final static TimeLineResult< RtmTaskSeries > newTaskResult( String timelineId,
+                                                                       String taskSeriesId,
+                                                                       String taskId,
+                                                                       MethodCallType methodCallType,
+                                                                       final Element elt ) throws ServiceException
    {
       if ( methodCallType == MethodCallType.WITH_RESULT )
       {
@@ -985,7 +985,7 @@ public class ServiceImpl implements Service
          if ( node != null && node.getNodeType() == Node.ELEMENT_NODE )
          {
             final RtmTaskList rtmTaskList = new RtmTaskList( (Element) elt.getNextSibling() );
-            return TimeLineMethod.newResult( elt,
+            return TimeLineResult.newResult( elt,
                                              timelineId,
                                              findTask( taskSeriesId,
                                                        taskId,
@@ -997,7 +997,7 @@ public class ServiceImpl implements Service
          }
       }
       else
-         return TimeLineMethod.newResult( elt, timelineId );
+         return TimeLineResult.newResult( elt, timelineId );
    }
    
 

@@ -28,6 +28,7 @@ import java.util.List;
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
+import com.mdt.rtm.TimeLineResult;
 
 import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
@@ -70,7 +71,7 @@ public final class NoopServerSyncOperation< T extends IServerSyncable< T >>
    
 
 
-   public List< TimeLineMethod.Transaction > revert( Service service )
+   public List< TimeLineResult.Transaction > revert( Service service )
    {
       return Collections.emptyList();
    }

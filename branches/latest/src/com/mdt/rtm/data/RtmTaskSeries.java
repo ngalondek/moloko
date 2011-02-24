@@ -311,7 +311,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private SyncResultDirection syncListId( SyncProperties< RtmTaskSeries > properties,
+   private SyncResultDirection syncListId( SyncProperties properties,
                                            String serverValue,
                                            String localValue )
    {
@@ -326,8 +326,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                          serverValue,
                                                                          id,
                                                                          task.getId() ),
-                                       Op.UPDATE,
-                                       this );
+                                       Op.UPDATE );
       return dir;
    }
    
@@ -340,7 +339,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static SyncResultDirection syncCreatedDate( SyncProperties< RtmTaskSeries > properties,
+   private static SyncResultDirection syncCreatedDate( SyncProperties properties,
                                                        ParcelableDate serverValue,
                                                        ParcelableDate localValue )
    {
@@ -361,7 +360,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static SyncResultDirection syncModifiedDate( SyncProperties< RtmTaskSeries > properties,
+   private static SyncResultDirection syncModifiedDate( SyncProperties properties,
                                                         ParcelableDate serverValue,
                                                         ParcelableDate localValue )
    {
@@ -391,7 +390,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private SyncResultDirection syncName( SyncProperties< RtmTaskSeries > properties,
+   private SyncResultDirection syncName( SyncProperties properties,
                                          String serverValue,
                                          String localValue )
    {
@@ -406,8 +405,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                           id,
                                                                           task.getId(),
                                                                           localValue ),
-                                       Op.UPDATE,
-                                       this );
+                                       Op.UPDATE );
       return dir;
    }
    
@@ -420,7 +418,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static SyncResultDirection syncSource( SyncProperties< RtmTaskSeries > properties,
+   private static SyncResultDirection syncSource( SyncProperties properties,
                                                   String serverValue,
                                                   String localValue )
    {
@@ -441,7 +439,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static void syncTasks( SyncProperties< RtmTaskSeries > properties,
+   private static void syncTasks( SyncProperties properties,
                                   List< RtmTask > serverValues,
                                   List< RtmTask > localValues )
    {
@@ -481,7 +479,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static void syncNotes( SyncProperties< RtmTaskSeries > properties,
+   private static void syncNotes( SyncProperties properties,
                                   List< RtmTaskNote > serverValues,
                                   List< RtmTaskNote > localValues )
    {
@@ -530,7 +528,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static void syncTags( SyncProperties< RtmTaskSeries > properties,
+   private static void syncTags( SyncProperties properties,
                                  List< Tag > serverValues,
                                  List< Tag > localValues )
    {
@@ -558,7 +556,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static void syncParticiapants( SyncProperties< RtmTaskSeries > properties,
+   private static void syncParticiapants( SyncProperties properties,
                                           ParticipantList serverValues,
                                           ParticipantList localValues )
    {
@@ -584,7 +582,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private SyncResultDirection syncLocationId( SyncProperties< RtmTaskSeries > properties,
+   private SyncResultDirection syncLocationId( SyncProperties properties,
                                                String serverValue,
                                                String localValue )
    {
@@ -599,8 +597,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                               id,
                                                                               task.getId(),
                                                                               localValue ),
-                                       Op.UPDATE,
-                                       this );
+                                       Op.UPDATE );
       return dir;
    }
    
@@ -613,7 +610,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private SyncResultDirection syncUrl( SyncProperties< RtmTaskSeries > properties,
+   private SyncResultDirection syncUrl( SyncProperties properties,
                                         String serverValue,
                                         String localValue )
    {
@@ -628,8 +625,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                          id,
                                                                          task.getId(),
                                                                          localValue ),
-                                       Op.UPDATE,
-                                       this );
+                                       Op.UPDATE );
       return dir;
    }
    
@@ -642,7 +638,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static SyncResultDirection syncRecurrence( SyncProperties< RtmTaskSeries > properties,
+   private static SyncResultDirection syncRecurrence( SyncProperties properties,
                                                       String serverValue,
                                                       String localValue )
    {
@@ -663,7 +659,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private static SyncResultDirection syncIsEveryRecurrence( SyncProperties< RtmTaskSeries > properties,
+   private static SyncResultDirection syncIsEveryRecurrence( SyncProperties properties,
                                                              boolean serverValue,
                                                              boolean localValue )
    {
@@ -762,11 +758,11 @@ public class RtmTaskSeries extends RtmData implements
    public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
                                                                                         RtmTaskSeries serverElement )
    {
-      final SyncProperties< RtmTaskSeries > properties = SyncProperties.newLocalOnlyInstance( lastSync,
-                                                                                              serverElement,
-                                                                                              this,
-                                                                                              Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                                        id ) );
+      final SyncProperties properties = SyncProperties.newLocalOnlyInstance( lastSync,
+                                                                             serverElement,
+                                                                             this,
+                                                                             Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                                       id ) );
       return syncImpl( serverElement, this, properties ).operations.getLocalOperations();
    }
    
@@ -778,14 +774,14 @@ public class RtmTaskSeries extends RtmData implements
                                                          RtmTaskSeries serverElement,
                                                          RtmTaskSeries localElement )
    {
-      final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.BOTH,
-                                                                                     lastSync,
-                                                                                     serverElement,
-                                                                                     localElement,
-                                                                                     Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                               id ),
-                                                                                     modifications,
-                                                                                     timeline );
+      final SyncProperties properties = SyncProperties.newInstance( SyncDirection.BOTH,
+                                                                    lastSync,
+                                                                    serverElement,
+                                                                    localElement,
+                                                                    Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                              id ),
+                                                                    modifications,
+                                                                    timeline );
       return syncImpl( serverElement, localElement, properties ).operations;
    }
    
@@ -795,14 +791,14 @@ public class RtmTaskSeries extends RtmData implements
                                                                            RtmTimeline timeline,
                                                                            ModificationList modifications )
    {
-      final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
-                                                                                     lastSync,
-                                                                                     this,
-                                                                                     this,
-                                                                                     Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                               id ),
-                                                                                     modifications,
-                                                                                     timeline );
+      final SyncProperties properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
+                                                                    lastSync,
+                                                                    this,
+                                                                    this,
+                                                                    Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                              id ),
+                                                                    modifications,
+                                                                    timeline );
       return syncImpl( this, this, properties ).operations.getServerOperations();
    }
    
@@ -837,9 +833,9 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   private SyncProperties< RtmTaskSeries > syncImpl( RtmTaskSeries serverElement,
-                                                     RtmTaskSeries localElement,
-                                                     SyncProperties< RtmTaskSeries > properties )
+   private SyncProperties syncImpl( RtmTaskSeries serverElement,
+                                    RtmTaskSeries localElement,
+                                    SyncProperties properties )
    {
       SyncUtils.doPreSyncCheck( localElement.id, serverElement.id, properties );
       

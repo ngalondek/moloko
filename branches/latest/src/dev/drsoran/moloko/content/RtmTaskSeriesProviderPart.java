@@ -32,6 +32,7 @@ import java.util.Set;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -406,9 +407,20 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmTaskSeriesProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmTaskSeriesProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, TaskSeries.PATH );
+      super( context, dbAccess, TaskSeries.PATH );
+   }
+   
+
+
+   @Override
+   public Object getElement( Uri uri )
+   {
+      if ( matchUri( uri ) == MATCH_ITEM_TYPE )
+         return getTaskSeries( aquireContentProviderClient( uri ),
+                               uri.getLastPathSegment() );
+      return null;
    }
    
 

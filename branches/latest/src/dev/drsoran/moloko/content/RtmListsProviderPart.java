@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -101,6 +102,38 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
 
 
+   public final static RtmList getList( ContentProviderClient client, String id )
+   {
+      RtmList list = null;
+      Cursor c = null;
+      
+      try
+      {
+         // Only non-deleted lists
+         c = client.query( Lists.CONTENT_URI, PROJECTION, Lists._ID + " = "
+            + id, null, null );
+         
+         boolean ok = c != null && c.moveToFirst();
+         
+         if ( ok )
+            list = createList( c );
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query list failed. ", e );
+         list = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return list;
+   }
+   
+
+
    public final static RtmLists getAllLists( ContentProviderClient client,
                                              String selection )
    {
@@ -132,22 +165,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
             {
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
-                  // This as to be inside the loop. Otherwise we can get old
-                  // values.
-                  RtmSmartFilter filter = null;
-                  
-                  if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
-                     filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
-                  
-                  final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
-                                                    c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
-                                                    c.getLong( COL_INDICES.get( Lists.CREATED_DATE ) ),
-                                                    c.getLong( COL_INDICES.get( Lists.MODIFIED_DATE ) ),
-                                                    c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),
-                                                    c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
-                                                    c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
-                                                    c.getInt( COL_INDICES.get( Lists.POSITION ) ),
-                                                    filter );
+                  final RtmList list = createList( c );
                   lists.add( list );
                }
             }
@@ -172,9 +190,20 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmListsProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmListsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Lists.PATH );
+      super( context, dbAccess, Lists.PATH );
+   }
+   
+
+
+   @Override
+   public Object getElement( Uri uri )
+   {
+      if ( matchUri( uri ) == MATCH_ITEM_TYPE )
+         return getList( aquireContentProviderClient( uri ),
+                         uri.getLastPathSegment() );
+      return null;
    }
    
 
@@ -265,5 +294,26 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public String[] getProjection()
    {
       return PROJECTION;
+   }
+   
+
+
+   private static RtmList createList( Cursor c )
+   {
+      RtmSmartFilter filter = null;
+      
+      if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
+         filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
+      
+      final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
+                                        c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
+                                        c.getLong( COL_INDICES.get( Lists.CREATED_DATE ) ),
+                                        c.getLong( COL_INDICES.get( Lists.MODIFIED_DATE ) ),
+                                        c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),
+                                        c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
+                                        c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
+                                        c.getInt( COL_INDICES.get( Lists.POSITION ) ),
+                                        filter );
+      return list;
    }
 }

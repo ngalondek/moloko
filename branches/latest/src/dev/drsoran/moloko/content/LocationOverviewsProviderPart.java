@@ -73,7 +73,7 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUBQUERY_NON_COMPLETED = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                    false,
+      false,
                                                                     
                                                                     // tables
                                                                     TaskSeries.PATH
@@ -234,9 +234,10 @@ public class LocationOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public LocationOverviewsProviderPart( SQLiteOpenHelper dbAccess )
+   public LocationOverviewsProviderPart( Context context,
+      SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, LocationOverviews.PATH );
+      super( context, dbAccess, LocationOverviews.PATH );
    }
    
 

@@ -28,6 +28,7 @@ import java.util.HashMap;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -196,9 +197,20 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmNotesProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmNotesProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Notes.PATH );
+      super( context, dbAccess, Notes.PATH );
+   }
+   
+
+
+   @Override
+   public Object getElement( Uri uri )
+   {
+      if ( matchUri( uri ) == MATCH_ITEM_TYPE )
+         return getNote( aquireContentProviderClient( uri ),
+                         uri.getLastPathSegment() );
+      return null;
    }
    
 

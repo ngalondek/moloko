@@ -29,6 +29,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import android.content.ContentProviderOperation;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -457,6 +458,17 @@ public class RtmTaskSeries extends RtmData implements
          }
             break;
          
+         case SERVER_ONLY:
+         {
+            for ( RtmTask rtmTask : localValues )
+            {
+               properties.operations.addAllServerOps( rtmTask.computeServerUpdateOperations( properties.lastSyncDate,
+                                                                                             properties.timeline,
+                                                                                             properties.modifications ) );
+            }
+         }
+            break;
+         
          default :
          {
             final DirectedSyncOperations syncOperations = SyncDiffer.twoWaydiff( serverValues,
@@ -733,6 +745,13 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( TaskSeries.CONTENT_URI, id );
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( RtmTaskSeriesProviderPart.insertTaskSeries( this ) )
@@ -748,8 +767,7 @@ public class RtmTaskSeries extends RtmData implements
       //
       // These deletions have not to be counted cause they are implementation
       // details that all belong to a taskseries.
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                                   id ) )
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
                                                                              .build() )
                                          .build();
    }
@@ -762,8 +780,7 @@ public class RtmTaskSeries extends RtmData implements
       final SyncProperties properties = SyncProperties.newLocalOnlyInstance( lastSync,
                                                                              serverElement,
                                                                              this,
-                                                                             Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                       id ) );
+                                                                             getContentUriWithId() );
       return syncImpl( serverElement, this, properties ).operations.getLocalOperations();
    }
    
@@ -779,8 +796,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                     lastSync,
                                                                     serverElement,
                                                                     localElement,
-                                                                    Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                              id ),
+                                                                    getContentUriWithId(),
                                                                     modifications,
                                                                     timeline );
       return syncImpl( serverElement, localElement, properties ).operations;
@@ -796,8 +812,7 @@ public class RtmTaskSeries extends RtmData implements
                                                                     lastSync,
                                                                     this,
                                                                     this,
-                                                                    Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                              id ),
+                                                                    getContentUriWithId(),
                                                                     modifications,
                                                                     timeline );
       return syncImpl( this, this, properties ).operations.getServerOperations();
@@ -823,8 +838,7 @@ public class RtmTaskSeries extends RtmData implements
 
    public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
    {
-      if ( modifications.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                    id ) ) )
+      if ( modifications.hasModification( getContentUriWithId() ) )
          return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
                                                                                                             id ) )
                                             .build();

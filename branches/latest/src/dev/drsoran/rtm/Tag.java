@@ -158,6 +158,13 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( Tags.CONTENT_URI, id );
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Tags.CONTENT_URI )
@@ -171,8 +178,7 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Tags.CONTENT_URI,
-                                                                                                                   id ) )
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
                                                                              .build() )
                                          .build();
    }
@@ -182,7 +188,7 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
    public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
                                                                                         Tag update )
    {
-      final Uri uri = Queries.contentUriWithId( Tags.CONTENT_URI, id );
+      final Uri uri = getContentUriWithId();
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
       if ( SyncUtils.hasChanged( taskSeriesId, update.taskSeriesId ) )

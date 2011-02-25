@@ -235,6 +235,14 @@ public class RtmSettings extends RtmData implements
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( Settings.CONTENT_URI,
+                                       RtmSettingsProviderPart.SETTINGS_ID );
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       return NoopContentProviderSyncOperation.INSTANCE;
@@ -255,8 +263,7 @@ public class RtmSettings extends RtmData implements
    public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
                                                                                         RtmSettings update )
    {
-      final Uri settingsUri = Queries.contentUriWithId( Settings.CONTENT_URI,
-                                                        RtmSettingsProviderPart.SETTINGS_ID );
+      final Uri settingsUri = getContentUriWithId();
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       

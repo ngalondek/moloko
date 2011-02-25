@@ -92,7 +92,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                       false,
+      false,
                                                        
                                                        // tables
                                                        TaskSeries.PATH + ","
@@ -158,7 +158,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        null );
       
       TAGS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                            false,
+      false,
                                                             
                                                             // tables
                                                             TaskSeries.PATH
@@ -200,7 +200,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                             null );
       
       PARTICIPANTS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                    false,
+      false,
                                                                     
                                                                     // tables
                                                                     TaskSeries.PATH
@@ -255,7 +255,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                     null );
       
       NUM_NOTES_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                false,
+      false,
                                                                 
                                                                 // tables
                                                                 Notes.PATH,
@@ -410,9 +410,9 @@ public class TasksProviderPart extends AbstractProviderPart
    
 
 
-   public TasksProviderPart( SQLiteOpenHelper dbAccess )
+   public TasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Tasks.PATH );
+      super( context, dbAccess, Tasks.PATH );
    }
    
 

@@ -51,8 +51,8 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
-import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable.SyncDirection;
+import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.Intents;
@@ -466,59 +466,4 @@ public final class SyncUtils
       
       return syncDir;
    }
-   
-   // public final static List< SyncTask > flatten( RtmTaskSeries taskSeries )
-   // {
-   // final List< RtmTask > rtmTasks = taskSeries.getTasks();
-   // final List< SyncTask > tasks = new ArrayList< SyncTask >( rtmTasks.size() );
-   //
-   // for ( RtmTask rtmTask : rtmTasks )
-   // {
-   // tasks.add( new SyncTask( taskSeries, rtmTask ) );
-   // }
-   //
-   // return tasks;
-   // }
-   //
-   //
-   //
-   // public final static RtmTaskSeries toRtmTaskSeries( List< SyncTask > tasks )
-   // {
-   // if ( tasks.size() < 1 )
-   // throw new IllegalArgumentException( "need at least on RtmTask for a RtmTaskSeries" );
-   //
-   // final List< RtmTask > rtmTasks = new ArrayList< RtmTask >( tasks.size() );
-   //
-   // for ( SyncTask syncTask : tasks )
-   // {
-   // rtmTasks.add( new RtmTask( syncTask.getId(),
-   // syncTask.getTaskSeriesId(),
-   // syncTask.getDueDate(),
-   // syncTask.hasDueTime(),
-   // syncTask.getAddedDate(),
-   // syncTask.getCompletedDate(),
-   // syncTask.getDeletedDate(),
-   // syncTask.getPriority(),
-   // syncTask.getPosponed(),
-   // syncTask.getEstimate(),
-   // syncTask.getEstimateMillis() ) );
-   // }
-   //
-   // final SyncTask firstTask = tasks.get( 0 );
-   //
-   // return new RtmTaskSeries( firstTask.getTaskSeriesId(),
-   // firstTask.getListId(),
-   // firstTask.getCreatedDate(),
-   // firstTask.getModifiedDate(),
-   // firstTask.getName(),
-   // firstTask.getSource(),
-   // rtmTasks,
-   // firstTask.getNotes(),
-   // firstTask.getLocationId(),
-   // firstTask.getUrl(),
-   // firstTask.getRecurrence(),
-   // firstTask.isEveryRecurrence(),
-   // firstTask.getTags(),
-   // firstTask.getParticipants() );
-   // }
 }

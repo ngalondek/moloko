@@ -68,7 +68,7 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       query = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                   false,
+      false,
                                                    // tables
                                                    Tags.PATH,
                                                    // columns
@@ -87,7 +87,7 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                    null );
       
       subQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                      false,
+      false,
                                                       // tables
                                                       TaskSeries.PATH + ","
                                                          + RawTasks.PATH,
@@ -225,9 +225,9 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public TagOverviewsProviderPart( SQLiteOpenHelper dbAccess )
+   public TagOverviewsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, TagOverviews.PATH );
+      super( context, dbAccess, TagOverviews.PATH );
    }
    
 

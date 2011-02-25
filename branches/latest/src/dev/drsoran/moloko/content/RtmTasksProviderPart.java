@@ -29,6 +29,7 @@ import java.util.List;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -229,9 +230,9 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmTasksProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmTasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, RawTasks.PATH );
+      super( context, dbAccess, RawTasks.PATH );
    }
    
 
@@ -261,7 +262,7 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          + " WHERE " + TaskSeries.PATH + "." + TaskSeries._ID + " = old."
          + RawTasks.TASKSERIES_ID + " AND NOT EXISTS (SELECT " + RawTasks._ID
          + " FROM " + path + " WHERE old." + RawTasks.TASKSERIES_ID + " = "
-         + RawTasks.TASKSERIES_ID + "; END;" );
+         + RawTasks.TASKSERIES_ID + "); END;" );
    }
    
 

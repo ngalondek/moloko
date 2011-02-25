@@ -31,6 +31,7 @@ import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
 import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 
 
@@ -64,7 +65,7 @@ public final class NoopServerSyncOperation< T extends IServerSyncable< T >>
    
 
 
-   public List< IContentProviderSyncOperation > execute() throws ServiceException
+   public List< IContentProviderSyncOperation > execute( RtmProvider provider ) throws ServiceException
    {
       return Collections.emptyList();
    }

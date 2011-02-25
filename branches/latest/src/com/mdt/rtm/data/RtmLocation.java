@@ -165,6 +165,13 @@ public class RtmLocation extends RtmData implements
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( Locations.CONTENT_URI, id );
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Locations.CONTENT_URI )
@@ -178,8 +185,7 @@ public class RtmLocation extends RtmData implements
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Locations.CONTENT_URI,
-                                                                                                                   id ) )
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
                                                                              .build() )
                                          .build();
    }
@@ -193,7 +199,7 @@ public class RtmLocation extends RtmData implements
          throw new IllegalArgumentException( "Update id " + update.id
             + " differs this id " + id );
       
-      final Uri uri = Queries.contentUriWithId( Locations.CONTENT_URI, id );
+      final Uri uri = getContentUriWithId();
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       

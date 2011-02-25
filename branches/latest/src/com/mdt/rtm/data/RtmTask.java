@@ -26,6 +26,7 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import android.content.ContentProviderOperation;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -37,9 +38,9 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncProperties;
@@ -424,9 +425,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    {
       final SyncResultDirection dir = SyncUtils.syncValue( properties,
                                                            RawTasks.PRIORITY,
-                                                           serverValue,
-                                                           localValue,
-                                                           Priority.class );
+                                                           RtmTask.convertPriority( serverValue ),
+                                                           RtmTask.convertPriority( localValue ),
+                                                           String.class );
       if ( dir == SyncResultDirection.SERVER )
          properties.operations.add( properties.timeline.tasks_setPriority( listId,
                                                                            taskSeriesId,
@@ -548,6 +549,13 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
@@ -561,8 +569,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                                                   id ) )
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
                                                                              .build() )
                                          .build();
    }
@@ -575,8 +582,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
       final SyncProperties properties = SyncProperties.newLocalOnlyInstance( lastSync,
                                                                              serverElement,
                                                                              this,
-                                                                             Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                                       id ) );
+                                                                             getContentUriWithId() );
       return syncImpl( serverElement, this, properties ).operations.getLocalOperations();
    }
    
@@ -592,8 +598,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
                                                                     lastSync,
                                                                     serverElement,
                                                                     localElement,
-                                                                    Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                              id ),
+                                                                    getContentUriWithId(),
                                                                     modifications,
                                                                     timeline );
       return syncImpl( serverElement, localElement, properties ).operations;
@@ -609,8 +614,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
                                                                     lastSync,
                                                                     this,
                                                                     this,
-                                                                    Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                              id ),
+                                                                    getContentUriWithId(),
                                                                     modifications,
                                                                     timeline );
       return syncImpl( this, this, properties ).operations.getServerOperations();
@@ -636,8 +640,7 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
 
    public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
    {
-      if ( modifications.hasModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                    id ) ) )
+      if ( modifications.hasModification( getContentUriWithId() ) )
          return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( RawTasks.CONTENT_URI,
                                                                                                             id ) )
                                             .build();

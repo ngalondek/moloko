@@ -37,7 +37,18 @@ public class ServiceException extends Exception
    public ServiceException( int responseCode, String responseMessage )
    {
       super( "Service invocation failed.  Code: " + responseCode
-             + "; message: " + responseMessage );
+         + "; message: " + responseMessage );
+      this.responseCode = responseCode;
+      this.responseMessage = responseMessage;
+   }
+   
+
+
+   public ServiceException( int responseCode, String responseMessage,
+      Throwable e )
+   {
+      super( "Service invocation failed.  Code: " + responseCode
+         + "; message: " + responseMessage, e );
       this.responseCode = responseCode;
       this.responseMessage = responseMessage;
    }

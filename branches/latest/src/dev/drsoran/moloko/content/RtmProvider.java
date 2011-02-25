@@ -117,31 +117,34 @@ public class RtmProvider extends ContentProvider
    @Override
    public boolean onCreate()
    {
+      final Context context = getContext();
+      
       dbHelper = new RtmProviderOpenHelper( getContext() );
       
       // These parts allow modification in the local DB.
       mutableParts.addAll( Arrays.asList( new IRtmProviderPart[]
-      { new RtmTasksProviderPart( dbHelper ),
-       new RtmTaskSeriesProviderPart( dbHelper ),
-       new RtmListsProviderPart( dbHelper ), new TagsProviderPart( dbHelper ),
-       new RtmNotesProviderPart( dbHelper ),
-       new RtmLocationsProviderPart( dbHelper ),
-       new RtmContactsProviderPart( dbHelper ),
-       new ParticipantsProviderPart( dbHelper ),
-       new RtmSettingsProviderPart( dbHelper ),
-       new SyncProviderPart( dbHelper ),
-       new ModificationsProviderPart( dbHelper ),
-       new RollbacksProviderPart( dbHelper ) } ) );
+      { new RtmTasksProviderPart( context, dbHelper ),
+       new RtmTaskSeriesProviderPart( context, dbHelper ),
+       new RtmListsProviderPart( context, dbHelper ),
+       new TagsProviderPart( context, dbHelper ),
+       new RtmNotesProviderPart( context, dbHelper ),
+       new RtmLocationsProviderPart( context, dbHelper ),
+       new RtmContactsProviderPart( context, dbHelper ),
+       new ParticipantsProviderPart( context, dbHelper ),
+       new RtmSettingsProviderPart( context, dbHelper ),
+       new SyncProviderPart( context, dbHelper ),
+       new ModificationsProviderPart( context, dbHelper ),
+       new RollbacksProviderPart( context, dbHelper ) } ) );
       
       parts.addAll( mutableParts );
       
       // These parts are immutable and allow no insert, update, deletion
       parts.addAll( Arrays.asList( new IProviderPart[]
-      { new TasksProviderPart( dbHelper ),
-       new ListOverviewsProviderPart( dbHelper ),
-       new TagOverviewsProviderPart( dbHelper ),
-       new LocationOverviewsProviderPart( dbHelper ),
-       new ContactOverviewsProviderPart( dbHelper ),
+      { new TasksProviderPart( context, dbHelper ),
+       new ListOverviewsProviderPart( context, dbHelper ),
+       new TagOverviewsProviderPart( context, dbHelper ),
+       new LocationOverviewsProviderPart( context, dbHelper ),
+       new ContactOverviewsProviderPart( context, dbHelper ),
       /* new SyncTasksProviderPart( dbHelper ) */} ) );
       
       return true;
@@ -209,6 +212,18 @@ public class RtmProvider extends ContentProvider
       }
       
       return type;
+   }
+   
+
+
+   public IProviderPart getPart( Uri uri )
+   {
+      // Find the DB part that can handle the URI.
+      for ( IProviderPart part : parts )
+         if ( part.getType( uri ) != null )
+            return part;
+      
+      return null;
    }
    
 

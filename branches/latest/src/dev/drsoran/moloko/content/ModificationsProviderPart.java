@@ -31,6 +31,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -413,9 +414,9 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public ModificationsProviderPart( SQLiteOpenHelper dbAccess )
+   public ModificationsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Modifications.PATH );
+      super( context, dbAccess, Modifications.PATH );
    }
    
 

@@ -37,7 +37,6 @@ import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Participants;
-import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public class Participant implements IContentProviderSyncable< Participant >,
@@ -165,6 +164,13 @@ public class Participant implements IContentProviderSyncable< Participant >,
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( Participants.CONTENT_URI, id );
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Participants.CONTENT_URI )
@@ -196,7 +202,7 @@ public class Participant implements IContentProviderSyncable< Participant >,
    public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
                                                                                         Participant update )
    {
-      final Uri uri = Queries.contentUriWithId( TaskSeries.CONTENT_URI, id );
+      final Uri uri = getContentUriWithId();
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
       if ( SyncUtils.hasChanged( contactId, update.contactId ) )

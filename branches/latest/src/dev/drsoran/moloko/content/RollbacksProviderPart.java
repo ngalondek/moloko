@@ -28,6 +28,7 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -189,9 +190,9 @@ public class RollbacksProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RollbacksProviderPart( SQLiteOpenHelper dbAccess )
+   public RollbacksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Rollbacks.PATH );
+      super( context, dbAccess, Rollbacks.PATH );
    }
    
 

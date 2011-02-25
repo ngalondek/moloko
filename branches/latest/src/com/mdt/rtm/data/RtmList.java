@@ -251,6 +251,13 @@ public class RtmList extends RtmData implements
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( Lists.CONTENT_URI, id );
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Lists.CONTENT_URI )
@@ -264,8 +271,7 @@ public class RtmList extends RtmData implements
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                                                   id ) )
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
                                                                              .build() )
                                          .build();
    }
@@ -279,7 +285,7 @@ public class RtmList extends RtmData implements
          throw new IllegalArgumentException( "Update id " + update.id
             + " differs this id " + id );
       
-      final Uri uri = Queries.contentUriWithId( Lists.CONTENT_URI, id );
+      final Uri uri = getContentUriWithId();
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
       if ( SyncUtils.hasChanged( name, update.name ) )

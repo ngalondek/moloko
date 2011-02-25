@@ -24,6 +24,7 @@ package dev.drsoran.moloko.sync;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -54,8 +55,8 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.TimeLineResult;
 import com.mdt.rtm.TimeLineResult.Transaction;
 import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmTimeline;
 import com.mdt.rtm.data.RtmAuth.Perms;
+import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
@@ -324,6 +325,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                                         ModificationList modifications,
                                                                         SyncResult syncResult ) throws ServiceException
    {
+      // We merge the single server operations of the same entities into a single, composite server operation.
+      // So the result element will be created only once. This is important cause we use the result element
+      // of the server operation to update the local element. So we need only one update for all server
+      // modifications of the same element.
+      // List< ? extends IServerSyncOperation< ? > > mergedServerOps = mergeServerSyncOperationByElement( serverOps );
+      
       final ContentProviderSyncOperation.Builder localUpdatesBuilder = ContentProviderSyncOperation.newUpdate();
       final ContentProviderSyncOperation.Builder localDeletesBuilder = ContentProviderSyncOperation.newDelete();
       
@@ -332,7 +339,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          try
          {
             // Execute the server operation and retrieve the local updates as result.
-            localUpdatesBuilder.add( serverSyncOperation.execute() );
+            localUpdatesBuilder.add( serverSyncOperation.execute( rtmProvider ) );
          }
          catch ( ServiceException e )
          {
@@ -405,6 +412,19 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       localOps.add( localDeletesBuilder.build() );
       
       return localOps;
+   }
+   
+
+
+   private List< ? extends IServerSyncOperation< ? >> mergeServerSyncOperationByElement( List< ? extends IServerSyncOperation< ? >> serverOps )
+   {
+      if ( !serverOps.isEmpty() )
+      {
+         return Collections.emptyList();
+         
+      }
+      else
+         return Collections.emptyList();
    }
    
 

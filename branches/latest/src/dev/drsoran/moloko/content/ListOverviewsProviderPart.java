@@ -48,9 +48,9 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
+import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
-import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 
 
 public class ListOverviewsProviderPart extends AbstractProviderPart
@@ -79,7 +79,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUBQUERY_NON_COMPLETED_NON_DELETED = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                                false,
+      false,
                                                                                 // tables
                                                                                 TaskSeries.PATH
                                                                                    + ","
@@ -196,11 +196,10 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public final static ArrayList< RtmListWithTaskCount > getListsOverview( ContentProviderClient client,
-                                                                           String selection )
+   public final static List< RtmListWithTaskCount > getListsOverview( ContentProviderClient client,
+                                                                      String selection )
    {
-      ArrayList< RtmListWithTaskCount > lists = null;
-      
+      List< RtmListWithTaskCount > lists = null;
       Cursor c = null;
       
       try
@@ -338,9 +337,9 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public ListOverviewsProviderPart( SQLiteOpenHelper dbAccess )
+   public ListOverviewsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, ListOverviews.PATH );
+      super( context, dbAccess, ListOverviews.PATH );
    }
    
 

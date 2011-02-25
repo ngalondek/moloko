@@ -28,6 +28,7 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -189,9 +190,9 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public TagsProviderPart( SQLiteOpenHelper dbAccess )
+   public TagsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Tags.PATH );
+      super( context, dbAccess, Tags.PATH );
    }
    
 

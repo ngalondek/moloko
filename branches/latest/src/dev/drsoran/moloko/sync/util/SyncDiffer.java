@@ -255,8 +255,8 @@ public class SyncDiffer
                {
                   localTouchedElements[ i ] = true;
                   operations.addAllServerOps( localElement.computeServerUpdateOperations( lastSync,
-                                                                                         timeLine,
-                                                                                         modifications ) );
+                                                                                          timeLine,
+                                                                                          modifications ) );
                }
             }
          }

@@ -25,11 +25,17 @@ package dev.drsoran.moloko.sync.syncable;
 import java.util.Date;
 import java.util.List;
 
+import android.net.Uri;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 
 
 public interface IContentProviderSyncable< T extends IContentProviderSyncable< T > >
 {
+   
+   public Uri getContentUriWithId();
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation();
    
 

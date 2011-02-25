@@ -33,12 +33,14 @@ import java.util.List;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
+import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
-import com.mdt.rtm.Service.MethodCallType;
 
+import dev.drsoran.moloko.content.IProviderPart;
 import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 
@@ -159,7 +161,8 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
    
 
 
-   public List< IContentProviderSyncOperation > execute() throws ServiceException
+   @SuppressWarnings( "unchecked" )
+   public List< IContentProviderSyncOperation > execute( RtmProvider provider ) throws ServiceException
    {
       transactions = new LinkedList< TimeLineResult.Transaction >();
       
@@ -167,33 +170,82 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
       {
          final TimeLineMethod< T > method = i.next();
          
-         if ( i.hasNext() )
-            // We retrieve the result only for the last element.
-            transactions.add( method.call( MethodCallType.NO_RESULT ).transaction );
-         else
+         try
          {
-            final TimeLineResult< T > res = method.call( MethodCallType.WITH_RESULT );
-            resultElement = res.element;
-            transactions.add( res.transaction );
+            if ( i.hasNext() )
+               // We retrieve the result only for the last element.
+               transactions.add( method.call( MethodCallType.NO_RESULT ).transaction );
+            else
+            {
+               final TimeLineResult< T > res = method.call( MethodCallType.WITH_RESULT );
+               resultElement = res.element;
+               transactions.add( res.transaction );
+            }
+         }
+         catch ( Throwable e )
+         {
+            Log.e( TAG, "Error during server method execution", e );
+            
+            // If this was a service exception, re-throw it
+            if ( e instanceof ServiceException )
+               throw (ServiceException) e;
          }
       }
       
-      if ( resultElement == null )
-         throw new IllegalStateException( "Service method did not produced a result element" );
-      
-      if ( resultElement instanceof IContentProviderSyncable< ? > )
+      // If the result element is IContentProviderSyncable we update our local element
+      // with the received server element. This will merge all changes we applied to the
+      // server and the server had.
+      if ( resultElement instanceof IContentProviderSyncable )
       {
-         @SuppressWarnings( "unchecked" )
-         final IContentProviderSyncable resultSyncable = (IContentProviderSyncable) resultElement;
+         List< IContentProviderSyncOperation > operations = null;
+         final IContentProviderSyncable< ? > cpSyncableResultElement = (IContentProviderSyncable< ? >) resultElement;
          
-         @SuppressWarnings( "unchecked" )
-         // Do NO full sync since we only get the changes back, not the full set.
-         final List< IContentProviderSyncOperation > computeContentProviderUpdateOperation = sourceSyncable.computeContentProviderUpdateOperations( new Date(),
-                                                                                                                                                    resultSyncable );
-         return Collections.unmodifiableList( computeContentProviderUpdateOperation );
+         // Retrieve the Provider part that can handle the element.
+         final IProviderPart part = provider.getPart( cpSyncableResultElement.getContentUriWithId() );
+         
+         if ( part != null )
+         {
+            // Retrieve the local element from the provider part.
+            final Object localElement = part.getElement( cpSyncableResultElement.getContentUriWithId() );
+            
+            if ( localElement != null )
+            {
+               if ( localElement.getClass() == resultElement.getClass() )
+               {
+                  @SuppressWarnings( "rawtypes" )
+                  final IContentProviderSyncable cpSyncableLocalElement = (IContentProviderSyncable) localElement;
+                  operations = cpSyncableLocalElement.computeContentProviderUpdateOperations( new Date(),
+                                                                                              cpSyncableResultElement );
+               }
+               else
+               {
+                  Log.e( TAG, "Local element "
+                     + localElement.getClass().getSimpleName()
+                     + " is not of class "
+                     + resultElement.getClass().getSimpleName() );
+               }
+            }
+            else
+            {
+               Log.e( TAG, "No local element retrieved for URI "
+                  + cpSyncableResultElement.getContentUriWithId() );
+            }
+         }
+         else
+         {
+            Log.e( TAG, "Found no IProviderPart for URI "
+               + cpSyncableResultElement.getContentUriWithId() );
+         }
+         
+         if ( operations != null )
+            return Collections.unmodifiableList( operations );
+         else
+            return Collections.emptyList();
       }
       else
+      {
          return Collections.emptyList();
+      }
    }
    
 
@@ -230,10 +282,10 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
 
    public IContentProviderSyncOperation removeModification( ModificationList modifications )
    {
-      if ( resultElement == null )
-         throw new IllegalStateException( "Service method not yet executed" );
-      
-      return resultElement.computeRemoveModificationsOperation( modifications );
+      if ( resultElement != null )
+         return resultElement.computeRemoveModificationsOperation( modifications );
+      else
+         return NoopContentProviderSyncOperation.INSTANCE;
    }
    
 
@@ -248,13 +300,6 @@ public class ServerSyncOperation< T extends IServerSyncable< T > > implements
    public List< TimeLineMethod< T >> getMethods()
    {
       return this.serviceMethods;
-   }
-   
-
-
-   public T getResultElement()
-   {
-      return resultElement;
    }
    
 

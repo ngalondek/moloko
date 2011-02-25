@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -69,7 +70,7 @@ public class ParticipantList implements
    
    private final String taskSeriesId;
    
-   private final ArrayList< Participant > participants;
+   private final List< Participant > participants;
    
    
 
@@ -81,8 +82,7 @@ public class ParticipantList implements
    
 
 
-   public ParticipantList( String taskSeriesId,
-      ArrayList< Participant > participants )
+   public ParticipantList( String taskSeriesId, List< Participant > participants )
    {
       this.taskSeriesId = taskSeriesId;
       this.participants = new ArrayList< Participant >( participants );
@@ -166,6 +166,13 @@ public class ParticipantList implements
    {
       dest.writeString( taskSeriesId );
       dest.writeTypedList( participants );
+   }
+   
+
+
+   public Uri getContentUriWithId()
+   {
+      return Uri.EMPTY;
    }
    
 

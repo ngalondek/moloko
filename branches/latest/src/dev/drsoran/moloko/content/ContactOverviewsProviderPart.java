@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -69,7 +70,7 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                       false,
+      false,
                                                        
                                                        // tables
                                                        Participants.PATH + ","
@@ -174,11 +175,10 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public final static ArrayList< RtmContactWithTaskCount > getContactOverviews( ContentProviderClient client,
-                                                                                 String selection )
+   public final static List< RtmContactWithTaskCount > getContactOverviews( ContentProviderClient client,
+                                                                            String selection )
    {
-      ArrayList< RtmContactWithTaskCount > contacts = null;
-      
+      List< RtmContactWithTaskCount > contacts = null;
       Cursor c = null;
       
       try
@@ -227,9 +227,10 @@ public class ContactOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public ContactOverviewsProviderPart( SQLiteOpenHelper dbAccess )
+   public ContactOverviewsProviderPart( Context context,
+      SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, ContactOverviews.PATH );
+      super( context, dbAccess, ContactOverviews.PATH );
    }
    
 

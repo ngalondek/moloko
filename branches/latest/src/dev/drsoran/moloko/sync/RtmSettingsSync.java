@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.sync;
 
 import android.content.ContentProviderClient;
-import android.content.SyncResult;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
@@ -32,7 +31,6 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.rtm.RtmSettings;
 
@@ -46,8 +44,7 @@ public final class RtmSettingsSync
 
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
-                                      SyncResult syncResult,
-                                      DirectedSyncOperations result )
+                                      MolokoSyncResult syncResult )
    {
       RtmSettings server_Settings = null;
       
@@ -63,18 +60,18 @@ public final class RtmSettingsSync
          {
             case RtmServiceConstants.RtmErrorCodes.LOGIN_FAILED:
             case RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY:
-               ++syncResult.stats.numAuthExceptions;
+               ++syncResult.androidSyncResult.stats.numAuthExceptions;
                break;
             case RtmServiceConstants.RtmErrorCodes.SERVICE_UNAVAILABLE:
-               ++syncResult.stats.numIoExceptions;
+               ++syncResult.androidSyncResult.stats.numIoExceptions;
                break;
             default :
                if ( e instanceof ServiceInternalException )
                   SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
                                                             TAG,
-                                                            syncResult );
+                                                            syncResult.androidSyncResult );
                else
-                  ++syncResult.stats.numParseExceptions;
+                  ++syncResult.androidSyncResult.stats.numParseExceptions;
                break;
          }
          
@@ -85,12 +82,12 @@ public final class RtmSettingsSync
       
       if ( local_Settings == null )
       {
-         result.add( server_Settings.computeContentProviderInsertOperation() );
+         syncResult.localOps.add( server_Settings.computeContentProviderInsertOperation() );
       }
       else
       {
-         result.addAllLocalOps( local_Settings.computeContentProviderUpdateOperations( null,
-                                                                                       server_Settings ) );
+         syncResult.localOps.addAll( local_Settings.computeContentProviderUpdateOperations( null,
+                                                                                            server_Settings ) );
       }
       
       return true;

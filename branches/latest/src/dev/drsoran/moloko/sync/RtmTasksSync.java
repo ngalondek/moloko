@@ -24,15 +24,16 @@ package dev.drsoran.moloko.sync;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentProviderClient;
-import android.content.SyncResult;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
+import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
@@ -46,6 +47,7 @@ import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.rtm.SyncTask;
 
 
 public final class RtmTasksSync
@@ -60,19 +62,18 @@ public final class RtmTasksSync
                                       RtmTimeline timeline,
                                       ModificationList modifications,
                                       Date lastSyncOut,
-                                      SyncResult syncResult,
-                                      DirectedSyncOperations operations )
+                                      MolokoSyncResult syncResult )
    {
-      final List< RtmTaskSeries > local_Tasks = toPlainList( RtmTaskSeriesProviderPart.getAllTaskSeries( provider ) );
+      final List< SyncTask > local_Tasks = toPlainList( RtmTaskSeriesProviderPart.getAllTaskSeries( provider ) );
       
       if ( local_Tasks == null )
       {
-         syncResult.databaseError = true;
+         syncResult.androidSyncResult.databaseError = true;
          Log.e( TAG, "Getting local tasks failed." );
          return false;
       }
       
-      List< RtmTaskSeries > server_Tasks;
+      List< SyncTask > server_Tasks;
       
       try
       {
@@ -88,18 +89,18 @@ public final class RtmTasksSync
          {
             case RtmServiceConstants.RtmErrorCodes.LOGIN_FAILED:
             case RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY:
-               ++syncResult.stats.numAuthExceptions;
+               ++syncResult.androidSyncResult.stats.numAuthExceptions;
                break;
             case RtmServiceConstants.RtmErrorCodes.SERVICE_UNAVAILABLE:
-               ++syncResult.stats.numIoExceptions;
+               ++syncResult.androidSyncResult.stats.numIoExceptions;
                break;
             default :
                if ( e instanceof ServiceInternalException )
                   SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
                                                             TAG,
-                                                            syncResult );
+                                                            syncResult.androidSyncResult );
                else
-                  ++syncResult.stats.numParseExceptions;
+                  ++syncResult.androidSyncResult.stats.numParseExceptions;
                break;
          }
          
@@ -110,22 +111,23 @@ public final class RtmTasksSync
       if ( timeline != null )
       {
          // Do a 2-way diff
-         final DirectedSyncOperations syncOperations = SyncDiffer.twoWaydiff( server_Tasks,
-                                                                              local_Tasks,
-                                                                              RtmTaskSeries.LESS_ID,
-                                                                              modifications,
-                                                                              timeline,
-                                                                              lastSyncOut );
-         operations.addAll( syncOperations );
+         final DirectedSyncOperations< RtmTaskSeries > syncOperations = SyncDiffer.twoWaydiff( server_Tasks,
+                                                                                               local_Tasks,
+                                                                                               SyncTask.LESS_ID,
+                                                                                               modifications,
+                                                                                               timeline,
+                                                                                               lastSyncOut );
+         syncResult.localOps.addAll( syncOperations.getLocalOperations() );
+         syncResult.serverOps.addAll( syncOperations.getServerOperations() );
       }
       else
       {
          // Only sync incoming
-         final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( local_Tasks,
-                                                                                                                               RtmTaskSeries.LESS_ID );
+         final ContentProviderSyncableList< SyncTask > local_SyncList = new ContentProviderSyncableList< SyncTask >( local_Tasks,
+                                                                                                                     SyncTask.LESS_ID );
          final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Tasks,
                                                                                        local_SyncList );
-         operations.getLocalOperations().addAll( syncOperations );
+         syncResult.localOps.addAll( syncOperations );
       }
       
       return true;
@@ -133,19 +135,19 @@ public final class RtmTasksSync
    
 
 
-   private final static List< RtmTaskSeries > toPlainList( RtmTasks tasks )
+   private final static List< SyncTask > toPlainList( RtmTasks tasks )
    {
       if ( tasks == null )
          return null;
       
-      final List< RtmTaskSeries > result = new ArrayList< RtmTaskSeries >();
-      final List< RtmTaskList > listOfLists = tasks.getLists();
+      final List< SyncTask > result = new LinkedList< SyncTask >();
       
-      for ( RtmTaskList rtmTaskList : listOfLists )
-      {
-         result.addAll( rtmTaskList.getSeries() );
-      }
+      for ( RtmTaskList rtmTaskList : tasks.getLists() )
+         for ( RtmTaskSeries series : rtmTaskList.getSeries() )
+            for ( RtmTask task : series.getTasks() )
+               result.add( new SyncTask( series, task ) );
       
-      return result;
+      return new ArrayList< SyncTask >( result );
    }
+   
 }

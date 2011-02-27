@@ -48,7 +48,7 @@ public class ModificationList implements List< Modification >
 
    public ModificationList( Collection< ? extends Modification > collection )
    {
-      impl = Collections.unmodifiableList( new ArrayList< Modification >( collection ) );
+      impl = new ArrayList< Modification >( collection );
    }
    
 
@@ -184,6 +184,25 @@ public class ModificationList implements List< Modification >
    public boolean removeAll( Collection< ? > arg0 )
    {
       return impl.removeAll( arg0 );
+   }
+   
+
+
+   public boolean removeAll( Uri entityUri )
+   {
+      boolean found = false;
+      
+      for ( Iterator< Modification > i = impl.iterator(); i.hasNext(); )
+      {
+         final Modification modification = i.next();
+         if ( modification.getEntityUri().equals( entityUri ) )
+         {
+            i.remove();
+            found = true;
+         }
+      }
+      
+      return found;
    }
    
 

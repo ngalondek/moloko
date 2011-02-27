@@ -28,12 +28,11 @@ import java.util.List;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.ModificationList;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 
 
-public interface IServerSyncable< T extends IServerSyncable< T > >
+public interface IServerSyncable< T >
 {
    public static enum SyncDirection
    {
@@ -68,20 +67,15 @@ public interface IServerSyncable< T extends IServerSyncable< T > >
    
 
 
-   public List< IServerSyncOperation< ? > > computeServerUpdateOperations( Date lastSync,
-                                                                          RtmTimeline timeline,
-                                                                          ModificationList modifications );
+   public List< IServerSyncOperation< T > > computeServerUpdateOperations( Date lastSync,
+                                                                           RtmTimeline timeline,
+                                                                           ModificationList modifications );
    
 
 
-   public DirectedSyncOperations computeMergeOperations( Date lastSync,
-                                                         RtmTimeline timeline,
-                                                         ModificationList modifications,
-                                                         T serverElement,
-                                                         T localElement );
+   public IContentProviderSyncOperation handleServerUpdateResult( T resultElement );
    
 
 
-   public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications );
-   
+   public IContentProviderSyncOperation removeModifications( ModificationList modifictaions );
 }

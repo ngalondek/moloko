@@ -20,36 +20,28 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.sync.operation;
+package dev.drsoran.moloko.sync;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import com.mdt.rtm.Service;
-import com.mdt.rtm.ServiceException;
-import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.TimeLineResult;
-
-import dev.drsoran.moloko.content.ModificationList;
-import dev.drsoran.moloko.content.RtmProvider;
+import android.content.SyncResult;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 
 
-public interface IServerSyncOperation< T > extends ISyncOperation
+public final class MolokoSyncResult
 {
-   public IContentProviderSyncOperation execute( RtmProvider provider ) throws ServiceException;
+   public final SyncResult androidSyncResult;
+   
+   public final List< IServerSyncOperation< ? > > serverOps = new LinkedList< IServerSyncOperation< ? > >();
+   
+   public final List< IContentProviderSyncOperation > localOps = new LinkedList< IContentProviderSyncOperation >();
+   
    
 
-
-   public List< TimeLineResult.Transaction > revert( Service service );
-   
-
-
-   public IContentProviderSyncOperation removeModifications( ModificationList modifications );
-   
-
-
-   public List< TimeLineMethod< T > > getMethods();
-   
-
-
-   public void addMethod( TimeLineMethod< T > method );
+   public MolokoSyncResult( SyncResult result )
+   {
+      this.androidSyncResult = result;
+   }
 }

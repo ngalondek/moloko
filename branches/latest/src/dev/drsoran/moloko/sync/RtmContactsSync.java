@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderClient;
-import android.content.SyncResult;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
@@ -36,7 +35,6 @@ import com.mdt.rtm.ServiceInternalException;
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -54,8 +52,7 @@ public final class RtmContactsSync
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       Date lastSyncOut,
-                                      SyncResult syncResult,
-                                      DirectedSyncOperations result )
+                                      MolokoSyncResult syncResult )
    {
       // Get all contacts from local database
       final List< RtmContact > local_ListOfContacts = RtmContactsProviderPart.getAllContacts( provider,
@@ -63,7 +60,7 @@ public final class RtmContactsSync
       
       if ( local_ListOfContacts == null )
       {
-         syncResult.databaseError = true;
+         syncResult.androidSyncResult.databaseError = true;
          Log.e( TAG, "Getting local contacts failed." );
          return false;
       }
@@ -82,18 +79,18 @@ public final class RtmContactsSync
          {
             case RtmServiceConstants.RtmErrorCodes.LOGIN_FAILED:
             case RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY:
-               ++syncResult.stats.numAuthExceptions;
+               ++syncResult.androidSyncResult.stats.numAuthExceptions;
                break;
             case RtmServiceConstants.RtmErrorCodes.SERVICE_UNAVAILABLE:
-               ++syncResult.stats.numIoExceptions;
+               ++syncResult.androidSyncResult.stats.numIoExceptions;
                break;
             default :
                if ( e instanceof ServiceInternalException )
                   SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
                                                             TAG,
-                                                            syncResult );
+                                                            syncResult.androidSyncResult );
                else
-                  ++syncResult.stats.numParseExceptions;
+                  ++syncResult.androidSyncResult.stats.numParseExceptions;
                break;
          }
          
@@ -107,7 +104,7 @@ public final class RtmContactsSync
       final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Contacts,
                                                                                     local_SyncList );
       
-      result.getLocalOperations().addAll( syncOperations );
+      syncResult.localOps.addAll( syncOperations );
       
       return true;
    }

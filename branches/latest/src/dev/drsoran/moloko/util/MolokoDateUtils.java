@@ -25,6 +25,7 @@ package dev.drsoran.moloko.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.TimeZone;
 
 import android.content.Context;
@@ -35,6 +36,7 @@ import android.text.format.Time;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.rtm.ParcelableDate;
 
 
 public class MolokoDateUtils
@@ -187,6 +189,27 @@ public class MolokoDateUtils
       
       return DateFormat.format( buildPattern( false, true, 0 ), cal )
                        .toString();
+   }
+   
+
+
+   public final static Date getDate( ParcelableDate parcelableDate )
+   {
+      return parcelableDate != null ? parcelableDate.getDate() : null;
+   }
+   
+
+
+   public final static Long getTime( ParcelableDate parcelableDate )
+   {
+      return parcelableDate != null ? parcelableDate.getTime() : null;
+   }
+   
+
+
+   public final static Long getTime( Date date )
+   {
+      return date != null ? date.getTime() : null;
    }
    
 

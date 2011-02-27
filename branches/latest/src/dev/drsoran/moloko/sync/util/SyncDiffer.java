@@ -114,11 +114,11 @@ public class SyncDiffer
    
 
 
-   public final static < T extends ITwoWaySyncable< T > > DirectedSyncOperations twoWaydiff( List< ? extends T > serverList,
-                                                                                             List< ? extends T > localList,
-                                                                                             Comparator< ? super T > comp,
-                                                                                             ModificationList modifications,
-                                                                                             RtmTimeline timeLine )
+   public final static < T extends ITwoWaySyncable< T, V >, V > DirectedSyncOperations< V > twoWaydiff( List< ? extends T > serverList,
+                                                                                                        List< ? extends T > localList,
+                                                                                                        Comparator< ? super T > comp,
+                                                                                                        ModificationList modifications,
+                                                                                                        RtmTimeline timeLine )
    {
       return twoWaydiff( serverList,
                          localList,
@@ -130,12 +130,12 @@ public class SyncDiffer
    
 
 
-   public final static < T extends ITwoWaySyncable< T > > DirectedSyncOperations twoWaydiff( List< ? extends T > serverList,
-                                                                                             List< ? extends T > localList,
-                                                                                             Comparator< ? super T > comp,
-                                                                                             ModificationList modifications,
-                                                                                             RtmTimeline timeLine,
-                                                                                             Date lastSync )
+   public final static < T extends ITwoWaySyncable< T, V >, V > DirectedSyncOperations< V > twoWaydiff( List< ? extends T > serverList,
+                                                                                                        List< ? extends T > localList,
+                                                                                                        Comparator< ? super T > comp,
+                                                                                                        ModificationList modifications,
+                                                                                                        RtmTimeline timeLine,
+                                                                                                        Date lastSync )
    {
       if ( serverList == null || localList == null || comp == null
          || timeLine == null )
@@ -144,7 +144,7 @@ public class SyncDiffer
       Collections.sort( serverList, comp );
       Collections.sort( localList, comp );
       
-      final DirectedSyncOperations operations = new DirectedSyncOperations();
+      final DirectedSyncOperations< V > operations = new DirectedSyncOperations< V >();
       
       final boolean[] localTouchedElements = new boolean[ localList.size() ];
       
@@ -199,11 +199,11 @@ public class SyncDiffer
                // MERGE: The local element is not deleted or deleted before server modification.
                else
                {
-                  final DirectedSyncOperations mergeOps = localElement.computeMergeOperations( lastSync,
-                                                                                               timeLine,
-                                                                                               modifications,
-                                                                                               serverElement,
-                                                                                               localElement );
+                  final DirectedSyncOperations< V > mergeOps = localElement.computeMergeOperations( lastSync,
+                                                                                                    timeLine,
+                                                                                                    modifications,
+                                                                                                    serverElement,
+                                                                                                    localElement );
                   
                   // Check if NO server operations have been computed by the merge. This means we have only local
                   // updates. If we had server operations we would retrieve an up-to-date version of the element by

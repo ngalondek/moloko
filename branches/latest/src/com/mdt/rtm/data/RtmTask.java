@@ -21,32 +21,14 @@ package com.mdt.rtm.data;
 
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderOperation;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.content.ModificationList;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
-import dev.drsoran.moloko.content.RtmTasksProviderPart;
-import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
-import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
-import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.sync.util.SyncUtils.SyncProperties;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
-import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.ParcelableDate;
 
 
@@ -54,7 +36,7 @@ import dev.drsoran.rtm.ParcelableDate;
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
+public class RtmTask extends RtmData
 {
    private static final String TAG = "Moloko." + RtmTask.class.getSimpleName();
    
@@ -307,37 +289,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncDueDate( SyncProperties properties,
-                                                   ParcelableDate serverValue,
-                                                   ParcelableDate localValue )
-   {
-      final SyncResultDirection dir = SyncUtils.syncValue( properties,
-                                                           RawTasks.DUE_DATE,
-                                                           ParcelableDate.getTime( serverValue ),
-                                                           ParcelableDate.getTime( localValue ),
-                                                           Long.class );
-      return dir;
-   }
-   
-
-
    public int getHasDueTime()
    {
       return hasDueTime;
-   }
-   
-
-
-   private static SyncResultDirection syncHasDueTime( SyncProperties properties,
-                                                      int serverValue,
-                                                      int localValue )
-   {
-      final SyncResultDirection dir = SyncUtils.syncValue( properties,
-                                                           RawTasks.HAS_DUE_TIME,
-                                                           serverValue,
-                                                           localValue,
-                                                           Integer.class );
-      return dir;
    }
    
 
@@ -349,37 +303,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncAddedDate( SyncProperties properties,
-                                                     ParcelableDate serverValue,
-                                                     ParcelableDate localValue )
-   {
-      final SyncResultDirection dir = SyncUtils.syncValue( properties,
-                                                           RawTasks.ADDED_DATE,
-                                                           ParcelableDate.getTime( serverValue ),
-                                                           ParcelableDate.getTime( localValue ),
-                                                           Long.class );
-      return dir;
-   }
-   
-
-
    public Date getCompleted()
    {
       return ( completed != null ) ? completed.getDate() : null;
-   }
-   
-
-
-   private static SyncResultDirection syncCompletedDate( SyncProperties properties,
-                                                         ParcelableDate serverValue,
-                                                         ParcelableDate localValue )
-   {
-      final SyncResultDirection dir = SyncUtils.syncValue( properties,
-                                                           RawTasks.COMPLETED_DATE,
-                                                           ParcelableDate.getTime( serverValue ),
-                                                           ParcelableDate.getTime( localValue ),
-                                                           Long.class );
-      return dir;
    }
    
 
@@ -419,43 +345,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private SyncResultDirection syncPriority( SyncProperties properties,
-                                             Priority serverValue,
-                                             Priority localValue )
-   {
-      final SyncResultDirection dir = SyncUtils.syncValue( properties,
-                                                           RawTasks.PRIORITY,
-                                                           RtmTask.convertPriority( serverValue ),
-                                                           RtmTask.convertPriority( localValue ),
-                                                           String.class );
-      if ( dir == SyncResultDirection.SERVER )
-         properties.operations.add( properties.timeline.tasks_setPriority( listId,
-                                                                           taskSeriesId,
-                                                                           id,
-                                                                           priority ),
-                                    Op.UPDATE );
-      return dir;
-   }
-   
-
-
    public int getPostponed()
    {
       return postponed;
-   }
-   
-
-
-   private static SyncResultDirection syncPostponed( SyncProperties properties,
-                                                     int serverValue,
-                                                     int localValue )
-   {
-      final SyncResultDirection dir = SyncUtils.syncValue( properties,
-                                                           RawTasks.POSTPONED,
-                                                           serverValue,
-                                                           localValue,
-                                                           Integer.class );
-      return dir;
    }
    
 
@@ -467,37 +359,9 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
    
 
 
-   private static SyncResultDirection syncEstimate( SyncProperties properties,
-                                                    String serverValue,
-                                                    String localValue )
-   {
-      final SyncResultDirection dir = SyncUtils.syncValue( properties,
-                                                           RawTasks.ESTIMATE,
-                                                           serverValue,
-                                                           localValue,
-                                                           String.class );
-      return dir;
-   }
-   
-
-
    public long getEstimateMillis()
    {
       return estimateMillis;
-   }
-   
-
-
-   private static SyncResultDirection syncEstimateMillis( SyncProperties properties,
-                                                          long serverValue,
-                                                          long localValue )
-   {
-      final SyncResultDirection dir = SyncUtils.syncValue( properties,
-                                                           RawTasks.ESTIMATE_MILLIS,
-                                                           serverValue,
-                                                           localValue,
-                                                           Long.class );
-      return dir;
    }
    
 
@@ -547,139 +411,173 @@ public class RtmTask extends RtmData implements ITwoWaySyncable< RtmTask >
       }
    }
    
-
-
-   public Uri getContentUriWithId()
-   {
-      return Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation()
-   {
-      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
-                                                                             .withValues( RtmTasksProviderPart.getContentValues( this,
-                                                                                                                                 true ) )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
-   {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        RtmTask serverElement )
-   {
-      final SyncProperties properties = SyncProperties.newLocalOnlyInstance( lastSync,
-                                                                             serverElement,
-                                                                             this,
-                                                                             getContentUriWithId() );
-      return syncImpl( serverElement, this, properties ).operations.getLocalOperations();
-   }
-   
-
-
-   public DirectedSyncOperations computeMergeOperations( Date lastSync,
-                                                         RtmTimeline timeline,
-                                                         ModificationList modifications,
-                                                         RtmTask serverElement,
-                                                         RtmTask localElement )
-   {
-      final SyncProperties properties = SyncProperties.newInstance( SyncDirection.BOTH,
-                                                                    lastSync,
-                                                                    serverElement,
-                                                                    localElement,
-                                                                    getContentUriWithId(),
-                                                                    modifications,
-                                                                    timeline );
-      return syncImpl( serverElement, localElement, properties ).operations;
-   }
-   
-
-
-   public List< IServerSyncOperation< ? > > computeServerUpdateOperations( Date lastSync,
-                                                                           RtmTimeline timeline,
-                                                                           ModificationList modifications )
-   {
-      final SyncProperties properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
-                                                                    lastSync,
-                                                                    this,
-                                                                    this,
-                                                                    getContentUriWithId(),
-                                                                    modifications,
-                                                                    timeline );
-      return syncImpl( this, this, properties ).operations.getServerOperations();
-   }
-   
-
-
-   @SuppressWarnings( "unchecked" )
-   public IServerSyncOperation< RtmTask > computeServerInsertOperation( RtmTimeline timeLine )
-   {
-      return NoopServerSyncOperation.INSTANCE;
-   }
-   
-
-
-   @SuppressWarnings( "unchecked" )
-   public IServerSyncOperation< RtmTask > computeServerDeleteOperation( RtmTimeline timeLine )
-   {
-      return NoopServerSyncOperation.INSTANCE;
-   }
-   
-
-
-   public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
-   {
-      if ( modifications.hasModification( getContentUriWithId() ) )
-         return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( RawTasks.CONTENT_URI,
-                                                                                                            id ) )
-                                            .build();
-      else
-         return NoopContentProviderSyncOperation.INSTANCE;
-   }
-   
-
-
-   private SyncProperties syncImpl( RtmTask serverElement,
-                                    RtmTask localElement,
-                                    SyncProperties properties )
-   {
-      SyncUtils.doPreSyncCheck( localElement.id, serverElement.id, properties );
-      
-      syncDueDate( properties, serverElement.due, localElement.due );
-      
-      syncHasDueTime( properties,
-                      serverElement.hasDueTime,
-                      localElement.hasDueTime );
-      
-      syncAddedDate( properties, serverElement.added, localElement.added );
-      
-      syncCompletedDate( properties,
-                         serverElement.completed,
-                         localElement.completed );
-      
-      syncPriority( properties, serverElement.priority, localElement.priority );
-      
-      syncPostponed( properties,
-                     serverElement.postponed,
-                     localElement.postponed );
-      
-      syncEstimate( properties, serverElement.estimate, localElement.estimate );
-      
-      syncEstimateMillis( properties,
-                          serverElement.estimateMillis,
-                          localElement.estimateMillis );
-      
-      return properties;
-   }
+   // public Uri getContentUriWithId()
+   // {
+   // return Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
+   // }
+   //   
+   //
+   //
+   // public IContentProviderSyncOperation computeContentProviderInsertOperation()
+   // {
+   // return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
+   // .withValues( RtmTasksProviderPart.getContentValues( this,
+   // true ) )
+   // .build() )
+   // .build();
+   // }
+   //   
+   //
+   //
+   // public IContentProviderSyncOperation computeContentProviderDeleteOperation()
+   // {
+   // return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
+   // .build() )
+   // .build();
+   // }
+   //   
+   //
+   //
+   // public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
+   // RtmTask serverElement )
+   // {
+   // final SyncProperties< RtmTaskSeries > properties = SyncProperties.newLocalOnlyInstance( lastSync,
+   // serverElement.getModifiedDate(),
+   // this.getModifiedDate(),
+   // getContentUriWithId() );
+   // return syncImpl( properties, serverElement, this ).operations.getLocalOperations();
+   // }
+   //   
+   //
+   //
+   // public DirectedSyncOperations< RtmTaskSeries > computeMergeOperations( Date lastSync,
+   // RtmTimeline timeline,
+   // ModificationList modifications,
+   // RtmTaskSeries serverElement,
+   // RtmTask localElement )
+   // {
+   // final RtmTask serverTask = serverElement.getTask( id );
+   //      
+   // if ( serverTask == null )
+   // throw new IllegalStateException( "Server TaskSeries has no task with ID "
+   // + id );
+   //      
+   // final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.BOTH,
+   // lastSync,
+   // serverTask.getModifiedDate(),
+   // localElement.getModifiedDate(),
+   // getContentUriWithId(),
+   // modifications,
+   // timeline );
+   // return syncImpl( properties, serverTask, localElement ).operations;
+   // }
+   //   
+   //
+   //
+   // public List< IServerSyncOperation< RtmTaskSeries > > computeServerUpdateOperations( Date lastSync,
+   // RtmTimeline timeline,
+   // ModificationList modifications )
+   // {
+   // final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
+   // lastSync,
+   // this.getModifiedDate(),
+   // this.getModifiedDate(),
+   // getContentUriWithId(),
+   // modifications,
+   // timeline );
+   // return syncImpl( properties, this, this ).operations.getServerOperations();
+   // }
+   //   
+   //
+   //
+   // public IServerSyncOperation< RtmTaskSeries > computeServerInsertOperation( RtmTimeline timeLine )
+   // {
+   // return NoopServerSyncOperation.newInstance();
+   // }
+   //   
+   //
+   //
+   // public IServerSyncOperation< RtmTaskSeries > computeServerDeleteOperation( RtmTimeline timeLine )
+   // {
+   // return NoopServerSyncOperation.newInstance();
+   // }
+   //   
+   //
+   //
+   // public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
+   // {
+   // if ( modifications.hasModification( getContentUriWithId() ) )
+   // return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps(
+   // RawTasks.CONTENT_URI,
+   // id ) )
+   // .build();
+   // else
+   // return NoopContentProviderSyncOperation.INSTANCE;
+   // }
+   //   
+   //
+   //
+   // private SyncProperties< RtmTaskSeries > syncImpl( SyncProperties< RtmTaskSeries > properties,
+   // RtmTask serverElement,
+   // RtmTask localElement )
+   // {
+   // SyncUtils.doPreSyncCheck( localElement.id, serverElement.id, properties );
+   //      
+   // SyncUtils.syncValue( properties,
+   // RawTasks.DUE_DATE,
+   // MolokoDateUtils.getTime( serverElement.due ),
+   // MolokoDateUtils.getTime( localElement.due ),
+   // Long.class );
+   //      
+   // SyncUtils.syncValue( properties,
+   // RawTasks.HAS_DUE_TIME,
+   // serverElement.hasDueTime,
+   // localElement.hasDueTime,
+   // Integer.class );
+   //      
+   // SyncUtils.syncValue( properties,
+   // RawTasks.ADDED_DATE,
+   // MolokoDateUtils.getTime( serverElement.added ),
+   // MolokoDateUtils.getTime( localElement.added ),
+   // Long.class );
+   //      
+   // SyncUtils.syncValue( properties,
+   // RawTasks.COMPLETED_DATE,
+   // MolokoDateUtils.getTime( serverElement.completed ),
+   // MolokoDateUtils.getTime( localElement.completed ),
+   // Long.class );
+   //      
+   // if ( SyncUtils.syncValue( properties,
+   // RawTasks.PRIORITY,
+   // convertPriority( serverElement.priority ),
+   // convertPriority( localElement.priority ),
+   // String.class ) == SyncResultDirection.SERVER )
+   // {
+   // properties.operations.merge( properties.timeline.tasks_setPriority( listId,
+   // taskSeriesId,
+   // id,
+   // priority ),
+   // Op.UPDATE );
+   // }
+   //      
+   // SyncUtils.syncValue( properties,
+   // RawTasks.POSTPONED,
+   // serverElement.postponed,
+   // localElement.postponed,
+   // Integer.class );
+   //      
+   // SyncUtils.syncValue( properties,
+   // RawTasks.ESTIMATE,
+   // serverElement.estimate,
+   // localElement.estimate,
+   // String.class );
+   //      
+   // SyncUtils.syncValue( properties,
+   // RawTasks.ESTIMATE_MILLIS,
+   // serverElement.estimateMillis,
+   // localElement.estimateMillis,
+   // Long.class );
+   //      
+   // return properties;
+   // }
 }

@@ -32,18 +32,12 @@ import com.mdt.rtm.TimeLineResult;
 
 import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.RtmProvider;
-import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 
 
-public final class NoopServerSyncOperation< T extends IServerSyncable< T >>
-         implements IServerSyncOperation< T >, INoopSyncOperation
+public final class NoopServerSyncOperation< T > implements
+         IServerSyncOperation< T >, INoopSyncOperation
 {
    
-   @SuppressWarnings( "rawtypes" )
-   public final static NoopServerSyncOperation INSTANCE = new NoopServerSyncOperation();
-   
-   
-
    private NoopServerSyncOperation()
    {
       
@@ -65,9 +59,9 @@ public final class NoopServerSyncOperation< T extends IServerSyncable< T >>
    
 
 
-   public List< IContentProviderSyncOperation > execute( RtmProvider provider ) throws ServiceException
+   public IContentProviderSyncOperation execute( RtmProvider provider ) throws ServiceException
    {
-      return Collections.emptyList();
+      return NoopContentProviderSyncOperation.INSTANCE;
    }
    
 
@@ -87,6 +81,27 @@ public final class NoopServerSyncOperation< T extends IServerSyncable< T >>
 
 
    public IContentProviderSyncOperation removeModification( ModificationList modifications )
+   {
+      return NoopContentProviderSyncOperation.INSTANCE;
+   }
+   
+
+
+   public void addMethod( TimeLineMethod< T > method )
+   {
+      
+   }
+   
+
+
+   public final static < T > NoopServerSyncOperation< T > newInstance()
+   {
+      return new NoopServerSyncOperation< T >();
+   }
+   
+
+
+   public IContentProviderSyncOperation removeModifications( ModificationList modifictaions )
    {
       return NoopContentProviderSyncOperation.INSTANCE;
    }

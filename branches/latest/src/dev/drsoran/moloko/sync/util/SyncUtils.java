@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.sync.util;
 
 import java.io.IOException;
-import java.util.Date;
 
 import android.accounts.Account;
 import android.app.AlarmManager;
@@ -40,19 +39,15 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable.SyncDirection;
-import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.Intents;
@@ -303,7 +298,7 @@ public final class SyncUtils
 
    public final static < T > void doPreSyncCheck( String thisId,
                                                   String otherId,
-                                                  SyncProperties properties )
+                                                  SyncProperties< T > properties )
    {
       if ( !thisId.equals( otherId ) )
          throw new IllegalArgumentException( "Other id " + otherId
@@ -320,83 +315,13 @@ public final class SyncUtils
          throw new NullPointerException( "modifications are null" );
    }
    
-   
-   public final static class SyncProperties
-   {
-      public final SyncDirection syncDirection;
-      
-      public final Date lastSyncDate;
-      
-      public final Date serverModDate;
-      
-      public final Date localModDate;
-      
-      public final Uri uri;
-      
-      public final ModificationList modifications;
-      
-      public final RtmTimeline timeline;
-      
-      public final DirectedSyncOperations operations = new DirectedSyncOperations();
-      
-      
-
-      private SyncProperties( SyncDirection syncDirection, Date lastSyncDate,
-         Date serverModDate, IServerSyncable< ? > localElement, Uri uri,
-         ModificationList modifications, RtmTimeline timeline )
-      {
-         this.syncDirection = syncDirection;
-         this.lastSyncDate = lastSyncDate;
-         this.serverModDate = serverModDate;
-         this.localModDate = localElement.getModifiedDate();
-         this.uri = uri;
-         this.modifications = modifications;
-         this.timeline = timeline;
-      }
-      
 
 
-      public final static < T extends ITwoWaySyncable< T >> SyncProperties newInstance( SyncDirection syncDirection,
-                                                                                        Date lastSyncDate,
-                                                                                        T serverElement,
-                                                                                        T localElement,
-                                                                                        Uri uri,
-                                                                                        ModificationList modifications,
-                                                                                        RtmTimeline timeline )
-      {
-         return new SyncProperties( syncDirection,
-                                    lastSyncDate,
-                                    serverElement.getModifiedDate(),
-                                    localElement,
-                                    uri,
-                                    modifications,
-                                    timeline );
-      }
-      
-
-
-      public final static < T extends ITwoWaySyncable< T >> SyncProperties newLocalOnlyInstance( Date lastSyncDate,
-                                                                                                 T serverElement,
-                                                                                                 T localElement,
-                                                                                                 Uri uri )
-      {
-         return new SyncProperties( SyncDirection.LOCAL_ONLY,
-                                    lastSyncDate,
-                                    serverElement.getModifiedDate(),
-                                    localElement,
-                                    uri,
-                                    null,
-                                    null );
-      }
-   }
-   
-   
-
-   public final static < V > IServerSyncable.SyncResultDirection syncValue( SyncProperties properties,
-                                                                            String columnName,
-                                                                            V serverValue,
-                                                                            V localValue,
-                                                                            Class< V > valueClass )
+   public final static < T, V > IServerSyncable.SyncResultDirection syncValue( SyncProperties< T > properties,
+                                                                               String columnName,
+                                                                               V serverValue,
+                                                                               V localValue,
+                                                                               Class< V > valueClass )
    {
       IServerSyncable.SyncResultDirection syncDir = IServerSyncable.SyncResultDirection.NOTHING;
       

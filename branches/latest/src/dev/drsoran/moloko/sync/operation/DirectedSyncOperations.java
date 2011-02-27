@@ -33,15 +33,15 @@ import com.mdt.rtm.TimeLineMethod;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 
 
-public final class DirectedSyncOperations
+public final class DirectedSyncOperations< T >
 {
-   private final List< IServerSyncOperation< ? > > serverOps = new ArrayList< IServerSyncOperation< ? > >();
+   private final List< IServerSyncOperation< T > > serverOps = new ArrayList< IServerSyncOperation< T > >();
    
    private final List< IContentProviderSyncOperation > localOps = new ArrayList< IContentProviderSyncOperation >();
    
    
 
-   public boolean addAll( DirectedSyncOperations other )
+   public boolean addAll( DirectedSyncOperations< T > other )
    {
       return serverOps.addAll( other.serverOps )
          || localOps.addAll( other.localOps );
@@ -49,7 +49,7 @@ public final class DirectedSyncOperations
    
 
 
-   public < T extends IServerSyncable< T > > boolean add( IServerSyncOperation< T > op )
+   public boolean add( IServerSyncOperation< T > op )
    {
       if ( op == null )
          throw new NullPointerException( "op is null" );
@@ -62,25 +62,55 @@ public final class DirectedSyncOperations
    
 
 
-   public < T extends IServerSyncable< T > > boolean add( TimeLineMethod< T > op,
+   public < E extends IServerSyncable< T > > boolean add( E sourceElement,
+                                                          TimeLineMethod< T > op,
                                                           ISyncOperation.Op type )
    {
       if ( op == null )
          throw new NullPointerException( "op is null" );
       
-      return serverOps.add( ServerSyncOperation.< T > fromType( type )
+      return serverOps.add( ServerSyncOperation.< E, T > fromType( sourceElement,
+                                                                   type )
                                                .add( op )
                                                .build() );
    }
    
 
 
-   public boolean addAllServerOps( Collection< IServerSyncOperation< ? > > operations )
+   public boolean addAllServerOps( Collection< ? extends IServerSyncOperation< T > > operations )
    {
       if ( operations == null )
          throw new NullPointerException( "operations is null" );
       
       return serverOps.addAll( operations );
+   }
+   
+
+
+   public < E extends IServerSyncable< T > > void merge( E sourceElement,
+                                                         TimeLineMethod< T > op,
+                                                         ISyncOperation.Op type )
+   {
+      if ( op == null )
+         throw new NullPointerException( "op is null" );
+      
+      if ( serverOps.isEmpty() )
+         add( sourceElement, op, type );
+      else
+         serverOps.get( serverOps.size() - 1 ).addMethod( op );
+   }
+   
+
+
+   public < E extends IServerSyncable< T > > void mergeAllServerOps( E sourceElement,
+                                                                     Collection< ? extends IServerSyncOperation< T > > operations )
+   {
+      if ( operations == null )
+         throw new NullPointerException( "operations is null" );
+      
+      for ( IServerSyncOperation< T > iServerSyncOperation : operations )
+         for ( TimeLineMethod< T > op : iServerSyncOperation.getMethods() )
+            merge( sourceElement, op, iServerSyncOperation.getOperationType() );
    }
    
 
@@ -120,7 +150,7 @@ public final class DirectedSyncOperations
    
 
 
-   public List< IServerSyncOperation< ? > > getServerOperations()
+   public List< IServerSyncOperation< T > > getServerOperations()
    {
       return serverOps;
    }

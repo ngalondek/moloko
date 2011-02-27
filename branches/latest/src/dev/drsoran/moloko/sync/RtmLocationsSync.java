@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderClient;
-import android.content.SyncResult;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
@@ -37,7 +36,6 @@ import com.mdt.rtm.data.RtmLocation;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -53,15 +51,14 @@ public final class RtmLocationsSync
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       Date lastSyncOut,
-                                      SyncResult syncResult,
-                                      DirectedSyncOperations operations )
+                                      MolokoSyncResult syncResult )
    {
       // Get all locations from local database
       final List< RtmLocation > local_Locations = RtmLocationsProviderPart.getAllLocations( provider );
       
       if ( local_Locations == null )
       {
-         syncResult.databaseError = true;
+         syncResult.androidSyncResult.databaseError = true;
          Log.e( TAG, "Getting local locations failed." );
          return false;
       }
@@ -80,18 +77,18 @@ public final class RtmLocationsSync
          {
             case RtmServiceConstants.RtmErrorCodes.LOGIN_FAILED:
             case RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY:
-               ++syncResult.stats.numAuthExceptions;
+               ++syncResult.androidSyncResult.stats.numAuthExceptions;
                break;
             case RtmServiceConstants.RtmErrorCodes.SERVICE_UNAVAILABLE:
-               ++syncResult.stats.numIoExceptions;
+               ++syncResult.androidSyncResult.stats.numIoExceptions;
                break;
             default :
                if ( e instanceof ServiceInternalException )
                   SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
                                                             TAG,
-                                                            syncResult );
+                                                            syncResult.androidSyncResult );
                else
-                  ++syncResult.stats.numParseExceptions;
+                  ++syncResult.androidSyncResult.stats.numParseExceptions;
                break;
          }
          
@@ -103,7 +100,7 @@ public final class RtmLocationsSync
                                                                                                                         RtmLocation.LESS_ID );
       final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Locations,
                                                                                     local_SyncList );
-      operations.getLocalOperations().addAll( syncOperations );
+      syncResult.localOps.addAll( syncOperations );
       
       return true;
    }

@@ -22,8 +22,20 @@
 
 package dev.drsoran.moloko.sync.syncable;
 
-public interface ITwoWaySyncable< T extends IServerSyncable< T > & IContentProviderSyncable< T > >
-         extends IContentProviderSyncable< T >, IServerSyncable< T >
+import java.util.Date;
+
+import com.mdt.rtm.data.RtmTimeline;
+
+import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
+
+
+public interface ITwoWaySyncable< T extends IContentProviderSyncable< T >, V >
+         extends IContentProviderSyncable< T >, IServerSyncable< V >
 {
-   
+   public DirectedSyncOperations< V > computeMergeOperations( Date lastSync,
+                                                              RtmTimeline timeline,
+                                                              ModificationList modifications,
+                                                              T serverElement,
+                                                              T localElement );
 }

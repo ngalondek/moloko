@@ -38,10 +38,7 @@ import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
-import dev.drsoran.moloko.content.ParticipantsProviderPart;
-import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
-import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
@@ -56,7 +53,6 @@ import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
@@ -297,36 +293,9 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newInsert();
       
-      // Insert new taskseries
-      {
-         operation.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
-                                                .withValues( RtmTaskSeriesProviderPart.getContentValues( taskSeries,
-                                                                                                         true ) )
-                                                .build() );
-      }
-      
       // Insert new RtmTask
       {
          operation.add( RtmTasksProviderPart.insertTask( task ) );
-      }
-      
-      // Check for tags
-      {
-         final List< Tag > tags = taskSeries.getTags();
-         
-         for ( Tag tag : tags )
-         {
-            operation.add( ContentProviderOperation.newInsert( Tags.CONTENT_URI )
-                                                   .withValues( TagsProviderPart.getContentValues( tag,
-                                                                                                   true ) )
-                                                   .build() );
-         }
-      }
-      
-      // Check for participants
-      {
-         final ParticipantList participantList = taskSeries.getParticipants();
-         operation.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
       }
       
       return operation.build();

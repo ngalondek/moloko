@@ -64,22 +64,22 @@ public final class RtmTasksSync
                                       Date lastSyncOut,
                                       MolokoSyncResult syncResult )
    {
-      final List< SyncTask > local_Tasks = toPlainList( RtmTaskSeriesProviderPart.getAllTaskSeries( provider ) );
+      final List< RtmTaskSeries > local_TaskSeries = toPlainList( RtmTaskSeriesProviderPart.getAllTaskSeries( provider ) );
       
-      if ( local_Tasks == null )
+      if ( local_TaskSeries == null )
       {
          syncResult.androidSyncResult.databaseError = true;
          Log.e( TAG, "Getting local tasks failed." );
          return false;
       }
       
-      List< SyncTask > server_Tasks;
+      List< RtmTaskSeries > server_TaskSeries;
       
       try
       {
-         server_Tasks = toPlainList( service.tasks_getList( null,
-                                                            null,
-                                                            lastSyncOut ) );
+         server_TaskSeries = toPlainList( service.tasks_getList( null,
+                                                                 null,
+                                                                 lastSyncOut ) );
       }
       catch ( ServiceException e )
       {
@@ -107,12 +107,21 @@ public final class RtmTasksSync
          return false;
       }
       
+      // Sync TaskSeries incoming cause we need to insert new TaskSeries only once.
+      {
+         final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( local_TaskSeries,
+                                                                                                                               RtmTaskSeries.LESS_ID );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_TaskSeries,
+                                                                                       local_SyncList );
+         syncResult.localOps.addAll( syncOperations );
+      }
+      
       // Check if we have server write access
       if ( timeline != null )
       {
          // Do a 2-way diff
-         final DirectedSyncOperations< RtmTaskSeries > syncOperations = SyncDiffer.twoWaydiff( server_Tasks,
-                                                                                               local_Tasks,
+         final DirectedSyncOperations< RtmTaskSeries > syncOperations = SyncDiffer.twoWaydiff( toPlainList( server_TaskSeries ),
+                                                                                               toPlainList( local_TaskSeries ),
                                                                                                SyncTask.LESS_ID,
                                                                                                modifications,
                                                                                                timeline,
@@ -123,9 +132,9 @@ public final class RtmTasksSync
       else
       {
          // Only sync incoming
-         final ContentProviderSyncableList< SyncTask > local_SyncList = new ContentProviderSyncableList< SyncTask >( local_Tasks,
+         final ContentProviderSyncableList< SyncTask > local_SyncList = new ContentProviderSyncableList< SyncTask >( toPlainList( local_TaskSeries ),
                                                                                                                      SyncTask.LESS_ID );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Tasks,
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( toPlainList( server_TaskSeries ),
                                                                                        local_SyncList );
          syncResult.localOps.addAll( syncOperations );
       }
@@ -135,19 +144,33 @@ public final class RtmTasksSync
    
 
 
-   private final static List< SyncTask > toPlainList( RtmTasks tasks )
+   private final static List< SyncTask > toPlainList( List< RtmTaskSeries > taskSeries )
    {
-      if ( tasks == null )
+      if ( taskSeries == null )
          return null;
       
       final List< SyncTask > result = new LinkedList< SyncTask >();
       
-      for ( RtmTaskList rtmTaskList : tasks.getLists() )
-         for ( RtmTaskSeries series : rtmTaskList.getSeries() )
-            for ( RtmTask task : series.getTasks() )
-               result.add( new SyncTask( series, task ) );
+      for ( RtmTaskSeries series : taskSeries )
+         for ( RtmTask task : series.getTasks() )
+            result.add( new SyncTask( series, task ) );
       
       return new ArrayList< SyncTask >( result );
    }
    
+
+
+   private final static List< RtmTaskSeries > toPlainList( RtmTasks tasks )
+   {
+      if ( tasks == null )
+         return null;
+      
+      final List< RtmTaskSeries > result = new LinkedList< RtmTaskSeries >();
+      
+      for ( RtmTaskList rtmTaskList : tasks.getLists() )
+         for ( RtmTaskSeries series : rtmTaskList.getSeries() )
+            result.add( series );
+      
+      return new ArrayList< RtmTaskSeries >( result );
+   }
 }

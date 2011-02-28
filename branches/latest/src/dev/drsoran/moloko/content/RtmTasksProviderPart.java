@@ -54,10 +54,10 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { RawTasks._ID, RawTasks.TASKSERIES_ID, RawTasks.LIST_ID, RawTasks.DUE_DATE,
-    RawTasks.HAS_DUE_TIME, RawTasks.ADDED_DATE, RawTasks.TASK_MODIFIED_DATE,
-    RawTasks.COMPLETED_DATE, RawTasks.DELETED_DATE, RawTasks.PRIORITY,
-    RawTasks.POSTPONED, RawTasks.ESTIMATE, RawTasks.ESTIMATE_MILLIS };
+   { RawTasks._ID, RawTasks.TASKSERIES_ID, RawTasks.DUE_DATE,
+    RawTasks.HAS_DUE_TIME, RawTasks.ADDED_DATE, RawTasks.COMPLETED_DATE,
+    RawTasks.DELETED_DATE, RawTasks.PRIORITY, RawTasks.POSTPONED,
+    RawTasks.ESTIMATE, RawTasks.ESTIMATE_MILLIS };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -79,7 +79,6 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          values.put( RawTasks._ID, task.getId() );
       
       values.put( RawTasks.TASKSERIES_ID, task.getTaskSeriesId() );
-      values.put( RawTasks.LIST_ID, task.getListId() );
       
       if ( task.getDue() != null )
          values.put( RawTasks.DUE_DATE, task.getDue().getTime() );
@@ -88,7 +87,6 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
       
       values.put( RawTasks.HAS_DUE_TIME, task.getHasDueTime() );
       values.put( RawTasks.ADDED_DATE, task.getAdded().getTime() );
-      values.put( RawTasks.TASK_MODIFIED_DATE, task.getModifiedDate().getTime() );
       
       if ( task.getCompleted() != null )
          values.put( RawTasks.COMPLETED_DATE, task.getCompleted().getTime() );
@@ -241,10 +239,8 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + RawTasks._ID
          + " TEXT NOT NULL, " + RawTasks.TASKSERIES_ID + " TEXT NOT NULL, "
-         + RawTasks.LIST_ID + " TEXT NOT NULL, " + RawTasks.DUE_DATE
-         + " INTEGER, " + RawTasks.HAS_DUE_TIME
+         + RawTasks.DUE_DATE + " INTEGER, " + RawTasks.HAS_DUE_TIME
          + " INTEGER NOT NULL DEFAULT 0, " + RawTasks.ADDED_DATE
-         + " INTEGER NOT NULL, " + RawTasks.TASK_MODIFIED_DATE
          + " INTEGER NOT NULL, " + RawTasks.COMPLETED_DATE + " INTEGER, "
          + RawTasks.DELETED_DATE + " INTEGER, " + RawTasks.PRIORITY
          + " CHAR(1) NOT NULL DEFAULT 'n', " + RawTasks.POSTPONED
@@ -340,14 +336,11 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    {
       return new RtmTask( c.getString( COL_INDICES.get( RawTasks._ID ) ),
                           c.getString( COL_INDICES.get( RawTasks.TASKSERIES_ID ) ),
-                          c.getString( COL_INDICES.get( RawTasks.LIST_ID ) ),
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.DUE_DATE ) ),
                           c.getInt( COL_INDICES.get( RawTasks.HAS_DUE_TIME ) ),
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.ADDED_DATE ) ),
-                          Queries.getOptDate( c,
-                                              COL_INDICES.get( RawTasks.TASK_MODIFIED_DATE ) ),
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.COMPLETED_DATE ) ),
                           Queries.getOptDate( c,

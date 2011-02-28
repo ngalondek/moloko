@@ -40,13 +40,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
@@ -57,8 +57,8 @@ import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
+import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -679,11 +679,6 @@ public class TaskEditActivity extends Activity
                                                                                  task.getId() ),
                                                        RawTasks.PRIORITY,
                                                        RtmTask.convertPriority( newPriority ) ) );
-      
-      modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                              task.getId() ),
-                                                                    RawTasks.TASK_MODIFIED_DATE,
-                                                                    System.currentTimeMillis() ) );
    }
    
 

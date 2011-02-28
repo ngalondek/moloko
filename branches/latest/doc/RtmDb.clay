@@ -12,9 +12,6 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5b5dad:12bf1b86973:-7fdd" mandatory="true" name="taskseries_id">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="7210ec:12e4da4cd75:-7fe2" mandatory="true" name="list_id">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff7" mandatory="false" name="due">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
@@ -22,9 +19,6 @@
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff6" mandatory="true" name="added">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="1f756a9:12e48e5d0b3:-7fc6" mandatory="true" name="task_modified">
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="5122f2:128cb6194ba:-7ff5" mandatory="false" name="completed">
@@ -316,9 +310,6 @@
 </table>
 <table id="8339e4:12d9ed556c8:-7fe6" name="modifications">
 <column-list>
-<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fe0" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fdf" mandatory="true" name="entity_uri">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
@@ -331,10 +322,11 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fd9" mandatory="false" name="synced_value">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fe0" mandatory="true" name="timestamp">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
 </column-list>
-<primary-key id="8339e4:12d9ed556c8:-7fe5" name="PK_MODIFICATIONS">
-<primary-key-column name="_id"/>
-</primary-key>
+<primary-key id="8339e4:12d9ed556c8:-7fe5" name="PK_MODIFICATIONS"/>
 </table>
 <table id="1ecfc22:12e03bc8e0c:-7fe5" name="rollbacks">
 <column-list>
@@ -360,7 +352,7 @@
 </schema-list>
 </database-model>
 <diagram>
-<table-figure height="215" refid="5122f2:128cb6194ba:-7fff" width="177" x="428" y="572"/>
+<table-figure height="181" refid="5122f2:128cb6194ba:-7fff" width="177" x="428" y="572"/>
 <table-figure refid="5122f2:128cb6194ba:-7fee" x="436" y="250"/>
 <table-figure refid="5122f2:128cb6194ba:-7f59" x="724" y="402"/>
 <fk-figure refid="11fb115:12949b0b028:-7f74">

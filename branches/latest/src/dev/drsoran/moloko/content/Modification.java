@@ -45,6 +45,8 @@ public class Modification implements Comparable< Modification >
    
    private final boolean persistent;
    
+   private final long timestamp;
+   
    
    private final static class SortColumnName implements
             Comparator< Modification >
@@ -59,9 +61,9 @@ public class Modification implements Comparable< Modification >
    
    
 
-   private Modification( String id, Uri entityUri, String colName,
-      String newValue, String syncedValue, boolean syncedValueSet,
-      boolean persistent )
+   Modification( String id, Uri entityUri, String colName, String newValue,
+      String syncedValue, boolean syncedValueSet, boolean persistent,
+      long timestamp )
    {
       this.id = id;
       this.entityUri = entityUri;
@@ -70,6 +72,7 @@ public class Modification implements Comparable< Modification >
       this.syncedValue = syncedValue;
       this.synedValueSet = syncedValueSet;
       this.persistent = persistent;
+      this.timestamp = timestamp;
    }
    
 
@@ -137,6 +140,13 @@ public class Modification implements Comparable< Modification >
    
 
 
+   public long getTimestamp()
+   {
+      return timestamp;
+   }
+   
+
+
    @Override
    public boolean equals( Object o )
    {
@@ -152,6 +162,7 @@ public class Modification implements Comparable< Modification >
                                         : newValue.equals( other.newValue ) );
       equal = equal && entityUri.equals( other.entityUri );
       equal = equal && colName.equals( other.colName );
+      equal = equal && timestamp == other.timestamp;
       
       return equal;
    }
@@ -166,6 +177,7 @@ public class Modification implements Comparable< Modification >
       result = 31 * result + entityUri.hashCode();
       result = 31 * result + colName.hashCode();
       result = 31 * result + ( newValue != null ? newValue.hashCode() : 0 );
+      result = 31 * result + (int) ( timestamp / 1000 );
       
       return result;
    }
@@ -199,7 +211,8 @@ public class Modification implements Comparable< Modification >
                                toString( newValue ),
                                toString( syncedValue ),
                                true,
-                               true );
+                               true,
+                               System.currentTimeMillis() );
    }
    
 
@@ -214,7 +227,8 @@ public class Modification implements Comparable< Modification >
                                toString( newValue ),
                                null,
                                false,
-                               true );
+                               true,
+                               System.currentTimeMillis() );
    }
    
 
@@ -229,7 +243,8 @@ public class Modification implements Comparable< Modification >
                                toString( newValue ),
                                null,
                                false,
-                               false );
+                               false,
+                               System.currentTimeMillis() );
    }
    
 

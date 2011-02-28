@@ -32,10 +32,10 @@ import java.util.List;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
+import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
-import com.mdt.rtm.Service.MethodCallType;
 
 import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -150,7 +150,7 @@ public class ServerSyncOperation< T extends IServerSyncable< V >, V >
    
    private final List< TimeLineMethod< V > > serviceMethods;
    
-   private T sourceElement;
+   private final T sourceElement;
    
    private V resultElement;
    
@@ -161,7 +161,8 @@ public class ServerSyncOperation< T extends IServerSyncable< V >, V >
    private ServerSyncOperation( Builder< T, V > builder )
    {
       this.operationType = builder.operationType;
-      this.serviceMethods = Collections.unmodifiableList( new ArrayList< TimeLineMethod< V > >( builder.methods ) );
+      this.serviceMethods = new ArrayList< TimeLineMethod< V > >( builder.methods );
+      this.sourceElement = builder.sourceElement;
    }
    
 
@@ -241,7 +242,10 @@ public class ServerSyncOperation< T extends IServerSyncable< V >, V >
 
    public IContentProviderSyncOperation removeModifications( ModificationList modifictaions )
    {
-      return sourceElement.removeModifications( modifictaions );
+      if ( sourceElement != null )
+         return sourceElement.removeModifications( modifictaions );
+      else
+         return NoopContentProviderSyncOperation.INSTANCE;
    }
    
 

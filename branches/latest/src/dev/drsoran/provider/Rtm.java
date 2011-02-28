@@ -570,14 +570,6 @@ public class Rtm
       public final static String ADDED_DATE = "added";
       
       /**
-       * The date when the task was last modified
-       * <P>
-       * Type: INTEGER(long)
-       * </P>
-       */
-      public final static String TASK_MODIFIED_DATE = "task_modified";
-      
-      /**
        * The date when the task has been completed
        * <P>
        * Type: INTEGER(long)
@@ -646,14 +638,6 @@ public class Rtm
        * The MIME type of a {@link #CONTENT_URI} sub-directory of a single raw task.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.rawtask";
-      
-      /**
-       * The ID of the list this RawTask is in.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String LIST_ID = "list_id";
       
       /**
        * The default sort order for this table
@@ -1116,6 +1100,14 @@ public class Rtm
        * </P>
        */
       public final static String SYNCED_VALUE = "synced_value";
+      
+      /**
+       * The point of time when the modifictaion was inserted.
+       * <P>
+       * Type: INTEGER(long)
+       * </P>
+       */
+      public final static String TIMESTAMP = "timestamp";
    }
    
 

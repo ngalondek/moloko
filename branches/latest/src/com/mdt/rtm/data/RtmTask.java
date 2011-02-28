@@ -70,15 +70,11 @@ public class RtmTask extends RtmData
    
    private final String taskSeriesId;
    
-   private final String listId;
-   
    private final ParcelableDate due;
    
    private final int hasDueTime;
    
    private final ParcelableDate added;
-   
-   private final ParcelableDate modified;
    
    private final ParcelableDate completed;
    
@@ -140,18 +136,15 @@ public class RtmTask extends RtmData
    
 
 
-   public RtmTask( String id, String taskSeriesId, String listId, Date due,
-      int hasDueTime, Date added, Date modified, Date completed, Date deleted,
-      Priority priority, int postponed, String estimate, long estimateMillis )
+   public RtmTask( String id, String taskSeriesId, Date due, int hasDueTime,
+      Date added, Date completed, Date deleted, Priority priority,
+      int postponed, String estimate, long estimateMillis )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
-      this.listId = listId;
       this.due = ( due != null ) ? new ParcelableDate( due ) : null;
       this.hasDueTime = hasDueTime;
       this.added = ( added != null ) ? new ParcelableDate( added ) : null;
-      this.modified = ( modified != null ) ? new ParcelableDate( modified )
-                                          : null;
       this.completed = ( completed != null ) ? new ParcelableDate( completed )
                                             : null;
       this.deleted = ( deleted != null ) ? new ParcelableDate( deleted ) : null;
@@ -168,11 +161,9 @@ public class RtmTask extends RtmData
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
-      this.listId = listId;
       due = parseDate( textNullIfEmpty( elt, "due" ) );
       hasDueTime = Integer.parseInt( elt.getAttribute( "has_due_time" ) );
       added = parseDate( textNullIfEmpty( elt, "added" ) );
-      this.modified = modified;
       completed = parseDate( textNullIfEmpty( elt, "completed" ) );
       deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
       
@@ -227,12 +218,10 @@ public class RtmTask extends RtmData
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
-      this.listId = listId;
       this.deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
       due = null;
       hasDueTime = 0;
       added = null;
-      modified = null;
       completed = null;
       priority = Priority.None;
       postponed = 0;
@@ -246,11 +235,9 @@ public class RtmTask extends RtmData
    {
       this.id = source.readString();
       this.taskSeriesId = source.readString();
-      this.listId = source.readString();
       this.due = source.readParcelable( null );
       this.hasDueTime = source.readInt();
       this.added = source.readParcelable( null );
-      this.modified = source.readParcelable( null );
       this.completed = source.readParcelable( null );
       this.deleted = source.readParcelable( null );
       this.priority = Priority.valueOf( source.readString() );
@@ -271,13 +258,6 @@ public class RtmTask extends RtmData
    public String getTaskSeriesId()
    {
       return taskSeriesId;
-   }
-   
-
-
-   public String getListId()
-   {
-      return listId;
    }
    
 
@@ -313,13 +293,6 @@ public class RtmTask extends RtmData
    public Date getCreatedDate()
    {
       return getAdded();
-   }
-   
-
-
-   public Date getModifiedDate()
-   {
-      return ( modified != null ) ? modified.getDate() : null;
    }
    
 
@@ -385,7 +358,6 @@ public class RtmTask extends RtmData
    {
       dest.writeString( id );
       dest.writeString( taskSeriesId );
-      dest.writeString( listId );
       dest.writeParcelable( due, flags );
       dest.writeInt( hasDueTime );
       dest.writeParcelable( added, flags );
@@ -415,7 +387,7 @@ public class RtmTask extends RtmData
    // {
    // return Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
    // }
-   //   
+   //
    //
    //
    // public IContentProviderSyncOperation computeContentProviderInsertOperation()
@@ -426,7 +398,7 @@ public class RtmTask extends RtmData
    // .build() )
    // .build();
    // }
-   //   
+   //
    //
    //
    // public IContentProviderSyncOperation computeContentProviderDeleteOperation()
@@ -435,7 +407,7 @@ public class RtmTask extends RtmData
    // .build() )
    // .build();
    // }
-   //   
+   //
    //
    //
    // public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
@@ -447,7 +419,7 @@ public class RtmTask extends RtmData
    // getContentUriWithId() );
    // return syncImpl( properties, serverElement, this ).operations.getLocalOperations();
    // }
-   //   
+   //
    //
    //
    // public DirectedSyncOperations< RtmTaskSeries > computeMergeOperations( Date lastSync,
@@ -457,11 +429,11 @@ public class RtmTask extends RtmData
    // RtmTask localElement )
    // {
    // final RtmTask serverTask = serverElement.getTask( id );
-   //      
+   //
    // if ( serverTask == null )
    // throw new IllegalStateException( "Server TaskSeries has no task with ID "
    // + id );
-   //      
+   //
    // final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.BOTH,
    // lastSync,
    // serverTask.getModifiedDate(),
@@ -471,7 +443,7 @@ public class RtmTask extends RtmData
    // timeline );
    // return syncImpl( properties, serverTask, localElement ).operations;
    // }
-   //   
+   //
    //
    //
    // public List< IServerSyncOperation< RtmTaskSeries > > computeServerUpdateOperations( Date lastSync,
@@ -487,21 +459,21 @@ public class RtmTask extends RtmData
    // timeline );
    // return syncImpl( properties, this, this ).operations.getServerOperations();
    // }
-   //   
+   //
    //
    //
    // public IServerSyncOperation< RtmTaskSeries > computeServerInsertOperation( RtmTimeline timeLine )
    // {
    // return NoopServerSyncOperation.newInstance();
    // }
-   //   
+   //
    //
    //
    // public IServerSyncOperation< RtmTaskSeries > computeServerDeleteOperation( RtmTimeline timeLine )
    // {
    // return NoopServerSyncOperation.newInstance();
    // }
-   //   
+   //
    //
    //
    // public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
@@ -514,7 +486,7 @@ public class RtmTask extends RtmData
    // else
    // return NoopContentProviderSyncOperation.INSTANCE;
    // }
-   //   
+   //
    //
    //
    // private SyncProperties< RtmTaskSeries > syncImpl( SyncProperties< RtmTaskSeries > properties,
@@ -522,31 +494,31 @@ public class RtmTask extends RtmData
    // RtmTask localElement )
    // {
    // SyncUtils.doPreSyncCheck( localElement.id, serverElement.id, properties );
-   //      
+   //
    // SyncUtils.syncValue( properties,
    // RawTasks.DUE_DATE,
    // MolokoDateUtils.getTime( serverElement.due ),
    // MolokoDateUtils.getTime( localElement.due ),
    // Long.class );
-   //      
+   //
    // SyncUtils.syncValue( properties,
    // RawTasks.HAS_DUE_TIME,
    // serverElement.hasDueTime,
    // localElement.hasDueTime,
    // Integer.class );
-   //      
+   //
    // SyncUtils.syncValue( properties,
    // RawTasks.ADDED_DATE,
    // MolokoDateUtils.getTime( serverElement.added ),
    // MolokoDateUtils.getTime( localElement.added ),
    // Long.class );
-   //      
+   //
    // SyncUtils.syncValue( properties,
    // RawTasks.COMPLETED_DATE,
    // MolokoDateUtils.getTime( serverElement.completed ),
    // MolokoDateUtils.getTime( localElement.completed ),
    // Long.class );
-   //      
+   //
    // if ( SyncUtils.syncValue( properties,
    // RawTasks.PRIORITY,
    // convertPriority( serverElement.priority ),
@@ -559,25 +531,25 @@ public class RtmTask extends RtmData
    // priority ),
    // Op.UPDATE );
    // }
-   //      
+   //
    // SyncUtils.syncValue( properties,
    // RawTasks.POSTPONED,
    // serverElement.postponed,
    // localElement.postponed,
    // Integer.class );
-   //      
+   //
    // SyncUtils.syncValue( properties,
    // RawTasks.ESTIMATE,
    // serverElement.estimate,
    // localElement.estimate,
    // String.class );
-   //      
+   //
    // SyncUtils.syncValue( properties,
    // RawTasks.ESTIMATE_MILLIS,
    // serverElement.estimateMillis,
    // localElement.estimateMillis,
    // Long.class );
-   //      
+   //
    // return properties;
    // }
 }

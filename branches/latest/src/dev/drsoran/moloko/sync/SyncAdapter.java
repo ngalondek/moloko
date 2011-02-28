@@ -52,8 +52,8 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmTimeline;
 import com.mdt.rtm.data.RtmAuth.Perms;
+import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
@@ -336,23 +336,23 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             // If we retrieved an element related error, then we ignore the
             // modification and handle it as committed. This can happen if
             // we have modifications locally which refer to elements which
-            // have been deleted on server.
+            // have been deleted on server side.
             if ( !RtmServiceConstants.RtmErrorCodes.isElementError( e.responseCode ) )
             {
                // Log.e( TAG, "Initiating rollback" );
-               //               
+               //
                // // If something fails while reverting the changes, we receive a list of all
                // // non-reverted changes and store them for later reverting.
                // final List< TimeLineResult.Transaction > nonReverted = serverSyncOperation.revert( service );
-               //               
+               //
                // Log.i( TAG, "Rollback finished with " + nonReverted.size()
                // + " non-reverted changes" );
-               //               
+               //
                // if ( nonReverted.size() > 0 )
                // {
                // final ArrayList< ContentProviderOperation > transactionBatch = new ArrayList< ContentProviderOperation
                // >( nonReverted.size() );
-               //                  
+               //
                // // Store all non-reverted changes for later rollback.
                // for ( Transaction transaction : nonReverted )
                // {
@@ -360,10 +360,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                // .withValues( RollbacksProviderPart.getContentValues( transaction ) )
                // .build() );
                // }
-               //                  
+               //
                // final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
                // transactionalAccess.beginTransaction();
-               //                  
+               //
                // try
                // {
                // rtmProvider.applyBatch( transactionBatch );

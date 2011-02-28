@@ -55,7 +55,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    
    public final static String[] PROJECTION =
    { Modifications._ID, Modifications.ENTITY_URI, Modifications.COL_NAME,
-    Modifications.NEW_VALUE, Modifications.SYNCED_VALUE };
+    Modifications.NEW_VALUE, Modifications.SYNCED_VALUE,
+    Modifications.TIMESTAMP };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -92,6 +93,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       values.put( Modifications.ENTITY_URI, modification.getEntityUri()
                                                         .toString() );
       values.put( Modifications.COL_NAME, modification.getColName() );
+      values.put( Modifications.TIMESTAMP, modification.getTimestamp() );
       
       Modification.put( values,
                         Modifications.NEW_VALUE,
@@ -403,13 +405,16 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
 
    private static Modification createModification( Cursor c )
    {
-      return Modification.newModification( c.getString( COL_INDICES.get( Modifications._ID ) ),
-                                           Uri.parse( c.getString( COL_INDICES.get( Modifications.ENTITY_URI ) ) ),
-                                           c.getString( COL_INDICES.get( Modifications.COL_NAME ) ),
-                                           Queries.getOptString( c,
-                                                                 COL_INDICES.get( Modifications.NEW_VALUE ) ),
-                                           Queries.getOptString( c,
-                                                                 COL_INDICES.get( Modifications.SYNCED_VALUE ) ) );
+      return new Modification( c.getString( COL_INDICES.get( Modifications._ID ) ),
+                               Uri.parse( c.getString( COL_INDICES.get( Modifications.ENTITY_URI ) ) ),
+                               c.getString( COL_INDICES.get( Modifications.COL_NAME ) ),
+                               Queries.getOptString( c,
+                                                     COL_INDICES.get( Modifications.NEW_VALUE ) ),
+                               Queries.getOptString( c,
+                                                     COL_INDICES.get( Modifications.SYNCED_VALUE ) ),
+                               true,
+                               true,
+                               c.getLong( COL_INDICES.get( Modifications.TIMESTAMP ) ) );
    }
    
 
@@ -431,7 +436,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
          + Modifications.ENTITY_URI + " TEXT NOT NULL, "
          + Modifications.COL_NAME + " TEXT NOT NULL, "
          + Modifications.NEW_VALUE + " TEXT, " + Modifications.SYNCED_VALUE
-         + " TEXT );" );
+         + " TEXT, " + Modifications.TIMESTAMP + " INTEGER NOT NULL " + ");" );
    }
    
 

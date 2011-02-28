@@ -30,12 +30,13 @@ import java.util.List;
 import android.content.ContentProviderOperation;
 
 import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationList;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
@@ -44,8 +45,8 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
+import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncProperties;
@@ -118,21 +119,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
 
    public Date getModifiedDate()
    {
-      return getTaskModifiedDate();
-   }
-   
-
-
-   public Date getTaskSeriesModifiedDate()
-   {
       return taskSeries.getModifiedDate();
-   }
-   
-
-
-   public Date getTaskModifiedDate()
-   {
-      return task.getModifiedDate();
    }
    
 
@@ -316,13 +303,13 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
       return syncImpl( serverElement,
                        this,
                        SyncProperties.< RtmTaskSeries > newLocalOnlyInstance( lastSync,
-                                                                              serverElement.getTaskSeriesModifiedDate(),
-                                                                              this.getTaskSeriesModifiedDate(),
+                                                                              serverElement.getModifiedDate(),
+                                                                              this.getModifiedDate(),
                                                                               Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                         getTaskSeriesId() ) ),
                        SyncProperties.< RtmTaskSeries > newLocalOnlyInstance( lastSync,
-                                                                              serverElement.getTaskModifiedDate(),
-                                                                              this.getTaskModifiedDate(),
+                                                                              serverElement.getModifiedDate(),
+                                                                              this.getModifiedDate(),
                                                                               Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                         getId() ) ) ).operations.getLocalOperations();
    }
@@ -337,16 +324,16 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
                        this,
                        SyncProperties.< RtmTaskSeries > newInstance( SyncDirection.SERVER_ONLY,
                                                                      lastSync,
-                                                                     this.getTaskSeriesModifiedDate(),
-                                                                     this.getTaskSeriesModifiedDate(),
+                                                                     this.getModifiedDate(),
+                                                                     this.getModifiedDate(),
                                                                      Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                getTaskSeriesId() ),
                                                                      modifications,
                                                                      timeline ),
                        SyncProperties.< RtmTaskSeries > newInstance( SyncDirection.SERVER_ONLY,
                                                                      lastSync,
-                                                                     this.getTaskModifiedDate(),
-                                                                     this.getTaskModifiedDate(),
+                                                                     this.getModifiedDate(),
+                                                                     this.getModifiedDate(),
                                                                      Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                getId() ),
                                                                      modifications,
@@ -361,20 +348,20 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
                                                                           SyncTask serverElement,
                                                                           SyncTask localElement )
    {
-      return syncImpl( this,
-                       this,
+      return syncImpl( serverElement,
+                       localElement,
                        SyncProperties.< RtmTaskSeries > newInstance( SyncDirection.BOTH,
                                                                      lastSync,
-                                                                     this.getTaskSeriesModifiedDate(),
-                                                                     this.getTaskSeriesModifiedDate(),
+                                                                     serverElement.getModifiedDate(),
+                                                                     localElement.getModifiedDate(),
                                                                      Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                getTaskSeriesId() ),
                                                                      modifications,
                                                                      timeline ),
                        SyncProperties.< RtmTaskSeries > newInstance( SyncDirection.BOTH,
                                                                      lastSync,
-                                                                     this.getTaskModifiedDate(),
-                                                                     this.getTaskModifiedDate(),
+                                                                     serverElement.getModifiedDate(),
+                                                                     localElement.getModifiedDate(),
                                                                      Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                getId() ),
                                                                      modifications,
@@ -471,8 +458,21 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
                                 localElement.getListId(),
                                 String.class ) == SyncResultDirection.SERVER )
       {
+         String oldListId = serverElement.getListId();
+         
+         // The case we come from computeServerUpdateOperations() we take the synced
+         // value.
+         if ( serverElement == localElement )
+         {
+            final Modification modification = taskSeriesProperties.modifications.find( taskSeriesProperties.uri,
+                                                                                       TaskSeries.LIST_ID );
+            
+            if ( modification != null )
+               oldListId = modification.getSyncedValue();
+         }
+         
          taskSeriesProperties.operations.merge( localElement,
-                                                taskSeriesProperties.timeline.tasks_moveTo( serverElement.getListId(),
+                                                taskSeriesProperties.timeline.tasks_moveTo( oldListId,
                                                                                             localElement.getListId(),
                                                                                             getTaskSeriesId(),
                                                                                             getId() ),

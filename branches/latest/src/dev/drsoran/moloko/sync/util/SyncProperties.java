@@ -28,7 +28,7 @@ import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable.SyncDirection;
 
@@ -46,7 +46,7 @@ public class SyncProperties< T >
    
    public final Uri uri;
    
-   public final ModificationList modifications;
+   public final ModificationSet modifications;
    
    public final RtmTimeline timeline;
    
@@ -56,7 +56,7 @@ public class SyncProperties< T >
 
    private SyncProperties( SyncDirection syncDirection, Date lastSyncDate,
       Date serverModDate, Date localModDate, Uri uri,
-      ModificationList modifications, RtmTimeline timeline )
+      ModificationSet modifications, RtmTimeline timeline )
    {
       this.syncDirection = syncDirection;
       this.lastSyncDate = lastSyncDate;
@@ -74,7 +74,7 @@ public class SyncProperties< T >
                                                               Date serverModDate,
                                                               Date localModDate,
                                                               Uri uri,
-                                                              ModificationList modifications,
+                                                              ModificationSet modifications,
                                                               RtmTimeline timeline )
    {
       return new SyncProperties< T >( syncDirection,

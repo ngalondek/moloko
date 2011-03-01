@@ -284,6 +284,7 @@ public class TaskActivity extends Activity
          
          if ( !TextUtils.isEmpty( task.getUrl() ) )
          {
+            urlSection.setVisibility( View.VISIBLE );
             ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
          }
          else
@@ -409,6 +410,8 @@ public class TaskActivity extends Activity
       }
       else
       {
+         view.setVisibility( View.VISIBLE );
+         
          if ( TextUtils.isEmpty( locationName ) )
          {
             locationName = "Lon: " + task.getLongitude() + ", Lat: "

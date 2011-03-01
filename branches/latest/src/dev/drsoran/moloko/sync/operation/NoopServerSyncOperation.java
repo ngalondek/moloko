@@ -30,7 +30,7 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
 
 
@@ -80,7 +80,7 @@ public final class NoopServerSyncOperation< T > implements
    
 
 
-   public IContentProviderSyncOperation removeModification( ModificationList modifications )
+   public IContentProviderSyncOperation removeModification( ModificationSet modifications )
    {
       return NoopContentProviderSyncOperation.INSTANCE;
    }
@@ -101,7 +101,8 @@ public final class NoopServerSyncOperation< T > implements
    
 
 
-   public IContentProviderSyncOperation removeModifications( ModificationList modifictaions )
+   public IContentProviderSyncOperation removeModifications( ModificationSet modifictaions,
+                                                             boolean revert )
    {
       return NoopContentProviderSyncOperation.INSTANCE;
    }

@@ -23,8 +23,6 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.Date;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
@@ -49,10 +47,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
@@ -190,7 +188,7 @@ public class TaskEditActivity extends Activity
    
    private TitleWithEditTextLayout url;
    
-   private final Set< Modification > modifications = new TreeSet< Modification >();
+   private final ModificationSet modifications = new ModificationSet();
    
    
 
@@ -259,7 +257,6 @@ public class TaskEditActivity extends Activity
             }
             
             initializeListSpinner();
-            initializePrioritySpinner();
             initializeLocationSpinner();
          }
          else
@@ -330,14 +327,63 @@ public class TaskEditActivity extends Activity
       if ( validateInput() )
       {
          // Task name
-         if ( SyncUtils.hasChanged( task.getName(), nameEdit.getText()
-                                                            .toString() ) )
          {
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.TASKSERIES_NAME,
-                                                             nameEdit.getText()
-                                                                     .toString() ) );
+            if ( SyncUtils.hasChanged( task.getName(), nameEdit.getText()
+                                                               .toString() ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.TASKSERIES_NAME,
+                                                                nameEdit.getText()
+                                                                        .toString() ) );
+         }
+         
+         // List
+         {
+            final String selectedListId = list.getSelectedValue();
+            
+            if ( SyncUtils.hasChanged( task.getListId(), selectedListId ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.LIST_ID,
+                                                                selectedListId ) );
+         }
+         
+         // Priority
+         {
+            final String selectedPriority = priority.getSelectedValue();
+            
+            if ( SyncUtils.hasChanged( RtmTask.convertPriority( task.getPriority() ),
+                                       selectedPriority ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.PRIORITY,
+                                                                selectedPriority ) );
+         }
+         
+         // Location
+         {
+            final String selectedLocation = location.getSelectedValue();
+            
+            if ( SyncUtils.hasChanged( task.getLocationId(), selectedLocation ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.LOCATION_ID,
+                                                                TextUtils.isEmpty( selectedLocation )
+                                                                                                     ? null
+                                                                                                     : selectedLocation ) );
+         }
+         
+         // URL
+         {
+            final String newUrl = TextUtils.isEmpty( url.getText().toString() )
+                                                                               ? null
+                                                                               : url.getText()
+                                                                                    .toString();
+            if ( SyncUtils.hasChanged( task.getUrl(), newUrl ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.URL,
+                                                                newUrl ) );
          }
          
          int result = RESULT_EDIT_TASK_OK;
@@ -420,25 +466,6 @@ public class TaskEditActivity extends Activity
                   return adapter.convertToString( (Cursor) object ).toString();
                }
             } );
-            
-            list.setOnItemSelectedListener( new SpinnerChangedListener()
-            {
-               @Override
-               public void onItemSelected( AdapterView< ? > parent,
-                                           View view,
-                                           int pos,
-                                           long row )
-               {
-                  final String selectedListId = list.getValueAtPos( pos );
-                  
-                  if ( selectedListId != null
-                     && !TaskEditActivity.this.task.getListId()
-                                                   .equals( selectedListId ) )
-                  {
-                     onListChanged( selectedListId );
-                  }
-               }
-            } );
          }
          else
             throw new Exception();
@@ -447,26 +474,6 @@ public class TaskEditActivity extends Activity
       {
          LogUtils.logDBError( this, TAG, "Lists", e );
       }
-   }
-   
-
-
-   private void initializePrioritySpinner()
-   {
-      priority.setOnItemSelectedListener( new SpinnerChangedListener()
-      {
-         @Override
-         public void onItemSelected( AdapterView< ? > parent,
-                                     View view,
-                                     int pos,
-                                     long row )
-         {
-            final Priority value = RtmTask.convertPriority( priority.getValueAtPos( pos ) );
-            
-            if ( value != task.getPriority() )
-               onPriorityChanged( value );
-         }
-      } );
    }
    
 
@@ -500,24 +507,14 @@ public class TaskEditActivity extends Activity
                                                                                   locationNames );
                adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
                location.setAdapter( adapter );
-               location.setOnItemSelectedListener( new SpinnerChangedListener()
-               {
-                  @Override
-                  public void onItemSelected( AdapterView< ? > parent,
-                                              View view,
-                                              int pos,
-                                              long row )
-                  {
-                     final String selectedLocationName = parent.getItemAtPosition( pos )
-                                                               .toString();
-                     
-                     if ( SyncUtils.hasChanged( task.getLocationName(),
-                                                selectedLocationName ) )
-                     {
-                        onLocationChanged( selectedLocationName );
-                     }
-                  }
-               } );
+               
+               String[] values = new String[ locationNames.length ];
+               // Add the "nowhere" entry as first
+               values[ 0 ] = null;
+               // Add the locations to the array
+               values = Queries.fillStringArray( c, 0, values, 1 );
+               
+               location.setValues( values );
             }
             else
                throw new Exception();
@@ -659,32 +656,5 @@ public class TaskEditActivity extends Activity
       }
       
       return true;
-   }
-   
-
-
-   private void onListChanged( String newListId )
-   {
-      modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                 task.getTaskSeriesId() ),
-                                                       TaskSeries.LIST_ID,
-                                                       newListId ) );
-   }
-   
-
-
-   private void onPriorityChanged( RtmTask.Priority newPriority )
-   {
-      modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                 task.getId() ),
-                                                       RawTasks.PRIORITY,
-                                                       RtmTask.convertPriority( newPriority ) ) );
-   }
-   
-
-
-   private void onLocationChanged( String newLocationName )
-   {
-      // TODO: Handle selected location "no location".
    }
 }

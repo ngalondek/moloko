@@ -228,6 +228,13 @@ public class RtmProvider extends ContentProvider
    
 
 
+   public List< IRtmProviderPart > getMutableParts()
+   {
+      return mutableParts;
+   }
+   
+
+
    @Override
    public Uri insert( Uri uri, ContentValues values )
    {
@@ -295,34 +302,37 @@ public class RtmProvider extends ContentProvider
    
 
 
-   public synchronized void clear() throws OperationApplicationException
+   public synchronized void clear( List< ? extends IRtmProviderPart > parts ) throws OperationApplicationException
    {
       final ArrayList< ContentProviderOperation > deleteOps = new ArrayList< ContentProviderOperation >();
       
-      for ( IRtmProviderPart part : mutableParts )
+      for ( IRtmProviderPart part : parts )
       {
          deleteOps.add( ContentProviderOperation.newDelete( part.getContentUri() )
                                                 .build() );
       }
       
-      final TransactionalAccess transactionalAccess = newTransactionalAccess();
-      
-      try
+      if ( !deleteOps.isEmpty() )
       {
-         transactionalAccess.beginTransaction();
+         final TransactionalAccess transactionalAccess = newTransactionalAccess();
          
-         applyBatch( deleteOps );
-         
-         transactionalAccess.setTransactionSuccessful();
-      }
-      catch ( Throwable e )
-      {
-         Log.e( TAG, "Clearing database failed", e );
-         throw new OperationApplicationException( e );
-      }
-      finally
-      {
-         transactionalAccess.endTransaction();
+         try
+         {
+            transactionalAccess.beginTransaction();
+            
+            applyBatch( deleteOps );
+            
+            transactionalAccess.setTransactionSuccessful();
+         }
+         catch ( Throwable e )
+         {
+            Log.e( TAG, "Clearing database failed", e );
+            throw new OperationApplicationException( e );
+         }
+         finally
+         {
+            transactionalAccess.endTransaction();
+         }
       }
    }
    

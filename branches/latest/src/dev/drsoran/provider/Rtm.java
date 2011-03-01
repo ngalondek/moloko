@@ -1102,7 +1102,7 @@ public class Rtm
       public final static String SYNCED_VALUE = "synced_value";
       
       /**
-       * The point of time when the modifictaion was inserted.
+       * The point of time when the modification was inserted.
        * <P>
        * Type: INTEGER(long)
        * </P>

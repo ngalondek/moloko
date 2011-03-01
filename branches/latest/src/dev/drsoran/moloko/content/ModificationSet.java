@@ -28,34 +28,32 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Set;
+import java.util.TreeSet;
 
+import android.content.ContentProviderOperation;
 import android.net.Uri;
+import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.Modifications;
 
 
-public class ModificationList implements List< Modification >
+public class ModificationSet implements Set< Modification >
 {
-   private final List< Modification > impl;
+   private final Set< Modification > impl;
    
    
 
-   public ModificationList()
+   public ModificationSet()
    {
-      impl = Collections.emptyList();
+      impl = new TreeSet< Modification >();
    }
    
 
 
-   public ModificationList( Collection< ? extends Modification > collection )
+   public ModificationSet( Collection< ? extends Modification > collection )
    {
-      impl = new ArrayList< Modification >( collection );
-   }
-   
-
-
-   public void add( int location, Modification object )
-   {
-      impl.add( location, object );
+      impl = new TreeSet< Modification >( collection );
    }
    
 
@@ -70,13 +68,6 @@ public class ModificationList implements List< Modification >
    public boolean addAll( Collection< ? extends Modification > arg0 )
    {
       return impl.addAll( arg0 );
-   }
-   
-
-
-   public boolean addAll( int arg0, Collection< ? extends Modification > arg1 )
-   {
-      return impl.addAll( arg0, arg1 );
    }
    
 
@@ -102,36 +93,6 @@ public class ModificationList implements List< Modification >
    
 
 
-   @Override
-   public boolean equals( Object object )
-   {
-      return impl.equals( object );
-   }
-   
-
-
-   public Modification get( int location )
-   {
-      return impl.get( location );
-   }
-   
-
-
-   @Override
-   public int hashCode()
-   {
-      return impl.hashCode();
-   }
-   
-
-
-   public int indexOf( Object object )
-   {
-      return impl.indexOf( object );
-   }
-   
-
-
    public boolean isEmpty()
    {
       return impl.isEmpty();
@@ -146,34 +107,6 @@ public class ModificationList implements List< Modification >
    
 
 
-   public int lastIndexOf( Object object )
-   {
-      return impl.lastIndexOf( object );
-   }
-   
-
-
-   public ListIterator< Modification > listIterator()
-   {
-      return impl.listIterator();
-   }
-   
-
-
-   public ListIterator< Modification > listIterator( int location )
-   {
-      return impl.listIterator( location );
-   }
-   
-
-
-   public Modification remove( int location )
-   {
-      return impl.remove( location );
-   }
-   
-
-
    public boolean remove( Object object )
    {
       return impl.remove( object );
@@ -184,6 +117,73 @@ public class ModificationList implements List< Modification >
    public boolean removeAll( Collection< ? > arg0 )
    {
       return impl.removeAll( arg0 );
+   }
+   
+
+
+   public boolean retainAll( Collection< ? > arg0 )
+   {
+      return impl.retainAll( arg0 );
+   }
+   
+
+
+   public int size()
+   {
+      return impl.size();
+   }
+   
+
+
+   public Object[] toArray()
+   {
+      return impl.toArray();
+   }
+   
+
+
+   public < T > T[] toArray( T[] array )
+   {
+      return impl.toArray( array );
+   }
+   
+
+
+   /**
+    * Checks if the new and the synced value of the {@link Modification} are equal. If they are equal, the new
+    * {@link Modification} will not be added and any existing {@link Modification} objects which are refer the same
+    * {@link Modification} will be removed. This can happen if the user decided to revert an previously made change by
+    * setting it to the same value like before.
+    * 
+    * @param modification
+    */
+   public void addOrRevert( Modification modification )
+   {
+      if ( !SyncUtils.hasChanged( modification.getSyncedValue(),
+                                  modification.getNewValue() ) )
+         remove( modification );
+      else
+         add( modification );
+   }
+   
+
+
+   public boolean remove( Uri entityUri, String columnName )
+   {
+      boolean found = false;
+      
+      for ( Iterator< Modification > i = impl.iterator(); !found && i.hasNext(); )
+      {
+         final Modification modification = i.next();
+         if ( modification.getEntityUri().equals( entityUri )
+            && modification.getColName().equals( columnName ) )
+         {
+            i.remove();
+            found = true;
+         }
+      }
+      
+      return found;
    }
    
 
@@ -203,56 +203,6 @@ public class ModificationList implements List< Modification >
       }
       
       return found;
-   }
-   
-
-
-   public boolean retainAll( Collection< ? > arg0 )
-   {
-      return impl.retainAll( arg0 );
-   }
-   
-
-
-   public Modification set( int location, Modification object )
-   {
-      return impl.set( location, object );
-   }
-   
-
-
-   public int size()
-   {
-      return impl.size();
-   }
-   
-
-
-   public List< Modification > subList( int start, int end )
-   {
-      return impl.subList( start, end );
-   }
-   
-
-
-   public Object[] toArray()
-   {
-      return impl.toArray();
-   }
-   
-
-
-   public < T > T[] toArray( T[] array )
-   {
-      return impl.toArray( array );
-   }
-   
-
-
-   @Override
-   public String toString()
-   {
-      return impl.toString();
    }
    
 
@@ -309,5 +259,29 @@ public class ModificationList implements List< Modification >
       }
       
       return Collections.unmodifiableList( result );
+   }
+   
+
+
+   public List< ContentProviderOperation > getRevertAllOperations( Uri entityUri )
+   {
+      final List< Modification > mods = getModifications( entityUri );
+      List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >( mods.size() );
+      
+      for ( Modification modification : mods )
+      {
+         if ( modification.isSyncedValueSet() )
+         {
+            operations.add( ContentProviderOperation.newUpdate( modification.getEntityUri() )
+                                                    .withValue( modification.getColName(),
+                                                                modification.getSyncedValue() )
+                                                    .build() );
+            operations.add( ContentProviderOperation.newDelete( Queries.contentUriWithId( Modifications.CONTENT_URI,
+                                                                                          modification.getId() ) )
+                                                    .build() );
+         }
+      }
+      
+      return operations;
    }
 }

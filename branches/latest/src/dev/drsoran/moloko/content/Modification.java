@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.content;
 
 import java.util.Comparator;
+import java.util.Date;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -162,7 +163,6 @@ public class Modification implements Comparable< Modification >
                                         : newValue.equals( other.newValue ) );
       equal = equal && entityUri.equals( other.entityUri );
       equal = equal && colName.equals( other.colName );
-      equal = equal && timestamp == other.timestamp;
       
       return equal;
    }
@@ -177,7 +177,6 @@ public class Modification implements Comparable< Modification >
       result = 31 * result + entityUri.hashCode();
       result = 31 * result + colName.hashCode();
       result = 31 * result + ( newValue != null ? newValue.hashCode() : 0 );
-      result = 31 * result + (int) ( timestamp / 1000 );
       
       return result;
    }
@@ -195,6 +194,15 @@ public class Modification implements Comparable< Modification >
          return cmp;
       
       return 0;
+   }
+   
+
+
+   @Override
+   public String toString()
+   {
+      return "<Mod, " + id + ", " + entityUri + ", " + colName + ", "
+         + newValue + ", " + syncedValue + ", " + new Date( timestamp ) + ">";
    }
    
 

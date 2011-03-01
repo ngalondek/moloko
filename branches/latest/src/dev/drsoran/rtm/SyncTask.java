@@ -37,7 +37,7 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
@@ -318,7 +318,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
 
    public List< IServerSyncOperation< RtmTaskSeries > > computeServerUpdateOperations( Date lastSync,
                                                                                        RtmTimeline timeline,
-                                                                                       ModificationList modifications )
+                                                                                       ModificationSet modifications )
    {
       return syncImpl( this,
                        this,
@@ -344,7 +344,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
 
    public DirectedSyncOperations< RtmTaskSeries > computeMergeOperations( Date lastSync,
                                                                           RtmTimeline timeline,
-                                                                          ModificationList modifications,
+                                                                          ModificationSet modifications,
                                                                           SyncTask serverElement,
                                                                           SyncTask localElement )
    {
@@ -408,26 +408,37 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
    
 
 
-   public IContentProviderSyncOperation removeModifications( ModificationList modifications )
+   public IContentProviderSyncOperation removeModifications( ModificationSet modifications,
+                                                             boolean revert )
    {
       final ContentProviderSyncOperation.Builder builder = ContentProviderSyncOperation.newDelete();
       
-      if ( modifications.hasModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                    getId() ) ) )
+      if ( revert )
       {
-         builder.add( ModificationsProviderPart.getRemoveModificationOps( RawTasks.CONTENT_URI,
-                                                                          getId() ) );
-         modifications.removeAll( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                            getId() ) );
+         builder.addAll( modifications.getRevertAllOperations( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                         getId() ) ) );
+         builder.addAll( modifications.getRevertAllOperations( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                         getTaskSeriesId() ) ) );
       }
-      
-      if ( modifications.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                    getTaskSeriesId() ) ) )
+      else
       {
-         builder.add( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
-                                                                          getTaskSeriesId() ) );
-         modifications.removeAll( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                            getTaskSeriesId() ) );
+         if ( modifications.hasModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                       getId() ) ) )
+         {
+            builder.add( ModificationsProviderPart.getRemoveModificationOps( RawTasks.CONTENT_URI,
+                                                                             getId() ) );
+            modifications.removeAll( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                               getId() ) );
+         }
+         
+         if ( modifications.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                       getTaskSeriesId() ) ) )
+         {
+            builder.add( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
+                                                                             getTaskSeriesId() ) );
+            modifications.removeAll( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                               getTaskSeriesId() ) );
+         }
       }
       
       return builder.build();

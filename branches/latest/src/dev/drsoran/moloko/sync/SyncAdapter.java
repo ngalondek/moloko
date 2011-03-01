@@ -58,10 +58,8 @@ import com.mdt.rtm.data.RtmTimeline;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
-import dev.drsoran.moloko.content.Rollback;
-import dev.drsoran.moloko.content.RollbacksProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
@@ -74,7 +72,6 @@ import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Modifications;
-import dev.drsoran.provider.Rtm.Rollbacks;
 import dev.drsoran.provider.Rtm.Sync;
 
 
@@ -160,11 +157,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                      // rollbackFailedSync( service, provider, permission );
                      
                      // Retrieve all modifications done so far.
-                     final ModificationList modifictaions = getAllModifications();
-                     if ( modifictaions == null )
+                     final ModificationSet modifications = getAllModifications();
+                     if ( modifications == null )
                         throw new SQLException( "Retrieving the modifications failed" );
                      else
-                        Log.i( TAG, "Retrieved " + modifictaions.size()
+                        Log.i( TAG, "Retrieved " + modifications.size()
                            + " modifications" );
                      
                      // We can only create a time line with write permission. However, we need delete
@@ -182,7 +179,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                      if ( computeOperationsBatch( service,
                                                   provider,
                                                   timeLine,
-                                                  modifictaions,
+                                                  modifications,
                                                   extras,
                                                   batch ) )
                      {
@@ -193,7 +190,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                         final List< IContentProviderSyncOperation > localUpdates = applyServerOperations( service,
                                                                                                           contentProvider,
                                                                                                           batch.serverOps,
-                                                                                                          modifictaions,
+                                                                                                          modifications,
                                                                                                           syncResult );
                         batch.localOps.addAll( localUpdates );
                         
@@ -316,7 +313,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    private List< IContentProviderSyncOperation > applyServerOperations( Service service,
                                                                         RtmProvider rtmProvider,
                                                                         List< ? extends IServerSyncOperation< ? > > serverOps,
-                                                                        ModificationList modifications,
+                                                                        ModificationSet modifications,
                                                                         SyncResult syncResult ) throws ServiceException
    {
       final ContentProviderSyncOperation.Builder localUpdatesBuilder = ContentProviderSyncOperation.newUpdate();
@@ -328,10 +325,20 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          {
             // Execute the server operation and retrieve the local updates as result.
             localUpdatesBuilder.add( serverSyncOperation.execute( rtmProvider ) );
+            
+            // Remove possible modifications which lead to the server update after
+            // successfully applying the server operation.
+            localDeletesBuilder.add( serverSyncOperation.removeModifications( modifications,
+                                                                              false ) );
          }
          catch ( ServiceException e )
          {
-            Log.e( TAG, "Applying server operation failed.", e );
+            Log.e( TAG,
+                   "Applying server operation failed. Reverting modifications",
+                   e );
+            
+            localDeletesBuilder.add( serverSyncOperation.removeModifications( modifications,
+                                                                              true ) );
             
             // If we retrieved an element related error, then we ignore the
             // modification and handle it as committed. This can happen if
@@ -339,6 +346,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             // have been deleted on server side.
             if ( !RtmServiceConstants.RtmErrorCodes.isElementError( e.responseCode ) )
             {
+               // TODO: Commented
                // Log.e( TAG, "Initiating rollback" );
                //
                // // If something fails while reverting the changes, we receive a list of all
@@ -383,16 +391,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                
                throw e;
             }
-            else
-            {
-               Log.i( TAG, "Ignoring modification due to elemental error code "
-                  + e.responseCode );
-            }
          }
-         
-         // Remove possible modifications which lead to the server update after
-         // successfully applying the server operation.
-         localDeletesBuilder.add( serverSyncOperation.removeModifications( modifications ) );
       }
       
       // Here we need a list cause we have updates and deletes
@@ -425,61 +424,60 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   private void rollbackFailedSync( Service service,
-                                    ContentProviderClient provider,
-                                    RtmAuth.Perms permission ) throws RemoteException
-   {
-      final List< Rollback > rollbacks = RollbacksProviderPart.getRollbacks( provider );
-      
-      if ( rollbacks != null )
-      {
-         if ( rollbacks.size() > 0 )
-         {
-            // We can only revert with delete permissions
-            if ( permission == Perms.delete )
-            {
-               for ( Rollback rollback : rollbacks )
-               {
-                  try
-                  {
-                     service.transactions_undo( rollback.getTimeLineId(),
-                                                rollback.getTransactionId() );
-                     Log.e( TAG, "Rolled back change " + rollback );
-                  }
-                  catch ( ServiceException e )
-                  {
-                     Log.e( TAG,
-                            "Rolling back change " + rollback + " failed",
-                            e );
-                  }
-               }
-            }
-            else
-            {
-               Log.w( TAG,
-                      "Couldn't rollback changes due to lack of RTM access right" );
-            }
-            
-            // Remove all stored rollbacks netherless they succeeded or not. If
-            // we couldn't revert them then we have no hope.
-            //
-            // Here we use no transaction cause this is a single operation.
-            provider.delete( Rollbacks.CONTENT_URI, "1", null );
-         }
-      }
-      else
-      {
-         Log.e( TAG, "Retrieving rollbacks failed" );
-         throw new RemoteException();
-      }
-   }
+   // TODO: Commented
+   // private void rollbackFailedSync( Service service,
+   // ContentProviderClient provider,
+   // RtmAuth.Perms permission ) throws RemoteException
+   // {
+   // final List< Rollback > rollbacks = RollbacksProviderPart.getRollbacks( provider );
+   //
+   // if ( rollbacks != null )
+   // {
+   // if ( rollbacks.size() > 0 )
+   // {
+   // // We can only revert with delete permissions
+   // if ( permission == Perms.delete )
+   // {
+   // for ( Rollback rollback : rollbacks )
+   // {
+   // try
+   // {
+   // service.transactions_undo( rollback.getTimeLineId(),
+   // rollback.getTransactionId() );
+   // Log.e( TAG, "Rolled back change " + rollback );
+   // }
+   // catch ( ServiceException e )
+   // {
+   // Log.e( TAG,
+   // "Rolling back change " + rollback + " failed",
+   // e );
+   // }
+   // }
+   // }
+   // else
+   // {
+   // Log.w( TAG,
+   // "Couldn't rollback changes due to lack of RTM access right" );
+   // }
+   //
+   // // Remove all stored rollbacks netherless they succeeded or not. If
+   // // we couldn't revert them then we have no hope.
+   // //
+   // // Here we use no transaction cause this is a single operation.
+   // provider.delete( Rollbacks.CONTENT_URI, "1", null );
+   // }
+   // }
+   // else
+   // {
+   // Log.e( TAG, "Retrieving rollbacks failed" );
+   // throw new RemoteException();
+   // }
+   // }
    
-
-
    private boolean computeOperationsBatch( Service service,
                                            ContentProviderClient provider,
                                            RtmTimeline timeLine,
-                                           ModificationList modifications,
+                                           ModificationSet modifications,
                                            Bundle extras,
                                            MolokoSyncResult batch )
    {
@@ -582,9 +580,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   private final ModificationList getAllModifications()
+   private final ModificationSet getAllModifications()
    {
-      ModificationList modifications = null;
+      ModificationSet modifications = null;
       
       final ContentProviderClient client = context.getContentResolver()
                                                   .acquireContentProviderClient( Modifications.CONTENT_URI );
@@ -597,7 +595,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          if ( allMods != null )
          {
-            modifications = new ModificationList( allMods );
+            modifications = new ModificationSet( allMods );
          }
          else
             Log.e( TAG, LogUtils.GENERIC_DB_ERROR );

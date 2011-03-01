@@ -33,7 +33,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
@@ -571,7 +571,7 @@ public class RtmTaskSeries extends RtmData implements
 
    public DirectedSyncOperations< RtmTaskSeries > computeMergeOperations( Date lastSync,
                                                                           RtmTimeline timeline,
-                                                                          ModificationList modifications,
+                                                                          ModificationSet modifications,
                                                                           RtmTaskSeries serverElement,
                                                                           RtmTaskSeries localElement )
    {
@@ -590,7 +590,7 @@ public class RtmTaskSeries extends RtmData implements
 
    public List< IServerSyncOperation< RtmTaskSeries > > computeServerUpdateOperations( Date lastSync,
                                                                                        RtmTimeline timeline,
-                                                                                       ModificationList modifications )
+                                                                                       ModificationSet modifications )
    {
       final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
                                                                                      lastSync,
@@ -605,7 +605,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
+   public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationSet modifications )
    {
       if ( modifications.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                     id ) ) )

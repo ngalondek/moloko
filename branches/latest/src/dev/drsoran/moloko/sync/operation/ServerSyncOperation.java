@@ -37,7 +37,7 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 
@@ -240,10 +240,11 @@ public class ServerSyncOperation< T extends IServerSyncable< V >, V >
    
 
 
-   public IContentProviderSyncOperation removeModifications( ModificationList modifictaions )
+   public IContentProviderSyncOperation removeModifications( ModificationSet modifications,
+                                                             boolean revert )
    {
       if ( sourceElement != null )
-         return sourceElement.removeModifications( modifictaions );
+         return sourceElement.removeModifications( modifications, revert );
       else
          return NoopContentProviderSyncOperation.INSTANCE;
    }

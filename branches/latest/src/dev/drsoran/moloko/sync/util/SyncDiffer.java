@@ -30,7 +30,7 @@ import java.util.List;
 
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -117,7 +117,7 @@ public class SyncDiffer
    public final static < T extends ITwoWaySyncable< T, V >, V > DirectedSyncOperations< V > twoWaydiff( List< ? extends T > serverList,
                                                                                                         List< ? extends T > localList,
                                                                                                         Comparator< ? super T > comp,
-                                                                                                        ModificationList modifications,
+                                                                                                        ModificationSet modifications,
                                                                                                         RtmTimeline timeLine )
    {
       return twoWaydiff( serverList,
@@ -133,7 +133,7 @@ public class SyncDiffer
    public final static < T extends ITwoWaySyncable< T, V >, V > DirectedSyncOperations< V > twoWaydiff( List< ? extends T > serverList,
                                                                                                         List< ? extends T > localList,
                                                                                                         Comparator< ? super T > comp,
-                                                                                                        ModificationList modifications,
+                                                                                                        ModificationSet modifications,
                                                                                                         RtmTimeline timeLine,
                                                                                                         Date lastSync )
    {

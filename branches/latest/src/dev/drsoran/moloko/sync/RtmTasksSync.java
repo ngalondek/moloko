@@ -39,7 +39,7 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
@@ -60,7 +60,7 @@ public final class RtmTasksSync
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       RtmTimeline timeline,
-                                      ModificationList modifications,
+                                      ModificationSet modifications,
                                       Date lastSyncOut,
                                       MolokoSyncResult syncResult )
    {

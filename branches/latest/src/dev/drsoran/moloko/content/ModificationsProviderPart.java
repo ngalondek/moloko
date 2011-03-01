@@ -40,6 +40,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
@@ -321,23 +322,29 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                   
                   for ( Modification modification : modifications )
                   {
-                     final Uri entityUri = modification.getEntityUri();
-                     
                      // Check id the modification should be stored or simply modify
                      // the entity.
                      if ( modification.isPersistent() )
                      {
                         // Check if modification already exists
                         final Modification existingMod = getModification( client,
-                                                                          entityUri,
+                                                                          modification.getEntityUri(),
                                                                           modification.getColName() );
                         if ( existingMod != null )
                         {
-                           // Update the modification with the new value.
-                           operations.add( ContentProviderOperation.newUpdate( Modifications.CONTENT_URI )
-                                                                   .withValue( Modifications.NEW_VALUE,
-                                                                               modification.getNewValue() )
-                                                                   .build() );
+                           // Check if the new value equals the synced value from the existing modification, if so the
+                           // user has reverted his change and we delete the modification.
+                           if ( !SyncUtils.hasChanged( existingMod.getSyncedValue(),
+                                                       modification.getNewValue() ) )
+                              operations.add( ContentProviderOperation.newDelete( Queries.contentUriWithId( Modifications.CONTENT_URI,
+                                                                                                            existingMod.getId() ) )
+                                                                      .build() );
+                           else
+                              // Update the modification with the new value.
+                              operations.add( ContentProviderOperation.newUpdate( Modifications.CONTENT_URI )
+                                                                      .withValue( Modifications.NEW_VALUE,
+                                                                                  modification.getNewValue() )
+                                                                      .build() );
                         }
                         else
                         {

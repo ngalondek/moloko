@@ -29,7 +29,7 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
 
 
@@ -43,7 +43,8 @@ public interface IServerSyncOperation< T > extends ISyncOperation
    
 
 
-   public IContentProviderSyncOperation removeModifications( ModificationList modifications );
+   public IContentProviderSyncOperation removeModifications( ModificationSet modifications,
+                                                             boolean revert );
    
 
 

@@ -26,7 +26,7 @@ import java.util.Date;
 
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 
 
@@ -35,7 +35,7 @@ public interface ITwoWaySyncable< T extends IContentProviderSyncable< T >, V >
 {
    public DirectedSyncOperations< V > computeMergeOperations( Date lastSync,
                                                               RtmTimeline timeline,
-                                                              ModificationList modifications,
+                                                              ModificationSet modifications,
                                                               T serverElement,
                                                               T localElement );
 }

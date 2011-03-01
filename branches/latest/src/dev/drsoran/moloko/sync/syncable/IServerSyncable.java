@@ -27,7 +27,7 @@ import java.util.List;
 
 import com.mdt.rtm.data.RtmTimeline;
 
-import dev.drsoran.moloko.content.ModificationList;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 
@@ -69,7 +69,7 @@ public interface IServerSyncable< T >
 
    public List< IServerSyncOperation< T > > computeServerUpdateOperations( Date lastSync,
                                                                            RtmTimeline timeline,
-                                                                           ModificationList modifications );
+                                                                           ModificationSet modifications );
    
 
 
@@ -77,5 +77,6 @@ public interface IServerSyncable< T >
    
 
 
-   public IContentProviderSyncOperation removeModifications( ModificationList modifictaions );
+   public IContentProviderSyncOperation removeModifications( ModificationSet modifictaions,
+                                                             boolean revert );
 }

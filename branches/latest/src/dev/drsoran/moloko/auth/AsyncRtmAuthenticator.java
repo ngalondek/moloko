@@ -45,11 +45,11 @@ public class AsyncRtmAuthenticator
    private abstract class RtmAsyncAuthTask< Param, Result > extends
             AsyncTask< Param, Void, Result >
    {
-      protected final WeakReference< AuthenticatorActivity > activity;
+      protected volatile WeakReference< AuthenticatorActivity > activity;
       
-      protected final WeakReference< ServiceImpl > service;
+      protected volatile WeakReference< ServiceImpl > service;
       
-      protected ServiceException exception;
+      protected volatile ServiceException exception;
       
       
 
@@ -94,7 +94,7 @@ public class AsyncRtmAuthenticator
       {
          String result = null;
          
-         if ( service != null && params.length > 0 )
+         if ( service.get() != null && params.length > 0 )
          {
             try
             {
@@ -138,7 +138,7 @@ public class AsyncRtmAuthenticator
       {
          String result = null;
          
-         if ( service != null )
+         if ( service.get() != null )
          {
             try
             {
@@ -183,7 +183,7 @@ public class AsyncRtmAuthenticator
       {
          RtmAuth result = null;
          
-         if ( service != null && params.length > 0 )
+         if ( service.get() != null && params.length > 0 )
          {
             try
             {

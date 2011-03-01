@@ -48,6 +48,7 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable.SyncDirection;
+import dev.drsoran.moloko.sync.syncable.IServerSyncable.SyncResultDirection;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.Intents;
@@ -387,6 +388,63 @@ public final class SyncUtils
                                                                            serverValue )
                                                                .build(),
                                        Op.UPDATE );
+      }
+      
+      return syncDir;
+   }
+   
+
+
+   public final static < V > IServerSyncable.SyncResultDirection getSyncDirection( SyncProperties properties,
+                                                                                   String columnName,
+                                                                                   V serverValue,
+                                                                                   V localValue,
+                                                                                   Class< V > valueClass )
+   {
+      IServerSyncable.SyncResultDirection syncDir = SyncResultDirection.NOTHING;
+      
+      // Check if we should simply sync out
+      if ( properties.serverModDate == null )
+      {
+         syncDir = SyncResultDirection.SERVER;
+      }
+      
+      else if ( hasChanged( serverValue, localValue ) )
+      {
+         final Modification modification = properties.modifications.find( properties.uri,
+                                                                          columnName );
+         // Check if the local value was modified
+         if ( modification != null )
+         {
+            // MERGE
+            final V syncedValue = modification.getSyncedValue( valueClass );
+            
+            // Check if the server value has changed compared to the last synced value.
+            if ( hasChanged( syncedValue, serverValue ) )
+            {
+               // CONFLICT: Local and server element has changed.
+               // Let the modified date of the elements decide in which direction to sync.
+               //
+               // In case of equal dates we take the server value cause this
+               // value we have transferred already.
+               if ( properties.serverModDate.getTime() >= properties.localModDate.getTime() )
+                  // LOCAL UPDATE: The server element was modified after the local value.
+                  syncDir = IServerSyncable.SyncResultDirection.LOCAL;
+               else
+                  // SERVER UPDATE: The local element was modified after the server element.
+                  syncDir = IServerSyncable.SyncResultDirection.SERVER;
+            }
+            else
+               // SERVER UPDATE: The server value has not been changed since last sync,
+               // so use local modified value.
+               syncDir = IServerSyncable.SyncResultDirection.SERVER;
+         }
+         
+         // LOCAL UPDATE: If the element has not locally changed, take the server version
+         else
+         {
+            syncDir = IServerSyncable.SyncResultDirection.LOCAL;
+         }
       }
       
       return syncDir;

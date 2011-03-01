@@ -47,6 +47,8 @@ import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.SyncTask;
 
 
@@ -107,6 +109,17 @@ public final class RtmTasksSync
          return false;
       }
       
+      // Check if we have server write access
+      if ( timeline != null )
+      {
+         // Check if we have outgoing changes
+         if ( modifications.hasModification( TaskSeries.CONTENT_URI )
+            || modifications.hasModification( RawTasks.CONTENT_URI ) )
+         {
+            
+         }
+      }
+      
       // Sync TaskSeries incoming cause we need to insert new TaskSeries only once.
       {
          final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( local_TaskSeries,
@@ -116,7 +129,6 @@ public final class RtmTasksSync
          syncResult.localOps.addAll( syncOperations );
       }
       
-      // Check if we have server write access
       if ( timeline != null )
       {
          // Do a 2-way diff

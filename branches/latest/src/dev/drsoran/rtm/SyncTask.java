@@ -42,12 +42,12 @@ import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.sync.operation.ServerSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -57,7 +57,8 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
-public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
+public class SyncTask implements IContentProviderSyncOperation< SyncTask >,
+         IServerSyncable< SyncTask, RtmTaskSeries >
 {
    
    private final static class LessIdComperator implements Comparator< SyncTask >
@@ -297,18 +298,15 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        SyncTask serverElement )
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( SyncTask serverElement )
    {
       return syncImpl( serverElement,
                        this,
-                       SyncProperties.< RtmTaskSeries > newLocalOnlyInstance( lastSync,
-                                                                              serverElement.getModifiedDate(),
-                                                                              this.getModifiedDate(),
-                                                                              Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                        getTaskSeriesId() ) ),
-                       SyncProperties.< RtmTaskSeries > newLocalOnlyInstance( lastSync,
-                                                                              serverElement.getModifiedDate(),
+                       SyncProperties.newLocalOnlyInstance( serverElement.getModifiedDate(),
+                                                            this.getModifiedDate(),
+                                                            Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                      getTaskSeriesId() ) ),
+                       SyncProperties.< RtmTaskSeries > newLocalOnlyInstance( serverElement.getModifiedDate(),
                                                                               this.getModifiedDate(),
                                                                               Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                                         getId() ) ) ).operations.getLocalOperations();
@@ -316,56 +314,118 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
    
 
 
-   public List< IServerSyncOperation< RtmTaskSeries > > computeServerUpdateOperations( Date lastSync,
-                                                                                       RtmTimeline timeline,
-                                                                                       ModificationSet modifications )
+   public IServerSyncOperation< RtmTaskSeries > computeServerUpdateOperation( RtmTimeline timeline,
+                                                                              ModificationSet modifications,
+                                                                              SyncTask serverElement )
    {
-      return syncImpl( this,
-                       this,
-                       SyncProperties.< RtmTaskSeries > newInstance( SyncDirection.SERVER_ONLY,
-                                                                     lastSync,
-                                                                     this.getModifiedDate(),
-                                                                     this.getModifiedDate(),
-                                                                     Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+      ServerSyncOperation.Builder< SyncTask, RtmTaskSeries > operation = ServerSyncOperation.newUpdate( this );
+      
+      // In case we have no server element (incremental sync)
+      if ( serverElement == null )
+         serverElement = this;
+      
+      // RtmTaskSeries ///
+      {
+         final SyncProperties properties = SyncProperties.newInstance( serverElement == this
+                                                                                            ? null
+                                                                                            : serverElement.getModifiedDate(),
+                                                                       getModifiedDate(),
+                                                                       Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                                 getTaskSeriesId() ),
+                                                                       modifications );
+         // ListId
+         if ( SyncUtils.getSyncDirection( properties,
+                                          TaskSeries.LIST_ID,
+                                          serverElement.getListId(),
+                                          getListId(),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            String oldListId = null;
+            
+            // In case we have no server element (incremental sync), we look for the modification
+            if ( serverElement == this )
+            {
+               final Modification modification = modifications.find( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                                                                getTaskSeriesId() ),
-                                                                     modifications,
-                                                                     timeline ),
-                       SyncProperties.< RtmTaskSeries > newInstance( SyncDirection.SERVER_ONLY,
-                                                                     lastSync,
-                                                                     this.getModifiedDate(),
-                                                                     this.getModifiedDate(),
-                                                                     Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                               getId() ),
-                                                                     modifications,
-                                                                     timeline ) ).operations.getServerOperations();
-   }
-   
-
-
-   public DirectedSyncOperations< RtmTaskSeries > computeMergeOperations( Date lastSync,
-                                                                          RtmTimeline timeline,
-                                                                          ModificationSet modifications,
-                                                                          SyncTask serverElement,
-                                                                          SyncTask localElement )
-   {
-      return syncImpl( serverElement,
-                       localElement,
-                       SyncProperties.< RtmTaskSeries > newInstance( SyncDirection.BOTH,
-                                                                     lastSync,
-                                                                     serverElement.getModifiedDate(),
-                                                                     localElement.getModifiedDate(),
-                                                                     Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                               getTaskSeriesId() ),
-                                                                     modifications,
-                                                                     timeline ),
-                       SyncProperties.< RtmTaskSeries > newInstance( SyncDirection.BOTH,
-                                                                     lastSync,
-                                                                     serverElement.getModifiedDate(),
-                                                                     localElement.getModifiedDate(),
-                                                                     Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                               getId() ),
-                                                                     modifications,
-                                                                     timeline ) ).operations;
+                                                                     TaskSeries.LIST_ID );
+               if ( modification != null )
+                  oldListId = modification.getSyncedValue();
+            }
+            else
+            {
+               oldListId = serverElement.getListId();
+            }
+            
+            operation.add( timeline.tasks_moveTo( oldListId,
+                                                  getListId(),
+                                                  getTaskSeriesId(),
+                                                  getId() ) );
+         }
+         
+         // Name
+         if ( SyncUtils.getSyncDirection( properties,
+                                          TaskSeries.TASKSERIES_NAME,
+                                          serverElement.getName(),
+                                          getName(),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            operation.add( timeline.tasks_setName( getListId(),
+                                                   getTaskSeriesId(),
+                                                   getId(),
+                                                   getName() ) );
+         }
+         
+         // Location
+         if ( SyncUtils.getSyncDirection( properties,
+                                          TaskSeries.LOCATION_ID,
+                                          serverElement.getLocationId(),
+                                          getLocationId(),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            operation.add( timeline.tasks_setLocation( getListId(),
+                                                       getTaskSeriesId(),
+                                                       getId(),
+                                                       getLocationId() ) );
+         }
+         
+         // URL
+         if ( SyncUtils.getSyncDirection( properties,
+                                          TaskSeries.URL,
+                                          serverElement.getUrl(),
+                                          getUrl(),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            operation.add( timeline.tasks_setURL( getListId(),
+                                                  getTaskSeriesId(),
+                                                  getId(),
+                                                  getUrl() ) );
+         }
+      }
+      
+      // RtmTask ///
+      {
+         final SyncProperties properties = SyncProperties.newInstance( serverElement == this
+                                                                                            ? null
+                                                                                            : serverElement.getModifiedDate(),
+                                                                       getModifiedDate(),
+                                                                       Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                 getId() ),
+                                                                       modifications );
+         // Priority
+         if ( SyncUtils.getSyncDirection( properties,
+                                          RawTasks.PRIORITY,
+                                          RtmTask.convertPriority( serverElement.getPriority() ),
+                                          RtmTask.convertPriority( getPriority() ),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            operation.add( timeline.tasks_setPriority( getListId(),
+                                                       getTaskSeriesId(),
+                                                       getId(),
+                                                       getPriority() ) );
+         }
+      }
+      
+      return operation.build();
    }
    
 
@@ -401,7 +461,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
       final List< SyncTask > tasks = fromTaskSeries( resultElement );
       
       for ( SyncTask syncTask : tasks )
-         builder.add( computeContentProviderUpdateOperations( null, syncTask ) );
+         builder.add( computeContentProviderUpdateOperations( syncTask ) );
       
       return builder.build();
    }
@@ -644,7 +704,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
    
 
 
-   private static void syncNotes( SyncProperties< RtmTaskSeries > properties,
+   private static void syncNotes( SyncProperties properties,
                                   List< RtmTaskNote > serverValues,
                                   List< RtmTaskNote > localValues )
    {
@@ -666,7 +726,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
    
 
 
-   private static void syncTags( SyncProperties< RtmTaskSeries > properties,
+   private static void syncTags( SyncProperties properties,
                                  List< Tag > serverValues,
                                  List< Tag > localValues )
    {
@@ -687,7 +747,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
    
 
 
-   private static void syncParticipants( SyncProperties< RtmTaskSeries > properties,
+   private static void syncParticipants( SyncProperties properties,
                                          ParticipantList serverValues,
                                          ParticipantList localValues )
    {
@@ -695,8 +755,7 @@ public class SyncTask implements ITwoWaySyncable< SyncTask, RtmTaskSeries >
       {
          case LOCAL_ONLY:
          {
-            properties.operations.addAllLocalOps( localValues.computeContentProviderUpdateOperations( properties.lastSyncDate,
-                                                                                                      serverValues ) );
+            properties.operations.addAllLocalOps( localValues.computeContentProviderUpdateOperations( serverValues ) );
          }
             break;
          default :

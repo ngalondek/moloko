@@ -22,7 +22,6 @@
 
 package dev.drsoran.rtm;
 
-import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
@@ -185,8 +184,7 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        Tag update )
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Tag update )
    {
       final Uri uri = getContentUriWithId();
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();

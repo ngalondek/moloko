@@ -25,21 +25,11 @@ package dev.drsoran.moloko.sync.util;
 import java.util.Date;
 
 import android.net.Uri;
-
-import com.mdt.rtm.data.RtmTimeline;
-
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
-import dev.drsoran.moloko.sync.syncable.IServerSyncable.SyncDirection;
 
 
-public class SyncProperties< T >
+public class SyncProperties
 {
-   
-   public final SyncDirection syncDirection;
-   
-   public final Date lastSyncDate;
-   
    public final Date serverModDate;
    
    public final Date localModDate;
@@ -48,57 +38,36 @@ public class SyncProperties< T >
    
    public final ModificationSet modifications;
    
-   public final RtmTimeline timeline;
-   
-   public final DirectedSyncOperations< T > operations = new DirectedSyncOperations< T >();
-   
    
 
-   private SyncProperties( SyncDirection syncDirection, Date lastSyncDate,
-      Date serverModDate, Date localModDate, Uri uri,
-      ModificationSet modifications, RtmTimeline timeline )
+   private SyncProperties( Date serverModDate, Date localModDate, Uri uri,
+      ModificationSet modifications )
    {
-      this.syncDirection = syncDirection;
-      this.lastSyncDate = lastSyncDate;
       this.serverModDate = serverModDate;
       this.localModDate = localModDate;
       this.uri = uri;
       this.modifications = modifications;
-      this.timeline = timeline;
    }
    
 
 
-   public final static < T > SyncProperties< T > newInstance( SyncDirection syncDirection,
-                                                              Date lastSyncDate,
-                                                              Date serverModDate,
-                                                              Date localModDate,
-                                                              Uri uri,
-                                                              ModificationSet modifications,
-                                                              RtmTimeline timeline )
+   public final static SyncProperties newInstance( Date serverModDate,
+                                                   Date localModDate,
+                                                   Uri uri,
+                                                   ModificationSet modifications )
    {
-      return new SyncProperties< T >( syncDirection,
-                                      lastSyncDate,
-                                      serverModDate,
-                                      localModDate,
-                                      uri,
-                                      modifications,
-                                      timeline );
+      return new SyncProperties( serverModDate,
+                                 localModDate,
+                                 uri,
+                                 modifications );
    }
    
 
 
-   public final static < T > SyncProperties< T > newLocalOnlyInstance( Date lastSyncDate,
-                                                                       Date serverModDate,
-                                                                       Date localModDate,
-                                                                       Uri uri )
+   public final static SyncProperties newLocalOnlyInstance( Date serverModDate,
+                                                            Date localModDate,
+                                                            Uri uri )
    {
-      return new SyncProperties< T >( SyncDirection.LOCAL_ONLY,
-                                      lastSyncDate,
-                                      serverModDate,
-                                      localModDate,
-                                      uri,
-                                      null,
-                                      null );
+      return new SyncProperties( serverModDate, localModDate, uri, null );
    }
 }

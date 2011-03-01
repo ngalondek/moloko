@@ -260,8 +260,7 @@ public class RtmSettings extends RtmData implements
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        RtmSettings update )
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( RtmSettings update )
    {
       final Uri settingsUri = getContentUriWithId();
       

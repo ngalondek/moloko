@@ -26,17 +26,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
+import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.sync.syncable.ITwoWaySyncable;
+import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 
 
 public class SyncDiffer
@@ -257,6 +258,104 @@ public class SyncDiffer
                   operations.addAllServerOps( localElement.computeServerUpdateOperations( lastSync,
                                                                                           timeLine,
                                                                                           modifications ) );
+               }
+            }
+         }
+      }
+      
+      return operations;
+   }
+   
+
+
+   public final static < T extends IServerSyncable< T, V >, V > List< IServerSyncOperation< V > > outDiff( List< ? extends T > serverList,
+                                                                                                           List< ? extends T > localList,
+                                                                                                           Comparator< ? super T > comp,
+                                                                                                           ModificationSet modifications,
+                                                                                                           RtmTimeline timeLine,
+                                                                                                           Date lastSync )
+   {
+      if ( serverList == null || localList == null || comp == null
+         || timeLine == null )
+         throw new NullPointerException();
+      
+      Collections.sort( serverList, comp );
+      Collections.sort( localList, comp );
+      
+      final List< IServerSyncOperation< V > > operations = new LinkedList< IServerSyncOperation< V > >();
+      
+      final boolean[] localTouchedElements = new boolean[ localList.size() ];
+      
+      // for each element of the server list
+      for ( T serverElement : serverList )
+      {
+         final int pos = Collections.binarySearch( localList,
+                                                   serverElement,
+                                                   comp );
+         
+         // MERGE:
+         // SERVER DELETE: The server element is contained in the local list.
+         if ( pos >= 0 )
+         {
+            localTouchedElements[ pos ] = true;
+            final Date serverElementDeleted = serverElement.getDeletedDate();
+            final T localElement = localList.get( pos );
+            
+            // The server element is not marked as deleted.
+            if ( serverElementDeleted == null )
+            {
+               final Date serverElementModified = serverElement.getModifiedDate();
+               final Date localElementDeleted = localElement.getDeletedDate();
+               
+               // SERVER DELETE: The local element is marked as deleted and the server element is not modified
+               // after the local delete.
+               if ( localElementDeleted != null
+                  && localElementDeleted.after( serverElementModified ) )
+               {
+                  operations.add( serverElement.computeServerDeleteOperation( timeLine ) );
+               }
+               
+               // MERGE: The local element is not deleted or deleted before server modification.
+               else
+               {
+                  operations.addAll( localElement.computeServerUpdateOperations( timeLine,
+                                                                                 modifications,
+                                                                                 serverElement ) );
+               }
+            }
+         }
+      }
+      
+      // Get all local elements which have not been touched during the diff.
+      for ( int i = 0; i < localTouchedElements.length; i++ )
+      {
+         if ( !localTouchedElements[ i ] )
+         {
+            final T localElement = localList.get( i );
+            final Date localElementCreated = localElement.getCreatedDate();
+            
+            // SERVER INSERT: The local element has been created after the last sync.
+            if ( localElementCreated != null
+               && ( lastSync == null || lastSync.before( localElementCreated ) ) )
+            {
+               localTouchedElements[ i ] = true;
+               operations.add( localList.get( i )
+                                        .computeServerInsertOperation( timeLine ) );
+            }
+            
+            // SERVER UPDATE: The local element was modified since the last sync and the
+            // server element was not seen.
+            else
+            {
+               final Date localElementModified = localElement.getModifiedDate();
+               
+               if ( localElementModified != null
+                  && ( lastSync == null || lastSync.before( localElementModified ) ) )
+               {
+                  localTouchedElements[ i ] = true;
+                  operations.addAll( localElement.computeServerUpdateOperations( timeLine,
+                                                                                 modifications,
+                                                                                 null ) );
                }
             }
          }

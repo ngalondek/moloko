@@ -24,7 +24,6 @@ package dev.drsoran.rtm;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -199,8 +198,7 @@ public class ParticipantList implements
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        ParticipantList update )
+   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( ParticipantList update )
    {
       final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( participants,
                                                                                                                   Participant.LESS_ID );

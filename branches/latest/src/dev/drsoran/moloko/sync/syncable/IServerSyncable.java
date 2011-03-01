@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.sync.syncable;
 
 import java.util.Date;
-import java.util.List;
 
 import com.mdt.rtm.data.RtmTimeline;
 
@@ -32,7 +31,7 @@ import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 
 
-public interface IServerSyncable< T >
+public interface IServerSyncable< T, V >
 {
    public static enum SyncDirection
    {
@@ -59,17 +58,17 @@ public interface IServerSyncable< T >
    
 
 
-   public IServerSyncOperation< T > computeServerInsertOperation( RtmTimeline timeline );
+   public IServerSyncOperation< V > computeServerInsertOperation( RtmTimeline timeline );
    
 
 
-   public IServerSyncOperation< T > computeServerDeleteOperation( RtmTimeline timeline );
+   public IServerSyncOperation< V > computeServerDeleteOperation( RtmTimeline timeline );
    
 
 
-   public List< IServerSyncOperation< T > > computeServerUpdateOperations( Date lastSync,
-                                                                           RtmTimeline timeline,
-                                                                           ModificationSet modifications );
+   public IServerSyncOperation< V > computeServerUpdateOperation( RtmTimeline timeline,
+                                                                  ModificationSet modifications,
+                                                                  T serverElement );
    
 
 

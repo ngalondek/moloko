@@ -37,6 +37,7 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,6 +97,8 @@ public class TaskActivity extends Activity
    
    private View editTaskBtn;
    
+   private Button completeTaskBtn;
+   
    
 
    @Override
@@ -146,6 +149,7 @@ public class TaskActivity extends Activity
                participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
                urlSection = taskContainer.findViewById( R.id.task_url );
                editTaskBtn = taskContainer.findViewById( R.id.task_buttons_edit );
+               completeTaskBtn = (Button) findViewById( R.id.task_button_complete );
                
                inflateNotes( taskContainer, task );
             }
@@ -242,6 +246,29 @@ public class TaskActivity extends Activity
    
 
 
+   public void onCompleteTask( View v )
+   {
+      /*
+       * final ModificationSet modifications = new ModificationSet();
+       * 
+       * modifications.add( Modification.newModification( RawTasks.CONTENT_URI, task.getId(), RawTasks.COMPLETED_DATE,
+       * task.getCompleted() != null ? null : System.currentTimeMillis() ) );
+       * 
+       * modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
+       * 
+       * boolean ok = false;
+       * 
+       * try { ok = new ApplyModificationsTask( this ).execute( modifications ).get(); } catch ( InterruptedException e
+       * ) { Log.e( TAG, "Applying task changes failed", e ); ok = false; } catch ( ExecutionException e ) { Log.e( TAG,
+       * "Applying task changes failed", e ); ok = false; }
+       * 
+       * Toast.makeText( this, ok ? R.string.task_save_ok : R.string.task_save_error, Toast.LENGTH_LONG ).show();
+       */
+      finish();
+   }
+   
+
+
    private void loadTask()
    {
       if ( task != null )
@@ -253,11 +280,17 @@ public class TaskActivity extends Activity
                                                             FULL_DATE_FLAGS ) );
          
          if ( task.getCompleted() != null )
+         {
             completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                        .getTime(),
                                                                    FULL_DATE_FLAGS ) );
+            completeTaskBtn.setText( R.string.btn_uncomplete );
+         }
          else
+         {
             completedDate.setVisibility( View.GONE );
+            completeTaskBtn.setText( R.string.btn_complete );
+         }
          
          if ( !TextUtils.isEmpty( task.getSource() ) )
          {

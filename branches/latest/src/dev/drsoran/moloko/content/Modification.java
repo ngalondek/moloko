@@ -28,6 +28,8 @@ import java.util.Date;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public class Modification implements Comparable< Modification >
@@ -207,20 +209,14 @@ public class Modification implements Comparable< Modification >
    
 
 
-   public final static < T > Modification newModification( String id,
-                                                           Uri entityUri,
+   public final static < T > Modification newModification( Uri contentUri,
+                                                           String id,
                                                            String colName,
-                                                           T newValue,
-                                                           T syncedValue )
+                                                           T newValue )
    {
-      return new Modification( id,
-                               entityUri,
-                               colName,
-                               toString( newValue ),
-                               toString( syncedValue ),
-                               true,
-                               true,
-                               System.currentTimeMillis() );
+      return newModification( Queries.contentUriWithId( contentUri, id ),
+                              colName,
+                              newValue );
    }
    
 
@@ -241,6 +237,19 @@ public class Modification implements Comparable< Modification >
    
 
 
+   public final static < T > Modification newNonPersistentModification( Uri contentUri,
+                                                                        String id,
+                                                                        String colName,
+                                                                        T newValue )
+   {
+      return newNonPersistentModification( Queries.contentUriWithId( contentUri,
+                                                                     id ),
+                                           colName,
+                                           newValue );
+   }
+   
+
+
    public final static < T > Modification newNonPersistentModification( Uri entityUri,
                                                                         String colName,
                                                                         T newValue )
@@ -253,6 +262,16 @@ public class Modification implements Comparable< Modification >
                                false,
                                false,
                                System.currentTimeMillis() );
+   }
+   
+
+
+   public final static Modification newTaskModified( String taskSeriesId )
+   {
+      return newNonPersistentModification( TaskSeries.CONTENT_URI,
+                                           taskSeriesId,
+                                           TaskSeries.MODIFIED_DATE,
+                                           System.currentTimeMillis() );
    }
    
 

@@ -13,7 +13,7 @@
       implementation
    -->
 
-<LinearLayout
+<FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    style="@style/Task"
@@ -22,7 +22,8 @@
 
    <ScrollView
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent">
+      android:layout_height="fill_parent"
+      android:paddingBottom="70dip">
 
       <LinearLayout
          android:id="@+id/task_container"
@@ -199,5 +200,23 @@
 
       </LinearLayout>
    </ScrollView>
+   
+   <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="70dip"
+      android:background="@color/app_btnbar_bgnd_fill"
+      android:layout_gravity="bottom">
 
-</LinearLayout>
+      <Button
+         android:id="@+id/task_button_complete"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="5dip"
+         android:layout_marginBottom="5dip"
+         android:layout_gravity="center"
+         android:layout_weight="1.0"
+         android:text="@string/btn_complete"
+         android:onClick="onCompleteTask" />    
+   </LinearLayout>
+
+</FrameLayout>

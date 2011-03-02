@@ -26,19 +26,15 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -51,13 +47,13 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -86,61 +82,6 @@ public class TaskEditActivity extends Activity
    
    public final static int RESULT_EDIT_TASK_CHANGED = 1 << 9
       | RESULT_EDIT_TASK_OK;
-   
-   
-   private abstract class SpinnerChangedListener implements
-            OnItemSelectedListener
-   {
-      
-      abstract public void onItemSelected( AdapterView< ? > parent,
-                                           View view,
-                                           int pos,
-                                           long row );
-      
-
-
-      public void onNothingSelected( AdapterView< ? > arg0 )
-      {
-      }
-   }
-   
-
-   private class ApplyModificationsTask extends AsyncTask< Void, Void, Boolean >
-   {
-      private ProgressDialog dialog;
-      
-      
-
-      @Override
-      protected void onPreExecute()
-      {
-         dialog = new ProgressDialog( TaskEditActivity.this );
-         dialog.setMessage( TaskEditActivity.this.getString( R.string.task_edit_dlg_save_task ) );
-         dialog.setCancelable( false );
-         dialog.show();
-      }
-      
-
-
-      @Override
-      protected void onPostExecute( Boolean result )
-      {
-         if ( dialog != null )
-            dialog.dismiss();
-      }
-      
-
-
-      @Override
-      protected Boolean doInBackground( Void... params )
-      {
-         if ( modifications.size() == 0 )
-            return Boolean.TRUE;
-         
-         return Boolean.valueOf( ModificationsProviderPart.applyModifications( getContentResolver(),
-                                                                               modifications ) );
-      }
-   }
    
    private Task task;
    
@@ -392,13 +333,11 @@ public class TaskEditActivity extends Activity
          if ( modifications.size() > 0 )
          {
             // set the taskseries modification time to now
-            modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                    task.getTaskSeriesId() ),
-                                                                          TaskSeries.MODIFIED_DATE,
-                                                                          System.currentTimeMillis() ) );
+            modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
             try
             {
-               if ( new ApplyModificationsTask().execute().get() )
+               if ( new ApplyModificationsTask( this ).execute( modifications )
+                                                      .get() )
                {
                   result = RESULT_EDIT_TASK_CHANGED;
                }

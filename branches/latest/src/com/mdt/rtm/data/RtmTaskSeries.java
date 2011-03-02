@@ -35,6 +35,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
+import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
@@ -48,6 +49,7 @@ import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParcelableDate;
@@ -503,6 +505,19 @@ public class RtmTaskSeries extends RtmData implements
                                                 .withValues( RtmTaskSeriesProviderPart.getContentValues( this,
                                                                                                          true ) )
                                                 .build() );
+      }
+      
+      // Check for notes
+      {
+         final List< RtmTaskNote > notes = getNotes().getNotes();
+         
+         for ( RtmTaskNote rtmTaskNote : notes )
+         {
+            operation.add( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                                   .withValues( RtmNotesProviderPart.getContentValues( rtmTaskNote,
+                                                                                                       true ) )
+                                                   .build() );
+         }
       }
       
       // Check for tags

@@ -34,7 +34,6 @@ import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
-import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
@@ -54,9 +53,8 @@ public final class RtmListsSync
 
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
-                                      RtmTimeline timeline,
                                       ModificationSet modifications,
-                                      Date lastSyncOut,
+                                      Date lastSync,
                                       MolokoSyncResult syncResult )
    {
       // Get all lists from local database
@@ -109,8 +107,9 @@ public final class RtmListsSync
       
       final ContentProviderSyncableList< RtmList > local_SyncList = new ContentProviderSyncableList< RtmList >( local_RtmLists,
                                                                                                                 RtmList.LESS_ID );
-      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_RtmLists,
-                                                                                    local_SyncList );
+      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_RtmLists,
+                                                                                      local_SyncList,
+                                                                                      true /* always full sync */);
       syncResult.localOps.addAll( syncOperations );
       
       return true;

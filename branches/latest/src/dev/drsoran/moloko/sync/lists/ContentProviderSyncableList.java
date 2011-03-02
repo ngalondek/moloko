@@ -24,8 +24,6 @@ package dev.drsoran.moloko.sync.lists;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
@@ -66,21 +64,18 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
 
 
    @Override
-   public List< IContentProviderSyncOperation > computeUpdateOperation( int pos,
-                                                                        T updateElement,
-                                                                        Date lastSync )
+   public IContentProviderSyncOperation computeUpdateOperation( int pos,
+                                                                T updateElement )
    {
-      return super.computeUpdateOperation( pos, updateElement, lastSync );
+      return super.computeUpdateOperation( pos, updateElement );
    }
    
 
 
    @Override
-   protected List< IContentProviderSyncOperation > internalComputeUpdateOperation( T old,
-                                                                                   T updateElement,
-                                                                                   Date lastSync )
+   protected IContentProviderSyncOperation internalComputeUpdateOperation( T old,
+                                                                           T updateElement )
    {
-      return old.computeContentProviderUpdateOperations( lastSync,
-                                                         updateElement );
+      return old.computeContentProviderUpdateOperation( updateElement );
    }
 }

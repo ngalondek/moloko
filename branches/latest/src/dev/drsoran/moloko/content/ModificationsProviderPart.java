@@ -398,10 +398,17 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    public static ContentProviderOperation getRemoveModificationOps( Uri contentUri,
                                                                     String entityId )
    {
+      return getRemoveModificationOps( Queries.contentUriWithId( contentUri,
+                                                                 entityId ) );
+   }
+   
+
+
+   public static ContentProviderOperation getRemoveModificationOps( Uri entityUri )
+   {
       return ContentProviderOperation.newDelete( Modifications.CONTENT_URI )
                                      .withSelection( new StringBuilder( Modifications.ENTITY_URI ).append( " = '" )
-                                                                                                  .append( Queries.contentUriWithId( contentUri,
-                                                                                                                                     entityId ) )
+                                                                                                  .append( entityUri )
                                                                                                   .append( "'" )
                                                                                                   .toString(),
                                                      null )

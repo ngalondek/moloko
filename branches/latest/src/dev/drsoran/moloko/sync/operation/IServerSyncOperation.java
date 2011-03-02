@@ -23,16 +23,20 @@
 package dev.drsoran.moloko.sync.operation;
 
 import java.util.List;
+import java.util.Map;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
+import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.RtmProvider;
+
 
 public interface IServerSyncOperation< T > extends ISyncOperation
 {
-   public T execute() throws ServiceException;
+   public T execute( RtmProvider rtmProvider ) throws ServiceException;
    
 
 
@@ -40,5 +44,6 @@ public interface IServerSyncOperation< T > extends ISyncOperation
    
 
 
-   public List< TimeLineMethod< T > > getMethods();
+   public Map< TimeLineMethod< T >, Modification > getMethods();
+   
 }

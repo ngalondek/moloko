@@ -24,12 +24,14 @@ package dev.drsoran.moloko.sync.operation;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
 
+import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
 
@@ -40,7 +42,6 @@ public final class NoopServerSyncOperation< T > implements
    
    private NoopServerSyncOperation()
    {
-      
    }
    
 
@@ -52,16 +53,16 @@ public final class NoopServerSyncOperation< T > implements
    
 
 
-   public List< TimeLineMethod< T >> getMethods()
+   public Map< TimeLineMethod< T >, Modification > getMethods()
    {
-      return Collections.emptyList();
+      return Collections.emptyMap();
    }
    
 
 
-   public IContentProviderSyncOperation execute( RtmProvider provider ) throws ServiceException
+   public T execute( RtmProvider rtmProvider ) throws ServiceException
    {
-      return NoopContentProviderSyncOperation.INSTANCE;
+      return null;
    }
    
 

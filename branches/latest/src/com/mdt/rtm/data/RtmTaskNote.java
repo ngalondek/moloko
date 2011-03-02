@@ -255,17 +255,17 @@ public class RtmTaskNote extends RtmData implements
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      SyncUtils.updateDate( created,
-                            update.created,
-                            uri,
-                            Notes.NOTE_CREATED_DATE,
-                            result );
+      if ( SyncUtils.hasChanged( created, update.created ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_CREATED_DATE,
+                                                         update.created )
+                                             .build() );
       
-      SyncUtils.updateDate( modified,
-                            update.modified,
-                            uri,
-                            Notes.NOTE_MODIFIED_DATE,
-                            result );
+      if ( SyncUtils.hasChanged( modified, update.modified ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_MODIFIED_DATE,
+                                                         update.modified )
+                                             .build() );
       
       if ( SyncUtils.hasChanged( title, update.title ) )
          result.add( ContentProviderOperation.newUpdate( uri )

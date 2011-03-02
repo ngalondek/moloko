@@ -31,17 +31,14 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTaskNote;
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
-import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
@@ -49,9 +46,10 @@ import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
-import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -302,83 +300,6 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
    {
       ContentProviderSyncOperation.Builder operations = ContentProviderSyncOperation.newUpdate();
       
-      // RtmTaskSeries
-      {
-         final Uri contentUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                          getTaskSeriesId() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getListId(), getListId() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.LIST_ID,
-                                                                serverElement.getListId() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getCreatedDate(),
-                                    getCreatedDate() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.TASKSERIES_CREATED_DATE,
-                                                                serverElement.getCreatedDate() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getModifiedDate(),
-                                    getModifiedDate() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.MODIFIED_DATE,
-                                                                serverElement.getModifiedDate() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getName(), getName() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.TASKSERIES_NAME,
-                                                                serverElement.getName() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getSource(), getSource() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.SOURCE,
-                                                                serverElement.getSource() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getLocationId(),
-                                    getLocationId() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.LOCATION_ID,
-                                                                serverElement.getLocationId() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getUrl(), getUrl() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.URL,
-                                                                serverElement.getUrl() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getRecurrence(),
-                                    getRecurrence() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.RECURRENCE,
-                                                                serverElement.getRecurrence() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( Boolean.valueOf( serverElement.isEveryRecurrence() ),
-                                    Boolean.valueOf( isEveryRecurrence() ) ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                serverElement.isEveryRecurrence()
-                                                                                                 ? 1
-                                                                                                 : 0 )
-                                                    .build() );
-         
-         syncTags( operations, serverElement.getTags(), getTags() );
-         
-         syncParticipants( operations,
-                           serverElement.getParticipants(),
-                           getParticipants() );
-         
-         syncNotes( operations,
-                    serverElement.getNotes().getNotes(),
-                    getNotes().getNotes() );
-      }
-      
       // RtmTask
       {
          final Uri contentUri = Queries.contentUriWithId( RawTasks.CONTENT_URI,
@@ -387,7 +308,7 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
          if ( SyncUtils.hasChanged( serverElement.getDueDate(), getDueDate() ) )
             operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                     .withValue( RawTasks.DUE_DATE,
-                                                                serverElement.getDueDate() )
+                                                                MolokoDateUtils.getTime( serverElement.getDueDate() ) )
                                                     .build() );
          
          if ( SyncUtils.hasChanged( serverElement.hasDueTime(), hasDueTime() ) )
@@ -400,14 +321,14 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
                                     getAddedDate() ) )
             operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                     .withValue( RawTasks.ADDED_DATE,
-                                                                serverElement.getAddedDate() )
+                                                                MolokoDateUtils.getTime( serverElement.getAddedDate() ) )
                                                     .build() );
          
          if ( SyncUtils.hasChanged( serverElement.getCompletedDate(),
                                     getCompletedDate() ) )
             operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                     .withValue( RawTasks.COMPLETED_DATE,
-                                                                serverElement.getCompletedDate() )
+                                                                MolokoDateUtils.getTime( serverElement.getCompletedDate() ) )
                                                     .build() );
          
          if ( SyncUtils.hasChanged( serverElement.getPriority(), getPriority() ) )
@@ -445,7 +366,7 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
                                                                               ModificationSet modifications,
                                                                               SyncTask serverElement )
    {
-      ServerSyncOperation.Builder< SyncTask, RtmTaskSeries > operation = ServerSyncOperation.newUpdate( this );
+      ServerSyncOperation.Builder< RtmTaskSeries > operation = ServerSyncOperation.newUpdate();
       
       // In case we have no server element (incremental sync)
       if ( serverElement == null )
@@ -486,7 +407,8 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
             operation.add( timeline.tasks_moveTo( oldListId,
                                                   getListId(),
                                                   getTaskSeriesId(),
-                                                  getId() ) );
+                                                  getId() ),
+                           properties.getModification( TaskSeries.LIST_ID ) );
          }
          
          // Name
@@ -499,7 +421,8 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
             operation.add( timeline.tasks_setName( getListId(),
                                                    getTaskSeriesId(),
                                                    getId(),
-                                                   getName() ) );
+                                                   getName() ),
+                           properties.getModification( TaskSeries.TASKSERIES_NAME ) );
          }
          
          // Location
@@ -512,7 +435,8 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
             operation.add( timeline.tasks_setLocation( getListId(),
                                                        getTaskSeriesId(),
                                                        getId(),
-                                                       getLocationId() ) );
+                                                       getLocationId() ),
+                           properties.getModification( TaskSeries.LOCATION_ID ) );
          }
          
          // URL
@@ -525,7 +449,8 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
             operation.add( timeline.tasks_setURL( getListId(),
                                                   getTaskSeriesId(),
                                                   getId(),
-                                                  getUrl() ) );
+                                                  getUrl() ),
+                           properties.getModification( TaskSeries.URL ) );
          }
       }
       
@@ -548,7 +473,8 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
             operation.add( timeline.tasks_setPriority( getListId(),
                                                        getTaskSeriesId(),
                                                        getId(),
-                                                       getPriority() ) );
+                                                       getPriority() ),
+                           properties.getModification( RawTasks.PRIORITY ) );
          }
       }
       
@@ -570,98 +496,5 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
    public IServerSyncOperation< RtmTaskSeries > computeServerDeleteOperation( RtmTimeline timeLine )
    {
       return NoopServerSyncOperation.newInstance();
-   }
-   
-
-
-   public IContentProviderSyncOperation handleServerUpdateResult( RtmTaskSeries resultElement )
-   {
-      if ( resultElement == null )
-         throw new IllegalStateException( "resultElement is null" );
-      
-      if ( !resultElement.getId().equals( getTaskSeriesId() ) )
-         throw new IllegalStateException( "resultElement's ID "
-            + resultElement.getId() + " differs to expected ID "
-            + getTaskSeriesId() );
-      
-      final ContentProviderSyncOperation.Builder builder = ContentProviderSyncOperation.newUpdate();
-      final List< SyncTask > tasks = fromTaskSeries( resultElement );
-      
-      for ( SyncTask syncTask : tasks )
-         builder.add( computeContentProviderUpdateOperation( syncTask ) );
-      
-      return builder.build();
-   }
-   
-
-
-   public IContentProviderSyncOperation removeModifications( ModificationSet modifications,
-                                                             boolean revert )
-   {
-      final ContentProviderSyncOperation.Builder builder = ContentProviderSyncOperation.newDelete();
-      
-      if ( revert )
-      {
-         builder.addAll( modifications.getRevertAllOperations( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                         getId() ) ) );
-         builder.addAll( modifications.getRevertAllOperations( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                         getTaskSeriesId() ) ) );
-      }
-      else
-      {
-         if ( modifications.hasModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                       getId() ) ) )
-         {
-            builder.add( ModificationsProviderPart.getRemoveModificationOps( RawTasks.CONTENT_URI,
-                                                                             getId() ) );
-            modifications.removeAll( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                               getId() ) );
-         }
-         
-         if ( modifications.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                       getTaskSeriesId() ) ) )
-         {
-            builder.add( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
-                                                                             getTaskSeriesId() ) );
-            modifications.removeAll( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                               getTaskSeriesId() ) );
-         }
-      }
-      
-      return builder.build();
-   }
-   
-
-
-   private static void syncNotes( ContentProviderSyncOperation.Builder builder,
-                                  List< RtmTaskNote > serverValues,
-                                  List< RtmTaskNote > localValues )
-   {
-      final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( localValues,
-                                                                                                                       RtmTaskNote.LESS_ID );
-      final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverValues,
-                                                                                    syncNotesList );
-      builder.add( noteOperations );
-   }
-   
-
-
-   private static void syncTags( ContentProviderSyncOperation.Builder builder,
-                                 List< Tag > serverValues,
-                                 List< Tag > localValues )
-   {
-      final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( localValues );
-      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( serverValues,
-                                                                                    syncList );
-      builder.add( syncOperations );
-   }
-   
-
-
-   private static void syncParticipants( ContentProviderSyncOperation.Builder builder,
-                                         ParticipantList serverValues,
-                                         ParticipantList localValues )
-   {
-      builder.add( localValues.computeContentProviderUpdateOperation( serverValues ) );
    }
 }

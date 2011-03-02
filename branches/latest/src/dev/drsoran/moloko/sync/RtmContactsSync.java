@@ -51,7 +51,7 @@ public final class RtmContactsSync
 
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
-                                      Date lastSyncOut,
+                                      Date lastSync,
                                       MolokoSyncResult syncResult )
    {
       // Get all contacts from local database
@@ -101,8 +101,9 @@ public final class RtmContactsSync
       
       final ContentProviderSyncableList< RtmContact > local_SyncList = new ContentProviderSyncableList< RtmContact >( local_ListOfContacts,
                                                                                                                       RtmContact.LESS_ID );
-      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Contacts,
-                                                                                    local_SyncList );
+      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_Contacts,
+                                                                                      local_SyncList,
+                                                                                      true /* always full sync */);
       
       syncResult.localOps.addAll( syncOperations );
       

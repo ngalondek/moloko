@@ -23,101 +23,87 @@
 package dev.drsoran.moloko.sync.operation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import android.content.ContentProviderOperation;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
+import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
-import com.mdt.rtm.Service.MethodCallType;
 
-import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.sync.syncable.IServerSyncable;
+import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.ModificationsProviderPart;
+import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.TransactionalAccess;
+import dev.drsoran.moloko.service.RtmServiceConstants;
 
 
-public class ServerSyncOperation< T extends IServerSyncable< T, V >, V >
-         implements IServerSyncOperation< V >
+public class ServerSyncOperation< T > implements IServerSyncOperation< T >
 {
    private final static String TAG = "Moloko."
       + ServerSyncOperation.class.getSimpleName();
    
    
-   public static class Builder< T extends IServerSyncable< T, V >, V >
+   public static class Builder< T >
    {
       private final Op operationType;
       
-      private final List< TimeLineMethod< V > > methods = new ArrayList< TimeLineMethod< V > >();
-      
-      private final T sourceElement;
+      private final Map< TimeLineMethod< T >, Modification > methods = new HashMap< TimeLineMethod< T >, Modification >();
       
       
 
-      public Builder( Op operationType, T sourceElement )
+      public Builder( Op operationType )
       {
-         if ( sourceElement == null )
-            throw new NullPointerException( "sourceElement is null" );
-         
          this.operationType = operationType;
-         this.sourceElement = sourceElement;
       }
       
 
 
-      public Builder( Builder< T, V > other )
+      public Builder( Builder< T > other )
       {
-         if ( other.sourceElement == null )
-            throw new NullPointerException( "sourceElement is null" );
-         
          this.operationType = other.operationType;
-         this.methods.addAll( other.methods );
-         this.sourceElement = other.sourceElement;
+         this.methods.putAll( other.methods );
       }
       
 
 
-      public Builder( Op operationType, TimeLineMethod< V > method,
-         T sourceElement )
+      public Builder( Op operationType, TimeLineMethod< T > method,
+         Modification modification )
       {
-         this( operationType, sourceElement );
-         add( method );
+         this( operationType );
+         add( method, modification );
       }
       
 
 
-      public Builder( Op operationType,
-         Collection< TimeLineMethod< V > > methods, T sourceElement )
-      {
-         this( operationType, sourceElement );
-         add( methods );
-      }
-      
-
-
-      public Builder< T, V > add( TimeLineMethod< V > method )
+      public Builder< T > add( TimeLineMethod< T > method,
+                               Modification modification )
       {
          if ( method == null )
             throw new NullPointerException( "method is null" );
          
-         methods.add( method );
+         methods.put( method, modification );
          return this;
       }
       
 
 
-      public Builder< T, V > add( Collection< ? extends TimeLineMethod< V > > methods )
+      public Builder< T > add( IServerSyncOperation< T > operation )
       {
-         if ( methods == null )
-            throw new NullPointerException( "methods are null" );
-         
-         for ( TimeLineMethod< V > timeLineMethod : methods )
+         if ( !( operation instanceof INoopSyncOperation ) )
          {
-            add( timeLineMethod );
+            final Map< TimeLineMethod< T >, Modification > methods = operation.getMethods();
+            for ( TimeLineMethod< T > method : methods.keySet() )
+               add( method, methods.get( method ) );
          }
          
          return this;
@@ -125,54 +111,42 @@ public class ServerSyncOperation< T extends IServerSyncable< T, V >, V >
       
 
 
-      public Builder< T, V > add( IServerSyncOperation< V > operation )
-      {
-         if ( !( operation instanceof INoopSyncOperation ) )
-            for ( TimeLineMethod< V > method : operation.getMethods() )
-               add( method );
-         
-         return this;
-      }
-      
-
-
-      public IServerSyncOperation< V > build()
+      public IServerSyncOperation< T > build()
       {
          if ( methods.size() == 0 )
-            return NoopServerSyncOperation.< V > newInstance();
+            return NoopServerSyncOperation.< T > newInstance();
          else
-            return new ServerSyncOperation< T, V >( this );
+            return new ServerSyncOperation< T >( this );
       }
    }
    
    private final Op operationType;
    
-   private final List< TimeLineMethod< V > > serviceMethods;
+   private final Map< TimeLineMethod< T >, Modification > serviceMethods;
    
-   private final T sourceElement;
-   
-   private V resultElement;
+   private T resultElement;
    
    private List< TimeLineResult.Transaction > transactions;
    
    
 
-   private ServerSyncOperation( Builder< T, V > builder )
+   private ServerSyncOperation( Builder< T > builder )
    {
       this.operationType = builder.operationType;
-      this.serviceMethods = new ArrayList< TimeLineMethod< V > >( builder.methods );
-      this.sourceElement = builder.sourceElement;
+      this.serviceMethods = new HashMap< TimeLineMethod< T >, Modification >( builder.methods );
    }
    
 
 
-   public V execute() throws ServiceException
+   public T execute( RtmProvider rtmProvider ) throws ServiceException
    {
       transactions = new LinkedList< TimeLineResult.Transaction >();
+      final Set< TimeLineMethod< T > > methodSet = serviceMethods.keySet();
+      final ArrayList< ContentProviderOperation > removeModOps = new ArrayList< ContentProviderOperation >( methodSet.size() );
       
-      for ( Iterator< TimeLineMethod< V > > i = serviceMethods.iterator(); i.hasNext(); )
+      for ( Iterator< TimeLineMethod< T > > i = methodSet.iterator(); i.hasNext(); )
       {
-         final TimeLineMethod< V > method = i.next();
+         final TimeLineMethod< T > method = i.next();
          
          try
          {
@@ -181,7 +155,7 @@ public class ServerSyncOperation< T extends IServerSyncable< T, V >, V >
                transactions.add( method.call( MethodCallType.NO_RESULT ).transaction );
             else
             {
-               final TimeLineResult< V > res = method.call( MethodCallType.WITH_RESULT );
+               final TimeLineResult< T > res = method.call( MethodCallType.WITH_RESULT );
                resultElement = res.element;
                transactions.add( res.transaction );
             }
@@ -190,9 +164,54 @@ public class ServerSyncOperation< T extends IServerSyncable< T, V >, V >
          {
             Log.e( TAG, "Error during server method execution", e );
             
-            // If this was a service exception, re-throw it
+            // If this was a service exception
             if ( e instanceof ServiceException )
-               throw (ServiceException) e;
+            {
+               final ServiceException se = (ServiceException) e;
+               if ( !RtmServiceConstants.RtmErrorCodes.isElementError( se.responseCode ) )
+                  throw se;
+               else
+                  Log.e( TAG,
+                         "Ignoring failed server operation due to Element error "
+                            + se.responseCode );
+            }
+            else
+               throw new ServiceException( -1,
+                                           "Error during server method execution",
+                                           e );
+         }
+         
+         // Remove the modification which led to the server change
+         final Modification modification = serviceMethods.get( method );
+         
+         if ( modification != null )
+            removeModOps.add( ModificationsProviderPart.getRemoveModificationOps( modification.getEntityUri() ) );
+      }
+      
+      if ( removeModOps.size() > 0 )
+      {
+         Log.i( TAG, "Removing " + removeModOps.size() + " modifications" );
+         
+         final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
+         
+         if ( transactionalAccess == null )
+            throw new IllegalStateException( "No transactional access to remove modifications" );
+         
+         try
+         {
+            transactionalAccess.beginTransaction();
+            
+            rtmProvider.applyBatch( removeModOps );
+            
+            transactionalAccess.setTransactionSuccessful();
+         }
+         catch ( Throwable e )
+         {
+            Log.e( TAG, "Removing modifications failed", e );
+         }
+         finally
+         {
+            transactionalAccess.endTransaction();
          }
       }
       
@@ -231,17 +250,6 @@ public class ServerSyncOperation< T extends IServerSyncable< T, V >, V >
    
 
 
-   public IContentProviderSyncOperation removeModifications( ModificationSet modifications,
-                                                             boolean revert )
-   {
-      if ( sourceElement != null )
-         return sourceElement.removeModifications( modifications, revert );
-      else
-         return NoopContentProviderSyncOperation.INSTANCE;
-   }
-   
-
-
    public Op getOperationType()
    {
       return operationType;
@@ -249,34 +257,23 @@ public class ServerSyncOperation< T extends IServerSyncable< T, V >, V >
    
 
 
-   public List< TimeLineMethod< V >> getMethods()
+   public Map< TimeLineMethod< T >, Modification > getMethods()
    {
       return this.serviceMethods;
    }
    
 
 
-   public void addMethod( TimeLineMethod< V > method )
-   {
-      if ( method == null )
-         throw new NullPointerException( "method is null" );
-      
-      serviceMethods.add( method );
-   }
-   
-
-
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > fromType( T sourceElement,
-                                                                                          ISyncOperation.Op type )
+   public final static < T > Builder< T > fromType( ISyncOperation.Op type )
    {
       switch ( type )
       {
          case INSERT:
-            return newInsert( sourceElement );
+            return newInsert();
          case UPDATE:
-            return newUpdate( sourceElement );
+            return newUpdate();
          case DELETE:
-            return newDelete( sourceElement );
+            return newDelete();
          default :
             return null;
       }
@@ -284,95 +281,67 @@ public class ServerSyncOperation< T extends IServerSyncable< T, V >, V >
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newInsert( T sourceElement )
+   public final static < T > Builder< T > newInsert()
    {
-      return new Builder< T, V >( Op.INSERT, sourceElement );
+      return new Builder< T >( Op.INSERT );
    }
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newInsert( T sourceElement,
-                                                                                           IServerSyncOperation< V > operation )
+   public final static < T > Builder< T > newInsert( IServerSyncOperation< T > operation )
    {
-      return new Builder< T, V >( Op.INSERT, sourceElement ).add( operation );
+      return new Builder< T >( Op.INSERT ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newInsert( T sourceElement,
-                                                                                           TimeLineMethod< V > method )
+   public final static < T > Builder< T > newInsert( TimeLineMethod< T > method,
+                                                     Modification modification )
    {
-      return new Builder< T, V >( Op.INSERT, method, sourceElement );
+      return new Builder< T >( Op.INSERT, method, modification );
    }
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newInsert( T sourceElement,
-                                                                                           Collection< TimeLineMethod< V > > methods )
+   public final static < T > Builder< T > newUpdate()
    {
-      return new Builder< T, V >( Op.INSERT, methods, sourceElement );
+      return new Builder< T >( Op.UPDATE );
    }
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newUpdate( T sourceElement )
+   public final static < T > Builder< T > newUpdate( IServerSyncOperation< T > operation )
    {
-      return new Builder< T, V >( Op.UPDATE, sourceElement );
+      return new Builder< T >( Op.UPDATE ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newUpdate( T sourceElement,
-                                                                                           IServerSyncOperation< V > operation )
+   public final static < T > Builder< T > newUpdate( TimeLineMethod< T > method,
+                                                     Modification modification )
    {
-      return new Builder< T, V >( Op.UPDATE, sourceElement ).add( operation );
+      return new Builder< T >( Op.UPDATE, method, modification );
    }
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newUpdate( T sourceElement,
-                                                                                           TimeLineMethod< V > method )
+   public final static < T > Builder< T > newDelete()
    {
-      return new Builder< T, V >( Op.UPDATE, method, sourceElement );
+      return new Builder< T >( Op.DELETE );
    }
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newUpdate( T sourceElement,
-                                                                                           Collection< TimeLineMethod< V > > methods )
+   public final static < T > Builder< T > newDelete( IServerSyncOperation< T > operation )
    {
-      return new Builder< T, V >( Op.UPDATE, methods, sourceElement );
+      return new Builder< T >( Op.DELETE ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newDelete( T sourceElement )
+   public final static < T > Builder< T > newDelete( TimeLineMethod< T > method,
+                                                     Modification modification )
    {
-      return new Builder< T, V >( Op.DELETE, sourceElement );
+      return new Builder< T >( Op.DELETE, method, modification );
    }
-   
-
-
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newDelete( T sourceElement,
-                                                                                           IServerSyncOperation< V > operation )
-   {
-      return new Builder< T, V >( Op.DELETE, sourceElement ).add( operation );
-   }
-   
-
-
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newDelete( T sourceElement,
-                                                                                           TimeLineMethod< V > method )
-   {
-      return new Builder< T, V >( Op.DELETE, method, sourceElement );
-   }
-   
-
-
-   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newDelete( T sourceElement,
-                                                                                           Collection< TimeLineMethod< V > > methods )
-   {
-      return new Builder< T, V >( Op.DELETE, methods, sourceElement );
-   }
-   
 }

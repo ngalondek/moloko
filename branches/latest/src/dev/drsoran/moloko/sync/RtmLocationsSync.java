@@ -50,7 +50,7 @@ public final class RtmLocationsSync
 
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
-                                      Date lastSyncOut,
+                                      Date lastSync,
                                       MolokoSyncResult syncResult )
    {
       // Get all locations from local database
@@ -98,8 +98,9 @@ public final class RtmLocationsSync
       // Sync location lists
       final ContentProviderSyncableList< RtmLocation > local_SyncList = new ContentProviderSyncableList< RtmLocation >( local_Locations,
                                                                                                                         RtmLocation.LESS_ID );
-      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_Locations,
-                                                                                    local_SyncList );
+      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_Locations,
+                                                                                      local_SyncList,
+                                                                                      true /* always full sync */);
       syncResult.localOps.addAll( syncOperations );
       
       return true;

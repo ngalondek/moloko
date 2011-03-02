@@ -203,8 +203,9 @@ public class ParticipantList implements
       final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( participants,
                                                                                                                   Participant.LESS_ID );
       return ContentProviderSyncOperation.newUpdate()
-                                         .add( SyncDiffer.diff( update.participants,
-                                                                syncList ) )
+                                         .add( SyncDiffer.inDiff( update.participants,
+                                                                  syncList,
+                                                                  true /* always full sync */) )
                                          .build();
    }
 }

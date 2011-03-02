@@ -25,6 +25,7 @@ package dev.drsoran.moloko.sync.util;
 import java.util.Date;
 
 import android.net.Uri;
+import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 
 
@@ -47,6 +48,13 @@ public class SyncProperties
       this.localModDate = localModDate;
       this.uri = uri;
       this.modifications = modifications;
+   }
+   
+
+
+   public Modification getModification( String columnName )
+   {
+      return modifications.find( uri, columnName );
    }
    
 

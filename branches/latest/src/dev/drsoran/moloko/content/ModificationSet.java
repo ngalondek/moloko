@@ -221,6 +221,21 @@ public class ModificationSet implements Set< Modification >
    
 
 
+   public boolean hasModifications( Uri uri )
+   {
+      for ( Modification modification : impl )
+      {
+         if ( modification.getEntityUri()
+                          .toString()
+                          .startsWith( uri.toString() ) )
+            return true;
+      }
+      
+      return false;
+   }
+   
+
+
    public boolean hasModification( Uri entityUri )
    {
       for ( Modification modification : impl )

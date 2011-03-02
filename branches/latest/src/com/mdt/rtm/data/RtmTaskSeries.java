@@ -29,12 +29,11 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import android.content.ContentProviderOperation;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
@@ -42,16 +41,12 @@ import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.sync.syncable.IServerSyncable.SyncDirection;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
-import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -534,13 +529,6 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public IServerSyncOperation< RtmTaskSeries > computeServerInsertOperation( RtmTimeline timeLine )
-   {
-      return NoopServerSyncOperation.newInstance();
-   }
-   
-
-
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       // RtmTaskSeries gets deleted by a DB trigger if it references no more RawTasks.
@@ -549,153 +537,102 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public IServerSyncOperation< RtmTaskSeries > computeServerDeleteOperation( RtmTimeline timeLine )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTaskSeries serverElement )
    {
-      return NoopServerSyncOperation.newInstance();
-   }
-   
-
-
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        RtmTaskSeries serverElement )
-   {
-      final SyncProperties< RtmTaskSeries > properties = SyncProperties.newLocalOnlyInstance( lastSync,
-                                                                                              serverElement.getModifiedDate(),
-                                                                                              this.getModifiedDate(),
-                                                                                              Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                                        id ) );
-      return syncImpl( properties, serverElement, this ).operations.getLocalOperations();
-   }
-   
-
-
-   public DirectedSyncOperations< RtmTaskSeries > computeMergeOperations( Date lastSync,
-                                                                          RtmTimeline timeline,
-                                                                          ModificationSet modifications,
-                                                                          RtmTaskSeries serverElement,
-                                                                          RtmTaskSeries localElement )
-   {
-      final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.BOTH,
-                                                                                     lastSync,
-                                                                                     serverElement.getModifiedDate(),
-                                                                                     localElement.getModifiedDate(),
-                                                                                     Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                               id ),
-                                                                                     modifications,
-                                                                                     timeline );
-      return syncImpl( properties, serverElement, localElement ).operations;
-   }
-   
-
-
-   public List< IServerSyncOperation< RtmTaskSeries > > computeServerUpdateOperations( Date lastSync,
-                                                                                       RtmTimeline timeline,
-                                                                                       ModificationSet modifications )
-   {
-      final SyncProperties< RtmTaskSeries > properties = SyncProperties.newInstance( SyncDirection.SERVER_ONLY,
-                                                                                     lastSync,
-                                                                                     this.getModifiedDate(),
-                                                                                     this.getModifiedDate(),
-                                                                                     Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                               id ),
-                                                                                     modifications,
-                                                                                     timeline );
-      return syncImpl( properties, this, this ).operations.getServerOperations();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationSet modifications )
-   {
-      if ( modifications.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                    id ) ) )
-         return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
-                                                                                                            id ) )
-                                            .build();
-      else
-         return NoopContentProviderSyncOperation.INSTANCE;
-   }
-   
-
-
-   private SyncProperties< RtmTaskSeries > syncImpl( SyncProperties< RtmTaskSeries > properties,
-                                                     RtmTaskSeries serverElement,
-                                                     RtmTaskSeries localElement )
-   {
-      SyncUtils.doPreSyncCheck( localElement.id, serverElement.id, properties );
+      final ContentProviderSyncOperation.Builder operations = ContentProviderSyncOperation.newUpdate();
       
-      syncNotes( properties,
-                 serverElement.notes.getNotes(),
-                 localElement.notes.getNotes() );
-      
-      syncTags( properties, serverElement.tags, localElement.tags );
-      
-      syncParticiapants( properties,
-                         serverElement.participants,
-                         localElement.participants );
-      
-      return properties;
-   }
-   
-
-
-   private static void syncNotes( SyncProperties< RtmTaskSeries > properties,
-                                  List< RtmTaskNote > serverValues,
-                                  List< RtmTaskNote > localValues )
-   {
-      switch ( properties.syncDirection )
+      // Sync notes
       {
-         case LOCAL_ONLY:
-         {
-            final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( localValues,
-                                                                                                                             RtmTaskNote.LESS_ID );
-            final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverValues,
-                                                                                          syncNotesList );
-            properties.operations.addAllLocalOps( noteOperations );
-         }
-            break;
-         default :
-            break;
+         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( getNotes().getNotes(),
+                                                                                                                          RtmTaskNote.LESS_ID );
+         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.inDiff( serverElement.getNotes()
+                                                                                                      .getNotes(),
+                                                                                         syncNotesList,
+                                                                                         true /* always full sync */);
+         operations.add( noteOperations );
       }
-   }
-   
-
-
-   private static void syncTags( SyncProperties< RtmTaskSeries > properties,
-                                 List< Tag > serverValues,
-                                 List< Tag > localValues )
-   {
-      switch ( properties.syncDirection )
+      
+      // Sync Tags
       {
-         case LOCAL_ONLY:
-         {
-            final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( localValues );
-            final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( serverValues,
-                                                                                          syncList );
-            properties.operations.addAllLocalOps( syncOperations );
-         }
-            break;
-         default :
-            break;
+         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( getTags() );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( serverElement.getTags(),
+                                                                                         syncList,
+                                                                                         true /* always full sync */);
+         operations.add( syncOperations );
       }
-   }
-   
-
-
-   private static void syncParticiapants( SyncProperties< RtmTaskSeries > properties,
-                                          ParticipantList serverValues,
-                                          ParticipantList localValues )
-   {
-      switch ( properties.syncDirection )
+      
+      // Sync participants
       {
-         case LOCAL_ONLY:
-         {
-            properties.operations.addAllLocalOps( localValues.computeContentProviderUpdateOperations( properties.lastSyncDate,
-                                                                                                      serverValues ) );
-         }
-            break;
-         default :
-            break;
+         operations.add( participants.computeContentProviderUpdateOperation( serverElement.participants ) );
       }
+      
+      // Sync RtmTaskSeries
+      {
+         final Uri contentUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                          id );
+         
+         if ( SyncUtils.hasChanged( serverElement.getListId(), getListId() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.LIST_ID,
+                                                                serverElement.getListId() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getCreatedDate(),
+                                    getCreatedDate() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.TASKSERIES_CREATED_DATE,
+                                                                MolokoDateUtils.getTime( serverElement.getCreatedDate() ) )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getModifiedDate(),
+                                    getModifiedDate() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.MODIFIED_DATE,
+                                                                MolokoDateUtils.getTime( serverElement.getModifiedDate() ) )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getName(), getName() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.TASKSERIES_NAME,
+                                                                serverElement.getName() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getSource(), getSource() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.SOURCE,
+                                                                serverElement.getSource() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getLocationId(),
+                                    getLocationId() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.LOCATION_ID,
+                                                                serverElement.getLocationId() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getURL(), getURL() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.URL,
+                                                                serverElement.getURL() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getRecurrence(),
+                                    getRecurrence() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.RECURRENCE,
+                                                                serverElement.getRecurrence() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( Boolean.valueOf( serverElement.isEveryRecurrence() ),
+                                    Boolean.valueOf( isEveryRecurrence() ) ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.RECURRENCE_EVERY,
+                                                                serverElement.isEveryRecurrence()
+                                                                                                 ? 1
+                                                                                                 : 0 )
+                                                    .build() );
+      }
+      
+      return operations.build();
    }
 }

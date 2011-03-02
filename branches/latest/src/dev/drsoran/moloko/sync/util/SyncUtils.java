@@ -31,11 +31,9 @@ import android.accounts.Account;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentProviderClient;
-import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -46,21 +44,17 @@ import com.mdt.rtm.ServiceInternalException;
 
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.SyncProviderPart;
 import dev.drsoran.moloko.sync.Constants;
-import dev.drsoran.moloko.sync.MolokoSyncResult;
-import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.sync.syncable.IServerSyncable;
-import dev.drsoran.moloko.sync.syncable.IServerSyncable.SyncResultDirection;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
-import dev.drsoran.rtm.ParcelableDate;
 
 
 public final class SyncUtils
@@ -266,60 +260,38 @@ public final class SyncUtils
    
 
 
-   @Deprecated
-   public final static void updateDate( ParcelableDate current,
-                                        ParcelableDate update,
-                                        Uri uri,
-                                        String column,
-                                        ContentProviderSyncOperation.Builder result )
-   {
-      if ( ( current == null && update != null )
-         || ( current != null && update != null && current.getDate().getTime() != update.getDate()
-                                                                                        .getTime() ) )
-      {
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( column,
-                                                         update.getDate()
-                                                               .getTime() )
-                                             .build() );
-      }
-      
-      else if ( current != null && update == null )
-      {
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( column, null )
-                                             .build() );
-      }
-   }
-   
-
-
    public final static < V > boolean hasChanged( V oldVal, V newVal )
    {
       return ( oldVal == null && newVal != null )
          || ( oldVal != null && ( newVal == null || !oldVal.equals( newVal ) ) );
    }
    
-
-
-   public final static < V > IServerSyncable.SyncResultDirection getSyncDirection( SyncProperties properties,
-                                                                                   String columnName,
-                                                                                   V serverValue,
-                                                                                   V localValue,
-                                                                                   Class< V > valueClass )
+   
+   public enum SyncResultDirection
    {
-      IServerSyncable.SyncResultDirection syncDir = SyncResultDirection.NOTHING;
+      NOTHING, LOCAL, SERVER
+   }
+   
+   
+
+   public final static < V > SyncResultDirection getSyncDirection( SyncProperties properties,
+                                                                   String columnName,
+                                                                   V serverValue,
+                                                                   V localValue,
+                                                                   Class< V > valueClass )
+   {
+      SyncResultDirection syncDir = SyncResultDirection.NOTHING;
       
-      // Check if we should simply sync out
-      if ( properties.serverModDate == null )
+      final Modification modification = properties.getModification( columnName );
+      
+      // Check if we should simply sync out and have a modification
+      if ( properties.serverModDate == null && modification != null )
       {
          syncDir = SyncResultDirection.SERVER;
       }
       
       else if ( hasChanged( serverValue, localValue ) )
       {
-         final Modification modification = properties.modifications.find( properties.uri,
-                                                                          columnName );
          // Check if the local value was modified
          if ( modification != null )
          {
@@ -336,21 +308,21 @@ public final class SyncUtils
                // value we have transferred already.
                if ( properties.serverModDate.getTime() >= properties.localModDate.getTime() )
                   // LOCAL UPDATE: The server element was modified after the local value.
-                  syncDir = IServerSyncable.SyncResultDirection.LOCAL;
+                  syncDir = SyncResultDirection.LOCAL;
                else
                   // SERVER UPDATE: The local element was modified after the server element.
-                  syncDir = IServerSyncable.SyncResultDirection.SERVER;
+                  syncDir = SyncResultDirection.SERVER;
             }
             else
                // SERVER UPDATE: The server value has not been changed since last sync,
                // so use local modified value.
-               syncDir = IServerSyncable.SyncResultDirection.SERVER;
+               syncDir = SyncResultDirection.SERVER;
          }
          
          // LOCAL UPDATE: If the element has not locally changed, take the server version
          else
          {
-            syncDir = IServerSyncable.SyncResultDirection.LOCAL;
+            syncDir = SyncResultDirection.LOCAL;
          }
       }
       
@@ -359,42 +331,44 @@ public final class SyncUtils
    
 
 
-   public final static < T > void applyServerOperations( List< ? extends IServerSyncOperation< T > > serverOps,
+   public final static < T > void applyServerOperations( RtmProvider rtmProvider,
+                                                         List< ? extends IServerSyncOperation< T > > serverOps,
                                                          List< T > sortedServerElements,
-                                                         Comparator< ? super T > cmp,
-                                                         ModificationSet modifications,
-                                                         MolokoSyncResult syncResult ) throws ServiceException
+                                                         Comparator< ? super T > cmp ) throws ServiceException
    {
       for ( IServerSyncOperation< T > serverOp : serverOps )
       {
-         try
+         if ( !( serverOp instanceof INoopSyncOperation ) )
          {
-            final T result = serverOp.execute();
-            
-            if ( result == null )
-               throw new ServiceException( -1,
-                                           "ServerSyncOperation produced no result" );
-            
-            // If the set already contains an element in respect to the Comparator,
-            // then we update it by the new received.
-            final int pos = Collections.binarySearch( sortedServerElements,
-                                                      result,
-                                                      cmp );
-            
-            if ( pos > 0 )
+            try
             {
-               sortedServerElements.remove( pos );
-               sortedServerElements.add( pos, result );
+               final T result = serverOp.execute( rtmProvider );
+               
+               if ( result == null )
+                  throw new ServiceException( -1,
+                                              "ServerSyncOperation produced no result" );
+               
+               // If the set already contains an element in respect to the Comparator,
+               // then we update it by the new received.
+               final int pos = Collections.binarySearch( sortedServerElements,
+                                                         result,
+                                                         cmp );
+               
+               if ( pos >= 0 )
+               {
+                  sortedServerElements.remove( pos );
+                  sortedServerElements.add( pos, result );
+               }
+               else
+               {
+                  sortedServerElements.add( ( -pos - 1 ), result );
+               }
             }
-            else
+            catch ( ServiceException e )
             {
-               sortedServerElements.add( -pos, result );
+               Log.e( TAG, "Applying server operation failed", e );
+               throw e;
             }
-         }
-         catch ( ServiceException e )
-         {
-            Log.e( TAG, "Applying server operation failed", e );
-            throw e;
          }
       }
    }

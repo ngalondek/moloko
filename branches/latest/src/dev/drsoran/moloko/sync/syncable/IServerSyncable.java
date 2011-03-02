@@ -27,25 +27,12 @@ import java.util.Date;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 
 
 public interface IServerSyncable< T, V >
 {
-   public static enum SyncDirection
-   {
-      LOCAL_ONLY, SERVER_ONLY, BOTH
-   }
    
-
-   public static enum SyncResultDirection
-   {
-      NOTHING, LOCAL, SERVER
-   }
-   
-   
-
    public Date getCreatedDate();
    
 
@@ -69,13 +56,4 @@ public interface IServerSyncable< T, V >
    public IServerSyncOperation< V > computeServerUpdateOperation( RtmTimeline timeline,
                                                                   ModificationSet modifications,
                                                                   T serverElement );
-   
-
-
-   public IContentProviderSyncOperation handleServerUpdateResult( T resultElement );
-   
-
-
-   public IContentProviderSyncOperation removeModifications( ModificationSet modifictaions,
-                                                             boolean revert );
 }

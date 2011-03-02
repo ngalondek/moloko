@@ -22,23 +22,39 @@
 
 package dev.drsoran.moloko.sync;
 
-import java.util.LinkedList;
-import java.util.List;
+import android.util.Log;
 
-import android.content.SyncResult;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import com.mdt.rtm.Service;
+import com.mdt.rtm.ServiceException;
+import com.mdt.rtm.data.RtmTimeline;
 
 
-public final class MolokoSyncResult
+public final class TimeLineFactory
 {
-   public final SyncResult androidSyncResult;
+   private final static String TAG = "Moloko."
+      + TimeLineFactory.class.getSimpleName();
    
-   public final List< IContentProviderSyncOperation > localOps = new LinkedList< IContentProviderSyncOperation >();
+   private final Service service;
+   
+   private RtmTimeline timeline;
    
    
 
-   public MolokoSyncResult( SyncResult result )
+   public TimeLineFactory( Service service )
    {
-      this.androidSyncResult = result;
+      this.service = service;
+   }
+   
+
+
+   public final RtmTimeline createTimeline() throws ServiceException
+   {
+      if ( timeline == null )
+      {
+         timeline = service.timelines_create();
+         Log.i( TAG, "Created new time line " + timeline );
+      }
+      
+      return timeline;
    }
 }

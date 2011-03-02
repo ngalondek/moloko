@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.sync;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +41,7 @@ import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
@@ -61,9 +63,9 @@ public final class RtmTasksSync
 
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
-                                      RtmTimeline timeline,
+                                      TimeLineFactory timeLineFactory,
                                       ModificationSet modifications,
-                                      Date lastSyncOut,
+                                      Date lastSync,
                                       MolokoSyncResult syncResult )
    {
       final List< RtmTaskSeries > local_TaskSeries = toPlainList( RtmTaskSeriesProviderPart.getAllTaskSeries( provider ) );
@@ -81,7 +83,7 @@ public final class RtmTasksSync
       {
          server_TaskSeries = toPlainList( service.tasks_getList( null,
                                                                  null,
-                                                                 lastSyncOut ) );
+                                                                 lastSync ) );
       }
       catch ( ServiceException e )
       {
@@ -109,58 +111,78 @@ public final class RtmTasksSync
          return false;
       }
       
+      Collections.sort( local_TaskSeries, RtmTaskSeries.LESS_ID );
+      Collections.sort( server_TaskSeries, RtmTaskSeries.LESS_ID );
+      
       final List< SyncTask > server_Tasks = toPlainList( server_TaskSeries );
       final List< SyncTask > local_Tasks = toPlainList( local_TaskSeries );
       
+      Collections.sort( server_Tasks, SyncTask.LESS_ID );
+      Collections.sort( local_Tasks, SyncTask.LESS_ID );
+      
       // Check if we have server write access
-      if ( timeline != null )
+      if ( timeLineFactory != null )
       {
          // Check if we have outgoing changes
-         if ( modifications.hasModification( TaskSeries.CONTENT_URI )
-            || modifications.hasModification( RawTasks.CONTENT_URI ) )
+         if ( modifications.hasModifications( TaskSeries.CONTENT_URI )
+            || modifications.hasModifications( RawTasks.CONTENT_URI ) )
          {
-            // Collect all outgoing changes
-            List< IServerSyncOperation< RtmTaskSeries > > outOperations = SyncDiffer.outDiff( server_Tasks,
-                                                                                              local_Tasks,
-                                                                                              SyncTask.LESS_ID,
-                                                                                              modifications,
-                                                                                              timeline );
+            RtmTimeline timeline = null;
             
-            SyncUtils.applyServerOperations( service,
-                                             outOperations,
-                                             modifications,
-                                             syncResult );
+            try
+            {
+               timeline = timeLineFactory.createTimeline();
+            }
+            catch ( ServiceException e )
+            {
+               return false;
+            }
+            
+            // Collect all outgoing changes
+            final List< IServerSyncOperation< RtmTaskSeries > > serverOps = SyncDiffer.outDiff( server_Tasks,
+                                                                                                local_Tasks,
+                                                                                                SyncTask.LESS_ID,
+                                                                                                modifications,
+                                                                                                timeline,
+                                                                                                lastSync );
+            // Send our local changes to the server and update the server list of
+            // TaskSeries with the new elements retrieved from server during
+            // the commit.
+            try
+            {
+               SyncUtils.applyServerOperations( (RtmProvider) provider.getLocalContentProvider(),
+                                                serverOps,
+                                                server_TaskSeries,
+                                                RtmTaskSeries.LESS_ID );
+            }
+            catch ( ServiceException e )
+            {
+               return false;
+            }
          }
       }
       
+      // At this point we have an up-to-date list of server TaskSeries
+      // containing all changes made by outgoing sync.
+      
       // Sync TaskSeries incoming cause we need to insert new TaskSeries only once.
+      // This will also sync Notes, Tags, Participant cause this is shared between all SyncTasks
       {
          final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( local_TaskSeries,
                                                                                                                                RtmTaskSeries.LESS_ID );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( server_TaskSeries,
-                                                                                       local_SyncList );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_TaskSeries,
+                                                                                         local_SyncList,
+                                                                                         lastSync == null );
          syncResult.localOps.addAll( syncOperations );
       }
       
-      if ( timeline != null )
+      // Sync SyncTasks incoming
       {
-         // Do a 2-way diff
-         final DirectedSyncOperations< RtmTaskSeries > syncOperations = SyncDiffer.twoWaydiff( toPlainList( server_TaskSeries ),
-                                                                                               toPlainList( local_TaskSeries ),
-                                                                                               SyncTask.LESS_ID,
-                                                                                               modifications,
-                                                                                               timeline,
-                                                                                               lastSyncOut );
-         syncResult.localOps.addAll( syncOperations.getLocalOperations() );
-         syncResult.serverOps.addAll( syncOperations.getServerOperations() );
-      }
-      else
-      {
-         // Only sync incoming
-         final ContentProviderSyncableList< SyncTask > local_SyncList = new ContentProviderSyncableList< SyncTask >( toPlainList( local_TaskSeries ),
+         final ContentProviderSyncableList< SyncTask > local_SyncList = new ContentProviderSyncableList< SyncTask >( local_Tasks,
                                                                                                                      SyncTask.LESS_ID );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( toPlainList( server_TaskSeries ),
-                                                                                       local_SyncList );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_Tasks,
+                                                                                         local_SyncList,
+                                                                                         lastSync == null );
          syncResult.localOps.addAll( syncOperations );
       }
       

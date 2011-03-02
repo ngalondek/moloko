@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.sync.syncable;
 
-import java.util.List;
-
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 
 
@@ -34,7 +32,7 @@ public interface IContentProviderSyncable< T extends IContentProviderSyncable< T
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( T serverElement );
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( T serverElement );
    
 
 

@@ -20,8 +20,6 @@
 package com.mdt.rtm.data;
 
 import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -192,8 +190,7 @@ public class RtmLocation extends RtmData implements
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        RtmLocation update )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmLocation update )
    {
       if ( !id.equals( update.id ) )
          throw new IllegalArgumentException( "Update id " + update.id
@@ -239,6 +236,6 @@ public class RtmLocation extends RtmData implements
                                                          update.zoom )
                                              .build() );
       
-      return result.asList();
+      return result.build();
    }
 }

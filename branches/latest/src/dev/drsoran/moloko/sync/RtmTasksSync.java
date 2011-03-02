@@ -43,8 +43,8 @@ import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.sync.operation.DirectedSyncOperations;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.provider.Rtm.RawTasks;
@@ -109,6 +109,9 @@ public final class RtmTasksSync
          return false;
       }
       
+      final List< SyncTask > server_Tasks = toPlainList( server_TaskSeries );
+      final List< SyncTask > local_Tasks = toPlainList( local_TaskSeries );
+      
       // Check if we have server write access
       if ( timeline != null )
       {
@@ -116,7 +119,17 @@ public final class RtmTasksSync
          if ( modifications.hasModification( TaskSeries.CONTENT_URI )
             || modifications.hasModification( RawTasks.CONTENT_URI ) )
          {
+            // Collect all outgoing changes
+            List< IServerSyncOperation< RtmTaskSeries > > outOperations = SyncDiffer.outDiff( server_Tasks,
+                                                                                              local_Tasks,
+                                                                                              SyncTask.LESS_ID,
+                                                                                              modifications,
+                                                                                              timeline );
             
+            SyncUtils.applyServerOperations( service,
+                                             outOperations,
+                                             modifications,
+                                             syncResult );
          }
       }
       

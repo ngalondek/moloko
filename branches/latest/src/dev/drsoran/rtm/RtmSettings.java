@@ -24,7 +24,6 @@ package dev.drsoran.rtm;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import org.w3c.dom.Element;
@@ -260,7 +259,7 @@ public class RtmSettings extends RtmData implements
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( RtmSettings update )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmSettings update )
    {
       final Uri settingsUri = getContentUriWithId();
       
@@ -302,7 +301,7 @@ public class RtmSettings extends RtmData implements
                                                          update.language )
                                              .build() );
       
-      return result.asList();
+      return result.build();
    }
    
 }

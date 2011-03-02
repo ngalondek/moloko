@@ -23,7 +23,6 @@
 package dev.drsoran.rtm;
 
 import java.util.Comparator;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -185,7 +184,7 @@ public class RtmContact extends RtmData implements
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( RtmContact update )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmContact update )
    {
       if ( !id.equals( update.id ) )
          throw new IllegalArgumentException( "Update id " + update.id
@@ -207,6 +206,6 @@ public class RtmContact extends RtmData implements
                                                          update.fullname )
                                              .build() );
       
-      return result.asList();
+      return result.build();
    }
 }

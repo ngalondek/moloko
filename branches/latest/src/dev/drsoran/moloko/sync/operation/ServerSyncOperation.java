@@ -32,24 +32,23 @@ import java.util.List;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
-import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
+import com.mdt.rtm.Service.MethodCallType;
 
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 
 
-public class ServerSyncOperation< T extends IServerSyncable< V >, V >
+public class ServerSyncOperation< T extends IServerSyncable< T, V >, V >
          implements IServerSyncOperation< V >
 {
    private final static String TAG = "Moloko."
       + ServerSyncOperation.class.getSimpleName();
    
    
-   public static class Builder< T extends IServerSyncable< V >, V >
+   public static class Builder< T extends IServerSyncable< T, V >, V >
    {
       private final Op operationType;
       
@@ -167,7 +166,7 @@ public class ServerSyncOperation< T extends IServerSyncable< V >, V >
    
 
 
-   public IContentProviderSyncOperation execute( RtmProvider provider ) throws ServiceException
+   public V execute() throws ServiceException
    {
       transactions = new LinkedList< TimeLineResult.Transaction >();
       
@@ -197,15 +196,7 @@ public class ServerSyncOperation< T extends IServerSyncable< V >, V >
          }
       }
       
-      // This will merge all changes we applied to the server and the server had.
-      if ( resultElement != null )
-      {
-         return sourceElement.handleServerUpdateResult( resultElement );
-      }
-      else
-      {
-         return NoopContentProviderSyncOperation.INSTANCE;
-      }
+      return resultElement;
    }
    
 
@@ -275,8 +266,8 @@ public class ServerSyncOperation< T extends IServerSyncable< V >, V >
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > fromType( T sourceElement,
-                                                                                       ISyncOperation.Op type )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > fromType( T sourceElement,
+                                                                                          ISyncOperation.Op type )
    {
       switch ( type )
       {
@@ -293,93 +284,93 @@ public class ServerSyncOperation< T extends IServerSyncable< V >, V >
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newInsert( T sourceElement )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newInsert( T sourceElement )
    {
       return new Builder< T, V >( Op.INSERT, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newInsert( T sourceElement,
-                                                                                        IServerSyncOperation< V > operation )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newInsert( T sourceElement,
+                                                                                           IServerSyncOperation< V > operation )
    {
       return new Builder< T, V >( Op.INSERT, sourceElement ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newInsert( T sourceElement,
-                                                                                        TimeLineMethod< V > method )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newInsert( T sourceElement,
+                                                                                           TimeLineMethod< V > method )
    {
       return new Builder< T, V >( Op.INSERT, method, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newInsert( T sourceElement,
-                                                                                        Collection< TimeLineMethod< V > > methods )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newInsert( T sourceElement,
+                                                                                           Collection< TimeLineMethod< V > > methods )
    {
       return new Builder< T, V >( Op.INSERT, methods, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newUpdate( T sourceElement )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newUpdate( T sourceElement )
    {
       return new Builder< T, V >( Op.UPDATE, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newUpdate( T sourceElement,
-                                                                                        IServerSyncOperation< V > operation )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newUpdate( T sourceElement,
+                                                                                           IServerSyncOperation< V > operation )
    {
       return new Builder< T, V >( Op.UPDATE, sourceElement ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newUpdate( T sourceElement,
-                                                                                        TimeLineMethod< V > method )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newUpdate( T sourceElement,
+                                                                                           TimeLineMethod< V > method )
    {
       return new Builder< T, V >( Op.UPDATE, method, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newUpdate( T sourceElement,
-                                                                                        Collection< TimeLineMethod< V > > methods )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newUpdate( T sourceElement,
+                                                                                           Collection< TimeLineMethod< V > > methods )
    {
       return new Builder< T, V >( Op.UPDATE, methods, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newDelete( T sourceElement )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newDelete( T sourceElement )
    {
       return new Builder< T, V >( Op.DELETE, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newDelete( T sourceElement,
-                                                                                        IServerSyncOperation< V > operation )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newDelete( T sourceElement,
+                                                                                           IServerSyncOperation< V > operation )
    {
       return new Builder< T, V >( Op.DELETE, sourceElement ).add( operation );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newDelete( T sourceElement,
-                                                                                        TimeLineMethod< V > method )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newDelete( T sourceElement,
+                                                                                           TimeLineMethod< V > method )
    {
       return new Builder< T, V >( Op.DELETE, method, sourceElement );
    }
    
 
 
-   public final static < T extends IServerSyncable< V >, V > Builder< T, V > newDelete( T sourceElement,
-                                                                                        Collection< TimeLineMethod< V > > methods )
+   public final static < T extends IServerSyncable< T, V >, V > Builder< T, V > newDelete( T sourceElement,
+                                                                                           Collection< TimeLineMethod< V > > methods )
    {
       return new Builder< T, V >( Op.DELETE, methods, sourceElement );
    }

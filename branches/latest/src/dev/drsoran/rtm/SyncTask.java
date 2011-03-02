@@ -28,13 +28,14 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
+import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
@@ -44,20 +45,19 @@ import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.ISyncOperation.Op;
 import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.ServerSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
-public class SyncTask implements IContentProviderSyncOperation< SyncTask >,
+public class SyncTask implements IContentProviderSyncable< SyncTask >,
          IServerSyncable< SyncTask, RtmTaskSeries >
 {
    
@@ -298,18 +298,145 @@ public class SyncTask implements IContentProviderSyncOperation< SyncTask >,
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( SyncTask serverElement )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( SyncTask serverElement )
    {
-      return syncImpl( serverElement,
-                       this,
-                       SyncProperties.newLocalOnlyInstance( serverElement.getModifiedDate(),
-                                                            this.getModifiedDate(),
-                                                            Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                      getTaskSeriesId() ) ),
-                       SyncProperties.< RtmTaskSeries > newLocalOnlyInstance( serverElement.getModifiedDate(),
-                                                                              this.getModifiedDate(),
-                                                                              Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                                        getId() ) ) ).operations.getLocalOperations();
+      ContentProviderSyncOperation.Builder operations = ContentProviderSyncOperation.newUpdate();
+      
+      // RtmTaskSeries
+      {
+         final Uri contentUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                          getTaskSeriesId() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getListId(), getListId() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.LIST_ID,
+                                                                serverElement.getListId() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getCreatedDate(),
+                                    getCreatedDate() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.TASKSERIES_CREATED_DATE,
+                                                                serverElement.getCreatedDate() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getModifiedDate(),
+                                    getModifiedDate() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.MODIFIED_DATE,
+                                                                serverElement.getModifiedDate() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getName(), getName() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.TASKSERIES_NAME,
+                                                                serverElement.getName() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getSource(), getSource() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.SOURCE,
+                                                                serverElement.getSource() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getLocationId(),
+                                    getLocationId() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.LOCATION_ID,
+                                                                serverElement.getLocationId() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getUrl(), getUrl() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.URL,
+                                                                serverElement.getUrl() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getRecurrence(),
+                                    getRecurrence() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.RECURRENCE,
+                                                                serverElement.getRecurrence() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( Boolean.valueOf( serverElement.isEveryRecurrence() ),
+                                    Boolean.valueOf( isEveryRecurrence() ) ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.RECURRENCE_EVERY,
+                                                                serverElement.isEveryRecurrence()
+                                                                                                 ? 1
+                                                                                                 : 0 )
+                                                    .build() );
+         
+         syncTags( operations, serverElement.getTags(), getTags() );
+         
+         syncParticipants( operations,
+                           serverElement.getParticipants(),
+                           getParticipants() );
+         
+         syncNotes( operations,
+                    serverElement.getNotes().getNotes(),
+                    getNotes().getNotes() );
+      }
+      
+      // RtmTask
+      {
+         final Uri contentUri = Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                          getId() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getDueDate(), getDueDate() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( RawTasks.DUE_DATE,
+                                                                serverElement.getDueDate() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.hasDueTime(), hasDueTime() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( RawTasks.HAS_DUE_TIME,
+                                                                serverElement.hasDueTime() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getAddedDate(),
+                                    getAddedDate() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( RawTasks.ADDED_DATE,
+                                                                serverElement.getAddedDate() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getCompletedDate(),
+                                    getCompletedDate() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( RawTasks.COMPLETED_DATE,
+                                                                serverElement.getCompletedDate() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getPriority(), getPriority() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( RawTasks.PRIORITY,
+                                                                RtmTask.convertPriority( serverElement.getPriority() ) )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getPosponed(), getPosponed() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( RawTasks.POSTPONED,
+                                                                getPosponed() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getEstimate(), getEstimate() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( RawTasks.ESTIMATE,
+                                                                getEstimate() )
+                                                    .build() );
+         
+         if ( SyncUtils.hasChanged( serverElement.getEstimateMillis(),
+                                    getEstimateMillis() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( RawTasks.ESTIMATE_MILLIS,
+                                                                getEstimateMillis() )
+                                                    .build() );
+      }
+      
+      return operations.build();
    }
    
 
@@ -461,7 +588,7 @@ public class SyncTask implements IContentProviderSyncOperation< SyncTask >,
       final List< SyncTask > tasks = fromTaskSeries( resultElement );
       
       for ( SyncTask syncTask : tasks )
-         builder.add( computeContentProviderUpdateOperations( syncTask ) );
+         builder.add( computeContentProviderUpdateOperation( syncTask ) );
       
       return builder.build();
    }
@@ -506,260 +633,35 @@ public class SyncTask implements IContentProviderSyncOperation< SyncTask >,
    
 
 
-   private SyncProperties< RtmTaskSeries > syncImpl( SyncTask serverElement,
-                                                     SyncTask localElement,
-                                                     SyncProperties< RtmTaskSeries > taskSeriesProperties,
-                                                     SyncProperties< RtmTaskSeries > taskProperties )
-   {
-      // Here we need a separate SyncProperties instance for TaskSeries and Task cause we need the
-      // different ContentProvider URIs for modification checks.
-      
-      SyncUtils.doPreSyncCheck( serverElement.getTaskSeriesId(),
-                                localElement.getTaskSeriesId(),
-                                taskSeriesProperties );
-      
-      SyncUtils.doPreSyncCheck( serverElement.getId(),
-                                localElement.getId(),
-                                taskProperties );
-      
-      // RtmTaskSeries
-      if ( SyncUtils.syncValue( taskSeriesProperties,
-                                TaskSeries.LIST_ID,
-                                serverElement.getListId(),
-                                localElement.getListId(),
-                                String.class ) == SyncResultDirection.SERVER )
-      {
-         String oldListId = serverElement.getListId();
-         
-         // The case we come from computeServerUpdateOperations() we take the synced
-         // value.
-         if ( serverElement == localElement )
-         {
-            final Modification modification = taskSeriesProperties.modifications.find( taskSeriesProperties.uri,
-                                                                                       TaskSeries.LIST_ID );
-            
-            if ( modification != null )
-               oldListId = modification.getSyncedValue();
-         }
-         
-         taskSeriesProperties.operations.merge( localElement,
-                                                taskSeriesProperties.timeline.tasks_moveTo( oldListId,
-                                                                                            localElement.getListId(),
-                                                                                            getTaskSeriesId(),
-                                                                                            getId() ),
-                                                Op.UPDATE );
-      }
-      
-      SyncUtils.syncValue( taskSeriesProperties,
-                           TaskSeries.TASKSERIES_CREATED_DATE,
-                           MolokoDateUtils.getTime( serverElement.getCreatedDate() ),
-                           MolokoDateUtils.getTime( localElement.getCreatedDate() ),
-                           Long.class );
-      
-      SyncUtils.syncValue( taskSeriesProperties,
-                           TaskSeries.MODIFIED_DATE,
-                           MolokoDateUtils.getTime( serverElement.getModifiedDate() ),
-                           MolokoDateUtils.getTime( localElement.getModifiedDate() ),
-                           Long.class );
-      
-      if ( SyncUtils.syncValue( taskSeriesProperties,
-                                TaskSeries.TASKSERIES_NAME,
-                                serverElement.getName(),
-                                localElement.getName(),
-                                String.class ) == SyncResultDirection.SERVER )
-      {
-         taskSeriesProperties.operations.merge( localElement,
-                                                taskSeriesProperties.timeline.tasks_setName( getListId(),
-                                                                                             getTaskSeriesId(),
-                                                                                             getId(),
-                                                                                             localElement.getName() ),
-                                                Op.UPDATE );
-      }
-      
-      SyncUtils.syncValue( taskSeriesProperties,
-                           TaskSeries.SOURCE,
-                           serverElement.getSource(),
-                           localElement.getSource(),
-                           String.class );
-      
-      // syncTasks( properties, serverElement.tasks, localElement.tasks );
-      
-      syncNotes( taskSeriesProperties,
-                 serverElement.getNotes().getNotes(),
-                 localElement.getNotes().getNotes() );
-      
-      if ( SyncUtils.syncValue( taskSeriesProperties,
-                                TaskSeries.LOCATION_ID,
-                                serverElement.getLocationId(),
-                                localElement.getLocationId(),
-                                String.class ) == SyncResultDirection.SERVER )
-      {
-         
-         taskSeriesProperties.operations.merge( localElement,
-                                                taskSeriesProperties.timeline.tasks_setLocation( getListId(),
-                                                                                                 getTaskSeriesId(),
-                                                                                                 getId(),
-                                                                                                 localElement.getLocationId() ),
-                                                Op.UPDATE );
-      }
-      
-      if ( SyncUtils.syncValue( taskSeriesProperties,
-                                TaskSeries.URL,
-                                serverElement.getUrl(),
-                                localElement.getUrl(),
-                                String.class ) == SyncResultDirection.SERVER )
-      {
-         taskSeriesProperties.operations.merge( localElement,
-                                                taskSeriesProperties.timeline.tasks_setURL( getListId(),
-                                                                                            getTaskSeriesId(),
-                                                                                            getId(),
-                                                                                            localElement.getUrl() ),
-                                                Op.UPDATE );
-      }
-      
-      SyncUtils.syncValue( taskSeriesProperties,
-                           TaskSeries.RECURRENCE,
-                           serverElement.getRecurrence(),
-                           localElement.getRecurrence(),
-                           String.class );
-      
-      SyncUtils.syncValue( taskSeriesProperties,
-                           TaskSeries.RECURRENCE_EVERY,
-                           serverElement.isEveryRecurrence() ? 1 : 0,
-                           localElement.isEveryRecurrence() ? 1 : 0,
-                           Integer.class );
-      
-      syncTags( taskSeriesProperties,
-                serverElement.getTags(),
-                localElement.getTags() );
-      
-      syncParticipants( taskSeriesProperties,
-                        serverElement.getParticipants(),
-                        localElement.getParticipants() );
-      
-      // RtmTask
-      SyncUtils.syncValue( taskProperties,
-                           RawTasks.DUE_DATE,
-                           MolokoDateUtils.getTime( serverElement.getDueDate() ),
-                           MolokoDateUtils.getTime( localElement.getDueDate() ),
-                           Long.class );
-      
-      SyncUtils.syncValue( taskProperties,
-                           RawTasks.HAS_DUE_TIME,
-                           serverElement.hasDueTime(),
-                           localElement.hasDueTime(),
-                           Integer.class );
-      
-      SyncUtils.syncValue( taskProperties,
-                           RawTasks.ADDED_DATE,
-                           MolokoDateUtils.getTime( serverElement.getAddedDate() ),
-                           MolokoDateUtils.getTime( localElement.getAddedDate() ),
-                           Long.class );
-      
-      SyncUtils.syncValue( taskProperties,
-                           RawTasks.COMPLETED_DATE,
-                           MolokoDateUtils.getTime( serverElement.getCompletedDate() ),
-                           MolokoDateUtils.getTime( localElement.getCompletedDate() ),
-                           Long.class );
-      
-      if ( SyncUtils.syncValue( taskProperties,
-                                RawTasks.PRIORITY,
-                                RtmTask.convertPriority( serverElement.getPriority() ),
-                                RtmTask.convertPriority( localElement.getPriority() ),
-                                String.class ) == SyncResultDirection.SERVER )
-      {
-         taskProperties.operations.merge( localElement,
-                                          taskProperties.timeline.tasks_setPriority( getListId(),
-                                                                                     getTaskSeriesId(),
-                                                                                     getId(),
-                                                                                     localElement.getPriority() ),
-                                          Op.UPDATE );
-      }
-      
-      SyncUtils.syncValue( taskProperties,
-                           RawTasks.POSTPONED,
-                           serverElement.getPosponed(),
-                           localElement.getPosponed(),
-                           Integer.class );
-      
-      SyncUtils.syncValue( taskProperties,
-                           RawTasks.ESTIMATE,
-                           serverElement.getEstimate(),
-                           localElement.getEstimate(),
-                           String.class );
-      
-      SyncUtils.syncValue( taskProperties,
-                           RawTasks.ESTIMATE_MILLIS,
-                           serverElement.getEstimateMillis(),
-                           localElement.getEstimateMillis(),
-                           Long.class );
-      
-      // Merge all collected operations into one cause it is logically the same element.
-      taskSeriesProperties.operations.addAllLocalOps( taskProperties.operations.getLocalOperations() );
-      taskSeriesProperties.operations.mergeAllServerOps( localElement,
-                                                         taskProperties.operations.getServerOperations() );
-      
-      return taskSeriesProperties;
-   }
-   
-
-
-   private static void syncNotes( SyncProperties properties,
+   private static void syncNotes( ContentProviderSyncOperation.Builder builder,
                                   List< RtmTaskNote > serverValues,
                                   List< RtmTaskNote > localValues )
    {
-      switch ( properties.syncDirection )
-      {
-         case LOCAL_ONLY:
-         {
-            final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( localValues,
-                                                                                                                             RtmTaskNote.LESS_ID );
-            final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverValues,
-                                                                                          syncNotesList );
-            properties.operations.addAllLocalOps( noteOperations );
-         }
-            break;
-         default :
-            break;
-      }
+      final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( localValues,
+                                                                                                                       RtmTaskNote.LESS_ID );
+      final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( serverValues,
+                                                                                    syncNotesList );
+      builder.add( noteOperations );
    }
    
 
 
-   private static void syncTags( SyncProperties properties,
+   private static void syncTags( ContentProviderSyncOperation.Builder builder,
                                  List< Tag > serverValues,
                                  List< Tag > localValues )
    {
-      switch ( properties.syncDirection )
-      {
-         case LOCAL_ONLY:
-         {
-            final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( localValues );
-            final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( serverValues,
-                                                                                          syncList );
-            properties.operations.addAllLocalOps( syncOperations );
-         }
-            break;
-         default :
-            break;
-      }
+      final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( localValues );
+      final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( serverValues,
+                                                                                    syncList );
+      builder.add( syncOperations );
    }
    
 
 
-   private static void syncParticipants( SyncProperties properties,
+   private static void syncParticipants( ContentProviderSyncOperation.Builder builder,
                                          ParticipantList serverValues,
                                          ParticipantList localValues )
    {
-      switch ( properties.syncDirection )
-      {
-         case LOCAL_ONLY:
-         {
-            properties.operations.addAllLocalOps( localValues.computeContentProviderUpdateOperations( serverValues ) );
-         }
-            break;
-         default :
-            break;
-      }
+      builder.add( localValues.computeContentProviderUpdateOperation( serverValues ) );
    }
 }

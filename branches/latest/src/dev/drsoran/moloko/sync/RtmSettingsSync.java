@@ -86,8 +86,7 @@ public final class RtmSettingsSync
       }
       else
       {
-         syncResult.localOps.addAll( local_Settings.computeContentProviderUpdateOperations( null,
-                                                                                            server_Settings ) );
+         syncResult.localOps.add( local_Settings.computeContentProviderUpdateOperation( server_Settings ) );
       }
       
       return true;

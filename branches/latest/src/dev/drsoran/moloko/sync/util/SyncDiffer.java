@@ -121,23 +121,6 @@ public class SyncDiffer
                                                                                                         ModificationSet modifications,
                                                                                                         RtmTimeline timeLine )
    {
-      return twoWaydiff( serverList,
-                         localList,
-                         comp,
-                         modifications,
-                         timeLine,
-                         null );
-   }
-   
-
-
-   public final static < T extends ITwoWaySyncable< T, V >, V > DirectedSyncOperations< V > twoWaydiff( List< ? extends T > serverList,
-                                                                                                        List< ? extends T > localList,
-                                                                                                        Comparator< ? super T > comp,
-                                                                                                        ModificationSet modifications,
-                                                                                                        RtmTimeline timeLine,
-                                                                                                        Date lastSync )
-   {
       if ( serverList == null || localList == null || comp == null
          || timeLine == null )
          throw new NullPointerException();
@@ -272,8 +255,7 @@ public class SyncDiffer
                                                                                                            List< ? extends T > localList,
                                                                                                            Comparator< ? super T > comp,
                                                                                                            ModificationSet modifications,
-                                                                                                           RtmTimeline timeLine,
-                                                                                                           Date lastSync )
+                                                                                                           RtmTimeline timeLine )
    {
       if ( serverList == null || localList == null || comp == null
          || timeLine == null )
@@ -318,9 +300,9 @@ public class SyncDiffer
                // MERGE: The local element is not deleted or deleted before server modification.
                else
                {
-                  operations.addAll( localElement.computeServerUpdateOperations( timeLine,
-                                                                                 modifications,
-                                                                                 serverElement ) );
+                  operations.add( localElement.computeServerUpdateOperation( timeLine,
+                                                                             modifications,
+                                                                             serverElement ) );
                }
             }
          }
@@ -353,9 +335,9 @@ public class SyncDiffer
                   && ( lastSync == null || lastSync.before( localElementModified ) ) )
                {
                   localTouchedElements[ i ] = true;
-                  operations.addAll( localElement.computeServerUpdateOperations( timeLine,
-                                                                                 modifications,
-                                                                                 null ) );
+                  operations.add( localElement.computeServerUpdateOperation( timeLine,
+                                                                             modifications,
+                                                                             null ) );
                }
             }
          }

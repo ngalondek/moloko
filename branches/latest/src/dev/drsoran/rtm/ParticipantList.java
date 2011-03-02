@@ -198,10 +198,13 @@ public class ParticipantList implements
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( ParticipantList update )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( ParticipantList update )
    {
       final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( participants,
                                                                                                                   Participant.LESS_ID );
-      return SyncDiffer.diff( update.participants, syncList );
+      return ContentProviderSyncOperation.newUpdate()
+                                         .add( SyncDiffer.diff( update.participants,
+                                                                syncList ) )
+                                         .build();
    }
 }

@@ -21,7 +21,6 @@ package com.mdt.rtm.data;
 
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 import org.w3c.dom.Element;
 
@@ -278,8 +277,7 @@ public class RtmList extends RtmData implements
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        RtmList update )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmList update )
    {
       if ( !id.equals( update.id ) )
          throw new IllegalArgumentException( "Update id " + update.id
@@ -353,6 +351,6 @@ public class RtmList extends RtmData implements
                                              .build() );
       }
       
-      return result.asList();
+      return result.build();
    }
 }

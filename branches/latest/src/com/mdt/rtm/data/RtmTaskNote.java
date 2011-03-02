@@ -21,7 +21,6 @@ package com.mdt.rtm.data;
 
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -246,8 +245,7 @@ public class RtmTaskNote extends RtmData implements
    
 
 
-   public List< IContentProviderSyncOperation > computeContentProviderUpdateOperations( Date lastSync,
-                                                                                        RtmTaskNote update )
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTaskNote update )
    {
       if ( !id.equals( update.id ) )
          throw new IllegalArgumentException( "Update id " + update.id
@@ -281,7 +279,7 @@ public class RtmTaskNote extends RtmData implements
                                                          update.text )
                                              .build() );
       
-      return result.asList();
+      return result.build();
    }
    
 }

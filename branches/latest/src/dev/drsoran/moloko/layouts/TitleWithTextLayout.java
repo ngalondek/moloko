@@ -67,7 +67,7 @@ public class TitleWithTextLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      textView = new TextView( context );
+      textView = new TextView( context, attrs );
       textView.setId( R.id.title_with_text_text );
       textView.setAutoLinkMask( Linkify.ALL );
       

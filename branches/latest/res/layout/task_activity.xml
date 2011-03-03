@@ -17,8 +17,7 @@
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    style="@style/Task"
-   android:layout_width="fill_parent"
-   android:layout_height="fill_parent">
+   android:layout_width="fill_parent" android:layout_height="fill_parent">
 
    <ScrollView
       android:layout_width="fill_parent"
@@ -73,7 +72,7 @@
                   android:layout_marginRight="?android:attr/scrollbarSize"
                   android:layout_alignParentRight="true"
                   android:layout_below="@id/task_overview_added_date"
-                  android:drawableLeft="@drawable/ic_small_white_check"
+                  android:drawableLeft="@drawable/ic_small_green_check"
                   android:drawablePadding="2dip"
                   android:text="Completed_Date" />
 

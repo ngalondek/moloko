@@ -61,16 +61,30 @@ public class RtmTimeline
    
 
 
-   // public Service getService()
-   // {
-   // return service;
-   // }
-   //
-   
    @Override
    public String toString()
    {
       return "<id=" + id + ">";
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskSeries > tasks_complete( final String listId,
+                                                          final String taskSeriesId,
+                                                          final String taskId )
+   {
+      return new TimeLineMethod< RtmTaskSeries >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         {
+            return service.tasks_complete( id,
+                                           listId,
+                                           taskSeriesId,
+                                           taskId,
+                                           callType );
+         }
+      };
    }
    
 

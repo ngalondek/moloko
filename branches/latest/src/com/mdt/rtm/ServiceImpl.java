@@ -470,24 +470,28 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmTaskSeries tasks_complete( String timelineId,
-                                        String listId,
-                                        String taskSeriesId,
-                                        String taskId ) throws ServiceException
+   public TimeLineResult< RtmTaskSeries > tasks_complete( String timelineId,
+                                                          String listId,
+                                                          String taskSeriesId,
+                                                          String taskId,
+                                                          MethodCallType methodCallType ) throws ServiceException
    {
-      Element response = invoker.invoke( new Param( "method",
-                                                    "rtm.tasks.complete" ),
-                                         new Param( "timeline", timelineId ),
-                                         new Param( "list_id", listId ),
-                                         new Param( "taskseries_id",
-                                                    taskSeriesId ),
-                                         new Param( "task_id", taskId ),
-                                         new Param( "auth_token",
-                                                    currentAuthToken ),
-                                         new Param( "api_key",
-                                                    applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( response );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.complete" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId,
+                            taskSeriesId,
+                            taskId,
+                            methodCallType,
+                            elt );
    }
    
 

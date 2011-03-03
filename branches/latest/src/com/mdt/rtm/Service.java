@@ -218,10 +218,11 @@ public interface Service
    
 
 
-   public RtmTaskSeries tasks_complete( String timelineId,
-                                        String listId,
-                                        String taskSeriesId,
-                                        String taskId ) throws ServiceException;
+   public TimeLineResult< RtmTaskSeries > tasks_complete( String timelineId,
+                                                          String listId,
+                                                          String taskSeriesId,
+                                                          String taskId,
+                                                          MethodCallType methodCallType ) throws ServiceException;
    
 
 

@@ -27,10 +27,10 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.AdapterView.OnItemSelectedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Strings;
@@ -228,7 +228,7 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      spinner = new Spinner( context );
+      spinner = new Spinner( context, attrs );
       spinner.setId( R.id.title_with_spinner_layout );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,

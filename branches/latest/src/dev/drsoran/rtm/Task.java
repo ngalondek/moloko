@@ -75,7 +75,7 @@ public class Task
    
    private final Priority priority;
    
-   private final boolean posponed;
+   private final int posponed;
    
    private final String estimate;
    
@@ -106,10 +106,9 @@ public class Task
       String source, String url, String recurrence, boolean isEveryRecurrence,
       String locationId, String listId, Date due, boolean hasDueTime,
       Date added, Date completed, Date deleted, Priority priority,
-      boolean posponed, String estimate, long estimateMillis,
-      String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, String tags, ParticipantList participants,
-      int numNotes )
+      int posponed, String estimate, long estimateMillis, String locationName,
+      float longitude, float latitude, String address, boolean isViewable,
+      int zoom, String tags, ParticipantList participants, int numNotes )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
@@ -160,10 +159,9 @@ public class Task
       String source, String url, String recurrence, boolean isEveryRecurrence,
       String locationId, String listId, Date due, boolean hasDueTime,
       Date added, Date completed, Date deleted, Priority priority,
-      boolean posponed, String estimate, long estimateMillis,
-      String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, List< String > tags,
-      ParticipantList participants, int numNotes )
+      int posponed, String estimate, long estimateMillis, String locationName,
+      float longitude, float latitude, String address, boolean isViewable,
+      int zoom, List< String > tags, ParticipantList participants, int numNotes )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
@@ -342,7 +340,7 @@ public class Task
    
 
 
-   public boolean isPosponed()
+   public int getPosponed()
    {
       return posponed;
    }

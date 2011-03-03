@@ -101,6 +101,8 @@ public class TaskEditActivity extends Activity
    
    private TextView source;
    
+   private TextView postponed;
+   
    private EditText nameEdit;
    
    private TitleWithSpinnerLayout list;
@@ -176,6 +178,7 @@ public class TaskEditActivity extends Activity
                addedDate = (TextView) taskContainer.findViewById( R.id.task_edit_added_date );
                completedDate = (TextView) taskContainer.findViewById( R.id.task_edit_completed_date );
                source = (TextView) taskContainer.findViewById( R.id.task_edit_src );
+               postponed = (TextView) taskContainer.findViewById( R.id.task_overview_postponed );
                nameEdit = (EditText) taskContainer.findViewById( R.id.task_edit_desc );
                list = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_list );
                priority = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_priority );
@@ -230,11 +233,23 @@ public class TaskEditActivity extends Activity
                                                             FULL_DATE_FLAGS ) );
          
          if ( task.getCompleted() != null )
+         {
             completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                        .getTime(),
                                                                    FULL_DATE_FLAGS ) );
+            completedDate.setVisibility( View.VISIBLE );
+         }
          else
             completedDate.setVisibility( View.GONE );
+         
+         if ( task.getPosponed() > 0 )
+         {
+            postponed.setText( getString( R.string.task_postponed,
+                                          task.getPosponed() ) );
+            postponed.setVisibility( View.VISIBLE );
+         }
+         else
+            postponed.setVisibility( View.GONE );
          
          if ( !TextUtils.isEmpty( task.getSource() ) )
          {
@@ -245,7 +260,7 @@ public class TaskEditActivity extends Activity
             source.setText( getString( R.string.task_source, sourceStr ) );
          }
          else
-            source.setVisibility( View.GONE );
+            source.setText( "?" );
          
          nameEdit.setText( task.getName() );
          

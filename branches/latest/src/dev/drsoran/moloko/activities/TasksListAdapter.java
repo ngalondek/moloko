@@ -33,8 +33,8 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -109,6 +109,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       TextView description;
       ImageView recurrent;
       ImageView hasNotes;
+      ImageView postponed;
       TextView listName;
       TextView dueDate;
       ImageView completed;
@@ -121,6 +122,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
          listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
          recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
          hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
+         postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
          dueDate = (TextView) convertView.findViewById( R.id.taskslist_listitem_due_date );
          completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
          tagsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_tags );
@@ -145,6 +147,11 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
          hasNotes.setVisibility( View.VISIBLE );
       else
          hasNotes.setVisibility( View.GONE );
+      
+      if ( task.getPosponed() > 0 )
+         postponed.setVisibility( View.VISIBLE );
+      else
+         postponed.setVisibility( View.GONE );
       
       setListName( listName, task );
       

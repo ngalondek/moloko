@@ -65,25 +65,42 @@
                android:drawablePadding="2dip"
                android:text="Completed_Date" />
 
-            <TextView
-               android:id="@+id/task_edit_src"
-               style="@style/Task_Source_Text"
-               android:layout_width="wrap_content"
+            <RelativeLayout
+               android:id="@+id/task_edit_status_container"
                android:layout_height="wrap_content"
-               android:layout_marginTop="3dip"
-               android:layout_marginRight="?android:attr/scrollbarSize"
+               android:layout_width="wrap_content"
                android:layout_alignParentRight="true"
                android:layout_below="@id/task_edit_completed_date"
                android:layout_alignWithParentIfMissing="true"
-               android:drawablePadding="2dip"
-               android:text="src" />
+               android:layout_marginTop="3dip"
+               android:layout_marginRight="?android:attr/scrollbarSize">
+               
+               <TextView
+                  android:id="@+id/task_edit_postponed"
+                  style="@style/Task_Source_Text"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toLeftOf="@+id/task_edit_src"
+                  android:layout_marginRight="5dip"
+                  android:drawableLeft="@drawable/ic_small_black_postponed"
+                  android:drawablePadding="2dip"
+                  android:text="@string/task_postponed" />
+                  
+               <TextView
+                  android:id="@+id/task_edit_src"
+                  style="@style/Task_Source_Text"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true"
+                  android:text="@string/task_source" />                     
+             </RelativeLayout>
 
             <EditText
                android:id="@+id/task_edit_desc"
                style="@style/Task_Overview_DescriptionText"
                android:layout_width="fill_parent"
                android:layout_height="wrap_content"
-               android:layout_below="@id/task_edit_src"
+               android:layout_below="@id/task_edit_status_container"
                android:layout_alignWithParentIfMissing="true"
                android:layout_marginTop="3dip"
                android:layout_marginLeft="10dip"

@@ -23,6 +23,7 @@
 package dev.drsoran.rtm;
 
 import java.util.Comparator;
+import java.util.Date;
 
 import android.content.ContentProviderOperation;
 import android.net.Uri;
@@ -165,6 +166,13 @@ public class Participant implements IContentProviderSyncable< Participant >,
    public Uri getContentUriWithId()
    {
       return Queries.contentUriWithId( Participants.CONTENT_URI, id );
+   }
+   
+
+
+   public Date getDeletedDate()
+   {
+      return null;
    }
    
 

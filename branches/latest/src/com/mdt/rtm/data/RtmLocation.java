@@ -20,6 +20,7 @@
 package com.mdt.rtm.data;
 
 import java.util.Comparator;
+import java.util.Date;
 
 import org.w3c.dom.Element;
 
@@ -136,9 +137,9 @@ public class RtmLocation extends RtmData implements
    
 
 
-   public boolean isDeleted()
+   public Date getDeletedDate()
    {
-      return false;
+      return null;
    }
    
 

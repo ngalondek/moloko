@@ -185,8 +185,17 @@ options
 
    private void equalsIntParam( String param )
    {
-      result.append( " = " );
-      result.append( unquotify( param ) );
+   	try
+   	{
+   	   final int val = Integer.parseInt( unquotify( param ) );
+   	   
+         result.append( " = " );
+         result.append( val );
+   	}
+   	catch( NumberFormatException e )
+   	{
+   	   error = true;
+   	}
    }
 
 

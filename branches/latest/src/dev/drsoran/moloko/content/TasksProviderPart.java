@@ -623,7 +623,7 @@ public class TasksProviderPart extends AbstractProviderPart
                        Queries.getOptDate( c,
                                            COL_INDICES.get( Tasks.DELETED_DATE ) ),
                        RtmTask.convertPriority( c.getString( COL_INDICES.get( Tasks.PRIORITY ) ) ),
-                       c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ) != 0,
+                       c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ),
                        Queries.getOptString( c,
                                              COL_INDICES.get( Tasks.ESTIMATE ) ),
                        c.getLong( COL_INDICES.get( Tasks.ESTIMATE_MILLIS ) ),

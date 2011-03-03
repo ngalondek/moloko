@@ -445,7 +445,6 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       
       return new RtmListWithTaskCount( c.getString( COL_INDICES.get( ListOverviews._ID ) ),
                                        c.getString( COL_INDICES.get( ListOverviews.LIST_NAME ) ),
-                                       c.getInt( COL_INDICES.get( ListOverviews.LIST_DELETED ) ),
                                        c.getInt( COL_INDICES.get( ListOverviews.LOCKED ) ),
                                        c.getInt( COL_INDICES.get( ListOverviews.ARCHIVED ) ),
                                        c.getInt( COL_INDICES.get( ListOverviews.POSITION ) ),

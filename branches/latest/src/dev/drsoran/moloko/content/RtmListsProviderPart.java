@@ -38,6 +38,7 @@ import android.util.Log;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Settings;
@@ -77,9 +78,22 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          values.put( Rtm.Lists._ID, list.getId() );
       
       values.put( Lists.LIST_NAME, list.getName() );
-      values.put( Lists.CREATED_DATE, list.getCreated().getTime() );
-      values.put( Lists.MODIFIED_DATE, list.getModified().getTime() );
-      values.put( Lists.LIST_DELETED, list.getDeleted() );
+      
+      if ( list.getCreatedDate() != null )
+         values.put( Lists.CREATED_DATE, list.getCreatedDate().getTime() );
+      else
+         values.putNull( Lists.CREATED_DATE );
+      
+      if ( list.getModifiedDate() != null )
+         values.put( Lists.MODIFIED_DATE, list.getModifiedDate().getTime() );
+      else
+         values.putNull( Lists.MODIFIED_DATE );
+      
+      if ( list.getDeletedDate() != null )
+         values.put( Lists.LIST_DELETED, list.getDeletedDate().getTime() );
+      else
+         values.putNull( Lists.LIST_DELETED );
+      
       values.put( Lists.LOCKED, list.getLocked() );
       values.put( Lists.ARCHIVED, list.getArchived() );
       values.put( Lists.POSITION, list.getPosition() );
@@ -150,7 +164,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
                                                                              : "1" )
                                                    .append( " ) AND " )
                                                    .append( Lists.LIST_DELETED )
-                                                   .append( "=0" )
+                                                   .append( " IS NULL" )
                                                    .toString(),
                            null,
                            null );
@@ -212,9 +226,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Lists._ID
          + " TEXT NOT NULL, " + Lists.LIST_NAME + " TEXT NOT NULL, "
-         + Lists.CREATED_DATE + " INTEGER NOT NULL DEFAULT 0, "
-         + Lists.MODIFIED_DATE + " INTEGER NOT NULL DEFAULT 0, "
-         + Lists.LIST_DELETED + " INTEGER NOT NULL DEFAULT 0, " + Lists.LOCKED
+         + Lists.CREATED_DATE + " INTEGER, " + Lists.MODIFIED_DATE
+         + " INTEGER, " + Lists.LIST_DELETED + " INTEGER, " + Lists.LOCKED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.ARCHIVED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.POSITION
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.IS_SMART_LIST
@@ -307,9 +320,12 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
       
       final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
                                         c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
-                                        c.getLong( COL_INDICES.get( Lists.CREATED_DATE ) ),
-                                        c.getLong( COL_INDICES.get( Lists.MODIFIED_DATE ) ),
-                                        c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),
+                                        Queries.getOptDate( c,
+                                                            COL_INDICES.get( Lists.CREATED_DATE ) ),
+                                        Queries.getOptDate( c,
+                                                            COL_INDICES.get( Lists.MODIFIED_DATE ) ),
+                                        Queries.getOptDate( c,
+                                                            COL_INDICES.get( Lists.LIST_DELETED ) ),
                                         c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
                                         c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
                                         c.getInt( COL_INDICES.get( Lists.POSITION ) ),

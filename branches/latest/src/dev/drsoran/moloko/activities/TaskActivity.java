@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.content.ContentProviderClient;
@@ -46,9 +47,12 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.LogUtils;
@@ -56,6 +60,7 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Participant;
 import dev.drsoran.rtm.ParticipantList;
@@ -80,6 +85,8 @@ public class TaskActivity extends Activity
    private TextView completedDate;
    
    private TextView source;
+   
+   private TextView postponed;
    
    private TextView description;
    
@@ -141,6 +148,7 @@ public class TaskActivity extends Activity
                addedDate = (TextView) taskContainer.findViewById( R.id.task_overview_added_date );
                completedDate = (TextView) taskContainer.findViewById( R.id.task_overview_completed_date );
                source = (TextView) taskContainer.findViewById( R.id.task_overview_src );
+               postponed = (TextView) taskContainer.findViewById( R.id.task_overview_postponed );
                description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
                listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
                tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
@@ -248,22 +256,38 @@ public class TaskActivity extends Activity
 
    public void onCompleteTask( View v )
    {
-      /*
-       * final ModificationSet modifications = new ModificationSet();
-       * 
-       * modifications.add( Modification.newModification( RawTasks.CONTENT_URI, task.getId(), RawTasks.COMPLETED_DATE,
-       * task.getCompleted() != null ? null : System.currentTimeMillis() ) );
-       * 
-       * modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
-       * 
-       * boolean ok = false;
-       * 
-       * try { ok = new ApplyModificationsTask( this ).execute( modifications ).get(); } catch ( InterruptedException e
-       * ) { Log.e( TAG, "Applying task changes failed", e ); ok = false; } catch ( ExecutionException e ) { Log.e( TAG,
-       * "Applying task changes failed", e ); ok = false; }
-       * 
-       * Toast.makeText( this, ok ? R.string.task_save_ok : R.string.task_save_error, Toast.LENGTH_LONG ).show();
-       */
+      final ModificationSet modifications = new ModificationSet();
+      
+      modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
+                                                       task.getId(),
+                                                       RawTasks.COMPLETED_DATE,
+                                                       task.getCompleted() != null
+                                                                                  ? null
+                                                                                  : System.currentTimeMillis() ) );
+      
+      modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
+      
+      boolean ok = false;
+      
+      try
+      {
+         ok = new ApplyModificationsTask( this ).execute( modifications ).get();
+      }
+      catch ( InterruptedException e )
+      {
+         Log.e( TAG, "Applying task changes failed", e );
+         ok = false;
+      }
+      catch ( ExecutionException e )
+      {
+         Log.e( TAG, "Applying task changes failed", e );
+         ok = false;
+      }
+      
+      Toast.makeText( this,
+                      ok ? R.string.task_save_ok : R.string.task_save_error,
+                      Toast.LENGTH_LONG ).show();
+      
       finish();
    }
    
@@ -281,6 +305,7 @@ public class TaskActivity extends Activity
          
          if ( task.getCompleted() != null )
          {
+            completedDate.setVisibility( View.VISIBLE );
             completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                        .getTime(),
                                                                    FULL_DATE_FLAGS ) );
@@ -292,6 +317,15 @@ public class TaskActivity extends Activity
             completeTaskBtn.setText( R.string.btn_complete );
          }
          
+         if ( task.getPosponed() > 0 )
+         {
+            postponed.setText( getString( R.string.task_postponed,
+                                          task.getPosponed() ) );
+            postponed.setVisibility( View.VISIBLE );
+         }
+         else
+            postponed.setVisibility( View.GONE );
+         
          if ( !TextUtils.isEmpty( task.getSource() ) )
          {
             String sourceStr = task.getSource();
@@ -301,7 +335,7 @@ public class TaskActivity extends Activity
             source.setText( getString( R.string.task_source, sourceStr ) );
          }
          else
-            source.setVisibility( View.GONE );
+            source.setText( "?" );
          
          UIUtils.setTaskDescription( description, task, null );
          
@@ -582,7 +616,7 @@ public class TaskActivity extends Activity
                   try
                   {
                      final TextView createdDate = (TextView) noteView.findViewById( R.id.note_created_date );
-                     createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
+                     createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
                                                                               .getTime(),
                                                                           FULL_DATE_FLAGS ) );
                   }

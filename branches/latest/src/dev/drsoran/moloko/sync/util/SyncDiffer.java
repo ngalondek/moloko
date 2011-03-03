@@ -62,21 +62,27 @@ public class SyncDiffer
       // for each element of the reference list
       for ( T refElement : reference )
       {
-         final int pos = target.find( refElement );
-         
-         // INSERT: The reference element is not contained in the target list.
-         if ( pos == -1 )
+         // Check if the server element is not deleted
+         if ( refElement.getDeletedDate() == null )
          {
-            final IContentProviderSyncOperation operation = target.computeInsertOperation( refElement );
-            if ( !( operation instanceof INoopSyncOperation ) )
-               operations.add( operation );
+            final int pos = target.find( refElement );
+            
+            // INSERT: The reference element is not contained in the target list.
+            if ( pos == -1 )
+            {
+               final IContentProviderSyncOperation operation = target.computeInsertOperation( refElement );
+               if ( !( operation instanceof INoopSyncOperation ) )
+                  operations.add( operation );
+            }
+            
+            // UPDATE: The reference element is contained in the target list.
+            else
+            {
+               operations.add( target.computeUpdateOperation( pos, refElement ) );
+            }
          }
          
-         // UPDATE: The reference element is contained in the target list.
-         else
-         {
-            operations.add( target.computeUpdateOperation( pos, refElement ) );
-         }
+         // We never had this element locally, just skip it.
       }
       
       // Check if we have a full sync. Otherwise we would delete elements

@@ -22,6 +22,8 @@
 
 package dev.drsoran.rtm;
 
+import java.util.Date;
+
 import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.os.Parcel;
@@ -158,6 +160,13 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
    public Uri getContentUriWithId()
    {
       return Queries.contentUriWithId( Tags.CONTENT_URI, id );
+   }
+   
+
+
+   public Date getDeletedDate()
+   {
+      return null;
    }
    
 

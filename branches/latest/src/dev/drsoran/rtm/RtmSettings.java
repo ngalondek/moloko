@@ -242,6 +242,13 @@ public class RtmSettings extends RtmData implements
    
 
 
+   public Date getDeletedDate()
+   {
+      return null;
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       return NoopContentProviderSyncOperation.INSTANCE;

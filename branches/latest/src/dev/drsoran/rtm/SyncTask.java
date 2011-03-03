@@ -476,6 +476,19 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
                                                        getPriority() ),
                            properties.getModification( RawTasks.PRIORITY ) );
          }
+         
+         // Completed date
+         if ( SyncUtils.getSyncDirection( properties,
+                                          RawTasks.COMPLETED_DATE,
+                                          MolokoDateUtils.getTime( serverElement.getCompletedDate() ),
+                                          MolokoDateUtils.getTime( getCompletedDate() ),
+                                          Long.class ) == SyncResultDirection.SERVER )
+         {
+            operation.add( timeline.tasks_complete( getListId(),
+                                                    getTaskSeriesId(),
+                                                    getId() ),
+                           properties.getModification( RawTasks.COMPLETED_DATE ) );
+         }
       }
       
       return operation.build();

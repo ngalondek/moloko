@@ -31,9 +31,9 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.util.Log;
 
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.util.LogUtils;
@@ -53,10 +53,9 @@ public class ListTask extends Task
       String source, String url, String recurrence, boolean isEveryRecurrence,
       String locationId, String listId, Date due, boolean hasDueTime,
       Date added, Date completed, Date deleted, Priority priority,
-      boolean posponed, String estimate, long estimateMillis,
-      String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, List< String > tags,
-      ParticipantList participants, int numNotes )
+      int posponed, String estimate, long estimateMillis, String locationName,
+      float longitude, float latitude, String address, boolean isViewable,
+      int zoom, List< String > tags, ParticipantList participants, int numNotes )
    {
       super( id,
              taskSeriesId,
@@ -114,7 +113,7 @@ public class ListTask extends Task
                            task.getCompleted(),
                            task.getDeleted(),
                            task.getPriority(),
-                           task.isPosponed(),
+                           task.getPosponed(),
                            task.getEstimate(),
                            task.getEstimateMillis(),
                            task.getLocationName(),

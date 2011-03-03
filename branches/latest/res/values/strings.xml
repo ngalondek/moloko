@@ -178,6 +178,7 @@
 	
 	<!-- Task activity -->
    <string name="task_source">from %1$s</string>
+   <string name="task_postponed">%1$dx,</string>
    <string name="task_datetime_title_due">When</string>
    <string name="task_datetime_title_estimate">Duration</string>
    <string name="task_datetime_title_recurr">Recurrence</string>

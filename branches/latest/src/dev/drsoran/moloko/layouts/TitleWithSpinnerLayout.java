@@ -27,10 +27,10 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.AdapterView.OnItemSelectedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Strings;
@@ -235,26 +235,28 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
                                                                R.styleable.TitleWithSpinner,
                                                                0,
                                                                0 );
-      
-      final int entriesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerEntries,
-                                                 -1 );
-      
-      if ( entriesId != -1 )
+      if ( !isInEditMode() )
       {
-         final ArrayAdapter< CharSequence > adapter = ArrayAdapter.createFromResource( context,
-                                                                                       entriesId,
-                                                                                       android.R.layout.simple_spinner_item );
-         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+         final int entriesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerEntries,
+                                                    -1 );
          
-         setAdapter( adapter );
-      }
-      
-      final int valuesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerValues,
-                                                -1 );
-      
-      if ( valuesId != -1 )
-      {
-         values = context.getResources().getStringArray( valuesId );
+         if ( entriesId != -1 )
+         {
+            final ArrayAdapter< CharSequence > adapter = ArrayAdapter.createFromResource( context,
+                                                                                          entriesId,
+                                                                                          android.R.layout.simple_spinner_item );
+            adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+            
+            setAdapter( adapter );
+         }
+         
+         final int valuesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerValues,
+                                                   -1 );
+         
+         if ( valuesId != -1 )
+         {
+            values = context.getResources().getStringArray( valuesId );
+         }
       }
       
       array.recycle();

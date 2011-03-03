@@ -78,14 +78,16 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          values.put( Notes._ID, note.getId() );
       
       values.put( Notes.TASKSERIES_ID, note.getTaskSeriesId() );
-      values.put( Notes.NOTE_CREATED_DATE, note.getCreated().getTime() );
+      values.put( Notes.NOTE_CREATED_DATE, note.getCreatedDate().getTime() );
       
-      if ( note.getModified() != null )
-         values.put( Notes.NOTE_MODIFIED_DATE, note.getModified().getTime() );
+      if ( note.getModifiedDate() != null )
+         values.put( Notes.NOTE_MODIFIED_DATE, note.getModifiedDate().getTime() );
       else
          values.putNull( Notes.NOTE_MODIFIED_DATE );
-      
-      values.put( Notes.NOTE_DELETED, note.isDeleted() );
+      if ( note.getDeletedDate() != null )
+         values.put( Notes.NOTE_DELETED, note.getDeletedDate().getTime() );
+      else
+         values.putNull( Notes.NOTE_DELETED );
       
       if ( !TextUtils.isEmpty( note.getTitle() ) )
          values.put( Notes.NOTE_TITLE, note.getTitle() );
@@ -221,9 +223,9 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          + " TEXT NOT NULL, " + Notes.TASKSERIES_ID + " TEXT NOT NULL, "
          + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
          + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_DELETED
-         + " INTEGER DEFAULT 0, " + Notes.NOTE_TITLE + " TEXT, "
-         + Notes.NOTE_TEXT + " TEXT NOT NULL, "
-         + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID + "\" ), "
+         + " INTEGER, " + Notes.NOTE_TITLE + " TEXT, " + Notes.NOTE_TEXT
+         + " TEXT NOT NULL, " + "CONSTRAINT PK_NOTES PRIMARY KEY ( \""
+         + Notes._ID + "\" ), "
          + "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( "
          + Notes.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH + " ( "
          + TaskSeries._ID + " ) );" );
@@ -305,7 +307,8 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                               new Date( c.getLong( COL_INDICES.get( Notes.NOTE_CREATED_DATE ) ) ),
                               Queries.getOptDate( c,
                                                   COL_INDICES.get( Notes.NOTE_MODIFIED_DATE ) ),
-                              c.getInt( COL_INDICES.get( Notes.NOTE_DELETED ) ) != 0,
+                              Queries.getOptDate( c,
+                                                  COL_INDICES.get( Notes.NOTE_DELETED ) ),
                               Queries.getOptString( c,
                                                     COL_INDICES.get( Notes.NOTE_TITLE ) ),
                               c.getString( COL_INDICES.get( Notes.NOTE_TEXT ) ) );

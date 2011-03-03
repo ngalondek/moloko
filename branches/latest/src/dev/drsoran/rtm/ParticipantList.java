@@ -24,11 +24,11 @@ package dev.drsoran.rtm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -169,9 +169,9 @@ public class ParticipantList implements
    
 
 
-   public Uri getContentUriWithId()
+   public Date getDeletedDate()
    {
-      return Uri.EMPTY;
+      return null;
    }
    
 

@@ -108,9 +108,20 @@
             android:layout_width="20dip"
             android:layout_height="20dip"
             android:layout_marginRight="5dip"
-            android:layout_toLeftOf="@+id/taskslist_listitem_recurrent"
+            android:layout_toLeftOf="@+id/taskslist_listitem_postponed"
             android:layout_alignWithParentIfMissing="true"
             android:src="@drawable/ic_list_taskslist_note"
+            android:focusable="false"
+            android:visibility="gone" />
+            
+         <ImageView
+            android:id="@+id/taskslist_listitem_postponed"
+            android:layout_width="20dip"
+            android:layout_height="20dip"
+            android:layout_marginRight="5dip"
+            android:layout_toLeftOf="@+id/taskslist_listitem_recurrent"
+            android:layout_alignWithParentIfMissing="true"
+            android:src="@drawable/ic_list_taskslist_postponed"
             android:focusable="false"
             android:visibility="gone" />
 

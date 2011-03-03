@@ -328,9 +328,7 @@ public class RtmTaskSeries extends RtmData implements
 
    public Date getDeletedDate()
    {
-      // This returns always null since a RtmTaskSeries gets deleted if it contains
-      // no more tasks and not explicitly.
-      return null;
+      return tasks.get( 0 ).getDeletedDate();
    }
    
 

@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.dialogs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +51,7 @@ import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.rtm.Task;
 

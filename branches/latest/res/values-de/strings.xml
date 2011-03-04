@@ -118,6 +118,9 @@
    
    <!-- Global Dialogs -->
    <string name="dlg_save_task">Speichere Änderungen...</string>
+   <string name="add_rem_tag_dialog_title_add">Tags hinzufügen</string>
+   <string name="add_rem_tag_dialog_title_rem">Tags entfernen</string>
+   <string name="add_rem_tag_dialog_edit_hint">Durch Komma getrennte Tags</string>
 	
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>

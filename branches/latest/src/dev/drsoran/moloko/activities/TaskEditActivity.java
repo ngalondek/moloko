@@ -48,6 +48,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.dialogs.AddRemoveTagsDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
@@ -274,6 +275,13 @@ public class TaskEditActivity extends Activity
          refreshLocationSpinner();
          refreshUrl();
       }
+   }
+   
+
+
+   public void onAddTag( View v )
+   {
+      new AddRemoveTagsDialog( this ).show();
    }
    
 

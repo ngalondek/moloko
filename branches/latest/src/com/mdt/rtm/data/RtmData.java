@@ -65,7 +65,7 @@ public abstract class RtmData implements Parcelable
    public static Element child( Element elt, String nodeName )
    {
       NodeList childNodes = elt.getChildNodes();
-      for ( int index = 0; index < childNodes.getLength(); index++ )
+      for ( int index = 0, cnt = childNodes.getLength(); index < cnt; index++ )
       {
          Node child = childNodes.item( index );
          if ( child.getNodeType() == Node.ELEMENT_NODE
@@ -86,7 +86,7 @@ public abstract class RtmData implements Parcelable
    {
       final List< Element > result = new LinkedList< Element >();
       NodeList childNodes = elt.getChildNodes();
-      for ( int index = 0; index < childNodes.getLength(); index++ )
+      for ( int index = 0, cnt = childNodes.getLength(); index < cnt; index++ )
       {
          Node child = childNodes.item( index );
          if ( child.getNodeType() == Node.ELEMENT_NODE
@@ -138,13 +138,32 @@ public abstract class RtmData implements Parcelable
    
 
 
-   public static ParcelableDate parseDate( String s )
+   public static ParcelableDate parseParcableDate( String s )
    {
       if ( !TextUtils.isEmpty( s ) )
       {
          try
          {
             return new ParcelableDate( DATE_FORMAT.parse( s ) );
+         }
+         catch ( ParseException e )
+         {
+            throw new RuntimeException( e );
+         }
+      }
+      
+      return null;
+   }
+   
+
+
+   public static Date parseDate( String s )
+   {
+      if ( !TextUtils.isEmpty( s ) )
+      {
+         try
+         {
+            return DATE_FORMAT.parse( s );
          }
          catch ( ParseException e )
          {

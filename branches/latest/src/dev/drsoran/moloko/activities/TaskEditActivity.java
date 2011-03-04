@@ -178,7 +178,7 @@ public class TaskEditActivity extends Activity
                addedDate = (TextView) taskContainer.findViewById( R.id.task_edit_added_date );
                completedDate = (TextView) taskContainer.findViewById( R.id.task_edit_completed_date );
                source = (TextView) taskContainer.findViewById( R.id.task_edit_src );
-               postponed = (TextView) taskContainer.findViewById( R.id.task_overview_postponed );
+               postponed = (TextView) taskContainer.findViewById( R.id.task_edit_postponed );
                nameEdit = (EditText) taskContainer.findViewById( R.id.task_edit_desc );
                list = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_list );
                priority = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_priority );

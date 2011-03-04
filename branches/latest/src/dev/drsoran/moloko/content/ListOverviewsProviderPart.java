@@ -133,7 +133,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                             .append( "." )
                                             // Only non-deleted lists
                                             .append( Lists.LIST_DELETED )
-                                            .append( " = 0 GROUP BY " )
+                                            .append( " IS NULL GROUP BY " )
                                             .append( Lists.LIST_NAME )
                                             .toString();
    }

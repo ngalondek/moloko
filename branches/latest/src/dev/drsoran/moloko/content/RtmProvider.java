@@ -284,17 +284,13 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
+            Log.e( TAG, "Unknown URI " + uri );
             break;
       }
       
       if ( numDeleted > 0 )
       {
          getContext().getContentResolver().notifyChange( uri, null );
-      }
-      else
-      {
-         // TODO: Throw and handle exception.
-         Log.e( TAG, "Unknown URI " + uri );
       }
       
       return numDeleted;
@@ -363,17 +359,13 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
+            Log.e( TAG, "Unknown URI " + uri );
             break;
       }
       
       if ( numUpdated > 0 )
       {
          getContext().getContentResolver().notifyChange( uri, null );
-      }
-      else
-      {
-         // TODO: Throw and handle exception.
-         Log.e( TAG, "Unknown URI " + uri );
       }
       
       return numUpdated;

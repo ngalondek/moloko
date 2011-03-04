@@ -156,16 +156,15 @@ public class RtmTask extends RtmData
    
 
 
-   public RtmTask( Element elt, String taskSeriesId, String listId,
-      ParcelableDate modified )
+   public RtmTask( Element elt, String taskSeriesId, String listId )
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
-      due = parseDate( textNullIfEmpty( elt, "due" ) );
+      due = parseParcableDate( textNullIfEmpty( elt, "due" ) );
       hasDueTime = Integer.parseInt( elt.getAttribute( "has_due_time" ) );
-      added = parseDate( textNullIfEmpty( elt, "added" ) );
-      completed = parseDate( textNullIfEmpty( elt, "completed" ) );
-      deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
+      added = parseParcableDate( textNullIfEmpty( elt, "added" ) );
+      completed = parseParcableDate( textNullIfEmpty( elt, "completed" ) );
+      deleted = parseParcableDate( textNullIfEmpty( elt, "deleted" ) );
       
       String priorityStr = elt.getAttribute( "priority" );
       if ( priorityStr.length() > 0 )
@@ -218,7 +217,7 @@ public class RtmTask extends RtmData
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
-      this.deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
+      this.deleted = parseParcableDate( textNullIfEmpty( elt, "deleted" ) );
       due = null;
       hasDueTime = 0;
       added = null;

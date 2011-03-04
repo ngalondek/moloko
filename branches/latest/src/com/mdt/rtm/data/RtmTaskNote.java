@@ -118,8 +118,8 @@ public class RtmTaskNote extends RtmData implements
    {
       id = textNullIfEmpty( element, "id" );
       this.taskSeriesId = taskSeriesId;
-      created = parseDate( element.getAttribute( "created" ) );
-      modified = parseDate( element.getAttribute( "modified" ) );
+      created = parseParcableDate( element.getAttribute( "created" ) );
+      modified = parseParcableDate( element.getAttribute( "modified" ) );
       deleted = null;
       title = textNullIfEmpty( element, "title" );
       

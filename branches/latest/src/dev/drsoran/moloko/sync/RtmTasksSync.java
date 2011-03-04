@@ -24,6 +24,7 @@ package dev.drsoran.moloko.sync;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +47,7 @@ import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -111,13 +113,10 @@ public final class RtmTasksSync
          return false;
       }
       
-      Collections.sort( local_TaskSeries, RtmTaskSeries.LESS_ID );
       Collections.sort( server_TaskSeries, RtmTaskSeries.LESS_ID );
+      Collections.sort( local_TaskSeries, RtmTaskSeries.LESS_ID );
       
-      final List< SyncTask > server_Tasks = toPlainList( server_TaskSeries );
       final List< SyncTask > local_Tasks = toPlainList( local_TaskSeries );
-      
-      Collections.sort( server_Tasks, SyncTask.LESS_ID );
       Collections.sort( local_Tasks, SyncTask.LESS_ID );
       
       // Check if we have server write access
@@ -127,33 +126,29 @@ public final class RtmTasksSync
          if ( modifications.hasModifications( TaskSeries.CONTENT_URI )
             || modifications.hasModifications( RawTasks.CONTENT_URI ) )
          {
+            final List< SyncTask > server_Tasks = toPlainList( server_TaskSeries );
+            Collections.sort( server_Tasks, SyncTask.LESS_ID );
+            
             RtmTimeline timeline = null;
             
             try
             {
                timeline = timeLineFactory.createTimeline();
-            }
-            catch ( ServiceException e )
-            {
-               return false;
-            }
-            
-            // Collect all outgoing changes
-            final List< IServerSyncOperation< RtmTaskSeries > > serverOps = SyncDiffer.outDiff( server_Tasks,
-                                                                                                local_Tasks,
-                                                                                                SyncTask.LESS_ID,
-                                                                                                modifications,
-                                                                                                timeline,
-                                                                                                lastSync );
-            // Send our local changes to the server and update the server list of
-            // TaskSeries with the new elements retrieved from server during
-            // the commit.
-            try
-            {
-               SyncUtils.applyServerOperations( (RtmProvider) provider.getLocalContentProvider(),
-                                                serverOps,
-                                                server_TaskSeries,
-                                                RtmTaskSeries.LESS_ID );
+               
+               // Collect all outgoing changes
+               final List< IServerSyncOperation< RtmTaskList > > serverOps = SyncDiffer.outDiff( server_Tasks,
+                                                                                                 local_Tasks,
+                                                                                                 SyncTask.LESS_ID,
+                                                                                                 modifications,
+                                                                                                 timeline,
+                                                                                                 lastSync );
+               // Send our local changes to the server and update the server list of
+               // TaskSeries with the new elements retrieved from server during
+               // the commit.
+               applyServerOperations( (RtmProvider) provider.getLocalContentProvider(),
+                                      serverOps,
+                                      server_TaskSeries,
+                                      RtmTaskSeries.LESS_ID );
             }
             catch ( ServiceException e )
             {
@@ -178,6 +173,10 @@ public final class RtmTasksSync
       
       // Sync SyncTasks incoming
       {
+         // Recreate server SyncTasks cause this list may have updated due to outgoing sync operations.
+         final List< SyncTask > server_Tasks = toPlainList( server_TaskSeries );
+         Collections.sort( server_Tasks, SyncTask.LESS_ID );
+         
          final ContentProviderSyncableList< SyncTask > local_SyncList = new ContentProviderSyncableList< SyncTask >( local_Tasks,
                                                                                                                      SyncTask.LESS_ID );
          final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_Tasks,
@@ -219,5 +218,54 @@ public final class RtmTasksSync
             result.add( series );
       
       return new ArrayList< RtmTaskSeries >( result );
+   }
+   
+
+
+   private final static void applyServerOperations( RtmProvider rtmProvider,
+                                                    List< ? extends IServerSyncOperation< RtmTaskList > > serverOps,
+                                                    List< RtmTaskSeries > sortedServerElements,
+                                                    Comparator< ? super RtmTaskSeries > cmp ) throws ServiceException
+   {
+      for ( IServerSyncOperation< RtmTaskList > serverOp : serverOps )
+      {
+         if ( !( serverOp instanceof INoopSyncOperation ) )
+         {
+            try
+            {
+               final RtmTaskList result = serverOp.execute( rtmProvider );
+               
+               if ( result == null )
+                  throw new ServiceException( -1,
+                                              "ServerSyncOperation produced no result" );
+               
+               final List< RtmTaskSeries > taskSeries = result.getSeries();
+               
+               for ( RtmTaskSeries rtmTaskSeries : taskSeries )
+               {
+                  // If the set already contains an element in respect to the Comparator,
+                  // then we update it by the new received.
+                  final int pos = Collections.binarySearch( sortedServerElements,
+                                                            rtmTaskSeries,
+                                                            cmp );
+                  
+                  if ( pos >= 0 )
+                  {
+                     sortedServerElements.remove( pos );
+                     sortedServerElements.add( pos, rtmTaskSeries );
+                  }
+                  else
+                  {
+                     sortedServerElements.add( ( -pos - 1 ), rtmTaskSeries );
+                  }
+               }
+            }
+            catch ( ServiceException e )
+            {
+               Log.e( TAG, "Applying server operation failed", e );
+               throw e;
+            }
+         }
+      }
    }
 }

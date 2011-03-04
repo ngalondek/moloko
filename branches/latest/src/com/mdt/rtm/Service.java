@@ -28,11 +28,12 @@ import com.mdt.rtm.data.RtmFrob;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
+import com.mdt.rtm.data.RtmTask.Priority;
+import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
@@ -45,13 +46,7 @@ import dev.drsoran.rtm.RtmSettings;
  */
 public interface Service
 {
-   enum MethodCallType
-   {
-      NO_RESULT, WITH_RESULT
-   }
    
-   
-
    // ////// AUTHORIZATION /////////////////////////////
    
    /**
@@ -218,11 +213,17 @@ public interface Service
    
 
 
-   public TimeLineResult< RtmTaskSeries > tasks_complete( String timelineId,
-                                                          String listId,
-                                                          String taskSeriesId,
-                                                          String taskId,
-                                                          MethodCallType methodCallType ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_complete( String timelineId,
+                                                 String listId,
+                                                 String taskSeriesId,
+                                                 String taskId ) throws ServiceException;
+   
+
+
+   TimeLineResult< RtmTaskList > tasks_uncomplete( String timelineId,
+                                                   String listId,
+                                                   String taskSeriesId,
+                                                   String taskId ) throws ServiceException;
    
 
 
@@ -250,21 +251,19 @@ public interface Service
    
 
 
-   TimeLineResult< RtmTaskSeries > tasks_movePriority( String timelineId,
-                                                       String listId,
-                                                       String taskSeriesId,
-                                                       String taskId,
-                                                       boolean up,
-                                                       MethodCallType methodCallType ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_movePriority( String timelineId,
+                                                     String listId,
+                                                     String taskSeriesId,
+                                                     String taskId,
+                                                     boolean up ) throws ServiceException;
    
 
 
-   TimeLineResult< RtmTaskSeries > tasks_moveTo( String timelineId,
-                                                 String fromListId,
-                                                 String toListId,
-                                                 String taskSeriesId,
-                                                 String taskId,
-                                                 MethodCallType methodCallType ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_moveTo( String timelineId,
+                                               String fromListId,
+                                               String toListId,
+                                               String taskSeriesId,
+                                               String taskId ) throws ServiceException;
    
 
 
@@ -292,21 +291,19 @@ public interface Service
    
 
 
-   TimeLineResult< RtmTaskSeries > tasks_setName( String timelineId,
-                                                  String listId,
-                                                  String taskSeriesId,
-                                                  String taskId,
-                                                  String newName,
-                                                  MethodCallType callType ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setName( String timelineId,
+                                                String listId,
+                                                String taskSeriesId,
+                                                String taskId,
+                                                String newName ) throws ServiceException;
    
 
 
-   TimeLineResult< RtmTaskSeries > tasks_setPriority( String timelineId,
-                                                      String listId,
-                                                      String taskSeriesId,
-                                                      String taskId,
-                                                      Priority priority,
-                                                      MethodCallType callType ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setPriority( String timelineId,
+                                                    String listId,
+                                                    String taskSeriesId,
+                                                    String taskId,
+                                                    Priority priority ) throws ServiceException;
    
 
 
@@ -322,28 +319,19 @@ public interface Service
    
 
 
-   TimeLineResult< RtmTaskSeries > tasks_setLocation( String timelineId,
-                                                      String listId,
-                                                      String taskSeriesId,
-                                                      String taskId,
-                                                      String locationId,
-                                                      MethodCallType callType ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setLocation( String timelineId,
+                                                    String listId,
+                                                    String taskSeriesId,
+                                                    String taskId,
+                                                    String locationId ) throws ServiceException;
    
 
 
-   TimeLineResult< RtmTaskSeries > tasks_setURL( String timelineId,
-                                                 String listId,
-                                                 String taskSeriesId,
-                                                 String taskId,
-                                                 String url,
-                                                 MethodCallType callType ) throws ServiceException;
-   
-
-
-   RtmTaskSeries tasks_uncomplete( String timelineId,
-                                   String listId,
-                                   String taskSeriesId,
-                                   String taskId ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setURL( String timelineId,
+                                               String listId,
+                                               String taskSeriesId,
+                                               String taskId,
+                                               String url ) throws ServiceException;
    
 
 
@@ -403,5 +391,4 @@ public interface Service
    // ////// LOCATIONS /////////////////////////////
    
    List< RtmLocation > locations_getList() throws ServiceException;
-   
 }

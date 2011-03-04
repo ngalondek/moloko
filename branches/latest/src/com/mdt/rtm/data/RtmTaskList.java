@@ -93,6 +93,15 @@ public class RtmTaskList extends RtmData
    
 
 
+   public RtmTaskList( RtmTaskList other )
+   {
+      this.id = other.id;
+      this.series = new ArrayList< RtmTaskSeries >( other.series );
+      this.current = other.current;
+   }
+   
+
+
    public RtmTaskList( Parcel source )
    {
       id = source.readString();
@@ -105,33 +114,29 @@ public class RtmTaskList extends RtmData
    public RtmTaskList( Element elt )
    {
       id = elt.getAttribute( "id" );
-      series = new ArrayList< RtmTaskSeries >();
+      
+      final List< Element > children = children( elt, "taskseries" );
+      final List< Element > deleted = children( elt, "deleted" );
+      
+      series = new ArrayList< RtmTaskSeries >( children.size() + deleted.size() );
       
       // Look for taskseries element
+      for ( Element seriesElt : children )
       {
-         final List< Element > children = children( elt, "taskseries" );
-         
-         for ( Element seriesElt : children )
-         {
-            series.add( new RtmTaskSeries( seriesElt, id ) );
-         }
+         series.add( new RtmTaskSeries( seriesElt, id ) );
       }
       
       // There may also be 'deleted' elements in which are 'taskseries'
       // elements
+      for ( Element deletedElement : deleted )
       {
-         final List< Element > deleted = children( elt, "deleted" );
-         
-         for ( Element deletedElement : deleted )
+         for ( Element seriesElt : children( deletedElement, "taskseries" ) )
          {
-            for ( Element seriesElt : children( deletedElement, "taskseries" ) )
-            {
-               series.add( new RtmTaskSeries( seriesElt, id, true ) );
-            }
+            series.add( new RtmTaskSeries( seriesElt, id, true ) );
          }
       }
       
-      current = parseDate( textNullIfEmpty( elt, "current" ) );
+      current = parseParcableDate( textNullIfEmpty( elt, "current" ) );
       
       if ( TextUtils.isEmpty( id ) )
       {
@@ -155,9 +160,66 @@ public class RtmTaskList extends RtmData
    
 
 
+   public void sortSeries()
+   {
+      Collections.sort( series, RtmTaskSeries.LESS_ID );
+   }
+   
+
+
    public void add( RtmTaskSeries taskSeries )
    {
-      this.series.add( taskSeries );
+      series.add( taskSeries );
+   }
+   
+
+
+   public void addGeneratedSeries( Element elt )
+   {
+      final List< Element > generated = children( elt, "taskseries" );
+      
+      if ( generated.size() > 0 )
+      {
+         // Find the first non-deleted TaskSeries
+         for ( RtmTaskSeries taskSeries : series )
+         {
+            if ( taskSeries.getDeletedDate() == null )
+            {
+               for ( Element element : generated )
+               {
+                  series.add( RtmTaskSeries.newGenerated( element, taskSeries ) );
+               }
+               
+               return;
+            }
+         }
+      }
+   }
+   
+
+
+   public void update( RtmTaskList taskList )
+   {
+      if ( taskList == null )
+         throw new NullPointerException( "taskList is null" );
+      
+      for ( RtmTaskSeries taskSeries : taskList.getSeries() )
+      {
+         // If the set already contains an element in respect to the Comparator,
+         // then we update it by the new.
+         final int pos = Collections.binarySearch( series,
+                                                   taskSeries,
+                                                   RtmTaskSeries.LESS_ID );
+         if ( pos >= 0 )
+         {
+            series.remove( pos );
+            series.add( pos, taskSeries );
+         }
+         else
+         {
+            series.add( ( -pos - 1 ), taskSeries );
+         }
+      }
    }
    
 

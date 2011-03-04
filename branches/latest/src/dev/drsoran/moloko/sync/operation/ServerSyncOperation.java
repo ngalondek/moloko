@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.sync.operation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ import android.content.ContentProviderOperation;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
-import com.mdt.rtm.Service.MethodCallType;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
 import com.mdt.rtm.TimeLineResult;
@@ -45,6 +45,7 @@ import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.service.RtmServiceConstants;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class ServerSyncOperation< T > implements IServerSyncOperation< T >
@@ -111,12 +112,45 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       
 
 
-      public IServerSyncOperation< T > build()
+      public < O extends IServerSyncOperation< T >> IServerSyncOperation< T > build( Class< O > opType )
       {
          if ( methods.size() == 0 )
             return NoopServerSyncOperation.< T > newInstance();
          else
-            return new ServerSyncOperation< T >( this );
+            try
+            {
+               return opType.getConstructor( Builder.class ).newInstance( this );
+            }
+            catch ( IllegalArgumentException e )
+            {
+               Log.e( TAG, Strings.EMPTY_STRING, e );
+               return null;
+            }
+            catch ( SecurityException e )
+            {
+               Log.e( TAG, Strings.EMPTY_STRING, e );
+               return null;
+            }
+            catch ( InstantiationException e )
+            {
+               Log.e( TAG, Strings.EMPTY_STRING, e );
+               return null;
+            }
+            catch ( IllegalAccessException e )
+            {
+               Log.e( TAG, Strings.EMPTY_STRING, e );
+               return null;
+            }
+            catch ( InvocationTargetException e )
+            {
+               Log.e( TAG, Strings.EMPTY_STRING, e );
+               return null;
+            }
+            catch ( NoSuchMethodException e )
+            {
+               Log.e( TAG, Strings.EMPTY_STRING, e );
+               return null;
+            }
       }
    }
    
@@ -130,7 +164,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    
 
-   private ServerSyncOperation( Builder< T > builder )
+   protected ServerSyncOperation( Builder< T > builder )
    {
       this.operationType = builder.operationType;
       this.serviceMethods = new HashMap< TimeLineMethod< T >, Modification >( builder.methods );
@@ -141,24 +175,17 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    public T execute( RtmProvider rtmProvider ) throws ServiceException
    {
       transactions = new LinkedList< TimeLineResult.Transaction >();
+      
       final Set< TimeLineMethod< T > > methodSet = serviceMethods.keySet();
       final ArrayList< ContentProviderOperation > removeModOps = new ArrayList< ContentProviderOperation >( methodSet.size() );
       
-      for ( Iterator< TimeLineMethod< T > > i = methodSet.iterator(); i.hasNext(); )
+      for ( TimeLineMethod< T > method : methodSet )
       {
-         final TimeLineMethod< T > method = i.next();
-         
          try
          {
-            if ( i.hasNext() )
-               // We retrieve the result only for the last element.
-               transactions.add( method.call( MethodCallType.NO_RESULT ).transaction );
-            else
-            {
-               final TimeLineResult< T > res = method.call( MethodCallType.WITH_RESULT );
-               resultElement = res.element;
-               transactions.add( res.transaction );
-            }
+            final TimeLineResult< T > res = method.call();
+            resultElement = handleResultElement( res.element );
+            transactions.add( res.transaction );
          }
          catch ( Throwable e )
          {
@@ -260,6 +287,13 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    public Map< TimeLineMethod< T >, Modification > getMethods()
    {
       return this.serviceMethods;
+   }
+   
+
+
+   protected T handleResultElement( T resultElement )
+   {
+      return resultElement;
    }
    
 

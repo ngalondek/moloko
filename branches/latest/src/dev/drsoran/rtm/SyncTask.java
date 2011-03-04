@@ -32,6 +32,7 @@ import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTask.Priority;
+import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
@@ -43,7 +44,7 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.ServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.TaskServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncProperties;
@@ -56,7 +57,7 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public class SyncTask implements IContentProviderSyncable< SyncTask >,
-         IServerSyncable< SyncTask, RtmTaskSeries >
+         IServerSyncable< SyncTask, RtmTaskList >
 {
    
    private final static class LessIdComperator implements Comparator< SyncTask >
@@ -289,7 +290,7 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
    
 
 
-   public IServerSyncOperation< RtmTaskSeries > computeServerInsertOperation( RtmTimeline timeLine )
+   public IServerSyncOperation< RtmTaskList > computeServerInsertOperation( RtmTimeline timeLine )
    {
       return NoopServerSyncOperation.newInstance();
    }
@@ -362,11 +363,11 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
    
 
 
-   public IServerSyncOperation< RtmTaskSeries > computeServerUpdateOperation( RtmTimeline timeline,
-                                                                              ModificationSet modifications,
-                                                                              SyncTask serverElement )
+   public IServerSyncOperation< RtmTaskList > computeServerUpdateOperation( RtmTimeline timeline,
+                                                                            ModificationSet modifications,
+                                                                            SyncTask serverElement )
    {
-      ServerSyncOperation.Builder< RtmTaskSeries > operation = ServerSyncOperation.newUpdate();
+      TaskServerSyncOperation.Builder< RtmTaskList > operation = TaskServerSyncOperation.newUpdate();
       
       // In case we have no server element (incremental sync)
       if ( serverElement == null )
@@ -484,14 +485,20 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
                                           MolokoDateUtils.getTime( getCompletedDate() ),
                                           Long.class ) == SyncResultDirection.SERVER )
          {
-            operation.add( timeline.tasks_complete( getListId(),
-                                                    getTaskSeriesId(),
-                                                    getId() ),
-                           properties.getModification( RawTasks.COMPLETED_DATE ) );
+            if ( getCompletedDate() != null )
+               operation.add( timeline.tasks_complete( getListId(),
+                                                       getTaskSeriesId(),
+                                                       getId() ),
+                              properties.getModification( RawTasks.COMPLETED_DATE ) );
+            else
+               operation.add( timeline.tasks_uncomplete( getListId(),
+                                                         getTaskSeriesId(),
+                                                         getId() ),
+                              properties.getModification( RawTasks.COMPLETED_DATE ) );
          }
       }
       
-      return operation.build();
+      return operation.build( TaskServerSyncOperation.class );
    }
    
 
@@ -506,7 +513,7 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
    
 
 
-   public IServerSyncOperation< RtmTaskSeries > computeServerDeleteOperation( RtmTimeline timeLine )
+   public IServerSyncOperation< RtmTaskList > computeServerDeleteOperation( RtmTimeline timeLine )
    {
       return NoopServerSyncOperation.newInstance();
    }

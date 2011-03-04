@@ -178,8 +178,8 @@ public class RtmTaskSeries extends RtmData implements
    {
       this.id = textNullIfEmpty( elt, "id" );
       this.listId = listId;
-      this.created = parseDate( elt.getAttribute( "created" ) );
-      this.modified = parseDate( elt.getAttribute( "modified" ) );
+      this.created = parseParcableDate( elt.getAttribute( "created" ) );
+      this.modified = parseParcableDate( elt.getAttribute( "modified" ) );
       this.name = textNullIfEmpty( elt, "name" );
       this.source = textNullIfEmpty( elt, "source" );
       
@@ -215,7 +215,7 @@ public class RtmTaskSeries extends RtmData implements
       
       for ( Element task : tasks )
       {
-         this.tasks.add( new RtmTask( task, id, listId, modified ) );
+         this.tasks.add( new RtmTask( task, id, listId ) );
       }
       
       this.notes = new RtmTaskNotes( child( elt, "notes" ), id );
@@ -274,6 +274,38 @@ public class RtmTaskSeries extends RtmData implements
       isEveryRecurrence = false;
       tags = null;
       participants = null;
+   }
+   
+
+
+   public static RtmTaskSeries newGenerated( Element elt,
+                                             RtmTaskSeries reference )
+   {
+      final String id = elt.getAttribute( "id" );
+      final Date modified = parseDate( elt.getAttribute( "modified" ) );
+      
+      final List< Element > taskElements = children( elt, "task" );
+      final List< RtmTask > tasks = new ArrayList< RtmTask >( taskElements.size() );
+      
+      for ( Element taskElement : taskElements )
+      {
+         tasks.add( new RtmTask( taskElement, id, reference.listId ) );
+      }
+      
+      return new RtmTaskSeries( id,
+                                reference.listId,
+                                reference.getCreatedDate(),
+                                modified,
+                                reference.name,
+                                reference.source,
+                                tasks,
+                                reference.notes,
+                                reference.locationId,
+                                reference.url,
+                                reference.recurrence,
+                                reference.isEveryRecurrence,
+                                reference.getTagStrings(),
+                                reference.participants );
    }
    
 

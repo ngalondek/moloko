@@ -40,7 +40,6 @@ import android.util.Log;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TagOverviews;
-import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.TagWithTaskCount;
 
@@ -57,9 +56,7 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
-   private final static String query;
-   
-   private final static String subQuery;
+   private final static String QUERY;
    
    static
    {
@@ -67,54 +64,32 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                     PROJECTION_MAP,
                                                     COL_INDICES );
       
-      query = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
+      QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
+                                                   false,
                                                    // tables
-                                                   Tags.PATH,
+                                                   TaskSeries.PATH + ","
+                                                      + RawTasks.PATH,
                                                    // columns
                                                    new String[]
                                                    {
-                                                    TagOverviews._ID,
-                                                    TagOverviews.TAG,
-                                                    "count("
-                                                       + TagOverviews.TAG
-                                                       + ") AS "
-                                                       + TagOverviews.TASKS_COUNT },
-                                                   null,
+                                                    TaskSeries.PATH + "."
+                                                       + TaskSeries._ID,
+                                                    TaskSeries.TAGS,
+                                                    RawTasks.COMPLETED_DATE },
+                                                   // where
+                                                   TaskSeries.PATH + "."
+                                                      + TaskSeries._ID
+                                                      + "="
+                                                      + RawTasks.TASKSERIES_ID
+                                                      
+                                                      // Only non-deleted tasks
+                                                      + " AND "
+                                                      + RawTasks.DELETED_DATE
+                                                      + " IS NULL",
                                                    null,
                                                    null,
                                                    null,
                                                    null );
-      
-      subQuery = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
-                                                      // tables
-                                                      TaskSeries.PATH + ","
-                                                         + RawTasks.PATH,
-                                                      // columns
-                                                      new String[]
-                                                      {
-                                                       TaskSeries.PATH + "."
-                                                          + TaskSeries._ID
-                                                          + " AS series_id",
-                                                       RawTasks.COMPLETED_DATE },
-                                                      // where
-                                                      TaskSeries.PATH
-                                                         + "."
-                                                         + TaskSeries._ID
-                                                         + "="
-                                                         + RawTasks.PATH
-                                                         + "."
-                                                         + RawTasks.TASKSERIES_ID
-                                                         
-                                                         // Only non-deleted tasks
-                                                         + " AND "
-                                                         + RawTasks.DELETED_DATE
-                                                         + " IS NULL",
-                                                      null,
-                                                      null,
-                                                      null,
-                                                      null );
    }
    
    
@@ -122,9 +97,8 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
-      context.getContentResolver().registerContentObserver( Tags.CONTENT_URI,
-                                                            true,
-                                                            observer );
+      context.getContentResolver()
+             .registerContentObserver( TaskSeries.CONTENT_URI, true, observer );
    }
    
 
@@ -133,41 +107,6 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
-   }
-   
-
-
-   public final static TagWithTaskCount getTagOverview( ContentProviderClient client,
-                                                        String id )
-   {
-      TagWithTaskCount tag = null;
-      Cursor c = null;
-      
-      try
-      {
-         c = client.query( TagOverviews.CONTENT_URI,
-                           PROJECTION,
-                           TagOverviews._ID + " = " + id,
-                           null,
-                           null );
-         
-         if ( c != null && c.moveToFirst() )
-         {
-            tag = createTagOverview( c );
-         }
-      }
-      catch ( RemoteException e )
-      {
-         Log.e( TAG, "Query tag overview failed. ", e );
-         tag = null;
-      }
-      finally
-      {
-         if ( c != null )
-            c.close();
-      }
-      
-      return tag;
    }
    
 
@@ -241,13 +180,8 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
    {
       final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
                                                                         .append( " FROM (" )
-                                                                        .append( query )
-                                                                        .append( " LEFT OUTER JOIN (" )
-                                                                        .append( subQuery )
-                                                                        .append( ") AS subQuery ON subQuery.series_id = " )
-                                                                        .append( Tags.PATH )
-                                                                        .append( "." )
-                                                                        .append( Tags.TASKSERIES_ID );
+                                                                        .append( QUERY )
+                                                                        .append( ")" );
       
       if ( !TextUtils.isEmpty( selection ) )
       {
@@ -259,14 +193,12 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                       .append( " )" );
       }
       
-      stringBuilder.append( " GROUP BY " ).append( Tags.TAG );
-      
       if ( !TextUtils.isEmpty( sortOrder ) )
       {
          stringBuilder.append( " ORDER BY " ).append( sortOrder );
       }
       
-      final String finalQuery = stringBuilder.append( ")" ).toString();
+      final String finalQuery = stringBuilder.toString();
       
       // Get the database and run the query
       final SQLiteDatabase db = dbAccess.getReadableDatabase();

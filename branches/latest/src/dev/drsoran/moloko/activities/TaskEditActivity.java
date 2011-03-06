@@ -48,11 +48,10 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.dialogs.AddRemoveTagsDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.layouts.WrappingLayout;
+import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -112,9 +111,7 @@ public class TaskEditActivity extends Activity
    
    private WrappingLayout tagsContainer;
    
-   private ImageButton addTagButton;
-   
-   private ImageButton removeTagButton;
+   private ImageButton changeTagsButton;
    
    private EditText dueEdit;
    
@@ -184,8 +181,7 @@ public class TaskEditActivity extends Activity
                list = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_list );
                priority = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_priority );
                tagsContainer = (WrappingLayout) taskContainer.findViewById( R.id.task_edit_tags_container );
-               addTagButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_add );
-               removeTagButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_remove );
+               changeTagsButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_change );
                dueEdit = (EditText) taskContainer.findViewById( R.id.task_edit_due_text );
                duePickerButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_due_btn_picker );
                recurrEdit = (EditText) taskContainer.findViewById( R.id.task_edit_recurrence_text );
@@ -268,7 +264,7 @@ public class TaskEditActivity extends Activity
          refeshListSpinner();
          refeshPrioritySpinner();
          refeshTags();
-         refreshTagsButtons();
+         refreshTagButton();
          refreshDue();
          refreshRecurrence();
          refreshEstimate();
@@ -279,9 +275,15 @@ public class TaskEditActivity extends Activity
    
 
 
-   public void onAddTag( View v )
+   public void onChangeTag( View v )
    {
-      new AddRemoveTagsDialog( this ).show();
+      final Intent intent = new Intent( this, ChangeTagsActivity.class );
+      final String tags[] = new String[ task.getTags().size() ];
+      
+      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS,
+                       task.getTags().toArray( tags ) );
+      
+      startActivity( intent );
    }
    
 
@@ -519,9 +521,9 @@ public class TaskEditActivity extends Activity
    
 
 
-   private void refreshTagsButtons()
+   private void refreshTagButton()
    {
-      removeTagButton.setEnabled( tagsContainer.getChildCount() > 0 );
+      changeTagsButton.setEnabled( tagsContainer.getChildCount() > 0 );
    }
    
 

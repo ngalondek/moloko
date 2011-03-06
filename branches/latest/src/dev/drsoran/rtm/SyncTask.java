@@ -31,11 +31,11 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
@@ -236,14 +236,7 @@ public class SyncTask implements IContentProviderSyncable< SyncTask >,
    
 
 
-   public List< String > getTagStrings()
-   {
-      return taskSeries.getTagStrings();
-   }
-   
-
-
-   public List< Tag > getTags()
+   public List< String > getTags()
    {
       return taskSeries.getTags();
    }

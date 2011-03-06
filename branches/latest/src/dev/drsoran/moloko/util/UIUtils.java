@@ -403,47 +403,48 @@ public final class UIUtils
                                              int id,
                                              int menuOrder )
    {
-      if ( menu.findItem( id ) == null )
+      if ( menu.findItem( id ) != null )
+         menu.removeItem( id );
+      
+      if ( SyncUtils.isSyncing( context ) )
       {
-         if ( SyncUtils.isSyncing( context ) )
-         {
-            menu.add( Menu.NONE, id, menuOrder, R.string.phr_cancel_sync )
-                .setIcon( R.drawable.ic_menu_cancel )
-                .setOnMenuItemClickListener( new OnMenuItemClickListener()
+         menu.add( Menu.NONE, id, menuOrder, R.string.phr_cancel_sync )
+             .setIcon( R.drawable.ic_menu_cancel )
+             .setOnMenuItemClickListener( new OnMenuItemClickListener()
+             {
+                public boolean onMenuItemClick( MenuItem item )
                 {
-                   public boolean onMenuItemClick( MenuItem item )
-                   {
-                      SyncUtils.cancelSync( context );
-                      return true;
-                   }
-                } );
+                   SyncUtils.cancelSync( context );
+                   return true;
+                }
+             } );
+      }
+      else
+      {
+         final MenuItem menuItem = menu.add( Menu.NONE,
+                                             id,
+                                             menuOrder,
+                                             R.string.phr_do_sync )
+                                       .setIcon( R.drawable.ic_menu_refresh );
+         
+         final Account account = SyncUtils.isReadyToSync( context );
+         
+         if ( account != null )
+         {
+            menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+            {
+               public boolean onMenuItemClick( MenuItem item )
+               {
+                  SyncUtils.requestSync( context, account, true );
+                  return true;
+               }
+            } );
          }
          else
          {
-            final MenuItem menuItem = menu.add( Menu.NONE,
-                                                id,
-                                                menuOrder,
-                                                R.string.phr_do_sync )
-                                          .setIcon( R.drawable.ic_menu_refresh );
-            
-            final Account account = SyncUtils.isReadyToSync( context );
-            
-            if ( account != null )
-            {
-               menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
-               {
-                  public boolean onMenuItemClick( MenuItem item )
-                  {
-                     SyncUtils.requestSync( context, account, true );
-                     return true;
-                  }
-               } );
-            }
-            else
-            {
-               menuItem.setEnabled( false );
-            }
+            menuItem.setEnabled( false );
          }
       }
    }
+   
 }

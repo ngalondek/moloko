@@ -141,7 +141,7 @@ public class Task
       
       if ( !TextUtils.isEmpty( tags ) )
       {
-         this.tags = Arrays.asList( TextUtils.split( tags, Tasks.TAGS_DELIMITER ) );
+         this.tags = Arrays.asList( TextUtils.split( tags, Tasks.TAGS_SEPARATOR ) );
       }
       else
       {

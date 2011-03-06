@@ -37,7 +37,6 @@ import android.util.Log;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
-import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
@@ -49,12 +48,11 @@ import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.ParticipantList;
-import dev.drsoran.rtm.Tag;
 
 
 /**
@@ -142,7 +140,7 @@ public class RtmTaskSeries extends RtmData implements
    
    private boolean isEveryRecurrence;
    
-   private final List< Tag > tags;
+   private final List< String > tags;
    
    private final ParticipantList participants;
    
@@ -151,8 +149,7 @@ public class RtmTaskSeries extends RtmData implements
    public RtmTaskSeries( String id, String listId, Date created, Date modified,
       String name, String source, List< RtmTask > tasks, RtmTaskNotes notes,
       String locationId, String url, String recurrence,
-      boolean isEveryRecurrence, List< String > tags,
-      ParticipantList participants )
+      boolean isEveryRecurrence, String tags, ParticipantList participants )
    {
       this.id = id;
       this.listId = listId;
@@ -167,7 +164,8 @@ public class RtmTaskSeries extends RtmData implements
       this.url = url;
       this.recurrence = recurrence;
       this.isEveryRecurrence = isEveryRecurrence;
-      this.tags = createTags( tags );
+      this.tags = new ArrayList< String >( Arrays.asList( TextUtils.split( tags,
+                                                                           TaskSeries.TAGS_SEPARATOR ) ) );
       this.participants = participants == null ? new ParticipantList( id )
                                               : participants;
    }
@@ -223,7 +221,7 @@ public class RtmTaskSeries extends RtmData implements
       this.url = textNullIfEmpty( elt, "url" );
       
       final Element elementTags = child( elt, "tags" );
-      this.tags = new ArrayList< Tag >();
+      this.tags = new ArrayList< String >();
       
       if ( elementTags.getChildNodes().getLength() > 0 )
       {
@@ -234,7 +232,7 @@ public class RtmTaskSeries extends RtmData implements
             final String tag = text( elementTag );
             if ( !TextUtils.isEmpty( tag ) )
             {
-               this.tags.add( new Tag( id, tag ) );
+               this.tags.add( tag );
             }
          }
       }
@@ -304,7 +302,7 @@ public class RtmTaskSeries extends RtmData implements
                                 reference.url,
                                 reference.recurrence,
                                 reference.isEveryRecurrence,
-                                reference.getTagStrings(),
+                                reference.getTagsJoined(),
                                 reference.participants );
    }
    
@@ -324,7 +322,7 @@ public class RtmTaskSeries extends RtmData implements
       url = source.readString();
       recurrence = source.readString();
       isEveryRecurrence = source.readInt() != 0;
-      tags = source.createTypedArrayList( Tag.CREATOR );
+      tags = source.createStringArrayList();
       participants = source.readParcelable( null );
    }
    
@@ -404,7 +402,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public List< Tag > getTags()
+   public List< String > getTags()
    {
       if ( tags == null )
          return Collections.emptyList();
@@ -414,19 +412,19 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public List< String > getTagStrings()
+   public String getTagsJoined()
    {
-      if ( tags == null )
-         return Collections.emptyList();
+      if ( !hasTags() )
+         return Strings.EMPTY_STRING;
       else
-      {
-         final List< String > tagStrings = new ArrayList< String >( tags.size() );
-         for ( Tag tag : tags )
-         {
-            tagStrings.add( tag.getTag() );
-         }
-         return tagStrings;
-      }
+         return TextUtils.join( TaskSeries.TAGS_SEPARATOR, tags );
+   }
+   
+
+
+   public boolean hasTags()
+   {
+      return tags != null && !tags.isEmpty();
    }
    
 
@@ -487,7 +485,7 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeString( url );
       dest.writeString( recurrence );
       dest.writeInt( isEveryRecurrence ? 1 : 0 );
-      dest.writeTypedList( tags );
+      dest.writeStringList( tags );
       dest.writeParcelable( participants, flags );
    }
    
@@ -497,20 +495,6 @@ public class RtmTaskSeries extends RtmData implements
    public String toString()
    {
       return "TaskSeries<" + id + "," + name + ">";
-   }
-   
-
-
-   private final List< Tag > createTags( List< String > tagStrings )
-   {
-      final List< Tag > tags = new ArrayList< Tag >( tagStrings.size() );
-      
-      for ( String tagStr : tagStrings )
-      {
-         tags.add( new Tag( id, tagStr ) );
-      }
-      
-      return tags;
    }
    
 
@@ -550,19 +534,6 @@ public class RtmTaskSeries extends RtmData implements
          }
       }
       
-      // Check for tags
-      {
-         final List< Tag > tags = getTags();
-         
-         for ( Tag tag : tags )
-         {
-            operation.add( ContentProviderOperation.newInsert( Tags.CONTENT_URI )
-                                                   .withValues( TagsProviderPart.getContentValues( tag,
-                                                                                                   true ) )
-                                                   .build() );
-         }
-      }
-      
       // Check for participants
       {
          final ParticipantList participantList = getParticipants();
@@ -595,15 +566,6 @@ public class RtmTaskSeries extends RtmData implements
                                                                                          syncNotesList,
                                                                                          true /* always full sync */);
          operations.add( noteOperations );
-      }
-      
-      // Sync Tags
-      {
-         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( getTags() );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( serverElement.getTags(),
-                                                                                         syncList,
-                                                                                         true /* always full sync */);
-         operations.add( syncOperations );
       }
       
       // Sync participants
@@ -675,6 +637,14 @@ public class RtmTaskSeries extends RtmData implements
                                                                 serverElement.isEveryRecurrence()
                                                                                                  ? 1
                                                                                                  : 0 )
+                                                    .build() );
+         
+         final String joinedServerTags = serverElement.getTagsJoined();
+         
+         if ( SyncUtils.hasChanged( joinedServerTags, getTagsJoined() ) )
+            operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                    .withValue( TaskSeries.TAGS,
+                                                                joinedServerTags )
                                                     .build() );
       }
       

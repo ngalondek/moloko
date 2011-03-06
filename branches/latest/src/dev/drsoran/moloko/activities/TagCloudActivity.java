@@ -45,14 +45,14 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.content.LocationOverviewsProviderPart;
-import dev.drsoran.moloko.content.TagOverviewsProviderPart;
+import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.LocationOverviews;
-import dev.drsoran.provider.Rtm.TagOverviews;
+import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.LocationWithTaskCount;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.TagWithTaskCount;
@@ -95,28 +95,8 @@ public class TagCloudActivity extends Activity
             }
          }
          
-         List< TagWithTaskCount > tags = null;
-         
          // Fetch all Tags and their task count
-         {
-            final ContentProviderClient client = getContentResolver().acquireContentProviderClient( TagOverviews.CONTENT_URI );
-            
-            if ( client != null )
-            {
-               tags = TagOverviewsProviderPart.getTagsOverview( client, true /* exclude completed */);
-               
-               if ( tags == null )
-               {
-                  LogUtils.logDBError( TagCloudActivity.this, TAG, "Tags" );
-               }
-               
-               client.release();
-            }
-            else
-            {
-               LogUtils.logDBError( TagCloudActivity.this, TAG, "Tags" );
-            }
-         }
+         final List< TagWithTaskCount > tags = getTagsWithTaskCount();
          
          List< LocationWithTaskCount > locations = null;
          
@@ -446,5 +426,25 @@ public class TagCloudActivity extends Activity
       }
       
       return result;
+   }
+   
+
+
+   private List< TagWithTaskCount > getTagsWithTaskCount()
+   {
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( TaskSeries.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final List< TaskSeries > taskSeries = RtmTaskSeriesProviderPart.getAllTaskSeries( client );
+         
+         client.release();
+      }
+      else
+      {
+         LogUtils.logDBError( TagCloudActivity.this, TAG, "TaskSeries" );
+      }
+      
+      return tags;
    }
 }

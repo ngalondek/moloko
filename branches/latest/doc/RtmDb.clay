@@ -81,6 +81,9 @@
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7be4" mandatory="true" name="list_id">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
+<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="30cf9d:12e87655ae6:-7fe2" mandatory="false" name="tags">
+<data-type name="TEXT" selected-variant-pattern="TEXT"/>
+</column>
 </column-list>
 <primary-key id="5122f2:128cb6194ba:-7fed" name="PK_TASKSERIES">
 <primary-key-column name="_id"/>

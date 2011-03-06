@@ -390,18 +390,6 @@ public class Rtm
    }
    
 
-   protected static interface TagReferenceColumns
-   {
-      /**
-       * The ID of the taskseries referenced.
-       * <P>
-       * Type: INTEGER (foreign key to table taskseries _ID field)
-       * </P>
-       */
-      public final static String TASKSERIES_ID = "taskseries_id";
-   }
-   
-
    public static final class Tags implements BaseColumns, TagColumns,
             TagReferenceColumns
    {

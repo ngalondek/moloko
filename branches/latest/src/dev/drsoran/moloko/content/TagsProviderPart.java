@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentProviderClient;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -37,9 +36,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
-import dev.drsoran.rtm.Tag;
 
 
 public class TagsProviderPart extends AbstractRtmProviderPart
@@ -62,29 +59,6 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    }
    
    
-
-   public final static ContentValues getContentValues( Tag tag, boolean withId )
-   {
-      ContentValues values = null;
-      
-      if ( tag != null && tag.getTag() != null && tag.getTaskSeriesId() != null )
-      {
-         values = new ContentValues();
-         
-         if ( withId )
-            if ( !TextUtils.isEmpty( tag.getId() ) )
-               values.put( Tags._ID, tag.getId() );
-            else
-               values.putNull( Tags._ID );
-         
-         values.put( Tags.TASKSERIES_ID, tag.getTaskSeriesId() );
-         values.put( Tags.TAG, tag.getTag() );
-      }
-      
-      return values;
-   }
-   
-
 
    public final static List< Tag > getAllTags( ContentProviderClient client,
                                                String taskSeriesId )

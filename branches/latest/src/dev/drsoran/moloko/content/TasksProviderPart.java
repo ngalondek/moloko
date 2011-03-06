@@ -49,7 +49,6 @@ import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Participant;
@@ -79,8 +78,6 @@ public class TasksProviderPart extends AbstractProviderPart
    
    private final static String SUB_QUERY;
    
-   private final static String TAGS_SUB_QUERY;
-   
    private final static String PARTICIPANTS_SUB_QUERY;
    
    private final static String NUM_NOTES_SUBQUERY;
@@ -92,7 +89,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
+                                                       false,
                                                        
                                                        // tables
                                                        TaskSeries.PATH + ","
@@ -157,50 +154,8 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        null,
                                                        null );
       
-      TAGS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
-                                                            
-                                                            // tables
-                                                            TaskSeries.PATH
-                                                               + ","
-                                                               + Tags.PATH,
-                                                            
-                                                            // columns
-                                                            new String[]
-                                                            {
-                                                             TaskSeries.PATH
-                                                                + "."
-                                                                + TaskSeries._ID,
-                                                             Tags.PATH
-                                                                + "."
-                                                                + Tags.TASKSERIES_ID
-                                                                + " AS series_id",
-                                                             "group_concat("
-                                                                + Tags.TAG
-                                                                + ",\""
-                                                                + Tasks.TAGS_DELIMITER
-                                                                + "\") AS "
-                                                                + Tasks.TAGS },
-                                                            
-                                                            // where
-                                                            TaskSeries.PATH
-                                                               + "."
-                                                               + TaskSeries._ID
-                                                               + "="
-                                                               + Tags.PATH
-                                                               + "."
-                                                               + Tags.TASKSERIES_ID,
-                                                            
-                                                            // group by
-                                                            TaskSeries.PATH
-                                                               + "."
-                                                               + TaskSeries._ID,
-                                                            null,
-                                                            null,
-                                                            null );
-      
       PARTICIPANTS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
+                                                                    false,
                                                                     
                                                                     // tables
                                                                     TaskSeries.PATH
@@ -255,7 +210,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                     null );
       
       NUM_NOTES_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
+                                                                false,
                                                                 
                                                                 // tables
                                                                 Notes.PATH,
@@ -301,9 +256,6 @@ public class TasksProviderPart extends AbstractProviderPart
              .registerContentObserver( RawTasks.CONTENT_URI, true, observer );
       context.getContentResolver()
              .registerContentObserver( Locations.CONTENT_URI, true, observer );
-      context.getContentResolver().registerContentObserver( Tags.CONTENT_URI,
-                                                            true,
-                                                            observer );
       context.getContentResolver().registerContentObserver( Notes.CONTENT_URI,
                                                             true,
                                                             observer );
@@ -484,14 +436,6 @@ public class TasksProviderPart extends AbstractProviderPart
                    .append( Locations._ID )
                    .append( " = subQuery." )
                    .append( TaskSeries.LOCATION_ID );
-      
-      // Add tags columns
-      stringBuilder.append( " LEFT OUTER JOIN " )
-                   .append( "(" )
-                   .append( TAGS_SUB_QUERY )
-                   .append( ") AS tagsSubQuery ON tagsSubQuery.series_id" )
-                   .append( " = subQuery." )
-                   .append( Tasks.TASKSERIES_ID );
       
       // Add participants columns
       stringBuilder.append( " LEFT OUTER JOIN " )

@@ -120,6 +120,13 @@ public final class Queries
    
 
 
+   public final static String getOptString( Cursor c, int index, String defValue )
+   {
+      return c.isNull( index ) ? defValue : c.getString( index );
+   }
+   
+
+
    public final static Date getOptDate( Cursor c, int index )
    {
       return c.isNull( index ) ? null : new Date( c.getLong( index ) );

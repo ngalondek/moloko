@@ -149,6 +149,13 @@
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>
       </activity>
+      
+      <activity         
+         android:name=".activities.ChangeTagsActivity"
+         android:launchMode="singleTop"
+         android:excludeFromRecents="true"
+         android:theme="@style/Theme.Moloko.Task">
+      </activity>
 
       <activity
          android:label="@string/app_note"

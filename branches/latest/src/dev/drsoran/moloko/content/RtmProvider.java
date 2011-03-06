@@ -126,7 +126,6 @@ public class RtmProvider extends ContentProvider
       { new RtmTasksProviderPart( context, dbHelper ),
        new RtmTaskSeriesProviderPart( context, dbHelper ),
        new RtmListsProviderPart( context, dbHelper ),
-       new TagsProviderPart( context, dbHelper ),
        new RtmNotesProviderPart( context, dbHelper ),
        new RtmLocationsProviderPart( context, dbHelper ),
        new RtmContactsProviderPart( context, dbHelper ),

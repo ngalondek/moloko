@@ -22,11 +22,7 @@
 
 package dev.drsoran.moloko.sync;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentProviderClient;
@@ -35,9 +31,7 @@ import android.util.Log;
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
-import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
@@ -45,6 +39,9 @@ import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.service.RtmServiceConstants;
+import dev.drsoran.moloko.sync.elements.InSyncRtmTaskSeries;
+import dev.drsoran.moloko.sync.elements.OutSyncTask;
+import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
@@ -53,7 +50,6 @@ import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
-import dev.drsoran.rtm.SyncTask;
 
 
 public final class RtmTasksSync
@@ -70,54 +66,56 @@ public final class RtmTasksSync
                                       Date lastSync,
                                       MolokoSyncResult syncResult )
    {
-      final List< RtmTaskSeries > local_TaskSeries = toPlainList( RtmTaskSeriesProviderPart.getAllTaskSeries( provider ) );
       
-      if ( local_TaskSeries == null )
-      {
-         syncResult.androidSyncResult.databaseError = true;
-         Log.e( TAG, "Getting local tasks failed." );
-         return false;
-      }
+      SyncRtmTaskList local_SyncTaskList = null;
       
-      List< RtmTaskSeries > server_TaskSeries;
-      
-      try
       {
-         server_TaskSeries = toPlainList( service.tasks_getList( null,
-                                                                 null,
-                                                                 lastSync ) );
-      }
-      catch ( ServiceException e )
-      {
-         Log.e( TAG, "Getting server lists failed.", e );
+         final RtmTasks tasks = RtmTaskSeriesProviderPart.getAllTaskSeries( provider );
          
-         switch ( e.responseCode )
+         if ( tasks == null )
          {
-            case RtmServiceConstants.RtmErrorCodes.LOGIN_FAILED:
-            case RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY:
-               ++syncResult.androidSyncResult.stats.numAuthExceptions;
-               break;
-            case RtmServiceConstants.RtmErrorCodes.SERVICE_UNAVAILABLE:
-               ++syncResult.androidSyncResult.stats.numIoExceptions;
-               break;
-            default :
-               if ( e instanceof ServiceInternalException )
-                  SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
-                                                            TAG,
-                                                            syncResult.androidSyncResult );
-               else
-                  ++syncResult.androidSyncResult.stats.numParseExceptions;
-               break;
+            syncResult.androidSyncResult.databaseError = true;
+            Log.e( TAG, "Getting local tasks failed." );
+            return false;
          }
-         
-         return false;
+         else
+            local_SyncTaskList = new SyncRtmTaskList( tasks );
       }
       
-      Collections.sort( server_TaskSeries, RtmTaskSeries.LESS_ID );
-      Collections.sort( local_TaskSeries, RtmTaskSeries.LESS_ID );
+      SyncRtmTaskList server_SyncTaskList = null;
       
-      final List< SyncTask > local_Tasks = toPlainList( local_TaskSeries );
-      Collections.sort( local_Tasks, SyncTask.LESS_ID );
+      {
+         try
+         {
+            final RtmTasks tasks = service.tasks_getList( null, null, lastSync );
+            server_SyncTaskList = new SyncRtmTaskList( tasks );
+         }
+         catch ( ServiceException e )
+         {
+            Log.e( TAG, "Getting server lists failed.", e );
+            
+            switch ( e.responseCode )
+            {
+               case RtmServiceConstants.RtmErrorCodes.LOGIN_FAILED:
+               case RtmServiceConstants.RtmErrorCodes.INVALID_API_KEY:
+                  ++syncResult.androidSyncResult.stats.numAuthExceptions;
+                  break;
+               case RtmServiceConstants.RtmErrorCodes.SERVICE_UNAVAILABLE:
+                  ++syncResult.androidSyncResult.stats.numIoExceptions;
+                  break;
+               default :
+                  if ( e instanceof ServiceInternalException )
+                     SyncUtils.handleServiceInternalException( (ServiceInternalException) e,
+                                                               TAG,
+                                                               syncResult.androidSyncResult );
+                  else
+                     ++syncResult.androidSyncResult.stats.numParseExceptions;
+                  break;
+            }
+            
+            return false;
+         }
+      }
       
       // Check if we have server write access
       if ( timeLineFactory != null )
@@ -126,8 +124,8 @@ public final class RtmTasksSync
          if ( modifications.hasModifications( TaskSeries.CONTENT_URI )
             || modifications.hasModifications( RawTasks.CONTENT_URI ) )
          {
-            final List< SyncTask > server_Tasks = toPlainList( server_TaskSeries );
-            Collections.sort( server_Tasks, SyncTask.LESS_ID );
+            final List< OutSyncTask > server_Tasks = server_SyncTaskList.getOutSyncTasks();
+            final List< OutSyncTask > local_Tasks = local_SyncTaskList.getOutSyncTasks();
             
             RtmTimeline timeline = null;
             
@@ -138,7 +136,7 @@ public final class RtmTasksSync
                // Collect all outgoing changes
                final List< IServerSyncOperation< RtmTaskList > > serverOps = SyncDiffer.outDiff( server_Tasks,
                                                                                                  local_Tasks,
-                                                                                                 SyncTask.LESS_ID,
+                                                                                                 OutSyncTask.LESS_ID,
                                                                                                  modifications,
                                                                                                  timeline,
                                                                                                  lastSync );
@@ -147,8 +145,7 @@ public final class RtmTasksSync
                // the commit.
                applyServerOperations( (RtmProvider) provider.getLocalContentProvider(),
                                       serverOps,
-                                      server_TaskSeries,
-                                      RtmTaskSeries.LESS_ID );
+                                      server_SyncTaskList );
             }
             catch ( ServiceException e )
             {
@@ -159,27 +156,10 @@ public final class RtmTasksSync
       
       // At this point we have an up-to-date list of server TaskSeries
       // containing all changes made by outgoing sync.
-      
-      // Sync TaskSeries incoming cause we need to insert new TaskSeries only once.
-      // This will also sync Notes, Tags, Participant cause this is shared between all SyncTasks
       {
-         final ContentProviderSyncableList< RtmTaskSeries > local_SyncList = new ContentProviderSyncableList< RtmTaskSeries >( local_TaskSeries,
-                                                                                                                               RtmTaskSeries.LESS_ID );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_TaskSeries,
-                                                                                         local_SyncList,
-                                                                                         lastSync == null );
-         syncResult.localOps.addAll( syncOperations );
-      }
-      
-      // Sync SyncTasks incoming
-      {
-         // Recreate server SyncTasks cause this list may have updated due to outgoing sync operations.
-         final List< SyncTask > server_Tasks = toPlainList( server_TaskSeries );
-         Collections.sort( server_Tasks, SyncTask.LESS_ID );
-         
-         final ContentProviderSyncableList< SyncTask > local_SyncList = new ContentProviderSyncableList< SyncTask >( local_Tasks,
-                                                                                                                     SyncTask.LESS_ID );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_Tasks,
+         final ContentProviderSyncableList< InSyncRtmTaskSeries > local_SyncList = new ContentProviderSyncableList< InSyncRtmTaskSeries >( local_SyncTaskList.getInSyncTasksSeries(),
+                                                                                                                                           InSyncRtmTaskSeries.LESS_ID );
+         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_SyncTaskList.getInSyncTasksSeries(),
                                                                                          local_SyncList,
                                                                                          lastSync == null );
          syncResult.localOps.addAll( syncOperations );
@@ -190,42 +170,9 @@ public final class RtmTasksSync
    
 
 
-   private final static List< SyncTask > toPlainList( List< RtmTaskSeries > taskSeries )
-   {
-      if ( taskSeries == null )
-         return null;
-      
-      final List< SyncTask > result = new LinkedList< SyncTask >();
-      
-      for ( RtmTaskSeries series : taskSeries )
-         for ( RtmTask task : series.getTasks() )
-            result.add( new SyncTask( series, task ) );
-      
-      return new ArrayList< SyncTask >( result );
-   }
-   
-
-
-   private final static List< RtmTaskSeries > toPlainList( RtmTasks tasks )
-   {
-      if ( tasks == null )
-         return null;
-      
-      final List< RtmTaskSeries > result = new LinkedList< RtmTaskSeries >();
-      
-      for ( RtmTaskList rtmTaskList : tasks.getLists() )
-         for ( RtmTaskSeries series : rtmTaskList.getSeries() )
-            result.add( series );
-      
-      return new ArrayList< RtmTaskSeries >( result );
-   }
-   
-
-
-   private final static void applyServerOperations( RtmProvider rtmProvider,
+   private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmTaskList > > serverOps,
-                                                    List< RtmTaskSeries > sortedServerElements,
-                                                    Comparator< ? super RtmTaskSeries > cmp ) throws ServiceException
+                                                    SyncRtmTaskList serverList ) throws ServiceException
    {
       for ( IServerSyncOperation< RtmTaskList > serverOp : serverOps )
       {
@@ -239,26 +186,9 @@ public final class RtmTasksSync
                   throw new ServiceException( -1,
                                               "ServerSyncOperation produced no result" );
                
-               final List< RtmTaskSeries > taskSeries = result.getSeries();
-               
-               for ( RtmTaskSeries rtmTaskSeries : taskSeries )
-               {
-                  // If the set already contains an element in respect to the Comparator,
-                  // then we update it by the new received.
-                  final int pos = Collections.binarySearch( sortedServerElements,
-                                                            rtmTaskSeries,
-                                                            cmp );
-                  
-                  if ( pos >= 0 )
-                  {
-                     sortedServerElements.remove( pos );
-                     sortedServerElements.add( pos, rtmTaskSeries );
-                  }
-                  else
-                  {
-                     sortedServerElements.add( ( -pos - 1 ), rtmTaskSeries );
-                  }
-               }
+               // If the set already contains an element in respect to the Comparator,
+               // then we update it by the new received.
+               serverList.update( result );
             }
             catch ( ServiceException e )
             {

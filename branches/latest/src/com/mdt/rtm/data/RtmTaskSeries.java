@@ -22,34 +22,18 @@ package com.mdt.rtm.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderOperation;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.content.ParticipantsProviderPart;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
-import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.grammar.RecurrencePatternParser;
-import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.sync.util.SyncDiffer;
-import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.ParticipantList;
@@ -59,21 +43,10 @@ import dev.drsoran.rtm.ParticipantList;
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskSeries extends RtmData implements
-         IContentProviderSyncable< RtmTaskSeries >
+public class RtmTaskSeries extends RtmData
 {
    private final static String TAG = "Moloko."
       + RtmTaskSeries.class.getSimpleName();
-   
-   
-   private static final class LessIdComperator implements
-            Comparator< RtmTaskSeries >
-   {
-      public int compare( RtmTaskSeries object1, RtmTaskSeries object2 )
-      {
-         return object1.id.compareTo( object2.id );
-      }
-   }
    
    public static final Parcelable.Creator< RtmTaskSeries > CREATOR = new Parcelable.Creator< RtmTaskSeries >()
    {
@@ -114,8 +87,6 @@ public class RtmTaskSeries extends RtmData implements
       return null;
    }
    
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
-   
    private final String id;
    
    private final String listId;
@@ -136,9 +107,9 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String url;
    
-   private String recurrence;
+   private final String recurrence;
    
-   private boolean isEveryRecurrence;
+   private final boolean isEveryRecurrence;
    
    private final List< String > tags;
    
@@ -183,30 +154,31 @@ public class RtmTaskSeries extends RtmData implements
       
       final Element recurrenceRule = child( elt, "rrule" );
       
+      String recurrence = null;
+      boolean isEveryRecurrence = false;
+      
       if ( recurrenceRule != null
          && recurrenceRule.getChildNodes().getLength() > 0 )
       {
-         this.recurrence = textNullIfEmpty( recurrenceRule );
+         recurrence = textNullIfEmpty( recurrenceRule );
          
          try
          {
-            this.isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
-                                                                        "every" ) ) != 0;
-            this.recurrence = ensureRecurrencePatternOrder( recurrence );
+            isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
+                                                                   "every" ) ) != 0;
+            recurrence = ensureRecurrencePatternOrder( recurrence );
          }
          catch ( NumberFormatException nfe )
          {
-            this.recurrence = null;
-            this.isEveryRecurrence = false;
+            recurrence = null;
+            isEveryRecurrence = false;
             
             Log.e( TAG, "Error reading recurrence pattern from XML", nfe );
          }
       }
-      else
-      {
-         this.recurrence = null;
-         this.isEveryRecurrence = false;
-      }
+      
+      this.recurrence = recurrence;
+      this.isEveryRecurrence = isEveryRecurrence;
       
       final List< Element > tasks = children( elt, "task" );
       this.tasks = new ArrayList< RtmTask >( tasks.size() );
@@ -272,38 +244,6 @@ public class RtmTaskSeries extends RtmData implements
       isEveryRecurrence = false;
       tags = null;
       participants = null;
-   }
-   
-
-
-   public static RtmTaskSeries newGenerated( Element elt,
-                                             RtmTaskSeries reference )
-   {
-      final String id = elt.getAttribute( "id" );
-      final Date modified = parseDate( elt.getAttribute( "modified" ) );
-      
-      final List< Element > taskElements = children( elt, "task" );
-      final List< RtmTask > tasks = new ArrayList< RtmTask >( taskElements.size() );
-      
-      for ( Element taskElement : taskElements )
-      {
-         tasks.add( new RtmTask( taskElement, id, reference.listId ) );
-      }
-      
-      return new RtmTaskSeries( id,
-                                reference.listId,
-                                reference.getCreatedDate(),
-                                modified,
-                                reference.name,
-                                reference.source,
-                                tasks,
-                                reference.notes,
-                                reference.locationId,
-                                reference.url,
-                                reference.recurrence,
-                                reference.isEveryRecurrence,
-                                reference.getTagsJoined(),
-                                reference.participants );
    }
    
 
@@ -505,149 +445,5 @@ public class RtmTaskSeries extends RtmData implements
       Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
       
       return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation()
-   {
-      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newInsert();
-      
-      // Insert new taskseries
-      {
-         operation.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
-                                                .withValues( RtmTaskSeriesProviderPart.getContentValues( this,
-                                                                                                         true ) )
-                                                .build() );
-      }
-      
-      // Check for notes
-      {
-         final List< RtmTaskNote > notes = getNotes().getNotes();
-         
-         for ( RtmTaskNote rtmTaskNote : notes )
-         {
-            operation.add( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                                   .withValues( RtmNotesProviderPart.getContentValues( rtmTaskNote,
-                                                                                                       true ) )
-                                                   .build() );
-         }
-      }
-      
-      // Check for participants
-      {
-         final ParticipantList participantList = getParticipants();
-         operation.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
-      }
-      
-      return operation.build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
-   {
-      // RtmTaskSeries gets deleted by a DB trigger if it references no more RawTasks.
-      return NoopContentProviderSyncOperation.INSTANCE;
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTaskSeries serverElement )
-   {
-      final ContentProviderSyncOperation.Builder operations = ContentProviderSyncOperation.newUpdate();
-      
-      // Sync notes
-      {
-         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( getNotes().getNotes(),
-                                                                                                                          RtmTaskNote.LESS_ID );
-         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.inDiff( serverElement.getNotes()
-                                                                                                      .getNotes(),
-                                                                                         syncNotesList,
-                                                                                         true /* always full sync */);
-         operations.add( noteOperations );
-      }
-      
-      // Sync participants
-      {
-         operations.add( participants.computeContentProviderUpdateOperation( serverElement.participants ) );
-      }
-      
-      // Sync RtmTaskSeries
-      {
-         final Uri contentUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                          id );
-         
-         if ( SyncUtils.hasChanged( serverElement.getListId(), getListId() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.LIST_ID,
-                                                                serverElement.getListId() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getCreatedDate(),
-                                    getCreatedDate() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.TASKSERIES_CREATED_DATE,
-                                                                MolokoDateUtils.getTime( serverElement.getCreatedDate() ) )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getModifiedDate(),
-                                    getModifiedDate() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.MODIFIED_DATE,
-                                                                MolokoDateUtils.getTime( serverElement.getModifiedDate() ) )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getName(), getName() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.TASKSERIES_NAME,
-                                                                serverElement.getName() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getSource(), getSource() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.SOURCE,
-                                                                serverElement.getSource() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getLocationId(),
-                                    getLocationId() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.LOCATION_ID,
-                                                                serverElement.getLocationId() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getURL(), getURL() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.URL,
-                                                                serverElement.getURL() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( serverElement.getRecurrence(),
-                                    getRecurrence() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.RECURRENCE,
-                                                                serverElement.getRecurrence() )
-                                                    .build() );
-         
-         if ( SyncUtils.hasChanged( Boolean.valueOf( serverElement.isEveryRecurrence() ),
-                                    Boolean.valueOf( isEveryRecurrence() ) ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                serverElement.isEveryRecurrence()
-                                                                                                 ? 1
-                                                                                                 : 0 )
-                                                    .build() );
-         
-         final String joinedServerTags = serverElement.getTagsJoined();
-         
-         if ( SyncUtils.hasChanged( joinedServerTags, getTagsJoined() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.TAGS,
-                                                                joinedServerTags )
-                                                    .build() );
-      }
-      
-      return operations.build();
    }
 }

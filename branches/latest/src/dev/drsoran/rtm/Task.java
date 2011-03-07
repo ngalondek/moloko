@@ -32,7 +32,7 @@ import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask.Priority;
 
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.provider.Rtm.Tags;
 
 
 public class Task
@@ -141,7 +141,7 @@ public class Task
       
       if ( !TextUtils.isEmpty( tags ) )
       {
-         this.tags = Arrays.asList( TextUtils.split( tags, Tasks.TAGS_SEPARATOR ) );
+         this.tags = Arrays.asList( TextUtils.split( tags, Tags.TAGS_SEPARATOR ) );
       }
       else
       {

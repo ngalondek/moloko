@@ -20,8 +20,6 @@
 package com.mdt.rtm.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +28,7 @@ import org.w3c.dom.Element;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.rtm.ParcelableDate;
 
 
@@ -42,17 +41,6 @@ public class RtmTaskList extends RtmData
    @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + RtmTaskList.class.getSimpleName();
-   
-   
-   private static final class LessIdComperator implements
-            Comparator< RtmTaskList >
-   {
-      public int compare( RtmTaskList object1, RtmTaskList object2 )
-      {
-         return object1.id.compareTo( object2.id );
-      }
-      
-   }
    
    public static final Parcelable.Creator< RtmTaskList > CREATOR = new Parcelable.Creator< RtmTaskList >()
    {
@@ -71,8 +59,6 @@ public class RtmTaskList extends RtmData
       
    };
    
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
-   
    private final String id;
    
    private final List< RtmTaskSeries > series;
@@ -83,21 +69,14 @@ public class RtmTaskList extends RtmData
 
    public RtmTaskList( String id )
    {
-      this.id = id;
-      
-      // do not use Collections.emptyList() here cause we
-      // need a mutable list.
-      this.series = new ArrayList< RtmTaskSeries >( 0 );
-      this.current = null;
+      this( id, new ArrayList< RtmTaskSeries >( 0 ), null );
    }
    
 
 
    public RtmTaskList( RtmTaskList other )
    {
-      this.id = other.id;
-      this.series = new ArrayList< RtmTaskSeries >( other.series );
-      this.current = other.current;
+      this( other.id, other.series, MolokoDateUtils.getDate( other.current ) );
    }
    
 
@@ -107,6 +86,18 @@ public class RtmTaskList extends RtmData
       id = source.readString();
       series = source.createTypedArrayList( RtmTaskSeries.CREATOR );
       current = source.readParcelable( null );
+   }
+   
+
+
+   public RtmTaskList( String id, List< RtmTaskSeries > series, Date current )
+   {
+      this.id = id;
+      
+      // do not use Collections.emptyList() here cause we
+      // need a mutable list.
+      this.series = new ArrayList< RtmTaskSeries >( series );
+      this.current = current != null ? new ParcelableDate( current ) : null;
    }
    
 
@@ -155,14 +146,14 @@ public class RtmTaskList extends RtmData
 
    public List< RtmTaskSeries > getSeries()
    {
-      return Collections.unmodifiableList( series );
+      return series;
    }
    
 
 
-   public void sortSeries()
+   public Date getCurrent()
    {
-      Collections.sort( series, RtmTaskSeries.LESS_ID );
+      return ( current != null ) ? current.getDate() : null;
    }
    
 
@@ -176,57 +167,54 @@ public class RtmTaskList extends RtmData
 
    public void addGeneratedSeries( Element elt )
    {
-      final List< Element > generated = children( elt, "taskseries" );
+      final List< Element > generated = RtmData.children( elt, "taskseries" );
       
       if ( generated.size() > 0 )
       {
          // Find the first non-deleted TaskSeries
          for ( RtmTaskSeries taskSeries : series )
-         {
             if ( taskSeries.getDeletedDate() == null )
             {
                for ( Element element : generated )
                {
-                  series.add( RtmTaskSeries.newGenerated( element, taskSeries ) );
+                  series.add( newGenerated( element, taskSeries ) );
                }
                
                return;
             }
-         }
       }
    }
    
 
 
-   public void update( RtmTaskList taskList )
+   private static RtmTaskSeries newGenerated( Element elt,
+                                              RtmTaskSeries reference )
    {
-      if ( taskList == null )
-         throw new NullPointerException( "taskList is null" );
+      final String id = elt.getAttribute( "id" );
+      final Date modified = RtmData.parseDate( elt.getAttribute( "modified" ) );
       
-      for ( RtmTaskSeries taskSeries : taskList.getSeries() )
+      final List< Element > taskElements = RtmData.children( elt, "task" );
+      final List< RtmTask > tasks = new ArrayList< RtmTask >( taskElements.size() );
+      
+      for ( Element taskElement : taskElements )
       {
-         // If the set already contains an element in respect to the Comparator,
-         // then we update it by the new.
-         final int pos = Collections.binarySearch( series,
-                                                   taskSeries,
-                                                   RtmTaskSeries.LESS_ID );
-         if ( pos >= 0 )
-         {
-            series.remove( pos );
-            series.add( pos, taskSeries );
-         }
-         else
-         {
-            series.add( ( -pos - 1 ), taskSeries );
-         }
+         tasks.add( new RtmTask( taskElement, id, reference.getListId() ) );
       }
-   }
-   
-
-
-   public Date getCurrent()
-   {
-      return ( current != null ) ? current.getDate() : null;
+      
+      return new RtmTaskSeries( id,
+                                reference.getListId(),
+                                reference.getCreatedDate(),
+                                modified,
+                                reference.getName(),
+                                reference.getSource(),
+                                tasks,
+                                reference.getNotes(),
+                                reference.getLocationId(),
+                                reference.getURL(),
+                                reference.getRecurrence(),
+                                reference.isEveryRecurrence(),
+                                reference.getTagsJoined(),
+                                reference.getParticipants() );
    }
    
 
@@ -253,4 +241,5 @@ public class RtmTaskList extends RtmData
       return "RtmTaskList<" + id + ",#" + series.size()
          + ( ( current != null ) ? "," + current.getDate() : "" ) + ">";
    }
+   
 }

@@ -311,11 +311,11 @@ public interface Service
    
 
 
-   void tasks_setTags( String timelineId,
-                       String listId,
-                       String taskSeriesId,
-                       String taskId,
-                       String[] tags ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setTags( String timelineId,
+                                                String listId,
+                                                String taskSeriesId,
+                                                String taskId,
+                                                List< String > tags ) throws ServiceException;
    
 
 

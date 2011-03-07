@@ -381,17 +381,21 @@ public class Rtm
    protected static interface TagColumns
    {
       /**
-       * The tag itself
+       * A {@link TAGS_SEPARATOR} separated list of tags.
        * <P>
-       * Type: STRING
+       * Type: TEXT
        * </P>
        */
-      public final static String TAG = "tag";
+      public final static String TAGS = "tags";
+      
+      /**
+       * The separator used to separate a the tags.
+       */
+      public final static String TAGS_SEPARATOR = ",";
    }
    
 
-   public static final class Tags implements BaseColumns, TagColumns,
-            TagReferenceColumns
+   public static final class Tags implements BaseColumns, TagColumns
    {
       public final static String PATH = "tags";
       
@@ -404,12 +408,12 @@ public class Rtm
       /**
        * The MIME type of {@link #CONTENT_URI} providing a directory of tags.
        */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.tag";
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.tags";
       
       /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single tag.
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of {@link TAGS_SEPARATOR} separated tags.
        */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.tag";
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.tags";
       
       /**
        * The default sort order for this table
@@ -496,7 +500,7 @@ public class Rtm
    
 
    public static final class TaskSeries implements BaseColumns,
-            TaskSeriesColumns
+            TaskSeriesColumns, TagColumns
    {
       public final static String PATH = "taskseries";
       
@@ -670,14 +674,9 @@ public class Rtm
       public final static String PARTICIPANT_USERNAMES = "participant_usernames";
       
       /**
-       * The delimiter used to separate a list of tags.
-       */
-      public final static String TAGS_DELIMITER = ",";
-      
-      /**
        * The delimiter used to separate a list of participant attributes.
        */
-      public final static String PARTICIPANTS_DELIMITER = TAGS_DELIMITER;
+      public final static String PARTICIPANTS_DELIMITER = TagColumns.TAGS_SEPARATOR;
    }
    
 
@@ -762,7 +761,7 @@ public class Rtm
    }
    
 
-   public static final class TagOverviews implements BaseColumns, TagColumns
+   public static final class TagOverviews implements BaseColumns
    {
       public final static String PATH = "tag_overviews";
       
@@ -781,6 +780,14 @@ public class Rtm
        * The MIME type of a {@link #CONTENT_URI} sub-directory of settings.
        */
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.tag_overviews";
+      
+      /**
+       * The tag itself
+       * <P>
+       * Type: TEXT
+       * </P>
+       */
+      public final static String TAG = "tag";
       
       /**
        * The number of tasks tagged with the tag

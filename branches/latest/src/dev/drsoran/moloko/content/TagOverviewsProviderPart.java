@@ -65,7 +65,7 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                   false,
+      false,
                                                    // tables
                                                    TaskSeries.PATH + ","
                                                       + RawTasks.PATH,
@@ -99,6 +99,8 @@ public class TagOverviewsProviderPart extends AbstractProviderPart
    {
       context.getContentResolver()
              .registerContentObserver( TaskSeries.CONTENT_URI, true, observer );
+      context.getContentResolver()
+             .registerContentObserver( RawTasks.CONTENT_URI, true, observer );
    }
    
 

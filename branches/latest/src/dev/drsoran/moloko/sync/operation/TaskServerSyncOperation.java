@@ -24,10 +24,12 @@ package dev.drsoran.moloko.sync.operation;
 
 import com.mdt.rtm.data.RtmTaskList;
 
+import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
+
 
 public class TaskServerSyncOperation extends ServerSyncOperation< RtmTaskList >
 {
-   private RtmTaskList resultList;
+   private SyncRtmTaskList resultList;
    
    
 
@@ -47,8 +49,7 @@ public class TaskServerSyncOperation extends ServerSyncOperation< RtmTaskList >
       {
          if ( resultList == null )
          {
-            resultList = new RtmTaskList( result );
-            resultList.sortSeries();
+            resultList = new SyncRtmTaskList( result );
          }
          else
          {
@@ -59,6 +60,6 @@ public class TaskServerSyncOperation extends ServerSyncOperation< RtmTaskList >
          }
       }
       
-      return resultList;
+      return resultList.toRtmTaskList();
    }
 }

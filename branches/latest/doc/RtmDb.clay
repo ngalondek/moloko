@@ -195,27 +195,6 @@
 <primary-key-column name="_id"/>
 </primary-key>
 </table>
-<table id="163c031:128fe8bf79f:-7f97" name="tags">
-<column-list>
-<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7c1c" mandatory="true" name="_id">
-<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f91" mandatory="true" name="taskseries_id">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
-<column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="163c031:128fe8bf79f:-7f8e" mandatory="true" name="tag">
-<data-type name="TEXT" selected-variant-pattern="TEXT"/>
-</column>
-</column-list>
-<primary-key id="163c031:128fe8bf79f:-7f96" name="PK_TAGS">
-<primary-key-column name="_id"/>
-</primary-key>
-<foreign-key-list>
-<foreign-key id="163c031:128fe8bf79f:-7c1e" name="tags_taskseries_ref" on-delete="UNSPECIFIED" on-update="UNSPECIFIED" referenced-key="PK_TASKSERIES" referenced-table="taskseries" referenced-table-schema="Rtm" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="">
-<foreign-key-column column-name="taskseries_id" referenced-key-column-name="_id"/>
-</foreign-key>
-</foreign-key-list>
-</table>
 <table id="3b2fd2:12b0f7019ac:-7ff0" name="settings">
 <column-list>
 <column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="3b2fd2:12b0f7019ac:-7fec" mandatory="true" name="_id">
@@ -357,13 +336,12 @@
 <diagram>
 <table-figure height="181" refid="5122f2:128cb6194ba:-7fff" width="177" x="428" y="572"/>
 <table-figure refid="5122f2:128cb6194ba:-7fee" x="436" y="250"/>
-<table-figure refid="5122f2:128cb6194ba:-7f59" x="724" y="402"/>
+<table-figure refid="5122f2:128cb6194ba:-7f59" x="723" y="273"/>
 <fk-figure refid="11fb115:12949b0b028:-7f74">
 <source-terminal x="2" y="67"/>
 </fk-figure>
 <table-figure refid="190abb9:128ce294477:-7fe8" x="464" y="16"/>
 <table-figure refid="190abb9:128ce294477:-7f35" x="191" y="263"/>
-<table-figure refid="163c031:128fe8bf79f:-7f97" x="733" y="193"/>
 <table-figure refid="3b2fd2:12b0f7019ac:-7ff0" x="187" y="37"/>
 <table-figure refid="1735ee1:12b714ecdc7:-7fed" x="922" y="57"/>
 <table-figure refid="bf1775:12cd4b4f24d:-7fd8" x="201" y="689"/>

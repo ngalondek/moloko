@@ -19,7 +19,6 @@
  */
 package com.mdt.rtm.data;
 
-import java.util.Comparator;
 import java.util.Date;
 
 import org.w3c.dom.Element;
@@ -40,15 +39,6 @@ public class RtmTask extends RtmData
 {
    private static final String TAG = "Moloko." + RtmTask.class.getSimpleName();
    
-   
-   private final static class LessIdComperator implements Comparator< RtmTask >
-   {
-      public int compare( RtmTask object1, RtmTask object2 )
-      {
-         return object1.id.compareTo( object2.id );
-      }
-   }
-   
    public static final Parcelable.Creator< RtmTask > CREATOR = new Parcelable.Creator< RtmTask >()
    {
       public RtmTask createFromParcel( Parcel source )
@@ -63,8 +53,6 @@ public class RtmTask extends RtmData
          return new RtmTask[ size ];
       }
    };
-   
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private final String id;
    

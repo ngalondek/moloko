@@ -50,8 +50,8 @@ import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
+import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -277,13 +277,13 @@ public class TaskEditActivity extends Activity
 
    public void onChangeTag( View v )
    {
-      final Intent intent = new Intent( this, ChangeTagsActivity.class );
-      final String tags[] = new String[ task.getTags().size() ];
-      
-      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS,
-                       task.getTags().toArray( tags ) );
-      
-      startActivity( intent );
+      // final Intent intent = new Intent( this, ChangeTagsActivity.class );
+      // final String tags[] = new String[ task.getTags().size() ];
+      //
+      // intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS,
+      // task.getTags().toArray( tags ) );
+      //
+      // startActivity( intent );
    }
    
 

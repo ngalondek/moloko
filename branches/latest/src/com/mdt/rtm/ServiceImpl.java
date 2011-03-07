@@ -33,6 +33,7 @@ import org.w3c.dom.NodeList;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -744,32 +745,27 @@ public class ServiceImpl implements Service
    
 
 
-   public void tasks_setTags( String timelineId,
-                              String listId,
-                              String taskSeriesId,
-                              String taskId,
-                              String[] tags ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_setTags( String timelineId,
+                                                       String listId,
+                                                       String taskSeriesId,
+                                                       String taskId,
+                                                       List< String > tags ) throws ServiceException
    {
-      final StringBuilder stringifiedTasks = new StringBuilder();
-      if ( tags != null )
-      {
-         for ( int index = 0; index < tags.length; index++ )
-         {
-            stringifiedTasks.append( tags[ index ] );
-            if ( index < tags.length - 1 )
-            {
-               stringifiedTasks.append( "," );
-            }
-         }
-      }
-      invoker.invoke( new Param( "method", "rtm.tasks.setTags" ),
-                      new Param( "timeline", timelineId ),
-                      new Param( "list_id", listId ),
-                      new Param( "taskseries_id", taskSeriesId ),
-                      new Param( "task_id", taskId ),
-                      new Param( "tags", stringifiedTasks.toString() ),
-                      new Param( "auth_token", currentAuthToken ),
-                      new Param( "api_key", applicationInfo.getApiKey() ) );
+      final String joinedTags = TextUtils.join( ",", tags );
+      
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.setTags" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "tags", joinedTags ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 

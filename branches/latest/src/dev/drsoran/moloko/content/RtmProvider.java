@@ -140,8 +140,8 @@ public class RtmProvider extends ContentProvider
       // These parts are immutable and allow no insert, update, deletion
       parts.addAll( Arrays.asList( new IProviderPart[]
       { new TasksProviderPart( context, dbHelper ),
+       new TagsProviderPart( context, dbHelper ),
        new ListOverviewsProviderPart( context, dbHelper ),
-       new TagOverviewsProviderPart( context, dbHelper ),
        new LocationOverviewsProviderPart( context, dbHelper ),
        new ContactOverviewsProviderPart( context, dbHelper ),
       /* new SyncTasksProviderPart( dbHelper ) */} ) );

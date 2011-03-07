@@ -19,6 +19,8 @@
  */
 package com.mdt.rtm.data;
 
+import java.util.List;
+
 import org.w3c.dom.Element;
 
 import com.mdt.rtm.Service;
@@ -157,6 +159,27 @@ public class RtmTimeline
                                               taskSeriesId,
                                               taskId,
                                               priority );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setTags( final String listId,
+                                                       final String taskSeriesId,
+                                                       final String taskId,
+                                                       final List< String > tags ) throws ServiceException
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setTags( id,
+                                          listId,
+                                          taskSeriesId,
+                                          taskId,
+                                          tags );
          }
       };
    }

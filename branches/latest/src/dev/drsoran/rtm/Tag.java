@@ -22,28 +22,17 @@
 
 package dev.drsoran.rtm;
 
-import java.util.Date;
+import java.util.Comparator;
 
-import android.content.ContentProviderOperation;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import dev.drsoran.moloko.content.TagsProviderPart;
-import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.provider.Rtm.Tags;
 
 
-public class Tag implements IContentProviderSyncable< Tag >, Parcelable
+public class Tag implements Parcelable
 {
    
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko." + Tag.class.getSimpleName();
-   
-   private final String id;
    
    private final String taskSeriesId;
    
@@ -65,19 +54,18 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
    };
    
    
+   public final static class ASC_ALPHA implements Comparator< Tag >
+   {
+      public int compare( Tag object1, Tag object2 )
+      {
+         return object1.tag.compareToIgnoreCase( object2.tag );
+      }
+   }
+   
+   
 
    public Tag( String taskSeriesId, String tag )
    {
-      this.id = null;
-      this.taskSeriesId = taskSeriesId;
-      this.tag = tag;
-   }
-   
-
-
-   public Tag( String id, String taskSeriesId, String tag )
-   {
-      this.id = id;
       this.taskSeriesId = taskSeriesId;
       this.tag = tag;
    }
@@ -86,16 +74,8 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
 
    public Tag( Parcel source )
    {
-      id = source.readString();
       taskSeriesId = source.readString();
       tag = source.readString();
-   }
-   
-
-
-   public String getId()
-   {
-      return id;
    }
    
 
@@ -123,7 +103,6 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
 
    public void writeToParcel( Parcel dest, int flags )
    {
-      dest.writeString( id );
       dest.writeString( taskSeriesId );
       dest.writeString( tag );
    }
@@ -135,78 +114,31 @@ public class Tag implements IContentProviderSyncable< Tag >, Parcelable
    {
       if ( !( o instanceof Tag ) )
          return false;
-      else
-      {
-         final Tag other = (Tag) o;
-         
-         // Only if booth tags have an id we compare it.
-         // It may happen that we create temporary tag objects
-         // with no ID. In this case the ID is not important.
-         boolean equals = ( id != null && other.id != null )
-                                                            ? id.equals( other.id )
-                                                            : true;
-         
-         equals = equals
-            && !SyncUtils.hasChanged( taskSeriesId, other.taskSeriesId );
-         
-         equals = equals && !SyncUtils.hasChanged( tag, other.tag );
-         
-         return equals;
-      }
-   }
-   
-
-
-   public Uri getContentUriWithId()
-   {
-      return Queries.contentUriWithId( Tags.CONTENT_URI, id );
-   }
-   
-
-
-   public Date getDeletedDate()
-   {
-      return null;
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation()
-   {
-      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Tags.CONTENT_URI )
-                                                                             .withValues( TagsProviderPart.getContentValues( this,
-                                                                                                                             true ) )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
-   {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( Tag update )
-   {
-      final Uri uri = getContentUriWithId();
-      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      if ( SyncUtils.hasChanged( taskSeriesId, update.taskSeriesId ) )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Tags.TASKSERIES_ID,
-                                                         update.taskSeriesId )
-                                             .build() );
+      final Tag other = (Tag) o;
       
-      if ( SyncUtils.hasChanged( tag, update.tag ) )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Tags.TAG, update.tag )
-                                             .build() );
+      return taskSeriesId.equals( other.taskSeriesId )
+         && tag.equals( other.tag );
+   }
+   
+
+
+   @Override
+   public int hashCode()
+   {
+      int result = 17;
       
-      return result.build();
+      result = 31 * result + taskSeriesId.hashCode();
+      result = 31 * result + tag.hashCode();
+      
+      return result;
+   }
+   
+
+
+   @Override
+   public String toString()
+   {
+      return tag;
    }
 }

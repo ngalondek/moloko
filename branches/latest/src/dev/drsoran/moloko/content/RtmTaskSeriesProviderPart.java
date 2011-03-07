@@ -410,12 +410,12 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + " TEXT, " + TaskSeries.URL + " TEXT, " + TaskSeries.RECURRENCE
          + " TEXT, " + TaskSeries.RECURRENCE_EVERY + " INTEGER, "
          + TaskSeries.LOCATION_ID + " TEXT, " + TaskSeries.LIST_ID
-         + " TEXT NOT NULL, " + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \""
-         + TaskSeries._ID + "\" ), " + "CONSTRAINT list FOREIGN KEY ( "
-         + TaskSeries.LIST_ID + " ) REFERENCES lists ( \"" + Lists._ID
-         + "\" ), " + "CONSTRAINT location FOREIGN KEY ( "
-         + TaskSeries.LOCATION_ID + " ) REFERENCES locations ( \""
-         + Locations._ID + "\" )" + ");" );
+         + " TEXT NOT NULL, " + TaskSeries.TAGS + " TEXT, "
+         + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + TaskSeries._ID
+         + "\" ), " + "CONSTRAINT list FOREIGN KEY ( " + TaskSeries.LIST_ID
+         + " ) REFERENCES lists ( \"" + Lists._ID + "\" ), "
+         + "CONSTRAINT location FOREIGN KEY ( " + TaskSeries.LOCATION_ID
+         + " ) REFERENCES locations ( \"" + Locations._ID + "\" )" + ");" );
       
       // Triggers: If a taskseries gets deleted, we also delete:
       // - all raw tasks

@@ -175,7 +175,18 @@ public class ChangeTagsActivity extends ListActivity
       
       if ( tag.isAvailable )
       {
-         editView.getText().append( ", " + tag.tag );
+         final Editable text = editView.getEditableText();
+         
+         if ( TextUtils.isEmpty( text ) )
+            text.append( tag.tag );
+         else
+         {
+            final int trimmedLength = TextUtils.getTrimmedLength( text );
+            if ( text.charAt( trimmedLength - 1 ) == ',' )
+               text.append( tag.tag );
+            else
+               text.append( ", " + tag.tag );
+         }
       }
       else
       {

@@ -264,7 +264,6 @@ public class TaskEditActivity extends Activity
          refeshListSpinner();
          refeshPrioritySpinner();
          refeshTags();
-         refreshTagButton();
          refreshDue();
          refreshRecurrence();
          refreshEstimate();
@@ -517,13 +516,6 @@ public class TaskEditActivity extends Activity
    private void refeshTags()
    {
       UIUtils.inflateTags( this, tagsContainer, task, null, null );
-   }
-   
-
-
-   private void refreshTagButton()
-   {
-      changeTagsButton.setEnabled( tagsContainer.getChildCount() > 0 );
    }
    
 

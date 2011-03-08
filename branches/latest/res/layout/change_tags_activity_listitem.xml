@@ -11,7 +11,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
       android:layout_marginLeft="5dip"
-      android:src="@drawable/ic_list_change_tags_tag_remove" />
+      android:src="@drawable/ic_list_change_tags_tag" />
       
    <TextView
       android:id="@+id/change_tags_activity_listitem_tag"

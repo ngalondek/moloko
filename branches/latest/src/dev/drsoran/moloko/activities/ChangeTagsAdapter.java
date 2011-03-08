@@ -82,7 +82,7 @@ public class ChangeTagsAdapter extends
       final ChangeTag tag = getItem( position );
       
       icon.setImageResource( tag.isAvailable
-                                            ? R.drawable.ic_list_change_tags_tag_remove
+                                            ? R.drawable.ic_list_change_tags_tag_add
                                             : R.drawable.ic_list_change_tags_tag_remove );
       tagText.setText( tag.tag );
       

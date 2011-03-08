@@ -96,8 +96,6 @@ public class ChangeTagsActivity extends ListActivity
                                     int before,
                                     int count )
          {
-            // TODO Auto-generated method stub
-            
          }
          
 
@@ -107,16 +105,13 @@ public class ChangeTagsActivity extends ListActivity
                                         int count,
                                         int after )
          {
-            // TODO Auto-generated method stub
-            
          }
          
 
 
          public void afterTextChanged( Editable s )
          {
-            // TODO Auto-generated method stub
-            
+            updateTagList();
          }
       } );
       
@@ -155,6 +150,20 @@ public class ChangeTagsActivity extends ListActivity
          asyncQueryTags.cancel( true );
       
       asyncQueryTags = null;
+   }
+   
+
+
+   public void onDone( View v )
+   {
+      
+   }
+   
+
+
+   public void onCancel( View v )
+   {
+      
    }
    
 
@@ -224,8 +233,6 @@ public class ChangeTagsActivity extends ListActivity
       getListView().setAdapter( new ChangeTagsAdapter( this,
                                                        R.layout.change_tags_activity_listitem,
                                                        changeTags ) );
-      
-      editView.setText( TextUtils.join( ", ", chosenTags ) );
    }
    
 

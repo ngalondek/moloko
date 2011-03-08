@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -82,7 +83,6 @@ public class TagsProviderPart extends AbstractProviderPart
                                                    // columns
                                                    new String[]
                                                    {
-                                                    "ROWID AS " + Tags._ID,
                                                     TaskSeries.PATH + "."
                                                        + TaskSeries._ID,
                                                     TaskSeries.TAGS,
@@ -260,6 +260,17 @@ public class TagsProviderPart extends AbstractProviderPart
                         String[] selectionArgs,
                         String sortOrder )
    {
+      // Replace _id to ROWID AS _id
+      {
+         final List< String > projectionList = Arrays.asList( projection );
+         
+         for ( int i = 0, cnt = projectionList.size(); i < cnt; ++i )
+         {
+            if ( projectionList.get( i ).equalsIgnoreCase( Tags._ID ) )
+               projectionList.set( i, "ROWID AS " + Tags._ID );
+         }
+      }
+      
       final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
                                                                         .append( " FROM (" )
                                                                         .append( QUERY )

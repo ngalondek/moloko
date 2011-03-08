@@ -37,11 +37,9 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
-import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -68,6 +66,8 @@ public class InSyncRtmTaskSeries implements
    
    private final RtmTaskSeries taskSeries;
    
+   private final List< InSyncRtmTask > inSyncTasks;
+   
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    
@@ -78,18 +78,10 @@ public class InSyncRtmTaskSeries implements
          throw new NullPointerException( "taskSeries is null" );
       
       this.taskSeries = taskSeries;
-   }
-   
-
-
-   public List< InSyncRtmTask > getInSyncTasks()
-   {
-      final List< InSyncRtmTask > res = new ArrayList< InSyncRtmTask >( taskSeries.getTasks()
-                                                                                  .size() );
+      this.inSyncTasks = new ArrayList< InSyncRtmTask >( taskSeries.getTasks()
+                                                                   .size() );
       for ( RtmTask task : taskSeries.getTasks() )
-         res.add( new InSyncRtmTask( task ) );
-      
-      return res;
+         this.inSyncTasks.add( new InSyncRtmTask( task ) );
    }
    
 
@@ -123,13 +115,13 @@ public class InSyncRtmTaskSeries implements
       
       // Insert tasks
       {
-         for ( RtmTask rtmTask : taskSeries.getTasks() )
+         for ( InSyncRtmTask inSyncTask : inSyncTasks )
          {
-            operation.add( RtmTasksProviderPart.insertTask( rtmTask ) );
+            operation.add( inSyncTask.computeContentProviderInsertOperation() );
          }
       }
       
-      // Check for notes
+      // Insert notes
       {
          final List< RtmTaskNote > notes = taskSeries.getNotes().getNotes();
          
@@ -142,7 +134,7 @@ public class InSyncRtmTaskSeries implements
          }
       }
       
-      // Check for participants
+      // Insert participants
       {
          final ParticipantList participantList = taskSeries.getParticipants();
          operation.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
@@ -155,8 +147,20 @@ public class InSyncRtmTaskSeries implements
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      // RtmTaskSeries gets deleted by a DB trigger if it references no more RawTasks.
-      return NoopContentProviderSyncOperation.INSTANCE;
+      // RtmTaskSeries, Notes, Participant gets deleted by a RtmTaskSeriesProvider DB trigger if it references no more
+      // RawTasks.
+      
+      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newDelete();
+      
+      // Delete tasks
+      {
+         for ( InSyncRtmTask inSyncTask : inSyncTasks )
+         {
+            operation.add( inSyncTask.computeContentProviderDeleteOperation() );
+         }
+      }
+      
+      return operation.build();
    }
    
 
@@ -167,9 +171,9 @@ public class InSyncRtmTaskSeries implements
       
       // Sync tasks
       {
-         final ContentProviderSyncableList< InSyncRtmTask > syncTasksList = new ContentProviderSyncableList< InSyncRtmTask >( getInSyncTasks(),
+         final ContentProviderSyncableList< InSyncRtmTask > syncTasksList = new ContentProviderSyncableList< InSyncRtmTask >( inSyncTasks,
                                                                                                                               InSyncRtmTask.LESS_ID );
-         final List< IContentProviderSyncOperation > taskOperations = SyncDiffer.inDiff( serverElement.getInSyncTasks(),
+         final List< IContentProviderSyncOperation > taskOperations = SyncDiffer.inDiff( serverElement.inSyncTasks,
                                                                                          syncTasksList,
                                                                                          false /* never full sync */);
          operations.add( taskOperations );

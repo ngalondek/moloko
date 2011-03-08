@@ -37,7 +37,9 @@
          android:layout_marginRight="10dip"
          android:layout_marginTop="8dip"
          android:hint="@string/change_tags_edit_hint"
-         android:inputType="text|textAutoCorrect" />
+         android:inputType="text|textAutoCorrect"
+         android:imeOptions="actionDone"
+         android:completionThreshold="1" />
 
       <View
          android:layout_height="1dip"

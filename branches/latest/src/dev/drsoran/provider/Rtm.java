@@ -638,16 +638,34 @@ public class Rtm
    }
    
 
-   protected static interface SyncTaskColumns extends TaskSeriesColumns,
-            RawTaskColumns
+   public static final class Tasks implements BaseColumns, ListBaseColumns,
+            TaskSeriesColumns, RawTaskColumns, TagColumns, LocationColumns
    {
+      public final static String PATH = "tasks";
+      
       /**
-       * A {@link TAGS_DELIMITER} separated list of all tags
+       * The content:// style URL for this table
+       */
+      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
+         + "/" + PATH );
+      
+      /**
+       * The MIME type of {@link #CONTENT_URI} providing a directory of tasks.
+       */
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.task";
+      
+      /**
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single task.
+       */
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.task";
+      
+      /**
+       * The number of notes the tag has attached
        * <P>
        * Type: STRING
        * </P>
        */
-      public final static String TAGS = "tags";
+      public final static String NUM_NOTES = "num_notes";
       
       /**
        * A {@link PARTICIPANTS_DELIMITER} separated list of all {@link ContactColumns} contact IDs
@@ -677,64 +695,6 @@ public class Rtm
        * The delimiter used to separate a list of participant attributes.
        */
       public final static String PARTICIPANTS_DELIMITER = TagColumns.TAGS_SEPARATOR;
-   }
-   
-
-   public static final class SyncTasks implements BaseColumns, SyncTaskColumns
-   {
-      public final static String PATH = "synctasks";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of tasks.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.synctask";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single task.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.synctask";
-      
-      /**
-       * The default sort order for this table
-       */
-      public final static String DEFAULT_SORT_ORDER = _ID + " ASC";
-   }
-   
-
-   public static final class Tasks implements BaseColumns, ListBaseColumns,
-            SyncTaskColumns, LocationColumns
-   {
-      public final static String PATH = "tasks";
-      
-      /**
-       * The content:// style URL for this table
-       */
-      public final static Uri CONTENT_URI = Uri.parse( "content://" + AUTHORITY
-         + "/" + PATH );
-      
-      /**
-       * The MIME type of {@link #CONTENT_URI} providing a directory of tasks.
-       */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.task";
-      
-      /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of a single task.
-       */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.task";
-      
-      /**
-       * The number of notes the tag has attached
-       * <P>
-       * Type: STRING
-       * </P>
-       */
-      public final static String NUM_NOTES = "num_notes";
       
       /**
        * Sorts result tasks by their priority

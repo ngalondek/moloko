@@ -172,8 +172,8 @@
                   android:layout_alignParentRight="true"                  
                   android:layout_marginTop="3dip"
                   android:scaleType="fitXY"
-                  android:src="@drawable/ic_button_add" 
-                  android:onClick=""/>              
+                  android:src="@drawable/ic_button_task_tag_change" 
+                  android:onClick="onChangeTag"/>              
             </RelativeLayout>
 
             <!-- Due -->

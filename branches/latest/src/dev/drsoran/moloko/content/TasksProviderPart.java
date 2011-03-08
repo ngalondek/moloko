@@ -69,7 +69,7 @@ public class TasksProviderPart extends AbstractProviderPart
     Tasks.SOURCE, Tasks.URL, Tasks.RECURRENCE, Tasks.RECURRENCE_EVERY,
     Tasks.TASKSERIES_ID, Tasks.DUE_DATE, Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE,
     Tasks.COMPLETED_DATE, Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED,
-    Tasks.ESTIMATE, Tasks.ESTIMATE_MILLIS, Tasks.LOCATION_ID,
+    Tasks.ESTIMATE, Tasks.ESTIMATE_MILLIS, Tasks.TAGS, Tasks.LOCATION_ID,
     Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE, Tasks.ADDRESS,
     Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.PARTICIPANT_IDS,
     Tasks.PARTICIPANT_FULLNAMES, Tasks.PARTICIPANT_USERNAMES, Tasks.NUM_NOTES };
@@ -125,6 +125,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                         Tasks.POSTPONED,
                                                         Tasks.ESTIMATE,
                                                         Tasks.ESTIMATE_MILLIS,
+                                                        Tasks.TAGS,
                                                         Tasks.LOCATION_ID },
                                                        
                                                        // where

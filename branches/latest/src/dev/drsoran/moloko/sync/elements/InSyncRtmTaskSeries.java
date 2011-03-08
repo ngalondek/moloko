@@ -37,6 +37,7 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
+import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -118,6 +119,14 @@ public class InSyncRtmTaskSeries implements
                                                 .withValues( RtmTaskSeriesProviderPart.getContentValues( taskSeries,
                                                                                                          true ) )
                                                 .build() );
+      }
+      
+      // Insert tasks
+      {
+         for ( RtmTask rtmTask : taskSeries.getTasks() )
+         {
+            operation.add( RtmTasksProviderPart.insertTask( rtmTask ) );
+         }
       }
       
       // Check for notes

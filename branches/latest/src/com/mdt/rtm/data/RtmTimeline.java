@@ -168,7 +168,7 @@ public class RtmTimeline
    public TimeLineMethod< RtmTaskList > tasks_setTags( final String listId,
                                                        final String taskSeriesId,
                                                        final String taskId,
-                                                       final List< String > tags ) throws ServiceException
+                                                       final List< String > tags )
    {
       return new TimeLineMethod< RtmTaskList >()
       {

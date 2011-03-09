@@ -13,21 +13,16 @@
       implementation
    -->
 <FrameLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   style="@style/Task"
+   xmlns:android="http://schemas.android.com/apk/res/android"   
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
-   <LinearLayout
-      style="@style/Task_Section"
-      android:orientation="vertical"
+   <LinearLayout      
       android:layout_height="fill_parent"
       android:layout_width="fill_parent"
-      android:layout_marginTop="8dip"
-      android:layout_marginLeft="10dip"
-      android:layout_marginBottom="80dip"
-      android:layout_marginRight="8dip"
-      android:layout_gravity="fill_horizontal|fill_vertical">
+      android:layout_gravity="fill_horizontal|fill_vertical"
+      android:orientation="vertical"
+      android:background="@color/app_default_bgnd">
 
       <MultiAutoCompleteTextView
          android:id="@+id/change_tags_activity_edit"
@@ -55,7 +50,7 @@
          android:layout_height="fill_parent"
          android:layout_marginLeft="5dip"
          android:layout_marginRight="5dip"
-         android:layout_marginBottom="5dip" />
+         android:layout_marginBottom="70dip" />
 
       <TextView
          android:id="@android:id/empty"

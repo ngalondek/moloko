@@ -341,7 +341,7 @@ public class TaskActivity extends Activity
          
          listName.setText( task.getListName() );
          
-         UIUtils.inflateTags( this, tagsLayout, task, null, null );
+         UIUtils.inflateTags( this, tagsLayout, task.getTags(), null, null );
          
          setDateTimeSection( dateTimeSection, task );
          

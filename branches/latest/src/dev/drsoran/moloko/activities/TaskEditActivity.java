@@ -22,7 +22,9 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
@@ -50,8 +52,8 @@ import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
+import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -62,6 +64,7 @@ import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -69,6 +72,11 @@ import dev.drsoran.rtm.Task;
 
 public class TaskEditActivity extends Activity
 {
+   private class MutableTask
+   {
+      public final List< String > tags = new ArrayList< String >();
+   }
+   
    private final static String TAG = "Moloko."
       + TaskEditActivity.class.getSimpleName();
    
@@ -82,6 +90,8 @@ public class TaskEditActivity extends Activity
    
    public final static int RESULT_EDIT_TASK_CHANGED = 1 << 9
       | RESULT_EDIT_TASK_OK;
+   
+   private final MutableTask mutableTask = new MutableTask();
    
    private Task task;
    
@@ -197,6 +207,7 @@ public class TaskEditActivity extends Activity
                throw e;
             }
             
+            initializeMutableTask();
             initializeListSpinner();
             initializeLocationSpinner();
          }
@@ -214,6 +225,13 @@ public class TaskEditActivity extends Activity
                                           R.string.err_unsupported_intent_action,
                                           intent.getAction() );
       }
+   }
+   
+
+
+   private void initializeMutableTask()
+   {
+      mutableTask.tags.addAll( task.getTags() );
    }
    
 
@@ -274,15 +292,38 @@ public class TaskEditActivity extends Activity
    
 
 
-   public void onChangeTag( View v )
+   @Override
+   protected void onActivityResult( int requestCode, int resultCode, Intent data )
+   {
+      switch ( requestCode )
+      {
+         case ChangeTagsActivity.REQ_CHANGE_TAGS:
+            if ( resultCode == RESULT_OK && data != null
+               && data.hasExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS ) )
+            {
+               mutableTask.tags.clear();
+               
+               for ( String tag : data.getStringArrayExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS ) )
+                  mutableTask.tags.add( tag );
+            }
+         default :
+            break;
+      }
+   }
+   
+
+
+   public void onChangeTags( View v )
    {
       final Intent intent = new Intent( this, ChangeTagsActivity.class );
       final String tags[] = new String[ task.getTags().size() ];
       
+      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TASK_NAME,
+                       task.getName() );
       intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS,
                        task.getTags().toArray( tags ) );
       
-      startActivity( intent );
+      startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
    }
    
 
@@ -323,6 +364,20 @@ public class TaskEditActivity extends Activity
                                                                                           task.getId() ),
                                                                 RawTasks.PRIORITY,
                                                                 selectedPriority ) );
+         }
+         
+         // Tags
+         {
+            final String tags = TextUtils.join( Tags.TAGS_SEPARATOR,
+                                                mutableTask.tags );
+            
+            if ( SyncUtils.hasChanged( tags,
+                                       TextUtils.join( Tags.TAGS_SEPARATOR,
+                                                       task.getTags() ) ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.TAGS,
+                                                                tags ) );
          }
          
          // Location
@@ -515,7 +570,7 @@ public class TaskEditActivity extends Activity
 
    private void refeshTags()
    {
-      UIUtils.inflateTags( this, tagsContainer, task, null, null );
+      UIUtils.inflateTags( this, tagsContainer, mutableTask.tags, null, null );
    }
    
 

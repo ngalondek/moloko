@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.util;
 
-import java.util.List;
+import java.util.Collection;
 
 import android.accounts.Account;
 import android.app.Activity;
@@ -40,10 +40,10 @@ import android.util.Log;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
@@ -80,6 +80,10 @@ public final class UIUtils
       if ( titleBarText instanceof TextView )
       {
          ( (TextView) titleBarText ).setText( text );
+      }
+      else
+      {
+         activity.setTitle( text );
       }
    }
    
@@ -118,6 +122,10 @@ public final class UIUtils
          }
          
          titleBarText.setCompoundDrawables( bitmap, null, null, null );
+      }
+      else
+      {
+         activity.setTitle( text );
       }
    }
    
@@ -168,7 +176,7 @@ public final class UIUtils
 
    public final static void inflateTags( Context context,
                                          ViewGroup container,
-                                         Task task,
+                                         Collection< String > tags,
                                          Bundle configuration,
                                          OnClickListener listener ) throws InflateException
    {
@@ -180,13 +188,10 @@ public final class UIUtils
       container.removeAllViews();
       
       // inflate the stub and add tags
-      if ( task.getTags().size() > 0
-         && !configuration.containsKey( REMOVE_ALL_TAGS ) )
+      if ( tags.size() > 0 && !configuration.containsKey( REMOVE_ALL_TAGS ) )
       {
          try
          {
-            final List< String > tags = task.getTags();
-            
             if ( configuration.containsKey( DISABLE_ALL_TAGS ) )
             {
                for ( String tagText : tags )

@@ -267,14 +267,18 @@ public class InSyncRtmTaskSeries implements
                                                                                                             : 0 )
                                                     .build() );
          
-         final String joinedServerTags = serverElement.taskSeries.getTagsJoined();
-         
-         if ( SyncUtils.hasChanged( joinedServerTags,
-                                    taskSeries.getTagsJoined() ) )
-            operations.add( ContentProviderOperation.newUpdate( contentUri )
-                                                    .withValue( TaskSeries.TAGS,
-                                                                joinedServerTags )
-                                                    .build() );
+         {
+            final String joinedServerTags = serverElement.taskSeries.getTagsJoined();
+            
+            if ( SyncUtils.hasChanged( joinedServerTags,
+                                       taskSeries.getTagsJoined() ) )
+               operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                       .withValue( TaskSeries.TAGS,
+                                                                   serverElement.taskSeries.hasTags()
+                                                                                                     ? joinedServerTags
+                                                                                                     : null )
+                                                       .build() );
+         }
       }
       
       return operations.build();

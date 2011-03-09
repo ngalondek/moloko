@@ -190,6 +190,20 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                            properties.getModification( TaskSeries.TASKSERIES_NAME ) );
          }
          
+         // Tags
+         if ( SyncUtils.getSyncDirection( properties,
+                                          TaskSeries.TAGS,
+                                          serverElement.taskSeries.getTagsJoined(),
+                                          taskSeries.getTagsJoined(),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            operation.add( timeline.tasks_setTags( taskSeries.getListId(),
+                                                   taskSeries.getId(),
+                                                   task.getId(),
+                                                   taskSeries.getTags() ),
+                           properties.getModification( TaskSeries.TAGS ) );
+         }
+         
          // Location
          if ( SyncUtils.getSyncDirection( properties,
                                           TaskSeries.LOCATION_ID,

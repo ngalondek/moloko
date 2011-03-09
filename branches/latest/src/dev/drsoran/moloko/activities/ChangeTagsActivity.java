@@ -43,6 +43,7 @@ import android.widget.MultiAutoCompleteTextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.rtm.Tag;
 
@@ -67,6 +68,8 @@ public class ChangeTagsActivity extends ListActivity
    
    public final static int REQ_CHANGE_TAGS = 0;
    
+   public final static String INTENT_EXTRA_TASK_NAME = "task_name";
+   
    public final static String INTENT_EXTRA_TAGS = "tags";
    
    private final Set< String > chosenTags = new TreeSet< String >();
@@ -85,6 +88,19 @@ public class ChangeTagsActivity extends ListActivity
    protected void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
+      final Intent intent = getIntent();
+      
+      if ( intent.hasExtra( INTENT_EXTRA_TASK_NAME ) )
+         UIUtils.setTitle( this,
+                           getString( R.string.app_change_tags,
+                                      intent.getStringExtra( INTENT_EXTRA_TASK_NAME ) ) );
+      else
+         UIUtils.setTitle( this,
+                           getString( R.string.app_change_tags,
+                                      getResources().getQuantityString( R.plurals.g_task,
+                                                                        1 ) ) );
+      
       setContentView( R.layout.change_tags_activity );
       
       editView = (MultiAutoCompleteTextView) findViewById( R.id.change_tags_activity_edit );
@@ -114,8 +130,6 @@ public class ChangeTagsActivity extends ListActivity
             updateTagList();
          }
       } );
-      
-      final Intent intent = getIntent();
       
       if ( intent.hasExtra( INTENT_EXTRA_TAGS ) )
       {
@@ -156,14 +170,23 @@ public class ChangeTagsActivity extends ListActivity
 
    public void onDone( View v )
    {
+      final Intent intent = getIntent();
       
+      String[] resultTags = new String[ chosenTags.size() ];
+      resultTags = chosenTags.toArray( resultTags );
+      
+      intent.putExtra( INTENT_EXTRA_TAGS, resultTags );
+      
+      setResult( RESULT_OK, intent );
+      finish();
    }
    
 
 
    public void onCancel( View v )
    {
-      
+      setResult( RESULT_CANCELED );
+      finish();
    }
    
 
@@ -190,7 +213,7 @@ public class ChangeTagsActivity extends ListActivity
       }
       else
       {
-         // Cut out the removed tag including any trailing ,
+         // Cut the removed tag including any trailing ,
          String content = editView.getText().toString();
          content = content.replaceAll( tag.tag + "\\,*\\s*",
                                        Strings.EMPTY_STRING );

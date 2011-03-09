@@ -288,7 +288,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       
       UIUtils.inflateTags( context,
                            tagsLayout,
-                           task,
+                           task.getTags(),
                            tagsConfig,
                            (OnClickListener) context );
    }

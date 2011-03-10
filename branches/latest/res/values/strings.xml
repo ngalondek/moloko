@@ -57,9 +57,10 @@
       Special thanks to David Vermeille.&lt;br>&lt;br>
       Moloko is implemented by means of:&lt;br>
                 - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 3.2
-         &lt;br>- A modified version of &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library 0.5
-         &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library 2.0.3
+         &lt;br>- A modified version of &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library
+         &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library
          &lt;br>- &lt;a href="http://code.google.com/p/android-log-collector/">android-log-collector&lt;/a>
+         &lt;br>- &lt;a href="http://code.google.com/p/android-wheel/>android-wheel&lt;/a>
    </string>
    
    <!-- TODO: to be removed -->   
@@ -160,6 +161,7 @@
    
    <!-- Global Dialogs -->
    <string name="dlg_save_task">Saving task changes...</string>
+   <string name="dlg_estimate_picker_title">How long does it take?</string>
 	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>

@@ -58,6 +58,25 @@ public class MolokoDateUtils
       | FORMAT_ABR_MONTH;
    
    
+   public final static class EstimateStruct
+   {
+      public final int days;
+      
+      public final int hours;
+      
+      public final int minutes;
+      
+      
+
+      public EstimateStruct( int days, int hours, int minutes )
+      {
+         this.days = days;
+         this.hours = hours;
+         this.minutes = minutes;
+      }
+   }
+   
+   
 
    private MolokoDateUtils()
    {
@@ -214,58 +233,81 @@ public class MolokoDateUtils
    
 
 
+   public final static EstimateStruct parseEstimated( long millis )
+   {
+      int days = 0;
+      int hours = 0;
+      int minutes = 0;
+      
+      if ( millis > -1 )
+      {
+         int timeSeconds = (int) ( millis / 1000 );
+         
+         // Minute is minimal resolution
+         if ( timeSeconds >= 60 )
+         {
+            if ( timeSeconds >= 3600 * 24 )
+            {
+               days = timeSeconds / 3600 * 24;
+               timeSeconds -= hours * 3600 * 24;
+            }
+            
+            if ( timeSeconds >= 3600 )
+            {
+               hours = timeSeconds / 3600;
+               timeSeconds -= hours * 3600;
+            }
+            
+            if ( timeSeconds >= 60 )
+            {
+               minutes = timeSeconds / 60;
+               timeSeconds -= minutes * 60;
+            }
+         }
+      }
+      
+      return new EstimateStruct( days, hours, minutes );
+   }
+   
+
+
    public final static String formatEstimated( Context context, long millis )
    {
       final Resources res = context.getResources();
       
       if ( millis > -1 )
       {
+         final EstimateStruct estimateStruct = parseEstimated( millis );
          final StringBuilder stringBuilder = new StringBuilder();
-         int timeSeconds = (int) ( millis / 1000 );
          
-         // Minute is minimal resolution
-         if ( timeSeconds >= 60 )
+         if ( estimateStruct.days > 0 )
          {
-            int days = 0;
-            int hours = 0;
-            int minutes = 0;
+            stringBuilder.append( estimateStruct.days )
+                         .append( " " )
+                         .append( res.getQuantityString( R.plurals.g_day,
+                                                         estimateStruct.days ) );
+         }
+         
+         if ( estimateStruct.hours > 0 )
+         {
+            if ( stringBuilder.length() > 0 )
+               stringBuilder.append( ", " );
             
-            if ( timeSeconds >= 3600 * 24 )
-            {
-               days = timeSeconds / 3600 * 24;
-               timeSeconds -= hours * 3600 * 24;
-               
-               stringBuilder.append( days )
-                            .append( " " )
-                            .append( res.getQuantityString( R.plurals.g_day,
-                                                            days ) );
-            }
-            if ( timeSeconds >= 3600 )
-            {
-               hours = timeSeconds / 3600;
-               timeSeconds -= hours * 3600;
-               
-               if ( stringBuilder.length() > 0 )
-                  stringBuilder.append( ", " );
-               
-               stringBuilder.append( hours )
-                            .append( " " )
-                            .append( res.getQuantityString( R.plurals.g_hour,
-                                                            hours ) );
-            }
-            if ( timeSeconds >= 60 )
-            {
-               minutes = timeSeconds / 60;
-               timeSeconds -= minutes * 60;
-               
-               if ( stringBuilder.length() > 0 )
-                  stringBuilder.append( ", " );
-               
-               stringBuilder.append( minutes )
-                            .append( " " )
-                            .append( res.getQuantityString( R.plurals.g_minute,
-                                                            minutes ) );
-            }
+            stringBuilder.append( estimateStruct.hours )
+                         .append( " " )
+                         .append( res.getQuantityString( R.plurals.g_hour,
+                                                         estimateStruct.hours ) );
+         }
+         
+         if ( estimateStruct.minutes > 0 )
+         {
+            if ( stringBuilder.length() > 0 )
+               stringBuilder.append( ", " );
+            
+            stringBuilder.append( estimateStruct.minutes )
+                         .append( " " )
+                         .append( res.getQuantityString( R.plurals.g_minute,
+                                                         estimateStruct.minutes ) );
          }
          
          if ( stringBuilder.length() == 0 )

@@ -53,8 +53,8 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.layouts.WrappingLayout;
+import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -62,7 +62,6 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.RawTasks;
@@ -332,9 +331,7 @@ public class TaskEditActivity extends Activity
 
    public void onEstimate( View v )
    {
-      final long millis = RtmDateTimeParsing.parseEstimated( estimateEdit.getText()
-                                                                         .toString() );
-      new EstimatePickerDialog( this, millis ).show();
+      new EstimatePickerDialog( this ).show();
    }
    
 

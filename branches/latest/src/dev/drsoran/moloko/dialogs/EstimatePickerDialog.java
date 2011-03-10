@@ -54,6 +54,13 @@ public class EstimatePickerDialog
    
    
 
+   public EstimatePickerDialog( Context context )
+   {
+      this( context, 1, UNIT_DAY );
+   }
+   
+
+
    public EstimatePickerDialog( Context context, long millis )
    {
       this.context = context;
@@ -97,14 +104,16 @@ public class EstimatePickerDialog
 
    private void init( Context context, int initialValue, int unit )
    {
+      if ( initialValue == 0 )
+         initialValue = 1;
+      
       final LayoutInflater inflater = LayoutInflater.from( context );
       final View view = inflater.inflate( R.layout.estimate_picker_dialog, null );
       
       numberWheel = (WheelView) view.findViewById( R.id.estimate_dlg_number_wheel );
       numberWheel.setViewAdapter( new NumericWheelAdapter( context, 1, 999 ) );
       numberWheel.setCyclic( true );
-      numberWheel.setCurrentItem( initialValue > 0 ? --initialValue
-                                                  : initialValue );
+      numberWheel.setCurrentItem( initialValue - 1 );
       
       unitWheel = (WheelView) view.findViewById( R.id.estimate_dlg_unit_wheel );
       setUnits( initialValue );
@@ -139,6 +148,46 @@ public class EstimatePickerDialog
    public void show()
    {
       impl.show();
+   }
+   
+
+
+   public int getValue()
+   {
+      return numberWheel.getCurrentItem() + 1;
+   }
+   
+
+
+   public int getUnit()
+   {
+      return unitWheel.getCurrentItem();
+   }
+   
+
+
+   public long getMillis()
+   {
+      long millis = 1000 * getValue(); // s -> ms
+      
+      final int unit = getUnit();
+      
+      switch ( unit )
+      {
+         case UNIT_DAY:
+            millis = millis * 3600 * 24;
+            break;
+         case UNIT_HOUR:
+            millis = millis * 3600;
+            break;
+         case UNIT_MINUTE:
+            millis = millis * 60;
+            break;
+         default :
+            return -1;
+      }
+      
+      return millis;
    }
    
 

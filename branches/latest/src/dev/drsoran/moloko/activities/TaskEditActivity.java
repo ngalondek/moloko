@@ -35,13 +35,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
@@ -53,8 +56,8 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
+import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -62,6 +65,7 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.RawTasks;
@@ -97,14 +101,6 @@ public class TaskEditActivity extends Activity
    private Task task;
    
    private ViewGroup taskContainer;
-   
-   private ViewGroup tagsLayout;
-   
-   private ViewGroup dueLayout;
-   
-   private ViewGroup recurrenceLayout;
-   
-   private ViewGroup estimateLayout;
    
    private TextView addedDate;
    
@@ -180,10 +176,6 @@ public class TaskEditActivity extends Activity
             try
             {
                taskContainer = (ViewGroup) findViewById( R.id.task_edit_container );
-               tagsLayout = (ViewGroup) findViewById( R.id.task_edit_tags_layout );
-               dueLayout = (ViewGroup) findViewById( R.id.task_edit_due_layout );
-               recurrenceLayout = (ViewGroup) findViewById( R.id.task_edit_recurrence_layout );
-               estimateLayout = (ViewGroup) findViewById( R.id.task_edit_estimate_layout );
                addedDate = (TextView) taskContainer.findViewById( R.id.task_edit_added_date );
                completedDate = (TextView) taskContainer.findViewById( R.id.task_edit_completed_date );
                source = (TextView) taskContainer.findViewById( R.id.task_edit_src );
@@ -207,6 +199,16 @@ public class TaskEditActivity extends Activity
                Log.e( TAG, "Invalid layout spec.", e );
                throw e;
             }
+            
+            estimateEdit.setOnEditorActionListener( new OnEditorActionListener()
+            {
+               public boolean onEditorAction( TextView v,
+                                              int actionId,
+                                              KeyEvent event )
+               {
+                  return onEstimateEdit( actionId );
+               }
+            } );
             
             initializeMutableTask();
             initializeListSpinner();
@@ -332,6 +334,38 @@ public class TaskEditActivity extends Activity
    public void onEstimate( View v )
    {
       new EstimatePickerDialog( this, estimateEdit ).show();
+   }
+   
+
+
+   public boolean onEstimateEdit( int actionId )
+   {
+      if ( actionId == EditorInfo.IME_ACTION_DONE
+         | actionId == EditorInfo.IME_NULL )
+      {
+         final String estStr = estimateEdit.getText().toString();
+         
+         if ( !TextUtils.isEmpty( estStr ) )
+         {
+            final long millis = RtmDateTimeParsing.parseEstimated( estStr );
+            
+            if ( millis != -1 )
+            {
+               estimateEdit.setText( MolokoDateUtils.formatEstimated( TaskEditActivity.this,
+                                                                      millis ) );
+            }
+            else
+            {
+               Toast.makeText( this,
+                               getString( R.string.task_edit_validate_estimate,
+                                          estStr ),
+                               Toast.LENGTH_LONG ).show();
+               return true;
+            }
+         }
+      }
+      
+      return false;
    }
    
 
@@ -672,6 +706,22 @@ public class TaskEditActivity extends Activity
                          Toast.LENGTH_SHORT ).show();
          nameEdit.requestFocus();
          return false;
+      }
+      
+      // Estimation
+      if ( !TextUtils.isEmpty( estimateEdit.getText() ) )
+      {
+         final long millis = RtmDateTimeParsing.parseEstimated( estimateEdit.getText()
+                                                                            .toString() );
+         if ( millis != -1 )
+         {
+            Toast.makeText( this,
+                            getString( R.string.task_edit_validate_estimate,
+                                       estimateEdit.getText() ),
+                            Toast.LENGTH_LONG ).show();
+            estimateEdit.requestFocus();
+            return false;
+         }
       }
       
       return true;

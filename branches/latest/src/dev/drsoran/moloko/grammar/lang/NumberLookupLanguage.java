@@ -30,87 +30,20 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
-import android.util.Log;
 
 
-public class RecurrPatternLanguage extends Language< String, String >
+public class NumberLookupLanguage extends Language< String, Integer >
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
-      + RecurrPatternLanguage.class.getSimpleName();
+      + NumberLookupLanguage.class.getSimpleName();
    
    
 
-   public RecurrPatternLanguage( Resources resources, int langResId )
+   public NumberLookupLanguage( Resources resources, int langResId )
       throws ParseException
    {
       fromResources( resources, langResId );
-   }
-   
-
-
-   public void add( StringBuilder sb, String key )
-   {
-      final String res = dictionary.get( key );
-      
-      if ( res != null )
-         sb.append( res );
-      else
-         Log.e( TAG, "No dict entry for " + key );
-   }
-   
-
-
-   public void addEvery( StringBuilder sb, String unit, String quantity )
-   {
-      addPlural( sb, "every", unit, quantity );
-   }
-   
-
-
-   public void addAfter( StringBuilder sb, String unit, String quantity )
-   {
-      addPlural( sb, "after", unit, quantity );
-   }
-   
-
-
-   public void addStToX( StringBuilder sb, int x )
-   {
-      final String xStr = String.valueOf( x );
-      
-      sb.append( xStr );
-      
-      final String xst = dictionary.get( "xst" );
-      
-      if ( xst != null )
-         sb.append( xst );
-      else
-      {
-         if ( x > 3 && x < 20 )
-         {
-            sb.append( "th" );
-         }
-         else
-         {
-            final char lastNum = xStr.charAt( xStr.length() - 1 );
-            
-            switch ( lastNum )
-            {
-               case '1':
-                  sb.append( "st" );
-                  break;
-               case '2':
-                  sb.append( "nd" );
-                  break;
-               case '3':
-                  sb.append( "rd" );
-                  break;
-               default :
-                  sb.append( "th" );
-                  break;
-            }
-         }
-      }
    }
    
 
@@ -137,9 +70,6 @@ public class RecurrPatternLanguage extends Language< String, String >
                   if ( name.equalsIgnoreCase( "entry" ) )
                      readSimpleEntry( xmlParser );
                   
-                  else if ( name.equalsIgnoreCase( "entryPl" ) )
-                     readPluralEntry( xmlParser );
-                  
                   break;
                
                default :
@@ -159,39 +89,6 @@ public class RecurrPatternLanguage extends Language< String, String >
       }
       
       xmlParser.close();
-   }
-   
-
-
-   private void readPluralEntry( XmlResourceParser xmlParser ) throws ParseException,
-                                                              XmlPullParserException,
-                                                              IOException
-
-   {
-      final int attribCount = xmlParser.getAttributeCount();
-      
-      if ( attribCount < 2 )
-         throw new ParseException( "Unexpected number of attributes in 'entryPl' tag. "
-                                      + attribCount,
-                                   xmlParser.getLineNumber() );
-      
-      String key = null;
-      
-      for ( int i = 0; i < attribCount; ++i )
-      {
-         final String attribName = xmlParser.getAttributeName( i );
-         
-         if ( attribName.equalsIgnoreCase( "key" ) )
-         {
-            key = xmlParser.getAttributeValue( i );
-         }
-         else
-         {
-            final String value = xmlParser.getAttributeValue( i );
-            
-            dictionary.put( key + "_" + attribName, value );
-         }
-      }
    }
    
 
@@ -226,33 +123,19 @@ public class RecurrPatternLanguage extends Language< String, String >
       }
       
       if ( key != null && value != null )
-         dictionary.put( key, value );
+         try
+         {
+            if ( dictionary.put( key, Integer.valueOf( value ) ) != null )
+               throw new ParseException( "Ambigious entry for " + key,
+                                         xmlParser.getLineNumber() );
+         }
+         catch ( NumberFormatException e )
+         {
+            throw new ParseException( "Expected Integer type attribute",
+                                      xmlParser.getLineNumber() );
+         }
       else
          throw new ParseException( "Missing attribute",
                                    xmlParser.getLineNumber() );
-   }
-   
-
-
-   private void addPlural( StringBuilder sb,
-                           String prefix,
-                           String unit,
-                           String quantity )
-   {
-      String res = null;
-      
-      final String key = prefix + "_" + unit + "_";
-      
-      res = dictionary.get( key + quantity );
-      
-      if ( res == null )
-         res = dictionary.get( key + "n" );
-      
-      if ( res != null )
-      {
-         sb.append( String.format( res, quantity ) );
-      }
-      else
-         Log.e( TAG, "No dict entry for " + prefix + "_" + unit );
    }
 }

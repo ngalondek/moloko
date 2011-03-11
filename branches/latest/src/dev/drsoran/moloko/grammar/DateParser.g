@@ -17,40 +17,34 @@ options
    import java.text.ParseException;
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
-   import java.util.Locale;
+   import java.util.Map;
    import java.util.HashMap;
+   
+   import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
 }
 
 @members
 {
+   private NumberLookupLanguage numberLookUp;
+   
+
    public DateParser()
    {
       super( null );
    }
 
-   private final static Locale LOCALE = Locale.ENGLISH;
 
-   private final static HashMap< String, Integer > numberLookUp = new HashMap< String, Integer >();
 
-   static
+   public void setNumberLookUp( NumberLookupLanguage numberLookUp )
    {
-      numberLookUp.put( "one",   1 );
-      numberLookUp.put( "two",   2 );
-      numberLookUp.put( "three", 3 );
-      numberLookUp.put( "four",  4 );
-      numberLookUp.put( "five",  5 );
-      numberLookUp.put( "six",   6 );
-      numberLookUp.put( "seven", 7 );
-      numberLookUp.put( "eight", 8 );
-      numberLookUp.put( "nine",  9 );
-      numberLookUp.put( "ten",   10 );
+      this.numberLookUp = numberLookUp;
    }
 
+   
 
-
-   public final static Calendar getLocalizedCalendar()
+   public final static Calendar getCalendar()
    {
-      final Calendar cal = Calendar.getInstance( LOCALE );
+      final Calendar cal = Calendar.getInstance();
 
       cal.clear( Calendar.HOUR );
       cal.clear( Calendar.HOUR_OF_DAY );
@@ -63,7 +57,7 @@ options
 
 
 
-   private final static int strToNumber( String string )
+   private final int strToNumber( String string )
    {
       int res = -1;
 
@@ -77,34 +71,52 @@ options
 
 
 
-   private final static void parseFullDate( Calendar cal,
-                                            String   day,
-                                            String   month,
-                                            String   year,
-                                            boolean  textMonth ) throws RecognitionException
+   private final int getMonthNumber( String month )
+   {    
+      // Only take the 1st three chars of the month as key.
+      return strToNumber( month.substring( 0, 3 ) );
+   }
+
+
+
+   private final int getWeekdayNumber( String weekday )
+   {    
+      // Only take the 1st two chars of the weekday as key.
+      return strToNumber( weekday.substring( 0, 2 ) );
+   }
+
+
+
+   private final void parseFullDate( Calendar cal,
+                                     String   day,
+                                     String   month,
+                                     String   year,
+                                     boolean  textMonth ) throws RecognitionException
    {
       try
       {
-         final StringBuffer pattern = new StringBuffer( "dd." );
+         final StringBuffer pattern = new StringBuffer( "dd.MM" );
 
-         if ( !textMonth )
+         int monthNum = -1;
+
+         if ( textMonth )
          {
-            pattern.append( "MM" );
+            monthNum = getMonthNumber( month );
          }
          else
          {
-            pattern.append( "MMM" );
+            monthNum = Integer.parseInt( month );
          }
+         
+         if ( monthNum == -1 )
+         	throw new RecognitionException();
 
          if ( year != null )
-         {
             pattern.append( ".yyyy" );
-         }
+         
+         final SimpleDateFormat sdf = new SimpleDateFormat( pattern.toString() );
 
-         final SimpleDateFormat sdf = new SimpleDateFormat( pattern.toString(),
-                                                             LOCALE /* Locale for MMM*/ );
-
-         sdf.parse( day + "." + month + ( ( year != null ) ? "." + year : "" ) );
+         sdf.parse( day + "." + monthNum + ( ( year != null ) ? "." + year : "" ) );
 
          final Calendar sdfCal = sdf.getCalendar();
 
@@ -114,6 +126,10 @@ options
          if ( year != null )
             cal.set( Calendar.YEAR, sdfCal.get( Calendar.YEAR ) );
       }
+      catch( NumberFormatException nfe )
+      {
+         throw new RecognitionException();
+      }
       catch( ParseException e )
       {
          throw new RecognitionException();
@@ -122,20 +138,15 @@ options
 
 
 
-   private final static void parseTextMonth( Calendar cal,
-                                             String   month ) throws RecognitionException
+   private final void parseTextMonth( Calendar cal,
+                                      String   month ) throws RecognitionException
    {
-      try
-      {
-         final SimpleDateFormat sdf = new SimpleDateFormat( "MMM", LOCALE );
-         sdf.parse( month );
+      final int monthNum = getMonthNumber( month );
+         
+      if ( monthNum == -1 )
+       	throw new RecognitionException();
 
-         cal.set( Calendar.MONTH, sdf.getCalendar().get( Calendar.MONTH ) );
-      }
-      catch( ParseException e )
-      {
-         throw new RecognitionException();
-      }
+      cal.set( Calendar.MONTH, monthNum );
    }
 
 
@@ -235,13 +246,13 @@ parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
 parseDateWithin[boolean past] returns [Calendar epochStart, Calendar epochEnd]
    @init
    {
-      retval.epochStart = getLocalizedCalendar();
+      retval.epochStart = getCalendar();
       int amount        =  1;
       int unit          = -1;
    }
    @after
    {
-      retval.epochEnd = getLocalizedCalendar();
+      retval.epochEnd = getCalendar();
       retval.epochEnd.setTimeInMillis( retval.epochStart.getTimeInMillis() );
       retval.epochEnd.add( unit, past ? -amount : amount );
 
@@ -328,7 +339,7 @@ date_full [Calendar cal]
        // befor now we roll to the next year.
        if ( pt3Str == null )
        {
-          final Calendar now = getLocalizedCalendar();
+          final Calendar now = getCalendar();
 
           if ( cal.before( now ) )
           {
@@ -351,7 +362,7 @@ date_on [Calendar cal]
 date_on_Xst_of_M [Calendar cal]
    @init
    {
-      final Calendar now = getLocalizedCalendar();
+      final Calendar now = getCalendar();
       boolean hasMonth   = false;
       boolean hasYear    = false;
    }
@@ -417,7 +428,7 @@ date_on_M_Xst [Calendar cal]
    {
       // if we have a year we have a full qualified date.
       // so we change nothing.
-      if ( !hasYear && getLocalizedCalendar().after( cal ) )
+      if ( !hasYear && getCalendar().after( cal ) )
          // If the date is before now we roll the year
          cal.add( Calendar.YEAR, 1 );
    }
@@ -438,10 +449,11 @@ date_on_weekday [Calendar cal]
    }
    : (NEXT { nextWeek = true; })? wd=WEEKDAY
    {
-      final SimpleDateFormat sdf = new SimpleDateFormat( "EE", LOCALE );
-      sdf.parse( $wd.text );
-
-      final int parsedWeekDay  = sdf.getCalendar().get( Calendar.DAY_OF_WEEK );
+      final int parsedWeekDay  = getWeekdayNumber( $wd.text );
+      
+      if ( parsedWeekDay == -1 )
+      	throw new RecognitionException();
+      
       final int currentWeekDay = cal.get( Calendar.DAY_OF_WEEK );
 
       cal.set( Calendar.DAY_OF_WEEK, parsedWeekDay );
@@ -455,10 +467,6 @@ date_on_weekday [Calendar cal]
          cal.add( Calendar.WEEK_OF_YEAR, 1 );
    }
    ;
-   catch[ ParseException pe ]
-   {
-      throw new RecognitionException();
-   }
    catch [RecognitionException e]
    {
       throw e;

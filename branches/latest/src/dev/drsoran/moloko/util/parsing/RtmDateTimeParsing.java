@@ -22,24 +22,50 @@
 
 package dev.drsoran.moloko.util.parsing;
 
+import java.text.ParseException;
 import java.util.Calendar;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
+import android.content.res.Resources;
+import android.util.Log;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.DateTimeLexer;
 import dev.drsoran.moloko.grammar.TimeParser;
+import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
 
 public final class RtmDateTimeParsing
 {
+   private final static String TAG = "Moloko."
+      + RtmDateTimeParsing.class.getSimpleName();
+   
    private final static DateTimeLexer dateTimeLexer = new DateTimeLexer();
    
    private final static TimeParser timeParser = new TimeParser();
    
    private final static DateParser dateParser = new DateParser();
+   
+   private static NumberLookupLanguage numberLookUp;
+   
+   
+
+   public final static void initLookupLanguage( Resources resources )
+   {
+      try
+      {
+         numberLookUp = new NumberLookupLanguage( resources,
+                                                  R.xml.parser_lang_number_lookup );
+      }
+      catch ( ParseException e )
+      {
+         numberLookUp = null;
+         Log.e( TAG, "Unable to initialize number lookup language.", e );
+      }
+   }
    
    
    public final static class DateWithinReturn
@@ -65,7 +91,7 @@ public final class RtmDateTimeParsing
       dateTimeLexer.setCharStream( stream );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-      final Calendar cal = TimeParser.getLocalizedCalendar();
+      final Calendar cal = TimeParser.getCalendar();
       
       boolean eof = false;
       boolean hasTime = false;
@@ -91,6 +117,7 @@ public final class RtmDateTimeParsing
          if ( !hasTime )
             antlrTokens.reset();
          
+         dateParser.setNumberLookUp( numberLookUp );
          dateParser.setTokenStream( antlrTokens );
          
          try

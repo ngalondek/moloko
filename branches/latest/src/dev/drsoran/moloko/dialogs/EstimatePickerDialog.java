@@ -28,6 +28,8 @@ import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,7 @@ import android.widget.EditText;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils.EstimateStruct;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 public class EstimatePickerDialog
@@ -59,15 +62,14 @@ public class EstimatePickerDialog
 
    public EstimatePickerDialog( Context context, EditText widget )
    {
-      this( context, widget, 1, UNIT_DAY );
-   }
-   
-
-
-   public EstimatePickerDialog( Context context, EditText widget, long millis )
-   {
       this.context = context;
       this.widget = widget;
+      
+      long millis = -1;
+      
+      if ( widget != null )
+         millis = RtmDateTimeParsing.parseEstimated( widget.getText()
+                                                           .toString() );
       
       final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( millis );
       
@@ -80,13 +82,13 @@ public class EstimatePickerDialog
          unit = UNIT_DAY;
       }
       
-      if ( estimateStruct.hours > 0 )
+      else if ( estimateStruct.hours > 0 )
       {
          value = estimateStruct.hours;
          unit = UNIT_HOUR;
       }
       
-      if ( estimateStruct.minutes > 0 )
+      else if ( estimateStruct.minutes > 0 )
       {
          value = estimateStruct.minutes;
          unit = UNIT_MINUTE;
@@ -97,18 +99,7 @@ public class EstimatePickerDialog
    
 
 
-   public EstimatePickerDialog( Context context, EditText widget,
-      int initialValue, int unit )
-   {
-      this.context = context;
-      this.widget = widget;
-      
-      init( context, initialValue, unit );
-   }
-   
-
-
-   private void init( Context context, int initialValue, int unit )
+   private void init( final Context context, int initialValue, int unit )
    {
       if ( initialValue == 0 )
          initialValue = 1;
@@ -118,7 +109,6 @@ public class EstimatePickerDialog
       
       numberWheel = (WheelView) view.findViewById( R.id.estimate_dlg_number_wheel );
       numberWheel.setViewAdapter( new NumericWheelAdapter( context, 1, 999 ) );
-      numberWheel.setCyclic( true );
       numberWheel.setCurrentItem( initialValue - 1 );
       
       unitWheel = (WheelView) view.findViewById( R.id.estimate_dlg_unit_wheel );
@@ -143,7 +133,18 @@ public class EstimatePickerDialog
                                                     .setTitle( R.string.dlg_estimate_picker_title )
                                                     .setView( view )
                                                     .setPositiveButton( R.string.btn_ok,
-                                                                        null )
+                                                                        new OnClickListener()
+                                                                        {
+                                                                           public void onClick( DialogInterface dialog,
+                                                                                                int which )
+                                                                           {
+                                                                              if ( widget != null )
+                                                                              {
+                                                                                 widget.setText( MolokoDateUtils.formatEstimated( context,
+                                                                                                                                  getMillis() ) );
+                                                                              }
+                                                                           }
+                                                                        } )
                                                     .setNegativeButton( R.string.btn_cancel,
                                                                         null )
                                                     .create();

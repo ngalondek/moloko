@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NumberLookup>
+   <!-- Numbers en -->
+   <entry
+      key="one"
+      value="1" />
+   <entry
+      key="two"
+      value="2" />
+   <entry
+      key="three"
+      value="3" />
+   <entry
+      key="four"
+      value="4" />
+   <entry
+      key="five"
+      value="5" />
+   <entry
+      key="six"
+      value="6" />
+   <entry
+      key="seven"
+      value="7" />
+   <entry
+      key="eight"
+      value="8" />
+   <entry
+      key="nine"
+      value="9" />
+   <entry
+      key="ten"
+      value="10" />
+
+   <!-- Numbers de -->
+   <entry
+      key="eins"
+      value="1" />
+   <entry
+      key="zwei"
+      value="2" />
+   <entry
+      key="drei"
+      value="3" />
+   <entry
+      key="vier"
+      value="4" />
+   <entry
+      key="fünf"
+      value="5" />
+   <entry
+      key="funf"
+      value="5" />
+   <entry
+      key="sechs"
+      value="6" />
+   <entry
+      key="sieben"
+      value="7" />
+   <entry
+      key="acht"
+      value="8" />
+   <entry
+      key="neun"
+      value="9" />
+   <entry
+      key="zehn"
+      value="10" />
+
+   <!-- Months en -->
+   <entry
+      key="jan"
+      value="1" />
+   <entry
+      key="feb"
+      value="2" />
+   <entry
+      key="mar"
+      value="3" />
+   <entry
+      key="apr"
+      value="4" />
+   <entry
+      key="may"
+      value="5" />
+   <entry
+      key="jun"
+      value="6" />
+   <entry
+      key="jul"
+      value="7" />
+   <entry
+      key="aug"
+      value="8" />
+   <entry
+      key="sep"
+      value="9" />
+   <entry
+      key="oct"
+      value="10" />
+   <entry
+      key="nov"
+      value="11" />
+   <entry
+      key="dec"
+      value="12" />
+
+   <!-- Months de -->
+   <entry
+      key="mär"
+      value="3" />
+   <entry
+      key="mai"
+      value="5" />
+   <entry
+      key="okt"
+      value="10" />
+   <entry
+      key="dez"
+      value="12" />
+
+   <!-- Weekdays en -->
+   <entry
+      key="mo"
+      value="1" />
+   <entry
+      key="tu"
+      value="2" />
+   <entry
+      key="we"
+      value="3" />
+   <entry
+      key="th"
+      value="4" />
+   <entry
+      key="fr"
+      value="5" />
+   <entry
+      key="sa"
+      value="6" />
+   <entry
+      key="su"
+      value="7" />
+
+   <!-- Weekdays de -->  
+   <entry
+      key="di"
+      value="2" />
+   <entry
+      key="mi"
+      value="3" />
+   <entry
+      key="do"
+      value="4" /> 
+   <entry
+      key="so"
+      value="7" />
+
+</NumberLookup>

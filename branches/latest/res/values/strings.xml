@@ -215,6 +215,7 @@
    <string name="task_edit_estimate_nothing">Nothing estimated</string>
    <string name="task_edit_location_no">Nowhere</string>
    <string name="task_edit_validate_empty_name">The task name must not be empty</string>
+   <string name="task_edit_validate_estimate">\'%1$s\' is no valid estimation</string>
    
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Comma separated tags</string>

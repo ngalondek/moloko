@@ -10,64 +10,76 @@ options
    package dev.drsoran.moloko.grammar;
 }
 
-NEVER     : 'never';
+NEVER     : 'never' | 'nie';
 
-TODAY     : 'today' | 'tod';
+TODAY     : 'today' | 'tod' | 'heute';
 
-TOMORROW  : 'tomorrow' | 'tom' | 'tmr';
+TOMORROW  : 'tomorrow' | 'tom' | 'tmr' | 'morgen';
 
-YESTERDAY : 'yesterday';
+YESTERDAY : 'yesterday' | 'gestern';
 
-AT        : '@' | 'at';
+AT        : '@' | 'at' | 'um';
 
-ON        : 'on';
+ON        : 'on' | 'am' | 'an';
 
-IN        : 'in';
+IN        : 'in' | 'im';
 
-OF        : 'of';
+OF        : 'of' | 'des';
 
-NEXT      : 'next';
+NEXT      : 'next' | 'nächste'('s'|'r')?;
 
-AND       : 'and';
+AND       : 'and' | 'und';
 
-END       : 'end';
+END       : 'end' | 'ende';
 
-THE       : 'the';
+THE       : 'the' | 'd'('er'|'ie'|'as');
 
 STs       : 'st' | 'th' | 'rd' | 'nd';
 
-NOW       : 'now';
+NOW       : 'now' | 'jetzt';
 
-TONIGHT   : 'tonight' | 'ton';
+TONIGHT   : 'tonight' | 'ton' | 'heute';
 
-MIDNIGHT  : 'midnight';
+MIDNIGHT  : 'midnight' | 'mitternacht';
 
-MIDDAY    : 'midday';
+MIDDAY    : 'midday' | 'mittag';
 
-NOON      : 'noon';
+NOON      : 'noon' | 'mittag';
 
-YEARS     : 'years' | 'year' | 'yrs' | 'yr';
+YEARS     : 'years' | 'year' | 'yrs' | 'yr' | 'jahr' | 'jahre';
 
-MONTHS    : 'months' | 'month' | 'mons' | 'mon';
+MONTHS    : 'months' | 'month' | 'mons' | 'mon' | 'monat' | 'monate';
 
-WEEKS     : 'weeks' | 'week' | 'wks' | 'wk';
+WEEKS     : 'weeks' | 'week' | 'wks' | 'wk' | 'woche' | 'wochen';
 
-DAYS      : 'days' | 'day' | 'd';
+DAYS      : 'days' | 'day' | 'd' | 'tag' | 'tage';
 
-HOURS     : 'hours' | 'hour' | 'hrs' | 'hr' | 'h';
+HOURS     : 'hours' | 'hour' | 'hrs' | 'hr' | 'h' | 'stunden' | 'std';
 
-MINUTES   : 'minutes' | 'minute' | 'mins' | 'min' | 'm';
+MINUTES   : 'minutes' | 'minute' | 'mins' | 'min' | 'm' | 'minuten';
 
-SECONDS   : 'seconds' | 'second' | 'secs' | 'sec' | 's';
+SECONDS   : 'seconds' | 'second' | 'secs' | 'sec' | 's' | 'sekunde' | 'sekunden';
 
-MONTH     : 'january'   | 'jan'  | 'february' | 'feb'     | 'march' | 'mar'      | 'april' | 'apr' |
-            'may'       | 'june' | 'jun'      | 'july'    | 'jul'   | 'august'   | 'aug'   |
-            'september' | 'sept' | 'sep'      | 'october' | 'oct'   | 'november' | 'nov'   |
-            'december'  | 'dec';
+MONTH     : 'january'   | 'jan'  | 'januar'   |
+            'february'  | 'feb'  | 'februar'  |
+            'march'     | 'mar'  | 'märz'     | 'marz' |
+            'april'     | 'apr'  |
+            'may'       | 'mai'  |
+            'june'      | 'jun'  | 'juni'     |
+            'july'      | 'jul'  | 'juli'     |
+            'august'    | 'aug'  |
+            'september' | 'sept' | 'sep'      |
+            'october'   | 'oct'  | 'oktober'  | 'okt'  |
+            'november'  | 'nov'  |
+            'december'  | 'dec'  | 'dezember' | 'dez';
 
-WEEKDAY   : 'monday'   | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' |
-            'thursday' | 'thu' | 'friday'  | 'fri' | 'saturday'  | 'sat' |
-            'sunday'   | 'sun';
+WEEKDAY   : 'monday'    | 'mon' | 'montag'     | 'mo'
+            'tuesday'   | 'tue' | 'dienstag'   | 'di'
+            'wednesday' | 'wed' | 'mittwoch'   | 'mi'
+            'thursday'  | 'thu' | 'donnerstag' | 'do'
+            'friday'    | 'fri' | 'freitag'    | 'fr'
+            'saturday'  | 'sat' | 'samstag'    | 'sa'
+            'sunday'    | 'sun' | 'sonntag'    | 'so';
 
 DATE_SEP  : '/' | '\u5E74' | '\u6708' | '\u65E5';
 
@@ -89,7 +101,8 @@ AM        :  A('m')? | '\u4E0A' | '\u5348\u524D' | '\uC624\uC804';
 
 PM        : 'p'('m')? | '\u4E0B' | '\u5348\u5F8C' | '\uC624\uD6C4';
 
-NUM_STR   : 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten';
+NUM_STR   : 'one'  | 'two'  | 'three' | 'four' | 'five'          | 'six'   | 'seven'  | 'eight' | 'nine' | 'ten' |
+            'eins' | 'zwei' | 'drei'  | 'vier' | 'fünf' | 'funf' | 'sechs' | 'sieben' | 'acht'  | 'neun' | 'zehn';
 
 fragment
 STRING    : ~('"' | ' ' | '(' | ')')+;

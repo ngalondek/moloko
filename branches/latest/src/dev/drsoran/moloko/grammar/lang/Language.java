@@ -28,11 +28,18 @@ import java.util.HashMap;
 import android.content.res.Resources;
 
 
-public abstract class Language
+public abstract class Language< K, V >
 {
-   protected final HashMap< String, String > dictionary = new HashMap< String, String >();
+   protected final HashMap< K, V > dictionary = new HashMap< K, V >();
    
    
+
+   public V get( K key )
+   {
+      return dictionary.get( key );
+   }
+   
+
 
    abstract protected void fromResources( Resources resources, int resId ) throws ParseException;
 }

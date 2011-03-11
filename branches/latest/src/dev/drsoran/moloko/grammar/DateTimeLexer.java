@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g 2011-01-13 06:32:22
+// $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g 2011-03-11 13:12:20
 
 package dev.drsoran.moloko.grammar;
 
@@ -15,87 +15,87 @@ import org.antlr.runtime.RecognizerSharedState;
 
 public class DateTimeLexer extends Lexer
 {
-   public static final int STs = 16;
-   
-   public static final int MIDDAY = 20;
-   
-   public static final int THE = 15;
-   
-   public static final int NOW = 17;
-   
-   public static final int SECONDS = 28;
-   
-   public static final int MIDNIGHT = 19;
-   
-   public static final int AND = 13;
-   
    public static final int EOF = -1;
-   
-   public static final int MONTH = 29;
-   
-   public static final int AT = 8;
-   
-   public static final int WEEKDAY = 30;
-   
-   public static final int IN = 10;
-   
-   public static final int TONIGHT = 18;
-   
-   public static final int COMMA = 36;
-   
-   public static final int NOON = 21;
-   
-   public static final int NEXT = 12;
-   
-   public static final int DOT = 32;
-   
-   public static final int AM = 39;
-   
-   public static final int TOMORROW = 6;
-   
-   public static final int TODAY = 5;
-   
-   public static final int A = 38;
-   
-   public static final int MINUS_A = 35;
-   
-   public static final int ON = 9;
-   
-   public static final int INT = 37;
-   
-   public static final int MINUS = 34;
-   
-   public static final int OF = 11;
-   
-   public static final int YEARS = 22;
-   
-   public static final int NUM_STR = 41;
-   
-   public static final int MINUTES = 27;
-   
-   public static final int COLON = 33;
-   
-   public static final int DAYS = 25;
-   
-   public static final int WEEKS = 24;
-   
-   public static final int WS = 43;
-   
-   public static final int MONTHS = 23;
-   
-   public static final int PM = 40;
    
    public static final int NEVER = 4;
    
-   public static final int DATE_SEP = 31;
+   public static final int TODAY = 5;
    
-   public static final int END = 14;
+   public static final int TOMORROW = 6;
    
    public static final int YESTERDAY = 7;
    
+   public static final int AT = 8;
+   
+   public static final int ON = 9;
+   
+   public static final int IN = 10;
+   
+   public static final int OF = 11;
+   
+   public static final int NEXT = 12;
+   
+   public static final int AND = 13;
+   
+   public static final int END = 14;
+   
+   public static final int THE = 15;
+   
+   public static final int STs = 16;
+   
+   public static final int NOW = 17;
+   
+   public static final int TONIGHT = 18;
+   
+   public static final int MIDNIGHT = 19;
+   
+   public static final int MIDDAY = 20;
+   
+   public static final int NOON = 21;
+   
+   public static final int YEARS = 22;
+   
+   public static final int MONTHS = 23;
+   
+   public static final int WEEKS = 24;
+   
+   public static final int DAYS = 25;
+   
    public static final int HOURS = 26;
    
+   public static final int MINUTES = 27;
+   
+   public static final int SECONDS = 28;
+   
+   public static final int MONTH = 29;
+   
+   public static final int WEEKDAY = 30;
+   
+   public static final int DATE_SEP = 31;
+   
+   public static final int DOT = 32;
+   
+   public static final int COLON = 33;
+   
+   public static final int MINUS = 34;
+   
+   public static final int MINUS_A = 35;
+   
+   public static final int COMMA = 36;
+   
+   public static final int INT = 37;
+   
+   public static final int A = 38;
+   
+   public static final int AM = 39;
+   
+   public static final int PM = 40;
+   
+   public static final int NUM_STR = 41;
+   
    public static final int STRING = 42;
+   
+   public static final int WS = 43;
    
    
 
@@ -124,9 +124,10 @@ public class DateTimeLexer extends Lexer
    
 
 
+   @Override
    public String getGrammarFileName()
    {
-      return "D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g";
+      return "F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g";
    }
    
 
@@ -138,69 +139,21 @@ public class DateTimeLexer extends Lexer
       {
          int _type = NEVER;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:13:11: (
-         // 'never' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:13:13:
-         // 'never'
-         {
-            match( "never" );
-            
-         }
-         
-         state.type = _type;
-         state.channel = _channel;
-      }
-      finally
-      {
-      }
-   }
-   
-
-
-   // $ANTLR end "NEVER"
-   
-   // $ANTLR start "TODAY"
-   public final void mTODAY() throws RecognitionException
-   {
-      try
-      {
-         int _type = TODAY;
-         int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:15:11: (
-         // 'today' | 'tod' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:13:11: ( 'never' | 'nie' )
          int alt1 = 2;
          int LA1_0 = input.LA( 1 );
          
-         if ( ( LA1_0 == 't' ) )
+         if ( ( LA1_0 == 'n' ) )
          {
             int LA1_1 = input.LA( 2 );
             
-            if ( ( LA1_1 == 'o' ) )
+            if ( ( LA1_1 == 'e' ) )
             {
-               int LA1_2 = input.LA( 3 );
-               
-               if ( ( LA1_2 == 'd' ) )
-               {
-                  int LA1_3 = input.LA( 4 );
-                  
-                  if ( ( LA1_3 == 'a' ) )
-                  {
-                     alt1 = 1;
-                  }
-                  else
-                  {
-                     alt1 = 2;
-                  }
-               }
-               else
-               {
-                  NoViableAltException nvae = new NoViableAltException( "",
-                                                                        1,
-                                                                        2,
-                                                                        input );
-                  
-                  throw nvae;
-               }
+               alt1 = 1;
+            }
+            else if ( ( LA1_1 == 'i' ) )
+            {
+               alt1 = 2;
             }
             else
             {
@@ -224,18 +177,119 @@ public class DateTimeLexer extends Lexer
          switch ( alt1 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:15:13:
-               // 'today'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:13:13: 'never'
+            {
+               match( "never" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:13:23: 'nie'
+            {
+               match( "nie" );
+               
+            }
+               break;
+            
+         }
+         state.type = _type;
+         state.channel = _channel;
+      }
+      finally
+      {
+      }
+   }
+   
+
+
+   // $ANTLR end "NEVER"
+   
+   // $ANTLR start "TODAY"
+   public final void mTODAY() throws RecognitionException
+   {
+      try
+      {
+         int _type = TODAY;
+         int _channel = DEFAULT_TOKEN_CHANNEL;
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:15:11: ( 'today' | 'tod' |
+         // 'heute' )
+         int alt2 = 3;
+         int LA2_0 = input.LA( 1 );
+         
+         if ( ( LA2_0 == 't' ) )
+         {
+            int LA2_1 = input.LA( 2 );
+            
+            if ( ( LA2_1 == 'o' ) )
+            {
+               int LA2_3 = input.LA( 3 );
+               
+               if ( ( LA2_3 == 'd' ) )
+               {
+                  int LA2_4 = input.LA( 4 );
+                  
+                  if ( ( LA2_4 == 'a' ) )
+                  {
+                     alt2 = 1;
+                  }
+                  else
+                  {
+                     alt2 = 2;
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        2,
+                                                                        3,
+                                                                        input );
+                  
+                  throw nvae;
+               }
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     2,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+            }
+         }
+         else if ( ( LA2_0 == 'h' ) )
+         {
+            alt2 = 3;
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  2,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt2 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:15:13: 'today'
             {
                match( "today" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:15:23:
-               // 'tod'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:15:23: 'tod'
             {
                match( "tod" );
+               
+            }
+               break;
+            case 3:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:15:31: 'heute'
+            {
+               match( "heute" );
                
             }
                break;
@@ -260,88 +314,96 @@ public class DateTimeLexer extends Lexer
       {
          int _type = TOMORROW;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:11: (
-         // 'tomorrow' | 'tom' | 'tmr' )
-         int alt2 = 3;
-         int LA2_0 = input.LA( 1 );
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:11: ( 'tomorrow' | 'tom' |
+         // 'tmr' | 'morgen' )
+         int alt3 = 4;
+         int LA3_0 = input.LA( 1 );
          
-         if ( ( LA2_0 == 't' ) )
+         if ( ( LA3_0 == 't' ) )
          {
-            int LA2_1 = input.LA( 2 );
+            int LA3_1 = input.LA( 2 );
             
-            if ( ( LA2_1 == 'o' ) )
+            if ( ( LA3_1 == 'o' ) )
             {
-               int LA2_2 = input.LA( 3 );
+               int LA3_3 = input.LA( 3 );
                
-               if ( ( LA2_2 == 'm' ) )
+               if ( ( LA3_3 == 'm' ) )
                {
-                  int LA2_4 = input.LA( 4 );
+                  int LA3_5 = input.LA( 4 );
                   
-                  if ( ( LA2_4 == 'o' ) )
+                  if ( ( LA3_5 == 'o' ) )
                   {
-                     alt2 = 1;
+                     alt3 = 1;
                   }
                   else
                   {
-                     alt2 = 2;
+                     alt3 = 2;
                   }
                }
                else
                {
                   NoViableAltException nvae = new NoViableAltException( "",
-                                                                        2,
-                                                                        2,
+                                                                        3,
+                                                                        3,
                                                                         input );
                   
                   throw nvae;
                }
             }
-            else if ( ( LA2_1 == 'm' ) )
+            else if ( ( LA3_1 == 'm' ) )
             {
-               alt2 = 3;
+               alt3 = 3;
             }
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     2,
+                                                                     3,
                                                                      1,
                                                                      input );
                
                throw nvae;
             }
          }
+         else if ( ( LA3_0 == 'm' ) )
+         {
+            alt3 = 4;
+         }
          else
          {
             NoViableAltException nvae = new NoViableAltException( "",
-                                                                  2,
+                                                                  3,
                                                                   0,
                                                                   input );
             
             throw nvae;
          }
-         switch ( alt2 )
+         switch ( alt3 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:13:
-               // 'tomorrow'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:13: 'tomorrow'
             {
                match( "tomorrow" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:26:
-               // 'tom'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:26: 'tom'
             {
                match( "tom" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:34:
-               // 'tmr'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:34: 'tmr'
             {
                match( "tmr" );
+               
+            }
+               break;
+            case 4:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:17:42: 'morgen'
+            {
+               match( "morgen" );
                
             }
                break;
@@ -366,15 +428,46 @@ public class DateTimeLexer extends Lexer
       {
          int _type = YESTERDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:19:11: (
-         // 'yesterday' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:19:13:
-         // 'yesterday'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:19:11: ( 'yesterday' |
+         // 'gestern' )
+         int alt4 = 2;
+         int LA4_0 = input.LA( 1 );
+         
+         if ( ( LA4_0 == 'y' ) )
          {
-            match( "yesterday" );
+            alt4 = 1;
+         }
+         else if ( ( LA4_0 == 'g' ) )
+         {
+            alt4 = 2;
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  4,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt4 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:19:13: 'yesterday'
+            {
+               match( "yesterday" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:19:27: 'gestern'
+            {
+               match( "gestern" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -394,43 +487,54 @@ public class DateTimeLexer extends Lexer
       {
          int _type = AT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:21:11: ( '@'
-         // | 'at' )
-         int alt3 = 2;
-         int LA3_0 = input.LA( 1 );
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:21:11: ( '@' | 'at' | 'um' )
+         int alt5 = 3;
+         switch ( input.LA( 1 ) )
+         {
+            case '@':
+            {
+               alt5 = 1;
+            }
+               break;
+            case 'a':
+            {
+               alt5 = 2;
+            }
+               break;
+            case 'u':
+            {
+               alt5 = 3;
+            }
+               break;
+            default :
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     5,
+                                                                     0,
+                                                                     input );
+               
+               throw nvae;
+         }
          
-         if ( ( LA3_0 == '@' ) )
-         {
-            alt3 = 1;
-         }
-         else if ( ( LA3_0 == 'a' ) )
-         {
-            alt3 = 2;
-         }
-         else
-         {
-            NoViableAltException nvae = new NoViableAltException( "",
-                                                                  3,
-                                                                  0,
-                                                                  input );
-            
-            throw nvae;
-         }
-         switch ( alt3 )
+         switch ( alt5 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:21:13:
-               // '@'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:21:13: '@'
             {
                match( '@' );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:21:19:
-               // 'at'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:21:19: 'at'
             {
                match( "at" );
+               
+            }
+               break;
+            case 3:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:21:26: 'um'
+            {
+               match( "um" );
                
             }
                break;
@@ -455,14 +559,70 @@ public class DateTimeLexer extends Lexer
       {
          int _type = ON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:23:11: (
-         // 'on' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:23:13: 'on'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:23:11: ( 'on' | 'am' | 'an' )
+         int alt6 = 3;
+         int LA6_0 = input.LA( 1 );
+         
+         if ( ( LA6_0 == 'o' ) )
          {
-            match( "on" );
+            alt6 = 1;
+         }
+         else if ( ( LA6_0 == 'a' ) )
+         {
+            int LA6_2 = input.LA( 2 );
+            
+            if ( ( LA6_2 == 'm' ) )
+            {
+               alt6 = 2;
+            }
+            else if ( ( LA6_2 == 'n' ) )
+            {
+               alt6 = 3;
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     6,
+                                                                     2,
+                                                                     input );
+               
+               throw nvae;
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  6,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt6 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:23:13: 'on'
+            {
+               match( "on" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:23:20: 'am'
+            {
+               match( "am" );
+               
+            }
+               break;
+            case 3:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:23:27: 'an'
+            {
+               match( "an" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -482,14 +642,59 @@ public class DateTimeLexer extends Lexer
       {
          int _type = IN;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:25:11: (
-         // 'in' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:25:13: 'in'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:25:11: ( 'in' | 'im' )
+         int alt7 = 2;
+         int LA7_0 = input.LA( 1 );
+         
+         if ( ( LA7_0 == 'i' ) )
          {
-            match( "in" );
+            int LA7_1 = input.LA( 2 );
+            
+            if ( ( LA7_1 == 'n' ) )
+            {
+               alt7 = 1;
+            }
+            else if ( ( LA7_1 == 'm' ) )
+            {
+               alt7 = 2;
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     7,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  7,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt7 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:25:13: 'in'
+            {
+               match( "in" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:25:20: 'im'
+            {
+               match( "im" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -509,14 +714,45 @@ public class DateTimeLexer extends Lexer
       {
          int _type = OF;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:27:11: (
-         // 'of' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:27:13: 'of'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:27:11: ( 'of' | 'des' )
+         int alt8 = 2;
+         int LA8_0 = input.LA( 1 );
+         
+         if ( ( LA8_0 == 'o' ) )
          {
-            match( "of" );
+            alt8 = 1;
+         }
+         else if ( ( LA8_0 == 'd' ) )
+         {
+            alt8 = 2;
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  8,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt8 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:27:13: 'of'
+            {
+               match( "of" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:27:20: 'des'
+            {
+               match( "des" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -536,15 +772,92 @@ public class DateTimeLexer extends Lexer
       {
          int _type = NEXT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:29:11: (
-         // 'next' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:29:13:
-         // 'next'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:29:11: ( 'next' | 'nächste' (
+         // 's' | 'r' )? )
+         int alt10 = 2;
+         int LA10_0 = input.LA( 1 );
+         
+         if ( ( LA10_0 == 'n' ) )
          {
-            match( "next" );
+            int LA10_1 = input.LA( 2 );
+            
+            if ( ( LA10_1 == 'e' ) )
+            {
+               alt10 = 1;
+            }
+            else if ( ( LA10_1 == '\u00E4' ) )
+            {
+               alt10 = 2;
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     10,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  10,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt10 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:29:13: 'next'
+            {
+               match( "next" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:29:22: 'nächste' ( 's' |
+               // 'r' )?
+            {
+               match( "nächste" );
+               
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:29:31: ( 's' | 'r' )?
+               int alt9 = 2;
+               int LA9_0 = input.LA( 1 );
+               
+               if ( ( ( LA9_0 >= 'r' && LA9_0 <= 's' ) ) )
+               {
+                  alt9 = 1;
+               }
+               switch ( alt9 )
+               {
+                  case 1:
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:
+                  {
+                     if ( ( input.LA( 1 ) >= 'r' && input.LA( 1 ) <= 's' ) )
+                     {
+                        input.consume();
+                        
+                     }
+                     else
+                     {
+                        MismatchedSetException mse = new MismatchedSetException( null,
+                                                                                 input );
+                        recover( mse );
+                        throw mse;
+                     }
+                     
+                  }
+                     break;
+                  
+               }
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -564,14 +877,45 @@ public class DateTimeLexer extends Lexer
       {
          int _type = AND;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:31:11: (
-         // 'and' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:31:13: 'and'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:31:11: ( 'and' | 'und' )
+         int alt11 = 2;
+         int LA11_0 = input.LA( 1 );
+         
+         if ( ( LA11_0 == 'a' ) )
          {
-            match( "and" );
+            alt11 = 1;
+         }
+         else if ( ( LA11_0 == 'u' ) )
+         {
+            alt11 = 2;
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  11,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt11 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:31:13: 'and'
+            {
+               match( "and" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:31:21: 'und'
+            {
+               match( "und" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -591,14 +935,78 @@ public class DateTimeLexer extends Lexer
       {
          int _type = END;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:33:11: (
-         // 'end' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:33:13: 'end'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:33:11: ( 'end' | 'ende' )
+         int alt12 = 2;
+         int LA12_0 = input.LA( 1 );
+         
+         if ( ( LA12_0 == 'e' ) )
          {
-            match( "end" );
+            int LA12_1 = input.LA( 2 );
+            
+            if ( ( LA12_1 == 'n' ) )
+            {
+               int LA12_2 = input.LA( 3 );
+               
+               if ( ( LA12_2 == 'd' ) )
+               {
+                  int LA12_3 = input.LA( 4 );
+                  
+                  if ( ( LA12_3 == 'e' ) )
+                  {
+                     alt12 = 2;
+                  }
+                  else
+                  {
+                     alt12 = 1;
+                  }
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        12,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+               }
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     12,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  12,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt12 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:33:13: 'end'
+            {
+               match( "end" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:33:21: 'ende'
+            {
+               match( "ende" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -618,14 +1026,101 @@ public class DateTimeLexer extends Lexer
       {
          int _type = THE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:11: (
-         // 'the' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:13: 'the'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:11: ( 'the' | 'd' ( 'er' |
+         // 'ie' | 'as' ) )
+         int alt14 = 2;
+         int LA14_0 = input.LA( 1 );
+         
+         if ( ( LA14_0 == 't' ) )
          {
-            match( "the" );
+            alt14 = 1;
+         }
+         else if ( ( LA14_0 == 'd' ) )
+         {
+            alt14 = 2;
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  14,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt14 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:13: 'the'
+            {
+               match( "the" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:21: 'd' ( 'er' | 'ie'
+               // | 'as' )
+            {
+               match( 'd' );
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:24: ( 'er' | 'ie' |
+               // 'as' )
+               int alt13 = 3;
+               switch ( input.LA( 1 ) )
+               {
+                  case 'e':
+                  {
+                     alt13 = 1;
+                  }
+                     break;
+                  case 'i':
+                  {
+                     alt13 = 2;
+                  }
+                     break;
+                  case 'a':
+                  {
+                     alt13 = 3;
+                  }
+                     break;
+                  default :
+                     NoViableAltException nvae = new NoViableAltException( "",
+                                                                           13,
+                                                                           0,
+                                                                           input );
+                     
+                     throw nvae;
+               }
+               
+               switch ( alt13 )
+               {
+                  case 1:
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:25: 'er'
+                  {
+                     match( "er" );
+                     
+                  }
+                     break;
+                  case 2:
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:30: 'ie'
+                  {
+                     match( "ie" );
+                     
+                  }
+                     break;
+                  case 3:
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:35:35: 'as'
+                  {
+                     match( "as" );
+                     
+                  }
+                     break;
+                  
+               }
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -645,69 +1140,65 @@ public class DateTimeLexer extends Lexer
       {
          int _type = STs;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:11: (
-         // 'st' | 'th' | 'rd' | 'nd' )
-         int alt4 = 4;
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:11: ( 'st' | 'th' | 'rd' |
+         // 'nd' )
+         int alt15 = 4;
          switch ( input.LA( 1 ) )
          {
             case 's':
             {
-               alt4 = 1;
+               alt15 = 1;
             }
                break;
             case 't':
             {
-               alt4 = 2;
+               alt15 = 2;
             }
                break;
             case 'r':
             {
-               alt4 = 3;
+               alt15 = 3;
             }
                break;
             case 'n':
             {
-               alt4 = 4;
+               alt15 = 4;
             }
                break;
             default :
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     4,
+                                                                     15,
                                                                      0,
                                                                      input );
                
                throw nvae;
          }
          
-         switch ( alt4 )
+         switch ( alt15 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:13:
-               // 'st'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:13: 'st'
             {
                match( "st" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:20:
-               // 'th'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:20: 'th'
             {
                match( "th" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:27:
-               // 'rd'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:27: 'rd'
             {
                match( "rd" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:34:
-               // 'nd'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:37:34: 'nd'
             {
                match( "nd" );
                
@@ -734,14 +1225,45 @@ public class DateTimeLexer extends Lexer
       {
          int _type = NOW;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:39:11: (
-         // 'now' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:39:13: 'now'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:39:11: ( 'now' | 'jetzt' )
+         int alt16 = 2;
+         int LA16_0 = input.LA( 1 );
+         
+         if ( ( LA16_0 == 'n' ) )
          {
-            match( "now" );
+            alt16 = 1;
+         }
+         else if ( ( LA16_0 == 'j' ) )
+         {
+            alt16 = 2;
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  16,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt16 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:39:13: 'now'
+            {
+               match( "now" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:39:21: 'jetzt'
+            {
+               match( "jetzt" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -761,37 +1283,37 @@ public class DateTimeLexer extends Lexer
       {
          int _type = TONIGHT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:41:11: (
-         // 'tonight' | 'ton' )
-         int alt5 = 2;
-         int LA5_0 = input.LA( 1 );
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:41:11: ( 'tonight' | 'ton' |
+         // 'heute' )
+         int alt17 = 3;
+         int LA17_0 = input.LA( 1 );
          
-         if ( ( LA5_0 == 't' ) )
+         if ( ( LA17_0 == 't' ) )
          {
-            int LA5_1 = input.LA( 2 );
+            int LA17_1 = input.LA( 2 );
             
-            if ( ( LA5_1 == 'o' ) )
+            if ( ( LA17_1 == 'o' ) )
             {
-               int LA5_2 = input.LA( 3 );
+               int LA17_3 = input.LA( 3 );
                
-               if ( ( LA5_2 == 'n' ) )
+               if ( ( LA17_3 == 'n' ) )
                {
-                  int LA5_3 = input.LA( 4 );
+                  int LA17_4 = input.LA( 4 );
                   
-                  if ( ( LA5_3 == 'i' ) )
+                  if ( ( LA17_4 == 'i' ) )
                   {
-                     alt5 = 1;
+                     alt17 = 1;
                   }
                   else
                   {
-                     alt5 = 2;
+                     alt17 = 2;
                   }
                }
                else
                {
                   NoViableAltException nvae = new NoViableAltException( "",
-                                                                        5,
-                                                                        2,
+                                                                        17,
+                                                                        3,
                                                                         input );
                   
                   throw nvae;
@@ -800,37 +1322,46 @@ public class DateTimeLexer extends Lexer
             else
             {
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     5,
+                                                                     17,
                                                                      1,
                                                                      input );
                
                throw nvae;
             }
          }
+         else if ( ( LA17_0 == 'h' ) )
+         {
+            alt17 = 3;
+         }
          else
          {
             NoViableAltException nvae = new NoViableAltException( "",
-                                                                  5,
+                                                                  17,
                                                                   0,
                                                                   input );
             
             throw nvae;
          }
-         switch ( alt5 )
+         switch ( alt17 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:41:13:
-               // 'tonight'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:41:13: 'tonight'
             {
                match( "tonight" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:41:25:
-               // 'ton'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:41:25: 'ton'
             {
                match( "ton" );
+               
+            }
+               break;
+            case 3:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:41:33: 'heute'
+            {
+               match( "heute" );
                
             }
                break;
@@ -855,15 +1386,74 @@ public class DateTimeLexer extends Lexer
       {
          int _type = MIDNIGHT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:43:11: (
-         // 'midnight' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:43:13:
-         // 'midnight'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:43:11: ( 'midnight' |
+         // 'mitternacht' )
+         int alt18 = 2;
+         int LA18_0 = input.LA( 1 );
+         
+         if ( ( LA18_0 == 'm' ) )
          {
-            match( "midnight" );
+            int LA18_1 = input.LA( 2 );
+            
+            if ( ( LA18_1 == 'i' ) )
+            {
+               int LA18_2 = input.LA( 3 );
+               
+               if ( ( LA18_2 == 'd' ) )
+               {
+                  alt18 = 1;
+               }
+               else if ( ( LA18_2 == 't' ) )
+               {
+                  alt18 = 2;
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        18,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+               }
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     18,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  18,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt18 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:43:13: 'midnight'
+            {
+               match( "midnight" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:43:26: 'mitternacht'
+            {
+               match( "mitternacht" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -883,15 +1473,73 @@ public class DateTimeLexer extends Lexer
       {
          int _type = MIDDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:45:11: (
-         // 'midday' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:45:13:
-         // 'midday'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:45:11: ( 'midday' | 'mittag' )
+         int alt19 = 2;
+         int LA19_0 = input.LA( 1 );
+         
+         if ( ( LA19_0 == 'm' ) )
          {
-            match( "midday" );
+            int LA19_1 = input.LA( 2 );
+            
+            if ( ( LA19_1 == 'i' ) )
+            {
+               int LA19_2 = input.LA( 3 );
+               
+               if ( ( LA19_2 == 'd' ) )
+               {
+                  alt19 = 1;
+               }
+               else if ( ( LA19_2 == 't' ) )
+               {
+                  alt19 = 2;
+               }
+               else
+               {
+                  NoViableAltException nvae = new NoViableAltException( "",
+                                                                        19,
+                                                                        2,
+                                                                        input );
+                  
+                  throw nvae;
+               }
+            }
+            else
+            {
+               NoViableAltException nvae = new NoViableAltException( "",
+                                                                     19,
+                                                                     1,
+                                                                     input );
+               
+               throw nvae;
+            }
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  19,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt19 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:45:13: 'midday'
+            {
+               match( "midday" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:45:24: 'mittag'
+            {
+               match( "mittag" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -911,15 +1559,45 @@ public class DateTimeLexer extends Lexer
       {
          int _type = NOON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:47:11: (
-         // 'noon' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:47:13:
-         // 'noon'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:47:11: ( 'noon' | 'mittag' )
+         int alt20 = 2;
+         int LA20_0 = input.LA( 1 );
+         
+         if ( ( LA20_0 == 'n' ) )
          {
-            match( "noon" );
+            alt20 = 1;
+         }
+         else if ( ( LA20_0 == 'm' ) )
+         {
+            alt20 = 2;
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  20,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt20 )
+         {
+            case 1:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:47:13: 'noon'
+            {
+               match( "noon" );
+               
+            }
+               break;
+            case 2:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:47:22: 'mittag'
+            {
+               match( "mittag" );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -939,41 +1617,51 @@ public class DateTimeLexer extends Lexer
       {
          int _type = YEARS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:11: (
-         // 'years' | 'year' | 'yrs' | 'yr' )
-         int alt6 = 4;
-         alt6 = dfa6.predict( input );
-         switch ( alt6 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:11: ( 'years' | 'year' |
+         // 'yrs' | 'yr' | 'jahr' | 'jahre' )
+         int alt21 = 6;
+         alt21 = dfa21.predict( input );
+         switch ( alt21 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:13:
-               // 'years'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:13: 'years'
             {
                match( "years" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:23:
-               // 'year'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:23: 'year'
             {
                match( "year" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:32:
-               // 'yrs'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:32: 'yrs'
             {
                match( "yrs" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:40:
-               // 'yr'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:40: 'yr'
             {
                match( "yr" );
+               
+            }
+               break;
+            case 5:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:47: 'jahr'
+            {
+               match( "jahr" );
+               
+            }
+               break;
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:49:56: 'jahre'
+            {
+               match( "jahre" );
                
             }
                break;
@@ -998,41 +1686,51 @@ public class DateTimeLexer extends Lexer
       {
          int _type = MONTHS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:11: (
-         // 'months' | 'month' | 'mons' | 'mon' )
-         int alt7 = 4;
-         alt7 = dfa7.predict( input );
-         switch ( alt7 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:11: ( 'months' | 'month' |
+         // 'mons' | 'mon' | 'monat' | 'monate' )
+         int alt22 = 6;
+         alt22 = dfa22.predict( input );
+         switch ( alt22 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:13:
-               // 'months'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:13: 'months'
             {
                match( "months" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:24:
-               // 'month'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:24: 'month'
             {
                match( "month" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:34:
-               // 'mons'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:34: 'mons'
             {
                match( "mons" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:43:
-               // 'mon'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:43: 'mon'
             {
                match( "mon" );
+               
+            }
+               break;
+            case 5:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:51: 'monat'
+            {
+               match( "monat" );
+               
+            }
+               break;
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:51:61: 'monate'
+            {
+               match( "monate" );
                
             }
                break;
@@ -1057,41 +1755,51 @@ public class DateTimeLexer extends Lexer
       {
          int _type = WEEKS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:11: (
-         // 'weeks' | 'week' | 'wks' | 'wk' )
-         int alt8 = 4;
-         alt8 = dfa8.predict( input );
-         switch ( alt8 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:11: ( 'weeks' | 'week' |
+         // 'wks' | 'wk' | 'woche' | 'wochen' )
+         int alt23 = 6;
+         alt23 = dfa23.predict( input );
+         switch ( alt23 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:13:
-               // 'weeks'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:13: 'weeks'
             {
                match( "weeks" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:23:
-               // 'week'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:23: 'week'
             {
                match( "week" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:32:
-               // 'wks'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:32: 'wks'
             {
                match( "wks" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:40:
-               // 'wk'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:40: 'wk'
             {
                match( "wk" );
+               
+            }
+               break;
+            case 5:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:47: 'woche'
+            {
+               match( "woche" );
+               
+            }
+               break;
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:53:57: 'wochen'
+            {
+               match( "wochen" );
                
             }
                break;
@@ -1116,79 +1824,44 @@ public class DateTimeLexer extends Lexer
       {
          int _type = DAYS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:11: (
-         // 'days' | 'day' | 'd' )
-         int alt9 = 3;
-         int LA9_0 = input.LA( 1 );
-         
-         if ( ( LA9_0 == 'd' ) )
-         {
-            int LA9_1 = input.LA( 2 );
-            
-            if ( ( LA9_1 == 'a' ) )
-            {
-               int LA9_2 = input.LA( 3 );
-               
-               if ( ( LA9_2 == 'y' ) )
-               {
-                  int LA9_4 = input.LA( 4 );
-                  
-                  if ( ( LA9_4 == 's' ) )
-                  {
-                     alt9 = 1;
-                  }
-                  else
-                  {
-                     alt9 = 2;
-                  }
-               }
-               else
-               {
-                  NoViableAltException nvae = new NoViableAltException( "",
-                                                                        9,
-                                                                        2,
-                                                                        input );
-                  
-                  throw nvae;
-               }
-            }
-            else
-            {
-               alt9 = 3;
-            }
-         }
-         else
-         {
-            NoViableAltException nvae = new NoViableAltException( "",
-                                                                  9,
-                                                                  0,
-                                                                  input );
-            
-            throw nvae;
-         }
-         switch ( alt9 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:11: ( 'days' | 'day' | 'd' |
+         // 'tag' | 'tage' )
+         int alt24 = 5;
+         alt24 = dfa24.predict( input );
+         switch ( alt24 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:13:
-               // 'days'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:13: 'days'
             {
                match( "days" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:22:
-               // 'day'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:22: 'day'
             {
                match( "day" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:30:
-               // 'd'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:30: 'd'
             {
                match( 'd' );
+               
+            }
+               break;
+            case 4:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:36: 'tag'
+            {
+               match( "tag" );
+               
+            }
+               break;
+            case 5:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:55:44: 'tage'
+            {
+               match( "tage" );
                
             }
                break;
@@ -1213,49 +1886,58 @@ public class DateTimeLexer extends Lexer
       {
          int _type = HOURS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:11: (
-         // 'hours' | 'hour' | 'hrs' | 'hr' | 'h' )
-         int alt10 = 5;
-         alt10 = dfa10.predict( input );
-         switch ( alt10 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:11: ( 'hours' | 'hour' |
+         // 'hrs' | 'hr' | 'h' | 'stunden' | 'std' )
+         int alt25 = 7;
+         alt25 = dfa25.predict( input );
+         switch ( alt25 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:13:
-               // 'hours'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:13: 'hours'
             {
                match( "hours" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:23:
-               // 'hour'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:23: 'hour'
             {
                match( "hour" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:32:
-               // 'hrs'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:32: 'hrs'
             {
                match( "hrs" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:40:
-               // 'hr'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:40: 'hr'
             {
                match( "hr" );
                
             }
                break;
             case 5:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:47:
-               // 'h'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:47: 'h'
             {
                match( 'h' );
+               
+            }
+               break;
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:53: 'stunden'
+            {
+               match( "stunden" );
+               
+            }
+               break;
+            case 7:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:57:65: 'std'
+            {
+               match( "std" );
                
             }
                break;
@@ -1280,49 +1962,51 @@ public class DateTimeLexer extends Lexer
       {
          int _type = MINUTES;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:11: (
-         // 'minutes' | 'minute' | 'mins' | 'min' | 'm' )
-         int alt11 = 5;
-         alt11 = dfa11.predict( input );
-         switch ( alt11 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:11: ( 'minutes' | 'minute' |
+         // 'mins' | 'min' | 'm' | 'minuten' )
+         int alt26 = 6;
+         alt26 = dfa26.predict( input );
+         switch ( alt26 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:13:
-               // 'minutes'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:13: 'minutes'
             {
                match( "minutes" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:25:
-               // 'minute'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:25: 'minute'
             {
                match( "minute" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:36:
-               // 'mins'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:36: 'mins'
             {
                match( "mins" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:45:
-               // 'min'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:45: 'min'
             {
                match( "min" );
                
             }
                break;
             case 5:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:53:
-               // 'm'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:53: 'm'
             {
                match( 'm' );
+               
+            }
+               break;
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:59:59: 'minuten'
+            {
+               match( "minuten" );
                
             }
                break;
@@ -1347,49 +2031,58 @@ public class DateTimeLexer extends Lexer
       {
          int _type = SECONDS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:11: (
-         // 'seconds' | 'second' | 'secs' | 'sec' | 's' )
-         int alt12 = 5;
-         alt12 = dfa12.predict( input );
-         switch ( alt12 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:11: ( 'seconds' | 'second' |
+         // 'secs' | 'sec' | 's' | 'sekunde' | 'sekunden' )
+         int alt27 = 7;
+         alt27 = dfa27.predict( input );
+         switch ( alt27 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:13:
-               // 'seconds'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:13: 'seconds'
             {
                match( "seconds" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:25:
-               // 'second'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:25: 'second'
             {
                match( "second" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:36:
-               // 'secs'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:36: 'secs'
             {
                match( "secs" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:45:
-               // 'sec'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:45: 'sec'
             {
                match( "sec" );
                
             }
                break;
             case 5:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:53:
-               // 's'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:53: 's'
             {
                match( 's' );
+               
+            }
+               break;
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:59: 'sekunde'
+            {
+               match( "sekunde" );
+               
+            }
+               break;
+            case 7:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:61:71: 'sekunden'
+            {
+               match( "sekunden" );
                
             }
                break;
@@ -1414,203 +2107,256 @@ public class DateTimeLexer extends Lexer
       {
          int _type = MONTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:11: (
-         // 'january' | 'jan' | 'february' | 'feb' | 'march' | 'mar' | 'april' | 'apr' | 'may' | 'june' | 'jun' | 'july'
-         // | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'november' | 'nov' |
-         // 'december' | 'dec' )
-         int alt13 = 24;
-         alt13 = dfa13.predict( input );
-         switch ( alt13 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:11: ( 'january' | 'jan' |
+         // 'januar' | 'february' | 'feb' | 'februar' | 'march' | 'mar' | 'märz' | 'marz' | 'april' | 'apr' | 'may' |
+         // 'mai' | 'june' | 'jun' | 'juni' | 'july' | 'jul' | 'juli' | 'august' | 'aug' | 'september' | 'sept' | 'sep'
+         // | 'october' | 'oct' | 'oktober' | 'okt' | 'november' | 'nov' | 'december' | 'dec' | 'dezember' | 'dez' )
+         int alt28 = 35;
+         alt28 = dfa28.predict( input );
+         switch ( alt28 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:13:
-               // 'january'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:13: 'january'
             {
                match( "january" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:27:
-               // 'jan'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:27: 'jan'
             {
                match( "jan" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:36:
-               // 'february'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:36: 'januar'
+            {
+               match( "januar" );
+               
+            }
+               break;
+            case 4:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:13: 'february'
             {
                match( "february" );
                
             }
                break;
-            case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:49:
-               // 'feb'
+            case 5:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:27: 'feb'
             {
                match( "feb" );
                
             }
                break;
-            case 5:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:61:
-               // 'march'
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:36: 'februar'
+            {
+               match( "februar" );
+               
+            }
+               break;
+            case 7:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:13: 'march'
             {
                match( "march" );
                
             }
                break;
-            case 6:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:71:
-               // 'mar'
+            case 8:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:27: 'mar'
             {
                match( "mar" );
                
             }
                break;
-            case 7:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:84:
-               // 'april'
+            case 9:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:36: 'märz'
+            {
+               match( "märz" );
+               
+            }
+               break;
+            case 10:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:49: 'marz'
+            {
+               match( "marz" );
+               
+            }
+               break;
+            case 11:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:66:13: 'april'
             {
                match( "april" );
                
             }
                break;
-            case 8:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:63:94:
-               // 'apr'
+            case 12:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:66:27: 'apr'
             {
                match( "apr" );
                
             }
                break;
-            case 9:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:13:
-               // 'may'
+            case 13:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:67:13: 'may'
             {
                match( "may" );
                
             }
                break;
-            case 10:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:27:
-               // 'june'
+            case 14:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:67:27: 'mai'
+            {
+               match( "mai" );
+               
+            }
+               break;
+            case 15:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:13: 'june'
             {
                match( "june" );
                
             }
                break;
-            case 11:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:36:
-               // 'jun'
+            case 16:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:27: 'jun'
             {
                match( "jun" );
                
             }
                break;
-            case 12:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:49:
-               // 'july'
+            case 17:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:36: 'juni'
+            {
+               match( "juni" );
+               
+            }
+               break;
+            case 18:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:13: 'july'
             {
                match( "july" );
                
             }
                break;
-            case 13:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:61:
-               // 'jul'
+            case 19:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:27: 'jul'
             {
                match( "jul" );
                
             }
                break;
-            case 14:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:71:
-               // 'august'
+            case 20:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:36: 'juli'
+            {
+               match( "juli" );
+               
+            }
+               break;
+            case 21:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:70:13: 'august'
             {
                match( "august" );
                
             }
                break;
-            case 15:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:64:84:
-               // 'aug'
+            case 22:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:70:27: 'aug'
             {
                match( "aug" );
                
             }
                break;
-            case 16:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:13:
-               // 'september'
+            case 23:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:71:13: 'september'
             {
                match( "september" );
                
             }
                break;
-            case 17:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:27:
-               // 'sept'
+            case 24:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:71:27: 'sept'
             {
                match( "sept" );
                
             }
                break;
-            case 18:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:36:
-               // 'sep'
+            case 25:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:71:36: 'sep'
             {
                match( "sep" );
                
             }
                break;
-            case 19:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:49:
-               // 'october'
+            case 26:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:72:13: 'october'
             {
                match( "october" );
                
             }
                break;
-            case 20:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:61:
-               // 'oct'
+            case 27:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:72:27: 'oct'
             {
                match( "oct" );
                
             }
                break;
-            case 21:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:71:
-               // 'november'
+            case 28:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:72:36: 'oktober'
+            {
+               match( "oktober" );
+               
+            }
+               break;
+            case 29:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:72:49: 'okt'
+            {
+               match( "okt" );
+               
+            }
+               break;
+            case 30:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:73:13: 'november'
             {
                match( "november" );
                
             }
                break;
-            case 22:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:65:84:
-               // 'nov'
+            case 31:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:73:27: 'nov'
             {
                match( "nov" );
                
             }
                break;
-            case 23:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:66:13:
-               // 'december'
+            case 32:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:74:13: 'december'
             {
                match( "december" );
                
             }
                break;
-            case 24:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:66:27:
-               // 'dec'
+            case 33:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:74:27: 'dec'
             {
                match( "dec" );
+               
+            }
+               break;
+            case 34:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:74:36: 'dezember'
+            {
+               match( "dezember" );
+               
+            }
+               break;
+            case 35:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:74:49: 'dez'
+            {
+               match( "dez" );
                
             }
                break;
@@ -1635,122 +2381,177 @@ public class DateTimeLexer extends Lexer
       {
          int _type = WEEKDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:11: (
-         // 'monday' | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' | 'thursday' | 'thu' | 'friday' | 'fri' |
-         // 'saturday' | 'sat' | 'sunday' | 'sun' )
-         int alt14 = 14;
-         alt14 = dfa14.predict( input );
-         switch ( alt14 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:76:11: ( 'monday' | 'mon' |
+         // 'montag' | 'mo' 'tuesday' | 'tue' | 'dienstag' | 'di' 'wednesday' | 'wed' | 'mittwoch' | 'mi' 'thursday' |
+         // 'thu' | 'donnerstag' | 'do' 'friday' | 'fri' | 'freitag' | 'fr' 'saturday' | 'sat' | 'samstag' | 'sa'
+         // 'sunday' | 'sun' | 'sonntag' | 'so' )
+         int alt29 = 22;
+         alt29 = dfa29.predict( input );
+         switch ( alt29 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:13:
-               // 'monday'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:76:13: 'monday'
             {
                match( "monday" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:26:
-               // 'mon'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:76:27: 'mon'
             {
                match( "mon" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:34:
-               // 'tuesday'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:76:35: 'montag'
             {
-               match( "tuesday" );
+               match( "montag" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:46:
-               // 'tue'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:76:50: 'mo' 'tuesday'
+            {
+               match( "mo" );
+               
+               match( "tuesday" );
+               
+            }
+               break;
+            case 5:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:77:27: 'tue'
             {
                match( "tue" );
                
             }
                break;
-            case 5:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:54:
-               // 'wednesday'
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:77:35: 'dienstag'
             {
+               match( "dienstag" );
+               
+            }
+               break;
+            case 7:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:77:50: 'di' 'wednesday'
+            {
+               match( "di" );
+               
                match( "wednesday" );
                
             }
                break;
-            case 6:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:68:68:
-               // 'wed'
+            case 8:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:78:27: 'wed'
             {
                match( "wed" );
                
             }
                break;
-            case 7:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:13:
-               // 'thursday'
+            case 9:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:78:35: 'mittwoch'
             {
+               match( "mittwoch" );
+               
+            }
+               break;
+            case 10:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:78:50: 'mi' 'thursday'
+            {
+               match( "mi" );
+               
                match( "thursday" );
                
             }
                break;
-            case 8:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:26:
-               // 'thu'
+            case 11:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:79:27: 'thu'
             {
                match( "thu" );
                
             }
                break;
-            case 9:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:34:
-               // 'friday'
+            case 12:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:79:35: 'donnerstag'
             {
+               match( "donnerstag" );
+               
+            }
+               break;
+            case 13:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:79:50: 'do' 'friday'
+            {
+               match( "do" );
+               
                match( "friday" );
                
             }
                break;
-            case 10:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:46:
-               // 'fri'
+            case 14:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:80:27: 'fri'
             {
                match( "fri" );
                
             }
                break;
-            case 11:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:54:
-               // 'saturday'
+            case 15:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:80:35: 'freitag'
             {
+               match( "freitag" );
+               
+            }
+               break;
+            case 16:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:80:50: 'fr' 'saturday'
+            {
+               match( "fr" );
+               
                match( "saturday" );
                
             }
                break;
-            case 12:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:69:68:
-               // 'sat'
+            case 17:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:81:27: 'sat'
             {
                match( "sat" );
                
             }
                break;
-            case 13:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:70:13:
-               // 'sunday'
+            case 18:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:81:35: 'samstag'
             {
+               match( "samstag" );
+               
+            }
+               break;
+            case 19:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:81:50: 'sa' 'sunday'
+            {
+               match( "sa" );
+               
                match( "sunday" );
                
             }
                break;
-            case 14:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:70:26:
-               // 'sun'
+            case 20:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:82:27: 'sun'
             {
                match( "sun" );
+               
+            }
+               break;
+            case 21:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:82:35: 'sonntag'
+            {
+               match( "sonntag" );
+               
+            }
+               break;
+            case 22:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:82:50: 'so'
+            {
+               match( "so" );
                
             }
                break;
@@ -1775,9 +2576,9 @@ public class DateTimeLexer extends Lexer
       {
          int _type = DATE_SEP;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:72:11: ( '/'
-         // | '\\u5E74' | '\\u6708' | '\\u65E5' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:84:11: ( '/' | '\\u5E74' |
+         // '\\u6708' | '\\u65E5' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:
          {
             if ( input.LA( 1 ) == '/' || input.LA( 1 ) == '\u5E74'
                || input.LA( 1 ) == '\u65E5' || input.LA( 1 ) == '\u6708' )
@@ -1814,9 +2615,8 @@ public class DateTimeLexer extends Lexer
       {
          int _type = DOT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:74:11: ( '.'
-         // )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:74:13: '.'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:11: ( '.' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:13: '.'
          {
             match( '.' );
             
@@ -1841,9 +2641,8 @@ public class DateTimeLexer extends Lexer
       {
          int _type = COLON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:76:11: ( ':'
-         // )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:76:13: ':'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:11: ( ':' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:13: ':'
          {
             match( ':' );
             
@@ -1868,9 +2667,8 @@ public class DateTimeLexer extends Lexer
       {
          int _type = MINUS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:78:11: ( '-'
-         // )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:78:13: '-'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:11: ( '-' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:13: '-'
          {
             match( '-' );
             
@@ -1895,9 +2693,8 @@ public class DateTimeLexer extends Lexer
       {
          int _type = MINUS_A;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:80:11: (
-         // '-a' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:80:13: '-a'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:11: ( '-a' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:13: '-a'
          {
             match( "-a" );
             
@@ -1922,9 +2719,8 @@ public class DateTimeLexer extends Lexer
       {
          int _type = COMMA;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:82:11: ( ','
-         // )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:82:13: ','
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:94:11: ( ',' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:94:13: ','
          {
             match( ',' );
             
@@ -1949,29 +2745,25 @@ public class DateTimeLexer extends Lexer
       {
          int _type = INT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:84:11: ( (
-         // '0' .. '9' )+ )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:84:13: ( '0'
-         // .. '9' )+
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:96:11: ( ( '0' .. '9' )+ )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:96:13: ( '0' .. '9' )+
          {
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:84:13: (
-            // '0' .. '9' )+
-            int cnt15 = 0;
-            loop15: do
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:96:13: ( '0' .. '9' )+
+            int cnt30 = 0;
+            loop30: do
             {
-               int alt15 = 2;
-               int LA15_0 = input.LA( 1 );
+               int alt30 = 2;
+               int LA30_0 = input.LA( 1 );
                
-               if ( ( ( LA15_0 >= '0' && LA15_0 <= '9' ) ) )
+               if ( ( ( LA30_0 >= '0' && LA30_0 <= '9' ) ) )
                {
-                  alt15 = 1;
+                  alt30 = 1;
                }
                
-               switch ( alt15 )
+               switch ( alt30 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:84:13:
-                     // '0' .. '9'
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:96:13: '0' .. '9'
                   {
                      matchRange( '0', '9' );
                      
@@ -1979,12 +2771,12 @@ public class DateTimeLexer extends Lexer
                      break;
                   
                   default :
-                     if ( cnt15 >= 1 )
-                        break loop15;
-                     EarlyExitException eee = new EarlyExitException( 15, input );
+                     if ( cnt30 >= 1 )
+                        break loop30;
+                     EarlyExitException eee = new EarlyExitException( 30, input );
                      throw eee;
                }
-               cnt15++;
+               cnt30++;
             }
             while ( true );
             
@@ -2009,9 +2801,8 @@ public class DateTimeLexer extends Lexer
       {
          int _type = A;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:11: ( 'a'
-         // )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:86:13: 'a'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:98:11: ( 'a' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:98:13: 'a'
          {
             match( 'a' );
             
@@ -2036,61 +2827,58 @@ public class DateTimeLexer extends Lexer
       {
          int _type = AM;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:11: ( A (
-         // 'm' )? | '\\u4E0A' | '\\u5348\\u524D' | '\\uC624\\uC804' )
-         int alt17 = 4;
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:100:11: ( A ( 'm' )? |
+         // '\\u4E0A' | '\\u5348\\u524D' | '\\uC624\\uC804' )
+         int alt32 = 4;
          switch ( input.LA( 1 ) )
          {
             case 'a':
             {
-               alt17 = 1;
+               alt32 = 1;
             }
                break;
             case '\u4E0A':
             {
-               alt17 = 2;
+               alt32 = 2;
             }
                break;
             case '\u5348':
             {
-               alt17 = 3;
+               alt32 = 3;
             }
                break;
             case '\uC624':
             {
-               alt17 = 4;
+               alt32 = 4;
             }
                break;
             default :
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     17,
+                                                                     32,
                                                                      0,
                                                                      input );
                
                throw nvae;
          }
          
-         switch ( alt17 )
+         switch ( alt32 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:14:
-               // A ( 'm' )?
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:100:14: A ( 'm' )?
             {
                mA();
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:15:
-               // ( 'm' )?
-               int alt16 = 2;
-               int LA16_0 = input.LA( 1 );
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:100:15: ( 'm' )?
+               int alt31 = 2;
+               int LA31_0 = input.LA( 1 );
                
-               if ( ( LA16_0 == 'm' ) )
+               if ( ( LA31_0 == 'm' ) )
                {
-                  alt16 = 1;
+                  alt31 = 1;
                }
-               switch ( alt16 )
+               switch ( alt31 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:16:
-                     // 'm'
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:100:16: 'm'
                   {
                      match( 'm' );
                      
@@ -2102,24 +2890,21 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:24:
-               // '\\u4E0A'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:100:24: '\\u4E0A'
             {
                match( '\u4E0A' );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:35:
-               // '\\u5348\\u524D'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:100:35: '\\u5348\\u524D'
             {
                match( "\u5348\u524D" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:88:52:
-               // '\\uC624\\uC804'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:100:52: '\\uC624\\uC804'
             {
                match( "\uC624\uC804" );
                
@@ -2146,61 +2931,58 @@ public class DateTimeLexer extends Lexer
       {
          int _type = PM;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:11: ( 'p'
-         // ( 'm' )? | '\\u4E0B' | '\\u5348\\u5F8C' | '\\uC624\\uD6C4' )
-         int alt19 = 4;
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:102:11: ( 'p' ( 'm' )? |
+         // '\\u4E0B' | '\\u5348\\u5F8C' | '\\uC624\\uD6C4' )
+         int alt34 = 4;
          switch ( input.LA( 1 ) )
          {
             case 'p':
             {
-               alt19 = 1;
+               alt34 = 1;
             }
                break;
             case '\u4E0B':
             {
-               alt19 = 2;
+               alt34 = 2;
             }
                break;
             case '\u5348':
             {
-               alt19 = 3;
+               alt34 = 3;
             }
                break;
             case '\uC624':
             {
-               alt19 = 4;
+               alt34 = 4;
             }
                break;
             default :
                NoViableAltException nvae = new NoViableAltException( "",
-                                                                     19,
+                                                                     34,
                                                                      0,
                                                                      input );
                
                throw nvae;
          }
          
-         switch ( alt19 )
+         switch ( alt34 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:13:
-               // 'p' ( 'm' )?
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:102:13: 'p' ( 'm' )?
             {
                match( 'p' );
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:16:
-               // ( 'm' )?
-               int alt18 = 2;
-               int LA18_0 = input.LA( 1 );
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:102:16: ( 'm' )?
+               int alt33 = 2;
+               int LA33_0 = input.LA( 1 );
                
-               if ( ( LA18_0 == 'm' ) )
+               if ( ( LA33_0 == 'm' ) )
                {
-                  alt18 = 1;
+                  alt33 = 1;
                }
-               switch ( alt18 )
+               switch ( alt33 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:17:
-                     // 'm'
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:102:17: 'm'
                   {
                      match( 'm' );
                      
@@ -2212,24 +2994,21 @@ public class DateTimeLexer extends Lexer
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:25:
-               // '\\u4E0B'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:102:25: '\\u4E0B'
             {
                match( '\u4E0B' );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:36:
-               // '\\u5348\\u5F8C'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:102:36: '\\u5348\\u5F8C'
             {
                match( "\u5348\u5F8C" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:90:53:
-               // '\\uC624\\uD6C4'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:102:53: '\\uC624\\uD6C4'
             {
                match( "\uC624\uD6C4" );
                
@@ -2256,81 +3035,157 @@ public class DateTimeLexer extends Lexer
       {
          int _type = NUM_STR;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:11: (
-         // 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' )
-         int alt20 = 9;
-         alt20 = dfa20.predict( input );
-         switch ( alt20 )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:11: ( 'one' | 'two' |
+         // 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' | 'eins' | 'zwei' | 'drei' | 'vier' |
+         // 'fünf' | 'funf' | 'sechs' | 'sieben' | 'acht' | 'neun' | 'zehn' )
+         int alt35 = 21;
+         alt35 = dfa35.predict( input );
+         switch ( alt35 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:13:
-               // 'one'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:13: 'one'
             {
                match( "one" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:21:
-               // 'two'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:22: 'two'
             {
                match( "two" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:29:
-               // 'three'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:31: 'three'
             {
                match( "three" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:39:
-               // 'four'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:41: 'four'
             {
                match( "four" );
                
             }
                break;
             case 5:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:48:
-               // 'six'
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:50: 'five'
+            {
+               match( "five" );
+               
+            }
+               break;
+            case 6:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:68: 'six'
             {
                match( "six" );
                
             }
                break;
-            case 6:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:56:
-               // 'seven'
+            case 7:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:78: 'seven'
             {
                match( "seven" );
                
             }
                break;
-            case 7:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:66:
-               // 'eight'
+            case 8:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:89: 'eight'
             {
                match( "eight" );
                
             }
                break;
-            case 8:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:76:
-               // 'nine'
+            case 9:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:99: 'nine'
             {
                match( "nine" );
                
             }
                break;
-            case 9:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:92:85:
-               // 'ten'
+            case 10:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:104:108: 'ten'
             {
                match( "ten" );
+               
+            }
+               break;
+            case 11:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:13: 'eins'
+            {
+               match( "eins" );
+               
+            }
+               break;
+            case 12:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:22: 'zwei'
+            {
+               match( "zwei" );
+               
+            }
+               break;
+            case 13:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:31: 'drei'
+            {
+               match( "drei" );
+               
+            }
+               break;
+            case 14:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:41: 'vier'
+            {
+               match( "vier" );
+               
+            }
+               break;
+            case 15:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:50: 'fünf'
+            {
+               match( "fünf" );
+               
+            }
+               break;
+            case 16:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:59: 'funf'
+            {
+               match( "funf" );
+               
+            }
+               break;
+            case 17:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:68: 'sechs'
+            {
+               match( "sechs" );
+               
+            }
+               break;
+            case 18:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:78: 'sieben'
+            {
+               match( "sieben" );
+               
+            }
+               break;
+            case 19:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:89: 'acht'
+            {
+               match( "acht" );
+               
+            }
+               break;
+            case 20:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:99: 'neun'
+            {
+               match( "neun" );
+               
+            }
+               break;
+            case 21:
+               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:105:108: 'zehn'
+            {
+               match( "zehn" );
                
             }
                break;
@@ -2353,30 +3208,30 @@ public class DateTimeLexer extends Lexer
    {
       try
       {
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:95:11: ( (~
-         // ( '\"' | ' ' | '(' | ')' ) )+ )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:95:13: (~ (
-         // '\"' | ' ' | '(' | ')' ) )+
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:108:11: ( (~ ( '\"' | ' ' | '('
+         // | ')' ) )+ )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:108:13: (~ ( '\"' | ' ' | '(' |
+         // ')' ) )+
          {
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:95:13: (~
-            // ( '\"' | ' ' | '(' | ')' ) )+
-            int cnt21 = 0;
-            loop21: do
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:108:13: (~ ( '\"' | ' ' |
+            // '(' | ')' ) )+
+            int cnt36 = 0;
+            loop36: do
             {
-               int alt21 = 2;
-               int LA21_0 = input.LA( 1 );
+               int alt36 = 2;
+               int LA36_0 = input.LA( 1 );
                
-               if ( ( ( LA21_0 >= '\u0000' && LA21_0 <= '\u001F' )
-                  || LA21_0 == '!' || ( LA21_0 >= '#' && LA21_0 <= '\'' ) || ( LA21_0 >= '*' && LA21_0 <= '\uFFFF' ) ) )
+               if ( ( ( LA36_0 >= '\u0000' && LA36_0 <= '\u001F' )
+                  || LA36_0 == '!' || ( LA36_0 >= '#' && LA36_0 <= '\'' ) || ( LA36_0 >= '*' && LA36_0 <= '\uFFFF' ) ) )
                {
-                  alt21 = 1;
+                  alt36 = 1;
                }
                
-               switch ( alt21 )
+               switch ( alt36 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:95:13:
-                     // ~ ( '\"' | ' ' | '(' | ')' )
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:108:13: ~ ( '\"' |
+                     // ' ' | '(' | ')' )
                   {
                      if ( ( input.LA( 1 ) >= '\u0000' && input.LA( 1 ) <= '\u001F' )
                         || input.LA( 1 ) == '!'
@@ -2398,12 +3253,12 @@ public class DateTimeLexer extends Lexer
                      break;
                   
                   default :
-                     if ( cnt21 >= 1 )
-                        break loop21;
-                     EarlyExitException eee = new EarlyExitException( 21, input );
+                     if ( cnt36 >= 1 )
+                        break loop36;
+                     EarlyExitException eee = new EarlyExitException( 36, input );
                      throw eee;
                }
-               cnt21++;
+               cnt36++;
             }
             while ( true );
             
@@ -2426,10 +3281,10 @@ public class DateTimeLexer extends Lexer
       {
          int _type = WS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:97:11: ( (
-         // ' ' | '\\t' | '\\r' | '\\n' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:97:13: ( ' '
-         // | '\\t' | '\\r' | '\\n' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:110:11: ( ( ' ' | '\\t' | '\\r'
+         // | '\\n' ) )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:110:13: ( ' ' | '\\t' | '\\r' |
+         // '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
                || input.LA( 1 ) == '\r' || input.LA( 1 ) == ' ' )
@@ -2461,310 +3316,285 @@ public class DateTimeLexer extends Lexer
 
    // $ANTLR end "WS"
    
+   @Override
    public void mTokens() throws RecognitionException
    {
-      // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:8: ( NEVER |
-      // TODAY | TOMORROW | YESTERDAY | AT | ON | IN | OF | NEXT | AND | END | THE | STs | NOW | TONIGHT | MIDNIGHT |
-      // MIDDAY | NOON | YEARS | MONTHS | WEEKS | DAYS | HOURS | MINUTES | SECONDS | MONTH | WEEKDAY | DATE_SEP | DOT |
-      // COLON | MINUS | MINUS_A | COMMA | INT | A | AM | PM | NUM_STR | WS )
-      int alt22 = 39;
-      alt22 = dfa22.predict( input );
-      switch ( alt22 )
+      // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:8: ( NEVER | TODAY | TOMORROW |
+      // YESTERDAY | AT | ON | IN | OF | NEXT | AND | END | THE | STs | NOW | TONIGHT | MIDNIGHT | MIDDAY | NOON | YEARS
+      // | MONTHS | WEEKS | DAYS | HOURS | MINUTES | SECONDS | MONTH | WEEKDAY | DATE_SEP | DOT | COLON | MINUS |
+      // MINUS_A | COMMA | INT | A | AM | PM | NUM_STR | WS )
+      int alt37 = 39;
+      alt37 = dfa37.predict( input );
+      switch ( alt37 )
       {
          case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:10:
-            // NEVER
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:10: NEVER
          {
             mNEVER();
             
          }
             break;
          case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:16:
-            // TODAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:16: TODAY
          {
             mTODAY();
             
          }
             break;
          case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:22:
-            // TOMORROW
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:22: TOMORROW
          {
             mTOMORROW();
             
          }
             break;
          case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:31:
-            // YESTERDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:31: YESTERDAY
          {
             mYESTERDAY();
             
          }
             break;
          case 5:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:41: AT
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:41: AT
          {
             mAT();
             
          }
             break;
          case 6:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:44: ON
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:44: ON
          {
             mON();
             
          }
             break;
          case 7:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:47: IN
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:47: IN
          {
             mIN();
             
          }
             break;
          case 8:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:50: OF
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:50: OF
          {
             mOF();
             
          }
             break;
          case 9:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:53:
-            // NEXT
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:53: NEXT
          {
             mNEXT();
             
          }
             break;
          case 10:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:58: AND
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:58: AND
          {
             mAND();
             
          }
             break;
          case 11:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:62: END
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:62: END
          {
             mEND();
             
          }
             break;
          case 12:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:66: THE
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:66: THE
          {
             mTHE();
             
          }
             break;
          case 13:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:70: STs
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:70: STs
          {
             mSTs();
             
          }
             break;
          case 14:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:74: NOW
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:74: NOW
          {
             mNOW();
             
          }
             break;
          case 15:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:78:
-            // TONIGHT
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:78: TONIGHT
          {
             mTONIGHT();
             
          }
             break;
          case 16:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:86:
-            // MIDNIGHT
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:86: MIDNIGHT
          {
             mMIDNIGHT();
             
          }
             break;
          case 17:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:95:
-            // MIDDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:95: MIDDAY
          {
             mMIDDAY();
             
          }
             break;
          case 18:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:102:
-            // NOON
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:102: NOON
          {
             mNOON();
             
          }
             break;
          case 19:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:107:
-            // YEARS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:107: YEARS
          {
             mYEARS();
             
          }
             break;
          case 20:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:113:
-            // MONTHS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:113: MONTHS
          {
             mMONTHS();
             
          }
             break;
          case 21:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:120:
-            // WEEKS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:120: WEEKS
          {
             mWEEKS();
             
          }
             break;
          case 22:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:126:
-            // DAYS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:126: DAYS
          {
             mDAYS();
             
          }
             break;
          case 23:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:131:
-            // HOURS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:131: HOURS
          {
             mHOURS();
             
          }
             break;
          case 24:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:137:
-            // MINUTES
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:137: MINUTES
          {
             mMINUTES();
             
          }
             break;
          case 25:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:145:
-            // SECONDS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:145: SECONDS
          {
             mSECONDS();
             
          }
             break;
          case 26:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:153:
-            // MONTH
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:153: MONTH
          {
             mMONTH();
             
          }
             break;
          case 27:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:159:
-            // WEEKDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:159: WEEKDAY
          {
             mWEEKDAY();
             
          }
             break;
          case 28:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:167:
-            // DATE_SEP
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:167: DATE_SEP
          {
             mDATE_SEP();
             
          }
             break;
          case 29:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:176:
-            // DOT
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:176: DOT
          {
             mDOT();
             
          }
             break;
          case 30:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:180:
-            // COLON
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:180: COLON
          {
             mCOLON();
             
          }
             break;
          case 31:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:186:
-            // MINUS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:186: MINUS
          {
             mMINUS();
             
          }
             break;
          case 32:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:192:
-            // MINUS_A
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:192: MINUS_A
          {
             mMINUS_A();
             
          }
             break;
          case 33:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:200:
-            // COMMA
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:200: COMMA
          {
             mCOMMA();
             
          }
             break;
          case 34:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:206:
-            // INT
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:206: INT
          {
             mINT();
             
          }
             break;
          case 35:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:210: A
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:210: A
          {
             mA();
             
          }
             break;
          case 36:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:212: AM
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:212: AM
          {
             mAM();
             
          }
             break;
          case 37:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:215: PM
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:215: PM
          {
             mPM();
             
          }
             break;
          case 38:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:218:
-            // NUM_STR
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:218: NUM_STR
          {
             mNUM_STR();
             
          }
             break;
          case 39:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:226: WS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\DateTimeLexer.g:1:226: WS
          {
             mWS();
             
@@ -2775,680 +3605,113 @@ public class DateTimeLexer extends Lexer
       
    }
    
-   protected DFA6 dfa6 = new DFA6( this );
-   
-   protected DFA7 dfa7 = new DFA7( this );
-   
-   protected DFA8 dfa8 = new DFA8( this );
-   
-   protected DFA10 dfa10 = new DFA10( this );
-   
-   protected DFA11 dfa11 = new DFA11( this );
-   
-   protected DFA12 dfa12 = new DFA12( this );
-   
-   protected DFA13 dfa13 = new DFA13( this );
-   
-   protected DFA14 dfa14 = new DFA14( this );
-   
-   protected DFA20 dfa20 = new DFA20( this );
+   protected DFA21 dfa21 = new DFA21( this );
    
    protected DFA22 dfa22 = new DFA22( this );
    
-   static final String DFA6_eotS = "\3\uffff\1\6\3\uffff\1\11\2\uffff";
+   protected DFA23 dfa23 = new DFA23( this );
    
-   static final String DFA6_eofS = "\12\uffff";
+   protected DFA24 dfa24 = new DFA24( this );
    
-   static final String DFA6_minS = "\1\171\1\145\1\141\1\163\1\162\2\uffff\1\163\2\uffff";
+   protected DFA25 dfa25 = new DFA25( this );
    
-   static final String DFA6_maxS = "\1\171\1\162\1\141\1\163\1\162\2\uffff\1\163\2\uffff";
+   protected DFA26 dfa26 = new DFA26( this );
    
-   static final String DFA6_acceptS = "\5\uffff\1\3\1\4\1\uffff\1\1\1\2";
+   protected DFA27 dfa27 = new DFA27( this );
    
-   static final String DFA6_specialS = "\12\uffff}>";
+   protected DFA28 dfa28 = new DFA28( this );
    
-   static final String[] DFA6_transitionS =
-   { "\1\1", "\1\2\14\uffff\1\3", "\1\4", "\1\5", "\1\7", "", "", "\1\10", "",
-    "" };
+   protected DFA29 dfa29 = new DFA29( this );
    
-   static final short[] DFA6_eot = DFA.unpackEncodedString( DFA6_eotS );
+   protected DFA35 dfa35 = new DFA35( this );
    
-   static final short[] DFA6_eof = DFA.unpackEncodedString( DFA6_eofS );
+   protected DFA37 dfa37 = new DFA37( this );
    
-   static final char[] DFA6_min = DFA.unpackEncodedStringToUnsignedChars( DFA6_minS );
+   static final String DFA21_eotS = "\4\uffff\1\10\5\uffff\1\15\1\17\4\uffff";
    
-   static final char[] DFA6_max = DFA.unpackEncodedStringToUnsignedChars( DFA6_maxS );
+   static final String DFA21_eofS = "\20\uffff";
    
-   static final short[] DFA6_accept = DFA.unpackEncodedString( DFA6_acceptS );
+   static final String DFA21_minS = "\1\152\1\145\2\141\1\163\1\150\1\162\2\uffff\1\162\1\163\1\145"
+      + "\4\uffff";
    
-   static final short[] DFA6_special = DFA.unpackEncodedString( DFA6_specialS );
+   static final String DFA21_maxS = "\1\171\1\162\2\141\1\163\1\150\1\162\2\uffff\1\162\1\163\1\145"
+      + "\4\uffff";
    
-   static final short[][] DFA6_transition;
+   static final String DFA21_acceptS = "\7\uffff\1\3\1\4\3\uffff\1\1\1\2\1\6\1\5";
    
-   static
-   {
-      int numStates = DFA6_transitionS.length;
-      DFA6_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA6_transition[ i ] = DFA.unpackEncodedString( DFA6_transitionS[ i ] );
-      }
-   }
+   static final String DFA21_specialS = "\20\uffff}>";
    
+   static final String[] DFA21_transitionS =
+   { "\1\2\16\uffff\1\1", "\1\3\14\uffff\1\4", "\1\5", "\1\6", "\1\7", "\1\11",
+    "\1\12", "", "", "\1\13", "\1\14", "\1\16", "", "", "", "" };
    
-   class DFA6 extends DFA
-   {
-      
-      public DFA6( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 6;
-         this.eot = DFA6_eot;
-         this.eof = DFA6_eof;
-         this.min = DFA6_min;
-         this.max = DFA6_max;
-         this.accept = DFA6_accept;
-         this.special = DFA6_special;
-         this.transition = DFA6_transition;
-      }
-      
-
-
-      public String getDescription()
-      {
-         return "49:1: YEARS : ( 'years' | 'year' | 'yrs' | 'yr' );";
-      }
-   }
+   static final short[] DFA21_eot = DFA.unpackEncodedString( DFA21_eotS );
    
-   static final String DFA7_eotS = "\3\uffff\1\6\3\uffff\1\11\2\uffff";
+   static final short[] DFA21_eof = DFA.unpackEncodedString( DFA21_eofS );
    
-   static final String DFA7_eofS = "\12\uffff";
+   static final char[] DFA21_min = DFA.unpackEncodedStringToUnsignedChars( DFA21_minS );
    
-   static final String DFA7_minS = "\1\155\1\157\1\156\1\163\1\150\2\uffff\1\163\2\uffff";
+   static final char[] DFA21_max = DFA.unpackEncodedStringToUnsignedChars( DFA21_maxS );
    
-   static final String DFA7_maxS = "\1\155\1\157\1\156\1\164\1\150\2\uffff\1\163\2\uffff";
+   static final short[] DFA21_accept = DFA.unpackEncodedString( DFA21_acceptS );
    
-   static final String DFA7_acceptS = "\5\uffff\1\3\1\4\1\uffff\1\1\1\2";
+   static final short[] DFA21_special = DFA.unpackEncodedString( DFA21_specialS );
    
-   static final String DFA7_specialS = "\12\uffff}>";
-   
-   static final String[] DFA7_transitionS =
-   { "\1\1", "\1\2", "\1\3", "\1\5\1\4", "\1\7", "", "", "\1\10", "", "" };
-   
-   static final short[] DFA7_eot = DFA.unpackEncodedString( DFA7_eotS );
-   
-   static final short[] DFA7_eof = DFA.unpackEncodedString( DFA7_eofS );
-   
-   static final char[] DFA7_min = DFA.unpackEncodedStringToUnsignedChars( DFA7_minS );
-   
-   static final char[] DFA7_max = DFA.unpackEncodedStringToUnsignedChars( DFA7_maxS );
-   
-   static final short[] DFA7_accept = DFA.unpackEncodedString( DFA7_acceptS );
-   
-   static final short[] DFA7_special = DFA.unpackEncodedString( DFA7_specialS );
-   
-   static final short[][] DFA7_transition;
+   static final short[][] DFA21_transition;
    
    static
    {
-      int numStates = DFA7_transitionS.length;
-      DFA7_transition = new short[ numStates ][];
+      int numStates = DFA21_transitionS.length;
+      DFA21_transition = new short[ numStates ][];
       for ( int i = 0; i < numStates; i++ )
       {
-         DFA7_transition[ i ] = DFA.unpackEncodedString( DFA7_transitionS[ i ] );
+         DFA21_transition[ i ] = DFA.unpackEncodedString( DFA21_transitionS[ i ] );
       }
    }
    
    
-   class DFA7 extends DFA
+   class DFA21 extends DFA
    {
       
-      public DFA7( BaseRecognizer recognizer )
+      public DFA21( BaseRecognizer recognizer )
       {
          this.recognizer = recognizer;
-         this.decisionNumber = 7;
-         this.eot = DFA7_eot;
-         this.eof = DFA7_eof;
-         this.min = DFA7_min;
-         this.max = DFA7_max;
-         this.accept = DFA7_accept;
-         this.special = DFA7_special;
-         this.transition = DFA7_transition;
+         this.decisionNumber = 21;
+         this.eot = DFA21_eot;
+         this.eof = DFA21_eof;
+         this.min = DFA21_min;
+         this.max = DFA21_max;
+         this.accept = DFA21_accept;
+         this.special = DFA21_special;
+         this.transition = DFA21_transition;
       }
       
 
 
+      @Override
       public String getDescription()
       {
-         return "51:1: MONTHS : ( 'months' | 'month' | 'mons' | 'mon' );";
+         return "49:1: YEARS : ( 'years' | 'year' | 'yrs' | 'yr' | 'jahr' | 'jahre' );";
       }
    }
    
-   static final String DFA8_eotS = "\3\uffff\1\6\3\uffff\1\11\2\uffff";
+   static final String DFA22_eotS = "\3\uffff\1\7\4\uffff\1\13\1\15\4\uffff";
    
-   static final String DFA8_eofS = "\12\uffff";
+   static final String DFA22_eofS = "\16\uffff";
    
-   static final String DFA8_minS = "\1\167\2\145\1\163\1\153\2\uffff\1\163\2\uffff";
+   static final String DFA22_minS = "\1\155\1\157\1\156\1\141\1\150\1\uffff\1\164\1\uffff\1\163\1\145"
+      + "\4\uffff";
    
-   static final String DFA8_maxS = "\1\167\1\153\1\145\1\163\1\153\2\uffff\1\163\2\uffff";
+   static final String DFA22_maxS = "\1\155\1\157\1\156\1\164\1\150\1\uffff\1\164\1\uffff\1\163\1\145"
+      + "\4\uffff";
    
-   static final String DFA8_acceptS = "\5\uffff\1\3\1\4\1\uffff\1\1\1\2";
+   static final String DFA22_acceptS = "\5\uffff\1\3\1\uffff\1\4\2\uffff\1\1\1\2\1\6\1\5";
    
-   static final String DFA8_specialS = "\12\uffff}>";
-   
-   static final String[] DFA8_transitionS =
-   { "\1\1", "\1\2\5\uffff\1\3", "\1\4", "\1\5", "\1\7", "", "", "\1\10", "",
-    "" };
-   
-   static final short[] DFA8_eot = DFA.unpackEncodedString( DFA8_eotS );
-   
-   static final short[] DFA8_eof = DFA.unpackEncodedString( DFA8_eofS );
-   
-   static final char[] DFA8_min = DFA.unpackEncodedStringToUnsignedChars( DFA8_minS );
-   
-   static final char[] DFA8_max = DFA.unpackEncodedStringToUnsignedChars( DFA8_maxS );
-   
-   static final short[] DFA8_accept = DFA.unpackEncodedString( DFA8_acceptS );
-   
-   static final short[] DFA8_special = DFA.unpackEncodedString( DFA8_specialS );
-   
-   static final short[][] DFA8_transition;
-   
-   static
-   {
-      int numStates = DFA8_transitionS.length;
-      DFA8_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA8_transition[ i ] = DFA.unpackEncodedString( DFA8_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA8 extends DFA
-   {
-      
-      public DFA8( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 8;
-         this.eot = DFA8_eot;
-         this.eof = DFA8_eof;
-         this.min = DFA8_min;
-         this.max = DFA8_max;
-         this.accept = DFA8_accept;
-         this.special = DFA8_special;
-         this.transition = DFA8_transition;
-      }
-      
-
-
-      public String getDescription()
-      {
-         return "53:1: WEEKS : ( 'weeks' | 'week' | 'wks' | 'wk' );";
-      }
-   }
-   
-   static final String DFA10_eotS = "\1\uffff\1\4\1\uffff\1\7\4\uffff\1\12\2\uffff";
-   
-   static final String DFA10_eofS = "\13\uffff";
-   
-   static final String DFA10_minS = "\1\150\1\157\1\165\1\163\1\uffff\1\162\2\uffff\1\163\2\uffff";
-   
-   static final String DFA10_maxS = "\1\150\1\162\1\165\1\163\1\uffff\1\162\2\uffff\1\163\2\uffff";
-   
-   static final String DFA10_acceptS = "\4\uffff\1\5\1\uffff\1\3\1\4\1\uffff\1\1\1\2";
-   
-   static final String DFA10_specialS = "\13\uffff}>";
-   
-   static final String[] DFA10_transitionS =
-   { "\1\1", "\1\2\2\uffff\1\3", "\1\5", "\1\6", "", "\1\10", "", "", "\1\11",
-    "", "" };
-   
-   static final short[] DFA10_eot = DFA.unpackEncodedString( DFA10_eotS );
-   
-   static final short[] DFA10_eof = DFA.unpackEncodedString( DFA10_eofS );
-   
-   static final char[] DFA10_min = DFA.unpackEncodedStringToUnsignedChars( DFA10_minS );
-   
-   static final char[] DFA10_max = DFA.unpackEncodedStringToUnsignedChars( DFA10_maxS );
-   
-   static final short[] DFA10_accept = DFA.unpackEncodedString( DFA10_acceptS );
-   
-   static final short[] DFA10_special = DFA.unpackEncodedString( DFA10_specialS );
-   
-   static final short[][] DFA10_transition;
-   
-   static
-   {
-      int numStates = DFA10_transitionS.length;
-      DFA10_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA10_transition[ i ] = DFA.unpackEncodedString( DFA10_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA10 extends DFA
-   {
-      
-      public DFA10( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 10;
-         this.eot = DFA10_eot;
-         this.eof = DFA10_eof;
-         this.min = DFA10_min;
-         this.max = DFA10_max;
-         this.accept = DFA10_accept;
-         this.special = DFA10_special;
-         this.transition = DFA10_transition;
-      }
-      
-
-
-      public String getDescription()
-      {
-         return "57:1: HOURS : ( 'hours' | 'hour' | 'hrs' | 'hr' | 'h' );";
-      }
-   }
-   
-   static final String DFA11_eotS = "\1\uffff\1\3\2\uffff\1\7\4\uffff\1\13\2\uffff";
-   
-   static final String DFA11_eofS = "\14\uffff";
-   
-   static final String DFA11_minS = "\1\155\1\151\1\156\1\uffff\1\163\1\164\2\uffff\1\145\1\163\2\uffff";
-   
-   static final String DFA11_maxS = "\1\155\1\151\1\156\1\uffff\1\165\1\164\2\uffff\1\145\1\163\2\uffff";
-   
-   static final String DFA11_acceptS = "\3\uffff\1\5\2\uffff\1\3\1\4\2\uffff\1\1\1\2";
-   
-   static final String DFA11_specialS = "\14\uffff}>";
-   
-   static final String[] DFA11_transitionS =
-   { "\1\1", "\1\2", "\1\4", "", "\1\6\1\uffff\1\5", "\1\10", "", "", "\1\11",
-    "\1\12", "", "" };
-   
-   static final short[] DFA11_eot = DFA.unpackEncodedString( DFA11_eotS );
-   
-   static final short[] DFA11_eof = DFA.unpackEncodedString( DFA11_eofS );
-   
-   static final char[] DFA11_min = DFA.unpackEncodedStringToUnsignedChars( DFA11_minS );
-   
-   static final char[] DFA11_max = DFA.unpackEncodedStringToUnsignedChars( DFA11_maxS );
-   
-   static final short[] DFA11_accept = DFA.unpackEncodedString( DFA11_acceptS );
-   
-   static final short[] DFA11_special = DFA.unpackEncodedString( DFA11_specialS );
-   
-   static final short[][] DFA11_transition;
-   
-   static
-   {
-      int numStates = DFA11_transitionS.length;
-      DFA11_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA11_transition[ i ] = DFA.unpackEncodedString( DFA11_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA11 extends DFA
-   {
-      
-      public DFA11( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 11;
-         this.eot = DFA11_eot;
-         this.eof = DFA11_eof;
-         this.min = DFA11_min;
-         this.max = DFA11_max;
-         this.accept = DFA11_accept;
-         this.special = DFA11_special;
-         this.transition = DFA11_transition;
-      }
-      
-
-
-      public String getDescription()
-      {
-         return "59:1: MINUTES : ( 'minutes' | 'minute' | 'mins' | 'min' | 'm' );";
-      }
-   }
-   
-   static final String DFA12_eotS = "\1\uffff\1\3\2\uffff\1\7\4\uffff\1\13\2\uffff";
-   
-   static final String DFA12_eofS = "\14\uffff";
-   
-   static final String DFA12_minS = "\1\163\1\145\1\143\1\uffff\1\157\1\156\2\uffff\1\144\1\163\2\uffff";
-   
-   static final String DFA12_maxS = "\1\163\1\145\1\143\1\uffff\1\163\1\156\2\uffff\1\144\1\163\2\uffff";
-   
-   static final String DFA12_acceptS = "\3\uffff\1\5\2\uffff\1\3\1\4\2\uffff\1\1\1\2";
-   
-   static final String DFA12_specialS = "\14\uffff}>";
-   
-   static final String[] DFA12_transitionS =
-   { "\1\1", "\1\2", "\1\4", "", "\1\5\3\uffff\1\6", "\1\10", "", "", "\1\11",
-    "\1\12", "", "" };
-   
-   static final short[] DFA12_eot = DFA.unpackEncodedString( DFA12_eotS );
-   
-   static final short[] DFA12_eof = DFA.unpackEncodedString( DFA12_eofS );
-   
-   static final char[] DFA12_min = DFA.unpackEncodedStringToUnsignedChars( DFA12_minS );
-   
-   static final char[] DFA12_max = DFA.unpackEncodedStringToUnsignedChars( DFA12_maxS );
-   
-   static final short[] DFA12_accept = DFA.unpackEncodedString( DFA12_acceptS );
-   
-   static final short[] DFA12_special = DFA.unpackEncodedString( DFA12_specialS );
-   
-   static final short[][] DFA12_transition;
-   
-   static
-   {
-      int numStates = DFA12_transitionS.length;
-      DFA12_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA12_transition[ i ] = DFA.unpackEncodedString( DFA12_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA12 extends DFA
-   {
-      
-      public DFA12( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 12;
-         this.eot = DFA12_eot;
-         this.eof = DFA12_eof;
-         this.min = DFA12_min;
-         this.max = DFA12_max;
-         this.accept = DFA12_accept;
-         this.special = DFA12_special;
-         this.transition = DFA12_transition;
-      }
-      
-
-
-      public String getDescription()
-      {
-         return "61:1: SECONDS : ( 'seconds' | 'second' | 'secs' | 'sec' | 's' );";
-      }
-   }
-   
-   static final String DFA13_eotS = "\23\uffff\1\40\1\42\1\44\1\46\1\50\1\uffff\1\52\1\54\1\56\1\60"
-      + "\1\62\1\64\16\uffff\1\66\11\uffff";
-   
-   static final String DFA13_eofS = "\67\uffff";
-   
-   static final String DFA13_minS = "\2\141\1\145\1\141\1\160\1\145\1\143\1\157\1\145\1\156\1\154\1"
-      + "\142\2\162\1\147\1\160\1\164\1\166\1\143\1\165\1\145\1\171\1\162"
-      + "\1\143\1\uffff\1\151\1\165\1\164\1\157\2\145\16\uffff\1\145\11\uffff";
-   
-   static final String DFA13_maxS = "\1\163\1\165\1\145\1\141\1\165\1\145\1\143\1\157\1\145\2\156\1"
-      + "\142\1\171\1\162\1\147\1\160\1\164\1\166\1\143\1\165\1\145\1\171"
-      + "\1\162\1\143\1\uffff\1\151\1\165\1\164\1\157\2\145\16\uffff\1\145"
-      + "\11\uffff";
-   
-   static final String DFA13_acceptS = "\30\uffff\1\11\6\uffff\1\1\1\2\1\12\1\13\1\14\1\15\1\3\1\4\1\5"
-      + "\1\6\1\7\1\10\1\16\1\17\1\uffff\1\22\1\23\1\24\1\25\1\26\1\27\1"
-      + "\30\1\20\1\21";
-   
-   static final String DFA13_specialS = "\67\uffff}>";
-   
-   static final String[] DFA13_transitionS =
-   {
-    "\1\4\2\uffff\1\10\1\uffff\1\2\3\uffff\1\1\2\uffff\1\3\1\7\1"
-       + "\6\3\uffff\1\5", "\1\11\23\uffff\1\12", "\1\13", "\1\14",
-    "\1\15\4\uffff\1\16", "\1\17", "\1\20", "\1\21", "\1\22", "\1\23",
-    "\1\25\1\uffff\1\24", "\1\26", "\1\27\6\uffff\1\30", "\1\31", "\1\32",
-    "\1\33", "\1\34", "\1\35", "\1\36", "\1\37", "\1\41", "\1\43", "\1\45",
-    "\1\47", "", "\1\51", "\1\53", "\1\55", "\1\57", "\1\61", "\1\63", "", "",
-    "", "", "", "", "", "", "", "", "", "", "", "", "\1\65", "", "", "", "",
-    "", "", "", "", "" };
-   
-   static final short[] DFA13_eot = DFA.unpackEncodedString( DFA13_eotS );
-   
-   static final short[] DFA13_eof = DFA.unpackEncodedString( DFA13_eofS );
-   
-   static final char[] DFA13_min = DFA.unpackEncodedStringToUnsignedChars( DFA13_minS );
-   
-   static final char[] DFA13_max = DFA.unpackEncodedStringToUnsignedChars( DFA13_maxS );
-   
-   static final short[] DFA13_accept = DFA.unpackEncodedString( DFA13_acceptS );
-   
-   static final short[] DFA13_special = DFA.unpackEncodedString( DFA13_specialS );
-   
-   static final short[][] DFA13_transition;
-   
-   static
-   {
-      int numStates = DFA13_transitionS.length;
-      DFA13_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA13_transition[ i ] = DFA.unpackEncodedString( DFA13_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA13 extends DFA
-   {
-      
-      public DFA13( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 13;
-         this.eot = DFA13_eot;
-         this.eof = DFA13_eof;
-         this.min = DFA13_min;
-         this.max = DFA13_max;
-         this.accept = DFA13_accept;
-         this.special = DFA13_special;
-         this.transition = DFA13_transition;
-      }
-      
-
-
-      public String getDescription()
-      {
-         return "63:1: MONTH : ( 'january' | 'jan' | 'february' | 'feb' | 'march' | 'mar' | 'april' | 'apr' | 'may' | 'june' | 'jun' | 'july' | 'jul' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'november' | 'nov' | 'december' | 'dec' );";
-      }
-   }
-   
-   static final String DFA14_eotS = "\15\uffff\1\25\1\27\1\31\1\33\1\35\1\37\1\41\16\uffff";
-   
-   static final String DFA14_eofS = "\42\uffff";
-   
-   static final String DFA14_minS = "\1\146\1\157\1\150\1\145\1\162\1\141\1\156\1\145\1\165\1\144\1"
-      + "\151\1\164\1\156\1\144\1\163\1\162\1\156\1\144\1\165\1\144\16\uffff";
-   
-   static final String DFA14_maxS = "\1\167\1\157\1\165\1\145\1\162\1\165\1\156\1\145\1\165\1\144\1"
-      + "\151\1\164\1\156\1\144\1\163\1\162\1\156\1\144\1\165\1\144\16\uffff";
-   
-   static final String DFA14_acceptS = "\24\uffff\1\1\1\2\1\3\1\4\1\7\1\10\1\5\1\6\1\11\1\12\1\13\1\14"
-      + "\1\15\1\16";
-   
-   static final String DFA14_specialS = "\42\uffff}>";
-   
-   static final String[] DFA14_transitionS =
-   { "\1\4\6\uffff\1\1\5\uffff\1\5\1\2\2\uffff\1\3", "\1\6",
-    "\1\10\14\uffff\1\7", "\1\11", "\1\12", "\1\13\23\uffff\1\14", "\1\15",
-    "\1\16", "\1\17", "\1\20", "\1\21", "\1\22", "\1\23", "\1\24", "\1\26",
-    "\1\30", "\1\32", "\1\34", "\1\36", "\1\40", "", "", "", "", "", "", "",
-    "", "", "", "", "", "", "" };
-   
-   static final short[] DFA14_eot = DFA.unpackEncodedString( DFA14_eotS );
-   
-   static final short[] DFA14_eof = DFA.unpackEncodedString( DFA14_eofS );
-   
-   static final char[] DFA14_min = DFA.unpackEncodedStringToUnsignedChars( DFA14_minS );
-   
-   static final char[] DFA14_max = DFA.unpackEncodedStringToUnsignedChars( DFA14_maxS );
-   
-   static final short[] DFA14_accept = DFA.unpackEncodedString( DFA14_acceptS );
-   
-   static final short[] DFA14_special = DFA.unpackEncodedString( DFA14_specialS );
-   
-   static final short[][] DFA14_transition;
-   
-   static
-   {
-      int numStates = DFA14_transitionS.length;
-      DFA14_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA14_transition[ i ] = DFA.unpackEncodedString( DFA14_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA14 extends DFA
-   {
-      
-      public DFA14( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 14;
-         this.eot = DFA14_eot;
-         this.eof = DFA14_eof;
-         this.min = DFA14_min;
-         this.max = DFA14_max;
-         this.accept = DFA14_accept;
-         this.special = DFA14_special;
-         this.transition = DFA14_transition;
-      }
-      
-
-
-      public String getDescription()
-      {
-         return "68:1: WEEKDAY : ( 'monday' | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' | 'thursday' | 'thu' | 'friday' | 'fri' | 'saturday' | 'sat' | 'sunday' | 'sun' );";
-      }
-   }
-   
-   static final String DFA20_eotS = "\14\uffff";
-   
-   static final String DFA20_eofS = "\14\uffff";
-   
-   static final String DFA20_minS = "\1\145\1\uffff\1\145\1\uffff\1\145\7\uffff";
-   
-   static final String DFA20_maxS = "\1\164\1\uffff\1\167\1\uffff\1\151\7\uffff";
-   
-   static final String DFA20_acceptS = "\1\uffff\1\1\1\uffff\1\4\1\uffff\1\7\1\10\1\2\1\3\1\11\1\5\1\6";
-   
-   static final String DFA20_specialS = "\14\uffff}>";
-   
-   static final String[] DFA20_transitionS =
-   { "\1\5\1\3\7\uffff\1\6\1\1\3\uffff\1\4\1\2", "",
-    "\1\11\2\uffff\1\10\16\uffff\1\7", "", "\1\13\3\uffff\1\12", "", "", "",
-    "", "", "", "" };
-   
-   static final short[] DFA20_eot = DFA.unpackEncodedString( DFA20_eotS );
-   
-   static final short[] DFA20_eof = DFA.unpackEncodedString( DFA20_eofS );
-   
-   static final char[] DFA20_min = DFA.unpackEncodedStringToUnsignedChars( DFA20_minS );
-   
-   static final char[] DFA20_max = DFA.unpackEncodedStringToUnsignedChars( DFA20_maxS );
-   
-   static final short[] DFA20_accept = DFA.unpackEncodedString( DFA20_acceptS );
-   
-   static final short[] DFA20_special = DFA.unpackEncodedString( DFA20_specialS );
-   
-   static final short[][] DFA20_transition;
-   
-   static
-   {
-      int numStates = DFA20_transitionS.length;
-      DFA20_transition = new short[ numStates ][];
-      for ( int i = 0; i < numStates; i++ )
-      {
-         DFA20_transition[ i ] = DFA.unpackEncodedString( DFA20_transitionS[ i ] );
-      }
-   }
-   
-   
-   class DFA20 extends DFA
-   {
-      
-      public DFA20( BaseRecognizer recognizer )
-      {
-         this.recognizer = recognizer;
-         this.decisionNumber = 20;
-         this.eot = DFA20_eot;
-         this.eof = DFA20_eof;
-         this.min = DFA20_min;
-         this.max = DFA20_max;
-         this.accept = DFA20_accept;
-         this.special = DFA20_special;
-         this.transition = DFA20_transition;
-      }
-      
-
-
-      public String getDescription()
-      {
-         return "92:1: NUM_STR : ( 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' );";
-      }
-   }
-   
-   static final String DFA22_eotS = "\5\uffff\1\46\3\uffff\1\53\1\uffff\1\56\1\uffff\1\61\6\uffff\1"
-      + "\63\14\uffff\1\12\5\uffff\1\74\26\uffff\1\101\3\uffff";
-   
-   static final String DFA22_eofS = "\102\uffff";
-   
-   static final String DFA22_minS = "\1\11\1\144\2\145\1\uffff\1\155\1\143\1\uffff\1\151\1\141\1\uffff"
-      + "\1\141\2\145\2\uffff\1\145\3\uffff\1\141\3\uffff\1\u524d\1\uc804"
-      + "\2\uffff\1\166\1\157\1\uffff\1\144\1\uffff\1\145\1\uffff\1\141\3"
-      + "\uffff\1\145\2\uffff\1\143\1\uffff\1\144\1\156\1\uffff\1\144\15"
-      + "\uffff\2\144\3\uffff";
-   
-   static final String DFA22_maxS = "\1\uc624\1\157\1\167\1\162\1\uffff\1\165\1\156\1\uffff\1\156\1"
-      + "\165\1\uffff\1\157\1\153\1\145\2\uffff\1\162\3\uffff\1\141\3\uffff"
-      + "\1\u5f8c\1\ud6c4\2\uffff\1\170\1\167\1\uffff\1\156\1\uffff\1\165"
-      + "\1\uffff\1\163\3\uffff\1\145\2\uffff\1\166\1\uffff\2\156\1\uffff"
-      + "\1\145\15\uffff\1\156\1\144\3\uffff";
-   
-   static final String DFA22_acceptS = "\4\uffff\1\5\2\uffff\1\7\2\uffff\1\15\3\uffff\1\27\1\32\1\uffff"
-      + "\1\34\1\35\1\36\1\uffff\1\41\1\42\1\44\2\uffff\1\45\1\47\2\uffff"
-      + "\1\46\1\uffff\1\3\1\uffff\1\33\1\uffff\1\23\1\12\1\43\1\uffff\1"
-      + "\10\1\13\1\uffff\1\31\2\uffff\1\30\1\uffff\1\25\1\26\1\40\1\37\1"
-      + "\1\1\11\1\16\1\22\1\2\1\17\1\14\1\4\1\6\2\uffff\1\20\1\21\1\24";
-   
-   static final String DFA22_specialS = "\102\uffff}>";
+   static final String DFA22_specialS = "\16\uffff}>";
    
    static final String[] DFA22_transitionS =
-   {
-    "\2\33\2\uffff\1\33\22\uffff\1\33\13\uffff\1\25\1\24\1\22\1"
-       + "\21\12\26\1\23\5\uffff\1\4\40\uffff\1\5\2\uffff\1\15\1\10\1"
-       + "\20\1\uffff\1\16\1\7\1\17\2\uffff\1\13\1\1\1\6\1\32\1\uffff"
-       + "\1\12\1\11\1\2\2\uffff\1\14\1\uffff\1\3\u4d90\uffff\1\27\1\32"
-       + "\u053c\uffff\1\30\u0b2b\uffff\1\21\u0770\uffff\1\21\u0122\uffff"
-       + "\1\21\u5f1b\uffff\1\31",
-    "\1\12\1\34\3\uffff\1\36\5\uffff\1\35",
-    "\1\36\2\uffff\1\41\4\uffff\1\40\1\uffff\1\37\5\uffff\1\42"
-       + "\1\uffff\1\36", "\1\43\14\uffff\1\44", "",
-    "\1\27\1\45\1\uffff\1\17\3\uffff\1\4\1\17",
-    "\1\17\2\uffff\1\50\7\uffff\1\47", "", "\1\36\4\uffff\1\51",
-    "\1\42\3\uffff\1\52\3\uffff\1\36\12\uffff\1\12\1\42", "",
-    "\1\17\7\uffff\1\54\5\uffff\1\55", "\1\57\5\uffff\1\60", "\1\17", "", "",
-    "\1\17\11\uffff\1\36\2\uffff\1\42", "", "", "", "\1\62", "", "", "",
-    "\1\27\u0d3e\uffff\1\32", "\1\27\u0ebf\uffff\1\32", "", "",
-    "\1\64\1\uffff\1\65", "\1\67\6\uffff\1\17\1\66", "",
-    "\1\70\10\uffff\1\40\1\71", "", "\1\72\14\uffff\1\36\2\uffff\1\42", "",
-    "\1\44\21\uffff\1\73", "", "", "", "\1\36", "", "",
-    "\1\53\14\uffff\1\17\5\uffff\1\36", "", "\1\75\11\uffff\1\56", "\1\76", "",
-    "\1\42\1\60", "", "", "", "", "", "", "", "", "", "", "", "", "",
-    "\1\100\11\uffff\1\77", "\1\42", "", "", "" };
+   { "\1\1", "\1\2", "\1\3", "\1\6\21\uffff\1\5\1\4", "\1\10", "", "\1\11", "",
+    "\1\12", "\1\14", "", "", "", "" };
    
    static final short[] DFA22_eot = DFA.unpackEncodedString( DFA22_eotS );
    
@@ -3493,6 +3756,707 @@ public class DateTimeLexer extends Lexer
       
 
 
+      @Override
+      public String getDescription()
+      {
+         return "51:1: MONTHS : ( 'months' | 'month' | 'mons' | 'mon' | 'monat' | 'monate' );";
+      }
+   }
+   
+   static final String DFA23_eotS = "\3\uffff\1\7\5\uffff\1\14\3\uffff\1\17\2\uffff";
+   
+   static final String DFA23_eofS = "\20\uffff";
+   
+   static final String DFA23_minS = "\1\167\2\145\1\163\1\143\1\153\2\uffff\1\150\1\163\1\145\2\uffff"
+      + "\1\156\2\uffff";
+   
+   static final String DFA23_maxS = "\1\167\1\157\1\145\1\163\1\143\1\153\2\uffff\1\150\1\163\1\145"
+      + "\2\uffff\1\156\2\uffff";
+   
+   static final String DFA23_acceptS = "\6\uffff\1\3\1\4\3\uffff\1\1\1\2\1\uffff\1\6\1\5";
+   
+   static final String DFA23_specialS = "\20\uffff}>";
+   
+   static final String[] DFA23_transitionS =
+   { "\1\1", "\1\2\5\uffff\1\3\3\uffff\1\4", "\1\5", "\1\6", "\1\10", "\1\11",
+    "", "", "\1\12", "\1\13", "\1\15", "", "", "\1\16", "", "" };
+   
+   static final short[] DFA23_eot = DFA.unpackEncodedString( DFA23_eotS );
+   
+   static final short[] DFA23_eof = DFA.unpackEncodedString( DFA23_eofS );
+   
+   static final char[] DFA23_min = DFA.unpackEncodedStringToUnsignedChars( DFA23_minS );
+   
+   static final char[] DFA23_max = DFA.unpackEncodedStringToUnsignedChars( DFA23_maxS );
+   
+   static final short[] DFA23_accept = DFA.unpackEncodedString( DFA23_acceptS );
+   
+   static final short[] DFA23_special = DFA.unpackEncodedString( DFA23_specialS );
+   
+   static final short[][] DFA23_transition;
+   
+   static
+   {
+      int numStates = DFA23_transitionS.length;
+      DFA23_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA23_transition[ i ] = DFA.unpackEncodedString( DFA23_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA23 extends DFA
+   {
+      
+      public DFA23( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 23;
+         this.eot = DFA23_eot;
+         this.eof = DFA23_eof;
+         this.min = DFA23_min;
+         this.max = DFA23_max;
+         this.accept = DFA23_accept;
+         this.special = DFA23_special;
+         this.transition = DFA23_transition;
+      }
+      
+
+
+      @Override
+      public String getDescription()
+      {
+         return "53:1: WEEKS : ( 'weeks' | 'week' | 'wks' | 'wk' | 'woche' | 'wochen' );";
+      }
+   }
+   
+   static final String DFA24_eotS = "\1\uffff\1\4\4\uffff\1\11\1\13\4\uffff";
+   
+   static final String DFA24_eofS = "\14\uffff";
+   
+   static final String DFA24_minS = "\1\144\2\141\1\171\1\uffff\1\147\1\163\1\145\4\uffff";
+   
+   static final String DFA24_maxS = "\1\164\2\141\1\171\1\uffff\1\147\1\163\1\145\4\uffff";
+   
+   static final String DFA24_acceptS = "\4\uffff\1\3\3\uffff\1\1\1\2\1\5\1\4";
+   
+   static final String DFA24_specialS = "\14\uffff}>";
+   
+   static final String[] DFA24_transitionS =
+   { "\1\1\17\uffff\1\2", "\1\3", "\1\5", "\1\6", "", "\1\7", "\1\10", "\1\12",
+    "", "", "", "" };
+   
+   static final short[] DFA24_eot = DFA.unpackEncodedString( DFA24_eotS );
+   
+   static final short[] DFA24_eof = DFA.unpackEncodedString( DFA24_eofS );
+   
+   static final char[] DFA24_min = DFA.unpackEncodedStringToUnsignedChars( DFA24_minS );
+   
+   static final char[] DFA24_max = DFA.unpackEncodedStringToUnsignedChars( DFA24_maxS );
+   
+   static final short[] DFA24_accept = DFA.unpackEncodedString( DFA24_acceptS );
+   
+   static final short[] DFA24_special = DFA.unpackEncodedString( DFA24_specialS );
+   
+   static final short[][] DFA24_transition;
+   
+   static
+   {
+      int numStates = DFA24_transitionS.length;
+      DFA24_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA24_transition[ i ] = DFA.unpackEncodedString( DFA24_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA24 extends DFA
+   {
+      
+      public DFA24( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 24;
+         this.eot = DFA24_eot;
+         this.eof = DFA24_eof;
+         this.min = DFA24_min;
+         this.max = DFA24_max;
+         this.accept = DFA24_accept;
+         this.special = DFA24_special;
+         this.transition = DFA24_transition;
+      }
+      
+
+
+      @Override
+      public String getDescription()
+      {
+         return "55:1: DAYS : ( 'days' | 'day' | 'd' | 'tag' | 'tage' );";
+      }
+   }
+   
+   static final String DFA25_eotS = "\1\uffff\1\5\2\uffff\1\11\7\uffff\1\16\2\uffff";
+   
+   static final String DFA25_eofS = "\17\uffff";
+   
+   static final String DFA25_minS = "\1\150\1\157\1\164\1\165\1\163\1\uffff\1\144\1\162\4\uffff\1\163"
+      + "\2\uffff";
+   
+   static final String DFA25_maxS = "\1\163\1\162\1\164\1\165\1\163\1\uffff\1\165\1\162\4\uffff\1\163"
+      + "\2\uffff";
+   
+   static final String DFA25_acceptS = "\5\uffff\1\5\2\uffff\1\3\1\4\1\6\1\7\1\uffff\1\1\1\2";
+   
+   static final String DFA25_specialS = "\17\uffff}>";
+   
+   static final String[] DFA25_transitionS =
+   { "\1\1\12\uffff\1\2", "\1\3\2\uffff\1\4", "\1\6", "\1\7", "\1\10", "",
+    "\1\13\20\uffff\1\12", "\1\14", "", "", "", "", "\1\15", "", "" };
+   
+   static final short[] DFA25_eot = DFA.unpackEncodedString( DFA25_eotS );
+   
+   static final short[] DFA25_eof = DFA.unpackEncodedString( DFA25_eofS );
+   
+   static final char[] DFA25_min = DFA.unpackEncodedStringToUnsignedChars( DFA25_minS );
+   
+   static final char[] DFA25_max = DFA.unpackEncodedStringToUnsignedChars( DFA25_maxS );
+   
+   static final short[] DFA25_accept = DFA.unpackEncodedString( DFA25_acceptS );
+   
+   static final short[] DFA25_special = DFA.unpackEncodedString( DFA25_specialS );
+   
+   static final short[][] DFA25_transition;
+   
+   static
+   {
+      int numStates = DFA25_transitionS.length;
+      DFA25_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA25_transition[ i ] = DFA.unpackEncodedString( DFA25_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA25 extends DFA
+   {
+      
+      public DFA25( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 25;
+         this.eot = DFA25_eot;
+         this.eof = DFA25_eof;
+         this.min = DFA25_min;
+         this.max = DFA25_max;
+         this.accept = DFA25_accept;
+         this.special = DFA25_special;
+         this.transition = DFA25_transition;
+      }
+      
+
+
+      @Override
+      public String getDescription()
+      {
+         return "57:1: HOURS : ( 'hours' | 'hour' | 'hrs' | 'hr' | 'h' | 'stunden' | 'std' );";
+      }
+   }
+   
+   static final String DFA26_eotS = "\1\uffff\1\3\2\uffff\1\7\4\uffff\1\14\3\uffff";
+   
+   static final String DFA26_eofS = "\15\uffff";
+   
+   static final String DFA26_minS = "\1\155\1\151\1\156\1\uffff\1\163\1\164\2\uffff\1\145\1\156\3\uffff";
+   
+   static final String DFA26_maxS = "\1\155\1\151\1\156\1\uffff\1\165\1\164\2\uffff\1\145\1\163\3\uffff";
+   
+   static final String DFA26_acceptS = "\3\uffff\1\5\2\uffff\1\3\1\4\2\uffff\1\1\1\6\1\2";
+   
+   static final String DFA26_specialS = "\15\uffff}>";
+   
+   static final String[] DFA26_transitionS =
+   { "\1\1", "\1\2", "\1\4", "", "\1\6\1\uffff\1\5", "\1\10", "", "", "\1\11",
+    "\1\13\4\uffff\1\12", "", "", "" };
+   
+   static final short[] DFA26_eot = DFA.unpackEncodedString( DFA26_eotS );
+   
+   static final short[] DFA26_eof = DFA.unpackEncodedString( DFA26_eofS );
+   
+   static final char[] DFA26_min = DFA.unpackEncodedStringToUnsignedChars( DFA26_minS );
+   
+   static final char[] DFA26_max = DFA.unpackEncodedStringToUnsignedChars( DFA26_maxS );
+   
+   static final short[] DFA26_accept = DFA.unpackEncodedString( DFA26_acceptS );
+   
+   static final short[] DFA26_special = DFA.unpackEncodedString( DFA26_specialS );
+   
+   static final short[][] DFA26_transition;
+   
+   static
+   {
+      int numStates = DFA26_transitionS.length;
+      DFA26_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA26_transition[ i ] = DFA.unpackEncodedString( DFA26_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA26 extends DFA
+   {
+      
+      public DFA26( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 26;
+         this.eot = DFA26_eot;
+         this.eof = DFA26_eof;
+         this.min = DFA26_min;
+         this.max = DFA26_max;
+         this.accept = DFA26_accept;
+         this.special = DFA26_special;
+         this.transition = DFA26_transition;
+      }
+      
+
+
+      @Override
+      public String getDescription()
+      {
+         return "59:1: MINUTES : ( 'minutes' | 'minute' | 'mins' | 'min' | 'm' | 'minuten' );";
+      }
+   }
+   
+   static final String DFA27_eotS = "\1\uffff\1\3\2\uffff\1\10\7\uffff\1\17\3\uffff\1\22\2\uffff";
+   
+   static final String DFA27_eofS = "\23\uffff";
+   
+   static final String DFA27_minS = "\1\163\1\145\1\143\1\uffff\1\157\1\165\1\156\2\uffff\1\156\2\144"
+      + "\1\163\1\145\2\uffff\1\156\2\uffff";
+   
+   static final String DFA27_maxS = "\1\163\1\145\1\153\1\uffff\1\163\1\165\1\156\2\uffff\1\156\2\144"
+      + "\1\163\1\145\2\uffff\1\156\2\uffff";
+   
+   static final String DFA27_acceptS = "\3\uffff\1\5\3\uffff\1\3\1\4\5\uffff\1\1\1\2\1\uffff\1\7\1\6";
+   
+   static final String DFA27_specialS = "\23\uffff}>";
+   
+   static final String[] DFA27_transitionS =
+   { "\1\1", "\1\2", "\1\4\7\uffff\1\5", "", "\1\6\3\uffff\1\7", "\1\11",
+    "\1\12", "", "", "\1\13", "\1\14", "\1\15", "\1\16", "\1\20", "", "",
+    "\1\21", "", "" };
+   
+   static final short[] DFA27_eot = DFA.unpackEncodedString( DFA27_eotS );
+   
+   static final short[] DFA27_eof = DFA.unpackEncodedString( DFA27_eofS );
+   
+   static final char[] DFA27_min = DFA.unpackEncodedStringToUnsignedChars( DFA27_minS );
+   
+   static final char[] DFA27_max = DFA.unpackEncodedStringToUnsignedChars( DFA27_maxS );
+   
+   static final short[] DFA27_accept = DFA.unpackEncodedString( DFA27_acceptS );
+   
+   static final short[] DFA27_special = DFA.unpackEncodedString( DFA27_specialS );
+   
+   static final short[][] DFA27_transition;
+   
+   static
+   {
+      int numStates = DFA27_transitionS.length;
+      DFA27_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA27_transition[ i ] = DFA.unpackEncodedString( DFA27_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA27 extends DFA
+   {
+      
+      public DFA27( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 27;
+         this.eot = DFA27_eot;
+         this.eof = DFA27_eof;
+         this.min = DFA27_min;
+         this.max = DFA27_max;
+         this.accept = DFA27_accept;
+         this.special = DFA27_special;
+         this.transition = DFA27_transition;
+      }
+      
+
+
+      @Override
+      public String getDescription()
+      {
+         return "61:1: SECONDS : ( 'seconds' | 'second' | 'secs' | 'sec' | 's' | 'sekunde' | 'sekunden' );";
+      }
+   }
+   
+   static final String DFA28_eotS = "\25\uffff\1\45\1\50\1\53\1\55\1\60\2\uffff\1\62\1\64\1\66\1\70"
+      + "\1\72\1\74\1\76\1\100\21\uffff\1\104\17\uffff\1\110\3\uffff\1\113"
+      + "\2\uffff";
+   
+   static final String DFA28_eofS = "\114\uffff";
+   
+   static final String DFA28_minS = "\2\141\1\145\1\141\1\160\1\145\1\143\1\157\1\145\1\156\1\154\1"
+      + "\142\1\151\1\uffff\1\162\1\147\1\160\2\164\1\166\1\143\1\165\1\145"
+      + "\1\151\1\162\1\143\2\uffff\1\151\1\165\1\164\2\157\3\145\1\141\7"
+      + "\uffff\1\165\10\uffff\1\145\13\uffff\1\162\1\141\2\uffff\1\171\1"
+      + "\162\2\uffff\1\171\2\uffff";
+   
+   static final String DFA28_maxS = "\1\163\1\165\1\145\1\u00e4\1\165\1\145\1\153\1\157\1\145\2\156"
+      + "\1\142\1\171\1\uffff\1\162\1\147\1\160\2\164\1\166\1\172\1\165\1"
+      + "\151\1\171\1\162\1\172\2\uffff\1\151\1\165\1\164\2\157\3\145\1\141"
+      + "\7\uffff\1\165\10\uffff\1\145\13\uffff\1\162\1\141\2\uffff\1\171"
+      + "\1\162\2\uffff\1\171\2\uffff";
+   
+   static final String DFA28_acceptS = "\15\uffff\1\11\14\uffff\1\15\1\16\11\uffff\1\2\1\17\1\21\1\20\1"
+      + "\22\1\24\1\23\1\uffff\1\5\1\7\1\12\1\10\1\13\1\14\1\25\1\26\1\uffff"
+      + "\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\2\uffff"
+      + "\1\27\1\30\2\uffff\1\1\1\3\1\uffff\1\4\1\6";
+   
+   static final String DFA28_specialS = "\114\uffff}>";
+   
+   static final String[] DFA28_transitionS =
+   {
+    "\1\4\2\uffff\1\10\1\uffff\1\2\3\uffff\1\1\2\uffff\1\3\1\7\1"
+       + "\6\3\uffff\1\5", "\1\11\23\uffff\1\12", "\1\13",
+    "\1\14\u0082\uffff\1\15", "\1\16\4\uffff\1\17", "\1\20",
+    "\1\21\7\uffff\1\22", "\1\23", "\1\24", "\1\25", "\1\27\1\uffff\1\26",
+    "\1\30", "\1\33\10\uffff\1\31\6\uffff\1\32", "", "\1\34", "\1\35", "\1\36",
+    "\1\37", "\1\40", "\1\41", "\1\42\26\uffff\1\43", "\1\44",
+    "\1\46\3\uffff\1\47", "\1\52\17\uffff\1\51", "\1\54",
+    "\1\56\26\uffff\1\57", "", "", "\1\61", "\1\63", "\1\65", "\1\67", "\1\71",
+    "\1\73", "\1\75", "\1\77", "\1\101", "", "", "", "", "", "", "", "\1\102",
+    "", "", "", "", "", "", "", "", "\1\103", "", "", "", "", "", "", "", "",
+    "", "", "", "\1\105", "\1\106", "", "", "\1\107", "\1\111", "", "",
+    "\1\112", "", "" };
+   
+   static final short[] DFA28_eot = DFA.unpackEncodedString( DFA28_eotS );
+   
+   static final short[] DFA28_eof = DFA.unpackEncodedString( DFA28_eofS );
+   
+   static final char[] DFA28_min = DFA.unpackEncodedStringToUnsignedChars( DFA28_minS );
+   
+   static final char[] DFA28_max = DFA.unpackEncodedStringToUnsignedChars( DFA28_maxS );
+   
+   static final short[] DFA28_accept = DFA.unpackEncodedString( DFA28_acceptS );
+   
+   static final short[] DFA28_special = DFA.unpackEncodedString( DFA28_specialS );
+   
+   static final short[][] DFA28_transition;
+   
+   static
+   {
+      int numStates = DFA28_transitionS.length;
+      DFA28_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA28_transition[ i ] = DFA.unpackEncodedString( DFA28_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA28 extends DFA
+   {
+      
+      public DFA28( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 28;
+         this.eot = DFA28_eot;
+         this.eof = DFA28_eof;
+         this.min = DFA28_min;
+         this.max = DFA28_max;
+         this.accept = DFA28_accept;
+         this.special = DFA28_special;
+         this.transition = DFA28_transition;
+      }
+      
+
+
+      @Override
+      public String getDescription()
+      {
+         return "63:1: MONTH : ( 'january' | 'jan' | 'januar' | 'february' | 'feb' | 'februar' | 'march' | 'mar' | 'märz' | 'marz' | 'april' | 'apr' | 'may' | 'mai' | 'june' | 'jun' | 'juni' | 'july' | 'jul' | 'juli' | 'august' | 'aug' | 'september' | 'sept' | 'sep' | 'october' | 'oct' | 'oktober' | 'okt' | 'november' | 'nov' | 'december' | 'dec' | 'dezember' | 'dez' );";
+      }
+   }
+   
+   static final String DFA29_eotS = "\20\uffff\1\37\1\42\23\uffff";
+   
+   static final String DFA29_eofS = "\45\uffff";
+   
+   static final String DFA29_minS = "\1\144\1\151\1\150\1\151\1\uffff\1\162\1\141\1\156\1\164\2\uffff"
+      + "\1\145\1\146\1\145\1\155\1\uffff\1\156\1\144\1\uffff\1\150\21\uffff";
+   
+   static final String DFA29_maxS = "\1\167\1\157\1\165\1\157\1\uffff\1\162\1\165\2\164\2\uffff\1\167"
+      + "\1\156\1\163\1\164\1\uffff\1\156\1\164\1\uffff\1\164\21\uffff";
+   
+   static final String DFA29_acceptS = "\4\uffff\1\10\4\uffff\1\5\1\13\4\uffff\1\24\2\uffff\1\4\1\uffff"
+      + "\1\6\1\7\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\25\1\26\1\1\1"
+      + "\3\1\2\1\11\1\12";
+   
+   static final String DFA29_specialS = "\45\uffff}>";
+   
+   static final String[] DFA29_transitionS =
+   { "\1\3\1\uffff\1\5\6\uffff\1\1\5\uffff\1\6\1\2\2\uffff\1\4",
+    "\1\10\5\uffff\1\7", "\1\12\14\uffff\1\11", "\1\13\5\uffff\1\14", "",
+    "\1\15", "\1\16\15\uffff\1\20\5\uffff\1\17", "\1\21\5\uffff\1\22", "\1\23",
+    "", "", "\1\24\21\uffff\1\25", "\1\27\7\uffff\1\26",
+    "\1\31\3\uffff\1\30\11\uffff\1\32", "\1\34\5\uffff\1\35\1\33", "", "\1\36",
+    "\1\40\17\uffff\1\41", "", "\1\44\13\uffff\1\43", "", "", "", "", "", "",
+    "", "", "", "", "", "", "", "", "", "", "" };
+   
+   static final short[] DFA29_eot = DFA.unpackEncodedString( DFA29_eotS );
+   
+   static final short[] DFA29_eof = DFA.unpackEncodedString( DFA29_eofS );
+   
+   static final char[] DFA29_min = DFA.unpackEncodedStringToUnsignedChars( DFA29_minS );
+   
+   static final char[] DFA29_max = DFA.unpackEncodedStringToUnsignedChars( DFA29_maxS );
+   
+   static final short[] DFA29_accept = DFA.unpackEncodedString( DFA29_acceptS );
+   
+   static final short[] DFA29_special = DFA.unpackEncodedString( DFA29_specialS );
+   
+   static final short[][] DFA29_transition;
+   
+   static
+   {
+      int numStates = DFA29_transitionS.length;
+      DFA29_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA29_transition[ i ] = DFA.unpackEncodedString( DFA29_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA29 extends DFA
+   {
+      
+      public DFA29( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 29;
+         this.eot = DFA29_eot;
+         this.eof = DFA29_eof;
+         this.min = DFA29_min;
+         this.max = DFA29_max;
+         this.accept = DFA29_accept;
+         this.special = DFA29_special;
+         this.transition = DFA29_transition;
+      }
+      
+
+
+      @Override
+      public String getDescription()
+      {
+         return "76:1: WEEKDAY : ( 'monday' | 'mon' | 'montag' | 'mo' 'tuesday' | 'tue' | 'dienstag' | 'di' 'wednesday' | 'wed' | 'mittwoch' | 'mi' 'thursday' | 'thu' | 'donnerstag' | 'do' 'friday' | 'fri' | 'freitag' | 'fr' 'saturday' | 'sat' | 'samstag' | 'sa' 'sunday' | 'sun' | 'sonntag' | 'so' );";
+      }
+   }
+   
+   static final String DFA35_eotS = "\37\uffff";
+   
+   static final String DFA35_eofS = "\37\uffff";
+   
+   static final String DFA35_minS = "\1\141\1\uffff\1\145\1\151\1\145\1\151\2\145\12\uffff\1\145\1\143"
+      + "\1\147\12\uffff";
+   
+   static final String DFA35_maxS = "\1\172\1\uffff\1\167\1\u00fc\3\151\1\167\12\uffff\1\170\1\166\1"
+      + "\156\12\uffff";
+   
+   static final String DFA35_acceptS = "\1\uffff\1\1\6\uffff\1\15\1\16\1\23\1\2\1\3\1\12\1\4\1\5\1\17\1"
+      + "\20\3\uffff\1\11\1\24\1\14\1\25\1\6\1\22\1\7\1\21\1\10\1\13";
+   
+   static final String DFA35_specialS = "\37\uffff}>";
+   
+   static final String[] DFA35_transitionS =
+   {
+    "\1\12\2\uffff\1\10\1\5\1\3\7\uffff\1\6\1\1\3\uffff\1\4\1\2"
+       + "\1\uffff\1\11\3\uffff\1\7", "", "\1\15\2\uffff\1\14\16\uffff\1\13",
+    "\1\17\5\uffff\1\16\5\uffff\1\21\u0086\uffff\1\20", "\1\23\3\uffff\1\22",
+    "\1\24", "\1\26\3\uffff\1\25", "\1\30\21\uffff\1\27", "", "", "", "", "",
+    "", "", "", "", "", "\1\32\22\uffff\1\31", "\1\34\22\uffff\1\33",
+    "\1\35\6\uffff\1\36", "", "", "", "", "", "", "", "", "", "" };
+   
+   static final short[] DFA35_eot = DFA.unpackEncodedString( DFA35_eotS );
+   
+   static final short[] DFA35_eof = DFA.unpackEncodedString( DFA35_eofS );
+   
+   static final char[] DFA35_min = DFA.unpackEncodedStringToUnsignedChars( DFA35_minS );
+   
+   static final char[] DFA35_max = DFA.unpackEncodedStringToUnsignedChars( DFA35_maxS );
+   
+   static final short[] DFA35_accept = DFA.unpackEncodedString( DFA35_acceptS );
+   
+   static final short[] DFA35_special = DFA.unpackEncodedString( DFA35_specialS );
+   
+   static final short[][] DFA35_transition;
+   
+   static
+   {
+      int numStates = DFA35_transitionS.length;
+      DFA35_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA35_transition[ i ] = DFA.unpackEncodedString( DFA35_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA35 extends DFA
+   {
+      
+      public DFA35( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 35;
+         this.eot = DFA35_eot;
+         this.eof = DFA35_eof;
+         this.min = DFA35_min;
+         this.max = DFA35_max;
+         this.accept = DFA35_accept;
+         this.special = DFA35_special;
+         this.transition = DFA35_transition;
+      }
+      
+
+
+      @Override
+      public String getDescription()
+      {
+         return "104:1: NUM_STR : ( 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten' | 'eins' | 'zwei' | 'drei' | 'vier' | 'fünf' | 'funf' | 'sechs' | 'sieben' | 'acht' | 'neun' | 'zehn' );";
+      }
+   }
+   
+   static final String DFA37_eotS = "\3\uffff\1\51\1\55\3\uffff\1\62\3\uffff\1\46\1\uffff\1\74\7\uffff"
+      + "\1\102\16\uffff\1\17\13\uffff\1\114\2\uffff\1\114\5\uffff\1\17\16"
+      + "\uffff\1\121\3\uffff\1\107\1\74\11\uffff";
+   
+   static final String DFA37_eofS = "\130\uffff";
+   
+   static final String DFA37_minS = "\1\11\1\144\1\141\1\145\1\141\1\145\2\uffff\1\143\1\155\1\143\1"
+      + "\uffff\1\141\1\151\1\141\1\uffff\1\141\2\145\3\uffff\1\141\3\uffff"
+      + "\1\u524d\1\uc804\3\uffff\1\165\1\145\1\uffff\1\157\1\144\1\uffff"
+      + "\1\145\2\uffff\1\165\1\uffff\1\156\1\144\2\uffff\1\141\2\uffff\1"
+      + "\144\2\uffff\1\145\1\uffff\1\143\1\163\1\145\1\uffff\1\144\1\143"
+      + "\2\uffff\1\150\1\144\10\uffff\1\164\2\144\1\150\1\uffff\1\156\1"
+      + "\150\1\145\1\141\3\uffff\1\141\1\uffff\1\147\1\uffff";
+   
+   static final String DFA37_maxS = "\1\uc624\1\u00e4\1\167\1\145\1\u00e4\1\162\2\uffff\1\165\2\156"
+      + "\1\uffff\1\162\1\156\1\165\1\uffff\1\165\1\157\1\u00fc\3\uffff\1"
+      + "\141\3\uffff\1\u5f8c\1\ud6c4\3\uffff\1\170\1\156\1\uffff\1\167\1"
+      + "\156\1\uffff\1\165\2\uffff\1\165\1\uffff\2\164\2\uffff\1\163\2\uffff"
+      + "\1\144\2\uffff\1\145\1\uffff\1\172\1\171\1\167\1\uffff\1\165\1\166"
+      + "\2\uffff\1\156\1\145\10\uffff\2\164\1\156\1\164\1\uffff\1\156\1"
+      + "\150\1\145\1\150\3\uffff\1\167\1\uffff\1\147\1\uffff";
+   
+   static final String DFA37_acceptS = "\6\uffff\1\4\1\5\3\uffff\1\7\3\uffff\1\15\3\uffff\1\34\1\35\1\36"
+      + "\1\uffff\1\41\1\42\1\44\2\uffff\1\45\1\46\1\47\2\uffff\1\11\2\uffff"
+      + "\1\3\1\uffff\1\26\1\33\1\uffff\1\27\2\uffff\1\32\1\30\1\uffff\1"
+      + "\23\1\6\1\uffff\1\43\1\12\1\uffff\1\10\3\uffff\1\13\2\uffff\1\31"
+      + "\1\16\2\uffff\1\25\1\40\1\37\1\1\1\22\1\2\1\17\1\14\4\uffff\1\6"
+      + "\4\uffff\1\24\1\20\1\21\1\uffff\1\2\1\uffff\1\21";
+   
+   static final String DFA37_specialS = "\130\uffff}>";
+   
+   static final String[] DFA37_transitionS =
+   {
+    "\2\36\2\uffff\1\36\22\uffff\1\36\13\uffff\1\27\1\26\1\24\1"
+       + "\23\12\30\1\25\5\uffff\1\7\40\uffff\1\10\2\uffff\1\14\1\15\1"
+       + "\22\1\6\1\3\1\13\1\20\2\uffff\1\4\1\1\1\12\1\34\1\uffff\1\17"
+       + "\1\16\1\2\1\11\1\35\1\21\1\uffff\1\5\1\35\u4d8f\uffff\1\31\1"
+       + "\34\u053c\uffff\1\32\u0b2b\uffff\1\23\u0770\uffff\1\23\u0122"
+       + "\uffff\1\23\u5f1b\uffff\1\33",
+    "\1\17\1\37\3\uffff\1\40\5\uffff\1\42\164\uffff\1\41",
+    "\1\46\3\uffff\1\35\2\uffff\1\45\4\uffff\1\44\1\uffff\1\43"
+       + "\5\uffff\1\47\1\uffff\1\35",
+    "\1\50",
+    "\1\54\7\uffff\1\53\5\uffff\1\52\164\uffff\1\54",
+    "\1\56\14\uffff\1\57",
+    "",
+    "",
+    "\1\35\11\uffff\1\60\1\61\1\uffff\1\54\3\uffff\1\7\1\54",
+    "\1\7\1\63",
+    "\1\54\2\uffff\1\65\4\uffff\1\54\2\uffff\1\64",
+    "",
+    "\1\67\3\uffff\1\66\3\uffff\1\70\5\uffff\1\47\2\uffff\1\35",
+    "\1\35\4\uffff\1\71",
+    "\1\47\3\uffff\1\73\3\uffff\1\35\5\uffff\1\47\4\uffff\1\72" + "\1\47",
+    "",
+    "\1\76\3\uffff\1\75\17\uffff\1\54",
+    "\1\77\5\uffff\1\100\3\uffff\1\100",
+    "\1\54\3\uffff\1\35\5\uffff\1\35\2\uffff\1\47\2\uffff\1\35"
+       + "\u0086\uffff\1\35", "", "", "", "\1\101", "", "", "",
+    "\1\31\u0d3e\uffff\1\34", "\1\31\u0ebf\uffff\1\34", "", "", "",
+    "\1\35\1\103\1\uffff\1\41", "\1\103\10\uffff\1\35", "",
+    "\1\104\6\uffff\1\54\1\75", "\1\105\10\uffff\1\44\1\106", "",
+    "\1\107\14\uffff\1\35\2\uffff\1\47", "", "", "\1\110", "",
+    "\1\111\3\uffff\1\44\1\uffff\1\47", "\1\112\11\uffff\1\55\5\uffff\1\113",
+    "", "", "\1\57\21\uffff\1\6", "", "", "\1\63", "", "", "\1\35", "",
+    "\1\54\16\uffff\1\107\1\65\6\uffff\1\54", "\1\107\5\uffff\1\46",
+    "\1\115\21\uffff\1\47", "", "\1\51\20\uffff\1\51",
+    "\1\116\7\uffff\1\74\4\uffff\1\54\5\uffff\1\35", "", "",
+    "\1\57\5\uffff\1\54", "\1\47\1\100", "", "", "", "", "", "", "", "",
+    "\1\117", "\1\47\17\uffff\1\120", "\1\123\11\uffff\1\122",
+    "\1\47\13\uffff\1\124", "", "\1\47", "\1\35", "\1\125",
+    "\1\47\6\uffff\1\121", "", "", "", "\1\126\3\uffff\1\122\21\uffff\1\47",
+    "", "\1\127", "" };
+   
+   static final short[] DFA37_eot = DFA.unpackEncodedString( DFA37_eotS );
+   
+   static final short[] DFA37_eof = DFA.unpackEncodedString( DFA37_eofS );
+   
+   static final char[] DFA37_min = DFA.unpackEncodedStringToUnsignedChars( DFA37_minS );
+   
+   static final char[] DFA37_max = DFA.unpackEncodedStringToUnsignedChars( DFA37_maxS );
+   
+   static final short[] DFA37_accept = DFA.unpackEncodedString( DFA37_acceptS );
+   
+   static final short[] DFA37_special = DFA.unpackEncodedString( DFA37_specialS );
+   
+   static final short[][] DFA37_transition;
+   
+   static
+   {
+      int numStates = DFA37_transitionS.length;
+      DFA37_transition = new short[ numStates ][];
+      for ( int i = 0; i < numStates; i++ )
+      {
+         DFA37_transition[ i ] = DFA.unpackEncodedString( DFA37_transitionS[ i ] );
+      }
+   }
+   
+   
+   class DFA37 extends DFA
+   {
+      
+      public DFA37( BaseRecognizer recognizer )
+      {
+         this.recognizer = recognizer;
+         this.decisionNumber = 37;
+         this.eot = DFA37_eot;
+         this.eof = DFA37_eof;
+         this.min = DFA37_min;
+         this.max = DFA37_max;
+         this.accept = DFA37_accept;
+         this.special = DFA37_special;
+         this.transition = DFA37_transition;
+      }
+      
+
+
+      @Override
       public String getDescription()
       {
          return "1:1: Tokens : ( NEVER | TODAY | TOMORROW | YESTERDAY | AT | ON | IN | OF | NEXT | AND | END | THE | STs | NOW | TONIGHT | MIDNIGHT | MIDDAY | NOON | YEARS | MONTHS | WEEKS | DAYS | HOURS | MINUTES | SECONDS | MONTH | WEEKDAY | DATE_SEP | DOT | COLON | MINUS | MINUS_A | COMMA | INT | A | AM | PM | NUM_STR | WS );";

@@ -10,8 +10,24 @@ var hdpiFolder = null;
 
 if ( preProdFolder != null && startFolder != null )
 {
-	exportFolder( startFolder,
-					  ( ( startFolder.name != preProdFolder.name ) ? startFolder.name : null ) );
+	var prefix = ( startFolder.name != preProdFolder.name ) ? startFolder.name : null;
+	
+	// If we have a start folder != preproduction folder, then we walk up the
+	// path tree and append the folder names until we reach preproduction folder.
+	if ( prefix != null )
+	{
+		var currentFolder = startFolder;
+		var parent = currentFolder.parent;
+		
+		while( parent.name != preProdFolder.name )
+		{			
+			prefix = parent.name + "_" + currentFolder.name;
+			currentFolder = parent;
+			parent = currentFolder.parent;
+		}
+	}
+	
+	exportFolder( startFolder, prefix );
 	
 	alert( "Finished!" );
 }

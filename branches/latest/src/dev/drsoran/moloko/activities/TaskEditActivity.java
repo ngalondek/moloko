@@ -331,7 +331,7 @@ public class TaskEditActivity extends Activity
 
    public void onEstimate( View v )
    {
-      new EstimatePickerDialog( this ).show();
+      new EstimatePickerDialog( this, estimateEdit ).show();
    }
    
 

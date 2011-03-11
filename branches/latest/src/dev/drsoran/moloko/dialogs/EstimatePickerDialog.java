@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils.EstimateStruct;
@@ -46,6 +47,8 @@ public class EstimatePickerDialog
    
    private final Context context;
    
+   private final EditText widget;
+   
    private AlertDialog impl;
    
    private WheelView numberWheel;
@@ -54,16 +57,17 @@ public class EstimatePickerDialog
    
    
 
-   public EstimatePickerDialog( Context context )
+   public EstimatePickerDialog( Context context, EditText widget )
    {
-      this( context, 1, UNIT_DAY );
+      this( context, widget, 1, UNIT_DAY );
    }
    
 
 
-   public EstimatePickerDialog( Context context, long millis )
+   public EstimatePickerDialog( Context context, EditText widget, long millis )
    {
       this.context = context;
+      this.widget = widget;
       
       final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( millis );
       
@@ -93,9 +97,11 @@ public class EstimatePickerDialog
    
 
 
-   public EstimatePickerDialog( Context context, int initialValue, int unit )
+   public EstimatePickerDialog( Context context, EditText widget,
+      int initialValue, int unit )
    {
       this.context = context;
+      this.widget = widget;
       
       init( context, initialValue, unit );
    }
@@ -133,8 +139,8 @@ public class EstimatePickerDialog
          }
       } );
       
-      // TODO: Set thumb icon
-      this.impl = new AlertDialog.Builder( context ).setTitle( R.string.dlg_estimate_picker_title )
+      this.impl = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_thumb )
+                                                    .setTitle( R.string.dlg_estimate_picker_title )
                                                     .setView( view )
                                                     .setPositiveButton( R.string.btn_ok,
                                                                         null )

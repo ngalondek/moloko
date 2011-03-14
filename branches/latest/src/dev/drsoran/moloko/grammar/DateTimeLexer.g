@@ -3,6 +3,7 @@ lexer grammar DateTimeLexer;
 options
 {
    language=Java;
+   filter=true;
 }
 
 @header

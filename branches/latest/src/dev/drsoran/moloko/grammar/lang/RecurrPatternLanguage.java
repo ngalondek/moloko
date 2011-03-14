@@ -22,18 +22,13 @@
 
 package dev.drsoran.moloko.grammar.lang;
 
-import java.io.IOException;
 import java.text.ParseException;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
 import android.util.Log;
 
 
-public class RecurrPatternLanguage extends Language< String, String >
+public class RecurrPatternLanguage extends Language
 {
    private final static String TAG = "Moloko."
       + RecurrPatternLanguage.class.getSimpleName();
@@ -115,138 +110,12 @@ public class RecurrPatternLanguage extends Language< String, String >
    
 
 
-   @Override
-   protected void fromResources( Resources resources, int resId ) throws ParseException
-   {
-      final XmlResourceParser xmlParser = resources.getXml( resId );
-      
-      if ( xmlParser == null )
-         throw new ParseException( "Missing resource for resource ID " + resId,
-                                   -1 );
-      try
-      {
-         int eventType = xmlParser.getEventType();
-         
-         while ( eventType != XmlPullParser.END_DOCUMENT )
-         {
-            switch ( eventType )
-            {
-               case XmlPullParser.START_TAG:
-                  final String name = xmlParser.getName();
-                  
-                  if ( name.equalsIgnoreCase( "entry" ) )
-                     readSimpleEntry( xmlParser );
-                  
-                  else if ( name.equalsIgnoreCase( "entryPl" ) )
-                     readPluralEntry( xmlParser );
-                  
-                  break;
-               
-               default :
-                  break;
-            }
-            
-            eventType = xmlParser.next();
-         }
-      }
-      catch ( XmlPullParserException e )
-      {
-         throw new ParseException( e.getMessage(), e.getLineNumber() );
-      }
-      catch ( IOException e )
-      {
-         throw new ParseException( e.getMessage(), xmlParser.getLineNumber() );
-      }
-      
-      xmlParser.close();
-   }
-   
-
-
-   private void readPluralEntry( XmlResourceParser xmlParser ) throws ParseException,
-                                                              XmlPullParserException,
-                                                              IOException
-
-   {
-      final int attribCount = xmlParser.getAttributeCount();
-      
-      if ( attribCount < 2 )
-         throw new ParseException( "Unexpected number of attributes in 'entryPl' tag. "
-                                      + attribCount,
-                                   xmlParser.getLineNumber() );
-      
-      String key = null;
-      
-      for ( int i = 0; i < attribCount; ++i )
-      {
-         final String attribName = xmlParser.getAttributeName( i );
-         
-         if ( attribName.equalsIgnoreCase( "key" ) )
-         {
-            key = xmlParser.getAttributeValue( i );
-         }
-         else
-         {
-            final String value = xmlParser.getAttributeValue( i );
-            
-            dictionary.put( key + "_" + attribName, value );
-         }
-      }
-   }
-   
-
-
-   private void readSimpleEntry( XmlResourceParser xmlParser ) throws ParseException
-   {
-      final int attribCount = xmlParser.getAttributeCount();
-      
-      if ( attribCount < 2 )
-         throw new ParseException( "Unexpected number of attributes in 'entry' tag. "
-                                      + attribCount,
-                                   xmlParser.getLineNumber() );
-      
-      String key = null;
-      String value = null;
-      
-      for ( int i = 0; i < attribCount; ++i )
-      {
-         final String attribName = xmlParser.getAttributeName( i );
-         
-         if ( attribName.equalsIgnoreCase( "key" ) )
-         {
-            key = xmlParser.getAttributeValue( i );
-         }
-         else if ( attribName.equalsIgnoreCase( "value" ) )
-         {
-            value = xmlParser.getAttributeValue( i );
-         }
-         else
-            throw new ParseException( "Unknown attribute " + attribName,
-                                      xmlParser.getLineNumber() );
-      }
-      
-      if ( key != null && value != null )
-         dictionary.put( key, value );
-      else
-         throw new ParseException( "Missing attribute",
-                                   xmlParser.getLineNumber() );
-   }
-   
-
-
    private void addPlural( StringBuilder sb,
                            String prefix,
                            String unit,
                            String quantity )
    {
-      String res = null;
-      
-      final String key = prefix + "_" + unit + "_";
-      
-      res = dictionary.get( key + quantity );
-      
-      if ( res == null )
-         res = dictionary.get( key + "n" );
+      final String res = getPluralString( prefix, unit, quantity );
       
       if ( res != null )
       {

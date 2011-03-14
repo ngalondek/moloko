@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeParser.g 2011-03-11 14:41:04
+// $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeParser.g 2011-03-14 14:28:22
 
 package dev.drsoran.moloko.grammar;
 
@@ -129,7 +129,6 @@ public class TimeParser extends Parser
    
 
 
-   @Override
    public String[] getTokenNames()
    {
       return TimeParser.tokenNames;
@@ -137,7 +136,6 @@ public class TimeParser extends Parser
    
 
 
-   @Override
    public String getGrammarFileName()
    {
       return "F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeParser.g";

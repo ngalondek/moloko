@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -23,21 +23,14 @@
 package dev.drsoran.moloko.grammar.lang;
 
 import java.text.ParseException;
-
-import org.xmlpull.v1.XmlPullParser;
+import java.util.List;
 
 import android.content.res.Resources;
 
 
-public class NumberLookupLanguage extends Language
+public class AutoComplLanguage extends Language
 {
-   @SuppressWarnings( "unused" )
-   private final static String TAG = "Moloko."
-      + NumberLookupLanguage.class.getSimpleName();
-   
-   
-
-   public NumberLookupLanguage( Resources resources, int langResId )
+   public AutoComplLanguage( Resources resources, int langResId )
       throws ParseException
    {
       fromResources( resources, langResId );
@@ -45,33 +38,17 @@ public class NumberLookupLanguage extends Language
    
 
 
-   public Integer get( String key )
+   public List< String > getSuggestions( int state )
    {
-      Integer res = null;
-      
-      final String value = super.getString( key );
-      
-      if ( value != null )
-      {
-         res = Integer.parseInt( value );
-      }
-      
-      return res;
+      return super.getStings( String.valueOf( state ) );
    }
    
 
 
-   @Override
-   protected void validate( XmlPullParser xmlParser, String key, String value ) throws ParseException
+   public List< String > getSuggestions( int state, String unit, int quantity )
    {
-      try
-      {
-         Integer.parseInt( value );
-      }
-      catch ( NumberFormatException e )
-      {
-         throw new ParseException( "Expected Integer type attribute @line "
-            + xmlParser.getLineNumber(), xmlParser.getLineNumber() );
-      }
+      return super.getPluralStings( String.valueOf( state ),
+                                    unit,
+                                    String.valueOf( quantity ) );
    }
 }

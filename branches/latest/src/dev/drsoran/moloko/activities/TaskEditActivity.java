@@ -44,8 +44,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -56,13 +56,14 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.layouts.WrappingLayout;
+import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
@@ -420,6 +421,25 @@ public class TaskEditActivity extends Activity
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.TAGS,
                                                                 tags ) );
+         }
+         
+         // Estimate
+         {
+            final String estimateStr = Strings.nullIfEmpty( estimateEdit.getText()
+                                                                        .toString() );
+            if ( SyncUtils.hasChanged( task.getEstimate(), estimateStr ) )
+            {
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.ESTIMATE,
+                                                                estimateStr ) );
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.ESTIMATE_MILLIS,
+                                                                !TextUtils.isEmpty( estimateStr )
+                                                                                                 ? RtmDateTimeParsing.parseEstimated( estimateStr )
+                                                                                                 : -1 ) );
+            }
          }
          
          // Location

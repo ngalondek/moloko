@@ -27,6 +27,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import android.text.TextUtils;
+
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskSeries;
@@ -43,6 +45,7 @@ import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -273,6 +276,22 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                                          taskSeries.getId(),
                                                          task.getId() ),
                               properties.getModification( RawTasks.COMPLETED_DATE ) );
+         }
+         
+         // Estimate
+         if ( SyncUtils.getSyncDirection( properties,
+                                          RawTasks.ESTIMATE,
+                                          serverElement.task.getEstimate(),
+                                          task.getEstimate(),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            operation.add( timeline.tasks_setEstimate( taskSeries.getListId(),
+                                                       taskSeries.getId(),
+                                                       task.getId(),
+                                                       TextUtils.isEmpty( task.getEstimate() )
+                                                                                              ? Strings.EMPTY_STRING
+                                                                                              : task.getEstimate() ),
+                           properties.getModification( TaskSeries.LOCATION_ID ) );
          }
       }
       

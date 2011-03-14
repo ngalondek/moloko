@@ -102,6 +102,27 @@ public class RtmTimeline
    
 
 
+   public TimeLineMethod< RtmTaskList > tasks_setEstimate( final String listId,
+                                                           final String taskSeriesId,
+                                                           final String taskId,
+                                                           final String estimate )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setName( id,
+                                          listId,
+                                          taskSeriesId,
+                                          taskId,
+                                          estimate );
+         }
+      };
+   }
+   
+
+
    public TimeLineMethod< RtmTaskList > tasks_setName( final String listId,
                                                        final String taskSeriesId,
                                                        final String taskId,

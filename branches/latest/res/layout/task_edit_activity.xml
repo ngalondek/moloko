@@ -169,8 +169,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/task_edit_tags_layout"
             android:layout_alignLeft="@id/task_edit_desc"
-            android:layout_marginTop="10dip"
-            android:visibility="gone">
+            android:layout_marginTop="10dip">
 
             <View
                android:id="@+id/task_edit_due_top_line"
@@ -200,8 +199,7 @@
                   android:id="@+id/task_edit_due_text"
                   android:layout_width="0dip"
                   android:layout_height="wrap_content"
-                  android:layout_weight="1"
-                  android:text="Due_Date"
+                  android:layout_weight="1"                  
                   android:hint="@string/task_edit_due_never"
                   android:inputType="textNoSuggestions|number"
                   android:imeOptions="actionDone"

@@ -33,9 +33,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -46,8 +44,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -58,8 +56,8 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.layouts.WrappingLayout;
+import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -340,33 +338,6 @@ public class TaskEditActivity extends Activity
          public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
          {
             return onEstimateEdit( actionId );
-         }
-      } );
-      estimateEdit.addTextChangedListener( new TextWatcher()
-      {
-         public void onTextChanged( CharSequence s,
-                                    int start,
-                                    int before,
-                                    int count )
-         {
-         }
-         
-
-
-         public void beforeTextChanged( CharSequence s,
-                                        int start,
-                                        int count,
-                                        int after )
-         {
-         }
-         
-
-
-         public void afterTextChanged( Editable s )
-         {
-            final List< String > suggs = RtmDateTimeParsing.getEstimatedSuggestions( TaskEditActivity.this,
-                                                                                     s.toString() );
-            Log.d( TAG, suggs.toString() );
          }
       } );
    }

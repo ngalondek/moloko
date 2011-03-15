@@ -39,8 +39,22 @@ options
       this.lang = lang;
    }
 
+
+   private void setSuggId( int id )
+   {
+      quantifier = -1;
+      suggId = id;
+   }
+
+
+   private void setSuggId( int id, Token t ) throws RecognitionException
+   {
+      qty( t );
+      suggId = id;
+   }
+
    
-   Token qty( Token t ) throws RecognitionException
+   private Token qty( Token t ) throws RecognitionException
    {
       try
       {
@@ -53,6 +67,15 @@ options
       
       return t;
    }
+   
+   
+   private List< String > getSuggestions()
+   {
+      if ( quantifier != -1 )
+         return lang.getSuggestions( suggId, "units", quantifier );
+      else
+         return lang.getSuggestions( suggId );
+   }
 }
 
 /** RULES **/
@@ -60,50 +83,50 @@ options
 suggestTime returns [ List< String > suggs ]
    @init
    {
-      suggId = 0;
+      setSuggId( 0 );
    }
-   : (AT | COMMA)?   {
-                        suggId = 1;
+   @after
+   {
+      suggs = getSuggestions();
+   }
+   : (AT | COMMA)?   {                        
+                        setSuggId( 1 );
                      }
                      time_in_words
                    | v=INT {
-                              qty( v );
-                              suggId = 2;
+                              setSuggId( 2, v );
                            } (    
                                   time_colon_spec 
                                 | time_in_units (time_naturalspec time_naturalspec?)?
                              )
-   {
-      suggs = lang.getSuggestions( suggId, "units", quantifier );
-   }
    ;
    catch[ RecognitionException e ]
    {
-      suggs = lang.getSuggestions( suggId, "units", quantifier );
+      suggs = getSuggestions();
    }
    
 suggTimeEstimate returns[ List< String > suggs ]
+   @after
+   {
+      suggs = getSuggestions();
+   }
    : v=INT (
              {
-                qty( v );
-                suggId = 10;
+                setSuggId( 10, v );
              }
              (DAYS | time_in_units)
            )
-     {
-       suggId = 12;
+     {     
+       setSuggId( 12 );
      }
      ((COMMA | AND) {
-                       suggId = 11;
+                       setSuggId( 11 );
                     }
                     time_naturalspec)*
-     {
-        suggs  = lang.getSuggestions( suggId, "units", quantifier );
-     }
    ;
    catch[ RecognitionException e ]
    {
-      suggs  = lang.getSuggestions( suggId, "units", quantifier );
+      suggs = getSuggestions();
    }
 
 time_in_words

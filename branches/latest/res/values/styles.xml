@@ -163,7 +163,30 @@
       <item
          name="android:textStyle">italic|bold</item>
    </style>
-
+   
+   <!-- ************ -->
+   <!-- Dialogs      -->
+   
+   <style
+      name="Dlg_DuePicker_Value"
+      parent="@android:style/TextAppearance.Large">
+      <item
+         name="android:textColor">@color/app_dlg_due_picker_value</item>
+      <item
+         name="android:textStyle">bold</item>
+      <item
+         name="android:singleLine">true</item>
+   </style>
+   
+   <style
+      name="Dlg_DuePicker_Weekday"
+      parent="@android:style/TextAppearance.Medium">
+      <item
+         name="android:textColor">@color/app_dlg_due_picker_weekday</item>
+      <item
+         name="android:singleLine">true</item>
+   </style>
+   
    <!-- ************ -->
    <!-- Notification -->
 

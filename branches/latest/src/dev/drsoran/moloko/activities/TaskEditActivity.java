@@ -44,8 +44,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -53,11 +53,12 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
+import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -372,6 +373,13 @@ public class TaskEditActivity extends Activity
       }
       
       return false;
+   }
+   
+
+
+   public void onDue( View v )
+   {
+      new DuePickerDialog( this, dueEdit ).show();
    }
    
 

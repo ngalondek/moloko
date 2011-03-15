@@ -24,7 +24,7 @@ package dev.drsoran.moloko.dialogs;
 
 import java.util.Calendar;
 
-import kankan.wheel.widget.OnWheelChangedListener;
+import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import android.app.AlertDialog;
@@ -44,9 +44,6 @@ import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 public class DuePickerDialog
 {
-   
-   private final Context context;
-   
    private final EditText widget;
    
    private AlertDialog impl;
@@ -57,13 +54,16 @@ public class DuePickerDialog
    
    private WheelView dateYearWheel;
    
+   private WheelView wheelWithWeekdays;
+   
    private Calendar calendar;
+   
+   private int dateFormat;
    
    
 
    public DuePickerDialog( Context context, EditText widget )
    {
-      this.context = context;
       this.widget = widget;
       
       if ( widget != null )
@@ -71,7 +71,10 @@ public class DuePickerDialog
                                                                 .toString() );
       
       if ( calendar == null )
+      {
          calendar = DateParser.getCalendar();
+         calendar.setTimeInMillis( System.currentTimeMillis() );
+      }
       
       init( context );
    }
@@ -85,7 +88,9 @@ public class DuePickerDialog
       
       final Settings settings = MolokoApp.getSettings();
       
-      if ( settings.getDateformat() == Settings.DATEFORMAT_EU )
+      dateFormat = settings.getDateformat();
+      
+      if ( dateFormat == Settings.DATEFORMAT_EU )
       {
          dateDayWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_1 );
          dateMonthWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_2 );
@@ -96,22 +101,48 @@ public class DuePickerDialog
          dateMonthWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_1 );
       }
       
+      initDaysWheel( context );
+      initMonthsWheel( context );
+      
       dateYearWheel = (WheelView) view.findViewById( R.id.due_dlg_year_wheel );
       dateYearWheel.setViewAdapter( new NumericWheelAdapter( context,
                                                              calendar.getMinimum( Calendar.YEAR ),
                                                              calendar.getMaximum( Calendar.YEAR ) ) );
+      dateYearWheel.setCurrentItem( calendar.get( Calendar.YEAR ) - 1 );
       
-      dateMonthWheel.addChangingListener( new OnWheelChangedListener()
+      dateMonthWheel.addScrollingListener( new OnWheelScrollListener()
       {
-         public void onChanged( WheelView wheel, int oldValue, int newValue )
+         public void onScrollingStarted( WheelView wheel )
          {
+         }
+         
+
+
+         public void onScrollingFinished( WheelView wheel )
+         {
+            getCalendar();
+            initDaysWheel( context );
+            
+            if ( dateDayWheel != wheelWithWeekdays )
+               initMonthsWheel( context );
          }
       } );
       
-      dateYearWheel.addChangingListener( new OnWheelChangedListener()
+      dateYearWheel.addScrollingListener( new OnWheelScrollListener()
       {
-         public void onChanged( WheelView wheel, int oldValue, int newValue )
+         public void onScrollingStarted( WheelView wheel )
          {
+         }
+         
+
+
+         public void onScrollingFinished( WheelView wheel )
+         {
+            getCalendar();
+            initDaysWheel( context );
+            
+            if ( dateDayWheel != wheelWithWeekdays )
+               initMonthsWheel( context );
          }
       } );
       
@@ -161,6 +192,42 @@ public class DuePickerDialog
 
    public Calendar getCalendar()
    {
+      calendar.set( Calendar.DAY_OF_MONTH, dateDayWheel.getCurrentItem() + 1 );
+      calendar.set( Calendar.MONTH, dateMonthWheel.getCurrentItem() );
+      calendar.set( Calendar.YEAR, dateYearWheel.getCurrentItem() + 1 );
+      
       return calendar;
+   }
+   
+
+
+   private void initDaysWheel( Context context )
+   {
+      dateDayWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
+                                                                   calendar,
+                                                                   Calendar.DAY_OF_MONTH,
+                                                                   "d",
+                                                                   dateFormat == Settings.DATEFORMAT_EU
+                                                                                                       ? DateFormatWheelTextAdapter.TYPE_SHOW_WEEKDAY
+                                                                                                       : DateFormatWheelTextAdapter.TYPE_DEFAULT,
+                                                                   DateFormatWheelTextAdapter.FLAG_MARK_TODAY ) );
+      dateDayWheel.setCurrentItem( calendar.get( Calendar.DAY_OF_MONTH ) - 1 );
+      wheelWithWeekdays = dateDayWheel;
+   }
+   
+
+
+   private void initMonthsWheel( Context context )
+   {
+      dateMonthWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
+                                                                     calendar,
+                                                                     Calendar.MONTH,
+                                                                     "MMM",
+                                                                     dateFormat == Settings.DATEFORMAT_US
+                                                                                                         ? DateFormatWheelTextAdapter.TYPE_SHOW_WEEKDAY
+                                                                                                         : DateFormatWheelTextAdapter.TYPE_DEFAULT,
+                                                                     0 ) );
+      dateMonthWheel.setCurrentItem( calendar.get( Calendar.MONTH ) );
+      wheelWithWeekdays = dateDayWheel;
    }
 }

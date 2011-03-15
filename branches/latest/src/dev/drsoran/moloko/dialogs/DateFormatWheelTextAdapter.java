@@ -22,31 +22,129 @@
 
 package dev.drsoran.moloko.dialogs;
 
-import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import kankan.wheel.widget.adapters.AbstractWheelAdapter;
 import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import dev.drsoran.moloko.R;
 
 
-public class DateFormatWheelTextAdapter extends AbstractWheelTextAdapter
+public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
 {
+   public final static int TYPE_DEFAULT = 0;
    
-   public DateFormatWheelTextAdapter( Context context, String dateFormat )
+   public final static int TYPE_SHOW_WEEKDAY = 1;
+   
+   public final static int FLAG_MARK_TODAY = 1 << 0;
+   
+   private final LayoutInflater inflater;
+   
+   private final int type;
+   
+   private final Calendar calendar = Calendar.getInstance();
+   
+   private final int calField;
+   
+   private final SimpleDateFormat format;
+   
+   private final SimpleDateFormat weekDayFormat;
+   
+   private final int min;
+   
+   private final int max;
+   
+   private final int flags;
+   
+   
+
+   public DateFormatWheelTextAdapter( Context context, Calendar cal,
+      int calField, String dateFormat, int type, int flags )
    {
-      super( context );
+      this.calendar.setTimeInMillis( cal.getTimeInMillis() );
+      this.calField = calField;
+      this.type = type;
+      this.format = new SimpleDateFormat( dateFormat, Locale.getDefault() );
+      
+      if ( type == TYPE_SHOW_WEEKDAY )
+         this.weekDayFormat = new SimpleDateFormat( "EE", Locale.getDefault() );
+      else
+         this.weekDayFormat = null;
+      
+      this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+      
+      this.min = calendar.getActualMinimum( calField );
+      this.max = calendar.getActualMaximum( calField );
+      this.flags = flags;
    }
    
 
 
-   @Override
-   protected CharSequence getItemText( int index )
+   public View getItem( int index, View convertView, ViewGroup parent )
    {
-      return null;
+      View view = convertView;
+      
+      if ( view == null )
+      {
+         switch ( type )
+         {
+            case TYPE_DEFAULT:
+               view = inflater.inflate( R.layout.due_picker_dialog_type_default,
+                                        parent,
+                                        false );
+               break;
+            case TYPE_SHOW_WEEKDAY:
+               view = inflater.inflate( R.layout.due_picker_dialog_type_weekday,
+                                        parent,
+                                        false );
+               break;
+            default :
+               break;
+         }
+      }
+      
+      if ( view != null )
+      {
+         if ( calField != Calendar.DAY_OF_MONTH )
+            calendar.set( calField, index );
+         else
+            calendar.set( calField, index + 1 );
+         
+         final Date date = calendar.getTime();
+         
+         final TextView value = (TextView) view.findViewById( R.id.due_dlg_value );
+         value.setText( format.format( date ) );
+         
+         // if ( ( flags & FLAG_MARK_TODAY ) == FLAG_MARK_TODAY )
+         // if ( MolokoDateUtils.isToday( date.getTime() ) )
+         // value.setTextColor( R.color.app_dlg_due_picker_today );
+         // else
+         // value.setTextColor( R.color.app_dlg_due_picker_value );
+         
+         switch ( type )
+         {
+            case TYPE_SHOW_WEEKDAY:
+               final TextView weekday = (TextView) view.findViewById( R.id.due_dlg_weekday );
+               weekday.setText( weekDayFormat.format( date ) );
+               break;
+            default :
+               break;
+         }
+      }
+      
+      return view;
    }
    
 
 
    public int getItemsCount()
    {
-      return 0;
+      return ( max - min ) + 1;
    }
-   
 }

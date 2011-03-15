@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/due_dlg_type_weekday"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
+
+   <TextView
+      android:id="@+id/due_dlg_weekday"
+      style="@style/Dlg_DuePicker_Weekday"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
+      android:layout_marginLeft="2dip"
+      android:text="wkd" />
+
+   <TextView      
+      android:id="@+id/due_dlg_value"
+      style="@style/Dlg_DuePicker_Value"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentRight="true"      
+      android:layout_centerVertical="true"
+      android:text="value" />
+</RelativeLayout>

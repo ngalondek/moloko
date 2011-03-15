@@ -54,8 +54,6 @@ public class DuePickerDialog
    
    private WheelView dateYearWheel;
    
-   private WheelView wheelWithWeekdays;
-   
    private Calendar calendar;
    
    private int dateFormat;
@@ -122,9 +120,6 @@ public class DuePickerDialog
          {
             getCalendar();
             initDaysWheel( context );
-            
-            if ( dateDayWheel != wheelWithWeekdays )
-               initMonthsWheel( context );
          }
       } );
       
@@ -140,9 +135,6 @@ public class DuePickerDialog
          {
             getCalendar();
             initDaysWheel( context );
-            
-            if ( dateDayWheel != wheelWithWeekdays )
-               initMonthsWheel( context );
          }
       } );
       
@@ -192,9 +184,18 @@ public class DuePickerDialog
 
    public Calendar getCalendar()
    {
-      calendar.set( Calendar.DAY_OF_MONTH, dateDayWheel.getCurrentItem() + 1 );
+      // First set the calendar to the first. Otherwise we get a wrap-around
+      // if we set the month and the day is beyond the maximum.
+      calendar.set( Calendar.DAY_OF_MONTH, 1 );
       calendar.set( Calendar.MONTH, dateMonthWheel.getCurrentItem() );
       calendar.set( Calendar.YEAR, dateYearWheel.getCurrentItem() + 1 );
+      
+      int day = dateDayWheel.getCurrentItem() + 1;
+      
+      if ( calendar.getActualMaximum( Calendar.DAY_OF_MONTH ) < day )
+         day = calendar.getActualMaximum( Calendar.DAY_OF_MONTH );
+      
+      calendar.set( Calendar.DAY_OF_MONTH, day );
       
       return calendar;
    }
@@ -207,12 +208,9 @@ public class DuePickerDialog
                                                                    calendar,
                                                                    Calendar.DAY_OF_MONTH,
                                                                    "d",
-                                                                   dateFormat == Settings.DATEFORMAT_EU
-                                                                                                       ? DateFormatWheelTextAdapter.TYPE_SHOW_WEEKDAY
-                                                                                                       : DateFormatWheelTextAdapter.TYPE_DEFAULT,
+                                                                   DateFormatWheelTextAdapter.TYPE_SHOW_WEEKDAY,
                                                                    DateFormatWheelTextAdapter.FLAG_MARK_TODAY ) );
       dateDayWheel.setCurrentItem( calendar.get( Calendar.DAY_OF_MONTH ) - 1 );
-      wheelWithWeekdays = dateDayWheel;
    }
    
 
@@ -223,11 +221,8 @@ public class DuePickerDialog
                                                                      calendar,
                                                                      Calendar.MONTH,
                                                                      "MMM",
-                                                                     dateFormat == Settings.DATEFORMAT_US
-                                                                                                         ? DateFormatWheelTextAdapter.TYPE_SHOW_WEEKDAY
-                                                                                                         : DateFormatWheelTextAdapter.TYPE_DEFAULT,
+                                                                     DateFormatWheelTextAdapter.TYPE_DEFAULT,
                                                                      0 ) );
       dateMonthWheel.setCurrentItem( calendar.get( Calendar.MONTH ) );
-      wheelWithWeekdays = dateDayWheel;
    }
 }

@@ -201,7 +201,7 @@
                   android:layout_height="wrap_content"
                   android:layout_weight="1"                  
                   android:hint="@string/task_edit_due_never"
-                  android:inputType="textNoSuggestions|number"
+                  android:inputType="text"
                   android:imeOptions="actionDone"
                   android:selectAllOnFocus="true" />
 

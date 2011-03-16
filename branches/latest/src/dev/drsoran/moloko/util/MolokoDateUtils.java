@@ -150,6 +150,19 @@ public class MolokoDateUtils
    
 
 
+   public final static Calendar clearTime( Calendar cal )
+   {
+      cal.clear( Calendar.HOUR );
+      cal.clear( Calendar.HOUR_OF_DAY );
+      cal.clear( Calendar.MINUTE );
+      cal.clear( Calendar.SECOND );
+      cal.clear( Calendar.MILLISECOND );
+      
+      return cal;
+   }
+   
+
+
    public final static String formatDate( long millis, int dateStyle )
    {
       final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
@@ -248,8 +261,8 @@ public class MolokoDateUtils
          {
             if ( timeSeconds >= 3600 * 24 )
             {
-               days = timeSeconds / 3600 * 24;
-               timeSeconds -= hours * 3600 * 24;
+               days = timeSeconds / 3600 / 24;
+               timeSeconds -= days * 3600 * 24;
             }
             
             if ( timeSeconds >= 3600 )

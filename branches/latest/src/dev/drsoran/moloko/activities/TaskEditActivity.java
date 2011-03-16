@@ -23,7 +23,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -53,6 +53,9 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
@@ -82,6 +85,12 @@ public class TaskEditActivity extends Activity
    private class MutableTask
    {
       public final List< String > tags = new ArrayList< String >();
+      
+      public long estimateMillis = -1;
+      
+      public long due = -1;
+      
+      public boolean hasDueTime = false;
    }
    
    private final static String TAG = "Moloko."
@@ -124,21 +133,19 @@ public class TaskEditActivity extends Activity
    
    private EditText dueEdit;
    
-   private ImageButton duePickerButton;
-   
    private EditText recurrEdit;
    
    private ImageButton recurrPickerButton;
    
    private EditText estimateEdit;
    
-   private ImageButton estimatePickerButton;
-   
    private TitleWithSpinnerLayout location;
    
    private TitleWithEditTextLayout url;
    
    private final ModificationSet modifications = new ModificationSet();
+   
+   private AbstractPickerDialog pickerDlg;
    
    
 
@@ -188,11 +195,9 @@ public class TaskEditActivity extends Activity
                tagsContainer = (WrappingLayout) taskContainer.findViewById( R.id.task_edit_tags_container );
                changeTagsButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_change );
                dueEdit = (EditText) taskContainer.findViewById( R.id.task_edit_due_text );
-               duePickerButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_due_btn_picker );
                recurrEdit = (EditText) taskContainer.findViewById( R.id.task_edit_recurrence_text );
                recurrPickerButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_recurrence_btn_picker );
                estimateEdit = (EditText) taskContainer.findViewById( R.id.task_edit_estim_text );
-               estimatePickerButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_estim_btn_picker );
                location = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_location );
                url = (TitleWithEditTextLayout) taskContainer.findViewById( R.id.task_edit_url );
             }
@@ -203,6 +208,7 @@ public class TaskEditActivity extends Activity
             }
             
             initializeMutableTask();
+            
             initializeListSpinner();
             initializeLocationSpinner();
          }
@@ -227,6 +233,13 @@ public class TaskEditActivity extends Activity
    private void initializeMutableTask()
    {
       mutableTask.tags.addAll( task.getTags() );
+      mutableTask.estimateMillis = task.getEstimateMillis();
+      
+      if ( task.getDue() != null )
+      {
+         mutableTask.due = task.getDue().getTime();
+         mutableTask.hasDueTime = task.hasDueTime();
+      }
    }
    
 
@@ -283,7 +296,25 @@ public class TaskEditActivity extends Activity
          refreshLocationSpinner();
          refreshUrl();
          
-         setEstimateEditListener();
+         dueEdit.setOnEditorActionListener( new OnEditorActionListener()
+         {
+            public boolean onEditorAction( TextView v,
+                                           int actionId,
+                                           KeyEvent event )
+            {
+               return onDueEdit( actionId );
+            }
+         } );
+         
+         estimateEdit.setOnEditorActionListener( new OnEditorActionListener()
+         {
+            public boolean onEditorAction( TextView v,
+                                           int actionId,
+                                           KeyEvent event )
+            {
+               return onEstimateEdit( actionId );
+            }
+         } );
       }
    }
    
@@ -327,20 +358,24 @@ public class TaskEditActivity extends Activity
 
    public void onEstimate( View v )
    {
-      new EstimatePickerDialog( this, estimateEdit ).show();
-   }
-   
-
-
-   private void setEstimateEditListener()
-   {
-      estimateEdit.setOnEditorActionListener( new OnEditorActionListener()
+      pickerDlg = new EstimatePickerDialog( this, mutableTask.estimateMillis );
+      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
       {
-         public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
+         public void onDialogClosed( CloseReason reason,
+                                     Object value,
+                                     Object... extras )
          {
-            return onEstimateEdit( actionId );
+            pickerDlg = null;
+            
+            if ( reason == CloseReason.OK )
+            {
+               mutableTask.estimateMillis = (Long) value;
+               
+               refreshEstimate();
+            }
          }
       } );
+      pickerDlg.show();
    }
    
 
@@ -358,8 +393,8 @@ public class TaskEditActivity extends Activity
             
             if ( millis != -1 )
             {
-               estimateEdit.setText( MolokoDateUtils.formatEstimated( TaskEditActivity.this,
-                                                                      millis ) );
+               mutableTask.estimateMillis = millis;
+               refreshEstimate();
             }
             else
             {
@@ -379,7 +414,59 @@ public class TaskEditActivity extends Activity
 
    public void onDue( View v )
    {
-      new DuePickerDialog( this, dueEdit ).show();
+      pickerDlg = new DuePickerDialog( this, mutableTask.due );
+      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
+      {
+         public void onDialogClosed( CloseReason reason,
+                                     Object value,
+                                     Object... extras )
+         {
+            pickerDlg = null;
+            
+            if ( reason == CloseReason.OK )
+            {
+               mutableTask.due = (Long) value;
+               mutableTask.hasDueTime = (Boolean) extras[ 0 ];
+               
+               refreshDue();
+            }
+         }
+      } );
+      pickerDlg.show();
+   }
+   
+
+
+   public boolean onDueEdit( int actionId )
+   {
+      if ( actionId == EditorInfo.IME_ACTION_DONE
+         | actionId == EditorInfo.IME_NULL )
+      {
+         final String dueStr = dueEdit.getText().toString();
+         
+         if ( !TextUtils.isEmpty( dueStr ) )
+         {
+            final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( dueStr );
+            
+            if ( cal != null )
+            {
+               mutableTask.hasDueTime = cal.isSet( Calendar.HOUR_OF_DAY );
+               mutableTask.due = cal.getTimeInMillis();
+               
+               refreshDue();
+            }
+            else
+            {
+               Toast.makeText( this,
+                               getString( R.string.task_edit_validate_due,
+                                          dueStr ),
+                               Toast.LENGTH_LONG ).show();
+               return true;
+            }
+         }
+      }
+      
+      return false;
    }
    
 
@@ -438,20 +525,18 @@ public class TaskEditActivity extends Activity
          
          // Estimate
          {
-            final String estimateStr = Strings.nullIfEmpty( estimateEdit.getText()
-                                                                        .toString() );
-            if ( SyncUtils.hasChanged( task.getEstimate(), estimateStr ) )
+            if ( SyncUtils.hasChanged( task.getEstimateMillis(),
+                                       mutableTask.estimateMillis ) )
             {
                modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.ESTIMATE,
-                                                                estimateStr ) );
+                                                                Strings.nullIfEmpty( estimateEdit.getText()
+                                                                                                 .toString() ) ) );
                modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                                                           task.getId() ),
                                                                 RawTasks.ESTIMATE_MILLIS,
-                                                                !TextUtils.isEmpty( estimateStr )
-                                                                                                 ? RtmDateTimeParsing.parseEstimated( estimateStr )
-                                                                                                 : -1 ) );
+                                                                mutableTask.estimateMillis ) );
             }
          }
          
@@ -659,15 +744,13 @@ public class TaskEditActivity extends Activity
 
    private void refreshDue()
    {
-      final Date due = task.getDue();
-      
-      if ( due == null )
+      if ( mutableTask.due == -1 )
       {
          dueEdit.setText( null );
       }
-      else if ( task.hasDueTime() )
+      else if ( mutableTask.hasDueTime )
       {
-         dueEdit.setText( MolokoDateUtils.formatDateTime( due.getTime(),
+         dueEdit.setText( MolokoDateUtils.formatDateTime( mutableTask.due,
                                                           MolokoDateUtils.FORMAT_NUMERIC
                                                              | MolokoDateUtils.FORMAT_WITH_YEAR
                                                              | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
@@ -675,7 +758,7 @@ public class TaskEditActivity extends Activity
       }
       else
       {
-         dueEdit.setText( MolokoDateUtils.formatDate( due.getTime(),
+         dueEdit.setText( MolokoDateUtils.formatDate( mutableTask.due,
                                                       MolokoDateUtils.FORMAT_NUMERIC
                                                          | MolokoDateUtils.FORMAT_WITH_YEAR
                                                          | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
@@ -707,16 +790,14 @@ public class TaskEditActivity extends Activity
 
    private void refreshEstimate()
    {
-      final String estimate = task.getEstimate();
-      
-      if ( TextUtils.isEmpty( estimate ) )
+      if ( mutableTask.estimateMillis == -1 )
       {
          estimateEdit.setText( null );
       }
       else
       {
          estimateEdit.setText( MolokoDateUtils.formatEstimated( this,
-                                                                task.getEstimateMillis() ) );
+                                                                mutableTask.estimateMillis ) );
       }
    }
    
@@ -736,17 +817,32 @@ public class TaskEditActivity extends Activity
       {
          Toast.makeText( this,
                          R.string.task_edit_validate_empty_name,
-                         Toast.LENGTH_SHORT ).show();
+                         Toast.LENGTH_LONG ).show();
          nameEdit.requestFocus();
          return false;
       }
       
-      // Estimation
+      // Due
+      if ( !TextUtils.isEmpty( dueEdit.getText() ) )
+      {
+         if ( RtmDateTimeParsing.parseDateTimeSpec( dueEdit.getText()
+                                                           .toString() ) == null )
+         {
+            Toast.makeText( this,
+                            getString( R.string.task_edit_validate_due,
+                                       dueEdit.getText() ),
+                            Toast.LENGTH_LONG ).show();
+            dueEdit.requestFocus();
+            return false;
+         }
+      }
+      
+      // Estimate
       if ( !TextUtils.isEmpty( estimateEdit.getText() ) )
       {
          final long millis = RtmDateTimeParsing.parseEstimated( estimateEdit.getText()
                                                                             .toString() );
-         if ( millis != -1 )
+         if ( millis == -1 )
          {
             Toast.makeText( this,
                             getString( R.string.task_edit_validate_estimate,

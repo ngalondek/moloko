@@ -33,19 +33,14 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
-public class DuePickerDialog
+public class DuePickerDialog extends AbstractPickerDialog
 {
-   private final EditText widget;
-   
    private AlertDialog impl;
    
    private WheelView dateDayWheel;
@@ -54,25 +49,26 @@ public class DuePickerDialog
    
    private WheelView dateYearWheel;
    
-   private Calendar calendar;
+   private final Calendar calendar;
    
    private int dateFormat;
    
    
 
-   public DuePickerDialog( Context context, EditText widget )
+   public DuePickerDialog( Context context )
    {
-      this.widget = widget;
-      
-      if ( widget != null )
-         calendar = RtmDateTimeParsing.parseDateTimeSpec( widget.getText()
-                                                                .toString() );
-      
-      if ( calendar == null )
-      {
-         calendar = DateParser.getCalendar();
-         calendar.setTimeInMillis( System.currentTimeMillis() );
-      }
+      this( context, System.currentTimeMillis() );
+   }
+   
+
+
+   public DuePickerDialog( Context context, long initial )
+   {
+      this.calendar = Calendar.getInstance( MolokoApp.getSettings()
+                                                     .getTimezone() );
+      this.calendar.setTimeInMillis( initial != -1 ? initial
+                                                  : System.currentTimeMillis() );
+      MolokoDateUtils.clearTime( calendar );
       
       init( context );
    }
@@ -147,29 +143,21 @@ public class DuePickerDialog
                                                                            public void onClick( DialogInterface dialog,
                                                                                                 int which )
                                                                            {
-                                                                              if ( widget != null )
-                                                                              {
-                                                                                 if ( calendar.isSet( Calendar.HOUR_OF_DAY ) )
-                                                                                 {
-                                                                                    widget.setText( MolokoDateUtils.formatDateTime( calendar.getTimeInMillis(),
-                                                                                                                                    MolokoDateUtils.FORMAT_NUMERIC
-                                                                                                                                       | MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                                                                                       | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
-                                                                                                                                       | MolokoDateUtils.FORMAT_ABR_ALL ) );
-                                                                                 }
-                                                                                 else
-                                                                                 {
-                                                                                    widget.setText( MolokoDateUtils.formatDate( calendar.getTimeInMillis(),
-                                                                                                                                MolokoDateUtils.FORMAT_NUMERIC
-                                                                                                                                   | MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                                                                                   | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
-                                                                                                                                   | MolokoDateUtils.FORMAT_ABR_ALL ) );
-                                                                                 }
-                                                                              }
+                                                                              notifyOnDialogCloseListener( CloseReason.OK,
+                                                                                                           getCalendar().getTimeInMillis(),
+                                                                                                           Boolean.FALSE );
                                                                            }
                                                                         } )
                                                     .setNegativeButton( R.string.btn_cancel,
-                                                                        null )
+                                                                        new OnClickListener()
+                                                                        {
+                                                                           public void onClick( DialogInterface dialog,
+                                                                                                int which )
+                                                                           {
+                                                                              notifyOnDialogCloseListener( CloseReason.CANCELED,
+                                                                                                           null );
+                                                                           }
+                                                                        } )
                                                     .create();
    }
    
@@ -190,7 +178,7 @@ public class DuePickerDialog
       calendar.set( Calendar.MONTH, dateMonthWheel.getCurrentItem() );
       calendar.set( Calendar.YEAR, dateYearWheel.getCurrentItem() + 1 );
       
-      int day = dateDayWheel.getCurrentItem() + 1;
+      int day = dateDayWheel.getCurrentItem();
       
       if ( calendar.getActualMaximum( Calendar.DAY_OF_MONTH ) < day )
          day = calendar.getActualMaximum( Calendar.DAY_OF_MONTH );
@@ -210,7 +198,7 @@ public class DuePickerDialog
                                                                    "d",
                                                                    DateFormatWheelTextAdapter.TYPE_SHOW_WEEKDAY,
                                                                    DateFormatWheelTextAdapter.FLAG_MARK_TODAY ) );
-      dateDayWheel.setCurrentItem( calendar.get( Calendar.DAY_OF_MONTH ) - 1 );
+      dateDayWheel.setCurrentItem( calendar.get( Calendar.DAY_OF_MONTH ) );
    }
    
 

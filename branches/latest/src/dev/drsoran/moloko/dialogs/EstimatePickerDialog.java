@@ -33,14 +33,12 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils.EstimateStruct;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
-public class EstimatePickerDialog
+public class EstimatePickerDialog extends AbstractPickerDialog
 {
    public final static int UNIT_DAY = 0;
    
@@ -50,8 +48,6 @@ public class EstimatePickerDialog
    
    private final Context context;
    
-   private final EditText widget;
-   
    private AlertDialog impl;
    
    private WheelView numberWheel;
@@ -60,21 +56,21 @@ public class EstimatePickerDialog
    
    
 
-   public EstimatePickerDialog( Context context, EditText widget )
+   public EstimatePickerDialog( Context context )
+   {
+      this( context, -1 );
+   }
+   
+
+
+   public EstimatePickerDialog( Context context, long initial )
    {
       this.context = context;
-      this.widget = widget;
       
-      long millis = -1;
-      
-      if ( widget != null )
-         millis = RtmDateTimeParsing.parseEstimated( widget.getText()
-                                                           .toString() );
-      
-      final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( millis );
+      final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( initial );
       
       int value = 1;
-      int unit = 0;
+      int unit = UNIT_DAY;
       
       if ( estimateStruct.days > 0 )
       {
@@ -138,15 +134,20 @@ public class EstimatePickerDialog
                                                                            public void onClick( DialogInterface dialog,
                                                                                                 int which )
                                                                            {
-                                                                              if ( widget != null )
-                                                                              {
-                                                                                 widget.setText( MolokoDateUtils.formatEstimated( context,
-                                                                                                                                  getMillis() ) );
-                                                                              }
+                                                                              notifyOnDialogCloseListener( CloseReason.OK,
+                                                                                                           getMillis() );
                                                                            }
                                                                         } )
                                                     .setNegativeButton( R.string.btn_cancel,
-                                                                        null )
+                                                                        new OnClickListener()
+                                                                        {
+                                                                           public void onClick( DialogInterface dialog,
+                                                                                                int which )
+                                                                           {
+                                                                              notifyOnDialogCloseListener( CloseReason.CANCELED,
+                                                                                                           null );
+                                                                           }
+                                                                        } )
                                                     .create();
    }
    

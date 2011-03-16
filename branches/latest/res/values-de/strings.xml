@@ -121,7 +121,7 @@
    <!-- Global Dialogs -->
    <string name="dlg_save_task">Speichere Änderungen...</string>
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
-   <string name="dlg_due_picker_title">Auslaufzeitpunkt</string>
+   <string name="dlg_due_picker_title">Fälligkeit</string>
 	
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>
@@ -169,6 +169,7 @@
    <string name="task_edit_location_no">Nirgendwo</string>
    <string name="task_edit_validate_empty_name">Der Name der Aufgabe darf nicht leer sein</string>   
    <string name="task_edit_validate_estimate">\'%1$s\' ist keine gültige Zeitschätzung</string>
+   <string name="task_edit_validate_due">\'%1$s\' ist keine gültige Fälligkeit</string>
    
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Durch Komma getrennte Tags</string>

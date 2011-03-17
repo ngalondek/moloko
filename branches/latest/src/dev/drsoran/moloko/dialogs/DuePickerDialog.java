@@ -95,14 +95,11 @@ public class DuePickerDialog extends AbstractPickerDialog
          dateMonthWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_1 );
       }
       
+      dateYearWheel = (WheelView) view.findViewById( R.id.due_dlg_year_wheel );
+      
       initDaysWheel( context );
       initMonthsWheel( context );
-      
-      dateYearWheel = (WheelView) view.findViewById( R.id.due_dlg_year_wheel );
-      dateYearWheel.setViewAdapter( new NumericWheelAdapter( context,
-                                                             calendar.getMinimum( Calendar.YEAR ),
-                                                             calendar.getMaximum( Calendar.YEAR ) ) );
-      dateYearWheel.setCurrentItem( calendar.get( Calendar.YEAR ) - 1 );
+      initYearsWheel( context );
       
       dateMonthWheel.addScrollingListener( new OnWheelScrollListener()
       {
@@ -163,6 +160,7 @@ public class DuePickerDialog extends AbstractPickerDialog
    
 
 
+   @Override
    public void show()
    {
       impl.show();
@@ -178,7 +176,7 @@ public class DuePickerDialog extends AbstractPickerDialog
       calendar.set( Calendar.MONTH, dateMonthWheel.getCurrentItem() );
       calendar.set( Calendar.YEAR, dateYearWheel.getCurrentItem() + 1 );
       
-      int day = dateDayWheel.getCurrentItem();
+      int day = dateDayWheel.getCurrentItem() + 1;
       
       if ( calendar.getActualMaximum( Calendar.DAY_OF_MONTH ) < day )
          day = calendar.getActualMaximum( Calendar.DAY_OF_MONTH );
@@ -198,7 +196,7 @@ public class DuePickerDialog extends AbstractPickerDialog
                                                                    "d",
                                                                    DateFormatWheelTextAdapter.TYPE_SHOW_WEEKDAY,
                                                                    DateFormatWheelTextAdapter.FLAG_MARK_TODAY ) );
-      dateDayWheel.setCurrentItem( calendar.get( Calendar.DAY_OF_MONTH ) );
+      dateDayWheel.setCurrentItem( calendar.get( Calendar.DAY_OF_MONTH ) - 1 );
    }
    
 
@@ -212,5 +210,15 @@ public class DuePickerDialog extends AbstractPickerDialog
                                                                      DateFormatWheelTextAdapter.TYPE_DEFAULT,
                                                                      0 ) );
       dateMonthWheel.setCurrentItem( calendar.get( Calendar.MONTH ) );
+   }
+   
+
+
+   private void initYearsWheel( Context context )
+   {
+      dateYearWheel.setViewAdapter( new NumericWheelAdapter( context,
+                                                             calendar.getMinimum( Calendar.YEAR ),
+                                                             calendar.getMaximum( Calendar.YEAR ) ) );
+      dateYearWheel.setCurrentItem( calendar.get( Calendar.YEAR ) - 1 );
    }
 }

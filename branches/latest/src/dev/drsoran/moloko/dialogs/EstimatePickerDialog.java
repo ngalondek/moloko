@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.dialogs;
 
-import kankan.wheel.widget.OnWheelChangedListener;
+import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
@@ -113,15 +113,19 @@ public class EstimatePickerDialog extends AbstractPickerDialog
       
       // Connect this as last otherwise it will be called when setting
       // the initial value
-      numberWheel.addChangingListener( new OnWheelChangedListener()
+      numberWheel.addScrollingListener( new OnWheelScrollListener()
       {
-         public void onChanged( WheelView wheel, int oldValue, int newValue )
+         public void onScrollingStarted( WheelView wheel )
+         {
+         }
+         
+
+
+         public void onScrollingFinished( WheelView wheel )
          {
             // 0-based
             // Set the right texts if the value changes. E.g. 1 day - 2 days
-            if ( ( oldValue == 0 && newValue > 0 )
-               || ( oldValue > 0 && newValue == 0 ) )
-               setUnits( ++newValue );
+            setUnits( wheel.getCurrentItem() + 1 );
          }
       } );
       
@@ -153,6 +157,7 @@ public class EstimatePickerDialog extends AbstractPickerDialog
    
 
 
+   @Override
    public void show()
    {
       impl.show();

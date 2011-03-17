@@ -575,6 +575,27 @@ public class WheelView extends View
    
 
 
+   protected int getCenterDrawableResId()
+   {
+      return R.drawable.wheel_val;
+   }
+   
+
+
+   protected int getBackgroundResId()
+   {
+      return R.drawable.wheel_bg;
+   }
+   
+
+
+   protected Drawable getCenterDrawable()
+   {
+      return centerDrawable;
+   }
+   
+
+
    /**
     * Initializes resources
     */
@@ -583,7 +604,7 @@ public class WheelView extends View
       if ( centerDrawable == null )
       {
          centerDrawable = getContext().getResources()
-                                      .getDrawable( R.drawable.wheel_val );
+                                      .getDrawable( getCenterDrawableResId() );
       }
       
       if ( topShadow == null )
@@ -598,7 +619,7 @@ public class WheelView extends View
                                               SHADOWS_COLORS );
       }
       
-      setBackgroundResource( R.drawable.wheel_bg );
+      setBackgroundResource( getBackgroundResId() );
    }
    
 

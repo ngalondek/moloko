@@ -77,9 +77,13 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
       this.calField = calField;
       this.type = type;
       this.format = new SimpleDateFormat( dateFormat, Locale.getDefault() );
+      this.format.setTimeZone( calendar.getTimeZone() );
       
       if ( type == TYPE_SHOW_WEEKDAY )
+      {
          this.weekDayFormat = new SimpleDateFormat( "EE", Locale.getDefault() );
+         this.weekDayFormat.setTimeZone( calendar.getTimeZone() );
+      }
       else
          this.weekDayFormat = null;
       

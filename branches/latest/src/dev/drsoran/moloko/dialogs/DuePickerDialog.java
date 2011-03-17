@@ -26,6 +26,7 @@ import java.util.Calendar;
 
 import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
+import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -48,6 +49,12 @@ public class DuePickerDialog extends AbstractPickerDialog
    private WheelView dateMonthWheel;
    
    private WheelView dateYearWheel;
+   
+   private WheelView timeHourWheel;
+   
+   private WheelView timeMinuteWheel;
+   
+   private WheelView timeAmPmWheel;
    
    private final Calendar calendar;
    
@@ -96,10 +103,16 @@ public class DuePickerDialog extends AbstractPickerDialog
       }
       
       dateYearWheel = (WheelView) view.findViewById( R.id.due_dlg_year_wheel );
+      timeHourWheel = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_hour );
+      timeMinuteWheel = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_minute );
+      timeAmPmWheel = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_am_pm );
       
       initDaysWheel( context );
       initMonthsWheel( context );
       initYearsWheel( context );
+      initHourWheel( context );
+      initMinuteWheel( context );
+      initAmPmWheel( context );
       
       dateMonthWheel.addScrollingListener( new OnWheelScrollListener()
       {
@@ -220,5 +233,56 @@ public class DuePickerDialog extends AbstractPickerDialog
                                                              calendar.getMinimum( Calendar.YEAR ),
                                                              calendar.getMaximum( Calendar.YEAR ) ) );
       dateYearWheel.setCurrentItem( calendar.get( Calendar.YEAR ) - 1 );
+   }
+   
+
+
+   private void initHourWheel( Context context )
+   {
+      if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
+      {
+         timeHourWheel.setViewAdapter( new NumericWheelAdapter( context,
+                                                                calendar.getMinimum( Calendar.HOUR_OF_DAY ),
+                                                                calendar.getMaximum( Calendar.HOUR_OF_DAY ),
+                                                                "%02d" ) );
+         timeHourWheel.setCurrentItem( calendar.get( Calendar.HOUR_OF_DAY ) - 1 );
+      }
+      else
+      {
+         timeHourWheel.setViewAdapter( new NumericWheelAdapter( context,
+                                                                calendar.getMinimum( Calendar.HOUR ) + 1,
+                                                                calendar.getMaximum( Calendar.HOUR ) + 1,
+                                                                "%02d" ) );
+         timeHourWheel.setCurrentItem( calendar.get( Calendar.HOUR ) - 1 );
+      }
+   }
+   
+
+
+   private void initMinuteWheel( Context context )
+   {
+      timeMinuteWheel.setViewAdapter( new NumericWheelAdapter( context,
+                                                               calendar.getMinimum( Calendar.MINUTE ),
+                                                               calendar.getMaximum( Calendar.MINUTE ),
+                                                               "%02d" ) );
+      timeMinuteWheel.setCurrentItem( calendar.get( Calendar.MINUTE ) - 1 );
+   }
+   
+
+
+   private void initAmPmWheel( Context context )
+   {
+      if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_12 )
+      {
+         timeAmPmWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,
+                                                                        new String[]
+                                                                        { "AM",
+                                                                         "PM" } ) );
+         timeAmPmWheel.setCurrentItem( calendar.get( Calendar.AM_PM ) - 1 );
+      }
+      else
+      {
+         timeAmPmWheel.setVisibility( View.GONE );
+      }
    }
 }

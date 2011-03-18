@@ -26,7 +26,6 @@ import java.util.Calendar;
 
 import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
-import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -64,18 +63,20 @@ public class DuePickerDialog extends AbstractPickerDialog
 
    public DuePickerDialog( Context context )
    {
-      this( context, System.currentTimeMillis() );
+      this( context, System.currentTimeMillis(), false );
    }
    
 
 
-   public DuePickerDialog( Context context, long initial )
+   public DuePickerDialog( Context context, long initial, boolean hasDueTime )
    {
       this.calendar = Calendar.getInstance( MolokoApp.getSettings()
                                                      .getTimezone() );
       this.calendar.setTimeInMillis( initial != -1 ? initial
                                                   : System.currentTimeMillis() );
-      MolokoDateUtils.clearTime( calendar );
+      
+      if ( !hasDueTime )
+         MolokoDateUtils.clearTime( calendar );
       
       init( context );
    }
@@ -241,18 +242,16 @@ public class DuePickerDialog extends AbstractPickerDialog
    {
       if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
       {
-         timeHourWheel.setViewAdapter( new NumericWheelAdapter( context,
-                                                                calendar.getMinimum( Calendar.HOUR_OF_DAY ),
-                                                                calendar.getMaximum( Calendar.HOUR_OF_DAY ),
-                                                                "%02d" ) );
+         timeHourWheel.setViewAdapter( new DueTimeWheelTextAdapter( context,
+                                                                    calendar,
+                                                                    DueTimeWheelTextAdapter.TYPE_HOUR_OF_DAY ) );
          timeHourWheel.setCurrentItem( calendar.get( Calendar.HOUR_OF_DAY ) - 1 );
       }
       else
       {
-         timeHourWheel.setViewAdapter( new NumericWheelAdapter( context,
-                                                                calendar.getMinimum( Calendar.HOUR ) + 1,
-                                                                calendar.getMaximum( Calendar.HOUR ) + 1,
-                                                                "%02d" ) );
+         timeHourWheel.setViewAdapter( new DueTimeWheelTextAdapter( context,
+                                                                    calendar,
+                                                                    DueTimeWheelTextAdapter.TYPE_HOUR ) );
          timeHourWheel.setCurrentItem( calendar.get( Calendar.HOUR ) - 1 );
       }
    }
@@ -261,10 +260,9 @@ public class DuePickerDialog extends AbstractPickerDialog
 
    private void initMinuteWheel( Context context )
    {
-      timeMinuteWheel.setViewAdapter( new NumericWheelAdapter( context,
-                                                               calendar.getMinimum( Calendar.MINUTE ),
-                                                               calendar.getMaximum( Calendar.MINUTE ),
-                                                               "%02d" ) );
+      timeMinuteWheel.setViewAdapter( new DueTimeWheelTextAdapter( context,
+                                                                   calendar,
+                                                                   DueTimeWheelTextAdapter.TYPE_MINUTE ) );
       timeMinuteWheel.setCurrentItem( calendar.get( Calendar.MINUTE ) - 1 );
    }
    
@@ -274,10 +272,9 @@ public class DuePickerDialog extends AbstractPickerDialog
    {
       if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_12 )
       {
-         timeAmPmWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,
-                                                                        new String[]
-                                                                        { "AM",
-                                                                         "PM" } ) );
+         timeAmPmWheel.setViewAdapter( new DueTimeWheelTextAdapter( context,
+                                                                    calendar,
+                                                                    DueTimeWheelTextAdapter.TYPE_AM_PM ) );
          timeAmPmWheel.setCurrentItem( calendar.get( Calendar.AM_PM ) - 1 );
       }
       else

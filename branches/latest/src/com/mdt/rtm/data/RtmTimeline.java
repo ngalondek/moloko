@@ -19,6 +19,7 @@
  */
 package com.mdt.rtm.data;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -222,6 +223,27 @@ public class RtmTimeline
                                          toListId,
                                          taskSeriesId,
                                          taskId );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setDueDate( final String listId,
+                                                          final String taskSeriesId,
+                                                          final String taskId,
+                                                          final Calendar dueUtc )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setDueDate( id,
+                                             listId,
+                                             taskSeriesId,
+                                             taskId,
+                                             dueUtc );
          }
       };
    }

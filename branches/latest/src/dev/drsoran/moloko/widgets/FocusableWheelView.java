@@ -106,17 +106,17 @@ public class FocusableWheelView extends WheelView implements Checkable
    
 
 
-   public FocusableWheelView( Context context, AttributeSet attrs, int defStyle )
+   public FocusableWheelView( Context context, AttributeSet attrs )
    {
-      super( context, attrs, defStyle );
+      super( context, attrs );
       init();
    }
    
 
 
-   public FocusableWheelView( Context context, AttributeSet attrs )
+   public FocusableWheelView( Context context, AttributeSet attrs, int defStyle )
    {
-      super( context, attrs );
+      super( context, attrs, defStyle );
       init();
    }
    

@@ -19,8 +19,8 @@
  */
 package com.mdt.rtm;
 
+import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -28,12 +28,12 @@ import com.mdt.rtm.data.RtmFrob;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
@@ -275,15 +275,11 @@ public interface Service
    
 
 
-   /**
-    * THINK: Would it not be better to have a {@link GregorianCalendar} parameter instead?
-    */
-   RtmTaskSeries tasks_setDueDate( String timelineId,
-                                   String listId,
-                                   String taskSeriesId,
-                                   String taskId,
-                                   Date due,
-                                   boolean hasDueTime ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setDueDate( String timelineId,
+                                                   String listId,
+                                                   String taskSeriesId,
+                                                   String taskId,
+                                                   Calendar dueUtc ) throws ServiceException;
    
 
 

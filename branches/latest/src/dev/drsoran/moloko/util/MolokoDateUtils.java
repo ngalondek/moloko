@@ -157,6 +157,7 @@ public class MolokoDateUtils
       cal.clear( Calendar.MINUTE );
       cal.clear( Calendar.SECOND );
       cal.clear( Calendar.MILLISECOND );
+      cal.clear( Calendar.AM_PM );
       
       return cal;
    }

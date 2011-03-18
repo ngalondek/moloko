@@ -49,11 +49,7 @@ public class DuePickerDialog extends AbstractPickerDialog
    
    private WheelView dateYearWheel;
    
-   private WheelView timeHourWheel;
-   
-   private WheelView timeMinuteWheel;
-   
-   private WheelView timeAmPmWheel;
+   private TimeWheelGroup timeWheelGroup;
    
    private final Calendar calendar;
    
@@ -78,12 +74,12 @@ public class DuePickerDialog extends AbstractPickerDialog
       if ( !hasDueTime )
          MolokoDateUtils.clearTime( calendar );
       
-      init( context );
+      init( context, hasDueTime );
    }
    
 
 
-   private void init( final Context context )
+   private void init( final Context context, boolean hasTime )
    {
       final LayoutInflater inflater = LayoutInflater.from( context );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
@@ -104,16 +100,12 @@ public class DuePickerDialog extends AbstractPickerDialog
       }
       
       dateYearWheel = (WheelView) view.findViewById( R.id.due_dlg_year_wheel );
-      timeHourWheel = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_hour );
-      timeMinuteWheel = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_minute );
-      timeAmPmWheel = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_am_pm );
       
       initDaysWheel( context );
       initMonthsWheel( context );
       initYearsWheel( context );
-      initHourWheel( context );
-      initMinuteWheel( context );
-      initAmPmWheel( context );
+      
+      timeWheelGroup = new TimeWheelGroup( context, view, 0, hasTime );
       
       dateMonthWheel.addScrollingListener( new OnWheelScrollListener()
       {
@@ -125,7 +117,7 @@ public class DuePickerDialog extends AbstractPickerDialog
 
          public void onScrollingFinished( WheelView wheel )
          {
-            getCalendar();
+            updateCalendarDate();
             initDaysWheel( context );
          }
       } );
@@ -140,7 +132,7 @@ public class DuePickerDialog extends AbstractPickerDialog
 
          public void onScrollingFinished( WheelView wheel )
          {
-            getCalendar();
+            updateCalendarDate();
             initDaysWheel( context );
          }
       } );
@@ -154,9 +146,11 @@ public class DuePickerDialog extends AbstractPickerDialog
                                                                            public void onClick( DialogInterface dialog,
                                                                                                 int which )
                                                                            {
+                                                                              final Calendar cal = getCalendar();
                                                                               notifyOnDialogCloseListener( CloseReason.OK,
-                                                                                                           getCalendar().getTimeInMillis(),
-                                                                                                           Boolean.FALSE );
+                                                                                                           cal.getTimeInMillis(),
+                                                                                                           Boolean.valueOf( cal.isSet( Calendar.HOUR )
+                                                                                                              || cal.isSet( Calendar.HOUR_OF_DAY ) ) );
                                                                            }
                                                                         } )
                                                     .setNegativeButton( R.string.btn_cancel,
@@ -184,6 +178,19 @@ public class DuePickerDialog extends AbstractPickerDialog
 
    public Calendar getCalendar()
    {
+      updateCalendarDate();
+      
+      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
+                                                          .getTimezone() );
+      cal.setTimeInMillis( calendar.getTimeInMillis() );
+      
+      return timeWheelGroup.putTime( cal );
+   }
+   
+
+
+   private void updateCalendarDate()
+   {
       // First set the calendar to the first. Otherwise we get a wrap-around
       // if we set the month and the day is beyond the maximum.
       calendar.set( Calendar.DAY_OF_MONTH, 1 );
@@ -196,8 +203,6 @@ public class DuePickerDialog extends AbstractPickerDialog
          day = calendar.getActualMaximum( Calendar.DAY_OF_MONTH );
       
       calendar.set( Calendar.DAY_OF_MONTH, day );
-      
-      return calendar;
    }
    
 
@@ -236,50 +241,245 @@ public class DuePickerDialog extends AbstractPickerDialog
       dateYearWheel.setCurrentItem( calendar.get( Calendar.YEAR ) - 1 );
    }
    
-
-
-   private void initHourWheel( Context context )
-   {
-      if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
-      {
-         timeHourWheel.setViewAdapter( new DueTimeWheelTextAdapter( context,
-                                                                    calendar,
-                                                                    DueTimeWheelTextAdapter.TYPE_HOUR_OF_DAY ) );
-         timeHourWheel.setCurrentItem( calendar.get( Calendar.HOUR_OF_DAY ) - 1 );
-      }
-      else
-      {
-         timeHourWheel.setViewAdapter( new DueTimeWheelTextAdapter( context,
-                                                                    calendar,
-                                                                    DueTimeWheelTextAdapter.TYPE_HOUR ) );
-         timeHourWheel.setCurrentItem( calendar.get( Calendar.HOUR ) - 1 );
-      }
-   }
    
-
-
-   private void initMinuteWheel( Context context )
+   private class TimeWheelGroup implements OnWheelScrollListener
    {
-      timeMinuteWheel.setViewAdapter( new DueTimeWheelTextAdapter( context,
-                                                                   calendar,
-                                                                   DueTimeWheelTextAdapter.TYPE_MINUTE ) );
-      timeMinuteWheel.setCurrentItem( calendar.get( Calendar.MINUTE ) - 1 );
-   }
-   
+      private final WheelView[] wheelViews = new WheelView[ 3 ];
+      
+      private final int offIndex;
+      
+      private final int[] lastNonOffIndex =
+      { -1, -1, -1 };
+      
+      private final int[] lastIndex =
+      { 0, 0, 0 };
+      
+      private boolean notifying;
+      
+      private boolean hasTime;
+      
+      
 
-
-   private void initAmPmWheel( Context context )
-   {
-      if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_12 )
+      public TimeWheelGroup( Context context, View view, int offIndex,
+         boolean hasTime )
       {
-         timeAmPmWheel.setViewAdapter( new DueTimeWheelTextAdapter( context,
-                                                                    calendar,
-                                                                    DueTimeWheelTextAdapter.TYPE_AM_PM ) );
-         timeAmPmWheel.setCurrentItem( calendar.get( Calendar.AM_PM ) - 1 );
+         this.offIndex = offIndex;
+         this.hasTime = hasTime;
+         
+         wheelViews[ 0 ] = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_hour );
+         wheelViews[ 1 ] = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_minute );
+         wheelViews[ 2 ] = (WheelView) view.findViewById( R.id.due_dlg_time_wheel_am_pm );
+         
+         initHourWheel( context );
+         initMinuteWheel( context );
+         initAmPmWheel( context );
+         
+         setLastIndex( wheelViews[ 0 ] );
+         setLastIndex( wheelViews[ 1 ] );
+         setLastIndex( wheelViews[ 2 ] );
+         
+         wheelViews[ 0 ].addScrollingListener( this );
+         wheelViews[ 1 ].addScrollingListener( this );
+         wheelViews[ 2 ].addScrollingListener( this );
       }
-      else
+      
+
+
+      public void onScrollingStarted( WheelView wheel )
       {
-         timeAmPmWheel.setVisibility( View.GONE );
+      }
+      
+
+
+      public void onScrollingFinished( WheelView wheel )
+      {
+         if ( !notifying )
+         {
+            // a wheel has been put into off
+            if ( wheel.getCurrentItem() == offIndex )
+            {
+               // put other wheels into off
+               notifying = true;
+               setOtherWheelsOff( wheel );
+               notifying = false;
+            }
+            // a wheel has been put from off to on
+            else if ( getLastIndex( wheel ) == offIndex )
+            {
+               // put other wheels into on
+               notifying = true;
+               restoreOtherWheels( wheel );
+               notifying = false;
+            }
+         }
+         
+         setLastIndex( wheel );
+      }
+      
+
+
+      public Calendar putTime( Calendar cal )
+      {
+         if ( !hasTime )
+            return MolokoDateUtils.clearTime( cal );
+         else
+         {
+            if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
+               cal.set( Calendar.HOUR_OF_DAY,
+                        wheelViews[ 0 ].getCurrentItem() - 1 );
+            else
+               cal.set( Calendar.HOUR, wheelViews[ 0 ].getCurrentItem() - 1 );
+            
+            cal.set( Calendar.MINUTE, wheelViews[ 1 ].getCurrentItem() - 1 );
+            
+            if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_12 )
+               cal.set( Calendar.AM_PM, wheelViews[ 2 ].getCurrentItem() - 1 );
+            else
+               cal.clear( Calendar.AM_PM );
+            
+            cal.set( Calendar.SECOND, 0 );
+            cal.set( Calendar.MILLISECOND, 0 );
+            
+            return cal;
+         }
+      }
+      
+
+
+      private void initHourWheel( Context context )
+      {
+         if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
+         {
+            wheelViews[ 0 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
+                                                                         calendar,
+                                                                         DueTimeWheelTextAdapter.TYPE_HOUR_OF_DAY ) );
+            if ( !hasTime || !calendar.isSet( Calendar.HOUR_OF_DAY ) )
+               wheelViews[ 0 ].setCurrentItem( offIndex );
+            else
+               wheelViews[ 0 ].setCurrentItem( calendar.get( Calendar.HOUR_OF_DAY ) + 1 );
+         }
+         else
+         {
+            wheelViews[ 0 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
+                                                                         calendar,
+                                                                         DueTimeWheelTextAdapter.TYPE_HOUR ) );
+            if ( !hasTime || !calendar.isSet( Calendar.HOUR ) )
+               wheelViews[ 0 ].setCurrentItem( offIndex );
+            else
+               wheelViews[ 0 ].setCurrentItem( calendar.get( Calendar.HOUR ) + 1 );
+         }
+      }
+      
+
+
+      private void initMinuteWheel( Context context )
+      {
+         wheelViews[ 1 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
+                                                                      calendar,
+                                                                      DueTimeWheelTextAdapter.TYPE_MINUTE ) );
+         if ( !hasTime || !calendar.isSet( Calendar.MINUTE ) )
+            wheelViews[ 1 ].setCurrentItem( offIndex );
+         else
+            wheelViews[ 1 ].setCurrentItem( calendar.get( Calendar.MINUTE ) + 1 );
+      }
+      
+
+
+      private void initAmPmWheel( Context context )
+      {
+         if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_12 )
+         {
+            wheelViews[ 2 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
+                                                                         calendar,
+                                                                         DueTimeWheelTextAdapter.TYPE_AM_PM ) );
+            
+            if ( !hasTime || !calendar.isSet( Calendar.AM_PM ) )
+               wheelViews[ 2 ].setCurrentItem( offIndex );
+            else
+               wheelViews[ 2 ].setCurrentItem( calendar.get( Calendar.AM_PM ) + 1 );
+         }
+         else
+         {
+            wheelViews[ 2 ].setCurrentItem( offIndex );
+            wheelViews[ 2 ].setVisibility( View.GONE );
+         }
+      }
+      
+
+
+      private void setOtherWheelsOff( WheelView wheel )
+      {
+         final int wheelIdx = getWheelIndex( wheel );
+         
+         for ( int i = 1; wheelIdx != -1 && i < wheelViews.length - 1; i++ )
+            wheelViews[ ( wheelIdx + i ) % wheelViews.length ].setCurrentItem( offIndex,
+                                                                               true );
+      }
+      
+
+
+      private void restoreOtherWheels( WheelView wheel )
+      {
+         final int wheelIdx = getWheelIndex( wheel );
+         
+         for ( int i = 1; wheelIdx != -1 && i < wheelViews.length - 1; i++ )
+         {
+            final int idx = ( wheelIdx + i ) % wheelViews.length;
+            final WheelView otherWheel = wheelViews[ idx ];
+            
+            if ( otherWheel.getVisibility() != View.GONE )
+            {
+               if ( lastNonOffIndex[ idx ] != -1 )
+                  otherWheel.setCurrentItem( lastNonOffIndex[ idx ], true );
+               else
+                  otherWheel.setCurrentItem( offIndex + 1, true );
+            }
+         }
+      }
+      
+
+
+      private int getWheelIndex( WheelView wheel )
+      {
+         for ( int i = 0; i < wheelViews.length; i++ )
+            if ( wheelViews[ i ] == wheel )
+               return i;
+         
+         return -1;
+      }
+      
+
+
+      private void setLastIndex( WheelView wheel )
+      {
+         final int wheelIdx = getWheelIndex( wheel );
+         
+         if ( wheelIdx != -1 )
+         {
+            lastIndex[ wheelIdx ] = wheel.getCurrentItem();
+            
+            if ( lastIndex[ wheelIdx ] != offIndex )
+            {
+               lastNonOffIndex[ wheelIdx ] = lastIndex[ wheelIdx ];
+               hasTime = true;
+            }
+            else
+            {
+               hasTime = false;
+            }
+         }
+      }
+      
+
+
+      private int getLastIndex( WheelView wheel )
+      {
+         final int wheelIdx = getWheelIndex( wheel );
+         
+         if ( wheelIdx != -1 )
+            return lastIndex[ wheelIdx ];
+         else
+            return -1;
       }
    }
 }

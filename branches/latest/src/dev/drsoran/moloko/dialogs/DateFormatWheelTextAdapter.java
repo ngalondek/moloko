@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.dialogs;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,7 +55,7 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
    
    private final int calField;
    
-   private final SimpleDateFormat format;
+   private final DateFormat format;
    
    private final SimpleDateFormat weekDayFormat;
    
@@ -63,6 +64,10 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
    private final int max;
    
    private final int flags;
+   
+   private final int valueColor;
+   
+   private final int todayColor;
    
    
 
@@ -92,6 +97,11 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
       this.min = calendar.getActualMinimum( calField );
       this.max = calendar.getActualMaximum( calField );
       this.flags = flags;
+      
+      this.valueColor = context.getResources()
+                               .getColor( R.color.app_dlg_due_picker_value );
+      this.todayColor = context.getResources()
+                               .getColor( R.color.app_dlg_due_picker_today );
    }
    
 
@@ -131,11 +141,13 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
          final TextView value = (TextView) view.findViewById( R.id.due_dlg_value );
          value.setText( format.format( date ) );
          
-         // if ( ( flags & FLAG_MARK_TODAY ) == FLAG_MARK_TODAY )
-         // if ( MolokoDateUtils.isToday( date.getTime() ) )
-         // value.setTextColor( R.color.app_dlg_due_picker_today );
-         // else
-         // value.setTextColor( R.color.app_dlg_due_picker_value );
+         int color = valueColor;
+         
+         if ( ( flags & FLAG_MARK_TODAY ) == FLAG_MARK_TODAY
+            && MolokoDateUtils.isToday( date.getTime() ) )
+            color = todayColor;
+         
+         value.setTextColor( color );
          
          switch ( type )
          {

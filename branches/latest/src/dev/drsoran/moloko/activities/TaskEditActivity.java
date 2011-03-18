@@ -44,8 +44,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -54,14 +54,14 @@ import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.DuePickerDialog;
-import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
+import dev.drsoran.moloko.dialogs.DuePickerDialog;
+import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
+import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -401,7 +401,7 @@ public class TaskEditActivity extends Activity
                Toast.makeText( this,
                                getString( R.string.task_edit_validate_estimate,
                                           estStr ),
-                               Toast.LENGTH_LONG ).show();
+                               Toast.LENGTH_SHORT ).show();
                return true;
             }
          }
@@ -462,7 +462,7 @@ public class TaskEditActivity extends Activity
                Toast.makeText( this,
                                getString( R.string.task_edit_validate_due,
                                           dueStr ),
-                               Toast.LENGTH_LONG ).show();
+                               Toast.LENGTH_SHORT ).show();
                return true;
             }
          }
@@ -523,6 +523,36 @@ public class TaskEditActivity extends Activity
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.TAGS,
                                                                 tags ) );
+         }
+         
+         // Due
+         {
+            final Long newDue = mutableTask.due == -1
+                                                     ? null
+                                                     : Long.valueOf( mutableTask.due );
+            
+            if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( task.getDue() ),
+                                       newDue ) )
+            {
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.DUE_DATE,
+                                                                newDue ) );
+               
+            }
+            
+            final Integer newHasDueTime = mutableTask.hasDueTime
+                                                                ? Integer.valueOf( 1 )
+                                                                : Integer.valueOf( 0 );
+            
+            if ( SyncUtils.hasChanged( task.hasDueTime(),
+                                       mutableTask.hasDueTime ) )
+            {
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.HAS_DUE_TIME,
+                                                                newHasDueTime ) );
+            }
          }
          
          // Estimate
@@ -819,7 +849,7 @@ public class TaskEditActivity extends Activity
       {
          Toast.makeText( this,
                          R.string.task_edit_validate_empty_name,
-                         Toast.LENGTH_LONG ).show();
+                         Toast.LENGTH_SHORT ).show();
          nameEdit.requestFocus();
          return false;
       }
@@ -833,7 +863,7 @@ public class TaskEditActivity extends Activity
             Toast.makeText( this,
                             getString( R.string.task_edit_validate_due,
                                        dueEdit.getText() ),
-                            Toast.LENGTH_LONG ).show();
+                            Toast.LENGTH_SHORT ).show();
             dueEdit.requestFocus();
             return false;
          }
@@ -849,7 +879,7 @@ public class TaskEditActivity extends Activity
             Toast.makeText( this,
                             getString( R.string.task_edit_validate_estimate,
                                        estimateEdit.getText() ),
-                            Toast.LENGTH_LONG ).show();
+                            Toast.LENGTH_SHORT ).show();
             estimateEdit.requestFocus();
             return false;
          }

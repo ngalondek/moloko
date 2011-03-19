@@ -278,6 +278,38 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                               properties.getModification( RawTasks.COMPLETED_DATE ) );
          }
          
+         // Due date
+         if ( SyncUtils.getSyncDirection( properties,
+                                          RawTasks.DUE_DATE,
+                                          MolokoDateUtils.getTime( serverElement.task.getDue() ),
+                                          MolokoDateUtils.getTime( task.getDue() ),
+                                          Long.class ) == SyncResultDirection.SERVER
+            || SyncUtils.getSyncDirection( properties,
+                                           RawTasks.HAS_DUE_TIME,
+                                           serverElement.task.getHasDueTime(),
+                                           task.getHasDueTime(),
+                                           Integer.class ) == SyncResultDirection.SERVER )
+         {
+            final Modification dueMod = properties.getModification( RawTasks.DUE_DATE );
+            final Modification hasTimeMod = properties.getModification( RawTasks.HAS_DUE_TIME );
+            
+            final List< Modification > modsList = new ArrayList< Modification >( 2 );
+            
+            if ( dueMod != null )
+               modsList.add( dueMod );
+            if ( hasTimeMod != null )
+               modsList.add( hasTimeMod );
+            
+            operation.add( timeline.tasks_setDueDate( taskSeries.getListId(),
+                                                      taskSeries.getId(),
+                                                      task.getId(),
+                                                      task.getDue(),
+                                                      task.getHasDueTime() != 0
+                                                                               ? true
+                                                                               : false ),
+                           modsList );
+         }
+         
          // Estimate
          if ( SyncUtils.getSyncDirection( properties,
                                           RawTasks.ESTIMATE,

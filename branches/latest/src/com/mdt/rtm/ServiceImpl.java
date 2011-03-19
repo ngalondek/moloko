@@ -20,12 +20,11 @@
 package com.mdt.rtm;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,12 +43,12 @@ import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.RtmContacts;
@@ -651,9 +650,10 @@ public class ServiceImpl implements Service
                                                           String listId,
                                                           String taskSeriesId,
                                                           String taskId,
-                                                          Calendar dueUtc ) throws ServiceException
+                                                          Date due,
+                                                          boolean hasTime ) throws ServiceException
    {
-      final boolean setDueDate = ( dueUtc != null );
+      final boolean setDueDate = ( due != null );
       final Element elt;
       
       if ( setDueDate == true )
@@ -663,13 +663,8 @@ public class ServiceImpl implements Service
                                new Param( "list_id", listId ),
                                new Param( "taskseries_id", taskSeriesId ),
                                new Param( "task_id", taskId ),
-                               new Param( "due",
-                                          RtmData.formatDate( dueUtc.getTime() ) ),
-                               new Param( "has_due_time",
-                                          dueUtc.isSet( Calendar.HOUR )
-                                             || dueUtc.isSet( Calendar.HOUR_OF_DAY )
-                                                                                    ? "1"
-                                                                                    : "0" ),
+                               new Param( "due", RtmData.formatDate( due ) ),
+                               new Param( "has_due_time", hasTime ? "1" : "0" ),
                                new Param( "auth_token", currentAuthToken ),
                                new Param( "api_key",
                                           applicationInfo.getApiKey() ) );

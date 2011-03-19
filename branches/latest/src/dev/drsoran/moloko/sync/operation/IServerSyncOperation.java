@@ -44,6 +44,6 @@ public interface IServerSyncOperation< T > extends ISyncOperation
    
 
 
-   public Map< TimeLineMethod< T >, Modification > getMethods();
+   public Map< TimeLineMethod< T >, List< Modification > > getMethods();
    
 }

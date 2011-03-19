@@ -9,6 +9,8 @@ import org.antlr.runtime.RecognitionException;
 
 import dev.drsoran.moloko.grammar.RecurrenceLexer;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
+import dev.drsoran.moloko.grammar.RecurrencePatternLexer;
+import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
@@ -17,7 +19,7 @@ public class RecurrenceTestCase
 {
    private final static RecurrPatternLanguage LANG = new RecurrPatternLanguage();
    
-   private final static SimpleDateFormat SDF_FORMAT = new SimpleDateFormat( RecurrenceParser.DATE_PATTERN );
+   private final static SimpleDateFormat SDF_FORMAT = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
    
    private final static SimpleDateFormat SDF_PARSE = new SimpleDateFormat( "dd.MM.yyyy" );
    
@@ -79,14 +81,14 @@ public class RecurrenceTestCase
       {
          final HashMap< String, Object > result = parser.parseRecurrence();
          
-         final String res_freq = (String) result.get( RecurrenceParser.OP_FREQ_LIT );
-         final int res_interval = (Integer) result.get( RecurrenceParser.OP_INTERVAL_LIT );
-         final String res_byDay = (String) result.get( RecurrenceParser.OP_BYDAY_LIT );
-         final String res_byMonth = (String) result.get( RecurrenceParser.OP_BYMONTH_LIT );
-         final String res_byMonthDay = (String) result.get( RecurrenceParser.OP_BYMONTHDAY_LIT );
-         final boolean res_isEvery = (Boolean) result.get( RecurrenceParser.IS_EVERY );
-         final String res_until = (String) result.get( RecurrenceParser.OP_UNTIL_LIT );
-         final Integer res_for = (Integer) result.get( RecurrenceParser.OP_COUNT_LIT );
+         final String res_freq = (String) result.get( RecurrencePatternParser.OP_FREQ_LIT );
+         final int res_interval = (Integer) result.get( RecurrencePatternParser.OP_INTERVAL_LIT );
+         final String res_byDay = (String) result.get( RecurrencePatternParser.OP_BYDAY_LIT );
+         final String res_byMonth = (String) result.get( RecurrencePatternParser.OP_BYMONTH_LIT );
+         final String res_byMonthDay = (String) result.get( RecurrencePatternParser.OP_BYMONTHDAY_LIT );
+         final boolean res_isEvery = (Boolean) result.get( RecurrencePatternParser.IS_EVERY );
+         final String res_until = (String) result.get( RecurrencePatternParser.OP_UNTIL_LIT );
+         final Integer res_for = (Integer) result.get( RecurrencePatternParser.OP_COUNT_LIT );
          
          System.out.println( string + "_freq: " + res_freq );
          System.out.println( string + "_interval: " + res_interval );
@@ -103,21 +105,21 @@ public class RecurrenceTestCase
          
          if ( res != null )
          {
-            if ( res.equals( RecurrenceParser.OP_BYDAY_LIT ) )
+            if ( res.equals( RecurrencePatternParser.OP_BYDAY_LIT ) )
                Asserts.assertNonNull( res_byDay, "" );
-            else if ( res.equals( RecurrenceParser.OP_BYMONTH_LIT ) )
+            else if ( res.equals( RecurrencePatternParser.OP_BYMONTH_LIT ) )
                Asserts.assertNonNull( res_byMonth, "" );
-            else if ( res.equals( RecurrenceParser.OP_BYMONTHDAY_LIT ) )
+            else if ( res.equals( RecurrencePatternParser.OP_BYMONTHDAY_LIT ) )
                Asserts.assertNonNull( res_byMonthDay, "" );
          }
          
          if ( resEx != null )
          {
-            if ( resEx.equals( RecurrenceParser.OP_BYDAY_LIT ) )
+            if ( resEx.equals( RecurrencePatternParser.OP_BYDAY_LIT ) )
                Asserts.assertNonNull( res_byDay, "" );
-            else if ( resEx.equals( RecurrenceParser.OP_BYMONTH_LIT ) )
+            else if ( resEx.equals( RecurrencePatternParser.OP_BYMONTH_LIT ) )
                Asserts.assertNonNull( res_byMonth, "" );
-            else if ( resEx.equals( RecurrenceParser.OP_BYMONTHDAY_LIT ) )
+            else if ( resEx.equals( RecurrencePatternParser.OP_BYMONTHDAY_LIT ) )
                Asserts.assertNonNull( res_byMonthDay, "" );
          }
          
@@ -159,9 +161,9 @@ public class RecurrenceTestCase
                                                String expected,
                                                boolean isEvery )
    {
-      final RecurrenceLexer lexer = new RecurrenceLexer( new ANTLRStringStream( string ) );
+      final RecurrencePatternLexer lexer = new RecurrencePatternLexer( new ANTLRStringStream( string ) );
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      final RecurrenceParser parser = new RecurrenceParser( antlrTokens );
+      final RecurrencePatternParser parser = new RecurrencePatternParser( antlrTokens );
       
       System.out.println( ">input: " + string );
       
@@ -185,12 +187,12 @@ public class RecurrenceTestCase
                                        int interval,
                                        String... resolution )
    {
-      StringBuilder result = new StringBuilder( RecurrenceParser.OP_FREQ_LIT );
+      StringBuilder result = new StringBuilder( RecurrencePatternParser.OP_FREQ_LIT );
       
       result.append( "=" )
             .append( freq )
             .append( ";" );
-      result.append( RecurrenceParser.OP_INTERVAL_LIT )
+      result.append( RecurrencePatternParser.OP_INTERVAL_LIT )
             .append( "=" )
             .append( String.valueOf( interval ) )
             .append( resolution.length > 0 ? ";" : "" );
@@ -213,101 +215,101 @@ public class RecurrenceTestCase
    public final static void execute() throws ParseException
    {
       parseRecurrence( "every year",
-                       RecurrenceParser.VAL_YEARLY_LIT,
+                       RecurrencePatternParser.VAL_YEARLY_LIT,
                        1,
                        null,
                        null,
                        true );
       parseRecurrence( "every 1st and 25th",
-                       RecurrenceParser.VAL_MONTHLY_LIT,
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYMONTHDAY_LIT,
+                       RecurrencePatternParser.OP_BYMONTHDAY_LIT,
                        "1,25",
                        true );
       parseRecurrence( "every tuesday",
-                       RecurrenceParser.VAL_WEEKLY_LIT,
+                       RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "TU",
                        true );
       parseRecurrence( "every monday, wednesday",
-                       RecurrenceParser.VAL_WEEKLY_LIT,
+                       RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "MO,WE",
                        true );
       parseRecurrence( "every 2nd friday",
-                       RecurrenceParser.VAL_WEEKLY_LIT,
+                       RecurrencePatternParser.VAL_WEEKLY_LIT,
                        2,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "FR",
                        true );
       parseRecurrence( "every weekday",
-                       RecurrenceParser.VAL_WEEKLY_LIT,
+                       RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "MO,TU,WE,TH,FR",
                        true );
       parseRecurrence( "every day",
-                       RecurrenceParser.VAL_DAILY_LIT,
+                       RecurrencePatternParser.VAL_DAILY_LIT,
                        1,
                        null,
                        null,
                        true );
       parseRecurrence( "every 2 weeks",
-                       RecurrenceParser.VAL_WEEKLY_LIT,
+                       RecurrencePatternParser.VAL_WEEKLY_LIT,
                        2,
                        null,
                        null,
                        true );
       parseRecurrence( "every month on the 4th",
-                       RecurrenceParser.VAL_MONTHLY_LIT,
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYMONTHDAY_LIT,
+                       RecurrencePatternParser.OP_BYMONTHDAY_LIT,
                        "4",
                        true );
       parseRecurrence( "every 3rd tuesday",
-                       RecurrenceParser.VAL_WEEKLY_LIT,
+                       RecurrencePatternParser.VAL_WEEKLY_LIT,
                        3,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "TU",
                        true );
       parseRecurrence( "every month on the 3rd tuesday",
-                       RecurrenceParser.VAL_MONTHLY_LIT,
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "3TU",
                        true );
       parseRecurrence( "every month on the last monday",
-                       RecurrenceParser.VAL_MONTHLY_LIT,
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "-1MO",
                        true );
       parseRecurrence( "every month on the 2nd last friday",
-                       RecurrenceParser.VAL_MONTHLY_LIT,
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "-2FR",
                        true );
       parseRecurrence( "every month on the 1st friday",
-                       RecurrenceParser.VAL_MONTHLY_LIT,
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "1FR",
                        true );
       parseRecurrence( "every year on the 1st friday, monday of january",
-                       RecurrenceParser.VAL_YEARLY_LIT,
+                       RecurrencePatternParser.VAL_YEARLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "1MO,1FR",
-                       RecurrenceParser.OP_BYMONTH_LIT,
+                       RecurrencePatternParser.OP_BYMONTH_LIT,
                        "1",
                        true );
       parseRecurrence( "every monday, wednesday until 10.10.2010",
-                       RecurrenceParser.VAL_WEEKLY_LIT,
+                       RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
-                       RecurrenceParser.OP_BYDAY_LIT,
+                       RecurrencePatternParser.OP_BYDAY_LIT,
                        "MO,WE",
                        null,
                        null,
@@ -325,7 +327,7 @@ public class RecurrenceTestCase
          cal.set( Calendar.MILLISECOND, 0 );
          
          parseRecurrence( "every day until tomorrow",
-                          RecurrenceParser.VAL_DAILY_LIT,
+                          RecurrencePatternParser.VAL_DAILY_LIT,
                           1,
                           null,
                           null,
@@ -336,7 +338,7 @@ public class RecurrenceTestCase
                           true );
       }
       parseRecurrence( "every day for 10 times",
-                       RecurrenceParser.VAL_DAILY_LIT,
+                       RecurrencePatternParser.VAL_DAILY_LIT,
                        1,
                        null,
                        null,
@@ -346,83 +348,83 @@ public class RecurrenceTestCase
                        10,
                        true );
       
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_YEARLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_YEARLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=1MO,1FR",
-                                            RecurrenceParser.OP_BYMONTH_LIT
+                                            RecurrencePatternParser.OP_BYMONTH_LIT
                                                      + "=1" ),
                               "every year on the 1st monday, friday in january",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_YEARLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_YEARLY_LIT,
                                             1 ),
                               "every year",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_YEARLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_YEARLY_LIT,
                                             2 ),
                               "every 2 years",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_MONTHLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_MONTHLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYMONTHDAY_LIT
+                                            RecurrencePatternParser.OP_BYMONTHDAY_LIT
                                                      + "=1,25" ),
                               "every month on the 1st, 25th",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_MONTHLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_MONTHLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=3TU" ),
                               "every month on the 3rd tuesday",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_MONTHLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_MONTHLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=-1MO" ),
                               "every month on the last monday",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_MONTHLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_MONTHLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=-2FR" ),
                               "every month on the 2nd last friday",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_MONTHLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_MONTHLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=1FR" ),
                               "every month on the 1st friday",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_WEEKLY_LIT,
                                             2 ),
                               "every 2 weeks",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_WEEKLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=TU" ),
                               "every week on the tuesday",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_WEEKLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=MO,WE" ),
                               "every week on the monday, wednesday",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_WEEKLY_LIT,
                                             2,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=FR" ),
                               "every 2 weeks on the friday",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_DAILY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_DAILY_LIT,
                                             1 ),
                               "every day",
                               true );
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_WEEKLY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_WEEKLY_LIT,
                                             1,
-                                            RecurrenceParser.OP_BYDAY_LIT
+                                            RecurrencePatternParser.OP_BYDAY_LIT
                                                      + "=MO,WE",
-                                            RecurrenceParser.OP_UNTIL_LIT
+                                            RecurrencePatternParser.OP_UNTIL_LIT
                                                      + "="
                                                      + SDF_FORMAT.format( SDF_PARSE.parse( "10.10.2010" ) ) ),
                               "every week on the monday, wednesday until 10.10.2010",
@@ -437,17 +439,17 @@ public class RecurrenceTestCase
          cal.set( Calendar.SECOND, 0 );
          cal.set( Calendar.MILLISECOND, 0 );
          
-         parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_DAILY_LIT,
+         parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_DAILY_LIT,
                                                1,
-                                               RecurrenceParser.OP_UNTIL_LIT
+                                               RecurrencePatternParser.OP_UNTIL_LIT
                                                         + "="
                                                         + SDF_FORMAT.format( cal.getTime() ) ),
                                  "every day until " + SDF_PARSE.format( cal.getTime() ),
                                  true );
       }
-      parseRecurrencePattern( buildPattern( RecurrenceParser.VAL_DAILY_LIT,
+      parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_DAILY_LIT,
                                             1,
-                                            RecurrenceParser.OP_COUNT_LIT
+                                            RecurrencePatternParser.OP_COUNT_LIT
                                                      + "=10" ),
                               "every day for 10 times",
                               true );

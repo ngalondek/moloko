@@ -58,7 +58,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    {
       private final Op operationType;
       
-      private final Map< TimeLineMethod< T >, Modification > methods = new HashMap< TimeLineMethod< T >, Modification >();
+      private final Map< TimeLineMethod< T >, List< Modification > > methods = new HashMap< TimeLineMethod< T >, List< Modification > >();
       
       
 
@@ -92,7 +92,19 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          if ( method == null )
             throw new NullPointerException( "method is null" );
          
-         methods.put( method, modification );
+         methods.put( method, Collections.singletonList( modification ) );
+         return this;
+      }
+      
+
+
+      public Builder< T > add( TimeLineMethod< T > method,
+                               List< Modification > modifications )
+      {
+         if ( method == null )
+            throw new NullPointerException( "method is null" );
+         
+         methods.put( method, modifications );
          return this;
       }
       
@@ -102,7 +114,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       {
          if ( !( operation instanceof INoopSyncOperation ) )
          {
-            final Map< TimeLineMethod< T >, Modification > methods = operation.getMethods();
+            final Map< TimeLineMethod< T >, List< Modification > > methods = operation.getMethods();
             for ( TimeLineMethod< T > method : methods.keySet() )
                add( method, methods.get( method ) );
          }
@@ -156,7 +168,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
    private final Op operationType;
    
-   private final Map< TimeLineMethod< T >, Modification > serviceMethods;
+   private final Map< TimeLineMethod< T >, List< Modification > > serviceMethods;
    
    private T resultElement;
    
@@ -167,7 +179,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    protected ServerSyncOperation( Builder< T > builder )
    {
       this.operationType = builder.operationType;
-      this.serviceMethods = new HashMap< TimeLineMethod< T >, Modification >( builder.methods );
+      this.serviceMethods = new HashMap< TimeLineMethod< T >, List< Modification > >( builder.methods );
    }
    
 
@@ -209,10 +221,12 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          }
          
          // Remove the modification which led to the server change
-         final Modification modification = serviceMethods.get( method );
+         final List< Modification > modifications = serviceMethods.get( method );
          
-         if ( modification != null )
-            removeModOps.add( ModificationsProviderPart.getRemoveModificationOps( modification.getEntityUri() ) );
+         if ( modifications != null )
+            for ( Modification modification : modifications )
+               if ( modification != null )
+                  removeModOps.add( ModificationsProviderPart.getRemoveModificationOps( modification.getEntityUri() ) );
       }
       
       if ( removeModOps.size() > 0 )
@@ -284,7 +298,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
 
 
-   public Map< TimeLineMethod< T >, Modification > getMethods()
+   public Map< TimeLineMethod< T >, List< Modification > > getMethods()
    {
       return this.serviceMethods;
    }

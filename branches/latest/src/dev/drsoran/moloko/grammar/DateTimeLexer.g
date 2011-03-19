@@ -3,7 +3,6 @@ lexer grammar DateTimeLexer;
 options
 {
    language=Java;
-   filter=true;
 }
 
 @header
@@ -11,76 +10,64 @@ options
    package dev.drsoran.moloko.grammar;
 }
 
-NEVER     : 'never' | 'nie';
+NEVER     : 'never';
 
-TODAY     : 'today' | 'tod' | 'heute';
+TODAY     : 'today' | 'tod';
 
-TOMORROW  : 'tomorrow' | 'tom' | 'tmr' | 'morgen';
+TOMORROW  : 'tomorrow' | 'tom' | 'tmr';
 
-YESTERDAY : 'yesterday' | 'gestern';
+YESTERDAY : 'yesterday';
 
-AT        : '@' | 'at' | 'um';
+AT        : '@' | 'at';
 
-ON        : 'on' | 'am' | 'an';
+ON        : 'on';
 
-IN        : 'in' | 'im';
+IN        : 'in';
 
-OF        : 'of' | 'des';
+OF        : 'of';
 
-NEXT      : 'next' | 'nächste'('s'|'r')?;
+NEXT      : 'next';
 
-AND       : 'and' | 'und';
+AND       : 'and';
 
-END       : 'end' | 'ende';
+END       : 'end';
 
-THE       : 'the' | 'd'('er'|'ie'|'as');
+THE       : 'the';
 
 STs       : 'st' | 'th' | 'rd' | 'nd';
 
-NOW       : 'now' | 'jetzt';
+NOW       : 'now';
 
-TONIGHT   : 'tonight' | 'ton' | 'heute';
+TONIGHT   : 'tonight' | 'ton';
 
-MIDNIGHT  : 'midnight' | 'mitternacht';
+MIDNIGHT  : 'midnight';
 
-MIDDAY    : 'midday' | 'mittag';
+MIDDAY    : 'midday';
 
-NOON      : 'noon' | 'mittag';
+NOON      : 'noon';
 
-YEARS     : 'years' | 'year' | 'yrs' | 'yr' | 'jahr' | 'jahre';
+YEARS     : 'years' | 'year' | 'yrs' | 'yr';
 
-MONTHS    : 'months' | 'month' | 'mons' | 'mon' | 'monat' | 'monate';
+MONTHS    : 'months' | 'month' | 'mons' | 'mon';
 
-WEEKS     : 'weeks' | 'week' | 'wks' | 'wk' | 'woche' | 'wochen';
+WEEKS     : 'weeks' | 'week' | 'wks' | 'wk';
 
-DAYS      : 'days' | 'day' | 'd' | 'tag' | 'tage';
+DAYS      : 'days' | 'day' | 'd';
 
-HOURS     : 'hours' | 'hour' | 'hrs' | 'hr' | 'h' | 'stunden' | 'std';
+HOURS     : 'hours' | 'hour' | 'hrs' | 'hr' | 'h';
 
-MINUTES   : 'minutes' | 'minute' | 'mins' | 'min' | 'm' | 'minuten';
+MINUTES   : 'minutes' | 'minute' | 'mins' | 'min' | 'm';
 
-SECONDS   : 'seconds' | 'second' | 'secs' | 'sec' | 's' | 'sekunde' | 'sekunden';
+SECONDS   : 'seconds' | 'second' | 'secs' | 'sec' | 's';
 
-MONTH     : 'january'   | 'jan'  | 'januar'   |
-            'february'  | 'feb'  | 'februar'  |
-            'march'     | 'mar'  | 'märz'     | 'marz' |
-            'april'     | 'apr'  |
-            'may'       | 'mai'  |
-            'june'      | 'jun'  | 'juni'     |
-            'july'      | 'jul'  | 'juli'     |
-            'august'    | 'aug'  |
-            'september' | 'sept' | 'sep'      |
-            'october'   | 'oct'  | 'oktober'  | 'okt'  |
-            'november'  | 'nov'  |
-            'december'  | 'dec'  | 'dezember' | 'dez';
+MONTH     : 'january'   | 'jan'  | 'february' | 'feb'     | 'march' | 'mar'      | 'april' | 'apr' |
+            'may'       | 'june' | 'jun'      | 'july'    | 'jul'   | 'august'   | 'aug'   |
+            'september' | 'sept' | 'sep'      | 'october' | 'oct'   | 'november' | 'nov'   |
+            'december'  | 'dec';
 
-WEEKDAY   : 'monday'    | 'mon' | 'montag'     | 'mo'
-            'tuesday'   | 'tue' | 'dienstag'   | 'di'
-            'wednesday' | 'wed' | 'mittwoch'   | 'mi'
-            'thursday'  | 'thu' | 'donnerstag' | 'do'
-            'friday'    | 'fri' | 'freitag'    | 'fr'
-            'saturday'  | 'sat' | 'samstag'    | 'sa'
-            'sunday'    | 'sun' | 'sonntag'    | 'so';
+WEEKDAY   : 'monday'   | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' |
+            'thursday' | 'thu' | 'friday'  | 'fri' | 'saturday'  | 'sat' |
+            'sunday'   | 'sun';
 
 DATE_SEP  : '/' | '\u5E74' | '\u6708' | '\u65E5';
 
@@ -102,8 +89,7 @@ AM        :  A('m')? | '\u4E0A' | '\u5348\u524D' | '\uC624\uC804';
 
 PM        : 'p'('m')? | '\u4E0B' | '\u5348\u5F8C' | '\uC624\uD6C4';
 
-NUM_STR   : 'one'  | 'two'  | 'three' | 'four' | 'five'          | 'six'   | 'seven'  | 'eight' | 'nine' | 'ten' |
-            'eins' | 'zwei' | 'drei'  | 'vier' | 'fünf' | 'funf' | 'sechs' | 'sieben' | 'acht'  | 'neun' | 'zehn';
+NUM_STR   : 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten';
 
 fragment
 STRING    : ~('"' | ' ' | '(' | ')')+;

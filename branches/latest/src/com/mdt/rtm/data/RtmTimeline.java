@@ -19,7 +19,7 @@
  */
 package com.mdt.rtm.data;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -232,7 +232,8 @@ public class RtmTimeline
    public TimeLineMethod< RtmTaskList > tasks_setDueDate( final String listId,
                                                           final String taskSeriesId,
                                                           final String taskId,
-                                                          final Calendar dueUtc )
+                                                          final Date dueUtc,
+                                                          final boolean hasTime )
    {
       return new TimeLineMethod< RtmTaskList >()
       {
@@ -243,7 +244,8 @@ public class RtmTimeline
                                              listId,
                                              taskSeriesId,
                                              taskId,
-                                             dueUtc );
+                                             dueUtc,
+                                             hasTime );
          }
       };
    }

@@ -379,6 +379,8 @@ public class TaskActivity extends Activity
       }
       else
       {
+         view.setVisibility( View.VISIBLE );
+         
          final StringBuilder textBuffer = new StringBuilder();
          
          if ( hasDue )
@@ -535,6 +537,8 @@ public class TaskActivity extends Activity
       
       if ( participants != null && participants.getCount() > 0 )
       {
+         view.setVisibility( View.VISIBLE );
+         
          for ( final Participant participant : participants.getParticipants() )
          {
             final SpannableString clickableContact = new SpannableString( participant.getFullname() );

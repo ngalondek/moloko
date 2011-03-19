@@ -1,9 +1,8 @@
-parser grammar RecurrenceParser;
+grammar Recurrence;
 
 @option
 {
    language=Java;
-   tokenVocab=RecurrenceLexer;
 }
 
 @header
@@ -22,6 +21,11 @@ parser grammar RecurrenceParser;
 
    import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
    import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+}
+
+@lexer::header
+{
+   package dev.drsoran.moloko.grammar;
 }
 
 
@@ -413,3 +417,114 @@ parse_Month returns [int number]
    {
       return 1;
    }
+
+// TOKENS
+
+EVERY         : 'every' | 'each';
+
+AFTER         : 'after';
+
+BIWEEKLY      : 'fortnight' | 'biweekly';
+
+YEARS         : 'years' | 'year' | 'yrs' | 'yr';
+
+MONTHS        : 'months' | 'month' | 'mons' | 'mon';
+
+WEEKS         : 'weeks' | 'week' | 'wks' | 'wk';
+
+DAYS          : 'days' | 'day';
+
+MONTH         : 'january'   | 'jan'  | 'february' | 'feb'     | 'march' | 'mar'      | 'april' | 'apr' |
+                'may'       | 'june' | 'jun'      | 'july'    | 'jul'   | 'august'   | 'aug'   |
+                'september' | 'sept' | 'sep'      | 'october' | 'oct'   | 'november' | 'nov'   |
+                'december'  | 'dec';
+
+WEEKDAY_LIT   : 'weekday''s'?;
+
+WEEKEND       : 'weekend''s'?;
+
+MONDAY        : 'monday'    | 'mon';
+
+TUESDAY       : 'tuesday'   | 'tue';
+
+WEDNESDAY     : 'wednesday' | 'wed';
+
+THURSDAY      : 'thursday'  | 'thu';
+
+FRIDAY        : 'friday'    | 'fri';
+
+SATURDAY      : 'saturday'  | 'sat';
+
+SUNDAY        : 'sunday'    | 'sun';
+
+FIRST         : 'first';
+
+SECOND        : 'second';
+
+THIRD         : 'third';
+
+FOURTH        : 'fourth';
+
+FIFTH         : 'fifth';
+
+LAST          : 'last';
+
+OTHER         : 'other';
+
+ST_S          : 'st' | 'nd' | 'rd' | 'th';
+
+NUM_ONE       : 'one';
+
+NUM_TWO       : 'two';
+
+NUM_THREE     : 'three';
+
+NUM_FOUR      : 'four';
+
+NUM_FIVE      : 'five';
+
+NUM_SIX       : 'six';
+
+NUM_SEVEN     : 'seven';
+
+NUM_EIGHT     : 'eight';
+
+NUM_NINE      : 'nine';
+
+NUM_TEN       : 'ten';
+
+AND           : 'and';
+
+IN            : 'in';
+
+ON            : 'on';
+
+OF            : 'of';
+
+THE           : 'the';
+
+UNTIL         : 'until' STRING;
+
+FOR           : 'for';
+
+TIMES         : 'times';
+
+DOT           : '.';
+
+MINUS         : '-';
+
+COMMA         : ',';
+
+fragment
+NUMBER        : '0'..'9';
+
+INT           : MINUS? NUMBER+;
+
+fragment
+STRING        : (' '|.)+;
+
+WS            : (  ' '
+                 | '\t'
+                 | '\r'
+                 | '\n'
+                ) { $channel=HIDDEN; };

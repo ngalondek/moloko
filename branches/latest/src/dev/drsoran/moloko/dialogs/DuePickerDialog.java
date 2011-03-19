@@ -149,8 +149,7 @@ public class DuePickerDialog extends AbstractPickerDialog
                                                                               final Calendar cal = getCalendar();
                                                                               notifyOnDialogCloseListener( CloseReason.OK,
                                                                                                            cal.getTimeInMillis(),
-                                                                                                           Boolean.valueOf( cal.isSet( Calendar.HOUR )
-                                                                                                              || cal.isSet( Calendar.HOUR_OF_DAY ) ) );
+                                                                                                           Boolean.valueOf( hasTime() ) );
                                                                            }
                                                                         } )
                                                     .setNegativeButton( R.string.btn_cancel,
@@ -185,6 +184,13 @@ public class DuePickerDialog extends AbstractPickerDialog
       cal.setTimeInMillis( calendar.getTimeInMillis() );
       
       return timeWheelGroup.putTime( cal );
+   }
+   
+
+
+   public boolean hasTime()
+   {
+      return timeWheelGroup.hasTime;
    }
    
 

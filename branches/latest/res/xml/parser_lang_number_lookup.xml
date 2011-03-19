@@ -67,93 +67,93 @@
       key="zehn"
       value="10" />
 
-   <!-- Months en -->
+   <!-- Months en - values from Calendar constants -->
    <entry
       key="jan"
-      value="1" />
+      value="0" />
    <entry
       key="feb"
-      value="2" />
-   <entry
-      key="mar"
-      value="3" />
-   <entry
-      key="apr"
-      value="4" />
-   <entry
-      key="may"
-      value="5" />
-   <entry
-      key="jun"
-      value="6" />
-   <entry
-      key="jul"
-      value="7" />
-   <entry
-      key="aug"
-      value="8" />
-   <entry
-      key="sep"
-      value="9" />
-   <entry
-      key="oct"
-      value="10" />
-   <entry
-      key="nov"
-      value="11" />
-   <entry
-      key="dec"
-      value="12" />
-
-   <!-- Months de -->
-   <entry
-      key="mär"
-      value="3" />
-   <entry
-      key="mai"
-      value="5" />
-   <entry
-      key="okt"
-      value="10" />
-   <entry
-      key="dez"
-      value="12" />
-
-   <!-- Weekdays en -->
-   <entry
-      key="mo"
       value="1" />
    <entry
-      key="tu"
+      key="mar"
       value="2" />
    <entry
-      key="we"
+      key="apr"
       value="3" />
    <entry
-      key="th"
+      key="may"
       value="4" />
    <entry
-      key="fr"
+      key="jun"
       value="5" />
    <entry
-      key="sa"
+      key="jul"
       value="6" />
    <entry
-      key="su"
+      key="aug"
       value="7" />
-
-   <!-- Weekdays de -->  
    <entry
-      key="di"
+      key="sep"
+      value="8" />
+   <entry
+      key="oct"
+      value="9" />
+   <entry
+      key="nov"
+      value="10" />
+   <entry
+      key="dec"
+      value="11" />
+
+   <!-- Months de - values from Calendar constants -->
+   <entry
+      key="mär"
       value="2" />
    <entry
-      key="mi"
+      key="mai"
+      value="4" />
+   <entry
+      key="okt"
+      value="9" />
+   <entry
+      key="dez"
+      value="11" />
+
+   <!-- Weekdays en - values from Calendar constants -->
+   <entry
+      key="mo"
+      value="2" />
+   <entry
+      key="tu"
       value="3" />
    <entry
+      key="we"
+      value="4" />
+   <entry
+      key="th"
+      value="5" />
+   <entry
+      key="fr"
+      value="6" />
+   <entry
+      key="sa"
+      value="7" />
+   <entry
+      key="su"
+      value="1" />
+
+   <!-- Weekdays de - values from Calendar constants -->  
+   <entry
+      key="di"
+      value="3" />
+   <entry
+      key="mi"
+      value="4" />
+   <entry
       key="do"
-      value="4" /> 
+      value="5" /> 
    <entry
       key="so"
-      value="7" />
+      value="1" />
 
 </NumberLookup>

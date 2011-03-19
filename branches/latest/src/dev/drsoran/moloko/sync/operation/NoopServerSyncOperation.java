@@ -53,7 +53,7 @@ public final class NoopServerSyncOperation< T > implements
    
 
 
-   public Map< TimeLineMethod< T >, Modification > getMethods()
+   public Map< TimeLineMethod< T >, List< Modification > > getMethods()
    {
       return Collections.emptyMap();
    }

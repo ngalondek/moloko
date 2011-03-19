@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g 2011-02-24 08:45:38
+// $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g 2011-03-19 12:30:17
 
 package dev.drsoran.moloko.grammar;
 
@@ -38,7 +38,8 @@ public class RecurrenceParser extends Parser
     "THIRD", "FOURTH", "FIFTH", "NUM_ONE", "NUM_TWO", "NUM_THREE", "NUM_FOUR",
     "NUM_FIVE", "NUM_SIX", "NUM_SEVEN", "NUM_EIGHT", "NUM_NINE", "NUM_TEN",
     "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY",
-    "SUNDAY", "WEEKEND", "WEEKDAY_LIT", "MONTH" };
+    "SUNDAY", "WEEKEND", "WEEKDAY_LIT", "MONTH", "STRING", "TIMES", "MINUS",
+    "NUMBER", "WS" };
    
    public static final int EOF = -1;
    
@@ -132,6 +133,16 @@ public class RecurrenceParser extends Parser
    
    public static final int MONTH = 48;
    
+   public static final int STRING = 49;
+   
+   public static final int TIMES = 50;
+   
+   public static final int MINUS = 51;
+   
+   public static final int NUMBER = 52;
+   
+   public static final int WS = 53;
+   
    
 
    // delegates
@@ -152,7 +163,6 @@ public class RecurrenceParser extends Parser
    
 
 
-   @Override
    public String[] getTokenNames()
    {
       return RecurrenceParser.tokenNames;
@@ -160,10 +170,9 @@ public class RecurrenceParser extends Parser
    
 
 
-   @Override
    public String getGrammarFileName()
    {
-      return "F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g";
+      return "F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g";
    }
    
 
@@ -268,12 +277,12 @@ public class RecurrenceParser extends Parser
 
 
    // $ANTLR start "parseRecurrence"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:130:1: parseRecurrence returns
-   // [HashMap< String, Object > res] : ( ( EVERY | AFTER )? ( (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY )
-   // ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )? | MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? |
-   // YEARS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? ) |
-   // recurr_Xst[ints] | recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] ) ) (until=
-   // UNTIL | FOR count= INT )? | EOF );
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:134:1:
+   // parseRecurrence returns [HashMap< String, Object > res] : ( ( EVERY | AFTER )? ( (interval= parse_Number )? ( DAYS
+   // | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )? | MONTHS ( ( ON )? ( THE )? r=
+   // recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN |
+   // OF )? m= parse_Month )? )? ) | recurr_Xst[ints] | recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints]
+   // recurr_WD[weekdays, \"\"] ) ) (until= UNTIL | FOR count= INT )? | EOF );
    public final HashMap< String, Object > parseRecurrence() throws RecognitionException
    {
       HashMap< String, Object > res = null;
@@ -301,12 +310,12 @@ public class RecurrenceParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:154:4: ( ( EVERY | AFTER )?
-         // ( (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )? |
-         // MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )? r=
-         // recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? ) | recurr_Xst[ints] |
-         // recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] ) ) (until= UNTIL | FOR
-         // count= INT )? | EOF )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:158:4: ( (
+         // EVERY | AFTER )? ( (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )?
+         // recurr_WD[weekdays, \"\"] )? | MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON
+         // )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? ) |
+         // recurr_Xst[ints] | recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] ) )
+         // (until= UNTIL | FOR count= INT )? | EOF )
          int alt18 = 2;
          int LA18_0 = input.LA( 1 );
          
@@ -331,15 +340,15 @@ public class RecurrenceParser extends Parser
          switch ( alt18 )
          {
             case 1:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:154:6: ( EVERY | AFTER
-               // )? ( (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays,
-               // \"\"] )? | MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )?
-               // r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? ) | recurr_Xst[ints] |
-               // recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] ) ) (until= UNTIL
-               // | FOR count= INT )?
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:158:6: (
+               // EVERY | AFTER )? ( (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )?
+               // recurr_WD[weekdays, \"\"] )? | MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS
+               // ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? ) |
+               // recurr_Xst[ints] | recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"]
+               // ) ) (until= UNTIL | FOR count= INT )?
             {
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:154:6: ( EVERY | AFTER
-               // )?
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:158:6: (
+               // EVERY | AFTER )?
                int alt1 = 3;
                int LA1_0 = input.LA( 1 );
                
@@ -354,26 +363,28 @@ public class RecurrenceParser extends Parser
                switch ( alt1 )
                {
                   case 1:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:154:7: EVERY
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:158:7:
+                     // EVERY
                   {
-                     match( input, EVERY, FOLLOW_EVERY_in_parseRecurrence62 );
+                     match( input, EVERY, FOLLOW_EVERY_in_parseRecurrence69 );
                      isEvery = Boolean.TRUE;
                      
                   }
                      break;
                   case 2:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:154:43: AFTER
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:158:43:
+                     // AFTER
                   {
-                     match( input, AFTER, FOLLOW_AFTER_in_parseRecurrence68 );
+                     match( input, AFTER, FOLLOW_AFTER_in_parseRecurrence75 );
                      
                   }
                      break;
                   
                }
                
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:155:6: ( (interval=
-               // parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )? | MONTHS
-               // ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )? r=
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:159:6: (
+               // (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"]
+               // )? | MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )? r=
                // recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? ) | recurr_Xst[ints] |
                // recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] ) )
                int alt16 = 4;
@@ -381,12 +392,12 @@ public class RecurrenceParser extends Parser
                switch ( alt16 )
                {
                   case 1:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:156:9:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:160:9:
                      // (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays,
                      // \"\"] )? | MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? (
                      // THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? )
                   {
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:156:17:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:160:17:
                      // (interval= parse_Number )?
                      int alt2 = 2;
                      int LA2_0 = input.LA( 1 );
@@ -398,10 +409,10 @@ public class RecurrenceParser extends Parser
                      switch ( alt2 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:156:17:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:160:17:
                            // interval= parse_Number
                         {
-                           pushFollow( FOLLOW_parse_Number_in_parseRecurrence89 );
+                           pushFollow( FOLLOW_parse_Number_in_parseRecurrence96 );
                            interval = parse_Number();
                            
                            state._fsp--;
@@ -411,10 +422,10 @@ public class RecurrenceParser extends Parser
                         
                      }
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:157:9: ( DAYS |
-                     // ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )? | MONTHS ( ( ON )? ( THE )?
-                     // r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays,
-                     // ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? )
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:161:9:
+                     // ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )? | MONTHS ( ( ON )?
+                     // ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )? r=
+                     // recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? )
                      int alt15 = 4;
                      switch ( input.LA( 1 ) )
                      {
@@ -451,22 +462,22 @@ public class RecurrenceParser extends Parser
                      switch ( alt15 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:158:13:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:162:13:
                            // DAYS
                         {
                            match( input,
                                   DAYS,
-                                  FOLLOW_DAYS_in_parseRecurrence114 );
+                                  FOLLOW_DAYS_in_parseRecurrence121 );
                            freq = RecurrencePatternParser.VAL_DAILY_LIT;
                            
                         }
                            break;
                         case 2:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:159:13: (
-                           // WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )?
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:163:13:
+                           // ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )?
                         {
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:159:13: (
-                           // WEEKS | BIWEEKLY )
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:163:13:
+                           // ( WEEKS | BIWEEKLY )
                            int alt3 = 2;
                            int LA3_0 = input.LA( 1 );
                            
@@ -490,22 +501,22 @@ public class RecurrenceParser extends Parser
                            switch ( alt3 )
                            {
                               case 1:
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:160:18:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:164:18:
                                  // WEEKS
                               {
                                  match( input,
                                         WEEKS,
-                                        FOLLOW_WEEKS_in_parseRecurrence195 );
+                                        FOLLOW_WEEKS_in_parseRecurrence202 );
                                  
                               }
                                  break;
                               case 2:
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:161:18:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:165:18:
                                  // BIWEEKLY
                               {
                                  match( input,
                                         BIWEEKLY,
-                                        FOLLOW_BIWEEKLY_in_parseRecurrence214 );
+                                        FOLLOW_BIWEEKLY_in_parseRecurrence221 );
                                  
                                  interval = 2;
                                  
@@ -515,8 +526,8 @@ public class RecurrenceParser extends Parser
                            }
                            
                            freq = RecurrencePatternParser.VAL_WEEKLY_LIT;
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:166:14: (
-                           // ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )?
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:170:14:
+                           // ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )?
                            int alt6 = 2;
                            int LA6_0 = input.LA( 1 );
                            
@@ -527,10 +538,10 @@ public class RecurrenceParser extends Parser
                            switch ( alt6 )
                            {
                               case 1:
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:166:15:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:170:15:
                                  // ( ON )? ( THE )? recurr_WD[weekdays, \"\"]
                               {
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:166:15:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:170:15:
                                  // ( ON )?
                                  int alt4 = 2;
                                  int LA4_0 = input.LA( 1 );
@@ -542,19 +553,19 @@ public class RecurrenceParser extends Parser
                                  switch ( alt4 )
                                  {
                                     case 1:
-                                       // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:166:15:
+                                       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:170:15:
                                        // ON
                                     {
                                        match( input,
                                               ON,
-                                              FOLLOW_ON_in_parseRecurrence314 );
+                                              FOLLOW_ON_in_parseRecurrence321 );
                                        
                                     }
                                        break;
                                     
                                  }
                                  
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:166:19:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:170:19:
                                  // ( THE )?
                                  int alt5 = 2;
                                  int LA5_0 = input.LA( 1 );
@@ -566,19 +577,19 @@ public class RecurrenceParser extends Parser
                                  switch ( alt5 )
                                  {
                                     case 1:
-                                       // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:166:19:
+                                       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:170:19:
                                        // THE
                                     {
                                        match( input,
                                               THE,
-                                              FOLLOW_THE_in_parseRecurrence317 );
+                                              FOLLOW_THE_in_parseRecurrence324 );
                                        
                                     }
                                        break;
                                     
                                  }
                                  
-                                 pushFollow( FOLLOW_recurr_WD_in_parseRecurrence320 );
+                                 pushFollow( FOLLOW_recurr_WD_in_parseRecurrence327 );
                                  recurr_WD( weekdays, "" );
                                  
                                  state._fsp--;
@@ -594,15 +605,15 @@ public class RecurrenceParser extends Parser
                         }
                            break;
                         case 3:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:172:13:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:176:13:
                            // MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )?
                         {
                            match( input,
                                   MONTHS,
-                                  FOLLOW_MONTHS_in_parseRecurrence372 );
+                                  FOLLOW_MONTHS_in_parseRecurrence379 );
                            freq = RecurrencePatternParser.VAL_MONTHLY_LIT;
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:173:14: (
-                           // ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )?
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:177:14:
+                           // ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )?
                            int alt9 = 2;
                            int LA9_0 = input.LA( 1 );
                            
@@ -614,10 +625,10 @@ public class RecurrenceParser extends Parser
                            switch ( alt9 )
                            {
                               case 1:
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:173:15:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:177:15:
                                  // ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints]
                               {
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:173:15:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:177:15:
                                  // ( ON )?
                                  int alt7 = 2;
                                  int LA7_0 = input.LA( 1 );
@@ -629,19 +640,19 @@ public class RecurrenceParser extends Parser
                                  switch ( alt7 )
                                  {
                                     case 1:
-                                       // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:173:15:
+                                       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:177:15:
                                        // ON
                                     {
                                        match( input,
                                               ON,
-                                              FOLLOW_ON_in_parseRecurrence434 );
+                                              FOLLOW_ON_in_parseRecurrence441 );
                                        
                                     }
                                        break;
                                     
                                  }
                                  
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:173:19:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:177:19:
                                  // ( THE )?
                                  int alt8 = 2;
                                  int LA8_0 = input.LA( 1 );
@@ -653,19 +664,19 @@ public class RecurrenceParser extends Parser
                                  switch ( alt8 )
                                  {
                                     case 1:
-                                       // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:173:19:
+                                       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:177:19:
                                        // THE
                                     {
                                        match( input,
                                               THE,
-                                              FOLLOW_THE_in_parseRecurrence437 );
+                                              FOLLOW_THE_in_parseRecurrence444 );
                                        
                                     }
                                        break;
                                     
                                  }
                                  
-                                 pushFollow( FOLLOW_recurr_Monthly_in_parseRecurrence442 );
+                                 pushFollow( FOLLOW_recurr_Monthly_in_parseRecurrence449 );
                                  r = recurr_Monthly( weekdays, ints );
                                  
                                  state._fsp--;
@@ -683,17 +694,17 @@ public class RecurrenceParser extends Parser
                         }
                            break;
                         case 4:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:181:13:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:185:13:
                            // YEARS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m=
                            // parse_Month )? )?
                         {
                            match( input,
                                   YEARS,
-                                  FOLLOW_YEARS_in_parseRecurrence498 );
+                                  FOLLOW_YEARS_in_parseRecurrence505 );
                            freq = RecurrencePatternParser.VAL_YEARLY_LIT;
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:182:14: (
-                           // ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month
-                           // )? )?
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:186:14:
+                           // ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m=
+                           // parse_Month )? )?
                            int alt14 = 2;
                            int LA14_0 = input.LA( 1 );
                            
@@ -705,11 +716,11 @@ public class RecurrenceParser extends Parser
                            switch ( alt14 )
                            {
                               case 1:
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:182:15:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:186:15:
                                  // ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m=
                                  // parse_Month )?
                               {
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:182:15:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:186:15:
                                  // ( ON )?
                                  int alt10 = 2;
                                  int LA10_0 = input.LA( 1 );
@@ -721,19 +732,19 @@ public class RecurrenceParser extends Parser
                                  switch ( alt10 )
                                  {
                                     case 1:
-                                       // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:182:15:
+                                       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:186:15:
                                        // ON
                                     {
                                        match( input,
                                               ON,
-                                              FOLLOW_ON_in_parseRecurrence561 );
+                                              FOLLOW_ON_in_parseRecurrence568 );
                                        
                                     }
                                        break;
                                     
                                  }
                                  
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:182:19:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:186:19:
                                  // ( THE )?
                                  int alt11 = 2;
                                  int LA11_0 = input.LA( 1 );
@@ -745,19 +756,19 @@ public class RecurrenceParser extends Parser
                                  switch ( alt11 )
                                  {
                                     case 1:
-                                       // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:182:19:
+                                       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:186:19:
                                        // THE
                                     {
                                        match( input,
                                               THE,
-                                              FOLLOW_THE_in_parseRecurrence564 );
+                                              FOLLOW_THE_in_parseRecurrence571 );
                                        
                                     }
                                        break;
                                     
                                  }
                                  
-                                 pushFollow( FOLLOW_recurr_Monthly_in_parseRecurrence569 );
+                                 pushFollow( FOLLOW_recurr_Monthly_in_parseRecurrence576 );
                                  r = recurr_Monthly( weekdays, ints );
                                  
                                  state._fsp--;
@@ -773,7 +784,7 @@ public class RecurrenceParser extends Parser
                                                                         "parseRecurrence",
                                                                         " r.hasWD " );
                                  }
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:189:39:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:193:39:
                                  // ( ( IN | OF )? m= parse_Month )?
                                  int alt13 = 2;
                                  int LA13_0 = input.LA( 1 );
@@ -785,10 +796,10 @@ public class RecurrenceParser extends Parser
                                  switch ( alt13 )
                                  {
                                     case 1:
-                                       // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:190:41:
+                                       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:194:41:
                                        // ( IN | OF )? m= parse_Month
                                     {
-                                       // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:190:41:
+                                       // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:194:41:
                                        // ( IN | OF )?
                                        int alt12 = 2;
                                        int LA12_0 = input.LA( 1 );
@@ -800,7 +811,7 @@ public class RecurrenceParser extends Parser
                                        switch ( alt12 )
                                        {
                                           case 1:
-                                             // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:
+                                             // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:
                                           {
                                              if ( ( input.LA( 1 ) >= IN && input.LA( 1 ) <= OF ) )
                                              {
@@ -819,7 +830,7 @@ public class RecurrenceParser extends Parser
                                           
                                        }
                                        
-                                       pushFollow( FOLLOW_parse_Month_in_parseRecurrence717 );
+                                       pushFollow( FOLLOW_parse_Month_in_parseRecurrence724 );
                                        m = parse_Month();
                                        
                                        state._fsp--;
@@ -847,10 +858,10 @@ public class RecurrenceParser extends Parser
                   }
                      break;
                   case 2:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:200:6:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:204:6:
                      // recurr_Xst[ints]
                   {
-                     pushFollow( FOLLOW_recurr_Xst_in_parseRecurrence823 );
+                     pushFollow( FOLLOW_recurr_Xst_in_parseRecurrence830 );
                      recurr_Xst( ints );
                      
                      state._fsp--;
@@ -863,10 +874,10 @@ public class RecurrenceParser extends Parser
                   }
                      break;
                   case 3:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:207:6:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:211:6:
                      // recurr_WD[weekdays, \"\"]
                   {
-                     pushFollow( FOLLOW_recurr_WD_in_parseRecurrence838 );
+                     pushFollow( FOLLOW_recurr_WD_in_parseRecurrence845 );
                      recurr_WD( weekdays, "" );
                      
                      state._fsp--;
@@ -879,20 +890,20 @@ public class RecurrenceParser extends Parser
                   }
                      break;
                   case 4:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:214:6:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:218:6:
                      // (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] )
                   {
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:214:6:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:218:6:
                      // (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] )
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:215:9:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:219:9:
                      // firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"]
                      {
-                        pushFollow( FOLLOW_recurr_Xst_in_parseRecurrence865 );
+                        pushFollow( FOLLOW_recurr_Xst_in_parseRecurrence872 );
                         firstEntry = recurr_Xst( ints );
                         
                         state._fsp--;
                         
-                        pushFollow( FOLLOW_recurr_WD_in_parseRecurrence868 );
+                        pushFollow( FOLLOW_recurr_WD_in_parseRecurrence875 );
                         recurr_WD( weekdays, "" );
                         
                         state._fsp--;
@@ -909,8 +920,8 @@ public class RecurrenceParser extends Parser
                   
                }
                
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:224:4: (until= UNTIL |
-               // FOR count= INT )?
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:228:4:
+               // (until= UNTIL | FOR count= INT )?
                int alt17 = 3;
                int LA17_0 = input.LA( 1 );
                
@@ -925,12 +936,12 @@ public class RecurrenceParser extends Parser
                switch ( alt17 )
                {
                   case 1:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:225:9: until=
-                     // UNTIL
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:229:9:
+                     // until= UNTIL
                   {
                      until = (Token) match( input,
                                             UNTIL,
-                                            FOLLOW_UNTIL_in_parseRecurrence908 );
+                                            FOLLOW_UNTIL_in_parseRecurrence915 );
                      
                      final String dateTimeString = until.getText()
                                                         .toUpperCase()
@@ -959,13 +970,13 @@ public class RecurrenceParser extends Parser
                   }
                      break;
                   case 2:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:249:9: FOR
-                     // count= INT
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:253:9:
+                     // FOR count= INT
                   {
-                     match( input, FOR, FOLLOW_FOR_in_parseRecurrence928 );
+                     match( input, FOR, FOLLOW_FOR_in_parseRecurrence935 );
                      count = (Token) match( input,
                                             INT,
-                                            FOLLOW_INT_in_parseRecurrence932 );
+                                            FOLLOW_INT_in_parseRecurrence939 );
                      
                      res.put( RecurrencePatternParser.OP_COUNT_LIT,
                               Integer.parseInt( ( count != null
@@ -980,9 +991,10 @@ public class RecurrenceParser extends Parser
             }
                break;
             case 2:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:254:6: EOF
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:258:6:
+               // EOF
             {
-               match( input, EOF, FOLLOW_EOF_in_parseRecurrence955 );
+               match( input, EOF, FOLLOW_EOF_in_parseRecurrence962 );
                
             }
                break;
@@ -1022,8 +1034,8 @@ public class RecurrenceParser extends Parser
    // $ANTLR end "parseRecurrence"
    
    // $ANTLR start "recurr_Xst"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:265:1: recurr_Xst[Set< Integer >
-   // res] returns [int firstEntry] : x= parse_Xst ( ( ( AND | COMMA ) x= parse_Xst )+ )? ;
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:269:1:
+   // recurr_Xst[Set< Integer > res] returns [int firstEntry] : x= parse_Xst ( ( ( AND | COMMA ) x= parse_Xst )+ )? ;
    public final int recurr_Xst( Set< Integer > res ) throws RecognitionException
    {
       int firstEntry = 0;
@@ -1032,20 +1044,20 @@ public class RecurrenceParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:266:4: (x= parse_Xst ( ( (
-         // AND | COMMA ) x= parse_Xst )+ )? )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:266:6: x= parse_Xst ( ( (
-         // AND | COMMA ) x= parse_Xst )+ )?
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:270:4: (x=
+         // parse_Xst ( ( ( AND | COMMA ) x= parse_Xst )+ )? )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:270:6: x=
+         // parse_Xst ( ( ( AND | COMMA ) x= parse_Xst )+ )?
          {
-            pushFollow( FOLLOW_parse_Xst_in_recurr_Xst1002 );
+            pushFollow( FOLLOW_parse_Xst_in_recurr_Xst1009 );
             x = parse_Xst();
             
             state._fsp--;
             
             res.add( x );
             firstEntry = x;
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:267:4: ( ( ( AND | COMMA
-            // ) x= parse_Xst )+ )?
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:271:4: ( ( (
+            // AND | COMMA ) x= parse_Xst )+ )?
             int alt20 = 2;
             int LA20_0 = input.LA( 1 );
             
@@ -1056,11 +1068,11 @@ public class RecurrenceParser extends Parser
             switch ( alt20 )
             {
                case 1:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:267:5: ( ( AND |
-                  // COMMA ) x= parse_Xst )+
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:271:5:
+                  // ( ( AND | COMMA ) x= parse_Xst )+
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:267:5: ( ( AND |
-                  // COMMA ) x= parse_Xst )+
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:271:5:
+                  // ( ( AND | COMMA ) x= parse_Xst )+
                   int cnt19 = 0;
                   loop19: do
                   {
@@ -1075,8 +1087,8 @@ public class RecurrenceParser extends Parser
                      switch ( alt19 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:267:6: (
-                           // AND | COMMA ) x= parse_Xst
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:271:6:
+                           // ( AND | COMMA ) x= parse_Xst
                         {
                            if ( ( input.LA( 1 ) >= AND && input.LA( 1 ) <= COMMA ) )
                            {
@@ -1090,7 +1102,7 @@ public class RecurrenceParser extends Parser
                               throw mse;
                            }
                            
-                           pushFollow( FOLLOW_parse_Xst_in_recurr_Xst1035 );
+                           pushFollow( FOLLOW_parse_Xst_in_recurr_Xst1042 );
                            x = parse_Xst();
                            
                            state._fsp--;
@@ -1136,25 +1148,25 @@ public class RecurrenceParser extends Parser
    // $ANTLR end "recurr_Xst"
    
    // $ANTLR start "recurr_WD"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:274:1: recurr_WD[Set< String >
-   // weekdays, String Xst] : parse_Weekday[weekdays, Xst, true] ( ( ( AND | COMMA ) parse_Weekday[weekdays, Xst, true]
-   // )+ )? ;
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:278:1: recurr_WD[Set<
+   // String > weekdays, String Xst] : parse_Weekday[weekdays, Xst, true] ( ( ( AND | COMMA ) parse_Weekday[weekdays,
+   // Xst, true] )+ )? ;
    public final void recurr_WD( Set< String > weekdays, String Xst ) throws RecognitionException
    {
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:275:4: (
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:279:4: (
          // parse_Weekday[weekdays, Xst, true] ( ( ( AND | COMMA ) parse_Weekday[weekdays, Xst, true] )+ )? )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:275:6:
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:279:6:
          // parse_Weekday[weekdays, Xst, true] ( ( ( AND | COMMA ) parse_Weekday[weekdays, Xst, true] )+ )?
          {
-            pushFollow( FOLLOW_parse_Weekday_in_recurr_WD1070 );
+            pushFollow( FOLLOW_parse_Weekday_in_recurr_WD1077 );
             parse_Weekday( weekdays, Xst, true );
             
             state._fsp--;
             
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:276:4: ( ( ( AND | COMMA
-            // ) parse_Weekday[weekdays, Xst, true] )+ )?
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:280:4: ( ( (
+            // AND | COMMA ) parse_Weekday[weekdays, Xst, true] )+ )?
             int alt22 = 2;
             int LA22_0 = input.LA( 1 );
             
@@ -1165,11 +1177,11 @@ public class RecurrenceParser extends Parser
             switch ( alt22 )
             {
                case 1:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:276:5: ( ( AND |
-                  // COMMA ) parse_Weekday[weekdays, Xst, true] )+
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:280:5:
+                  // ( ( AND | COMMA ) parse_Weekday[weekdays, Xst, true] )+
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:276:5: ( ( AND |
-                  // COMMA ) parse_Weekday[weekdays, Xst, true] )+
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:280:5:
+                  // ( ( AND | COMMA ) parse_Weekday[weekdays, Xst, true] )+
                   int cnt21 = 0;
                   loop21: do
                   {
@@ -1184,8 +1196,8 @@ public class RecurrenceParser extends Parser
                      switch ( alt21 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:276:6: (
-                           // AND | COMMA ) parse_Weekday[weekdays, Xst, true]
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:280:6:
+                           // ( AND | COMMA ) parse_Weekday[weekdays, Xst, true]
                         {
                            if ( ( input.LA( 1 ) >= AND && input.LA( 1 ) <= COMMA ) )
                            {
@@ -1199,7 +1211,7 @@ public class RecurrenceParser extends Parser
                               throw mse;
                            }
                            
-                           pushFollow( FOLLOW_parse_Weekday_in_recurr_WD1100 );
+                           pushFollow( FOLLOW_parse_Weekday_in_recurr_WD1107 );
                            parse_Weekday( weekdays, Xst, true );
                            
                            state._fsp--;
@@ -1257,10 +1269,10 @@ public class RecurrenceParser extends Parser
    
 
    // $ANTLR start "recurr_Monthly"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:283:1: recurr_Monthly[Set< String
-   // > weekdays,\r\n Set< Integer > ints ] returns [String freq,\r\n String resolution,\r\n String resolutionVal,\r\n
-   // int interval,\r\n boolean hasWD] : firstEntry= recurr_Xst[ints] ( ( LAST )? recurr_WD[weekdays, Integer.toString(
-   // firstEntry )] )? ;
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:287:1:
+   // recurr_Monthly[Set< String > weekdays,\r\n Set< Integer > ints ] returns [String freq,\r\n String resolution,\r\n
+   // String resolutionVal,\r\n int interval,\r\n boolean hasWD] : firstEntry= recurr_Xst[ints] ( ( LAST )?
+   // recurr_WD[weekdays, Integer.toString( firstEntry )] )? ;
    public final RecurrenceParser.recurr_Monthly_return recurr_Monthly( Set< String > weekdays,
                                                                        Set< Integer > ints ) throws RecognitionException
    {
@@ -1274,12 +1286,12 @@ public class RecurrenceParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:294:4: (firstEntry=
-         // recurr_Xst[ints] ( ( LAST )? recurr_WD[weekdays, Integer.toString( firstEntry )] )? )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:294:6: firstEntry=
-         // recurr_Xst[ints] ( ( LAST )? recurr_WD[weekdays, Integer.toString( firstEntry )] )?
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:298:4:
+         // (firstEntry= recurr_Xst[ints] ( ( LAST )? recurr_WD[weekdays, Integer.toString( firstEntry )] )? )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:298:6:
+         // firstEntry= recurr_Xst[ints] ( ( LAST )? recurr_WD[weekdays, Integer.toString( firstEntry )] )?
          {
-            pushFollow( FOLLOW_recurr_Xst_in_recurr_Monthly1153 );
+            pushFollow( FOLLOW_recurr_Xst_in_recurr_Monthly1160 );
             firstEntry = recurr_Xst( ints );
             
             state._fsp--;
@@ -1287,8 +1299,8 @@ public class RecurrenceParser extends Parser
             retval.resolution = RecurrencePatternParser.OP_BYMONTHDAY_LIT;
             retval.resolutionVal = join( ",", ints );
             
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:298:8: ( ( LAST )?
-            // recurr_WD[weekdays, Integer.toString( firstEntry )] )?
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:302:8: ( (
+            // LAST )? recurr_WD[weekdays, Integer.toString( firstEntry )] )?
             int alt24 = 2;
             int LA24_0 = input.LA( 1 );
             
@@ -1299,10 +1311,11 @@ public class RecurrenceParser extends Parser
             switch ( alt24 )
             {
                case 1:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:299:11: ( LAST )?
-                  // recurr_WD[weekdays, Integer.toString( firstEntry )]
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:303:11:
+                  // ( LAST )? recurr_WD[weekdays, Integer.toString( firstEntry )]
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:299:11: ( LAST )?
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:303:11:
+                  // ( LAST )?
                   int alt23 = 2;
                   int LA23_0 = input.LA( 1 );
                   
@@ -1313,9 +1326,10 @@ public class RecurrenceParser extends Parser
                   switch ( alt23 )
                   {
                      case 1:
-                        // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:300:14: LAST
+                        // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:304:14:
+                        // LAST
                      {
-                        match( input, LAST, FOLLOW_LAST_in_recurr_Monthly1190 );
+                        match( input, LAST, FOLLOW_LAST_in_recurr_Monthly1197 );
                         
                         firstEntry = -firstEntry;
                         
@@ -1324,7 +1338,7 @@ public class RecurrenceParser extends Parser
                      
                   }
                   
-                  pushFollow( FOLLOW_recurr_WD_in_recurr_Monthly1230 );
+                  pushFollow( FOLLOW_recurr_WD_in_recurr_Monthly1237 );
                   recurr_WD( weekdays, Integer.toString( firstEntry ) );
                   
                   state._fsp--;
@@ -1360,8 +1374,8 @@ public class RecurrenceParser extends Parser
    // $ANTLR end "recurr_Monthly"
    
    // $ANTLR start "parse_Xst"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:318:1: parse_Xst returns [int
-   // number] : (n= INT ( DOT | ST_S )? | FIRST | ( SECOND | OTHER ) | THIRD | FOURTH | FIFTH );
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:322:1: parse_Xst
+   // returns [int number] : (n= INT ( DOT | ST_S )? | FIRST | ( SECOND | OTHER ) | THIRD | FOURTH | FIFTH );
    public final int parse_Xst() throws RecognitionException
    {
       int number = 0;
@@ -1370,8 +1384,8 @@ public class RecurrenceParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:319:4: (n= INT ( DOT | ST_S
-         // )? | FIRST | ( SECOND | OTHER ) | THIRD | FOURTH | FIFTH )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:323:4: (n= INT
+         // ( DOT | ST_S )? | FIRST | ( SECOND | OTHER ) | THIRD | FOURTH | FIFTH )
          int alt26 = 6;
          switch ( input.LA( 1 ) )
          {
@@ -1418,12 +1432,12 @@ public class RecurrenceParser extends Parser
          switch ( alt26 )
          {
             case 1:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:319:6: n= INT ( DOT |
-               // ST_S )?
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:323:6: n=
+               // INT ( DOT | ST_S )?
             {
-               n = (Token) match( input, INT, FOLLOW_INT_in_parse_Xst1286 );
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:319:12: ( DOT | ST_S
-               // )?
+               n = (Token) match( input, INT, FOLLOW_INT_in_parse_Xst1293 );
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:323:12: (
+               // DOT | ST_S )?
                int alt25 = 2;
                int LA25_0 = input.LA( 1 );
                
@@ -1434,7 +1448,7 @@ public class RecurrenceParser extends Parser
                switch ( alt25 )
                {
                   case 1:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:
                   {
                      if ( ( input.LA( 1 ) >= DOT && input.LA( 1 ) <= ST_S ) )
                      {
@@ -1463,16 +1477,17 @@ public class RecurrenceParser extends Parser
             }
                break;
             case 2:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:328:6: FIRST
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:332:6:
+               // FIRST
             {
-               match( input, FIRST, FOLLOW_FIRST_in_parse_Xst1305 );
+               match( input, FIRST, FOLLOW_FIRST_in_parse_Xst1312 );
                number = 1;
                
             }
                break;
             case 3:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:329:6: ( SECOND |
-               // OTHER )
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:333:6: (
+               // SECOND | OTHER )
             {
                if ( ( input.LA( 1 ) >= SECOND && input.LA( 1 ) <= OTHER ) )
                {
@@ -1491,25 +1506,28 @@ public class RecurrenceParser extends Parser
             }
                break;
             case 4:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:330:6: THIRD
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:334:6:
+               // THIRD
             {
-               match( input, THIRD, FOLLOW_THIRD_in_parse_Xst1340 );
+               match( input, THIRD, FOLLOW_THIRD_in_parse_Xst1347 );
                number = 3;
                
             }
                break;
             case 5:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:331:6: FOURTH
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:335:6:
+               // FOURTH
             {
-               match( input, FOURTH, FOLLOW_FOURTH_in_parse_Xst1360 );
+               match( input, FOURTH, FOLLOW_FOURTH_in_parse_Xst1367 );
                number = 4;
                
             }
                break;
             case 6:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:332:6: FIFTH
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:336:6:
+               // FIFTH
             {
-               match( input, FIFTH, FOLLOW_FIFTH_in_parse_Xst1379 );
+               match( input, FIFTH, FOLLOW_FIFTH_in_parse_Xst1386 );
                number = 5;
                
             }
@@ -1540,9 +1558,9 @@ public class RecurrenceParser extends Parser
    // $ANTLR end "parse_Xst"
    
    // $ANTLR start "parse_Number"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:343:1: parse_Number returns [int
-   // number] : (n= INT | NUM_ONE | NUM_TWO | NUM_THREE | NUM_FOUR | NUM_FIVE | NUM_SIX | NUM_SEVEN | NUM_EIGHT |
-   // NUM_NINE | NUM_TEN );
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:347:1: parse_Number
+   // returns [int number] : (n= INT | NUM_ONE | NUM_TWO | NUM_THREE | NUM_FOUR | NUM_FIVE | NUM_SIX | NUM_SEVEN |
+   // NUM_EIGHT | NUM_NINE | NUM_TEN );
    public final int parse_Number() throws RecognitionException
    {
       int number = 0;
@@ -1551,8 +1569,9 @@ public class RecurrenceParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:344:4: (n= INT | NUM_ONE |
-         // NUM_TWO | NUM_THREE | NUM_FOUR | NUM_FIVE | NUM_SIX | NUM_SEVEN | NUM_EIGHT | NUM_NINE | NUM_TEN )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:348:4: (n= INT
+         // | NUM_ONE | NUM_TWO | NUM_THREE | NUM_FOUR | NUM_FIVE | NUM_SIX | NUM_SEVEN | NUM_EIGHT | NUM_NINE | NUM_TEN
+         // )
          int alt27 = 11;
          switch ( input.LA( 1 ) )
          {
@@ -1623,89 +1642,100 @@ public class RecurrenceParser extends Parser
          switch ( alt27 )
          {
             case 1:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:344:6: n= INT
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:348:6: n=
+               // INT
             {
-               n = (Token) match( input, INT, FOLLOW_INT_in_parse_Number1437 );
+               n = (Token) match( input, INT, FOLLOW_INT_in_parse_Number1444 );
                number = Integer.parseInt( ( n != null ? n.getText() : null ) );
                
             }
                break;
             case 2:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:345:6: NUM_ONE
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:349:6:
+               // NUM_ONE
             {
-               match( input, NUM_ONE, FOLLOW_NUM_ONE_in_parse_Number1451 );
+               match( input, NUM_ONE, FOLLOW_NUM_ONE_in_parse_Number1458 );
                number = 1;
                
             }
                break;
             case 3:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:346:6: NUM_TWO
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:350:6:
+               // NUM_TWO
             {
-               match( input, NUM_TWO, FOLLOW_NUM_TWO_in_parse_Number1463 );
+               match( input, NUM_TWO, FOLLOW_NUM_TWO_in_parse_Number1470 );
                number = 2;
                
             }
                break;
             case 4:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:347:6: NUM_THREE
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:351:6:
+               // NUM_THREE
             {
-               match( input, NUM_THREE, FOLLOW_NUM_THREE_in_parse_Number1475 );
+               match( input, NUM_THREE, FOLLOW_NUM_THREE_in_parse_Number1482 );
                number = 3;
                
             }
                break;
             case 5:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:348:6: NUM_FOUR
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:352:6:
+               // NUM_FOUR
             {
-               match( input, NUM_FOUR, FOLLOW_NUM_FOUR_in_parse_Number1485 );
+               match( input, NUM_FOUR, FOLLOW_NUM_FOUR_in_parse_Number1492 );
                number = 4;
                
             }
                break;
             case 6:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:349:6: NUM_FIVE
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:353:6:
+               // NUM_FIVE
             {
-               match( input, NUM_FIVE, FOLLOW_NUM_FIVE_in_parse_Number1496 );
+               match( input, NUM_FIVE, FOLLOW_NUM_FIVE_in_parse_Number1503 );
                number = 5;
                
             }
                break;
             case 7:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:350:6: NUM_SIX
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:354:6:
+               // NUM_SIX
             {
-               match( input, NUM_SIX, FOLLOW_NUM_SIX_in_parse_Number1507 );
+               match( input, NUM_SIX, FOLLOW_NUM_SIX_in_parse_Number1514 );
                number = 6;
                
             }
                break;
             case 8:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:351:6: NUM_SEVEN
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:355:6:
+               // NUM_SEVEN
             {
-               match( input, NUM_SEVEN, FOLLOW_NUM_SEVEN_in_parse_Number1519 );
+               match( input, NUM_SEVEN, FOLLOW_NUM_SEVEN_in_parse_Number1526 );
                number = 7;
                
             }
                break;
             case 9:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:352:6: NUM_EIGHT
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:356:6:
+               // NUM_EIGHT
             {
-               match( input, NUM_EIGHT, FOLLOW_NUM_EIGHT_in_parse_Number1529 );
+               match( input, NUM_EIGHT, FOLLOW_NUM_EIGHT_in_parse_Number1536 );
                number = 8;
                
             }
                break;
             case 10:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:353:6: NUM_NINE
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:357:6:
+               // NUM_NINE
             {
-               match( input, NUM_NINE, FOLLOW_NUM_NINE_in_parse_Number1539 );
+               match( input, NUM_NINE, FOLLOW_NUM_NINE_in_parse_Number1546 );
                number = 9;
                
             }
                break;
             case 11:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:354:6: NUM_TEN
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:358:6:
+               // NUM_TEN
             {
-               match( input, NUM_TEN, FOLLOW_NUM_TEN_in_parse_Number1550 );
+               match( input, NUM_TEN, FOLLOW_NUM_TEN_in_parse_Number1557 );
                number = 10;
                
             }
@@ -1736,9 +1766,9 @@ public class RecurrenceParser extends Parser
    // $ANTLR end "parse_Number"
    
    // $ANTLR start "parse_Weekday"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:365:1: parse_Weekday[Set< String >
-   // weekdays, String Xst, boolean strict] returns [String weekday] : ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY |
-   // FRIDAY | SATURDAY | SUNDAY | WEEKEND | WEEKDAY_LIT );
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:369:1:
+   // parse_Weekday[Set< String > weekdays, String Xst, boolean strict] returns [String weekday] : ( MONDAY | TUESDAY |
+   // WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY | WEEKEND | WEEKDAY_LIT );
    public final String parse_Weekday( Set< String > weekdays,
                                       String Xst,
                                       boolean strict ) throws RecognitionException
@@ -1747,8 +1777,8 @@ public class RecurrenceParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:366:4: ( MONDAY | TUESDAY |
-         // WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY | WEEKEND | WEEKDAY_LIT )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:370:4: ( MONDAY
+         // | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY | WEEKEND | WEEKDAY_LIT )
          int alt28 = 9;
          switch ( input.LA( 1 ) )
          {
@@ -1809,65 +1839,73 @@ public class RecurrenceParser extends Parser
          switch ( alt28 )
          {
             case 1:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:366:6: MONDAY
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:370:6:
+               // MONDAY
             {
-               match( input, MONDAY, FOLLOW_MONDAY_in_parse_Weekday1600 );
+               match( input, MONDAY, FOLLOW_MONDAY_in_parse_Weekday1607 );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_MON );
                
             }
                break;
             case 2:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:367:6: TUESDAY
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:371:6:
+               // TUESDAY
             {
-               match( input, TUESDAY, FOLLOW_TUESDAY_in_parse_Weekday1614 );
+               match( input, TUESDAY, FOLLOW_TUESDAY_in_parse_Weekday1621 );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_TUE );
                
             }
                break;
             case 3:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:368:6: WEDNESDAY
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:372:6:
+               // WEDNESDAY
             {
-               match( input, WEDNESDAY, FOLLOW_WEDNESDAY_in_parse_Weekday1627 );
+               match( input, WEDNESDAY, FOLLOW_WEDNESDAY_in_parse_Weekday1634 );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_WED );
                
             }
                break;
             case 4:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:369:6: THURSDAY
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:373:6:
+               // THURSDAY
             {
-               match( input, THURSDAY, FOLLOW_THURSDAY_in_parse_Weekday1638 );
+               match( input, THURSDAY, FOLLOW_THURSDAY_in_parse_Weekday1645 );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_THU );
                
             }
                break;
             case 5:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:370:6: FRIDAY
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:374:6:
+               // FRIDAY
             {
-               match( input, FRIDAY, FOLLOW_FRIDAY_in_parse_Weekday1650 );
+               match( input, FRIDAY, FOLLOW_FRIDAY_in_parse_Weekday1657 );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_FRI );
                
             }
                break;
             case 6:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:371:6: SATURDAY
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:375:6:
+               // SATURDAY
             {
-               match( input, SATURDAY, FOLLOW_SATURDAY_in_parse_Weekday1664 );
+               match( input, SATURDAY, FOLLOW_SATURDAY_in_parse_Weekday1671 );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_SAT );
                
             }
                break;
             case 7:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:372:6: SUNDAY
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:376:6:
+               // SUNDAY
             {
-               match( input, SUNDAY, FOLLOW_SUNDAY_in_parse_Weekday1676 );
+               match( input, SUNDAY, FOLLOW_SUNDAY_in_parse_Weekday1683 );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_SUN );
                
             }
                break;
             case 8:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:373:6: WEEKEND
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:377:6:
+               // WEEKEND
             {
-               match( input, WEEKEND, FOLLOW_WEEKEND_in_parse_Weekday1690 );
+               match( input, WEEKEND, FOLLOW_WEEKEND_in_parse_Weekday1697 );
                
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_SAT );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_SUN );
@@ -1875,11 +1913,12 @@ public class RecurrenceParser extends Parser
             }
                break;
             case 9:
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:377:6: WEEKDAY_LIT
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:381:6:
+               // WEEKDAY_LIT
             {
                match( input,
                       WEEKDAY_LIT,
-                      FOLLOW_WEEKDAY_LIT_in_parse_Weekday1703 );
+                      FOLLOW_WEEKDAY_LIT_in_parse_Weekday1710 );
                
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_MON );
                weekdays.add( Xst + RecurrencePatternParser.BYDAY_TUE );
@@ -1912,8 +1951,8 @@ public class RecurrenceParser extends Parser
    // $ANTLR end "parse_Weekday"
    
    // $ANTLR start "parse_Month"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:393:1: parse_Month returns [int
-   // number] : m= MONTH ;
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:397:1: parse_Month
+   // returns [int number] : m= MONTH ;
    public final int parse_Month() throws RecognitionException
    {
       int number = 0;
@@ -1922,10 +1961,11 @@ public class RecurrenceParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:394:4: (m= MONTH )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrenceParser.g:394:6: m= MONTH
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:398:4: (m=
+         // MONTH )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\Recurrence.g:398:6: m= MONTH
          {
-            m = (Token) match( input, MONTH, FOLLOW_MONTH_in_parse_Month1738 );
+            m = (Token) match( input, MONTH, FOLLOW_MONTH_in_parse_Month1745 );
             
             try
             {
@@ -2032,203 +2072,202 @@ public class RecurrenceParser extends Parser
       
 
 
-      @Override
       public String getDescription()
       {
-         return "155:6: ( (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )? | MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? ) | recurr_Xst[ints] | recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] ) )";
+         return "159:6: ( (interval= parse_Number )? ( DAYS | ( WEEKS | BIWEEKLY ) ( ( ON )? ( THE )? recurr_WD[weekdays, \"\"] )? | MONTHS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] )? | YEARS ( ( ON )? ( THE )? r= recurr_Monthly[weekdays, ints] {...}? => ( ( IN | OF )? m= parse_Month )? )? ) | recurr_Xst[ints] | recurr_WD[weekdays, \"\"] | (firstEntry= recurr_Xst[ints] recurr_WD[weekdays, \"\"] ) )";
       }
    }
    
-   public static final BitSet FOLLOW_EVERY_in_parseRecurrence62 = new BitSet( new long[]
+   public static final BitSet FOLLOW_EVERY_in_parseRecurrence69 = new BitSet( new long[]
    { 0x0000FFFFFF8219C0L } );
    
-   public static final BitSet FOLLOW_AFTER_in_parseRecurrence68 = new BitSet( new long[]
+   public static final BitSet FOLLOW_AFTER_in_parseRecurrence75 = new BitSet( new long[]
    { 0x0000FFFFFF8219C0L } );
    
-   public static final BitSet FOLLOW_parse_Number_in_parseRecurrence89 = new BitSet( new long[]
+   public static final BitSet FOLLOW_parse_Number_in_parseRecurrence96 = new BitSet( new long[]
    { 0x00000000000019C0L } );
    
-   public static final BitSet FOLLOW_DAYS_in_parseRecurrence114 = new BitSet( new long[]
+   public static final BitSet FOLLOW_DAYS_in_parseRecurrence121 = new BitSet( new long[]
    { 0x0000000000018002L } );
    
-   public static final BitSet FOLLOW_WEEKS_in_parseRecurrence195 = new BitSet( new long[]
+   public static final BitSet FOLLOW_WEEKS_in_parseRecurrence202 = new BitSet( new long[]
    { 0x0000FF8000018602L } );
    
-   public static final BitSet FOLLOW_BIWEEKLY_in_parseRecurrence214 = new BitSet( new long[]
+   public static final BitSet FOLLOW_BIWEEKLY_in_parseRecurrence221 = new BitSet( new long[]
    { 0x0000FF8000018602L } );
    
-   public static final BitSet FOLLOW_ON_in_parseRecurrence314 = new BitSet( new long[]
+   public static final BitSet FOLLOW_ON_in_parseRecurrence321 = new BitSet( new long[]
    { 0x0000FF8000000400L } );
    
-   public static final BitSet FOLLOW_THE_in_parseRecurrence317 = new BitSet( new long[]
+   public static final BitSet FOLLOW_THE_in_parseRecurrence324 = new BitSet( new long[]
    { 0x0000FF8000000000L } );
    
-   public static final BitSet FOLLOW_recurr_WD_in_parseRecurrence320 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_WD_in_parseRecurrence327 = new BitSet( new long[]
    { 0x0000000000018002L } );
    
-   public static final BitSet FOLLOW_MONTHS_in_parseRecurrence372 = new BitSet( new long[]
+   public static final BitSet FOLLOW_MONTHS_in_parseRecurrence379 = new BitSet( new long[]
    { 0x000000001F838602L } );
    
-   public static final BitSet FOLLOW_ON_in_parseRecurrence434 = new BitSet( new long[]
+   public static final BitSet FOLLOW_ON_in_parseRecurrence441 = new BitSet( new long[]
    { 0x000000001F820600L } );
    
-   public static final BitSet FOLLOW_THE_in_parseRecurrence437 = new BitSet( new long[]
+   public static final BitSet FOLLOW_THE_in_parseRecurrence444 = new BitSet( new long[]
    { 0x000000001F820600L } );
    
-   public static final BitSet FOLLOW_recurr_Monthly_in_parseRecurrence442 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_Monthly_in_parseRecurrence449 = new BitSet( new long[]
    { 0x0000000000018002L } );
    
-   public static final BitSet FOLLOW_YEARS_in_parseRecurrence498 = new BitSet( new long[]
+   public static final BitSet FOLLOW_YEARS_in_parseRecurrence505 = new BitSet( new long[]
    { 0x000000001F838602L } );
    
-   public static final BitSet FOLLOW_ON_in_parseRecurrence561 = new BitSet( new long[]
+   public static final BitSet FOLLOW_ON_in_parseRecurrence568 = new BitSet( new long[]
    { 0x000000001F820600L } );
    
-   public static final BitSet FOLLOW_THE_in_parseRecurrence564 = new BitSet( new long[]
+   public static final BitSet FOLLOW_THE_in_parseRecurrence571 = new BitSet( new long[]
    { 0x000000001F820600L } );
    
-   public static final BitSet FOLLOW_recurr_Monthly_in_parseRecurrence569 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_Monthly_in_parseRecurrence576 = new BitSet( new long[]
    { 0x000100000001E002L } );
    
-   public static final BitSet FOLLOW_set_in_parseRecurrence665 = new BitSet( new long[]
+   public static final BitSet FOLLOW_set_in_parseRecurrence672 = new BitSet( new long[]
    { 0x0001000000006000L } );
    
-   public static final BitSet FOLLOW_parse_Month_in_parseRecurrence717 = new BitSet( new long[]
+   public static final BitSet FOLLOW_parse_Month_in_parseRecurrence724 = new BitSet( new long[]
    { 0x0000000000018002L } );
    
-   public static final BitSet FOLLOW_recurr_Xst_in_parseRecurrence823 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_Xst_in_parseRecurrence830 = new BitSet( new long[]
    { 0x0000000000018002L } );
    
-   public static final BitSet FOLLOW_recurr_WD_in_parseRecurrence838 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_WD_in_parseRecurrence845 = new BitSet( new long[]
    { 0x0000000000018002L } );
    
-   public static final BitSet FOLLOW_recurr_Xst_in_parseRecurrence865 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_Xst_in_parseRecurrence872 = new BitSet( new long[]
    { 0x0000FF8000000000L } );
    
-   public static final BitSet FOLLOW_recurr_WD_in_parseRecurrence868 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_WD_in_parseRecurrence875 = new BitSet( new long[]
    { 0x0000000000018002L } );
    
-   public static final BitSet FOLLOW_UNTIL_in_parseRecurrence908 = new BitSet( new long[]
+   public static final BitSet FOLLOW_UNTIL_in_parseRecurrence915 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_FOR_in_parseRecurrence928 = new BitSet( new long[]
+   public static final BitSet FOLLOW_FOR_in_parseRecurrence935 = new BitSet( new long[]
    { 0x0000000000020000L } );
    
-   public static final BitSet FOLLOW_INT_in_parseRecurrence932 = new BitSet( new long[]
+   public static final BitSet FOLLOW_INT_in_parseRecurrence939 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_EOF_in_parseRecurrence955 = new BitSet( new long[]
+   public static final BitSet FOLLOW_EOF_in_parseRecurrence962 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_parse_Xst_in_recurr_Xst1002 = new BitSet( new long[]
+   public static final BitSet FOLLOW_parse_Xst_in_recurr_Xst1009 = new BitSet( new long[]
    { 0x00000000000C0002L } );
    
-   public static final BitSet FOLLOW_set_in_recurr_Xst1025 = new BitSet( new long[]
+   public static final BitSet FOLLOW_set_in_recurr_Xst1032 = new BitSet( new long[]
    { 0x000000001F820000L } );
    
-   public static final BitSet FOLLOW_parse_Xst_in_recurr_Xst1035 = new BitSet( new long[]
+   public static final BitSet FOLLOW_parse_Xst_in_recurr_Xst1042 = new BitSet( new long[]
    { 0x00000000000C0002L } );
    
-   public static final BitSet FOLLOW_parse_Weekday_in_recurr_WD1070 = new BitSet( new long[]
+   public static final BitSet FOLLOW_parse_Weekday_in_recurr_WD1077 = new BitSet( new long[]
    { 0x00000000000C0002L } );
    
-   public static final BitSet FOLLOW_set_in_recurr_WD1092 = new BitSet( new long[]
+   public static final BitSet FOLLOW_set_in_recurr_WD1099 = new BitSet( new long[]
    { 0x0000FF8000000000L } );
    
-   public static final BitSet FOLLOW_parse_Weekday_in_recurr_WD1100 = new BitSet( new long[]
+   public static final BitSet FOLLOW_parse_Weekday_in_recurr_WD1107 = new BitSet( new long[]
    { 0x00000000000C0002L } );
    
-   public static final BitSet FOLLOW_recurr_Xst_in_recurr_Monthly1153 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_Xst_in_recurr_Monthly1160 = new BitSet( new long[]
    { 0x0000FF8000100002L } );
    
-   public static final BitSet FOLLOW_LAST_in_recurr_Monthly1190 = new BitSet( new long[]
+   public static final BitSet FOLLOW_LAST_in_recurr_Monthly1197 = new BitSet( new long[]
    { 0x0000FF8000000000L } );
    
-   public static final BitSet FOLLOW_recurr_WD_in_recurr_Monthly1230 = new BitSet( new long[]
+   public static final BitSet FOLLOW_recurr_WD_in_recurr_Monthly1237 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_INT_in_parse_Xst1286 = new BitSet( new long[]
+   public static final BitSet FOLLOW_INT_in_parse_Xst1293 = new BitSet( new long[]
    { 0x0000000000600002L } );
    
-   public static final BitSet FOLLOW_set_in_parse_Xst1288 = new BitSet( new long[]
+   public static final BitSet FOLLOW_set_in_parse_Xst1295 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_FIRST_in_parse_Xst1305 = new BitSet( new long[]
+   public static final BitSet FOLLOW_FIRST_in_parse_Xst1312 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_set_in_parse_Xst1325 = new BitSet( new long[]
+   public static final BitSet FOLLOW_set_in_parse_Xst1332 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_THIRD_in_parse_Xst1340 = new BitSet( new long[]
+   public static final BitSet FOLLOW_THIRD_in_parse_Xst1347 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_FOURTH_in_parse_Xst1360 = new BitSet( new long[]
+   public static final BitSet FOLLOW_FOURTH_in_parse_Xst1367 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_FIFTH_in_parse_Xst1379 = new BitSet( new long[]
+   public static final BitSet FOLLOW_FIFTH_in_parse_Xst1386 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_INT_in_parse_Number1437 = new BitSet( new long[]
+   public static final BitSet FOLLOW_INT_in_parse_Number1444 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_ONE_in_parse_Number1451 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_ONE_in_parse_Number1458 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_TWO_in_parse_Number1463 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_TWO_in_parse_Number1470 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_THREE_in_parse_Number1475 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_THREE_in_parse_Number1482 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_FOUR_in_parse_Number1485 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_FOUR_in_parse_Number1492 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_FIVE_in_parse_Number1496 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_FIVE_in_parse_Number1503 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_SIX_in_parse_Number1507 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_SIX_in_parse_Number1514 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_SEVEN_in_parse_Number1519 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_SEVEN_in_parse_Number1526 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_EIGHT_in_parse_Number1529 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_EIGHT_in_parse_Number1536 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_NINE_in_parse_Number1539 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_NINE_in_parse_Number1546 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_NUM_TEN_in_parse_Number1550 = new BitSet( new long[]
+   public static final BitSet FOLLOW_NUM_TEN_in_parse_Number1557 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_MONDAY_in_parse_Weekday1600 = new BitSet( new long[]
+   public static final BitSet FOLLOW_MONDAY_in_parse_Weekday1607 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_TUESDAY_in_parse_Weekday1614 = new BitSet( new long[]
+   public static final BitSet FOLLOW_TUESDAY_in_parse_Weekday1621 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_WEDNESDAY_in_parse_Weekday1627 = new BitSet( new long[]
+   public static final BitSet FOLLOW_WEDNESDAY_in_parse_Weekday1634 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_THURSDAY_in_parse_Weekday1638 = new BitSet( new long[]
+   public static final BitSet FOLLOW_THURSDAY_in_parse_Weekday1645 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_FRIDAY_in_parse_Weekday1650 = new BitSet( new long[]
+   public static final BitSet FOLLOW_FRIDAY_in_parse_Weekday1657 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_SATURDAY_in_parse_Weekday1664 = new BitSet( new long[]
+   public static final BitSet FOLLOW_SATURDAY_in_parse_Weekday1671 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_SUNDAY_in_parse_Weekday1676 = new BitSet( new long[]
+   public static final BitSet FOLLOW_SUNDAY_in_parse_Weekday1683 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_WEEKEND_in_parse_Weekday1690 = new BitSet( new long[]
+   public static final BitSet FOLLOW_WEEKEND_in_parse_Weekday1697 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_WEEKDAY_LIT_in_parse_Weekday1703 = new BitSet( new long[]
+   public static final BitSet FOLLOW_WEEKDAY_LIT_in_parse_Weekday1710 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
-   public static final BitSet FOLLOW_MONTH_in_parse_Month1738 = new BitSet( new long[]
+   public static final BitSet FOLLOW_MONTH_in_parse_Month1745 = new BitSet( new long[]
    { 0x0000000000000002L } );
    
 }

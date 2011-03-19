@@ -19,7 +19,7 @@ public class TimeParserTestCase
       
       System.out.println( ">input: " + string );
       
-      final Calendar cal = TimeParser.getLocalizedCalendar();
+      final Calendar cal = TimeParser.getCalendar();
       cal.setTimeZone( TimeZone.getTimeZone( "Europe/Berlin" ) );
       
       try
@@ -52,7 +52,7 @@ public class TimeParserTestCase
       
       System.out.println( ">input: " + string );
       
-      final Calendar cal = TimeParser.getLocalizedCalendar();
+      final Calendar cal = TimeParser.getCalendar();
       cal.setTimeZone( TimeZone.getTimeZone( "Europe/Berlin" ) );
       
       try

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/*.g|**/*.tokens|dev/drsoran/moloko/content/SyncTasksProviderPart.java|dev/drsoran/moloko/dialogs/AddRemoveTagsDialog.java|dev/drsoran/moloko/service/sync/lists/TwoWaySyncableList.java|dev/drsoran/moloko/service/sync/operation/CompositeContentProviderSyncOperation.java|dev/drsoran/moloko/service/sync/operation/NoopSyncOperation.java|dev/drsoran/moloko/sync/operation/DirectedSyncOperations.java|dev/drsoran/moloko/sync/syncable/ITwoWaySyncable.java|dev/drsoran/moloko/content/TagOverviewsProviderPart.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="aidl"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="lib" path="lib/antlr-runtime-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/acra-2.0.3.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

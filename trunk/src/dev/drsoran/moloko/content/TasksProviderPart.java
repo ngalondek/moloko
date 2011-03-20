@@ -49,7 +49,6 @@ import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Participant;
@@ -70,7 +69,7 @@ public class TasksProviderPart extends AbstractProviderPart
     Tasks.SOURCE, Tasks.URL, Tasks.RECURRENCE, Tasks.RECURRENCE_EVERY,
     Tasks.TASKSERIES_ID, Tasks.DUE_DATE, Tasks.HAS_DUE_TIME, Tasks.ADDED_DATE,
     Tasks.COMPLETED_DATE, Tasks.DELETED_DATE, Tasks.PRIORITY, Tasks.POSTPONED,
-    Tasks.ESTIMATE, Tasks.ESTIMATE_MILLIS, Tasks.LOCATION_ID,
+    Tasks.ESTIMATE, Tasks.ESTIMATE_MILLIS, Tasks.TAGS, Tasks.LOCATION_ID,
     Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE, Tasks.ADDRESS,
     Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.PARTICIPANT_IDS,
     Tasks.PARTICIPANT_FULLNAMES, Tasks.PARTICIPANT_USERNAMES, Tasks.NUM_NOTES };
@@ -78,8 +77,6 @@ public class TasksProviderPart extends AbstractProviderPart
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
    private final static String SUB_QUERY;
-   
-   private final static String TAGS_SUB_QUERY;
    
    private final static String PARTICIPANTS_SUB_QUERY;
    
@@ -105,7 +102,10 @@ public class TasksProviderPart extends AbstractProviderPart
                                                         RawTasks.PATH + "."
                                                            + RawTasks._ID
                                                            + " AS _id",
-                                                        Tasks.LIST_ID,
+                                                        TaskSeries.PATH + "."
+                                                           + TaskSeries.LIST_ID
+                                                           + " AS "
+                                                           + Tasks.LIST_ID,
                                                         Tasks.LIST_NAME,
                                                         Tasks.IS_SMART_LIST,
                                                         Tasks.TASKSERIES_CREATED_DATE,
@@ -125,6 +125,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                         Tasks.POSTPONED,
                                                         Tasks.ESTIMATE,
                                                         Tasks.ESTIMATE_MILLIS,
+                                                        Tasks.TAGS,
                                                         Tasks.LOCATION_ID },
                                                        
                                                        // where
@@ -153,48 +154,6 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        null,
                                                        null,
                                                        null );
-      
-      TAGS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                            false,
-                                                            
-                                                            // tables
-                                                            TaskSeries.PATH
-                                                               + ","
-                                                               + Tags.PATH,
-                                                            
-                                                            // columns
-                                                            new String[]
-                                                            {
-                                                             TaskSeries.PATH
-                                                                + "."
-                                                                + TaskSeries._ID,
-                                                             Tags.PATH
-                                                                + "."
-                                                                + Tags.TASKSERIES_ID
-                                                                + " AS series_id",
-                                                             "group_concat("
-                                                                + Tags.TAG
-                                                                + ",\""
-                                                                + Tasks.TAGS_DELIMITER
-                                                                + "\") AS "
-                                                                + Tasks.TAGS },
-                                                            
-                                                            // where
-                                                            TaskSeries.PATH
-                                                               + "."
-                                                               + TaskSeries._ID
-                                                               + "="
-                                                               + Tags.PATH
-                                                               + "."
-                                                               + Tags.TASKSERIES_ID,
-                                                            
-                                                            // group by
-                                                            TaskSeries.PATH
-                                                               + "."
-                                                               + TaskSeries._ID,
-                                                            null,
-                                                            null,
-                                                            null );
       
       PARTICIPANTS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
                                                                     false,
@@ -298,9 +257,6 @@ public class TasksProviderPart extends AbstractProviderPart
              .registerContentObserver( RawTasks.CONTENT_URI, true, observer );
       context.getContentResolver()
              .registerContentObserver( Locations.CONTENT_URI, true, observer );
-      context.getContentResolver().registerContentObserver( Tags.CONTENT_URI,
-                                                            true,
-                                                            observer );
       context.getContentResolver().registerContentObserver( Notes.CONTENT_URI,
                                                             true,
                                                             observer );
@@ -407,9 +363,9 @@ public class TasksProviderPart extends AbstractProviderPart
    
 
 
-   public TasksProviderPart( SQLiteOpenHelper dbAccess )
+   public TasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Tasks.PATH );
+      super( context, dbAccess, Tasks.PATH );
    }
    
 
@@ -481,14 +437,6 @@ public class TasksProviderPart extends AbstractProviderPart
                    .append( Locations._ID )
                    .append( " = subQuery." )
                    .append( TaskSeries.LOCATION_ID );
-      
-      // Add tags columns
-      stringBuilder.append( " LEFT OUTER JOIN " )
-                   .append( "(" )
-                   .append( TAGS_SUB_QUERY )
-                   .append( ") AS tagsSubQuery ON tagsSubQuery.series_id" )
-                   .append( " = subQuery." )
-                   .append( Tasks.TASKSERIES_ID );
       
       // Add participants columns
       stringBuilder.append( " LEFT OUTER JOIN " )
@@ -620,7 +568,7 @@ public class TasksProviderPart extends AbstractProviderPart
                        Queries.getOptDate( c,
                                            COL_INDICES.get( Tasks.DELETED_DATE ) ),
                        RtmTask.convertPriority( c.getString( COL_INDICES.get( Tasks.PRIORITY ) ) ),
-                       c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ) != 0,
+                       c.getInt( COL_INDICES.get( Tasks.POSTPONED ) ),
                        Queries.getOptString( c,
                                              COL_INDICES.get( Tasks.ESTIMATE ) ),
                        c.getLong( COL_INDICES.get( Tasks.ESTIMATE_MILLIS ) ),

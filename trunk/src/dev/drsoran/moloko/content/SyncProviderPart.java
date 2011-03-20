@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -183,9 +184,9 @@ public class SyncProviderPart extends AbstractRtmProviderPart
    
 
 
-   public SyncProviderPart( SQLiteOpenHelper dbAccess )
+   public SyncProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Sync.PATH );
+      super( context, dbAccess, Sync.PATH );
    }
    
 

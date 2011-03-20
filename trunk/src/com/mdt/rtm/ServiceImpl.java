@@ -28,10 +28,12 @@ import java.util.Map.Entry;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -470,24 +472,45 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmTaskSeries tasks_complete( String timelineId,
-                                        String listId,
-                                        String taskSeriesId,
-                                        String taskId ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_complete( String timelineId,
+                                                        String listId,
+                                                        String taskSeriesId,
+                                                        String taskId ) throws ServiceException
    {
-      Element response = invoker.invoke( new Param( "method",
-                                                    "rtm.tasks.complete" ),
-                                         new Param( "timeline", timelineId ),
-                                         new Param( "list_id", listId ),
-                                         new Param( "taskseries_id",
-                                                    taskSeriesId ),
-                                         new Param( "task_id", taskId ),
-                                         new Param( "auth_token",
-                                                    currentAuthToken ),
-                                         new Param( "api_key",
-                                                    applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( response );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.complete" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+   }
+   
+
+
+   public TimeLineResult< RtmTaskList > tasks_uncomplete( String timelineId,
+                                                          String listId,
+                                                          String taskSeriesId,
+                                                          String taskId ) throws ServiceException
+   {
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.uncomplete" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
@@ -560,30 +583,51 @@ public class ServiceImpl implements Service
    
 
 
-   public void tasks_movePriority()
+   public TimeLineResult< RtmTaskList > tasks_movePriority( String timelineId,
+                                                            String listId,
+                                                            String taskSeriesId,
+                                                            String taskId,
+                                                            boolean up ) throws ServiceException
    {
-      throw new UnsupportedOperationException( "Not supported yet." );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.moveTo" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "direction", up ? "up"
+                                                                    : "down" ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, taskSeriesId, taskId,
+
+      elt );
    }
    
 
 
-   public RtmTaskSeries tasks_moveTo( String timelineId,
-                                      String fromListId,
-                                      String toListId,
-                                      String taskSeriesId,
-                                      String taskId ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_moveTo( String timelineId,
+                                                      String fromListId,
+                                                      String toListId,
+                                                      String taskSeriesId,
+                                                      String taskId ) throws ServiceException
    {
-      Element elt = invoker.invoke( new Param( "method", "rtm.tasks.moveTo" ),
-                                    new Param( "timeline", timelineId ),
-                                    new Param( "from_list_id", fromListId ),
-                                    new Param( "to_list_id", toListId ),
-                                    new Param( "taskseries_id", taskSeriesId ),
-                                    new Param( "task_id", taskId ),
-                                    new Param( "auth_token", currentAuthToken ),
-                                    new Param( "api_key",
-                                               applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( elt );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.moveTo" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "from_list_id", fromListId ),
+                                          new Param( "to_list_id", toListId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
@@ -602,15 +646,16 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmTaskSeries tasks_setDueDate( String timelineId,
-                                          String listId,
-                                          String taskSeriesId,
-                                          String taskId,
-                                          Date due,
-                                          boolean hasDueTime ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_setDueDate( String timelineId,
+                                                          String listId,
+                                                          String taskSeriesId,
+                                                          String taskId,
+                                                          Date due,
+                                                          boolean hasTime ) throws ServiceException
    {
       final boolean setDueDate = ( due != null );
       final Element elt;
+      
       if ( setDueDate == true )
       {
          elt = invoker.invoke( new Param( "method", "rtm.tasks.setDueDate" ),
@@ -618,9 +663,8 @@ public class ServiceImpl implements Service
                                new Param( "list_id", listId ),
                                new Param( "taskseries_id", taskSeriesId ),
                                new Param( "task_id", taskId ),
-                               new Param( "due", due ),
-                               new Param( "has_due_time", hasDueTime ? "1"
-                                                                    : "0" ),
+                               new Param( "due", RtmData.formatDate( due ) ),
+                               new Param( "has_due_time", hasTime ? "1" : "0" ),
                                new Param( "auth_token", currentAuthToken ),
                                new Param( "api_key",
                                           applicationInfo.getApiKey() ) );
@@ -636,25 +680,40 @@ public class ServiceImpl implements Service
                                new Param( "api_key",
                                           applicationInfo.getApiKey() ) );
       }
-      final RtmTaskList rtmTaskList = new RtmTaskList( elt );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
 
-   public void tasks_setEstimate()
+   public TimeLineResult< RtmTaskList > tasks_setEstimate( String timelineId,
+                                                           String listId,
+                                                           String taskSeriesId,
+                                                           String taskId,
+                                                           String estimate ) throws ServiceException
    {
-      throw new UnsupportedOperationException( "Not supported yet." );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.setEstimate" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "estimate", estimate ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
 
-   public TimeLineMethod.Result< RtmTaskSeries > tasks_setName( String timelineId,
-                                                                String listId,
-                                                                String taskSeriesId,
-                                                                String taskId,
-                                                                String newName,
-                                                                MethodCallType methodCallType ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_setName( String timelineId,
+                                                       String listId,
+                                                       String taskSeriesId,
+                                                       String taskId,
+                                                       String newName ) throws ServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
                                                      "rtm.tasks.setName" ),
@@ -668,20 +727,16 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId,
-                            taskSeriesId,
-                            taskId,
-                            methodCallType,
-                            elt );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
 
-   public RtmTaskSeries tasks_setPriority( String timelineId,
-                                           String listId,
-                                           String taskSeriesId,
-                                           String taskId,
-                                           Priority priority ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_setPriority( String timelineId,
+                                                           String listId,
+                                                           String taskSeriesId,
+                                                           String taskId,
+                                                           Priority priority ) throws ServiceException
    {
       Element elt = invoker.invoke( new Param( "method",
                                                "rtm.tasks.setPriority" ),
@@ -694,8 +749,7 @@ public class ServiceImpl implements Service
                                     new Param( "auth_token", currentAuthToken ),
                                     new Param( "api_key",
                                                applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( elt );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
@@ -707,61 +761,68 @@ public class ServiceImpl implements Service
    
 
 
-   public void tasks_setTags( String timelineId,
-                              String listId,
-                              String taskSeriesId,
-                              String taskId,
-                              String[] tags ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_setTags( String timelineId,
+                                                       String listId,
+                                                       String taskSeriesId,
+                                                       String taskId,
+                                                       List< String > tags ) throws ServiceException
    {
-      final StringBuilder stringifiedTasks = new StringBuilder();
-      if ( tags != null )
-      {
-         for ( int index = 0; index < tags.length; index++ )
-         {
-            stringifiedTasks.append( tags[ index ] );
-            if ( index < tags.length - 1 )
-            {
-               stringifiedTasks.append( "," );
-            }
-         }
-      }
-      invoker.invoke( new Param( "method", "rtm.tasks.setTags" ),
-                      new Param( "timeline", timelineId ),
-                      new Param( "list_id", listId ),
-                      new Param( "taskseries_id", taskSeriesId ),
-                      new Param( "task_id", taskId ),
-                      new Param( "tags", stringifiedTasks.toString() ),
-                      new Param( "auth_token", currentAuthToken ),
-                      new Param( "api_key", applicationInfo.getApiKey() ) );
+      final String joinedTags = TextUtils.join( ",", tags );
+      
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.setTags" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "tags", joinedTags ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
 
-   public void tasks_setURL()
+   public TimeLineResult< RtmTaskList > tasks_setLocation( String timelineId,
+                                                           String listId,
+                                                           String taskSeriesId,
+                                                           String taskId,
+                                                           String locationId ) throws ServiceException
    {
-      throw new UnsupportedOperationException( "Not supported yet." );
+      Element elt = invoker.invoke( new Param( "method",
+                                               "rtm.tasks.setLocation" ),
+                                    new Param( "timeline", timelineId ),
+                                    new Param( "list_id", listId ),
+                                    new Param( "taskseries_id", taskSeriesId ),
+                                    new Param( "task_id", taskId ),
+                                    new Param( "location_id", locationId ),
+                                    new Param( "auth_token", currentAuthToken ),
+                                    new Param( "api_key",
+                                               applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
 
-   public RtmTaskSeries tasks_uncomplete( String timelineId,
-                                          String listId,
-                                          String taskSeriesId,
-                                          String taskId ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_setURL( String timelineId,
+                                                      String listId,
+                                                      String taskSeriesId,
+                                                      String taskId,
+                                                      String url ) throws ServiceException
    {
-      Element response = invoker.invoke( new Param( "method",
-                                                    "rtm.tasks.uncomplete" ),
-                                         new Param( "timeline", timelineId ),
-                                         new Param( "list_id", listId ),
-                                         new Param( "taskseries_id",
-                                                    taskSeriesId ),
-                                         new Param( "task_id", taskId ),
-                                         new Param( "auth_token",
-                                                    currentAuthToken ),
-                                         new Param( "api_key",
-                                                    applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( response );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
+      Element elt = invoker.invoke( new Param( "method", "rtm.tasks.setURL" ),
+                                    new Param( "timeline", timelineId ),
+                                    new Param( "list_id", listId ),
+                                    new Param( "taskseries_id", taskSeriesId ),
+                                    new Param( "task_id", taskId ),
+                                    new Param( "url", url ),
+                                    new Param( "auth_token", currentAuthToken ),
+                                    new Param( "api_key",
+                                               applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
@@ -814,54 +875,6 @@ public class ServiceImpl implements Service
                                     new Param( "api_key",
                                                applicationInfo.getApiKey() ) );
       return new RtmTaskNote( elt, taskSeriesId );
-   }
-   
-
-
-   public RtmTaskSeries tasks_setLocation( String timelineId,
-                                           String listId,
-                                           String taskSeriesId,
-                                           String taskId,
-                                           String locationId ) throws ServiceException
-   {
-      Element response = invoker.invoke( new Param( "method",
-                                                    "rtm.tasks.setLocation" ),
-                                         new Param( "timeline", timelineId ),
-                                         new Param( "list_id", listId ),
-                                         new Param( "taskseries_id",
-                                                    taskSeriesId ),
-                                         new Param( "task_id", taskId ),
-                                         new Param( "location_id", locationId ),
-                                         new Param( "auth_token",
-                                                    currentAuthToken ),
-                                         new Param( "api_key",
-                                                    applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( response );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
-   }
-   
-
-
-   public RtmTaskSeries tasks_setURL( String timelineId,
-                                      String listId,
-                                      String taskSeriesId,
-                                      String taskId,
-                                      String url ) throws ServiceException
-   {
-      Element response = invoker.invoke( new Param( "method",
-                                                    "rtm.tasks.setURL" ),
-                                         new Param( "timeline", timelineId ),
-                                         new Param( "list_id", listId ),
-                                         new Param( "taskseries_id",
-                                                    taskSeriesId ),
-                                         new Param( "task_id", taskId ),
-                                         new Param( "url", url ),
-                                         new Param( "auth_token",
-                                                    currentAuthToken ),
-                                         new Param( "api_key",
-                                                    applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( response );
-      return findTask( taskSeriesId, taskId, rtmTaskList );
    }
    
 
@@ -944,53 +957,58 @@ public class ServiceImpl implements Service
    
 
 
-   private final static TimeLineMethod.Result< RtmTaskSeries > newTaskResult( String timelineId,
-                                                                              String taskSeriesId,
-                                                                              String taskId,
-                                                                              MethodCallType methodCallType,
-                                                                              final Element elt ) throws ServiceException
+   private final static TimeLineResult< RtmTaskList > newTaskResult( String timelineId,
+                                                                     String taskSeriesId,
+                                                                     String taskId,
+                                                                     Element elt ) throws ServiceException
    {
-      if ( methodCallType == MethodCallType.WITH_RESULT )
+      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
+      final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
+      
+      if ( nodes.getLength() < 2 )
+         throw new ServiceInternalException( "Expected at least 2 nodes in response" );
+      
+      final Node transactionNode = nodes.item( 0 );
+      
+      if ( transactionNode != null
+         && transactionNode.getNodeName().equalsIgnoreCase( "transaction" )
+         && transactionNode.getNodeType() == Node.ELEMENT_NODE )
       {
-         final Node node = elt.getNextSibling();
-         if ( node != null && node.getNodeType() == Node.ELEMENT_NODE )
+         final Node taskListNode = nodes.item( 1 );
+         
+         if ( taskListNode != null
+            && taskListNode.getNodeName().equalsIgnoreCase( "list" )
+            && taskListNode.getNodeType() == Node.ELEMENT_NODE )
          {
-            final RtmTaskList rtmTaskList = new RtmTaskList( (Element) elt.getNextSibling() );
-            return TimeLineMethod.newResult( elt,
-                                             timelineId,
-                                             findTask( taskSeriesId,
-                                                       taskId,
-                                                       rtmTaskList ) );
+            final RtmTaskList taskList = new RtmTaskList( (Element) taskListNode );
+            
+            if ( nodes.getLength() > 2 )
+            {
+               final Node generatedNode = taskListNode.getNextSibling();
+               
+               if ( generatedNode != null
+                  && generatedNode.getNodeName().equalsIgnoreCase( "generated" )
+                  && generatedNode.getNodeType() == Node.ELEMENT_NODE )
+               {
+                  taskList.addGeneratedSeries( (Element) generatedNode );
+               }
+               else
+               {
+                  throw new ServiceInternalException( "Expected <generated> node in response" );
+               }
+            }
+            
+            return TimeLineResult.newResult( elt, timelineId, taskList );
          }
          else
          {
-            throw new ServiceInternalException( "No element node in response" );
+            throw new ServiceInternalException( "Expected <list> node in response" );
          }
       }
       else
-         return TimeLineMethod.newResult( elt, timelineId );
-   }
-   
-
-
-   private final static RtmTaskSeries findTask( String taskSeriesId,
-                                                String taskId,
-                                                RtmTaskList rtmTaskList )
-   {
-      for ( RtmTaskSeries series : rtmTaskList.getSeries() )
       {
-         if ( series.getId().equals( taskSeriesId ) )
-         {
-            final List< RtmTask > tasks = series.getTasks();
-            
-            for ( RtmTask rtmTask : tasks )
-            {
-               if ( rtmTask.getId().equals( taskId ) )
-                  return series;
-            }
-         }
+         throw new ServiceInternalException( "Expected <transaction> node in response" );
       }
-      return null;
    }
    
 }

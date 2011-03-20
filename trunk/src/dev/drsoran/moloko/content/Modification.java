@@ -23,10 +23,13 @@
 package dev.drsoran.moloko.content;
 
 import java.util.Comparator;
+import java.util.Date;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.TaskSeries;
 
 
 public class Modification implements Comparable< Modification >
@@ -45,6 +48,8 @@ public class Modification implements Comparable< Modification >
    
    private final boolean persistent;
    
+   private final long timestamp;
+   
    
    private final static class SortColumnName implements
             Comparator< Modification >
@@ -59,9 +64,9 @@ public class Modification implements Comparable< Modification >
    
    
 
-   private Modification( String id, Uri entityUri, String colName,
-      String newValue, String syncedValue, boolean syncedValueSet,
-      boolean persistent )
+   Modification( String id, Uri entityUri, String colName, String newValue,
+      String syncedValue, boolean syncedValueSet, boolean persistent,
+      long timestamp )
    {
       this.id = id;
       this.entityUri = entityUri;
@@ -70,6 +75,7 @@ public class Modification implements Comparable< Modification >
       this.syncedValue = syncedValue;
       this.synedValueSet = syncedValueSet;
       this.persistent = persistent;
+      this.timestamp = timestamp;
    }
    
 
@@ -137,6 +143,13 @@ public class Modification implements Comparable< Modification >
    
 
 
+   public long getTimestamp()
+   {
+      return timestamp;
+   }
+   
+
+
    @Override
    public boolean equals( Object o )
    {
@@ -187,19 +200,23 @@ public class Modification implements Comparable< Modification >
    
 
 
-   public final static < T > Modification newModification( String id,
-                                                           Uri entityUri,
-                                                           String colName,
-                                                           T newValue,
-                                                           T syncedValue )
+   @Override
+   public String toString()
    {
-      return new Modification( id,
-                               entityUri,
-                               colName,
-                               toString( newValue ),
-                               toString( syncedValue ),
-                               true,
-                               true );
+      return "<Mod, " + id + ", " + entityUri + ", " + colName + ", "
+         + newValue + ", " + syncedValue + ", " + new Date( timestamp ) + ">";
+   }
+   
+
+
+   public final static < T > Modification newModification( Uri contentUri,
+                                                           String id,
+                                                           String colName,
+                                                           T newValue )
+   {
+      return newModification( Queries.contentUriWithId( contentUri, id ),
+                              colName,
+                              newValue );
    }
    
 
@@ -214,7 +231,21 @@ public class Modification implements Comparable< Modification >
                                toString( newValue ),
                                null,
                                false,
-                               true );
+                               true,
+                               System.currentTimeMillis() );
+   }
+   
+
+
+   public final static < T > Modification newNonPersistentModification( Uri contentUri,
+                                                                        String id,
+                                                                        String colName,
+                                                                        T newValue )
+   {
+      return newNonPersistentModification( Queries.contentUriWithId( contentUri,
+                                                                     id ),
+                                           colName,
+                                           newValue );
    }
    
 
@@ -229,7 +260,18 @@ public class Modification implements Comparable< Modification >
                                toString( newValue ),
                                null,
                                false,
-                               false );
+                               false,
+                               System.currentTimeMillis() );
+   }
+   
+
+
+   public final static Modification newTaskModified( String taskSeriesId )
+   {
+      return newNonPersistentModification( TaskSeries.CONTENT_URI,
+                                           taskSeriesId,
+                                           TaskSeries.MODIFIED_DATE,
+                                           System.currentTimeMillis() );
    }
    
 

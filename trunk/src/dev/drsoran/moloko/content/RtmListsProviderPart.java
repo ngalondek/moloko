@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,6 +38,7 @@ import android.util.Log;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Settings;
@@ -76,9 +78,22 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
          values.put( Rtm.Lists._ID, list.getId() );
       
       values.put( Lists.LIST_NAME, list.getName() );
-      values.put( Lists.CREATED_DATE, list.getCreated().getTime() );
-      values.put( Lists.MODIFIED_DATE, list.getModified().getTime() );
-      values.put( Lists.LIST_DELETED, list.getDeleted() );
+      
+      if ( list.getCreatedDate() != null )
+         values.put( Lists.CREATED_DATE, list.getCreatedDate().getTime() );
+      else
+         values.putNull( Lists.CREATED_DATE );
+      
+      if ( list.getModifiedDate() != null )
+         values.put( Lists.MODIFIED_DATE, list.getModifiedDate().getTime() );
+      else
+         values.putNull( Lists.MODIFIED_DATE );
+      
+      if ( list.getDeletedDate() != null )
+         values.put( Lists.LIST_DELETED, list.getDeletedDate().getTime() );
+      else
+         values.putNull( Lists.LIST_DELETED );
+      
       values.put( Lists.LOCKED, list.getLocked() );
       values.put( Lists.ARCHIVED, list.getArchived() );
       values.put( Lists.POSITION, list.getPosition() );
@@ -101,6 +116,38 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
 
 
+   public final static RtmList getList( ContentProviderClient client, String id )
+   {
+      RtmList list = null;
+      Cursor c = null;
+      
+      try
+      {
+         // Only non-deleted lists
+         c = client.query( Lists.CONTENT_URI, PROJECTION, Lists._ID + " = "
+            + id, null, null );
+         
+         boolean ok = c != null && c.moveToFirst();
+         
+         if ( ok )
+            list = createList( c );
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query list failed. ", e );
+         list = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return list;
+   }
+   
+
+
    public final static RtmLists getAllLists( ContentProviderClient client,
                                              String selection )
    {
@@ -117,7 +164,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
                                                                              : "1" )
                                                    .append( " ) AND " )
                                                    .append( Lists.LIST_DELETED )
-                                                   .append( "=0" )
+                                                   .append( " IS NULL" )
                                                    .toString(),
                            null,
                            null );
@@ -132,22 +179,7 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
             {
                for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
-                  // This as to be inside the loop. Otherwise we can get old
-                  // values.
-                  RtmSmartFilter filter = null;
-                  
-                  if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
-                     filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
-                  
-                  final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
-                                                    c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
-                                                    c.getLong( COL_INDICES.get( Lists.CREATED_DATE ) ),
-                                                    c.getLong( COL_INDICES.get( Lists.MODIFIED_DATE ) ),
-                                                    c.getInt( COL_INDICES.get( Lists.LIST_DELETED ) ),
-                                                    c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
-                                                    c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
-                                                    c.getInt( COL_INDICES.get( Lists.POSITION ) ),
-                                                    filter );
+                  final RtmList list = createList( c );
                   lists.add( list );
                }
             }
@@ -172,9 +204,20 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmListsProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmListsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Lists.PATH );
+      super( context, dbAccess, Lists.PATH );
+   }
+   
+
+
+   @Override
+   public Object getElement( Uri uri )
+   {
+      if ( matchUri( uri ) == MATCH_ITEM_TYPE )
+         return getList( aquireContentProviderClient( uri ),
+                         uri.getLastPathSegment() );
+      return null;
    }
    
 
@@ -183,9 +226,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Lists._ID
          + " TEXT NOT NULL, " + Lists.LIST_NAME + " TEXT NOT NULL, "
-         + Lists.CREATED_DATE + " INTEGER NOT NULL DEFAULT 0, "
-         + Lists.MODIFIED_DATE + " INTEGER NOT NULL DEFAULT 0, "
-         + Lists.LIST_DELETED + " INTEGER NOT NULL DEFAULT 0, " + Lists.LOCKED
+         + Lists.CREATED_DATE + " INTEGER, " + Lists.MODIFIED_DATE
+         + " INTEGER, " + Lists.LIST_DELETED + " INTEGER, " + Lists.LOCKED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.ARCHIVED
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.POSITION
          + " INTEGER NOT NULL DEFAULT 0, " + Lists.IS_SMART_LIST
@@ -265,5 +307,29 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    public String[] getProjection()
    {
       return PROJECTION;
+   }
+   
+
+
+   private static RtmList createList( Cursor c )
+   {
+      RtmSmartFilter filter = null;
+      
+      if ( !c.isNull( COL_INDICES.get( Lists.FILTER ) ) )
+         filter = new RtmSmartFilter( c.getString( COL_INDICES.get( Lists.FILTER ) ) );
+      
+      final RtmList list = new RtmList( c.getString( COL_INDICES.get( Lists._ID ) ),
+                                        c.getString( COL_INDICES.get( Lists.LIST_NAME ) ),
+                                        Queries.getOptDate( c,
+                                                            COL_INDICES.get( Lists.CREATED_DATE ) ),
+                                        Queries.getOptDate( c,
+                                                            COL_INDICES.get( Lists.MODIFIED_DATE ) ),
+                                        Queries.getOptDate( c,
+                                                            COL_INDICES.get( Lists.LIST_DELETED ) ),
+                                        c.getInt( COL_INDICES.get( Lists.LOCKED ) ),
+                                        c.getInt( COL_INDICES.get( Lists.ARCHIVED ) ),
+                                        c.getInt( COL_INDICES.get( Lists.POSITION ) ),
+                                        filter );
+      return list;
    }
 }

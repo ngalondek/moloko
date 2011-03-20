@@ -30,7 +30,7 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.AttributeSet;
-import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 
 
 public class AutoSummaryListPreference extends ListPreference implements

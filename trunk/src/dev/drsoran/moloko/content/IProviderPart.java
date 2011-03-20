@@ -70,4 +70,8 @@ public interface IProviderPart
 
 
    public HashMap< String, Integer > getColumnIndices();
+   
+
+
+   public Object getElement( Uri uri );
 }

@@ -20,10 +20,7 @@
 package com.mdt.rtm.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -31,7 +28,8 @@ import org.w3c.dom.Element;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
+import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.rtm.ParcelableDate;
 
 
 /**
@@ -43,17 +41,6 @@ public class RtmTaskList extends RtmData
    @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
       + RtmTaskList.class.getSimpleName();
-   
-   
-   private static final class LessIdComperator implements
-            Comparator< RtmTaskList >
-   {
-      public int compare( RtmTaskList object1, RtmTaskList object2 )
-      {
-         return object1.id.compareTo( object2.id );
-      }
-      
-   }
    
    public static final Parcelable.Creator< RtmTaskList > CREATOR = new Parcelable.Creator< RtmTaskList >()
    {
@@ -72,8 +59,6 @@ public class RtmTaskList extends RtmData
       
    };
    
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
-   
    private final String id;
    
    private final List< RtmTaskSeries > series;
@@ -84,12 +69,14 @@ public class RtmTaskList extends RtmData
 
    public RtmTaskList( String id )
    {
-      this.id = id;
-      
-      // do not use Collections.emptyList() here cause we
-      // need a mutable list.
-      this.series = new ArrayList< RtmTaskSeries >( 0 );
-      this.current = null;
+      this( id, new ArrayList< RtmTaskSeries >( 0 ), null );
+   }
+   
+
+
+   public RtmTaskList( RtmTaskList other )
+   {
+      this( other.id, other.series, MolokoDateUtils.getDate( other.current ) );
    }
    
 
@@ -103,36 +90,44 @@ public class RtmTaskList extends RtmData
    
 
 
+   public RtmTaskList( String id, List< RtmTaskSeries > series, Date current )
+   {
+      this.id = id;
+      
+      // do not use Collections.emptyList() here cause we
+      // need a mutable list.
+      this.series = new ArrayList< RtmTaskSeries >( series );
+      this.current = current != null ? new ParcelableDate( current ) : null;
+   }
+   
+
+
    public RtmTaskList( Element elt )
    {
       id = elt.getAttribute( "id" );
-      series = new ArrayList< RtmTaskSeries >();
+      
+      final List< Element > children = children( elt, "taskseries" );
+      final List< Element > deleted = children( elt, "deleted" );
+      
+      series = new ArrayList< RtmTaskSeries >( children.size() + deleted.size() );
       
       // Look for taskseries element
+      for ( Element seriesElt : children )
       {
-         final List< Element > children = children( elt, "taskseries" );
-         
-         for ( Element seriesElt : children )
-         {
-            series.add( new RtmTaskSeries( seriesElt, id ) );
-         }
+         series.add( new RtmTaskSeries( seriesElt, id ) );
       }
       
       // There may also be 'deleted' elements in which are 'taskseries'
       // elements
+      for ( Element deletedElement : deleted )
       {
-         final List< Element > deleted = children( elt, "deleted" );
-         
-         for ( Element deletedElement : deleted )
+         for ( Element seriesElt : children( deletedElement, "taskseries" ) )
          {
-            for ( Element seriesElt : children( deletedElement, "taskseries" ) )
-            {
-               series.add( new RtmTaskSeries( seriesElt, id, true ) );
-            }
+            series.add( new RtmTaskSeries( seriesElt, id, true ) );
          }
       }
       
-      current = parseDate( textNullIfEmpty( elt, "current" ) );
+      current = parseParcableDate( textNullIfEmpty( elt, "current" ) );
       
       if ( TextUtils.isEmpty( id ) )
       {
@@ -151,26 +146,7 @@ public class RtmTaskList extends RtmData
 
    public List< RtmTaskSeries > getSeries()
    {
-      return Collections.unmodifiableList( series );
-   }
-   
-
-
-   public void add( RtmTaskSeries taskSeries )
-   {
-      this.series.add( taskSeries );
-   }
-   
-
-
-   public void removeDeletedTaskSeries()
-   {
-      for ( Iterator< RtmTaskSeries > i = series.iterator(); i.hasNext(); )
-      {
-         final RtmTaskSeries taskSeries = i.next();
-         if ( taskSeries.isDeleted() )
-            i.remove();
-      }
+      return series;
    }
    
 
@@ -178,6 +154,67 @@ public class RtmTaskList extends RtmData
    public Date getCurrent()
    {
       return ( current != null ) ? current.getDate() : null;
+   }
+   
+
+
+   public void add( RtmTaskSeries taskSeries )
+   {
+      series.add( taskSeries );
+   }
+   
+
+
+   public void addGeneratedSeries( Element elt )
+   {
+      final List< Element > generated = RtmData.children( elt, "taskseries" );
+      
+      if ( generated.size() > 0 )
+      {
+         // Find the first non-deleted TaskSeries
+         for ( RtmTaskSeries taskSeries : series )
+            if ( taskSeries.getDeletedDate() == null )
+            {
+               for ( Element element : generated )
+               {
+                  series.add( newGenerated( element, taskSeries ) );
+               }
+               
+               return;
+            }
+      }
+   }
+   
+
+
+   private static RtmTaskSeries newGenerated( Element elt,
+                                              RtmTaskSeries reference )
+   {
+      final String id = elt.getAttribute( "id" );
+      final Date modified = RtmData.parseDate( elt.getAttribute( "modified" ) );
+      
+      final List< Element > taskElements = RtmData.children( elt, "task" );
+      final List< RtmTask > tasks = new ArrayList< RtmTask >( taskElements.size() );
+      
+      for ( Element taskElement : taskElements )
+      {
+         tasks.add( new RtmTask( taskElement, id, reference.getListId() ) );
+      }
+      
+      return new RtmTaskSeries( id,
+                                reference.getListId(),
+                                reference.getCreatedDate(),
+                                modified,
+                                reference.getName(),
+                                reference.getSource(),
+                                tasks,
+                                reference.getNotes(),
+                                reference.getLocationId(),
+                                reference.getURL(),
+                                reference.getRecurrence(),
+                                reference.isEveryRecurrence(),
+                                reference.getTagsJoined(),
+                                reference.getParticipants() );
    }
    
 
@@ -202,7 +239,7 @@ public class RtmTaskList extends RtmData
    public String toString()
    {
       return "RtmTaskList<" + id + ",#" + series.size()
-         + ( ( current != null ) ? "," + current.getDate() : "" )
-         + ">";
+         + ( ( current != null ) ? "," + current.getDate() : "" ) + ">";
    }
+   
 }

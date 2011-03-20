@@ -13,7 +13,6 @@ options
    import java.text.ParseException;
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
-   import java.util.Locale;
 }
 
 @members
@@ -23,12 +22,10 @@ options
       super( null );
    }
 
-   private final static Locale LOCALE = Locale.ENGLISH;
 
-
-   public final static Calendar getLocalizedCalendar()
+   public final static Calendar getCalendar()
    {
-      final Calendar cal = Calendar.getInstance( LOCALE );
+      final Calendar cal = Calendar.getInstance();
       return cal;
    }
 
@@ -88,7 +85,7 @@ options
 parseTime [Calendar cal, boolean adjustDay] returns [boolean eof]
    : (AT | COMMA)? time_point_in_time[$cal]
    {
-      if ( adjustDay && getLocalizedCalendar().after( cal ) )
+      if ( adjustDay && getCalendar().after( cal ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );
    }
    | EOF
@@ -175,7 +172,7 @@ parseTimeSpec [Calendar cal, boolean adjustDay] returns [boolean eof]
                          time_naturalspec[$cal]?)?)
                    )
    {
-      if ( adjustDay && getLocalizedCalendar().after( cal ) )
+      if ( adjustDay && getCalendar().after( cal ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );
    }
    | EOF
@@ -294,11 +291,11 @@ parseTimeEstimate returns [long span]
          {
             span += Integer.parseInt( $d.text ) * 3600 * 24;
          }
-       | ts=time_naturalspec[null]
+       | (COMMA | AND)? ts=time_naturalspec[null]
        {
          span += ts;
        }
-     )+
+     )+ (COMMA | AND)*
    | EOF
    ;
    catch[ NumberFormatException nfe ]

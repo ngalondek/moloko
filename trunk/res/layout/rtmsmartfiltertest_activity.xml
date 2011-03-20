@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
-      free software: you can redistribute it and/or modify it under the terms of
-      the GNU General Public License as published by the Free Software
-      Foundation, either version 3 of the License, or (at your option) any later
-      version. Moloko is distributed in the hope that it will be useful, but
-      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-      for more details. You should have received a copy of the GNU General
-      Public License along with Moloko. If not, see
-      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
-   -->
+<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
+   is free software: you can redistribute it and/or modify it under the terms 
+   of the GNU General Public License as published by the Free Software Foundation, 
+   either version 3 of the License, or (at your option) any later version. Moloko 
+   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+   PURPOSE. See the GNU General Public License for more details. You should 
+   have received a copy of the GNU General Public License along with Moloko. 
+   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
+   - implementation -->
 
 <LinearLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,7 +18,6 @@
 
    <EditText
       android:id="@+id/rtmsmartfilter_edit"
-      android:text=""
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:hint="Enter filter" />
@@ -33,17 +29,15 @@
       android:text="Filter"
       android:onClick="onFilter" />
 
-   <EditText
-      android:id="@+id/rtmsmartfilter_timespec_edit"
-      android:text=""
+   <MultiAutoCompleteTextView
+      android:id="@+id/rtmsmartfilter_recurrence_edit"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:hint="Enter time spec" />
+      android:hint="Enter recurrence" />
 
    <Button
-      android:id="@+id/rtmsmartfilter_timespec_btn"
+      android:text="Recurrence"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:text="Time"
-      android:onClick="onTimeSpec" />
+      android:onClick="onRecurrence" />
 </LinearLayout>

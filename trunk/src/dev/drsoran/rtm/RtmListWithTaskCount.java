@@ -92,15 +92,15 @@ public class RtmListWithTaskCount
    
 
 
-   public RtmListWithTaskCount( String id, String name, int deleted,
-      int locked, int archived, int position, RtmSmartFilter smartFilter,
+   public RtmListWithTaskCount( String id, String name, int locked,
+      int archived, int position, RtmSmartFilter smartFilter,
       int incompletedTaskCount )
    {
       this.impl = new RtmList( id,
                                name,
-                               0,
-                               0,
-                               deleted,
+                               null,
+                               null,
+                               null,
                                locked,
                                archived,
                                position,
@@ -120,13 +120,6 @@ public class RtmListWithTaskCount
    public String getName()
    {
       return impl.getName();
-   }
-   
-
-
-   public int getDeleted()
-   {
-      return impl.getDeleted();
    }
    
 

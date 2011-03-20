@@ -48,9 +48,9 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
+import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
-import dev.drsoran.rtm.RtmListWithTaskCount.ExtendedListInfo;
 
 
 public class ListOverviewsProviderPart extends AbstractProviderPart
@@ -79,7 +79,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUBQUERY_NON_COMPLETED_NON_DELETED = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                                false,
+      false,
                                                                                 // tables
                                                                                 TaskSeries.PATH
                                                                                    + ","
@@ -91,7 +91,11 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                                                                     + "."
                                                                                     + TaskSeries._ID
                                                                                     + " AS series_id",
-                                                                                 TaskSeries.LIST_ID,
+                                                                                 TaskSeries.PATH
+                                                                                    + "."
+                                                                                    + TaskSeries.LIST_ID
+                                                                                    + " AS "
+                                                                                    + TaskSeries.LIST_ID,
                                                                                  RawTasks.COMPLETED_DATE },
                                                                                 // where
                                                                                 "series_id ="
@@ -129,7 +133,7 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
                                             .append( "." )
                                             // Only non-deleted lists
                                             .append( Lists.LIST_DELETED )
-                                            .append( " = 0 GROUP BY " )
+                                            .append( " IS NULL GROUP BY " )
                                             .append( Lists.LIST_NAME )
                                             .toString();
    }
@@ -192,11 +196,10 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public final static ArrayList< RtmListWithTaskCount > getListsOverview( ContentProviderClient client,
-                                                                           String selection )
+   public final static List< RtmListWithTaskCount > getListsOverview( ContentProviderClient client,
+                                                                      String selection )
    {
-      ArrayList< RtmListWithTaskCount > lists = null;
-      
+      List< RtmListWithTaskCount > lists = null;
       Cursor c = null;
       
       try
@@ -334,9 +337,9 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
    
 
 
-   public ListOverviewsProviderPart( SQLiteOpenHelper dbAccess )
+   public ListOverviewsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, ListOverviews.PATH );
+      super( context, dbAccess, ListOverviews.PATH );
    }
    
 
@@ -442,7 +445,6 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
       
       return new RtmListWithTaskCount( c.getString( COL_INDICES.get( ListOverviews._ID ) ),
                                        c.getString( COL_INDICES.get( ListOverviews.LIST_NAME ) ),
-                                       c.getInt( COL_INDICES.get( ListOverviews.LIST_DELETED ) ),
                                        c.getInt( COL_INDICES.get( ListOverviews.LOCKED ) ),
                                        c.getInt( COL_INDICES.get( ListOverviews.ARCHIVED ) ),
                                        c.getInt( COL_INDICES.get( ListOverviews.POSITION ) ),

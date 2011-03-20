@@ -196,9 +196,20 @@ public class RtmContactsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmContactsProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmContactsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Contacts.PATH );
+      super( context, dbAccess, Contacts.PATH );
+   }
+   
+
+
+   @Override
+   public Object getElement( Uri uri )
+   {
+      if ( matchUri( uri ) == MATCH_ITEM_TYPE )
+         return getContact( aquireContentProviderClient( uri ),
+                            uri.getLastPathSegment() );
+      return null;
    }
    
 

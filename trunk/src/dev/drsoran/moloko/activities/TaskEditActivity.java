@@ -22,51 +22,59 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
+import dev.drsoran.moloko.dialogs.DuePickerDialog;
+import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
+import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
+import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -74,6 +82,17 @@ import dev.drsoran.rtm.Task;
 
 public class TaskEditActivity extends Activity
 {
+   private class MutableTask
+   {
+      public final List< String > tags = new ArrayList< String >();
+      
+      public long estimateMillis = -1;
+      
+      public long due = -1;
+      
+      public boolean hasDueTime = false;
+   }
+   
    private final static String TAG = "Moloko."
       + TaskEditActivity.class.getSimpleName();
    
@@ -88,78 +107,19 @@ public class TaskEditActivity extends Activity
    public final static int RESULT_EDIT_TASK_CHANGED = 1 << 9
       | RESULT_EDIT_TASK_OK;
    
-   
-   private abstract class SpinnerChangedListener implements
-            OnItemSelectedListener
-   {
-      
-      abstract public void onItemSelected( AdapterView< ? > parent,
-                                           View view,
-                                           int pos,
-                                           long row );
-      
-
-
-      public void onNothingSelected( AdapterView< ? > arg0 )
-      {
-      }
-   }
-   
-
-   private class ApplyModificationsTask extends AsyncTask< Void, Void, Boolean >
-   {
-      private ProgressDialog dialog;
-      
-      
-
-      @Override
-      protected void onPreExecute()
-      {
-         dialog = new ProgressDialog( TaskEditActivity.this );
-         dialog.setMessage( TaskEditActivity.this.getString( R.string.task_edit_dlg_save_task ) );
-         dialog.setCancelable( false );
-         dialog.show();
-      }
-      
-
-
-      @Override
-      protected void onPostExecute( Boolean result )
-      {
-         if ( dialog != null )
-            dialog.dismiss();
-      }
-      
-
-
-      @Override
-      protected Boolean doInBackground( Void... params )
-      {
-         if ( params.length == 0 )
-            return Boolean.TRUE;
-         
-         return Boolean.valueOf( ModificationsProviderPart.applyModifications( getContentResolver(),
-                                                                               modifications ) );
-      }
-   }
+   private final MutableTask mutableTask = new MutableTask();
    
    private Task task;
    
    private ViewGroup taskContainer;
-   
-   private ViewGroup tagsLayout;
-   
-   private ViewGroup dueLayout;
-   
-   private ViewGroup recurrenceLayout;
-   
-   private ViewGroup estimateLayout;
    
    private TextView addedDate;
    
    private TextView completedDate;
    
    private TextView source;
+   
+   private TextView postponed;
    
    private EditText nameEdit;
    
@@ -169,13 +129,9 @@ public class TaskEditActivity extends Activity
    
    private WrappingLayout tagsContainer;
    
-   private ImageButton addTagButton;
-   
-   private ImageButton removeTagButton;
+   private ImageButton changeTagsButton;
    
    private EditText dueEdit;
-   
-   private ImageButton duePickerButton;
    
    private EditText recurrEdit;
    
@@ -183,13 +139,13 @@ public class TaskEditActivity extends Activity
    
    private EditText estimateEdit;
    
-   private ImageButton estimatePickerButton;
-   
    private TitleWithSpinnerLayout location;
    
    private TitleWithEditTextLayout url;
    
-   private final Set< Modification > modifications = new TreeSet< Modification >();
+   private final ModificationSet modifications = new ModificationSet();
+   
+   private AbstractPickerDialog pickerDlg;
    
    
 
@@ -229,25 +185,19 @@ public class TaskEditActivity extends Activity
             try
             {
                taskContainer = (ViewGroup) findViewById( R.id.task_edit_container );
-               tagsLayout = (ViewGroup) findViewById( R.id.task_edit_tags_layout );
-               dueLayout = (ViewGroup) findViewById( R.id.task_edit_due_layout );
-               recurrenceLayout = (ViewGroup) findViewById( R.id.task_edit_recurrence_layout );
-               estimateLayout = (ViewGroup) findViewById( R.id.task_edit_estimate_layout );
                addedDate = (TextView) taskContainer.findViewById( R.id.task_edit_added_date );
                completedDate = (TextView) taskContainer.findViewById( R.id.task_edit_completed_date );
                source = (TextView) taskContainer.findViewById( R.id.task_edit_src );
+               postponed = (TextView) taskContainer.findViewById( R.id.task_edit_postponed );
                nameEdit = (EditText) taskContainer.findViewById( R.id.task_edit_desc );
                list = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_list );
                priority = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_priority );
                tagsContainer = (WrappingLayout) taskContainer.findViewById( R.id.task_edit_tags_container );
-               addTagButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_add );
-               removeTagButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_remove );
+               changeTagsButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_change );
                dueEdit = (EditText) taskContainer.findViewById( R.id.task_edit_due_text );
-               duePickerButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_due_btn_picker );
                recurrEdit = (EditText) taskContainer.findViewById( R.id.task_edit_recurrence_text );
                recurrPickerButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_recurrence_btn_picker );
                estimateEdit = (EditText) taskContainer.findViewById( R.id.task_edit_estim_text );
-               estimatePickerButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_estim_btn_picker );
                location = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_location );
                url = (TitleWithEditTextLayout) taskContainer.findViewById( R.id.task_edit_url );
             }
@@ -257,8 +207,9 @@ public class TaskEditActivity extends Activity
                throw e;
             }
             
+            initializeMutableTask();
+            
             initializeListSpinner();
-            initializePrioritySpinner();
             initializeLocationSpinner();
          }
          else
@@ -279,6 +230,20 @@ public class TaskEditActivity extends Activity
    
 
 
+   private void initializeMutableTask()
+   {
+      mutableTask.tags.addAll( task.getTags() );
+      mutableTask.estimateMillis = task.getEstimateMillis();
+      
+      if ( task.getDue() != null )
+      {
+         mutableTask.due = task.getDue().getTime();
+         mutableTask.hasDueTime = task.hasDueTime();
+      }
+   }
+   
+
+
    @Override
    protected void onResume()
    {
@@ -291,11 +256,23 @@ public class TaskEditActivity extends Activity
                                                             FULL_DATE_FLAGS ) );
          
          if ( task.getCompleted() != null )
+         {
             completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                        .getTime(),
                                                                    FULL_DATE_FLAGS ) );
+            completedDate.setVisibility( View.VISIBLE );
+         }
          else
             completedDate.setVisibility( View.GONE );
+         
+         if ( task.getPosponed() > 0 )
+         {
+            postponed.setText( getString( R.string.task_postponed,
+                                          task.getPosponed() ) );
+            postponed.setVisibility( View.VISIBLE );
+         }
+         else
+            postponed.setVisibility( View.GONE );
          
          if ( !TextUtils.isEmpty( task.getSource() ) )
          {
@@ -306,20 +283,201 @@ public class TaskEditActivity extends Activity
             source.setText( getString( R.string.task_source, sourceStr ) );
          }
          else
-            source.setVisibility( View.GONE );
+            source.setText( "?" );
          
          nameEdit.setText( task.getName() );
          
          refeshListSpinner();
          refeshPrioritySpinner();
          refeshTags();
-         refreshTagsButtons();
          refreshDue();
          refreshRecurrence();
          refreshEstimate();
          refreshLocationSpinner();
          refreshUrl();
+         
+         dueEdit.setOnEditorActionListener( new OnEditorActionListener()
+         {
+            public boolean onEditorAction( TextView v,
+                                           int actionId,
+                                           KeyEvent event )
+            {
+               return onDueEdit( actionId );
+            }
+         } );
+         
+         estimateEdit.setOnEditorActionListener( new OnEditorActionListener()
+         {
+            public boolean onEditorAction( TextView v,
+                                           int actionId,
+                                           KeyEvent event )
+            {
+               return onEstimateEdit( actionId );
+            }
+         } );
       }
+   }
+   
+
+
+   @Override
+   protected void onActivityResult( int requestCode, int resultCode, Intent data )
+   {
+      switch ( requestCode )
+      {
+         case ChangeTagsActivity.REQ_CHANGE_TAGS:
+            if ( resultCode == RESULT_OK && data != null
+               && data.hasExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS ) )
+            {
+               mutableTask.tags.clear();
+               
+               for ( String tag : data.getStringArrayExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS ) )
+                  mutableTask.tags.add( tag );
+            }
+         default :
+            break;
+      }
+   }
+   
+
+
+   public void onChangeTags( View v )
+   {
+      final Intent intent = new Intent( this, ChangeTagsActivity.class );
+      final String tags[] = new String[ task.getTags().size() ];
+      
+      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TASK_NAME,
+                       task.getName() );
+      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS,
+                       task.getTags().toArray( tags ) );
+      
+      startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
+   }
+   
+
+
+   public void onEstimate( View v )
+   {
+      pickerDlg = new EstimatePickerDialog( this, mutableTask.estimateMillis );
+      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
+      {
+         public void onDialogClosed( CloseReason reason,
+                                     Object value,
+                                     Object... extras )
+         {
+            pickerDlg = null;
+            
+            if ( reason == CloseReason.OK )
+            {
+               mutableTask.estimateMillis = (Long) value;
+               
+               refreshEstimate();
+            }
+         }
+      } );
+      pickerDlg.show();
+   }
+   
+
+
+   public boolean onEstimateEdit( int actionId )
+   {
+      if ( actionId == EditorInfo.IME_ACTION_DONE
+         | actionId == EditorInfo.IME_NULL )
+      {
+         final String estStr = estimateEdit.getText().toString();
+         
+         if ( !TextUtils.isEmpty( estStr ) )
+         {
+            final long millis = RtmDateTimeParsing.parseEstimated( estStr );
+            
+            if ( millis != -1 )
+            {
+               mutableTask.estimateMillis = millis;
+               refreshEstimate();
+            }
+            else
+            {
+               Toast.makeText( this,
+                               getString( R.string.task_edit_validate_estimate,
+                                          estStr ),
+                               Toast.LENGTH_SHORT ).show();
+               return true;
+            }
+         }
+         else
+         {
+            mutableTask.estimateMillis = -1;
+         }
+      }
+      
+      return false;
+   }
+   
+
+
+   public void onDue( View v )
+   {
+      pickerDlg = new DuePickerDialog( this,
+                                       mutableTask.due,
+                                       mutableTask.hasDueTime );
+      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
+      {
+         public void onDialogClosed( CloseReason reason,
+                                     Object value,
+                                     Object... extras )
+         {
+            pickerDlg = null;
+            
+            if ( reason == CloseReason.OK )
+            {
+               mutableTask.due = (Long) value;
+               mutableTask.hasDueTime = (Boolean) extras[ 0 ];
+               
+               refreshDue();
+            }
+         }
+      } );
+      pickerDlg.show();
+   }
+   
+
+
+   public boolean onDueEdit( int actionId )
+   {
+      if ( actionId == EditorInfo.IME_ACTION_DONE
+         | actionId == EditorInfo.IME_NULL )
+      {
+         final String dueStr = dueEdit.getText().toString();
+         
+         if ( !TextUtils.isEmpty( dueStr ) )
+         {
+            final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( dueStr );
+            
+            if ( cal != null )
+            {
+               mutableTask.hasDueTime = cal.isSet( Calendar.HOUR_OF_DAY );
+               mutableTask.due = cal.getTimeInMillis();
+               
+               refreshDue();
+            }
+            else
+            {
+               Toast.makeText( this,
+                               getString( R.string.task_edit_validate_due,
+                                          dueStr ),
+                               Toast.LENGTH_SHORT ).show();
+               return true;
+            }
+         }
+         else
+         {
+            mutableTask.hasDueTime = false;
+            mutableTask.due = -1;
+         }
+      }
+      
+      return false;
    }
    
 
@@ -329,14 +487,124 @@ public class TaskEditActivity extends Activity
       if ( validateInput() )
       {
          // Task name
-         if ( SyncUtils.hasChanged( task.getName(), nameEdit.getText()
-                                                            .toString() ) )
          {
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.TASKSERIES_NAME,
-                                                             nameEdit.getText()
-                                                                     .toString() ) );
+            if ( SyncUtils.hasChanged( task.getName(), nameEdit.getText()
+                                                               .toString() ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.TASKSERIES_NAME,
+                                                                nameEdit.getText()
+                                                                        .toString() ) );
+         }
+         
+         // List
+         {
+            final String selectedListId = list.getSelectedValue();
+            
+            if ( SyncUtils.hasChanged( task.getListId(), selectedListId ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.LIST_ID,
+                                                                selectedListId ) );
+         }
+         
+         // Priority
+         {
+            final String selectedPriority = priority.getSelectedValue();
+            
+            if ( SyncUtils.hasChanged( RtmTask.convertPriority( task.getPriority() ),
+                                       selectedPriority ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.PRIORITY,
+                                                                selectedPriority ) );
+         }
+         
+         // Tags
+         {
+            final String tags = TextUtils.join( Tags.TAGS_SEPARATOR,
+                                                mutableTask.tags );
+            
+            if ( SyncUtils.hasChanged( tags,
+                                       TextUtils.join( Tags.TAGS_SEPARATOR,
+                                                       task.getTags() ) ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.TAGS,
+                                                                tags ) );
+         }
+         
+         // Due
+         {
+            final Long newDue = mutableTask.due == -1
+                                                     ? null
+                                                     : Long.valueOf( mutableTask.due );
+            
+            if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( task.getDue() ),
+                                       newDue ) )
+            {
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.DUE_DATE,
+                                                                newDue ) );
+               
+            }
+            
+            final Integer newHasDueTime = mutableTask.hasDueTime
+                                                                ? Integer.valueOf( 1 )
+                                                                : Integer.valueOf( 0 );
+            
+            if ( SyncUtils.hasChanged( task.hasDueTime(),
+                                       mutableTask.hasDueTime ) )
+            {
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.HAS_DUE_TIME,
+                                                                newHasDueTime ) );
+            }
+         }
+         
+         // Estimate
+         {
+            if ( SyncUtils.hasChanged( task.getEstimateMillis(),
+                                       mutableTask.estimateMillis ) )
+            {
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.ESTIMATE,
+                                                                Strings.nullIfEmpty( estimateEdit.getText()
+                                                                                                 .toString() ) ) );
+               modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                          task.getId() ),
+                                                                RawTasks.ESTIMATE_MILLIS,
+                                                                mutableTask.estimateMillis ) );
+            }
+         }
+         
+         // Location
+         {
+            final String selectedLocation = location.getSelectedValue();
+            
+            if ( SyncUtils.hasChanged( task.getLocationId(), selectedLocation ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.LOCATION_ID,
+                                                                TextUtils.isEmpty( selectedLocation )
+                                                                                                     ? null
+                                                                                                     : selectedLocation ) );
+         }
+         
+         // URL
+         {
+            final String newUrl = TextUtils.isEmpty( url.getText().toString() )
+                                                                               ? null
+                                                                               : url.getText()
+                                                                                    .toString();
+            if ( SyncUtils.hasChanged( task.getUrl(), newUrl ) )
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.URL,
+                                                                newUrl ) );
          }
          
          int result = RESULT_EDIT_TASK_OK;
@@ -344,14 +612,12 @@ public class TaskEditActivity extends Activity
          // Apply the modifications to the DB.
          if ( modifications.size() > 0 )
          {
-            // set the task modification time to now
-            modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                    task.getTaskSeriesId() ),
-                                                                          TaskSeries.MODIFIED_DATE,
-                                                                          System.currentTimeMillis() ) );
+            // set the taskseries modification time to now
+            modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
             try
             {
-               if ( new ApplyModificationsTask().execute().get() )
+               if ( new ApplyModificationsTask( this ).execute( modifications )
+                                                      .get() )
                {
                   result = RESULT_EDIT_TASK_CHANGED;
                }
@@ -408,8 +674,10 @@ public class TaskEditActivity extends Activity
                                                                          { android.R.id.text1 } );
             adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
             adapter.setStringConversionColumn( 1 );
-            
             list.setAdapter( adapter );
+            
+            list.setValues( c, 0 );
+            
             list.setStringConverter( new StringConverter()
             {
                public String convertToString( Object object )
@@ -417,53 +685,14 @@ public class TaskEditActivity extends Activity
                   return adapter.convertToString( (Cursor) object ).toString();
                }
             } );
-            
-            list.setOnItemSelectedListener( new SpinnerChangedListener()
-            {
-               @Override
-               public void onItemSelected( AdapterView< ? > parent,
-                                           View view,
-                                           int pos,
-                                           long row )
-               {
-                  final String selectedListName = adapter.convertToString( (Cursor) adapter.getItem( pos ) )
-                                                         .toString();
-                  
-                  if ( !TaskEditActivity.this.task.getListName()
-                                                  .equals( selectedListName ) )
-                  {
-                     onListChanged( selectedListName );
-                  }
-               }
-            } );
          }
          else
             throw new Exception();
       }
-      catch ( Exception e )
+      catch ( Throwable e )
       {
          LogUtils.logDBError( this, TAG, "Lists", e );
       }
-   }
-   
-
-
-   private void initializePrioritySpinner()
-   {
-      priority.setOnItemSelectedListener( new SpinnerChangedListener()
-      {
-         @Override
-         public void onItemSelected( AdapterView< ? > parent,
-                                     View view,
-                                     int pos,
-                                     long row )
-         {
-            final Priority value = RtmTask.convertPriority( priority.getValueAtPos( pos ) );
-            
-            if ( value != task.getPriority() )
-               onPriorityChanged( value );
-         }
-      } );
    }
    
 
@@ -497,24 +726,14 @@ public class TaskEditActivity extends Activity
                                                                                   locationNames );
                adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
                location.setAdapter( adapter );
-               location.setOnItemSelectedListener( new SpinnerChangedListener()
-               {
-                  @Override
-                  public void onItemSelected( AdapterView< ? > parent,
-                                              View view,
-                                              int pos,
-                                              long row )
-                  {
-                     final String selectedLocationName = parent.getItemAtPosition( pos )
-                                                               .toString();
-                     
-                     if ( SyncUtils.hasChanged( task.getLocationName(),
-                                                selectedLocationName ) )
-                     {
-                        onLocationChanged( selectedLocationName );
-                     }
-                  }
-               } );
+               
+               String[] values = new String[ locationNames.length ];
+               // Add the "nowhere" entry as first
+               values[ 0 ] = null;
+               // Add the locations to the array
+               values = Queries.fillStringArray( c, 0, values, 1 );
+               
+               location.setValues( values );
             }
             else
                throw new Exception();
@@ -537,50 +756,42 @@ public class TaskEditActivity extends Activity
 
    private void refeshListSpinner()
    {
-      list.setSelection( task.getListName(), -1 );
+      list.setSelectionByValue( task.getListId(), -1 );
    }
    
 
 
    private void refeshPrioritySpinner()
    {
-      priority.setSelection( RtmTask.convertPriority( task.getPriority() ), -1 );
+      priority.setSelectionByValue( RtmTask.convertPriority( task.getPriority() ),
+                                    -1 );
    }
    
 
 
    private void refeshTags()
    {
-      UIUtils.inflateTags( this, tagsContainer, task, null, null );
-   }
-   
-
-
-   private void refreshTagsButtons()
-   {
-      removeTagButton.setEnabled( tagsContainer.getChildCount() > 0 );
+      UIUtils.inflateTags( this, tagsContainer, mutableTask.tags, null, null );
    }
    
 
 
    private void refreshLocationSpinner()
    {
-      location.setSelection( task.getLocationName(), 0 );
+      location.setSelectionByEntry( task.getLocationName(), 0 );
    }
    
 
 
    private void refreshDue()
    {
-      final Date due = task.getDue();
-      
-      if ( due == null )
+      if ( mutableTask.due == -1 )
       {
          dueEdit.setText( null );
       }
-      else if ( task.hasDueTime() )
+      else if ( mutableTask.hasDueTime )
       {
-         dueEdit.setText( MolokoDateUtils.formatDateTime( due.getTime(),
+         dueEdit.setText( MolokoDateUtils.formatDateTime( mutableTask.due,
                                                           MolokoDateUtils.FORMAT_NUMERIC
                                                              | MolokoDateUtils.FORMAT_WITH_YEAR
                                                              | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
@@ -588,7 +799,7 @@ public class TaskEditActivity extends Activity
       }
       else
       {
-         dueEdit.setText( MolokoDateUtils.formatDate( due.getTime(),
+         dueEdit.setText( MolokoDateUtils.formatDate( mutableTask.due,
                                                       MolokoDateUtils.FORMAT_NUMERIC
                                                          | MolokoDateUtils.FORMAT_WITH_YEAR
                                                          | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
@@ -620,16 +831,14 @@ public class TaskEditActivity extends Activity
 
    private void refreshEstimate()
    {
-      final String estimate = task.getEstimate();
-      
-      if ( TextUtils.isEmpty( estimate ) )
+      if ( mutableTask.estimateMillis == -1 )
       {
          estimateEdit.setText( null );
       }
       else
       {
          estimateEdit.setText( MolokoDateUtils.formatEstimated( this,
-                                                                task.getEstimateMillis() ) );
+                                                                mutableTask.estimateMillis ) );
       }
    }
    
@@ -654,27 +863,37 @@ public class TaskEditActivity extends Activity
          return false;
       }
       
+      // // Due
+      // if ( !TextUtils.isEmpty( dueEdit.getText() ) )
+      // {
+      // if ( RtmDateTimeParsing.parseDateTimeSpec( dueEdit.getText()
+      // .toString() ) == null )
+      // {
+      // Toast.makeText( this,
+      // getString( R.string.task_edit_validate_due,
+      // dueEdit.getText() ),
+      // Toast.LENGTH_SHORT ).show();
+      // dueEdit.requestFocus();
+      // return false;
+      // }
+      // }
+      //      
+      // // Estimate
+      // if ( !TextUtils.isEmpty( estimateEdit.getText() ) )
+      // {
+      // final long millis = RtmDateTimeParsing.parseEstimated( estimateEdit.getText()
+      // .toString() );
+      // if ( millis == -1 )
+      // {
+      // Toast.makeText( this,
+      // getString( R.string.task_edit_validate_estimate,
+      // estimateEdit.getText() ),
+      // Toast.LENGTH_SHORT ).show();
+      // estimateEdit.requestFocus();
+      // return false;
+      // }
+      // }
+      
       return true;
-   }
-   
-
-
-   private void onListChanged( String newListName )
-   {
-      
-   }
-   
-
-
-   private void onPriorityChanged( RtmTask.Priority newPriority )
-   {
-      
-   }
-   
-
-
-   private void onLocationChanged( String newLocationName )
-   {
-      // TODO: Handle selected location "no location".
    }
 }

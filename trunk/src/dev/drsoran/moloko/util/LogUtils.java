@@ -61,7 +61,7 @@ public final class LogUtils
    public final static void logDBError( Context context,
                                         String tag,
                                         String entity,
-                                        Exception e )
+                                        Throwable e )
    {
       final String message = context.getString( R.string.err_db_typed, entity );
       

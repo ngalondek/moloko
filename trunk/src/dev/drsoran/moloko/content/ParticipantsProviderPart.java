@@ -288,9 +288,9 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public ParticipantsProviderPart( SQLiteOpenHelper dbAccess )
+   public ParticipantsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Participants.PATH );
+      super( context, dbAccess, Participants.PATH );
    }
    
 

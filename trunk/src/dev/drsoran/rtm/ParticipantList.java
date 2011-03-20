@@ -24,6 +24,7 @@ package dev.drsoran.rtm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -36,12 +37,11 @@ import android.util.Log;
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
-import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.service.sync.util.SyncDiffer;
+import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.util.SyncDiffer;
 
 
 public class ParticipantList implements
@@ -69,7 +69,7 @@ public class ParticipantList implements
    
    private final String taskSeriesId;
    
-   private final ArrayList< Participant > participants;
+   private final List< Participant > participants;
    
    
 
@@ -81,8 +81,7 @@ public class ParticipantList implements
    
 
 
-   public ParticipantList( String taskSeriesId,
-      ArrayList< Participant > participants )
+   public ParticipantList( String taskSeriesId, List< Participant > participants )
    {
       this.taskSeriesId = taskSeriesId;
       this.participants = new ArrayList< Participant >( participants );
@@ -170,6 +169,13 @@ public class ParticipantList implements
    
 
 
+   public Date getDeletedDate()
+   {
+      return null;
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ParticipantsProviderPart.insertParticipants( this ) )
@@ -196,13 +202,10 @@ public class ParticipantList implements
    {
       final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( participants,
                                                                                                                   Participant.LESS_ID );
-      final List< IContentProviderSyncOperation > operations = SyncDiffer.diff( update.participants,
-                                                                                syncList );
-      if ( operations.size() > 0 )
-         return ContentProviderSyncOperation.newUpdate()
-                                            .add( operations )
-                                            .build();
-      else
-         return NoopContentProviderSyncOperation.INSTANCE;
+      return ContentProviderSyncOperation.newUpdate()
+                                         .add( SyncDiffer.inDiff( update.participants,
+                                                                  syncList,
+                                                                  true /* always full sync */) )
+                                         .build();
    }
 }

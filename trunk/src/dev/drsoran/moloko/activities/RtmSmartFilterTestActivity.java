@@ -22,16 +22,14 @@
 
 package dev.drsoran.moloko.activities;
 
-import org.antlr.runtime.RecognitionException;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 
 
 public class RtmSmartFilterTestActivity extends Activity
@@ -41,7 +39,7 @@ public class RtmSmartFilterTestActivity extends Activity
    
    private EditText filterInput;
    
-   private EditText timeSpecInput;
+   private MultiAutoCompleteTextView recurrenceInput;
    
    
 
@@ -53,59 +51,28 @@ public class RtmSmartFilterTestActivity extends Activity
       
       filterInput = (EditText) findViewById( R.id.rtmsmartfilter_edit );
       
-      timeSpecInput = (EditText) findViewById( R.id.rtmsmartfilter_timespec_edit );
+      recurrenceInput = (MultiAutoCompleteTextView) findViewById( R.id.rtmsmartfilter_recurrence_edit );
+      recurrenceInput.setTokenizer( new MultiAutoCompleteTextView.CommaTokenizer() );
    }
    
 
 
    public void onFilter( View view )
    {
-      final ANTLRNoCaseStringStream input = new ANTLRNoCaseStringStream( filterInput.getText()
-                                                                                    .toString() );
-      final RtmSmartFilterLexer lexer = new RtmSmartFilterLexer( input );
+      final RtmSmartFilterParsing.RtmSmartFilterReturn ret = RtmSmartFilterParsing.evaluateRtmSmartFilter( filterInput.getText()
+                                                                                                                      .toString(),
+                                                                                                           null );
       
-      try
-      {
-         Log.d( TAG, "SQL: " + lexer.getResult() );
-      }
-      catch ( RecognitionException e )
-      {
-         Log.e( TAG, "Parsing failed.", e );
-      }
+      if ( ret != null )
+         Log.d( TAG, "SQL: " + ret.result );
+      else
+         Log.e( TAG, "Parsing failed." );
    }
    
 
 
-   public void onTimeSpec( View view )
+   public void onRecurrence( View view )
    {
-      // final TimeSpecLexer tsl = new TimeSpecLexer( new
-      // ANTLRNoCaseStringStream( timeSpecInput.getText()
-      // .toString() ) );
-      // final CommonTokenStream antlrTokens = new CommonTokenStream( tsl );
-      // final TimeSpecParser parser = new TimeSpecParser( antlrTokens );
-      // final Calendar cal = TimeSpecParser.getLocalizedCalendar();
-      //      
-      // // first try to parse time
-      // try
-      // {
-      // parser.time_spec( cal );
-      // }
-      // catch ( RecognitionException e )
-      // {
-      // tsl.reset();
-      //         
-      // try
-      // {
-      // parser.parseDateTime( cal, MolokoApp.getSettings().getDateformat() );
-      // }
-      // catch ( RecognitionException re )
-      // {
-      // Log.e( TAG, "Parsing failed.", e );
-      // return;
-      // }
-      // }
-      //      
-      // Log.d( TAG, "Millis: " + cal.getTimeInMillis() );
-      // Log.d( TAG, "Text  : " + cal.getTime() );
+      
    }
 }

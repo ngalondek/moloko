@@ -32,7 +32,7 @@ import android.text.TextUtils;
 
 import com.mdt.rtm.data.RtmTask.Priority;
 
-import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.provider.Rtm.Tags;
 
 
 public class Task
@@ -75,7 +75,7 @@ public class Task
    
    private final Priority priority;
    
-   private final boolean posponed;
+   private final int posponed;
    
    private final String estimate;
    
@@ -106,10 +106,9 @@ public class Task
       String source, String url, String recurrence, boolean isEveryRecurrence,
       String locationId, String listId, Date due, boolean hasDueTime,
       Date added, Date completed, Date deleted, Priority priority,
-      boolean posponed, String estimate, long estimateMillis,
-      String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, String tags, ParticipantList participants,
-      int numNotes )
+      int posponed, String estimate, long estimateMillis, String locationName,
+      float longitude, float latitude, String address, boolean isViewable,
+      int zoom, String tags, ParticipantList participants, int numNotes )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
@@ -142,7 +141,7 @@ public class Task
       
       if ( !TextUtils.isEmpty( tags ) )
       {
-         this.tags = Arrays.asList( TextUtils.split( tags, Tasks.TAGS_DELIMITER ) );
+         this.tags = Arrays.asList( TextUtils.split( tags, Tags.TAGS_SEPARATOR ) );
       }
       else
       {
@@ -160,10 +159,9 @@ public class Task
       String source, String url, String recurrence, boolean isEveryRecurrence,
       String locationId, String listId, Date due, boolean hasDueTime,
       Date added, Date completed, Date deleted, Priority priority,
-      boolean posponed, String estimate, long estimateMillis,
-      String locationName, float longitude, float latitude, String address,
-      boolean isViewable, int zoom, List< String > tags,
-      ParticipantList participants, int numNotes )
+      int posponed, String estimate, long estimateMillis, String locationName,
+      float longitude, float latitude, String address, boolean isViewable,
+      int zoom, List< String > tags, ParticipantList participants, int numNotes )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
@@ -342,7 +340,7 @@ public class Task
    
 
 
-   public boolean isPosponed()
+   public int getPosponed()
    {
       return posponed;
    }

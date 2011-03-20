@@ -23,13 +23,13 @@
 package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -86,19 +86,15 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          values.putNull( RawTasks.DUE_DATE );
       
       values.put( RawTasks.HAS_DUE_TIME, task.getHasDueTime() );
-      
-      if ( task.getAdded() != null )
-         values.put( RawTasks.ADDED_DATE, task.getAdded().getTime() );
-      else
-         values.putNull( RawTasks.ADDED_DATE );
+      values.put( RawTasks.ADDED_DATE, task.getAdded().getTime() );
       
       if ( task.getCompleted() != null )
          values.put( RawTasks.COMPLETED_DATE, task.getCompleted().getTime() );
       else
          values.putNull( RawTasks.COMPLETED_DATE );
       
-      if ( task.getDeleted() != null )
-         values.put( RawTasks.DELETED_DATE, task.getDeleted().getTime() );
+      if ( task.getDeletedDate() != null )
+         values.put( RawTasks.DELETED_DATE, task.getDeletedDate().getTime() );
       else
          values.putNull( RawTasks.DELETED_DATE );
       
@@ -232,9 +228,9 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmTasksProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmTasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, RawTasks.PATH );
+      super( context, dbAccess, RawTasks.PATH );
    }
    
 
@@ -254,6 +250,15 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          + "CONSTRAINT rawtasks_taskseries_ref FOREIGN KEY ( "
          + RawTasks.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH + "( \""
          + TaskSeries._ID + "\" )" + " );" );
+      
+      // TRIGGER: If a RawTask gets deleted, also delete the associated
+      // taskseries if it contains no RawTasks anymore
+      db.execSQL( "CREATE TRIGGER " + path + "_delete_rawtask AFTER DELETE ON "
+         + path + " FOR EACH ROW BEGIN DELETE FROM " + TaskSeries.PATH
+         + " WHERE " + TaskSeries.PATH + "." + TaskSeries._ID + " = old."
+         + RawTasks.TASKSERIES_ID + " AND NOT EXISTS (SELECT " + RawTasks._ID
+         + " FROM " + path + " WHERE old." + RawTasks.TASKSERIES_ID + " = "
+         + RawTasks.TASKSERIES_ID + "); END;" );
    }
    
 
@@ -334,7 +339,8 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.DUE_DATE ) ),
                           c.getInt( COL_INDICES.get( RawTasks.HAS_DUE_TIME ) ),
-                          new Date( c.getLong( COL_INDICES.get( RawTasks.ADDED_DATE ) ) ),
+                          Queries.getOptDate( c,
+                                              COL_INDICES.get( RawTasks.ADDED_DATE ) ),
                           Queries.getOptDate( c,
                                               COL_INDICES.get( RawTasks.COMPLETED_DATE ) ),
                           Queries.getOptDate( c,

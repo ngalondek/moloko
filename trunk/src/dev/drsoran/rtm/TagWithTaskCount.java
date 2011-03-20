@@ -24,7 +24,6 @@ package dev.drsoran.rtm;
 
 public class TagWithTaskCount
 {
-   private final String id;
    
    private final String tag;
    
@@ -32,18 +31,10 @@ public class TagWithTaskCount
    
    
 
-   public TagWithTaskCount( String id, String tag, int taskCount )
+   public TagWithTaskCount( String tag, int taskCount )
    {
-      this.id = id;
       this.tag = tag;
       this.taskCount = taskCount;
-   }
-   
-
-
-   public String getId()
-   {
-      return id;
    }
    
 

@@ -29,14 +29,14 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -83,7 +83,7 @@ public class RtmList extends RtmData implements
    
    private final ParcelableDate modified;
    
-   private final int deleted;
+   private final ParcelableDate deleted;
    
    private final int locked;
    
@@ -95,15 +95,15 @@ public class RtmList extends RtmData implements
    
    
 
-   public RtmList( String id, String name, long created, long modified,
-      int deleted, int locked, int archived, int position,
+   public RtmList( String id, String name, Date created, Date modified,
+      Date deleted, int locked, int archived, int position,
       RtmSmartFilter smartFilter )
    {
       this.id = id;
       this.name = name;
-      this.created = new ParcelableDate( created );
-      this.modified = new ParcelableDate( modified );
-      this.deleted = deleted;
+      this.created = created != null ? new ParcelableDate( created ) : null;
+      this.modified = modified != null ? new ParcelableDate( modified ) : null;
+      this.deleted = deleted != null ? new ParcelableDate( deleted ) : null;
       this.locked = locked;
       this.archived = archived;
       this.position = position;
@@ -116,9 +116,12 @@ public class RtmList extends RtmData implements
    {
       this.id = elt.getAttribute( "id" );
       this.name = elt.getAttribute( "name" );
-      this.created = new ParcelableDate( 0 );
-      this.modified = new ParcelableDate( 0 );
-      this.deleted = Integer.parseInt( elt.getAttribute( "deleted" ) );
+      this.created = null;
+      this.modified = null;
+      if ( Integer.parseInt( elt.getAttribute( "deleted" ) ) == 0 )
+         this.deleted = null;
+      else
+         this.deleted = new ParcelableDate( new Date() );
       this.locked = Integer.parseInt( elt.getAttribute( "locked" ) );
       this.archived = Integer.parseInt( elt.getAttribute( "archived" ) );
       this.position = Integer.parseInt( elt.getAttribute( "position" ) );
@@ -143,7 +146,7 @@ public class RtmList extends RtmData implements
       this.name = source.readString();
       this.created = source.readParcelable( null );
       this.modified = source.readParcelable( null );
-      this.deleted = source.readInt();
+      this.deleted = source.readParcelable( null );
       this.locked = source.readInt();
       this.archived = source.readInt();
       this.position = source.readInt();
@@ -166,23 +169,23 @@ public class RtmList extends RtmData implements
    
 
 
-   public Date getCreated()
+   public Date getCreatedDate()
    {
-      return created.getDate();
+      return created != null ? created.getDate() : null;
    }
    
 
 
-   public Date getModified()
+   public Date getModifiedDate()
    {
-      return modified.getDate();
+      return modified != null ? modified.getDate() : null;
    }
    
 
 
-   public int getDeleted()
+   public Date getDeletedDate()
    {
-      return deleted;
+      return deleted != null ? deleted.getDate() : null;
    }
    
 
@@ -228,7 +231,7 @@ public class RtmList extends RtmData implements
       dest.writeString( name );
       dest.writeParcelable( created, flags );
       dest.writeParcelable( modified, flags );
-      dest.writeInt( deleted );
+      dest.writeParcelable( deleted, flags );
       dest.writeInt( locked );
       dest.writeInt( archived );
       dest.writeInt( position );
@@ -250,6 +253,13 @@ public class RtmList extends RtmData implements
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( Lists.CONTENT_URI, id );
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Lists.CONTENT_URI )
@@ -263,8 +273,7 @@ public class RtmList extends RtmData implements
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                                                   id ) )
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
                                                                              .build() )
                                          .build();
    }
@@ -277,7 +286,7 @@ public class RtmList extends RtmData implements
          throw new IllegalArgumentException( "Update id " + update.id
             + " differs this id " + id );
       
-      final Uri uri = Queries.contentUriWithId( Lists.CONTENT_URI, id );
+      final Uri uri = getContentUriWithId();
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
       if ( SyncUtils.hasChanged( name, update.name ) )

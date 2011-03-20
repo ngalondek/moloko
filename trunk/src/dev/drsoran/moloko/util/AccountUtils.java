@@ -85,7 +85,7 @@ public final class AccountUtils
       if ( prefs != null )
       {
          return Integer.valueOf( prefs.getString( context.getString( R.string.key_sync_inverval ),
-                                                  context.getString( R.string.acc_pref_sync_interval_default_value ) ) ) != dev.drsoran.moloko.service.sync.Constants.SYNC_INTERVAL_MANUAL;
+                                                  context.getString( R.string.acc_pref_sync_interval_default_value ) ) ) != dev.drsoran.moloko.sync.Constants.SYNC_INTERVAL_MANUAL;
       }
       else
       {

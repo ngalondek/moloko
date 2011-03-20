@@ -28,6 +28,7 @@ import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,7 +38,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.mdt.rtm.TimeLineMethod.Transaction;
+import com.mdt.rtm.TimeLineResult;
 
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Modifications;
@@ -86,7 +87,7 @@ public class RollbacksProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static ContentValues getContentValues( Transaction transaction )
+   public final static ContentValues getContentValues( TimeLineResult.Transaction transaction )
    {
       ContentValues values = new ContentValues();
       
@@ -189,9 +190,9 @@ public class RollbacksProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RollbacksProviderPart( SQLiteOpenHelper dbAccess )
+   public RollbacksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Rollbacks.PATH );
+      super( context, dbAccess, Rollbacks.PATH );
    }
    
 

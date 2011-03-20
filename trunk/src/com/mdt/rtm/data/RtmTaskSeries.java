@@ -22,60 +22,31 @@ package com.mdt.rtm.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderOperation;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.content.ModificationList;
-import dev.drsoran.moloko.content.ModificationsProviderPart;
-import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.lists.ContentProviderSyncableList;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.TypedDirectedSyncOperations;
-import dev.drsoran.moloko.service.sync.syncable.ITwoWaySyncable;
-import dev.drsoran.moloko.service.sync.util.SyncDiffer;
-import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.SyncUtils;
-import dev.drsoran.moloko.util.SyncUtils.MergeProperties;
-import dev.drsoran.moloko.util.SyncUtils.MergeResultDirection;
+import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.TaskSeries;
+import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.ParticipantList;
-import dev.drsoran.rtm.Tag;
 
 
 /**
  * 
  * @author Will Ross Jun 22, 2007
  */
-public class RtmTaskSeries extends RtmData implements
-         ITwoWaySyncable< RtmTaskSeries >
+public class RtmTaskSeries extends RtmData
 {
    private final static String TAG = "Moloko."
       + RtmTaskSeries.class.getSimpleName();
-   
-   
-   private static final class LessIdComperator implements
-            Comparator< RtmTaskSeries >
-   {
-      public int compare( RtmTaskSeries object1, RtmTaskSeries object2 )
-      {
-         return object1.id.compareTo( object2.id );
-      }
-   }
    
    public static final Parcelable.Creator< RtmTaskSeries > CREATOR = new Parcelable.Creator< RtmTaskSeries >()
    {
@@ -116,8 +87,6 @@ public class RtmTaskSeries extends RtmData implements
       return null;
    }
    
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
-   
    private final String id;
    
    private final String listId;
@@ -130,7 +99,7 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String source;
    
-   private final ArrayList< RtmTask > tasks;
+   private final List< RtmTask > tasks;
    
    private final RtmTaskNotes notes;
    
@@ -138,23 +107,20 @@ public class RtmTaskSeries extends RtmData implements
    
    private final String url;
    
-   private String recurrence;
+   private final String recurrence;
    
-   private boolean isEveryRecurrence;
+   private final boolean isEveryRecurrence;
    
-   private final List< Tag > tags;
+   private final List< String > tags;
    
    private final ParticipantList participants;
-   
-   private final ParcelableDate deleted;
    
    
 
    public RtmTaskSeries( String id, String listId, Date created, Date modified,
       String name, String source, List< RtmTask > tasks, RtmTaskNotes notes,
       String locationId, String url, String recurrence,
-      boolean isEveryRecurrence, List< String > tags,
-      ParticipantList participants )
+      boolean isEveryRecurrence, String tags, ParticipantList participants )
    {
       this.id = id;
       this.listId = listId;
@@ -169,9 +135,10 @@ public class RtmTaskSeries extends RtmData implements
       this.url = url;
       this.recurrence = recurrence;
       this.isEveryRecurrence = isEveryRecurrence;
-      this.tags = createTags( tags );
-      this.participants = participants;
-      this.deleted = null;
+      this.tags = new ArrayList< String >( Arrays.asList( TextUtils.split( tags,
+                                                                           TaskSeries.TAGS_SEPARATOR ) ) );
+      this.participants = participants == null ? new ParticipantList( id )
+                                              : participants;
    }
    
 
@@ -180,44 +147,45 @@ public class RtmTaskSeries extends RtmData implements
    {
       this.id = textNullIfEmpty( elt, "id" );
       this.listId = listId;
-      this.created = parseDate( elt.getAttribute( "created" ) );
-      this.modified = parseDate( elt.getAttribute( "modified" ) );
+      this.created = parseParcableDate( elt.getAttribute( "created" ) );
+      this.modified = parseParcableDate( elt.getAttribute( "modified" ) );
       this.name = textNullIfEmpty( elt, "name" );
       this.source = textNullIfEmpty( elt, "source" );
       
       final Element recurrenceRule = child( elt, "rrule" );
       
+      String recurrence = null;
+      boolean isEveryRecurrence = false;
+      
       if ( recurrenceRule != null
          && recurrenceRule.getChildNodes().getLength() > 0 )
       {
-         this.recurrence = textNullIfEmpty( recurrenceRule );
+         recurrence = textNullIfEmpty( recurrenceRule );
          
          try
          {
-            this.isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
-                                                                        "every" ) ) != 0;
-            this.recurrence = ensureRecurrencePatternOrder( recurrence );
+            isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
+                                                                   "every" ) ) != 0;
+            recurrence = ensureRecurrencePatternOrder( recurrence );
          }
          catch ( NumberFormatException nfe )
          {
-            this.recurrence = null;
-            this.isEveryRecurrence = false;
+            recurrence = null;
+            isEveryRecurrence = false;
             
             Log.e( TAG, "Error reading recurrence pattern from XML", nfe );
          }
       }
-      else
-      {
-         this.recurrence = null;
-         this.isEveryRecurrence = false;
-      }
+      
+      this.recurrence = recurrence;
+      this.isEveryRecurrence = isEveryRecurrence;
       
       final List< Element > tasks = children( elt, "task" );
       this.tasks = new ArrayList< RtmTask >( tasks.size() );
       
       for ( Element task : tasks )
       {
-         this.tasks.add( new RtmTask( task, id ) );
+         this.tasks.add( new RtmTask( task, id, listId ) );
       }
       
       this.notes = new RtmTaskNotes( child( elt, "notes" ), id );
@@ -225,7 +193,7 @@ public class RtmTaskSeries extends RtmData implements
       this.url = textNullIfEmpty( elt, "url" );
       
       final Element elementTags = child( elt, "tags" );
-      this.tags = new ArrayList< Tag >();
+      this.tags = new ArrayList< String >();
       
       if ( elementTags.getChildNodes().getLength() > 0 )
       {
@@ -236,7 +204,7 @@ public class RtmTaskSeries extends RtmData implements
             final String tag = text( elementTag );
             if ( !TextUtils.isEmpty( tag ) )
             {
-               this.tags.add( new Tag( id, tag ) );
+               this.tags.add( tag );
             }
          }
       }
@@ -247,8 +215,6 @@ public class RtmTaskSeries extends RtmData implements
          this.participants = new ParticipantList( id, elementParticipants );
       else
          this.participants = new ParticipantList( id );
-      
-      this.deleted = null;
    }
    
 
@@ -267,7 +233,7 @@ public class RtmTaskSeries extends RtmData implements
       
       for ( Element task : tasks )
       {
-         this.tasks.add( new RtmTask( task, id, deleted ) );
+         this.tasks.add( new RtmTask( task, id, listId, deleted ) );
       }
       
       source = null;
@@ -278,7 +244,6 @@ public class RtmTaskSeries extends RtmData implements
       isEveryRecurrence = false;
       tags = null;
       participants = null;
-      this.deleted = new ParcelableDate( System.currentTimeMillis() );
    }
    
 
@@ -297,9 +262,8 @@ public class RtmTaskSeries extends RtmData implements
       url = source.readString();
       recurrence = source.readString();
       isEveryRecurrence = source.readInt() != 0;
-      tags = source.createTypedArrayList( Tag.CREATOR );
+      tags = source.createStringArrayList();
       participants = source.readParcelable( null );
-      deleted = source.readParcelable( null );
    }
    
 
@@ -332,6 +296,13 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
+   public Date getDeletedDate()
+   {
+      return tasks.get( 0 ).getDeletedDate();
+   }
+   
+
+
    public String getName()
    {
       return name;
@@ -353,6 +324,17 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
+   public RtmTask getTask( String id )
+   {
+      for ( RtmTask task : tasks )
+         if ( task.getId().equals( id ) )
+            return task;
+      
+      return null;
+   }
+   
+
+
    public RtmTaskNotes getNotes()
    {
       return notes == null ? new RtmTaskNotes() : notes;
@@ -360,7 +342,7 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public List< Tag > getTags()
+   public List< String > getTags()
    {
       if ( tags == null )
          return Collections.emptyList();
@@ -370,19 +352,19 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public List< String > getTagStrings()
+   public String getTagsJoined()
    {
-      if ( tags == null )
-         return Collections.emptyList();
+      if ( !hasTags() )
+         return Strings.EMPTY_STRING;
       else
-      {
-         final List< String > tagStrings = new ArrayList< String >( tags.size() );
-         for ( Tag tag : tags )
-         {
-            tagStrings.add( tag.getTag() );
-         }
-         return tagStrings;
-      }
+         return TextUtils.join( TaskSeries.TAGS_SEPARATOR, tags );
+   }
+   
+
+
+   public boolean hasTags()
+   {
+      return tags != null && !tags.isEmpty();
    }
    
 
@@ -394,31 +376,9 @@ public class RtmTaskSeries extends RtmData implements
    
 
 
-   public boolean isDeleted()
-   {
-      return deleted != null;
-   }
-   
-
-
-   public Date getDeletedDate()
-   {
-      return deleted != null ? deleted.getDate() : null;
-   }
-   
-
-
    public String getLocationId()
    {
       return locationId;
-   }
-   
-
-
-   @Override
-   public String toString()
-   {
-      return "TaskSeries<" + id + "," + name + "," + deleted + ">";
    }
    
 
@@ -465,264 +425,25 @@ public class RtmTaskSeries extends RtmData implements
       dest.writeString( url );
       dest.writeString( recurrence );
       dest.writeInt( isEveryRecurrence ? 1 : 0 );
-      dest.writeTypedList( tags );
+      dest.writeStringList( tags );
       dest.writeParcelable( participants, flags );
-      dest.writeParcelable( deleted, flags );
    }
    
 
 
-   private final List< Tag > createTags( List< String > tagStrings )
+   @Override
+   public String toString()
    {
-      final List< Tag > tags = new ArrayList< Tag >( tagStrings.size() );
-      
-      for ( String tagStr : tagStrings )
-      {
-         tags.add( new Tag( id, tagStr ) );
-      }
-      
-      return tags;
+      return "TaskSeries<" + id + "," + name + ">";
    }
    
 
 
    private final static String ensureRecurrencePatternOrder( String recurrencePattern )
    {
-      final String[] operators = recurrencePattern.split( RecurrenceParser.OPERATOR_SEP );
+      final String[] operators = recurrencePattern.split( RecurrencePatternParser.OPERATOR_SEP );
       Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
       
-      return TextUtils.join( RecurrenceParser.OPERATOR_SEP, operators );
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation()
-   {
-      return ContentProviderSyncOperation.newInsert( RtmTaskSeriesProviderPart.insertTaskSeries( this ) )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
-   {
-      // Referenced parts like RawTasks and Notes are deleted by a DB trigger.
-      // @see RtmTaskSeriesPart::create
-      //
-      // These deletions have not to be counted cause they are implementation
-      // details that all belong to a taskseries.
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                                                   id ) )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTaskSeries serverElement )
-   {
-      return computeMergeOperations( null,
-                                     null,
-                                     serverElement,
-                                     MergeDirection.LOCAL_ONLY ).getLocalOperation();
-   }
-   
-
-
-   public TypedDirectedSyncOperations< RtmTaskSeries > computeMergeOperations( RtmTimeline timeLine,
-                                                                               ModificationList modifications,
-                                                                               RtmTaskSeries updateElement,
-                                                                               MergeDirection mergeDirection )
-   {
-      SyncUtils.doMergePreCheck( id,
-                                 updateElement.id,
-                                 timeLine,
-                                 modifications,
-                                 mergeDirection );
-      
-      final Uri uri = Queries.contentUriWithId( TaskSeries.CONTENT_URI, id );
-      
-      final MergeProperties< RtmTaskSeries > mergeProperties = MergeProperties.newInstance( mergeDirection,
-                                                                                            this,
-                                                                                            updateElement,
-                                                                                            uri,
-                                                                                            modifications );
-      switch ( mergeDirection )
-      {
-         case LOCAL_ONLY:
-         case BOTH:
-            mergeLocal( updateElement, uri, mergeProperties );
-         case SERVER_ONLY:
-            mergeCommon( timeLine, updateElement, uri, mergeProperties );
-            break;
-      }
-      
-      return mergeProperties.getOperations();
-   }
-   
-
-
-   private void mergeCommon( RtmTimeline timeLine,
-                             RtmTaskSeries updateElement,
-                             Uri uri,
-                             MergeProperties< RtmTaskSeries > mergeProperties )
-   {
-      if ( SyncUtils.MergeResultDirection.SERVER == SyncUtils.mergeModification( mergeProperties,
-                                                                                 TaskSeries.TASKSERIES_NAME,
-                                                                                 updateElement.name,
-                                                                                 this.name,
-                                                                                 String.class ) )
-      {
-         for ( RtmTask task : tasks )
-         {
-            mergeProperties.serverBuilder.add( timeLine.tasks_setName( listId,
-                                                                       id,
-                                                                       task.getId(),
-                                                                       updateElement.name ) );
-         }
-      }
-      
-      SyncUtils.mergeModification( mergeProperties,
-                                   TaskSeries.LIST_ID,
-                                   updateElement.listId,
-                                   this.listId,
-                                   String.class );
-      
-      SyncUtils.mergeModification( mergeProperties,
-                                   TaskSeries.LOCATION_ID,
-                                   updateElement.locationId,
-                                   this.locationId,
-                                   String.class );
-      
-      SyncUtils.mergeModification( mergeProperties,
-                                   TaskSeries.URL,
-                                   updateElement.url,
-                                   this.url,
-                                   String.class );
-      
-      {
-         final MergeResultDirection mergeRes = SyncUtils.mergeModification( mergeProperties,
-                                                                            TaskSeries.RECURRENCE,
-                                                                            updateElement.recurrence,
-                                                                            this.recurrence,
-                                                                            String.class );
-         
-         // If we take the server value we must correctly set the local flags.
-         if ( mergeRes == MergeResultDirection.LOCAL )
-         {
-            if ( TextUtils.isEmpty( updateElement.recurrence ) )
-               mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
-                                                                         .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                                     null )
-                                                                         .build() );
-            else if ( isEveryRecurrence != updateElement.isEveryRecurrence )
-               mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
-                                                                         .withValue( TaskSeries.RECURRENCE_EVERY,
-                                                                                     updateElement.isEveryRecurrence
-                                                                                                                    ? 1
-                                                                                                                    : 0 )
-                                                                         .build() );
-         }
-      }
-   }
-   
-
-
-   private void mergeLocal( RtmTaskSeries updateElement,
-                            Uri uri,
-                            MergeProperties< RtmTaskSeries > mergeProperties )
-   {
-      // Update notes
-      {
-         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( notes.getNotes(),
-                                                                                                                          RtmTaskNote.LESS_ID );
-         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.diff( updateElement.notes.getNotes(),
-                                                                                       syncNotesList );
-         mergeProperties.localBuilder.add( noteOperations );
-      }
-      
-      // Update tags
-      {
-         final ContentProviderSyncableList< Tag > syncList = new ContentProviderSyncableList< Tag >( tags );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.diff( updateElement.tags,
-                                                                                       syncList );
-         mergeProperties.localBuilder.add( syncOperations );
-      }
-      
-      // Update tasks
-      {
-         final ContentProviderSyncableList< RtmTask > syncTasksList = new ContentProviderSyncableList< RtmTask >( tasks,
-                                                                                                                  RtmTask.LESS_ID );
-         final List< IContentProviderSyncOperation > taskOperations = SyncDiffer.diff( updateElement.tasks,
-                                                                                       syncTasksList );
-         mergeProperties.localBuilder.add( taskOperations );
-      }
-      
-      // Update participants
-      {
-         mergeProperties.localBuilder.add( participants.computeContentProviderUpdateOperation( updateElement.participants ) );
-      }
-      
-      // Update taskseries
-      {
-         SyncUtils.updateDate( created,
-                               updateElement.created,
-                               uri,
-                               TaskSeries.TASKSERIES_CREATED_DATE,
-                               mergeProperties.localBuilder );
-         
-         SyncUtils.updateDate( modified,
-                               updateElement.modified,
-                               uri,
-                               TaskSeries.MODIFIED_DATE,
-                               mergeProperties.localBuilder );
-         
-         // This can not be changed locally
-         if ( SyncUtils.hasChanged( source, updateElement.source ) )
-            mergeProperties.localBuilder.add( ContentProviderOperation.newUpdate( uri )
-                                                                      .withValue( TaskSeries.SOURCE,
-                                                                                  updateElement.source )
-                                                                      .build() );
-      }
-   }
-   
-
-
-   @SuppressWarnings( "unchecked" )
-   public IServerSyncOperation< RtmTaskSeries > computeServerInsertOperation( RtmTimeline timeLine )
-   {
-      return NoopServerSyncOperation.INSTANCE;
-   }
-   
-
-
-   @SuppressWarnings( "unchecked" )
-   public IServerSyncOperation< RtmTaskSeries > computeServerDeleteOperation( RtmTimeline timeLine )
-   {
-      return NoopServerSyncOperation.INSTANCE;
-   }
-   
-
-
-   public IServerSyncOperation< RtmTaskSeries > computeServerUpdateOperation( RtmTimeline timeLine,
-                                                                              ModificationList modifications )
-   {
-      return computeMergeOperations( timeLine,
-                                     modifications,
-                                     this,
-                                     MergeDirection.SERVER_ONLY ).getServerOperation();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeRemoveModificationsOperation( ModificationList modifications )
-   {
-      if ( modifications.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                    id ) ) )
-         return ContentProviderSyncOperation.newDelete( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
-                                                                                                            id ) )
-                                            .build();
-      else
-         return NoopContentProviderSyncOperation.INSTANCE;
+      return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
    }
 }

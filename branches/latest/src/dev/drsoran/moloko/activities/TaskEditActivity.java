@@ -789,10 +789,21 @@ public class TaskEditActivity extends Activity
       {
          dueEdit.setText( null );
       }
-      else
+      else if ( mutableTask.hasDueTime )
       {
          dueEdit.setText( MolokoDateUtils.formatDateTime( mutableTask.due,
-                                                          MolokoDateUtils.FORMAT_PARSER ) );
+                                                          MolokoDateUtils.FORMAT_NUMERIC
+                                                             | MolokoDateUtils.FORMAT_WITH_YEAR
+                                                             | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
+                                                             | MolokoDateUtils.FORMAT_ABR_ALL ) );
+      }
+      else
+      {
+         dueEdit.setText( MolokoDateUtils.formatDate( mutableTask.due,
+                                                      MolokoDateUtils.FORMAT_NUMERIC
+                                                         | MolokoDateUtils.FORMAT_WITH_YEAR
+                                                         | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
+                                                         | MolokoDateUtils.FORMAT_ABR_ALL ) );
       }
    }
    
@@ -852,36 +863,36 @@ public class TaskEditActivity extends Activity
          return false;
       }
       
-      // Due
-      if ( !TextUtils.isEmpty( dueEdit.getText() ) )
-      {
-         if ( RtmDateTimeParsing.parseDateTimeSpec( dueEdit.getText()
-                                                           .toString() ) == null )
-         {
-            Toast.makeText( this,
-                            getString( R.string.task_edit_validate_due,
-                                       dueEdit.getText() ),
-                            Toast.LENGTH_SHORT ).show();
-            dueEdit.requestFocus();
-            return false;
-         }
-      }
-      
-      // Estimate
-      if ( !TextUtils.isEmpty( estimateEdit.getText() ) )
-      {
-         final long millis = RtmDateTimeParsing.parseEstimated( estimateEdit.getText()
-                                                                            .toString() );
-         if ( millis == -1 )
-         {
-            Toast.makeText( this,
-                            getString( R.string.task_edit_validate_estimate,
-                                       estimateEdit.getText() ),
-                            Toast.LENGTH_SHORT ).show();
-            estimateEdit.requestFocus();
-            return false;
-         }
-      }
+      // // Due
+      // if ( !TextUtils.isEmpty( dueEdit.getText() ) )
+      // {
+      // if ( RtmDateTimeParsing.parseDateTimeSpec( dueEdit.getText()
+      // .toString() ) == null )
+      // {
+      // Toast.makeText( this,
+      // getString( R.string.task_edit_validate_due,
+      // dueEdit.getText() ),
+      // Toast.LENGTH_SHORT ).show();
+      // dueEdit.requestFocus();
+      // return false;
+      // }
+      // }
+      //      
+      // // Estimate
+      // if ( !TextUtils.isEmpty( estimateEdit.getText() ) )
+      // {
+      // final long millis = RtmDateTimeParsing.parseEstimated( estimateEdit.getText()
+      // .toString() );
+      // if ( millis == -1 )
+      // {
+      // Toast.makeText( this,
+      // getString( R.string.task_edit_validate_estimate,
+      // estimateEdit.getText() ),
+      // Toast.LENGTH_SHORT ).show();
+      // estimateEdit.requestFocus();
+      // return false;
+      // }
+      // }
       
       return true;
    }

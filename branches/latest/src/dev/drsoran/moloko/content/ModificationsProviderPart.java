@@ -341,7 +341,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                                                                       .build() );
                            else
                               // Update the modification with the new value.
-                              operations.add( ContentProviderOperation.newUpdate( Modifications.CONTENT_URI )
+                              operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Modifications.CONTENT_URI,
+                                                                                                            existingMod.getId() ) )
                                                                       .withValue( Modifications.NEW_VALUE,
                                                                                   modification.getNewValue() )
                                                                       .build() );

@@ -417,7 +417,7 @@ public class DuePickerDialog extends AbstractPickerDialog
       {
          final int wheelIdx = getWheelIndex( wheel );
          
-         for ( int i = 1; wheelIdx != -1 && i < wheelViews.length - 1; i++ )
+         for ( int i = 1; wheelIdx != -1 && i < wheelViews.length; i++ )
             wheelViews[ ( wheelIdx + i ) % wheelViews.length ].setCurrentItem( offIndex,
                                                                                true );
       }
@@ -428,7 +428,7 @@ public class DuePickerDialog extends AbstractPickerDialog
       {
          final int wheelIdx = getWheelIndex( wheel );
          
-         for ( int i = 1; wheelIdx != -1 && i < wheelViews.length - 1; i++ )
+         for ( int i = 1; wheelIdx != -1 && i < wheelViews.length; i++ )
          {
             final int idx = ( wheelIdx + i ) % wheelViews.length;
             final WheelView otherWheel = wheelViews[ idx ];

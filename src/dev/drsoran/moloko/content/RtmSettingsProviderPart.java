@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -178,9 +179,9 @@ public class RtmSettingsProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmSettingsProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmSettingsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Settings.PATH );
+      super( context, dbAccess, Settings.PATH );
    }
    
 

@@ -27,6 +27,7 @@
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
    <string name="app_task_edit">Aufgabe bearbeiten</string>
+   <string name="app_change_tags">Tags von %1$s bearbeiten</string>
 	<string name="app_note">Notiz</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Kontakte</string>
@@ -49,9 +50,10 @@
       Besonderen Dank an David Vermeille.&lt;br>&lt;br>
       Moloko ist implementiert mit Hilfe von:&lt;br>
                 - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 3.2
-         &lt;br>- Eine modifizierte Version der &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library 0.5
-         &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library 2.0.3
+         &lt;br>- Eine modifizierte Version der &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library
+         &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library
          &lt;br>- &lt;a href="http://code.google.com/p/android-log-collector/">android-log-collector&lt;/a>
+         &lt;br>- &lt;a href="http://code.google.com/p/android-wheel/>android-wheel&lt;/a>
    </string>
    
    <!-- Time phrases -->
@@ -110,9 +112,16 @@
 	<string name="btn_new_account">Neues Konto</string>
    <string name="btn_edit">Bearbeiten</string>
    <string name="btn_done">Fertig</string>
+   <string name="btn_complete">Erledigt</string>
+   <string name="btn_uncomplete">Unerledigt</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
+   
+   <!-- Global Dialogs -->
+   <string name="dlg_save_task">Speichere Änderungen...</string>
+   <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
+   <string name="dlg_due_picker_title">Fälligkeit</string>
 	
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>
@@ -158,9 +167,13 @@
    <string name="task_edit_estimate">Geschätzte Dauer</string>
    <string name="task_edit_estimate_nothing">Nichts geschätzt</string>
    <string name="task_edit_location_no">Nirgendwo</string>
-   <string name="task_edit_validate_empty_name">Der Name der Aufgabe darf nicht leer sein</string>
-   <!-- Dialogs -->
-      <string name="task_edit_dlg_save_task">Speichere Änderungen...</string>
+   <string name="task_edit_validate_empty_name">Der Name der Aufgabe darf nicht leer sein</string>   
+   <string name="task_edit_validate_estimate">\'%1$s\' ist keine gültige Zeitschätzung</string>
+   <string name="task_edit_validate_due">\'%1$s\' ist keine gültige Fälligkeit</string>
+   
+   <!-- Change Tags Activity -->
+   <string name="change_tags_edit_hint">Durch Komma getrennte Tags</string>
+   <string name="change_tags_empty">Diese Aufgabe hat keine Tags</string>
 		
    <!-- TaskLists activity -->
    <string name="tasklists_no_lists">Es existieren keine Listen</string>
@@ -279,18 +292,6 @@
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Datenbank gesäubert</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Säubern der Datenbank fehlgeschlagen</string>
-
-	<!-- RTM service status messages -->
-	<string name="rtmSvc_state_unknown">Unbekannt</string>
-	<string name="rtmSvc_state_internal_error">Interner Service Fehler</string>
-	<string name="rtmSvc_state_connected">Verbunden</string>
-	<string name="rtmSvc_state_disconnected">Getrennt</string>
-      <!-- Auth -->
-	   <string name="rtmSvc_auth_get_url_start">Empfange Anmelde-URL</string>
-	   <string name="rtmSvc_auth_get_url_fin">Anmelde-URL empfangen</string>
-	   <string name="rtmSvc_auth_get_token_start">Empfange Authentifiezierungs-Token</string>
-	   <string name="rtmSvc_auth_get_token_fin">Authentifiezierungs-Token empfangen</string>
-	   <string name="rtmSvc_auth_failed">Authentifizierung fehlgeschlagen</string>
     
    <!-- Error reporting -->   
    <string name="acra_crash_notif_ticker_text">Moloko ist oder war in einem fehlerhaften Zustand. Bitte senden Sie den Bericht</string>

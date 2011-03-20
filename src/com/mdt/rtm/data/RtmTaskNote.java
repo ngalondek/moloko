@@ -30,13 +30,13 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.rtm.ParcelableDate;
 
 
 /**
@@ -91,7 +91,7 @@ public class RtmTaskNote extends RtmData implements
    
    private final ParcelableDate modified;
    
-   private final boolean deleted;
+   private final ParcelableDate deleted;
    
    private final String title;
    
@@ -100,14 +100,14 @@ public class RtmTaskNote extends RtmData implements
    
 
    public RtmTaskNote( String id, String taskSeriesId, Date created,
-      Date modified, boolean deleted, String title, String text )
+      Date modified, Date deleted, String title, String text )
    {
       this.id = id;
       this.taskSeriesId = taskSeriesId;
       this.created = ( created != null ) ? new ParcelableDate( created ) : null;
       this.modified = ( modified != null ) ? new ParcelableDate( modified )
                                           : null;
-      this.deleted = deleted;
+      this.deleted = ( deleted != null ) ? new ParcelableDate( deleted ) : null;
       this.title = title;
       this.text = text;
    }
@@ -118,9 +118,9 @@ public class RtmTaskNote extends RtmData implements
    {
       id = textNullIfEmpty( element, "id" );
       this.taskSeriesId = taskSeriesId;
-      created = parseDate( element.getAttribute( "created" ) );
-      modified = parseDate( element.getAttribute( "modified" ) );
-      deleted = false;
+      created = parseParcableDate( element.getAttribute( "created" ) );
+      modified = parseParcableDate( element.getAttribute( "modified" ) );
+      deleted = null;
       title = textNullIfEmpty( element, "title" );
       
       if ( element.getChildNodes().getLength() > 0 )
@@ -142,7 +142,7 @@ public class RtmTaskNote extends RtmData implements
       taskSeriesId = source.readString();
       created = source.readParcelable( null );
       modified = source.readParcelable( null );
-      deleted = source.readInt() != 0;
+      deleted = source.readParcelable( null );
       title = source.readString();
       text = source.readString();
    }
@@ -163,23 +163,23 @@ public class RtmTaskNote extends RtmData implements
    
 
 
-   public Date getCreated()
+   public Date getCreatedDate()
    {
       return ( created != null ) ? created.getDate() : null;
    }
    
 
 
-   public Date getModified()
+   public Date getModifiedDate()
    {
       return ( modified != null ) ? modified.getDate() : null;
    }
    
 
 
-   public boolean isDeleted()
+   public Date getDeletedDate()
    {
-      return deleted;
+      return ( deleted != null ) ? deleted.getDate() : null;
    }
    
 
@@ -211,9 +211,16 @@ public class RtmTaskNote extends RtmData implements
       dest.writeString( taskSeriesId );
       dest.writeParcelable( created, 0 );
       dest.writeParcelable( modified, 0 );
-      dest.writeInt( deleted ? 1 : 0 );
+      dest.writeParcelable( deleted, 0 );
       dest.writeString( title );
       dest.writeString( text );
+   }
+   
+
+
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( Notes.CONTENT_URI, id );
    }
    
 
@@ -231,8 +238,7 @@ public class RtmTaskNote extends RtmData implements
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Notes.CONTENT_URI,
-                                                                                                                   id ) )
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
                                                                              .build() )
                                          .build();
    }
@@ -245,21 +251,21 @@ public class RtmTaskNote extends RtmData implements
          throw new IllegalArgumentException( "Update id " + update.id
             + " differs this id " + id );
       
-      final Uri uri = Queries.contentUriWithId( Notes.CONTENT_URI, id );
+      final Uri uri = getContentUriWithId();
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       
-      SyncUtils.updateDate( created,
-                            update.created,
-                            uri,
-                            Notes.NOTE_CREATED_DATE,
-                            result );
+      if ( SyncUtils.hasChanged( created, update.created ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_CREATED_DATE,
+                                                         update.created )
+                                             .build() );
       
-      SyncUtils.updateDate( modified,
-                            update.modified,
-                            uri,
-                            Notes.NOTE_MODIFIED_DATE,
-                            result );
+      if ( SyncUtils.hasChanged( modified, update.modified ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_MODIFIED_DATE,
+                                                         update.modified )
+                                             .build() );
       
       if ( SyncUtils.hasChanged( title, update.title ) )
          result.add( ContentProviderOperation.newUpdate( uri )

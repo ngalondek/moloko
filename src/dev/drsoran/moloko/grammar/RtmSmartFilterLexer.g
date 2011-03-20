@@ -102,11 +102,8 @@ options
 
    public final static String NOT_LIT = "not";
 
-   // END TOKEN LITERALS
+   // END TOKEN LITERALS  
 
-   private final static String TAGS_QUERY_PREFIX
-      = "(SELECT "  + Tags.TASKSERIES_ID + " FROM " + Tags.PATH
-        + " WHERE " + Tags.TASKSERIES_ID + " = " + "subQuery." + Tasks.TASKSERIES_ID;
 
    // STATUS VARIABLES
 
@@ -185,8 +182,17 @@ options
 
    private void equalsIntParam( String param )
    {
-      result.append( " = " );
-      result.append( unquotify( param ) );
+   	try
+   	{
+   	   final int val = Integer.parseInt( unquotify( param ) );
+   	   
+         result.append( " = " );
+         result.append( val );
+   	}
+   	catch( NumberFormatException e )
+   	{
+   	   error = true;
+   	}
    }
 
 
@@ -360,40 +366,60 @@ OP_STATUS   :  'status:'
 
 OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
               {
-                 result.append( TAGS_QUERY_PREFIX )
-                       .append( " AND " )
-                       .append( Tags.TAG );
-                 equalsStringParam( $s.getText() );
-                 result.append( ")" );
+                 final String unqString = unquotify( $s.getText() );
                  
+                 result.append( Tasks.TAGS )
+                 // Exact match if only 1 tag
+                       .append( " = '" )
+                       .append( unqString )
+                       .append( "' OR " )
+                // match for the case tag, (prefix)
+                       .append( Tasks.TAGS )
+                       .append( " like '" )
+                       .append( unqString )
+                       .append( Tags.TAGS_SEPARATOR )
+                       .append( "\%' OR " )
+                // match for the case ,tag, (infix)
+                       .append( Tasks.TAGS )
+                       .append( " like '\%" )
+                       .append( Tags.TAGS_SEPARATOR )                       
+                       .append( unqString )
+                       .append( Tags.TAGS_SEPARATOR )
+                       .append( "\%' OR " )
+                // match for the case ,tag (suffix)
+                       .append( Tasks.TAGS )
+                       .append( " like '\%" )
+                       .append( Tags.TAGS_SEPARATOR )                       
+                       .append( unqString )
+                       .append( "'" );
+                       
                  addRtmToken( OP_TAG, $s.getText() );
               };
 
 OP_TAG_CONTAINS : 'tagcontains:' ( s=STRING | s=Q_STRING )
                   {
-                    result.append( TAGS_QUERY_PREFIX )
-                          .append( " AND " )
-                          .append( Tags.TAG );
+	                 result.append( Tasks.TAGS );
                     containsStringParam( $s.getText() );
-                    result.append( ")" );
                     
                     addRtmToken( OP_TAG_CONTAINS, $s.getText() );
                   };
 
 OP_IS_TAGGED    : 'istagged:'
+                  {
+                     result.append( Tasks.TAGS );
+                  }
                   (
                      TRUE
                      {
-                        result.append( TAGS_QUERY_PREFIX );
-                        result.append( ")" );
+                        result.append( " IS NOT NULL" );
+                        
                         addRtmToken( OP_IS_TAGGED, TRUE_LIT );
                      }
                      |
                      FALSE
                      {
-                        result.append( " NOT EXISTS " );
-                        result.append( TAGS_QUERY_PREFIX );
-                        result.append( ")" );
+                        result.append( " IS NULL" );
+                        
                         addRtmToken( OP_IS_TAGGED, FALSE_LIT );
                      }
                   );

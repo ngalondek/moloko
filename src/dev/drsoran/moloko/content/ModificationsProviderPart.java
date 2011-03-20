@@ -31,6 +31,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,6 +40,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
@@ -54,7 +56,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    
    public final static String[] PROJECTION =
    { Modifications._ID, Modifications.ENTITY_URI, Modifications.COL_NAME,
-    Modifications.NEW_VALUE, Modifications.SYNCED_VALUE };
+    Modifications.NEW_VALUE, Modifications.SYNCED_VALUE,
+    Modifications.TIMESTAMP };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -91,6 +94,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       values.put( Modifications.ENTITY_URI, modification.getEntityUri()
                                                         .toString() );
       values.put( Modifications.COL_NAME, modification.getColName() );
+      values.put( Modifications.TIMESTAMP, modification.getTimestamp() );
       
       Modification.put( values,
                         Modifications.NEW_VALUE,
@@ -318,23 +322,30 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                   
                   for ( Modification modification : modifications )
                   {
-                     final Uri entityUri = modification.getEntityUri();
-                     
                      // Check id the modification should be stored or simply modify
                      // the entity.
                      if ( modification.isPersistent() )
                      {
                         // Check if modification already exists
                         final Modification existingMod = getModification( client,
-                                                                          entityUri,
+                                                                          modification.getEntityUri(),
                                                                           modification.getColName() );
                         if ( existingMod != null )
                         {
-                           // Update the modification with the new value.
-                           operations.add( ContentProviderOperation.newUpdate( Modifications.CONTENT_URI )
-                                                                   .withValue( Modifications.NEW_VALUE,
-                                                                               modification.getNewValue() )
-                                                                   .build() );
+                           // Check if the new value equals the synced value from the existing modification, if so the
+                           // user has reverted his change and we delete the modification.
+                           if ( !SyncUtils.hasChanged( existingMod.getSyncedValue(),
+                                                       modification.getNewValue() ) )
+                              operations.add( ContentProviderOperation.newDelete( Queries.contentUriWithId( Modifications.CONTENT_URI,
+                                                                                                            existingMod.getId() ) )
+                                                                      .build() );
+                           else
+                              // Update the modification with the new value.
+                              operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Modifications.CONTENT_URI,
+                                                                                                            existingMod.getId() ) )
+                                                                      .withValue( Modifications.NEW_VALUE,
+                                                                                  modification.getNewValue() )
+                                                                      .build() );
                         }
                         else
                         {
@@ -388,10 +399,17 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    public static ContentProviderOperation getRemoveModificationOps( Uri contentUri,
                                                                     String entityId )
    {
+      return getRemoveModificationOps( Queries.contentUriWithId( contentUri,
+                                                                 entityId ) );
+   }
+   
+
+
+   public static ContentProviderOperation getRemoveModificationOps( Uri entityUri )
+   {
       return ContentProviderOperation.newDelete( Modifications.CONTENT_URI )
                                      .withSelection( new StringBuilder( Modifications.ENTITY_URI ).append( " = '" )
-                                                                                                  .append( Queries.contentUriWithId( contentUri,
-                                                                                                                                     entityId ) )
+                                                                                                  .append( entityUri )
                                                                                                   .append( "'" )
                                                                                                   .toString(),
                                                      null )
@@ -402,20 +420,23 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
 
    private static Modification createModification( Cursor c )
    {
-      return Modification.newModification( c.getString( COL_INDICES.get( Modifications._ID ) ),
-                                           Uri.parse( c.getString( COL_INDICES.get( Modifications.ENTITY_URI ) ) ),
-                                           c.getString( COL_INDICES.get( Modifications.COL_NAME ) ),
-                                           Queries.getOptString( c,
-                                                                 COL_INDICES.get( Modifications.NEW_VALUE ) ),
-                                           Queries.getOptString( c,
-                                                                 COL_INDICES.get( Modifications.SYNCED_VALUE ) ) );
+      return new Modification( c.getString( COL_INDICES.get( Modifications._ID ) ),
+                               Uri.parse( c.getString( COL_INDICES.get( Modifications.ENTITY_URI ) ) ),
+                               c.getString( COL_INDICES.get( Modifications.COL_NAME ) ),
+                               Queries.getOptString( c,
+                                                     COL_INDICES.get( Modifications.NEW_VALUE ) ),
+                               Queries.getOptString( c,
+                                                     COL_INDICES.get( Modifications.SYNCED_VALUE ) ),
+                               true,
+                               true,
+                               c.getLong( COL_INDICES.get( Modifications.TIMESTAMP ) ) );
    }
    
 
 
-   public ModificationsProviderPart( SQLiteOpenHelper dbAccess )
+   public ModificationsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, Modifications.PATH );
+      super( context, dbAccess, Modifications.PATH );
    }
    
 
@@ -430,7 +451,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
          + Modifications.ENTITY_URI + " TEXT NOT NULL, "
          + Modifications.COL_NAME + " TEXT NOT NULL, "
          + Modifications.NEW_VALUE + " TEXT, " + Modifications.SYNCED_VALUE
-         + " TEXT );" );
+         + " TEXT, " + Modifications.TIMESTAMP + " INTEGER NOT NULL " + ");" );
    }
    
 

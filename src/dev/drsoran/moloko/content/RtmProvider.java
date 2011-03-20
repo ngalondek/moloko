@@ -117,31 +117,34 @@ public class RtmProvider extends ContentProvider
    @Override
    public boolean onCreate()
    {
+      final Context context = getContext();
+      
       dbHelper = new RtmProviderOpenHelper( getContext() );
       
       // These parts allow modification in the local DB.
       mutableParts.addAll( Arrays.asList( new IRtmProviderPart[]
-      { new RtmTasksProviderPart( dbHelper ),
-       new RtmTaskSeriesProviderPart( dbHelper ),
-       new RtmListsProviderPart( dbHelper ), new TagsProviderPart( dbHelper ),
-       new RtmNotesProviderPart( dbHelper ),
-       new RtmLocationsProviderPart( dbHelper ),
-       new RtmContactsProviderPart( dbHelper ),
-       new ParticipantsProviderPart( dbHelper ),
-       new RtmSettingsProviderPart( dbHelper ),
-       new SyncProviderPart( dbHelper ),
-       new ModificationsProviderPart( dbHelper ),
-       new RollbacksProviderPart( dbHelper ) } ) );
+      { new RtmTasksProviderPart( context, dbHelper ),
+       new RtmTaskSeriesProviderPart( context, dbHelper ),
+       new RtmListsProviderPart( context, dbHelper ),
+       new RtmNotesProviderPart( context, dbHelper ),
+       new RtmLocationsProviderPart( context, dbHelper ),
+       new RtmContactsProviderPart( context, dbHelper ),
+       new ParticipantsProviderPart( context, dbHelper ),
+       new RtmSettingsProviderPart( context, dbHelper ),
+       new SyncProviderPart( context, dbHelper ),
+       new ModificationsProviderPart( context, dbHelper ),
+       new RollbacksProviderPart( context, dbHelper ) } ) );
       
       parts.addAll( mutableParts );
       
       // These parts are immutable and allow no insert, update, deletion
       parts.addAll( Arrays.asList( new IProviderPart[]
-      { new TasksProviderPart( dbHelper ),
-       new ListOverviewsProviderPart( dbHelper ),
-       new TagOverviewsProviderPart( dbHelper ),
-       new LocationOverviewsProviderPart( dbHelper ),
-       new ContactOverviewsProviderPart( dbHelper ) } ) );
+      { new TasksProviderPart( context, dbHelper ),
+       new TagsProviderPart( context, dbHelper ),
+       new ListOverviewsProviderPart( context, dbHelper ),
+       new LocationOverviewsProviderPart( context, dbHelper ),
+       new ContactOverviewsProviderPart( context, dbHelper ),
+      /* new SyncTasksProviderPart( dbHelper ) */} ) );
       
       return true;
    }
@@ -212,6 +215,25 @@ public class RtmProvider extends ContentProvider
    
 
 
+   public IProviderPart getPart( Uri uri )
+   {
+      // Find the DB part that can handle the URI.
+      for ( IProviderPart part : parts )
+         if ( part.getType( uri ) != null )
+            return part;
+      
+      return null;
+   }
+   
+
+
+   public List< IRtmProviderPart > getMutableParts()
+   {
+      return mutableParts;
+   }
+   
+
+
    @Override
    public Uri insert( Uri uri, ContentValues values )
    {
@@ -261,6 +283,7 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
+            Log.e( TAG, "Unknown URI " + uri );
             break;
       }
       
@@ -268,45 +291,43 @@ public class RtmProvider extends ContentProvider
       {
          getContext().getContentResolver().notifyChange( uri, null );
       }
-      else
-      {
-         // TODO: Throw and handle exception.
-         Log.e( TAG, "Unknown URI " + uri );
-      }
       
       return numDeleted;
    }
    
 
 
-   public synchronized void clear() throws OperationApplicationException
+   public synchronized void clear( List< ? extends IRtmProviderPart > parts ) throws OperationApplicationException
    {
       final ArrayList< ContentProviderOperation > deleteOps = new ArrayList< ContentProviderOperation >();
       
-      for ( IRtmProviderPart part : mutableParts )
+      for ( IRtmProviderPart part : parts )
       {
          deleteOps.add( ContentProviderOperation.newDelete( part.getContentUri() )
                                                 .build() );
       }
       
-      final TransactionalAccess transactionalAccess = newTransactionalAccess();
-      
-      try
+      if ( !deleteOps.isEmpty() )
       {
-         transactionalAccess.beginTransaction();
+         final TransactionalAccess transactionalAccess = newTransactionalAccess();
          
-         applyBatch( deleteOps );
-         
-         transactionalAccess.setTransactionSuccessful();
-      }
-      catch ( Throwable e )
-      {
-         Log.e( TAG, "Clearing database failed", e );
-         throw new OperationApplicationException( e );
-      }
-      finally
-      {
-         transactionalAccess.endTransaction();
+         try
+         {
+            transactionalAccess.beginTransaction();
+            
+            applyBatch( deleteOps );
+            
+            transactionalAccess.setTransactionSuccessful();
+         }
+         catch ( Throwable e )
+         {
+            Log.e( TAG, "Clearing database failed", e );
+            throw new OperationApplicationException( e );
+         }
+         finally
+         {
+            transactionalAccess.endTransaction();
+         }
       }
    }
    
@@ -337,17 +358,13 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
+            Log.e( TAG, "Unknown URI " + uri );
             break;
       }
       
       if ( numUpdated > 0 )
       {
          getContext().getContentResolver().notifyChange( uri, null );
-      }
-      else
-      {
-         // TODO: Throw and handle exception.
-         Log.e( TAG, "Unknown URI " + uri );
       }
       
       return numUpdated;

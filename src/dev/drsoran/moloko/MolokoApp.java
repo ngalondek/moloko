@@ -37,13 +37,14 @@ import android.os.Message;
 import android.util.Log;
 import dev.drsoran.moloko.notification.MolokoNotificationManager;
 import dev.drsoran.moloko.receivers.TimeTickReceiver;
-import dev.drsoran.moloko.service.sync.Constants;
+import dev.drsoran.moloko.sync.Constants;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.ListenerList;
-import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.moloko.util.ListenerList.MessgageObject;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm;
 
 
@@ -107,8 +108,9 @@ public class MolokoApp extends org.acra.CrashReportingApplication implements
       syncStatHandle = ContentResolver.addStatusChangeListener( Constants.SYNC_OBSERVER_TYPE_SETTINGS,
                                                                 this );
       
-      // TODO: Reinitialize the pattern language if system language changes.
+      // TODO: Reinitialize the languages if system language changes.
       RecurrenceParsing.initPatternLanguage( getResources() );
+      RtmDateTimeParsing.initLookupLanguage( getResources() );
    }
    
 

@@ -28,9 +28,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Connection;
-import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm;
 
 

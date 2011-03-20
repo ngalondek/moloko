@@ -32,8 +32,6 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
-import dev.drsoran.moloko.service.RtmServiceException;
-
 
 public class AsyncRtmAuthenticator
 {
@@ -41,18 +39,17 @@ public class AsyncRtmAuthenticator
    
    private final ServiceImpl rtmServiceImpl;
    
-   @SuppressWarnings( "unchecked" )
-   private AsyncTask runningTask;
+   private AsyncTask< ?, Void, ? > runningTask;
    
    
    private abstract class RtmAsyncAuthTask< Param, Result > extends
             AsyncTask< Param, Void, Result >
    {
-      protected final WeakReference< AuthenticatorActivity > activity;
+      protected volatile WeakReference< AuthenticatorActivity > activity;
       
-      protected final WeakReference< ServiceImpl > service;
+      protected volatile WeakReference< ServiceImpl > service;
       
-      protected ServiceException exception;
+      protected volatile ServiceException exception;
       
       
 
@@ -97,7 +94,7 @@ public class AsyncRtmAuthenticator
       {
          String result = null;
          
-         if ( service != null && params.length > 0 )
+         if ( service.get() != null && params.length > 0 )
          {
             try
             {
@@ -141,7 +138,7 @@ public class AsyncRtmAuthenticator
       {
          String result = null;
          
-         if ( service != null )
+         if ( service.get() != null )
          {
             try
             {
@@ -186,7 +183,7 @@ public class AsyncRtmAuthenticator
       {
          RtmAuth result = null;
          
-         if ( service != null && params.length > 0 )
+         if ( service.get() != null && params.length > 0 )
          {
             try
             {
@@ -276,29 +273,11 @@ public class AsyncRtmAuthenticator
 
    public static String getExceptionCause( final Exception e )
    {
-      if ( e instanceof RtmServiceException )
-      {
-         return ( (RtmServiceException) e ).rtmCause;
-      }
-      else if ( e instanceof ServiceInternalException )
+      if ( e instanceof ServiceInternalException )
       {
          return ( (ServiceInternalException) e ).getResponseMessage();
       }
       else
          return e.getMessage();
-   }
-   
-
-
-   public static int getExceptionCode( final Exception e )
-   {
-      if ( e instanceof RtmServiceException )
-      {
-         return ( (RtmServiceException) e ).errorCode;
-      }
-      else
-      {
-         return 0;
-      }
    }
 }

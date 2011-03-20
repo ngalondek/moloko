@@ -22,7 +22,7 @@
 
 package dev.drsoran.moloko.util;
 
-import java.util.List;
+import java.util.Collection;
 
 import android.accounts.Account;
 import android.app.Activity;
@@ -40,13 +40,14 @@ import android.util.Log;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.rtm.Task;
 
 
@@ -79,6 +80,10 @@ public final class UIUtils
       if ( titleBarText instanceof TextView )
       {
          ( (TextView) titleBarText ).setText( text );
+      }
+      else
+      {
+         activity.setTitle( text );
       }
    }
    
@@ -117,6 +122,10 @@ public final class UIUtils
          }
          
          titleBarText.setCompoundDrawables( bitmap, null, null, null );
+      }
+      else
+      {
+         activity.setTitle( text );
       }
    }
    
@@ -167,7 +176,7 @@ public final class UIUtils
 
    public final static void inflateTags( Context context,
                                          ViewGroup container,
-                                         Task task,
+                                         Collection< String > tags,
                                          Bundle configuration,
                                          OnClickListener listener ) throws InflateException
    {
@@ -179,13 +188,10 @@ public final class UIUtils
       container.removeAllViews();
       
       // inflate the stub and add tags
-      if ( task.getTags().size() > 0
-         && !configuration.containsKey( REMOVE_ALL_TAGS ) )
+      if ( tags.size() > 0 && !configuration.containsKey( REMOVE_ALL_TAGS ) )
       {
          try
          {
-            final List< String > tags = task.getTags();
-            
             if ( configuration.containsKey( DISABLE_ALL_TAGS ) )
             {
                for ( String tagText : tags )
@@ -402,47 +408,48 @@ public final class UIUtils
                                              int id,
                                              int menuOrder )
    {
-      if ( menu.findItem( id ) == null )
+      if ( menu.findItem( id ) != null )
+         menu.removeItem( id );
+      
+      if ( SyncUtils.isSyncing( context ) )
       {
-         if ( SyncUtils.isSyncing( context ) )
-         {
-            menu.add( Menu.NONE, id, menuOrder, R.string.phr_cancel_sync )
-                .setIcon( R.drawable.ic_menu_cancel )
-                .setOnMenuItemClickListener( new OnMenuItemClickListener()
+         menu.add( Menu.NONE, id, menuOrder, R.string.phr_cancel_sync )
+             .setIcon( R.drawable.ic_menu_cancel )
+             .setOnMenuItemClickListener( new OnMenuItemClickListener()
+             {
+                public boolean onMenuItemClick( MenuItem item )
                 {
-                   public boolean onMenuItemClick( MenuItem item )
-                   {
-                      SyncUtils.cancelSync( context );
-                      return true;
-                   }
-                } );
+                   SyncUtils.cancelSync( context );
+                   return true;
+                }
+             } );
+      }
+      else
+      {
+         final MenuItem menuItem = menu.add( Menu.NONE,
+                                             id,
+                                             menuOrder,
+                                             R.string.phr_do_sync )
+                                       .setIcon( R.drawable.ic_menu_refresh );
+         
+         final Account account = SyncUtils.isReadyToSync( context );
+         
+         if ( account != null )
+         {
+            menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+            {
+               public boolean onMenuItemClick( MenuItem item )
+               {
+                  SyncUtils.requestSync( context, account, true );
+                  return true;
+               }
+            } );
          }
          else
          {
-            final MenuItem menuItem = menu.add( Menu.NONE,
-                                                id,
-                                                menuOrder,
-                                                R.string.phr_do_sync )
-                                          .setIcon( R.drawable.ic_menu_refresh );
-            
-            final Account account = SyncUtils.isReadyToSync( context );
-            
-            if ( account != null )
-            {
-               menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
-               {
-                  public boolean onMenuItemClick( MenuItem item )
-                  {
-                     SyncUtils.requestSync( context, account, true );
-                     return true;
-                  }
-               } );
-            }
-            else
-            {
-               menuItem.setEnabled( false );
-            }
+            menuItem.setEnabled( false );
          }
       }
    }
+   
 }

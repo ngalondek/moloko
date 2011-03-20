@@ -29,6 +29,7 @@
 	<string name="app_tasklists">Lists</string>
 	<string name="app_task">Task</string>
    <string name="app_task_edit">Edit Task</string>
+   <string name="app_change_tags">Change Tags of %1$s</string>
 	<string name="app_note">Note</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Contacts</string>
@@ -56,9 +57,10 @@
       Special thanks to David Vermeille.&lt;br>&lt;br>
       Moloko is implemented by means of:&lt;br>
                 - &lt;a href="http://www.antlr.org">ANTLR&lt;/a> Parser Generator 3.2
-         &lt;br>- A modified version of &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library 0.5
-         &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library 2.0.3
+         &lt;br>- A modified version of &lt;a href="http://sourceforge.net/projects/rtmjava/">rtmjava&lt;/a> library
+         &lt;br>- &lt;a href="http://code.google.com/p/acra/">ACRA&lt;/a> Application Crash Report for Android library
          &lt;br>- &lt;a href="http://code.google.com/p/android-log-collector/">android-log-collector&lt;/a>
+         &lt;br>- &lt;a href="http://code.google.com/p/android-wheel/>android-wheel&lt;/a>
    </string>
    
    <!-- TODO: to be removed -->   
@@ -150,10 +152,18 @@
    <string name="btn_cancel">Cancel</string>
    <string name="btn_new_account">New account</string>
    <string name="btn_edit">Edit</string>
-   <string name="btn_done">Done</string>   
+   <string name="btn_done">Done</string>
+   <string name="btn_complete">Complete</string>
+   <string name="btn_uncomplete">Uncomplete</string>
 	
 	<!-- Global menu items -->
    <string name="menu_opt_search_task_title">Search for tasks</string>
+   
+   <!-- Global Dialogs -->
+   <string name="dlg_save_task">Saving task changes...</string>
+   <string name="dlg_estimate_picker_title">How long does it take?</string>
+   <string name="dlg_due_picker_title">Set due</string>
+   <string name="dlg_due_picker_no_time">---</string>
 	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>
@@ -173,6 +183,7 @@
 	
 	<!-- Task activity -->
    <string name="task_source">from %1$s</string>
+   <string name="task_postponed">%1$dx,</string>
    <string name="task_datetime_title_due">When</string>
    <string name="task_datetime_title_estimate">Duration</string>
    <string name="task_datetime_title_recurr">Recurrence</string>
@@ -206,8 +217,12 @@
    <string name="task_edit_estimate_nothing">Nothing estimated</string>
    <string name="task_edit_location_no">Nowhere</string>
    <string name="task_edit_validate_empty_name">The task name must not be empty</string>
-   <!-- Dialogs -->
-      <string name="task_edit_dlg_save_task">Saving task changes...</string>
+   <string name="task_edit_validate_estimate">\'%1$s\' is not a valid estimation</string>
+   <string name="task_edit_validate_due">\'%1$s\' is not a valid due</string>
+   
+   <!-- Change Tags Activity -->
+   <string name="change_tags_edit_hint">Comma separated tags</string>
+   <string name="change_tags_empty">This task has no tags</string>
    		
    <!-- TaskLists activity -->
    <string name="tasklists_no_lists">There are no lists</string>
@@ -343,18 +358,6 @@
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Database cleared</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Clearing the database failed</string>
-
-	<!-- RTM service status messages -->
-   <string name="rtmSvc_state_unknown">Unknown</string>
-   <string name="rtmSvc_state_internal_error">Internal server error</string>
-   <string name="rtmSvc_state_connected">Connected</string>
-   <string name="rtmSvc_state_disconnected">Disconnected</string>
-      <!-- Auth -->
-      <string name="rtmSvc_auth_get_url_start">Receiving Login-URL</string>
-      <string name="rtmSvc_auth_get_url_fin">Login-URL received</string>
-      <string name="rtmSvc_auth_get_token_start">Receiving Authentication-Token</string>
-      <string name="rtmSvc_auth_get_token_fin">Authentication-Token received</string>
-      <string name="rtmSvc_auth_failed">Authentication failed</string>
       
    <!-- Error reporting -->   
    <string name="acra_crash_notif_ticker_text">Moloko has or had entered an unexpected state. Please send an error report.</string>

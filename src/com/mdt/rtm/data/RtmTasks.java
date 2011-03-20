@@ -110,16 +110,6 @@ public class RtmTasks extends RtmData
    
 
 
-   public void removeDeletedTaskSeries()
-   {
-      for ( RtmTaskList taskList : lists )
-      {
-         taskList.removeDeletedTaskSeries();
-      }
-   }
-   
-
-
    @Override
    public String toString()
    {

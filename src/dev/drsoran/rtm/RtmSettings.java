@@ -39,13 +39,12 @@ import android.util.Log;
 import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm.Settings;
 
 
@@ -235,6 +234,21 @@ public class RtmSettings extends RtmData implements
    
 
 
+   public Uri getContentUriWithId()
+   {
+      return Queries.contentUriWithId( Settings.CONTENT_URI,
+                                       RtmSettingsProviderPart.SETTINGS_ID );
+   }
+   
+
+
+   public Date getDeletedDate()
+   {
+      return null;
+   }
+   
+
+
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       return NoopContentProviderSyncOperation.INSTANCE;
@@ -254,8 +268,7 @@ public class RtmSettings extends RtmData implements
 
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmSettings update )
    {
-      final Uri settingsUri = Queries.contentUriWithId( Settings.CONTENT_URI,
-                                                        RtmSettingsProviderPart.SETTINGS_ID );
+      final Uri settingsUri = getContentUriWithId();
       
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
       

@@ -24,6 +24,8 @@ package dev.drsoran.moloko.content;
 
 import java.util.HashMap;
 
+import android.content.ContentProviderClient;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -49,14 +51,18 @@ public abstract class AbstractProviderPart implements IProviderPart
    
    protected static final int ITEM_ID = 2;
    
+   protected final Context context;
+   
    protected final UriMatcher uriMatcher = new UriMatcher( UriMatcher.NO_MATCH );
    
    protected SQLiteOpenHelper dbAccess = null;
    
    
 
-   public AbstractProviderPart( SQLiteOpenHelper dbAccess, String path )
+   public AbstractProviderPart( Context context, SQLiteOpenHelper dbAccess,
+      String path )
    {
+      this.context = context;
       this.dbAccess = dbAccess;
       this.path = path;
       
@@ -138,6 +144,20 @@ public abstract class AbstractProviderPart implements IProviderPart
          default :
             return UriMatcher.NO_MATCH;
       }
+   }
+   
+
+
+   public ContentProviderClient aquireContentProviderClient( Uri uri )
+   {
+      return context.getContentResolver().acquireContentProviderClient( uri );
+   }
+   
+
+
+   public Object getElement( Uri uri )
+   {
+      return null;
    }
    
 

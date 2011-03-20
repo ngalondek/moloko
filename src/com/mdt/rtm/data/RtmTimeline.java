@@ -19,12 +19,16 @@
  */
 package com.mdt.rtm.data;
 
+import java.util.Date;
+import java.util.List;
+
 import org.w3c.dom.Element;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.TimeLineMethod;
-import com.mdt.rtm.Service.MethodCallType;
+import com.mdt.rtm.TimeLineResult;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 
 public class RtmTimeline
@@ -59,12 +63,6 @@ public class RtmTimeline
    
 
 
-   // public Service getService()
-   // {
-   // return service;
-   // }
-   //   
-   
    @Override
    public String toString()
    {
@@ -73,24 +71,220 @@ public class RtmTimeline
    
 
 
-   public TimeLineMethod< RtmTaskSeries > tasks_setName( final String listId,
-                                                         final String taskSeriesId,
-                                                         final String taskId,
-                                                         final String newName )
+   public TimeLineMethod< RtmTaskList > tasks_complete( final String listId,
+                                                        final String taskSeriesId,
+                                                        final String taskId )
    {
-      return new TimeLineMethod< RtmTaskSeries >()
+      return new TimeLineMethod< RtmTaskList >()
       {
          @Override
-         public TimeLineMethod.Result< RtmTaskSeries > call( MethodCallType callType ) throws ServiceException
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_complete( id, listId, taskSeriesId, taskId );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_uncomplete( final String listId,
+                                                          final String taskSeriesId,
+                                                          final String taskId )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_uncomplete( id, listId, taskSeriesId, taskId );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setEstimate( final String listId,
+                                                           final String taskSeriesId,
+                                                           final String taskId,
+                                                           final String estimate )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
          {
             return service.tasks_setName( id,
                                           listId,
                                           taskSeriesId,
                                           taskId,
-                                          newName,
-                                          callType );
+                                          estimate );
          }
       };
    }
    
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setName( final String listId,
+                                                       final String taskSeriesId,
+                                                       final String taskId,
+                                                       final String newName )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setName( id,
+                                          listId,
+                                          taskSeriesId,
+                                          taskId,
+                                          newName );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_movePriority( final String listId,
+                                                            final String taskSeriesId,
+                                                            final String taskId,
+                                                            final boolean up )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_movePriority( id,
+                                               listId,
+                                               taskSeriesId,
+                                               taskId,
+                                               up );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setPriority( final String listId,
+                                                           final String taskSeriesId,
+                                                           final String taskId,
+                                                           final Priority priority )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setPriority( id,
+                                              listId,
+                                              taskSeriesId,
+                                              taskId,
+                                              priority );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setTags( final String listId,
+                                                       final String taskSeriesId,
+                                                       final String taskId,
+                                                       final List< String > tags )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setTags( id,
+                                          listId,
+                                          taskSeriesId,
+                                          taskId,
+                                          tags );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_moveTo( final String fromListId,
+                                                      final String toListId,
+                                                      final String taskSeriesId,
+                                                      final String taskId )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_moveTo( id,
+                                         fromListId,
+                                         toListId,
+                                         taskSeriesId,
+                                         taskId );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setDueDate( final String listId,
+                                                          final String taskSeriesId,
+                                                          final String taskId,
+                                                          final Date dueUtc,
+                                                          final boolean hasTime )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setDueDate( id,
+                                             listId,
+                                             taskSeriesId,
+                                             taskId,
+                                             dueUtc,
+                                             hasTime );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setLocation( final String listId,
+                                                           final String taskSeriesId,
+                                                           final String taskId,
+                                                           final String locationId )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setLocation( id,
+                                              listId,
+                                              taskSeriesId,
+                                              taskId,
+                                              locationId );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_setURL( final String listId,
+                                                      final String taskSeriesId,
+                                                      final String taskId,
+                                                      final String url )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setURL( id, listId, taskSeriesId, taskId, url );
+         }
+      };
+   }
 }

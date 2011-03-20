@@ -24,17 +24,24 @@ package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.AdapterView.OnItemSelectedListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.Strings;
 
 
 public class TitleWithSpinnerLayout extends TitleWithViewLayout
 {
+   private final String TAG = "Moloko."
+      + TitleWithSpinnerLayout.class.getSimpleName();
+   
+   
    public interface StringConverter
    {
       String convertToString( Object object );
@@ -95,7 +102,7 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    
 
 
-   public void setSelection( String value, int notFoundIndex )
+   public void setSelectionByEntry( String entry, int notFoundIndex )
    {
       final SpinnerAdapter adapter = spinner.getAdapter();
       
@@ -104,27 +111,23 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
          boolean found = false;
          final int cnt = adapter.getCount();
          
-         if ( value != null )
+         if ( entry != null )
          {
             for ( int i = 0; !found && i < cnt; i++ )
             {
                final Object item = adapter.getItem( i );
                
-               String spinnerValue = null;
+               String spinnerEntry = null;
                
                if ( converter != null )
-                  spinnerValue = converter.convertToString( item );
-               else if ( values != null && values.length > i )
-                  spinnerValue = values[ i ];
+                  spinnerEntry = converter.convertToString( item );
                else
-                  spinnerValue = item.toString();
+                  spinnerEntry = item.toString();
                
-               if ( spinnerValue.equals( value ) )
+               if ( spinnerEntry.equals( entry ) )
                {
                   if ( spinner.getSelectedItemPosition() != i )
-                  {
                      spinner.setSelection( i );
-                  }
                   
                   found = true;
                }
@@ -133,6 +136,72 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
          
          if ( !found && notFoundIndex != -1 && cnt > notFoundIndex )
             spinner.setSelection( notFoundIndex );
+      }
+   }
+   
+
+
+   public void setSelectionByValue( String value, int notFoundIndex )
+   {
+      if ( value == null )
+         throw new NullPointerException( "value is null" );
+      
+      if ( values != null )
+      {
+         boolean found = false;
+         
+         for ( int i = 0; !found && i < values.length; i++ )
+         {
+            if ( values[ i ].equals( value ) )
+            {
+               if ( spinner.getSelectedItemPosition() != i )
+                  spinner.setSelection( i );
+               
+               found = true;
+            }
+         }
+         
+         if ( !found && notFoundIndex != -1 && values.length > notFoundIndex )
+            spinner.setSelection( notFoundIndex );
+      }
+   }
+   
+
+
+   public void setValues( String[] values )
+   {
+      if ( values == null )
+         throw new NullPointerException( "values are null" );
+      
+      this.values = new String[ values.length ];
+      for ( int i = 0; i < values.length; ++i )
+      {
+         this.values[ i ] = values[ i ];
+      }
+   }
+   
+
+
+   public void setValues( Cursor c, int colIdx )
+   {
+      if ( c == null )
+         throw new NullPointerException( "cursor is null" );
+      
+      this.values = new String[ c.getCount() ];
+      
+      if ( c.getCount() > 0 )
+      {
+         boolean ok = c.moveToFirst();
+         for ( int i = 0; ok && !c.isAfterLast(); c.moveToNext(), ++i )
+         {
+            this.values[ i ] = c.getString( colIdx );
+         }
+         
+         if ( !ok )
+         {
+            this.values = null;
+            LogUtils.logDBError( getContext(), TAG, Strings.EMPTY_STRING );
+         }
       }
    }
    
@@ -148,37 +217,46 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
    
 
 
+   public String getSelectedValue()
+   {
+      return getValueAtPos( spinner.getSelectedItemPosition() );
+   }
+   
+
+
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      spinner = new Spinner( context );
+      spinner = new Spinner( context, attrs );
       spinner.setId( R.id.title_with_spinner_layout );
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.TitleWithSpinner,
                                                                0,
                                                                0 );
-      
-      final int entriesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerEntries,
-                                                 -1 );
-      
-      if ( entriesId != -1 )
+      if ( !isInEditMode() )
       {
-         final ArrayAdapter< CharSequence > adapter = ArrayAdapter.createFromResource( context,
-                                                                                       entriesId,
-                                                                                       android.R.layout.simple_spinner_item );
-         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+         final int entriesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerEntries,
+                                                    -1 );
          
-         setAdapter( adapter );
-      }
-      
-      final int valuesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerValues,
-                                                -1 );
-      
-      if ( valuesId != -1 )
-      {
-         values = context.getResources().getStringArray( valuesId );
+         if ( entriesId != -1 )
+         {
+            final ArrayAdapter< CharSequence > adapter = ArrayAdapter.createFromResource( context,
+                                                                                          entriesId,
+                                                                                          android.R.layout.simple_spinner_item );
+            adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+            
+            setAdapter( adapter );
+         }
+         
+         final int valuesId = array.getResourceId( R.styleable.TitleWithSpinner_spinnerValues,
+                                                   -1 );
+         
+         if ( valuesId != -1 )
+         {
+            values = context.getResources().getStringArray( valuesId );
+         }
       }
       
       array.recycle();

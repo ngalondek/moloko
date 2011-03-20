@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.content.ContentProviderClient;
@@ -37,6 +38,7 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,16 +47,20 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.Modification;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.LocationChooser;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Notes;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Participant;
 import dev.drsoran.rtm.ParticipantList;
@@ -80,6 +86,8 @@ public class TaskActivity extends Activity
    
    private TextView source;
    
+   private TextView postponed;
+   
    private TextView description;
    
    private TextView listName;
@@ -95,6 +103,8 @@ public class TaskActivity extends Activity
    private View urlSection;
    
    private View editTaskBtn;
+   
+   private Button completeTaskBtn;
    
    
 
@@ -138,6 +148,7 @@ public class TaskActivity extends Activity
                addedDate = (TextView) taskContainer.findViewById( R.id.task_overview_added_date );
                completedDate = (TextView) taskContainer.findViewById( R.id.task_overview_completed_date );
                source = (TextView) taskContainer.findViewById( R.id.task_overview_src );
+               postponed = (TextView) taskContainer.findViewById( R.id.task_overview_postponed );
                description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
                listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
                tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
@@ -146,6 +157,7 @@ public class TaskActivity extends Activity
                participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
                urlSection = taskContainer.findViewById( R.id.task_url );
                editTaskBtn = taskContainer.findViewById( R.id.task_buttons_edit );
+               completeTaskBtn = (Button) findViewById( R.id.task_button_complete );
                
                inflateNotes( taskContainer, task );
             }
@@ -242,6 +254,45 @@ public class TaskActivity extends Activity
    
 
 
+   public void onCompleteTask( View v )
+   {
+      final ModificationSet modifications = new ModificationSet();
+      
+      modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
+                                                       task.getId(),
+                                                       RawTasks.COMPLETED_DATE,
+                                                       task.getCompleted() != null
+                                                                                  ? null
+                                                                                  : System.currentTimeMillis() ) );
+      
+      modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
+      
+      boolean ok = false;
+      
+      try
+      {
+         ok = new ApplyModificationsTask( this ).execute( modifications ).get();
+      }
+      catch ( InterruptedException e )
+      {
+         Log.e( TAG, "Applying task changes failed", e );
+         ok = false;
+      }
+      catch ( ExecutionException e )
+      {
+         Log.e( TAG, "Applying task changes failed", e );
+         ok = false;
+      }
+      
+      Toast.makeText( this,
+                      ok ? R.string.task_save_ok : R.string.task_save_error,
+                      Toast.LENGTH_LONG ).show();
+      
+      finish();
+   }
+   
+
+
    private void loadTask()
    {
       if ( task != null )
@@ -253,11 +304,27 @@ public class TaskActivity extends Activity
                                                             FULL_DATE_FLAGS ) );
          
          if ( task.getCompleted() != null )
+         {
+            completedDate.setVisibility( View.VISIBLE );
             completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                        .getTime(),
                                                                    FULL_DATE_FLAGS ) );
+            completeTaskBtn.setText( R.string.btn_uncomplete );
+         }
          else
+         {
             completedDate.setVisibility( View.GONE );
+            completeTaskBtn.setText( R.string.btn_complete );
+         }
+         
+         if ( task.getPosponed() > 0 )
+         {
+            postponed.setText( getString( R.string.task_postponed,
+                                          task.getPosponed() ) );
+            postponed.setVisibility( View.VISIBLE );
+         }
+         else
+            postponed.setVisibility( View.GONE );
          
          if ( !TextUtils.isEmpty( task.getSource() ) )
          {
@@ -268,13 +335,13 @@ public class TaskActivity extends Activity
             source.setText( getString( R.string.task_source, sourceStr ) );
          }
          else
-            source.setVisibility( View.GONE );
+            source.setText( "?" );
          
          UIUtils.setTaskDescription( description, task, null );
          
          listName.setText( task.getListName() );
          
-         UIUtils.inflateTags( this, tagsLayout, task, null, null );
+         UIUtils.inflateTags( this, tagsLayout, task.getTags(), null, null );
          
          setDateTimeSection( dateTimeSection, task );
          
@@ -284,6 +351,7 @@ public class TaskActivity extends Activity
          
          if ( !TextUtils.isEmpty( task.getUrl() ) )
          {
+            urlSection.setVisibility( View.VISIBLE );
             ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
          }
          else
@@ -311,6 +379,8 @@ public class TaskActivity extends Activity
       }
       else
       {
+         view.setVisibility( View.VISIBLE );
+         
          final StringBuilder textBuffer = new StringBuilder();
          
          if ( hasDue )
@@ -409,6 +479,8 @@ public class TaskActivity extends Activity
       }
       else
       {
+         view.setVisibility( View.VISIBLE );
+         
          if ( TextUtils.isEmpty( locationName ) )
          {
             locationName = "Lon: " + task.getLongitude() + ", Lat: "
@@ -465,6 +537,8 @@ public class TaskActivity extends Activity
       
       if ( participants != null && participants.getCount() > 0 )
       {
+         view.setVisibility( View.VISIBLE );
+         
          for ( final Participant participant : participants.getParticipants() )
          {
             final SpannableString clickableContact = new SpannableString( participant.getFullname() );
@@ -546,7 +620,7 @@ public class TaskActivity extends Activity
                   try
                   {
                      final TextView createdDate = (TextView) noteView.findViewById( R.id.note_created_date );
-                     createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
+                     createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
                                                                               .getTime(),
                                                                           FULL_DATE_FLAGS ) );
                   }

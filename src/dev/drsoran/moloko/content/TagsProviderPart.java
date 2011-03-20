@@ -23,25 +23,37 @@
 package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import android.content.ContentProviderClient;
-import android.content.ContentValues;
+import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Tag;
+import dev.drsoran.rtm.TagWithTaskCount;
 
 
-public class TagsProviderPart extends AbstractRtmProviderPart
+public class TagsProviderPart extends AbstractProviderPart
 {
    private static final String TAG = "Moloko."
       + TagsProviderPart.class.getSimpleName();
@@ -49,170 +61,243 @@ public class TagsProviderPart extends AbstractRtmProviderPart
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
    public final static String[] PROJECTION =
-   { Tags._ID, Tags.TASKSERIES_ID, Tags.TAG };
+   { Tags._ID, Tags.TAGS };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
+   
+   private final static String QUERY;
    
    static
    {
       AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
                                                        PROJECTION_MAP,
                                                        COL_INDICES );
+      
+      QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
+      false,
+                                                   
+                                                   // tables
+                                                   TaskSeries.PATH + ","
+                                                      + RawTasks.PATH,
+                                                   
+                                                   // columns
+                                                   new String[]
+                                                   {
+                                                    TaskSeries.PATH + "."
+                                                       + TaskSeries._ID,
+                                                    TaskSeries.TAGS,
+                                                    RawTasks.COMPLETED_DATE },
+                                                   // where
+                                                   TaskSeries.PATH
+                                                      + "."
+                                                      + TaskSeries._ID
+                                                      + "="
+                                                      + RawTasks.TASKSERIES_ID
+                                                      
+                                                      // Only taskseries with tags
+                                                      + " AND "
+                                                      + TaskSeries.TAGS
+                                                      + " IS NOT NULL"
+                                                      
+                                                      // Only non-completed tasks
+                                                      + " AND "
+                                                      + RawTasks.COMPLETED_DATE
+                                                      + " IS NULL"
+                                                      
+                                                      // Only non-deleted tasks
+                                                      + " AND "
+                                                      + RawTasks.DELETED_DATE
+                                                      + " IS NULL",
+                                                   
+                                                   // group by
+                                                   null,
+                                                   null,
+                                                   
+                                                   // order by
+                                                   TaskSeries.PATH + "."
+                                                      + TaskSeries._ID,
+                                                   null );
    }
    
    
-
-   public final static ContentValues getContentValues( Tag tag, boolean withId )
-   {
-      ContentValues values = null;
-      
-      if ( tag != null && tag.getTag() != null && tag.getTaskSeriesId() != null )
-      {
-         values = new ContentValues();
-         
-         if ( withId )
-            if ( !TextUtils.isEmpty( tag.getId() ) )
-               values.put( Tags._ID, tag.getId() );
-            else
-               values.putNull( Tags._ID );
-         
-         values.put( Tags.TASKSERIES_ID, tag.getTaskSeriesId() );
-         values.put( Tags.TAG, tag.getTag() );
-      }
-      
-      return values;
-   }
-   
-
 
    public final static List< Tag > getAllTags( ContentProviderClient client,
-                                               String taskSeriesId )
+                                               String taskSeriesId,
+                                               Comparator< Tag > cmp,
+                                               boolean distinct )
    {
-      List< Tag > tags = null;
-      
-      if ( !TextUtils.isEmpty( taskSeriesId ) )
-      {
-         Cursor c = null;
-         
-         try
-         {
-            c = client.query( Tags.CONTENT_URI, PROJECTION, Tags.TASKSERIES_ID
-               + " = " + taskSeriesId, null, Tags.TAG );
-            
-            boolean ok = c != null;
-            
-            if ( ok )
-            {
-               tags = new ArrayList< Tag >( c.getCount() );
-               
-               if ( c.getCount() > 0 )
-               {
-                  
-                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-                  {
-                     tags.add( new Tag( c.getString( COL_INDICES.get( Tags._ID ) ),
-                                        c.getString( COL_INDICES.get( Tags.TASKSERIES_ID ) ),
-                                        c.getString( COL_INDICES.get( Tags.TAG ) ) ) );
-                  }
-               }
-               
-               if ( !ok )
-                  tags = null;
-            }
-         }
-         catch ( final RemoteException e )
-         {
-            Log.e( TAG, "Query tags failed. ", e );
-            tags = null;
-         }
-         finally
-         {
-            if ( c != null )
-               c.close();
-         }
-      }
-      
-      return tags;
-   }
-   
-
-
-   public final static List< String > getAllTagTexts( ContentProviderClient client,
-                                                      String taskSeriesId )
-   {
-      List< String > tags = null;
+      Collection< Tag > tags = null;
       Cursor c = null;
       
-      if ( taskSeriesId != null )
+      try
       {
-         try
+         c = client.query( Tags.CONTENT_URI,
+                           PROJECTION,
+                           taskSeriesId != null ? TaskSeries.PATH + "."
+                              + TaskSeries._ID + "=" + taskSeriesId : null,
+                           null,
+                           Tags.DEFAULT_SORT_ORDER );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
          {
-            final String[] projection =
-            { Tags._ID, Tags.TAG };
-            
-            c = client.query( Tags.CONTENT_URI, projection, Tags.TASKSERIES_ID
-               + " = " + taskSeriesId, null, null );
-            
-            boolean ok = c != null;
-            
-            if ( ok )
+            if ( distinct )
             {
-               tags = new ArrayList< String >( c.getCount() );
-               
-               if ( c.getCount() > 0 )
+               if ( cmp != null )
+                  tags = new TreeSet< Tag >( cmp );
+               else
+                  tags = new HashSet< Tag >();
+            }
+            else
+            {
+               tags = new LinkedList< Tag >();
+            }
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
+                  final String[] tagStrings = TextUtils.split( c.getString( COL_INDICES.get( Tags.TAGS ) ),
+                                                               Tags.TAGS_SEPARATOR );
+                  ok = tagStrings != null;
                   
-                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                  for ( String tagStr : tagStrings )
                   {
-                     tags.add( c.getString( 1 ) );
+                     tags.add( new Tag( taskSeriesId, tagStr ) );
                   }
                }
-               
-               if ( !ok )
-                  tags = null;
             }
+            
+            if ( !ok )
+               tags = null;
+            else if ( cmp != null && tags instanceof List )
+               Collections.sort( (List< Tag >) tags, cmp );
          }
-         catch ( final RemoteException e )
+      }
+      catch ( final RemoteException e )
+      {
+         Log.e( TAG, "Query tags failed. ", e );
+         tags = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return new ArrayList< Tag >( tags );
+   }
+   
+
+
+   public final static List< TagWithTaskCount > getAllTagsWithTaskCount( ContentProviderClient client )
+   {
+      List< TagWithTaskCount > result = null;
+      final List< Tag > allTags = getAllTags( client, null, null, false );
+      
+      boolean ok = allTags != null;
+      
+      if ( ok )
+      {
+         final HashMap< String, Integer > tagsWithCount = new HashMap< String, Integer >();
+         
+         for ( Tag tag : allTags )
          {
-            Log.e( TAG, "Query tag texts failed. ", e );
-            tags = null;
+            final String tagStr = tag.getTag();
+            final Integer count = tagsWithCount.get( tagStr );
+            
+            if ( count != null )
+               tagsWithCount.put( tagStr, Integer.valueOf( count + 1 ) );
+            else
+               tagsWithCount.put( tagStr, Integer.valueOf( 1 ) );
          }
-         finally
+         
+         result = new ArrayList< TagWithTaskCount >( tagsWithCount.size() );
+         
+         for ( Entry< String, Integer > tagWithCnt : tagsWithCount.entrySet() )
          {
-            if ( c != null )
-               c.close();
+            result.add( new TagWithTaskCount( tagWithCnt.getKey(),
+                                              tagWithCnt.getValue() ) );
          }
       }
       
-      return tags;
+      return ok ? result : null;
    }
    
 
 
-   public TagsProviderPart( SQLiteOpenHelper dbAccess )
+   public final static void registerContentObserver( Context context,
+                                                     ContentObserver observer )
    {
-      super( dbAccess, Tags.PATH );
+      context.getContentResolver()
+             .registerContentObserver( TaskSeries.CONTENT_URI, true, observer );
+      context.getContentResolver()
+             .registerContentObserver( RawTasks.CONTENT_URI, true, observer );
    }
    
 
 
-   public void create( SQLiteDatabase db ) throws SQLException
+   public final static void unregisterContentObserver( Context context,
+                                                       ContentObserver observer )
    {
-      db.execSQL( "CREATE TABLE " + path + " ( " + Tags._ID
-         + " INTEGER NOT NULL CONSTRAINT PK_TAGS PRIMARY KEY AUTOINCREMENT, "
-         + Tags.TASKSERIES_ID + " TEXT NOT NULL, " + Tags.TAG
-         + " TEXT NOT NULL, CONSTRAINT tags_taskseries_ref FOREIGN KEY ( "
-         + Tags.TASKSERIES_ID + ") REFERENCES " + TaskSeries.PATH + "( "
-         + TaskSeries._ID + " ) );" );
+      context.getContentResolver().unregisterContentObserver( observer );
+   }
+   
+
+
+   public TagsProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   {
+      super( context, dbAccess, Tags.PATH );
+   }
+   
+
+
+   @Override
+   public Cursor query( String id,
+                        String[] projection,
+                        String selection,
+                        String[] selectionArgs,
+                        String sortOrder )
+   {
+      // Replace _id to ROWID AS _id
+      {
+         final List< String > projectionList = Arrays.asList( projection );
+         
+         for ( int i = 0, cnt = projectionList.size(); i < cnt; ++i )
+         {
+            if ( projectionList.get( i ).equalsIgnoreCase( Tags._ID ) )
+               projectionList.set( i, "ROWID AS " + Tags._ID );
+         }
+      }
       
-      // Trigger: Silently ignores inserts with a taskseries ID
-      // and a tag that already exits
-      db.execSQL( "CREATE TRIGGER " + path
-         + "_ignore_duplicate_insert BEFORE INSERT ON " + path
-         + " FOR EACH ROW BEGIN SELECT RAISE ( IGNORE ) WHERE EXISTS ( SELECT "
-         + Tags.TASKSERIES_ID + ", " + Tags.TAG + " FROM " + Tags.PATH
-         + " WHERE " + Tags.TASKSERIES_ID + " = new." + Tags.TASKSERIES_ID
-         + " AND " + Tags.TAG + " = new." + Tags.TAG + "); END;" );
+      final StringBuilder stringBuilder = new StringBuilder( "SELECT " ).append( Queries.toCommaList( projection ) )
+                                                                        .append( " FROM (" )
+                                                                        .append( QUERY )
+                                                                        .append( ")" );
+      
+      if ( !TextUtils.isEmpty( selection ) )
+      {
+         stringBuilder.append( " WHERE ( " )
+                      .append( selectionArgs != null
+                                                    ? Queries.bindAll( selection,
+                                                                       selectionArgs )
+                                                    : selection )
+                      .append( " )" );
+      }
+      
+      if ( !TextUtils.isEmpty( sortOrder ) )
+      {
+         stringBuilder.append( " ORDER BY " ).append( sortOrder );
+      }
+      
+      final String finalQuery = stringBuilder.toString();
+      
+      // Get the database and run the query
+      final SQLiteDatabase db = dbAccess.getReadableDatabase();
+      final Cursor cursor = db.rawQuery( finalQuery, null );
+      
+      return cursor;
    }
    
 

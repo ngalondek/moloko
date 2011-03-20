@@ -31,9 +31,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.prefs.AutoSummaryListPreference;
-import dev.drsoran.moloko.service.sync.Constants;
+import dev.drsoran.moloko.sync.Constants;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.provider.Rtm;
 
 

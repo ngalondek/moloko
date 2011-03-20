@@ -13,16 +13,16 @@
       implementation
    -->
 
-<LinearLayout
+<FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    style="@style/Task"
-   android:layout_width="fill_parent"
-   android:layout_height="fill_parent">
+   android:layout_width="fill_parent" android:layout_height="fill_parent">
 
    <ScrollView
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent">
+      android:layout_height="fill_parent"
+      android:paddingBottom="70dip">
 
       <LinearLayout
          android:id="@+id/task_container"
@@ -72,29 +72,46 @@
                   android:layout_marginRight="?android:attr/scrollbarSize"
                   android:layout_alignParentRight="true"
                   android:layout_below="@id/task_overview_added_date"
-                  android:drawableLeft="@drawable/ic_small_white_check"
+                  android:drawableLeft="@drawable/ic_small_green_check"
                   android:drawablePadding="2dip"
                   android:text="Completed_Date" />
 
-               <TextView
-                  android:id="@+id/task_overview_src"
-                  style="@style/Task_Source_Text"
-                  android:layout_width="wrap_content"
+               <RelativeLayout
+                  android:id="@+id/task_overview_status_container"
                   android:layout_height="wrap_content"
-                  android:layout_marginTop="3dip"
-                  android:layout_marginRight="?android:attr/scrollbarSize"
+                  android:layout_width="wrap_content"
                   android:layout_alignParentRight="true"
                   android:layout_below="@id/task_overview_completed_date"
                   android:layout_alignWithParentIfMissing="true"
-                  android:drawablePadding="2dip"
-                  android:text="src" />
+                  android:layout_marginTop="3dip"
+                  android:layout_marginRight="?android:attr/scrollbarSize">
+                  
+                  <TextView
+                     android:id="@+id/task_overview_postponed"
+                     style="@style/Task_Source_Text"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_toLeftOf="@+id/task_overview_src"
+                     android:layout_marginRight="5dip"
+                     android:drawableLeft="@drawable/ic_small_black_postponed"
+                     android:drawablePadding="2dip"
+                     android:text="@string/task_postponed" />
+                     
+                  <TextView
+                     android:id="@+id/task_overview_src"
+                     style="@style/Task_Source_Text"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentRight="true"
+                     android:text="@string/task_source" />                     
+               </RelativeLayout>
 
                <TextView
                   android:id="@+id/task_overview_desc"
                   style="@style/Task_Overview_DescriptionText"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:layout_below="@id/task_overview_src"
+                  android:layout_below="@id/task_overview_status_container"
                   android:layout_alignWithParentIfMissing="true"
                   android:layout_marginLeft="10dip"
                   android:layout_marginRight="10dip"
@@ -199,5 +216,23 @@
 
       </LinearLayout>
    </ScrollView>
+   
+   <LinearLayout
+      android:layout_width="fill_parent"
+      android:layout_height="70dip"
+      android:background="@color/app_btnbar_bgnd_fill"
+      android:layout_gravity="bottom">
 
-</LinearLayout>
+      <Button
+         android:id="@+id/task_button_complete"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="5dip"
+         android:layout_marginBottom="5dip"
+         android:layout_gravity="center"
+         android:layout_weight="1.0"
+         android:text="@string/btn_complete"
+         android:onClick="onCompleteTask" />    
+   </LinearLayout>
+
+</FrameLayout>

@@ -20,7 +20,6 @@
 package com.mdt.rtm;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -28,6 +27,7 @@ import com.mdt.rtm.data.RtmFrob;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
+import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
@@ -45,13 +45,7 @@ import dev.drsoran.rtm.RtmSettings;
  */
 public interface Service
 {
-   enum MethodCallType
-   {
-      NO_RESULT, WITH_RESULT
-   }
    
-   
-
    // ////// AUTHORIZATION /////////////////////////////
    
    /**
@@ -218,10 +212,17 @@ public interface Service
    
 
 
-   public RtmTaskSeries tasks_complete( String timelineId,
-                                        String listId,
-                                        String taskSeriesId,
-                                        String taskId ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_complete( String timelineId,
+                                                 String listId,
+                                                 String taskSeriesId,
+                                                 String taskId ) throws ServiceException;
+   
+
+
+   TimeLineResult< RtmTaskList > tasks_uncomplete( String timelineId,
+                                                   String listId,
+                                                   String taskSeriesId,
+                                                   String taskId ) throws ServiceException;
    
 
 
@@ -249,15 +250,19 @@ public interface Service
    
 
 
-   void tasks_movePriority() throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_movePriority( String timelineId,
+                                                     String listId,
+                                                     String taskSeriesId,
+                                                     String taskId,
+                                                     boolean up ) throws ServiceException;
    
 
 
-   RtmTaskSeries tasks_moveTo( String timelineId,
-                               String fromListId,
-                               String toListId,
-                               String taskSeriesId,
-                               String taskId ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_moveTo( String timelineId,
+                                               String fromListId,
+                                               String toListId,
+                                               String taskSeriesId,
+                                               String taskId ) throws ServiceException;
    
 
 
@@ -269,36 +274,36 @@ public interface Service
    
 
 
-   /**
-    * THINK: Would it not be better to have a {@link GregorianCalendar} parameter instead?
-    */
-   RtmTaskSeries tasks_setDueDate( String timelineId,
-                                   String listId,
-                                   String taskSeriesId,
-                                   String taskId,
-                                   Date due,
-                                   boolean hasDueTime ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setDueDate( String timelineId,
+                                                   String listId,
+                                                   String taskSeriesId,
+                                                   String taskId,
+                                                   Date due,
+                                                   boolean hasTime ) throws ServiceException;
    
 
 
-   void tasks_setEstimate() throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setEstimate( String timelineId,
+                                                    String listId,
+                                                    String taskSeriesId,
+                                                    String taskId,
+                                                    String estimate ) throws ServiceException;
    
 
 
-   TimeLineMethod.Result< RtmTaskSeries > tasks_setName( String timelineId,
-                                                         String listId,
-                                                         String taskSeriesId,
-                                                         String taskId,
-                                                         String newName,
-                                                         MethodCallType callType ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setName( String timelineId,
+                                                String listId,
+                                                String taskSeriesId,
+                                                String taskId,
+                                                String newName ) throws ServiceException;
    
 
 
-   RtmTaskSeries tasks_setPriority( String timelineId,
-                                    String listId,
-                                    String taskSeriesId,
-                                    String taskId,
-                                    Priority priority ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setPriority( String timelineId,
+                                                    String listId,
+                                                    String taskSeriesId,
+                                                    String taskId,
+                                                    Priority priority ) throws ServiceException;
    
 
 
@@ -306,22 +311,27 @@ public interface Service
    
 
 
-   void tasks_setTags( String timelineId,
-                       String listId,
-                       String taskSeriesId,
-                       String taskId,
-                       String[] tags ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setTags( String timelineId,
+                                                String listId,
+                                                String taskSeriesId,
+                                                String taskId,
+                                                List< String > tags ) throws ServiceException;
    
 
 
-   void tasks_setURL() throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setLocation( String timelineId,
+                                                    String listId,
+                                                    String taskSeriesId,
+                                                    String taskId,
+                                                    String locationId ) throws ServiceException;
    
 
 
-   RtmTaskSeries tasks_uncomplete( String timelineId,
-                                   String listId,
-                                   String taskSeriesId,
-                                   String taskId ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setURL( String timelineId,
+                                               String listId,
+                                               String taskSeriesId,
+                                               String taskId,
+                                               String url ) throws ServiceException;
    
 
 
@@ -345,22 +355,6 @@ public interface Service
                                  String noteId,
                                  String title,
                                  String text ) throws ServiceException;
-   
-
-
-   RtmTaskSeries tasks_setLocation( String timelineId,
-                                    String listId,
-                                    String taskSeriesId,
-                                    String taskId,
-                                    String locationId ) throws ServiceException;
-   
-
-
-   RtmTaskSeries tasks_setURL( String timelineId,
-                               String listId,
-                               String taskSeriesId,
-                               String taskId,
-                               String url ) throws ServiceException;
    
 
 
@@ -397,5 +391,4 @@ public interface Service
    // ////// LOCATIONS /////////////////////////////
    
    List< RtmLocation > locations_getList() throws ServiceException;
-   
 }

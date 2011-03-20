@@ -293,7 +293,7 @@ public class NoteActivity extends Activity
       try
       {
          final TextView createdDate = (TextView) findViewById( R.id.note_created_date );
-         createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreated()
+         createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
                                                                   .getTime(),
                                                               MolokoDateUtils.FORMAT_WITH_YEAR ) );
          

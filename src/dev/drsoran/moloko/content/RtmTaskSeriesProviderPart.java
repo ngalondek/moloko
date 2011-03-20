@@ -32,6 +32,7 @@ import java.util.Set;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -50,16 +51,15 @@ import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Participants;
 import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.Tags;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParticipantList;
-import dev.drsoran.rtm.Tag;
 
 
 public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
@@ -73,7 +73,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    { TaskSeries._ID, TaskSeries.TASKSERIES_CREATED_DATE,
     TaskSeries.MODIFIED_DATE, TaskSeries.TASKSERIES_NAME, TaskSeries.SOURCE,
     TaskSeries.URL, TaskSeries.RECURRENCE, TaskSeries.RECURRENCE_EVERY,
-    TaskSeries.LOCATION_ID, TaskSeries.LIST_ID };
+    TaskSeries.LOCATION_ID, TaskSeries.LIST_ID, TaskSeries.TAGS };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -136,6 +136,11 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          values.putNull( TaskSeries.LOCATION_ID );
       
       values.put( TaskSeries.LIST_ID, taskSeries.getListId() );
+      
+      if ( taskSeries.hasTags() )
+         values.put( TaskSeries.TAGS, taskSeries.getTagsJoined() );
+      else
+         values.putNull( TaskSeries.TAGS );
       
       return values;
    }
@@ -285,19 +290,6 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          }
       }
       
-      // Check for tags
-      {
-         final List< Tag > tags = taskSeries.getTags();
-         
-         for ( Tag tag : tags )
-         {
-            operations.add( ContentProviderOperation.newInsert( Tags.CONTENT_URI )
-                                                    .withValues( TagsProviderPart.getContentValues( tag,
-                                                                                                    true ) )
-                                                    .build() );
-         }
-      }
-      
       // Check for notes
       {
          final List< RtmTaskNote > notesList = taskSeries.getNotes().getNotes();
@@ -343,23 +335,6 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       if ( ok && tasks.size() == 0 )
          throw new IllegalStateException( "taskSeries has no tasks" );
       
-      List< String > tags = null;
-      if ( ok )
-      {
-         final List< Tag > tagImpls = TagsProviderPart.getAllTags( client,
-                                                                   taskSeriesId );
-         ok = tagImpls != null;
-         if ( ok )
-         {
-            tags = new ArrayList< String >( tagImpls.size() );
-            
-            for ( final Tag tag : tagImpls )
-            {
-               tags.add( tag.getTag() );
-            }
-         }
-      }
-      
       RtmTaskNotes notes = null;
       if ( ok )
       {
@@ -397,7 +372,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
                                    Queries.getOptBool( c,
                                                        COL_INDICES.get( TaskSeries.RECURRENCE_EVERY ),
                                                        false ),
-                                   tags,
+                                   Queries.getOptString( c,
+                                                         COL_INDICES.get( TaskSeries.TAGS ),
+                                                         Strings.EMPTY_STRING ),
                                    participantsList );
       }
       else
@@ -406,9 +383,20 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
 
 
-   public RtmTaskSeriesProviderPart( SQLiteOpenHelper dbAccess )
+   public RtmTaskSeriesProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      super( dbAccess, TaskSeries.PATH );
+      super( context, dbAccess, TaskSeries.PATH );
+   }
+   
+
+
+   @Override
+   public Object getElement( Uri uri )
+   {
+      if ( matchUri( uri ) == MATCH_ITEM_TYPE )
+         return getTaskSeries( aquireContentProviderClient( uri ),
+                               uri.getLastPathSegment() );
+      return null;
    }
    
 
@@ -422,17 +410,16 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + " TEXT, " + TaskSeries.URL + " TEXT, " + TaskSeries.RECURRENCE
          + " TEXT, " + TaskSeries.RECURRENCE_EVERY + " INTEGER, "
          + TaskSeries.LOCATION_ID + " TEXT, " + TaskSeries.LIST_ID
-         + " TEXT NOT NULL, " + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \""
-         + TaskSeries._ID + "\" ), " + "CONSTRAINT list FOREIGN KEY ( "
-         + TaskSeries.LIST_ID + " ) REFERENCES lists ( \"" + Lists._ID
-         + "\" ), " + "CONSTRAINT location FOREIGN KEY ( "
-         + TaskSeries.LOCATION_ID + " ) REFERENCES locations ( \""
-         + Locations._ID + "\" )" + ");" );
+         + " TEXT NOT NULL, " + TaskSeries.TAGS + " TEXT, "
+         + "CONSTRAINT PK_TASKSERIES PRIMARY KEY ( \"" + TaskSeries._ID
+         + "\" ), " + "CONSTRAINT list FOREIGN KEY ( " + TaskSeries.LIST_ID
+         + " ) REFERENCES lists ( \"" + Lists._ID + "\" ), "
+         + "CONSTRAINT location FOREIGN KEY ( " + TaskSeries.LOCATION_ID
+         + " ) REFERENCES locations ( \"" + Locations._ID + "\" )" + ");" );
       
       // Triggers: If a taskseries gets deleted, we also delete:
       // - all raw tasks
       // - all referenced notes
-      // - all referenced tags
       // - all referenced participants
       
       db.execSQL( "CREATE TRIGGER " + path
@@ -440,10 +427,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + " FOR EACH ROW BEGIN DELETE FROM " + RawTasks.PATH + " WHERE "
          + RawTasks.TASKSERIES_ID + " = old." + TaskSeries._ID
          + "; DELETE FROM " + Notes.PATH + " WHERE " + Notes.TASKSERIES_ID
-         + " = old." + TaskSeries._ID + ";" + " DELETE FROM " + Tags.PATH
-         + " WHERE " + Tags.TASKSERIES_ID + " = old." + TaskSeries._ID
-         + "; DELETE FROM " + Participants.PATH + " WHERE "
-         + Participants.TASKSERIES_ID + " = old." + TaskSeries._ID + "; END;" );
+         + " = old." + TaskSeries._ID + "; DELETE FROM " + Participants.PATH
+         + " WHERE " + Participants.TASKSERIES_ID + " = old." + TaskSeries._ID
+         + "; END;" );
    }
    
 

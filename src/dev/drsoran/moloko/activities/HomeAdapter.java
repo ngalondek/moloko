@@ -28,7 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.util.SyncUtils;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
@@ -95,7 +95,15 @@ public class HomeAdapter extends BaseAdapter
                                    R.string.app_preferences,
                                    R.drawable.ic_home_settings,
                                    new Intent( context,
-                                               MolokoPreferencesActivity.class ) ) };
+                                               MolokoPreferencesActivity.class ) )
+
+      // new SimpleHomeWidgetLayout( context,
+      // null,
+      // android.R.string.untitled,
+      // R.drawable.ic_home_settings,
+      // new Intent( context,
+      // RtmSmartFilterTestActivity.class ) )
+      };
    }
    
 

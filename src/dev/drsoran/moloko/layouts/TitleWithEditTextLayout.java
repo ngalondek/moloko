@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
@@ -60,6 +61,13 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    public void setText( CharSequence value )
    {
       editText.setText( value );
+   }
+   
+
+
+   public Editable getText()
+   {
+      return editText.getText();
    }
    
 

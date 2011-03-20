@@ -51,8 +51,8 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Connection;
-import dev.drsoran.moloko.util.SyncUtils;
 
 
 /**

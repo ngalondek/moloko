@@ -19,51 +19,28 @@
  */
 package com.mdt.rtm.data;
 
-import java.util.Comparator;
 import java.util.Date;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderOperation;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.content.RtmTasksProviderPart;
-import dev.drsoran.moloko.service.parcel.ParcelableDate;
-import dev.drsoran.moloko.service.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.service.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.SyncUtils;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
-import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.rtm.ParcelableDate;
 
 
 /**
  * 
  * @author Will Ross Jun 21, 2007
  */
-public class RtmTask extends RtmData implements
-         IContentProviderSyncable< RtmTask >
+public class RtmTask extends RtmData
 {
    private static final String TAG = "Moloko." + RtmTask.class.getSimpleName();
    
-   
-   private final static class LessIdComperator implements Comparator< RtmTask >
-   {
-      
-      public int compare( RtmTask object1, RtmTask object2 )
-      {
-         return object1.id.compareTo( object2.id );
-      }
-      
-   }
-   
    public static final Parcelable.Creator< RtmTask > CREATOR = new Parcelable.Creator< RtmTask >()
    {
-      
       public RtmTask createFromParcel( Parcel source )
       {
          return new RtmTask( source );
@@ -75,10 +52,7 @@ public class RtmTask extends RtmData implements
       {
          return new RtmTask[ size ];
       }
-      
    };
-   
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private final String id;
    
@@ -170,15 +144,15 @@ public class RtmTask extends RtmData implements
    
 
 
-   public RtmTask( Element elt, String taskSeriesId )
+   public RtmTask( Element elt, String taskSeriesId, String listId )
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
-      due = parseDate( textNullIfEmpty( elt, "due" ) );
+      due = parseParcableDate( textNullIfEmpty( elt, "due" ) );
       hasDueTime = Integer.parseInt( elt.getAttribute( "has_due_time" ) );
-      added = parseDate( textNullIfEmpty( elt, "added" ) );
-      completed = parseDate( textNullIfEmpty( elt, "completed" ) );
-      deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
+      added = parseParcableDate( textNullIfEmpty( elt, "added" ) );
+      completed = parseParcableDate( textNullIfEmpty( elt, "completed" ) );
+      deleted = parseParcableDate( textNullIfEmpty( elt, "deleted" ) );
       
       String priorityStr = elt.getAttribute( "priority" );
       if ( priorityStr.length() > 0 )
@@ -226,11 +200,12 @@ public class RtmTask extends RtmData implements
    
 
 
-   public RtmTask( Element elt, String taskSeriesId, boolean deleted )
+   public RtmTask( Element elt, String taskSeriesId, String listId,
+      boolean deleted )
    {
       id = elt.getAttribute( "id" );
       this.taskSeriesId = taskSeriesId;
-      this.deleted = parseDate( textNullIfEmpty( elt, "deleted" ) );
+      this.deleted = parseParcableDate( textNullIfEmpty( elt, "deleted" ) );
       due = null;
       hasDueTime = 0;
       added = null;
@@ -302,7 +277,14 @@ public class RtmTask extends RtmData implements
    
 
 
-   public Date getDeleted()
+   public Date getCreatedDate()
+   {
+      return getAdded();
+   }
+   
+
+
+   public Date getDeletedDate()
    {
       return ( deleted != null ) ? deleted.getDate() : null;
    }
@@ -387,92 +369,4 @@ public class RtmTask extends RtmData implements
          this.estimateMillis = -1;
       }
    }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation()
-   {
-      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( RawTasks.CONTENT_URI )
-                                                                             .withValues( RtmTasksProviderPart.getContentValues( this,
-                                                                                                                                 true ) )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
-   {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                                                   id ) )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTask update )
-   {
-      if ( !id.equals( update.id ) )
-         throw new IllegalArgumentException( "Update id " + update.id
-            + " differs this id " + id );
-      
-      final Uri uri = Queries.contentUriWithId( RawTasks.CONTENT_URI, id );
-      
-      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
-      
-      SyncUtils.updateDate( due, update.due, uri, RawTasks.DUE_DATE, result );
-      
-      if ( hasDueTime != update.hasDueTime )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.HAS_DUE_TIME,
-                                                         update.hasDueTime )
-                                             .build() );
-      
-      SyncUtils.updateDate( added,
-                            update.added,
-                            uri,
-                            RawTasks.ADDED_DATE,
-                            result );
-      
-      SyncUtils.updateDate( completed,
-                            update.completed,
-                            uri,
-                            RawTasks.COMPLETED_DATE,
-                            result );
-      
-      SyncUtils.updateDate( deleted,
-                            update.deleted,
-                            uri,
-                            RawTasks.DELETED_DATE,
-                            result );
-      
-      if ( priority.compareTo( update.priority ) != 0 )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.PRIORITY,
-                                                         convertPriority( update.priority ) )
-                                             .build() );
-      
-      if ( postponed != update.postponed )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.POSTPONED,
-                                                         update.postponed )
-                                             .build() );
-      
-      if ( SyncUtils.hasChanged( estimate, update.estimate ) )
-      {
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.ESTIMATE,
-                                                         update.estimate )
-                                             .build() );
-         
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( RawTasks.ESTIMATE_MILLIS,
-                                                         update.estimateMillis )
-                                             .build() );
-      }
-      
-      return result.build();
-   }
-   
 }

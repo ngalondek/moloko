@@ -24,6 +24,7 @@ package dev.drsoran.moloko.content;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -44,9 +45,10 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
    
    
 
-   public AbstractRtmProviderPart( SQLiteOpenHelper dbAccess, String tableName )
+   public AbstractRtmProviderPart( Context context, SQLiteOpenHelper dbAccess,
+      String tableName )
    {
-      super( dbAccess, tableName );
+      super( context, dbAccess, tableName );
    }
    
 

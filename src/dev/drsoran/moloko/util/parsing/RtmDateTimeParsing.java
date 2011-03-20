@@ -22,24 +22,59 @@
 
 package dev.drsoran.moloko.util.parsing;
 
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.DateTimeLexer;
+import dev.drsoran.moloko.grammar.TimeAutoCompl;
 import dev.drsoran.moloko.grammar.TimeParser;
+import dev.drsoran.moloko.grammar.lang.AutoComplLanguage;
+import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
 
 public final class RtmDateTimeParsing
 {
+   private final static String TAG = "Moloko."
+      + RtmDateTimeParsing.class.getSimpleName();
+   
    private final static DateTimeLexer dateTimeLexer = new DateTimeLexer();
    
    private final static TimeParser timeParser = new TimeParser();
    
    private final static DateParser dateParser = new DateParser();
+   
+   private static NumberLookupLanguage numberLookUp;
+   
+   private static TimeAutoCompl timeAutoCompl;
+   
+   private static AutoComplLanguage timeAutoComplLang;
+   
+   
+
+   public final static void initLookupLanguage( Resources resources )
+   {
+      try
+      {
+         numberLookUp = new NumberLookupLanguage( resources,
+                                                  R.xml.parser_lang_number_lookup );
+      }
+      catch ( ParseException e )
+      {
+         numberLookUp = null;
+         Log.e( TAG, "Unable to initialize number lookup language.", e );
+      }
+   }
    
    
    public final static class DateWithinReturn
@@ -65,7 +100,7 @@ public final class RtmDateTimeParsing
       dateTimeLexer.setCharStream( stream );
       
       final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-      final Calendar cal = TimeParser.getLocalizedCalendar();
+      final Calendar cal = TimeParser.getCalendar();
       
       boolean eof = false;
       boolean hasTime = false;
@@ -91,6 +126,7 @@ public final class RtmDateTimeParsing
          if ( !hasTime )
             antlrTokens.reset();
          
+         dateParser.setNumberLookUp( numberLookUp );
          dateParser.setTokenStream( antlrTokens );
          
          try
@@ -185,6 +221,63 @@ public final class RtmDateTimeParsing
       catch ( RecognitionException e )
       {
          return null;
+      }
+   }
+   
+
+
+   public synchronized final static List< String > getTimeSuggestions( Context context,
+                                                                       String text )
+   {
+      return getTimeSuggestionsImpl( context, text, false );
+   }
+   
+
+
+   public synchronized final static List< String > getEstimatedSuggestions( Context context,
+                                                                            String text )
+   {
+      return getTimeSuggestionsImpl( context, text, true );
+   }
+   
+
+
+   private static final List< String > getTimeSuggestionsImpl( Context context,
+                                                               String text,
+                                                               boolean estimate )
+   {
+      if ( timeAutoComplLang == null )
+         try
+         {
+            timeAutoComplLang = new AutoComplLanguage( context.getResources(),
+                                                       R.xml.auto_compl_time );
+         }
+         catch ( ParseException e )
+         {
+            Log.e( TAG, "Error initialize AutoComplLanguage", e );
+            return Collections.emptyList();
+         }
+      
+      if ( timeAutoCompl == null )
+      {
+         timeAutoCompl = new TimeAutoCompl();
+         timeAutoCompl.setLanguage( timeAutoComplLang );
+      }
+      
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( text );
+      dateTimeLexer.setCharStream( stream );
+      
+      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
+      timeAutoCompl.setTokenStream( antlrTokens );
+      
+      try
+      {
+         return estimate ? timeAutoCompl.suggTimeEstimate()
+                        : timeAutoCompl.suggestTime();
+      }
+      catch ( RecognitionException e )
+      {
+         return Collections.emptyList();
       }
    }
 }

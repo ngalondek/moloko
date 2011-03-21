@@ -164,6 +164,7 @@
    <string name="dlg_estimate_picker_title">How long does it take?</string>
    <string name="dlg_due_picker_title">Set due</string>
    <string name="dlg_due_picker_no_time">---</string>
+   <string name="dlg_recurr_picker_title">Set recurrence</string>
 	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>

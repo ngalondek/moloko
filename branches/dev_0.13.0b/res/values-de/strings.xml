@@ -122,6 +122,7 @@
    <string name="dlg_save_task">Speichere Änderungen...</string>
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
+   <string name="dlg_recurr_picker_title">Wiederholung</string>
 	
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>

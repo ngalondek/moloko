@@ -85,7 +85,7 @@ public final class RecurrenceParsing
          
          try
          {
-            result = patternParser.parseRecurrencePattern( lang, isEvery, null );
+            result = patternParser.parseRecurrencePattern( lang, isEvery );
          }
          catch ( RecognitionException e )
          {

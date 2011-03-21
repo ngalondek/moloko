@@ -33,6 +33,9 @@ import android.content.res.Resources;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
+
+import com.mdt.rtm.data.RtmData;
+
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
@@ -160,6 +163,20 @@ public class MolokoDateUtils
       cal.clear( Calendar.AM_PM );
       
       return cal;
+   }
+   
+
+
+   public final static Date parseRtmDate( String rtmDateStr )
+   {
+      try
+      {
+         return RtmData.parseDate( rtmDateStr );
+      }
+      catch ( RuntimeException e )
+      {
+         throw new IllegalArgumentException( e );
+      }
    }
    
 

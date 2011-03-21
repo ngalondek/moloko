@@ -11,6 +11,7 @@ grammar RecurrencePattern;
 
    import java.util.Comparator;
    import java.util.Map;
+   import java.util.HashMap;
    import java.util.LinkedList;
 
    import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
@@ -62,14 +63,14 @@ grammar RecurrencePattern;
 
 
    
-   private final static void addElement( Map< Integer, List< Integer > > elements,
+   private final static void addElement( Map< Integer, List< Object > > elements,
                                          int element,
-                                         int value )
+                                         Object value )
    {
-      List< Integer > values = elements.get( element );
+      List< Object > values = elements.get( element );
       
       if ( values == null )
-         values = new LinkedList< Integer >();
+         values = new LinkedList< Object >();
 
       values.add( value );
       elements.put( element, values );
@@ -181,9 +182,6 @@ parseRecurrencePattern [RecurrPatternLanguage lang,
           )
         | (
              VAL_DAILY parse_PatternInterval[lang, sb, "day", every]
-             {
-                addElement( elements, OP_FREQ, VAL_DAILY );
-             }
           )
      )
      (
@@ -212,72 +210,36 @@ parseRecurrencePattern [RecurrPatternLanguage lang,
       throw e;
    }
    
-parseRecurrencePattern1 [boolean every] returns [Map< Integer, List< Integer > > elements]
+parseRecurrencePattern1 [boolean every] returns [Map< Integer, List< Object > > elements]
    @init
    {
-      elements = new HasMap< Integer, List< Integer > >();
-   }
-   @after
-   {
-      sentence = sb.toString();
+      elements = new HashMap< Integer, List< Object > >();
    }
    : OP_FREQ
      (
           (
-             VAL_YEARLY parse_PatternInterval[lang, sb, "year", every]
+             VAL_YEARLY parse_PatternInterval1[elements]
              {
                 addElement( elements, OP_FREQ, VAL_YEARLY );
-             }
-             (
-                {
-                   sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " );
-                }
-                (
-                   (OP_BYDAY parse_PatternWeekday[lang, sb, true]
-                      (COMMA { sb.append( ", " ); } parse_PatternWeekday[lang, sb, false])*)
-                   {
-                      sb.append( " " ); lang.add( sb, "in" ); sb.append( " " );
-                   }
-                   OP_BYMONTH parse_PatternMonth[lang, sb]
-                )
-             )?
+             }             
+             (parse_PatternWeekday1[elements] parse_PatternMonth1[elements])?
           )
         | (
-             VAL_MONTHLY parse_PatternInterval[lang, sb, "month", every]
+             VAL_MONTHLY parse_PatternInterval1[elements]
              {
                 addElement( elements, OP_FREQ, VAL_MONTHLY );
              }
-             (
-                {
-                   sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " );
-                }
-                (
-                     (
-                        OP_BYMONTHDAY parse_PatternXst[lang, sb]
-                           (COMMA { sb.append( ", " ); } parse_PatternXst[lang, sb])*
-                     )
-                   | (
-                        OP_BYDAY parse_PatternWeekday[lang, sb, true]
-                            (COMMA { sb.append( ", " ); } parse_PatternWeekday[lang, sb, false])*
-                     )
-                )
-             )?
+             (parse_PatternMonthDay1[elements] | parse_PatternWeekday1[elements])?
           )
         | (
-             VAL_WEEKLY parse_PatternInterval[lang, sb, "week", every]
+             VAL_WEEKLY parse_PatternInterval1[elements]
              {
                 addElement( elements, OP_FREQ, VAL_WEEKLY );
              }
-             (
-                {
-                   sb.append( " " ); lang.add( sb, "on_the" ); sb.append( " " );
-                }
-                OP_BYDAY parse_PatternWeekday[lang, sb, true]
-                   (COMMA { sb.append( ", " ); } parse_PatternWeekday[lang, sb, false])*
-             )?
+             parse_PatternWeekday1[elements]?
           )
         | (
-             VAL_DAILY parse_PatternInterval[lang, sb, "day", every]
+             VAL_DAILY parse_PatternInterval1[elements]
              {
                 addElement( elements, OP_FREQ, VAL_DAILY );
              }
@@ -286,24 +248,18 @@ parseRecurrencePattern1 [boolean every] returns [Map< Integer, List< Integer > >
      (
           OP_UNTIL date=VAL_DATE
           {
-             final String formatedDate = MolokoDateUtils.formatDate( DATE_PATTERN,
-                                                                     $date.text,
-                                                                       MolokoDateUtils.FORMAT_WITH_YEAR );
-
-             if ( formatedDate != null )
-             {
-                sb.append( " " ); lang.add( sb, "until" ); sb.append( " " );
-                sb.append( formatedDate );
-             }
+             addElement( elements, OP_UNTIL, MolokoDateUtils.parseRtmDate( $date.text ) );
           }
         | OP_COUNT count=INT
           {
-             sb.append( " " ); lang.add( sb, "for" ); sb.append( " " );
-             sb.append( $count.text );
-             sb.append( " " ); lang.add( sb, "times" );
+             addElement( elements, OP_COUNT, Integer.parseInt( $count.text ) );
           }
      )?
    ;
+   catch [ IllegalArgumentException e ]
+   {
+      throw new RecognitionException();
+   }
    catch [ RecognitionException e ]
    {
       throw e;
@@ -321,6 +277,21 @@ parse_PatternInterval [RecurrPatternLanguage lang,
            lang.addAfter( sb, unit, $interval.text );
      }
    ;
+   catch [ RecognitionException e ]
+   {
+      throw e;
+   }
+
+parse_PatternInterval1 [Map< Integer, List< Object > > elements]
+   : OP_INTERVAL interval=INT
+     {
+        addElement( elements, OP_INTERVAL, Integer.parseInt( $interval.text ) );
+     }
+   ;
+   catch [ NumberFormatException e ]
+   {
+      throw new RecognitionException();
+   }
    catch [ RecognitionException e ]
    {
       throw e;
@@ -387,12 +358,65 @@ parse_PatternWeekday [RecurrPatternLanguage lang,
       throw e;
    }
 
+parse_PatternWeekday1 [Map< Integer, List< Object > > elements]
+   : OP_BYDAY ((x=INT)? wd=(  MONDAY
+                            | TUESDAY
+                            | WEDNESDAY
+                            | THURSDAY
+                            | FRIDAY
+                            | SATURDAY
+                            | SUNDAY ) COMMA?)+
+   ;
+   catch [ RecognitionException e ]
+   {
+      throw e;
+   }
+
 parse_PatternMonth [RecurrPatternLanguage lang, StringBuilder sb]
    : m=INT
      {
         lang.add( sb, "m" + $m.text );
      }
    ;
+   catch [ RecognitionException e ]
+   {
+      throw e;
+   }
+   
+parse_PatternMonth1 [Map< Integer, List< Object > > elements]
+   : OP_BYMONTH m=INT
+     {
+        addElement( elements, OP_BYMONTH, Integer.parseInt( $m.text ) );
+     }
+   ;
+   catch [ NumberFormatException e ]
+   {
+      throw new RecognitionException();
+   }
+   catch [ RecognitionException e ]
+   {
+      throw e;
+   }
+
+parse_PatternMonthDay1 [Map< Integer, List< Object > > elements]
+   : OP_BYMONTHDAY 
+     (
+        m=INT
+        {
+           addElement( elements, OP_BYMONTHDAY, Integer.parseInt( $m.text ) );
+        }
+        (
+           COMMA m1=INT
+           {
+              addElement( elements, OP_BYMONTHDAY, Integer.parseInt( $m1.text ) );
+           }
+        )*
+     )
+   ;
+   catch [ NumberFormatException e ]
+   {
+      throw new RecognitionException();
+   }
    catch [ RecognitionException e ]
    {
       throw e;

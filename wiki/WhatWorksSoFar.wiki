@@ -15,7 +15,7 @@ This is a collection of features which are supported and what is todo.
     * contacts (support for linking RTM contacts to phone contacts. See [https://code.google.com/p/moloko/wiki/RTMContactLinking RTMContactLinking])
 
   * Writing/Deleting access for RTM features: see [https://code.google.com/p/moloko/wiki/RTMAccessLevels RTMAccessLevels]
-    * Rename tasks
+    * task's name, priority, list, tags, due, estimation, location, URL
 
   * Support for Android integrated search dialog. Allows searching for tasks using smart search syntax from above with search history.<br>
   * Support for *HTTP* and *HTTPS* access of RTM including proxy settings and compression to save data volume.
@@ -55,22 +55,17 @@ This is a collection of features which are supported and what is todo.
 
 
 === TODO ===
- ==== Next steps ===
-    * Moving tasks
-    * Setting task priority
-    * Setting task location
-    * Setting task URL
+ ==== Next steps ===   
+    * set task recurrence
     * Postpone task
 
  ==== later steps ===   
-    * Setting task tags
     * Renaming lists    
     * Groups
 
  ==== Unsupported RTM features ====
     * Groups
     * adding, deleting a task or list
-    * set task due, recurrence, estimation
     
  ==== Unsupported RTM smart search syntax operators ====
     Also used for smart lists: See [http://www.rememberthemilk.com/help/answers/search/advanced.rtm RTM search syntax]

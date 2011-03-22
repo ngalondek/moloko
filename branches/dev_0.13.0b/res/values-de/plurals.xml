@@ -15,6 +15,18 @@
 
 <resources>
    <!-- Globals -->
+   <plurals name="g_year">
+      <item quantity="one">Jahr</item>
+      <item quantity="other">Jahre</item>
+   </plurals>
+   <plurals name="g_month">
+      <item quantity="one">Monat</item>
+      <item quantity="other">Monate</item>
+   </plurals>
+   <plurals name="g_week">
+      <item quantity="one">Woche</item>
+      <item quantity="other">Wochen</item>
+   </plurals>
    <plurals name="g_day">
       <item quantity="one">Tag</item>
       <item quantity="other">Tage</item>

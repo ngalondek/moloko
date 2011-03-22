@@ -38,9 +38,23 @@ import android.content.res.XmlResourceParser;
 
 public abstract class Language
 {
-   protected final HashMap< String, String > dictionary = new HashMap< String, String >();
+   protected final HashMap< String, String > dictionary;
    
    
+
+   protected Language()
+   {
+      dictionary = new HashMap< String, String >();
+   }
+   
+
+
+   protected Language( Language other )
+   {
+      dictionary = new HashMap< String, String >( other.dictionary );
+   }
+   
+
 
    public String getString( String key )
    {
@@ -49,11 +63,18 @@ public abstract class Language
    
 
 
+   public String getPluralString( String key, String unit, int qty )
+   {
+      return getPluralString( key, unit, String.valueOf( qty ) );
+   }
+   
+
+
    public String getPluralString( String key, String unit, String qty )
    {
       key = key + "_" + unit + "_";
       
-      String res = dictionary.get( key + String.valueOf( qty ) );
+      String res = dictionary.get( key + qty );
       
       if ( res == null )
          res = dictionary.get( key + "n" );
@@ -78,7 +99,14 @@ public abstract class Language
    
 
 
-   public List< String > getPluralStings( String key, String unit, String qty )
+   public List< String > getPluralStings( String key, String unit, int qty )
+   {
+      return getPluralStrings( key, unit, String.valueOf( qty ) );
+   }
+   
+
+
+   public List< String > getPluralStrings( String key, String unit, String qty )
    {
       final String entry = getPluralString( key, unit, qty );
       

@@ -26,46 +26,85 @@ import java.util.List;
 import java.util.Map;
 
 import kankan.wheel.widget.WheelView;
+import kankan.wheel.widget.adapters.ArrayWheelAdapter;
+import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 
 
 public class RecurrPickerDialog extends AbstractPickerDialog
 {
+   private final Context context;
+   
+   private final RecurrPatternLanguage lang;
+   
    private AlertDialog impl;
+   
+   private View container;
+   
+   private WheelView evAftWheel;
    
    private WheelView intervalWheel;
    
+   private WheelView freqWheel;
+   
    
 
-   public RecurrPickerDialog( Context context, String pattern )
+   public RecurrPickerDialog( Context context, String pattern, boolean isEvery )
    {
-      init( context, pattern );
+      this.context = context;
+      this.lang = RecurrenceParsing.getPatternLanguage();
+      
+      init( pattern, isEvery );
    }
    
 
 
-   private void init( final Context context, String pattern )
+   private void init( String pattern, boolean isEvery )
    {
-      final Map< Integer, List< Object >> recurrencePattern = RecurrenceParsing.parseRecurrencePattern( pattern );
+      final Map< Integer, List< Object >> elements = RecurrenceParsing.parseRecurrencePattern( pattern );
       
       final LayoutInflater inflater = LayoutInflater.from( context );
-      final View view = inflater.inflate( R.layout.recurr_picker_dialog, null );
+      container = inflater.inflate( R.layout.recurr_picker_dialog, null );
       
-      intervalWheel = (WheelView) view.findViewById( R.id.recurr_dlg_interval_wheel );
+      // Every, After wheel
+      {
+         evAftWheel = (WheelView) container.findViewById( R.id.recurr_dlg_ev_aft_wheel );
+         initEvAftWheel( isEvery );
+      }
       
-      initIntervalWheel( context );
+      // Interval
+      {
+         intervalWheel = (WheelView) container.findViewById( R.id.recurr_dlg_interval_wheel );
+         initIntervalWheel( getPatternElement( elements,
+                                               RecurrencePatternParser.OP_INTERVAL,
+                                               Integer.class ) );
+      }
+      
+      // Frequency
+      {
+         freqWheel = (WheelView) container.findViewById( R.id.recurr_dlg_freq_wheel );
+         initFreqWheel( elements );
+      }
+      
+      // Dynamic wheels
+      {
+         initDynamicWheels();
+      }
       
       this.impl = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_time )
                                                     .setTitle( R.string.dlg_recurr_picker_title )
-                                                    .setView( view )
+                                                    .setView( container )
                                                     .setPositiveButton( R.string.btn_ok,
                                                                         new OnClickListener()
                                                                         {
@@ -99,8 +138,136 @@ public class RecurrPickerDialog extends AbstractPickerDialog
    
 
 
-   private void initIntervalWheel( Context context )
+   public int getInterval()
    {
+      return intervalWheel.getCurrentItem() + 1;
+   }
+   
+
+
+   public int getFreqValue()
+   {
+      switch ( freqWheel.getCurrentItem() )
+      {
+         case 0:
+            return RecurrencePatternParser.VAL_YEARLY;
+         case 1:
+            return RecurrencePatternParser.VAL_MONTHLY;
+         case 2:
+            return RecurrencePatternParser.VAL_WEEKLY;
+         case 3:
+            return RecurrencePatternParser.VAL_DAILY;
+         default :
+            return -1;
+      }
+   }
+   
+
+
+   private void initEvAftWheel( boolean isEvery )
+   {
+      final Resources res = context.getResources();
+      evAftWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,
+                                                                  new String[]
+                                                                  {
+                                                                   res.getString( R.string.dlg_recurr_picker_every ),
+                                                                   res.getString( R.string.dlg_recurr_picker_after ) } ) );
       
+   }
+   
+
+
+   private void initIntervalWheel( Integer interval )
+   {
+      intervalWheel.setViewAdapter( new NumericWheelAdapter( context, 1, 999 ) );
+      
+      if ( interval != null )
+         intervalWheel.setCurrentItem( interval.intValue() - 1 );
+      else
+         intervalWheel.setCurrentItem( 0 );
+   }
+   
+
+
+   private void initFreqWheel( Map< Integer, List< Object >> elements )
+   {
+      final Resources res = context.getResources();
+      final int interval = getInterval();
+      
+      freqWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,
+                                                                 new String[]
+                                                                 {
+                                                                  res.getQuantityText( R.plurals.g_year,
+                                                                                       interval )
+                                                                     .toString(),
+                                                                  res.getQuantityText( R.plurals.g_month,
+                                                                                       interval )
+                                                                     .toString(),
+                                                                  res.getQuantityText( R.plurals.g_week,
+                                                                                       interval )
+                                                                     .toString(),
+                                                                  res.getQuantityText( R.plurals.g_day,
+                                                                                       interval )
+                                                                     .toString() } ) );
+      
+      Integer freq = getPatternElement( elements,
+                                        RecurrencePatternParser.OP_FREQ,
+                                        Integer.class );
+      
+      if ( freq != null )
+      {
+         switch ( freq.intValue() )
+         {
+            case RecurrencePatternParser.VAL_YEARLY:
+               freqWheel.setCurrentItem( 0 );
+               break;
+            case RecurrencePatternParser.VAL_MONTHLY:
+               freqWheel.setCurrentItem( 1 );
+               break;
+            case RecurrencePatternParser.VAL_WEEKLY:
+               freqWheel.setCurrentItem( 2 );
+               break;
+            case RecurrencePatternParser.VAL_DAILY:
+               freqWheel.setCurrentItem( 3 );
+               break;
+            default :
+               freq = Integer.valueOf( -1 );
+               break;
+         }
+      }
+      else
+      {
+         freq = Integer.valueOf( -1 );
+      }
+      
+      if ( freq.intValue() == -1 )
+         freqWheel.setCurrentItem( 0 );
+   }
+   
+
+
+   private void initDynamicWheels()
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+
+
+   private final static < V > V getPatternElement( Map< Integer, List< Object > > elements,
+                                                   int key,
+                                                   Class< V > type )
+   {
+      final List< Object > values = elements.get( key );
+      
+      if ( values == null || values.isEmpty() )
+         return null;
+      
+      final Object o = values.get( 0 );
+      
+      if ( o.getClass() == type )
+         return type.cast( o );
+      else
+         return null;
    }
 }

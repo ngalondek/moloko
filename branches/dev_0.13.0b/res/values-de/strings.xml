@@ -123,6 +123,8 @@
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
    <string name="dlg_recurr_picker_title">Wiederholung</string>
+   <string name="dlg_recurr_picker_every">Alle</string>   
+   <string name="dlg_recurr_picker_after">Nach</string>
 	
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>

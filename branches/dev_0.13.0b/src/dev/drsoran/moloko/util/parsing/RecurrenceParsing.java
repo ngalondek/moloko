@@ -68,6 +68,13 @@ public final class RecurrenceParsing
    
 
 
+   public synchronized final static RecurrPatternLanguage getPatternLanguage()
+   {
+      return new RecurrPatternLanguage( lang );
+   }
+   
+
+
    public synchronized final static String parseRecurrencePattern( String pattern,
                                                                    boolean isEvery )
    {

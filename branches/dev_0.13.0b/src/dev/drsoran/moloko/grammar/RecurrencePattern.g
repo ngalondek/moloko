@@ -9,10 +9,15 @@ grammar RecurrencePattern;
 {
    package dev.drsoran.moloko.grammar;
 
+   import java.text.DateFormat;
+   import java.text.ParseException;
+   import java.text.SimpleDateFormat;
+   
    import java.util.Comparator;
    import java.util.Map;
    import java.util.HashMap;
    import java.util.LinkedList;
+   import java.util.TimeZone;
 
    import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
    import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -133,6 +138,13 @@ grammar RecurrencePattern;
    public final static String BYDAY_SUN         = "SU";
 
    public final static String DATE_PATTERN      = "yyyyMMdd'T'HHmmss";
+   
+   public final static DateFormat DATE_FORMAT   = new SimpleDateFormat( DATE_PATTERN );
+   
+   static
+   {
+      DATE_FORMAT.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
+   }
 }
 
 // RULES
@@ -202,7 +214,7 @@ parseRecurrencePattern [RecurrPatternLanguage lang,
           {
              final String formatedDate = MolokoDateUtils.formatDate( DATE_PATTERN,
                                                                      $date.text,
-                                                                       MolokoDateUtils.FORMAT_WITH_YEAR );
+                                                                     MolokoDateUtils.FORMAT_WITH_YEAR );
 
              if ( formatedDate != null )
              {
@@ -217,7 +229,7 @@ parseRecurrencePattern [RecurrPatternLanguage lang,
              sb.append( " " ); lang.add( sb, "times" );
           }
      )?
-   ;
+   ;  
    catch [ RecognitionException e ]
    {
       throw e;
@@ -261,7 +273,7 @@ parseRecurrencePattern1 returns [Map< Integer, List< Object > > elements]
      (
           OP_UNTIL date=VAL_DATE
           {
-             addElement( elements, OP_UNTIL, MolokoDateUtils.parseRtmDate( $date.text ) );
+             addElement( elements, OP_UNTIL, DATE_FORMAT.parse( $date.text ) );
           }
         | OP_COUNT count=INT
           {
@@ -269,7 +281,7 @@ parseRecurrencePattern1 returns [Map< Integer, List< Object > > elements]
           }
      )?
    ;
-   catch [ IllegalArgumentException e ]
+   catch [ ParseException e ]
    {
       throw new RecognitionException();
    }

@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g 2011-03-22 06:25:09
+// $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g 2011-03-22 11:55:02
 
 package dev.drsoran.moloko.grammar;
 
@@ -14,59 +14,59 @@ import org.antlr.runtime.RecognizerSharedState;
 
 public class RecurrencePatternLexer extends Lexer
 {
-   public static final int VAL_DAILY = 12;
-   
-   public static final int VAL_WEEKLY = 11;
-   
-   public static final int WEDNESDAY = 20;
-   
-   public static final int SATURDAY = 23;
+   public static final int EOF = -1;
    
    public static final int OP_FREQ = 4;
    
-   public static final int NUMBER = 28;
-   
-   public static final int MONDAY = 18;
-   
-   public static final int SUNDAY = 24;
-   
-   public static final int EQUALS = 26;
-   
-   public static final int SEMICOLON = 25;
-   
-   public static final int OP_BYMONTHDAY = 10;
-   
-   public static final int INT = 16;
-   
-   public static final int MINUS = 27;
-   
-   public static final int EOF = -1;
+   public static final int VAL_YEARLY = 5;
    
    public static final int OP_BYDAY = 6;
    
-   public static final int VAL_YEARLY = 5;
-   
-   public static final int FRIDAY = 22;
-   
-   public static final int WS = 29;
-   
-   public static final int OP_UNTIL = 13;
-   
-   public static final int THURSDAY = 21;
-   
-   public static final int OP_INTERVAL = 17;
-   
    public static final int COMMA = 7;
-   
-   public static final int VAL_DATE = 14;
    
    public static final int OP_BYMONTH = 8;
    
-   public static final int OP_COUNT = 15;
-   
    public static final int VAL_MONTHLY = 9;
    
+   public static final int OP_BYMONTHDAY = 10;
+   
+   public static final int VAL_WEEKLY = 11;
+   
+   public static final int VAL_DAILY = 12;
+   
+   public static final int OP_UNTIL = 13;
+   
+   public static final int VAL_DATE = 14;
+   
+   public static final int OP_COUNT = 15;
+   
+   public static final int INT = 16;
+   
+   public static final int OP_INTERVAL = 17;
+   
+   public static final int MONDAY = 18;
+   
    public static final int TUESDAY = 19;
+   
+   public static final int WEDNESDAY = 20;
+   
+   public static final int THURSDAY = 21;
+   
+   public static final int FRIDAY = 22;
+   
+   public static final int SATURDAY = 23;
+   
+   public static final int SUNDAY = 24;
+   
+   public static final int SEMICOLON = 25;
+   
+   public static final int EQUALS = 26;
+   
+   public static final int MINUS = 27;
+   
+   public static final int NUMBER = 28;
+   
+   public static final int WS = 29;
    
    
 
@@ -98,7 +98,7 @@ public class RecurrencePatternLexer extends Lexer
    @Override
    public String getGrammarFileName()
    {
-      return "D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g";
+      return "F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g";
    }
    
 
@@ -110,10 +110,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = MONDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:462:15:
-         // ( 'MO' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:462:17:
-         // 'MO'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:474:15: ( 'MO' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:474:17: 'MO'
          {
             match( "MO" );
             
@@ -138,10 +136,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = TUESDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:464:15:
-         // ( 'TU' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:464:17:
-         // 'TU'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:476:15: ( 'TU' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:476:17: 'TU'
          {
             match( "TU" );
             
@@ -166,10 +162,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = WEDNESDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:466:15:
-         // ( 'WE' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:466:17:
-         // 'WE'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:478:15: ( 'WE' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:478:17: 'WE'
          {
             match( "WE" );
             
@@ -194,10 +188,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = THURSDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:468:15:
-         // ( 'TH' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:468:17:
-         // 'TH'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:480:15: ( 'TH' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:480:17: 'TH'
          {
             match( "TH" );
             
@@ -222,10 +214,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = FRIDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:470:15:
-         // ( 'FR' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:470:17:
-         // 'FR'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:482:15: ( 'FR' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:482:17: 'FR'
          {
             match( "FR" );
             
@@ -250,10 +240,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = SATURDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:472:15:
-         // ( 'SA' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:472:17:
-         // 'SA'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:484:15: ( 'SA' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:484:17: 'SA'
          {
             match( "SA" );
             
@@ -278,10 +266,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = SUNDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:474:15:
-         // ( 'SU' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:474:17:
-         // 'SU'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:486:15: ( 'SU' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:486:17: 'SU'
          {
             match( "SU" );
             
@@ -306,10 +292,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = SEMICOLON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:476:15:
-         // ( ';' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:476:17:
-         // ';'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:488:15: ( ';' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:488:17: ';'
          {
             match( ';' );
             _channel = HIDDEN;
@@ -335,10 +319,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = EQUALS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:478:15:
-         // ( '=' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:478:17:
-         // '='
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:490:15: ( '=' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:490:17: '='
          {
             match( '=' );
             _channel = HIDDEN;
@@ -364,10 +346,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = MINUS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:480:15:
-         // ( '-' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:480:17:
-         // '-'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:492:15: ( '-' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:492:17: '-'
          {
             match( '-' );
             
@@ -392,10 +372,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = COMMA;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:482:15:
-         // ( ',' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:482:17:
-         // ','
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:494:15: ( ',' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:494:17: ','
          {
             match( ',' );
             
@@ -420,10 +398,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = OP_BYDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:484:15:
-         // ( 'BYDAY' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:484:17:
-         // 'BYDAY'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:496:15: ( 'BYDAY' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:496:17: 'BYDAY'
          {
             match( "BYDAY" );
             
@@ -448,10 +424,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = OP_BYMONTH;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:486:15:
-         // ( 'BYMONTH' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:486:17:
-         // 'BYMONTH'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:498:15: ( 'BYMONTH' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:498:17: 'BYMONTH'
          {
             match( "BYMONTH" );
             
@@ -476,10 +450,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = OP_BYMONTHDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:488:15:
-         // ( 'BYMONTHDAY' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:488:17:
-         // 'BYMONTHDAY'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:500:15: ( 'BYMONTHDAY' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:500:17: 'BYMONTHDAY'
          {
             match( "BYMONTHDAY" );
             
@@ -504,10 +476,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = OP_INTERVAL;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:490:15:
-         // ( 'INTERVAL' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:490:17:
-         // 'INTERVAL'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:502:15: ( 'INTERVAL' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:502:17: 'INTERVAL'
          {
             match( "INTERVAL" );
             
@@ -532,10 +502,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = OP_FREQ;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:492:15:
-         // ( 'FREQ' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:492:17:
-         // 'FREQ'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:504:15: ( 'FREQ' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:504:17: 'FREQ'
          {
             match( "FREQ" );
             
@@ -560,10 +528,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = OP_UNTIL;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:494:15:
-         // ( 'UNTIL' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:494:17:
-         // 'UNTIL'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:506:15: ( 'UNTIL' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:506:17: 'UNTIL'
          {
             match( "UNTIL" );
             
@@ -588,10 +554,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = OP_COUNT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:496:15:
-         // ( 'COUNT' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:496:17:
-         // 'COUNT'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:508:15: ( 'COUNT' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:508:17: 'COUNT'
          {
             match( "COUNT" );
             
@@ -616,10 +580,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = VAL_DAILY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:498:15:
-         // ( 'DAILY' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:498:17:
-         // 'DAILY'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:510:15: ( 'DAILY' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:510:17: 'DAILY'
          {
             match( "DAILY" );
             
@@ -644,10 +606,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = VAL_WEEKLY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:500:15:
-         // ( 'WEEKLY' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:500:17:
-         // 'WEEKLY'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:512:15: ( 'WEEKLY' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:512:17: 'WEEKLY'
          {
             match( "WEEKLY" );
             
@@ -672,10 +632,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = VAL_MONTHLY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:502:15:
-         // ( 'MONTHLY' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:502:17:
-         // 'MONTHLY'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:514:15: ( 'MONTHLY' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:514:17: 'MONTHLY'
          {
             match( "MONTHLY" );
             
@@ -700,10 +658,8 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = VAL_YEARLY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:504:15:
-         // ( 'YEARLY' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:504:17:
-         // 'YEARLY'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:516:15: ( 'YEARLY' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:516:17: 'YEARLY'
          {
             match( "YEARLY" );
             
@@ -728,10 +684,10 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = VAL_DATE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:507:15:
-         // ( NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER 'T' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:507:17:
-         // NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER 'T' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:519:15: ( NUMBER NUMBER
+         // NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER 'T' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:519:17: NUMBER NUMBER
+         // NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER 'T' NUMBER NUMBER NUMBER NUMBER NUMBER NUMBER
          {
             mNUMBER();
             mNUMBER();
@@ -768,10 +724,8 @@ public class RecurrencePatternLexer extends Lexer
    {
       try
       {
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:511:15:
-         // ( '0' .. '9' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:511:17:
-         // '0' .. '9'
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:523:15: ( '0' .. '9' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:523:17: '0' .. '9'
          {
             matchRange( '0', '9' );
             
@@ -794,13 +748,12 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = INT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:513:15:
-         // ( ( MINUS )? ( NUMBER )+ )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:513:17:
-         // ( MINUS )? ( NUMBER )+
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:525:15: ( ( MINUS )? (
+         // NUMBER )+ )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:525:17: ( MINUS )? ( NUMBER
+         // )+
          {
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:513:17:
-            // ( MINUS )?
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:525:17: ( MINUS )?
             int alt1 = 2;
             int LA1_0 = input.LA( 1 );
             
@@ -811,8 +764,7 @@ public class RecurrencePatternLexer extends Lexer
             switch ( alt1 )
             {
                case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:513:17:
-                  // MINUS
+                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:525:17: MINUS
                {
                   mMINUS();
                   
@@ -821,8 +773,7 @@ public class RecurrencePatternLexer extends Lexer
                
             }
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:513:24:
-            // ( NUMBER )+
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:525:24: ( NUMBER )+
             int cnt2 = 0;
             loop2: do
             {
@@ -837,8 +788,7 @@ public class RecurrencePatternLexer extends Lexer
                switch ( alt2 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:513:24:
-                     // NUMBER
+                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:525:24: NUMBER
                   {
                      mNUMBER();
                      
@@ -876,10 +826,10 @@ public class RecurrencePatternLexer extends Lexer
       {
          int _type = WS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:515:15:
-         // ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:515:17:
-         // ( ' ' | '\\t' | '\\r' | '\\n' )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:527:15: ( ( ' ' | '\\t' |
+         // '\\r' | '\\n' ) )
+         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:527:17: ( ' ' | '\\t' |
+         // '\\r' | '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
                || input.LA( 1 ) == '\r' || input.LA( 1 ) == ' ' )
@@ -914,209 +864,184 @@ public class RecurrencePatternLexer extends Lexer
    @Override
    public void mTokens() throws RecognitionException
    {
-      // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:8: (
-      // MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY | SEMICOLON | EQUALS | MINUS | COMMA |
-      // OP_BYDAY | OP_BYMONTH | OP_BYMONTHDAY | OP_INTERVAL | OP_FREQ | OP_UNTIL | OP_COUNT | VAL_DAILY | VAL_WEEKLY |
-      // VAL_MONTHLY | VAL_YEARLY | VAL_DATE | INT | WS )
+      // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:8: ( MONDAY | TUESDAY |
+      // WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY | SEMICOLON | EQUALS | MINUS | COMMA | OP_BYDAY | OP_BYMONTH
+      // | OP_BYMONTHDAY | OP_INTERVAL | OP_FREQ | OP_UNTIL | OP_COUNT | VAL_DAILY | VAL_WEEKLY | VAL_MONTHLY |
+      // VAL_YEARLY | VAL_DATE | INT | WS )
       int alt3 = 25;
       alt3 = dfa3.predict( input );
       switch ( alt3 )
       {
          case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:10:
-            // MONDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:10: MONDAY
          {
             mMONDAY();
             
          }
             break;
          case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:17:
-            // TUESDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:17: TUESDAY
          {
             mTUESDAY();
             
          }
             break;
          case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:25:
-            // WEDNESDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:25: WEDNESDAY
          {
             mWEDNESDAY();
             
          }
             break;
          case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:35:
-            // THURSDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:35: THURSDAY
          {
             mTHURSDAY();
             
          }
             break;
          case 5:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:44:
-            // FRIDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:44: FRIDAY
          {
             mFRIDAY();
             
          }
             break;
          case 6:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:51:
-            // SATURDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:51: SATURDAY
          {
             mSATURDAY();
             
          }
             break;
          case 7:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:60:
-            // SUNDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:60: SUNDAY
          {
             mSUNDAY();
             
          }
             break;
          case 8:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:67:
-            // SEMICOLON
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:67: SEMICOLON
          {
             mSEMICOLON();
             
          }
             break;
          case 9:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:77:
-            // EQUALS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:77: EQUALS
          {
             mEQUALS();
             
          }
             break;
          case 10:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:84:
-            // MINUS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:84: MINUS
          {
             mMINUS();
             
          }
             break;
          case 11:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:90:
-            // COMMA
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:90: COMMA
          {
             mCOMMA();
             
          }
             break;
          case 12:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:96:
-            // OP_BYDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:96: OP_BYDAY
          {
             mOP_BYDAY();
             
          }
             break;
          case 13:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:105:
-            // OP_BYMONTH
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:105: OP_BYMONTH
          {
             mOP_BYMONTH();
             
          }
             break;
          case 14:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:116:
-            // OP_BYMONTHDAY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:116: OP_BYMONTHDAY
          {
             mOP_BYMONTHDAY();
             
          }
             break;
          case 15:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:130:
-            // OP_INTERVAL
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:130: OP_INTERVAL
          {
             mOP_INTERVAL();
             
          }
             break;
          case 16:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:142:
-            // OP_FREQ
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:142: OP_FREQ
          {
             mOP_FREQ();
             
          }
             break;
          case 17:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:150:
-            // OP_UNTIL
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:150: OP_UNTIL
          {
             mOP_UNTIL();
             
          }
             break;
          case 18:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:159:
-            // OP_COUNT
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:159: OP_COUNT
          {
             mOP_COUNT();
             
          }
             break;
          case 19:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:168:
-            // VAL_DAILY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:168: VAL_DAILY
          {
             mVAL_DAILY();
             
          }
             break;
          case 20:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:178:
-            // VAL_WEEKLY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:178: VAL_WEEKLY
          {
             mVAL_WEEKLY();
             
          }
             break;
          case 21:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:189:
-            // VAL_MONTHLY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:189: VAL_MONTHLY
          {
             mVAL_MONTHLY();
             
          }
             break;
          case 22:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:201:
-            // VAL_YEARLY
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:201: VAL_YEARLY
          {
             mVAL_YEARLY();
             
          }
             break;
          case 23:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:212:
-            // VAL_DATE
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:212: VAL_DATE
          {
             mVAL_DATE();
             
          }
             break;
          case 24:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:221:
-            // INT
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:221: INT
          {
             mINT();
             
          }
             break;
          case 25:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:225:
-            // WS
+            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:1:225: WS
          {
             mWS();
             

@@ -62,6 +62,19 @@ grammar RecurrencePattern;
    }
 
 
+   public final static class OpByDayVal
+   {
+      public final Integer qualifier;
+      
+      public final int weekday;
+      
+      public OpByDayVal( Integer qualifier, int weekday )
+      {
+         this.qualifier = qualifier;
+         this.weekday = weekday;
+      }
+   }
+
    
    private final static void addElement( Map< Integer, List< Object > > elements,
                                          int element,
@@ -210,7 +223,7 @@ parseRecurrencePattern [RecurrPatternLanguage lang,
       throw e;
    }
    
-parseRecurrencePattern1 [boolean every] returns [Map< Integer, List< Object > > elements]
+parseRecurrencePattern1 returns [Map< Integer, List< Object > > elements]
    @init
    {
       elements = new HashMap< Integer, List< Object > >();
@@ -359,14 +372,35 @@ parse_PatternWeekday [RecurrPatternLanguage lang,
    }
 
 parse_PatternWeekday1 [Map< Integer, List< Object > > elements]
-   : OP_BYDAY ((x=INT)? wd=(  MONDAY
-                            | TUESDAY
-                            | WEDNESDAY
-                            | THURSDAY
-                            | FRIDAY
-                            | SATURDAY
-                            | SUNDAY ) COMMA?)+
+   : OP_BYDAY
+     (
+        {
+           Integer qualifier = null;
+        }
+        (
+           x=INT
+           {
+              qualifier = Integer.parseInt( $x.text );
+           }
+        )?
+        (
+           wd=(   MONDAY
+                | TUESDAY
+                | WEDNESDAY
+                | THURSDAY
+                | FRIDAY
+                | SATURDAY
+                | SUNDAY )
+           {
+              addElement( elements, OP_BYDAY, new OpByDayVal( qualifier, $wd.type ) );
+           }
+        ) COMMA?
+     )+
    ;
+   catch [ NumberFormatException e ]
+   {
+      throw new RecognitionException();
+   }
    catch [ RecognitionException e ]
    {
       throw e;

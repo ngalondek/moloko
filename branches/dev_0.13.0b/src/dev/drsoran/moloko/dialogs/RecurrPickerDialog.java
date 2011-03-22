@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.dialogs;
 
+import java.util.List;
+import java.util.Map;
+
 import kankan.wheel.widget.WheelView;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -31,6 +34,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 
 
 public class RecurrPickerDialog extends AbstractPickerDialog
@@ -50,6 +54,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
 
    private void init( final Context context, String pattern )
    {
+      final Map< Integer, List< Object >> recurrencePattern = RecurrenceParsing.parseRecurrencePattern( pattern );
+      
       final LayoutInflater inflater = LayoutInflater.from( context );
       final View view = inflater.inflate( R.layout.recurr_picker_dialog, null );
       

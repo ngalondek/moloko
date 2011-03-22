@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.util.parsing;
 
 import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -89,6 +91,7 @@ public final class RecurrenceParsing
          }
          catch ( RecognitionException e )
          {
+            Log.e( TAG, "Failed to parse recurrence pattern " + pattern, e );
             result = null;
          }
       }
@@ -97,5 +100,31 @@ public final class RecurrenceParsing
                 "Unable to parse recurrence pattern due to missing language." );
       
       return result;
+   }
+   
+
+
+   public synchronized final static Map< Integer, List< Object >> parseRecurrencePattern( String pattern )
+   {
+      if ( patternLexer == null )
+         patternLexer = new RecurrencePatternLexer();
+      
+      if ( patternParser == null )
+         patternParser = new RecurrencePatternParser();
+      
+      patternLexer.setCharStream( new ANTLRStringStream( pattern ) );
+      
+      final CommonTokenStream antlrTokens = new CommonTokenStream( patternLexer );
+      patternParser.setTokenStream( antlrTokens );
+      
+      try
+      {
+         return patternParser.parseRecurrencePattern1();
+      }
+      catch ( RecognitionException e )
+      {
+         Log.e( TAG, "Failed to parse recurrence pattern " + pattern, e );
+         return null;
+      }
    }
 }

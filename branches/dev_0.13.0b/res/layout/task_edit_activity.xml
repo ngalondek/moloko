@@ -224,8 +224,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/task_edit_due_layout"
             android:layout_alignLeft="@id/task_edit_desc"
-            android:layout_marginTop="10dip"
-            android:visibility="gone">
+            android:layout_marginTop="10dip">
 
             <TextView
                android:id="@+id/task_edit_recurrence_title"
@@ -251,7 +250,8 @@
                   android:hint="@string/task_edit_recurrence_no"
                   android:inputType="text|textMultiLine"
                   android:imeOptions="actionDone"
-                  android:selectAllOnFocus="true" />
+                  android:selectAllOnFocus="true"
+                  android:enabled="false" />
 
                <ImageButton
                   android:id="@+id/task_edit_recurrence_btn_picker"
@@ -259,7 +259,8 @@
                   android:layout_width="wrap_content"
                   android:layout_gravity="center_vertical"
                   android:scaleType="fitXY"
-                  android:src="@drawable/ic_button_task_recurrent" />
+                  android:src="@drawable/ic_button_task_recurrent"
+                  android:onClick="onRecurrence" />
             </LinearLayout>
          </RelativeLayout>
 

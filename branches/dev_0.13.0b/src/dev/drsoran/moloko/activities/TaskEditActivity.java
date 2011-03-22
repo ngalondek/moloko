@@ -56,6 +56,7 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
+import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
@@ -478,6 +479,28 @@ public class TaskEditActivity extends Activity
       }
       
       return false;
+   }
+   
+
+
+   public void onRecurrence( View v )
+   {
+      pickerDlg = new RecurrPickerDialog( this, task.getRecurrence() );
+      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
+      {
+         public void onDialogClosed( CloseReason reason,
+                                     Object value,
+                                     Object... extras )
+         {
+            pickerDlg = null;
+            
+            if ( reason == CloseReason.OK )
+            {
+               refreshRecurrence();
+            }
+         }
+      } );
+      pickerDlg.show();
    }
    
 

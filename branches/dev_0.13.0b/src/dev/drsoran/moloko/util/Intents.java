@@ -260,4 +260,18 @@ public final class Intents
       return new Intent( Intent.ACTION_EDIT,
                          Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
    }
+   
+
+
+   public final static Intent createSelectMultipleTasksIntent( Context context,
+                                                               RtmSmartFilter filter )
+   {
+      final Intent intent = createSmartFilterIntent( context,
+                                                     filter,
+                                                     context.getString( R.string.select_multiple_tasks_titlebar ),
+                                                     -1 );
+      intent.setAction( Intent.ACTION_PICK );
+      
+      return intent;
+   }
 }

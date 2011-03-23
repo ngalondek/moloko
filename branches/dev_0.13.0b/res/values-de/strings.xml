@@ -27,6 +27,7 @@
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
    <string name="app_task_edit">Aufgabe bearbeiten</string>
+   <string name="app_task_select_multiple">Aufgaben zum bearb. wählen</string>
    <string name="app_change_tags">Tags von %1$s bearbeiten</string>
 	<string name="app_note">Notiz</string>
 	<string name="app_tagcloud">Tags</string>
@@ -199,6 +200,7 @@
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
+     <string name="abstaskslist_menu_opt_edit_multiple">Mehrere bearb.</string>
 	  <string name="abstaskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>
      <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort %1$s</string>
      <string name="abstaskslist_listitem_ctx_open_location">Öffne Ort %1$s</string>
@@ -212,6 +214,13 @@
    <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
+     
+   <!-- SelectMultipleTasks activity -->
+      <!-- Menus -->
+      <string name="select_multiple_tasks_menu_opt_select_all">Alle wählen</string>
+      <string name="select_multiple_tasks_menu_opt_unselect_all">Keinen wählen</string>
+      <string name="select_multiple_tasks_menu_opt_inv_selection">Auswahl umkehren</string>
+      <string name="select_multiple_tasks_menu_opt_do_edit">%1$d bearbeiten</string>
      
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>

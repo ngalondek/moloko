@@ -40,13 +40,13 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -174,6 +174,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public final static int SETTINGS = START_IDX + 2;
       
       public final static int SYNC = START_IDX + 3;
+      
+      public final static int EDIT_MULTIPLE_TASKS = START_IDX + 4;
    }
    
 
@@ -342,12 +344,23 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                OptionsMenu.MENU_ORDER_FRONT );
       
       if ( getListAdapter() != null )
+      {
          addOptionalMenuItem( menu,
                               OptionsMenu.SORT,
                               getString( R.string.abstaskslist_menu_opt_sort ),
                               OptionsMenu.MENU_ORDER,
                               R.drawable.ic_menu_sort,
                               getListAdapter().getCount() > 1 );
+         
+         addOptionalMenuItem( menu,
+                              OptionsMenu.EDIT_MULTIPLE_TASKS,
+                              getString( R.string.abstaskslist_menu_opt_edit_multiple ),
+                              OptionsMenu.MENU_ORDER,
+                              -1,
+                              Intents.createSelectMultipleTasksIntent( this,
+                                                                       (RtmSmartFilter) getIntent().getParcelableExtra( FILTER ) ),
+                              getListAdapter().getCount() > 1 );
+      }
       
       return true;
    }
@@ -778,8 +791,6 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    /**
     * Note: This will run in a background thread.
-    * 
-    * @param params
     */
    abstract protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
                                                            Bundle configuration );
@@ -887,6 +898,19 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                        int iconId,
                                        boolean show )
    {
+      addOptionalMenuItem( menu, id, title, order, iconId, null, show );
+   }
+   
+
+
+   protected void addOptionalMenuItem( Menu menu,
+                                       int id,
+                                       String title,
+                                       int order,
+                                       int iconId,
+                                       Intent intent,
+                                       boolean show )
+   {
       if ( show )
       {
          MenuItem item = menu.findItem( id );
@@ -898,6 +922,9 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             if ( iconId != -1 )
                item.setIcon( iconId );
          }
+         
+         if ( intent != null )
+            item.setIntent( intent );
       }
       else
       {

@@ -41,11 +41,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -54,15 +53,15 @@ import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
-import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.layouts.WrappingLayout;
+import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout.StringConverter;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
@@ -92,6 +91,10 @@ public class TaskEditActivity extends Activity
       public long due = -1;
       
       public boolean hasDueTime = false;
+      
+      public String recurrence;
+      
+      public boolean isEveryRecurrence;
    }
    
    private final static String TAG = "Moloko."
@@ -130,13 +133,9 @@ public class TaskEditActivity extends Activity
    
    private WrappingLayout tagsContainer;
    
-   private ImageButton changeTagsButton;
-   
    private EditText dueEdit;
    
    private EditText recurrEdit;
-   
-   private ImageButton recurrPickerButton;
    
    private EditText estimateEdit;
    
@@ -194,10 +193,8 @@ public class TaskEditActivity extends Activity
                list = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_list );
                priority = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_priority );
                tagsContainer = (WrappingLayout) taskContainer.findViewById( R.id.task_edit_tags_container );
-               changeTagsButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_tags_btn_change );
                dueEdit = (EditText) taskContainer.findViewById( R.id.task_edit_due_text );
                recurrEdit = (EditText) taskContainer.findViewById( R.id.task_edit_recurrence_text );
-               recurrPickerButton = (ImageButton) taskContainer.findViewById( R.id.task_edit_recurrence_btn_picker );
                estimateEdit = (EditText) taskContainer.findViewById( R.id.task_edit_estim_text );
                location = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_location );
                url = (TitleWithEditTextLayout) taskContainer.findViewById( R.id.task_edit_url );
@@ -241,6 +238,9 @@ public class TaskEditActivity extends Activity
          mutableTask.due = task.getDue().getTime();
          mutableTask.hasDueTime = task.hasDueTime();
       }
+      
+      mutableTask.recurrence = task.getRecurrence();
+      mutableTask.isEveryRecurrence = task.isEveryRecurrence();
    }
    
 
@@ -486,8 +486,8 @@ public class TaskEditActivity extends Activity
    public void onRecurrence( View v )
    {
       pickerDlg = new RecurrPickerDialog( this,
-                                          task.getRecurrence(),
-                                          task.isEveryRecurrence() );
+                                          mutableTask.recurrence,
+                                          mutableTask.isEveryRecurrence );
       pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
       {
          public void onDialogClosed( CloseReason reason,
@@ -498,6 +498,8 @@ public class TaskEditActivity extends Activity
             
             if ( reason == CloseReason.OK )
             {
+               mutableTask.recurrence = (String) value;
+               mutableTask.isEveryRecurrence = (Boolean) extras[ 0 ];
                refreshRecurrence();
             }
          }
@@ -836,16 +838,14 @@ public class TaskEditActivity extends Activity
 
    private void refreshRecurrence()
    {
-      final String reccurrencePattern = task.getRecurrence();
-      
-      if ( TextUtils.isEmpty( reccurrencePattern ) )
+      if ( TextUtils.isEmpty( mutableTask.recurrence ) )
       {
          recurrEdit.setText( null );
       }
       else
       {
-         final String sentence = RecurrenceParsing.parseRecurrencePattern( reccurrencePattern,
-                                                                           task.isEveryRecurrence() );
+         final String sentence = RecurrenceParsing.parseRecurrencePattern( mutableTask.recurrence,
+                                                                           mutableTask.isEveryRecurrence );
          recurrEdit.setText( ( sentence != null
                                                ? sentence
                                                : getString( R.string.task_datetime_err_recurr ) ) );

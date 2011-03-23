@@ -166,7 +166,7 @@
    <string name="dlg_due_picker_no_time">---</string>
    <string name="dlg_recurr_picker_title">Set recurrence</string>
    <string name="dlg_recurr_picker_every">Every</string>   
-   <string name="dlg_recurr_picker_after">After</string>
+   <string name="dlg_recurr_picker_after">After</string>   
 	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>

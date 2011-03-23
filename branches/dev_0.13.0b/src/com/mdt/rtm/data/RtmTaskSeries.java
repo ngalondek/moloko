@@ -31,9 +31,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.grammar.RecurrenceParser;
-import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.ParticipantList;
@@ -166,7 +165,7 @@ public class RtmTaskSeries extends RtmData
          {
             isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
                                                                    "every" ) ) != 0;
-            recurrence = ensureRecurrencePatternOrder( recurrence );
+            recurrence = RecurrenceParsing.ensureRecurrencePatternOrder( recurrence );
          }
          catch ( NumberFormatException nfe )
          {
@@ -435,15 +434,5 @@ public class RtmTaskSeries extends RtmData
    public String toString()
    {
       return "TaskSeries<" + id + "," + name + ">";
-   }
-   
-
-
-   private final static String ensureRecurrencePatternOrder( String recurrencePattern )
-   {
-      final String[] operators = recurrencePattern.split( RecurrencePatternParser.OPERATOR_SEP );
-      Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
-      
-      return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
    }
 }

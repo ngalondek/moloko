@@ -25,6 +25,7 @@ package dev.drsoran.moloko.dialogs;
 import java.util.List;
 import java.util.Map;
 
+import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
@@ -37,7 +38,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.RecurrencePatternParser;
-import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 
@@ -45,8 +45,6 @@ import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 public class RecurrPickerDialog extends AbstractPickerDialog
 {
    private final Context context;
-   
-   private final RecurrPatternLanguage lang;
    
    private AlertDialog impl;
    
@@ -63,8 +61,6 @@ public class RecurrPickerDialog extends AbstractPickerDialog
    public RecurrPickerDialog( Context context, String pattern, boolean isEvery )
    {
       this.context = context;
-      this.lang = RecurrenceParsing.getPatternLanguage();
-      
       init( pattern, isEvery );
    }
    
@@ -97,10 +93,19 @@ public class RecurrPickerDialog extends AbstractPickerDialog
          initFreqWheel( elements );
       }
       
-      // Dynamic wheels
+      intervalWheel.addScrollingListener( new OnWheelScrollListener()
       {
-         initDynamicWheels();
-      }
+         public void onScrollingStarted( WheelView wheel )
+         {
+         }
+         
+
+
+         public void onScrollingFinished( WheelView wheel )
+         {
+            initFreqWheel( null );
+         }
+      } );
       
       this.impl = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_time )
                                                     .setTitle( R.string.dlg_recurr_picker_title )
@@ -112,7 +117,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
                                                                                                 int which )
                                                                            {
                                                                               notifyOnDialogCloseListener( CloseReason.OK,
-                                                                                                           Strings.EMPTY_STRING );
+                                                                                                           getPattern(),
+                                                                                                           Boolean.valueOf( isEvery() ) );
                                                                            }
                                                                         } )
                                                     .setNegativeButton( R.string.btn_cancel,
@@ -164,6 +170,56 @@ public class RecurrPickerDialog extends AbstractPickerDialog
    
 
 
+   public String getFreqValueAsString()
+   {
+      switch ( freqWheel.getCurrentItem() )
+      {
+         case 0:
+            return RecurrencePatternParser.VAL_YEARLY_LIT;
+         case 1:
+            return RecurrencePatternParser.VAL_MONTHLY_LIT;
+         case 2:
+            return RecurrencePatternParser.VAL_WEEKLY_LIT;
+         case 3:
+            return RecurrencePatternParser.VAL_DAILY_LIT;
+         default :
+            return Strings.EMPTY_STRING;
+      }
+   }
+   
+
+
+   public boolean isEvery()
+   {
+      return evAftWheel.getCurrentItem() == 0;
+   }
+   
+
+
+   public String getPattern()
+   {
+      final StringBuilder sb = new StringBuilder();
+      
+      sb.append( RecurrencePatternParser.OP_FREQ_LIT )
+        .append( "=" )
+        .append( getFreqValueAsString() );
+      sb.append( RecurrencePatternParser.OPERATOR_SEP );
+      sb.append( RecurrencePatternParser.OP_INTERVAL_LIT )
+        .append( "=" )
+        .append( getInterval() );
+      
+      return RecurrenceParsing.ensureRecurrencePatternOrder( sb.toString() );
+   }
+   
+
+
+   public String getSentence()
+   {
+      return RecurrenceParsing.parseRecurrencePattern( getPattern(), isEvery() );
+   }
+   
+
+
    private void initEvAftWheel( boolean isEvery )
    {
       final Resources res = context.getResources();
@@ -210,46 +266,41 @@ public class RecurrPickerDialog extends AbstractPickerDialog
                                                                                        interval )
                                                                      .toString() } ) );
       
-      Integer freq = getPatternElement( elements,
-                                        RecurrencePatternParser.OP_FREQ,
-                                        Integer.class );
-      
-      if ( freq != null )
+      if ( elements != null )
       {
-         switch ( freq.intValue() )
+         Integer freq = getPatternElement( elements,
+                                           RecurrencePatternParser.OP_FREQ,
+                                           Integer.class );
+         
+         if ( freq != null )
          {
-            case RecurrencePatternParser.VAL_YEARLY:
-               freqWheel.setCurrentItem( 0 );
-               break;
-            case RecurrencePatternParser.VAL_MONTHLY:
-               freqWheel.setCurrentItem( 1 );
-               break;
-            case RecurrencePatternParser.VAL_WEEKLY:
-               freqWheel.setCurrentItem( 2 );
-               break;
-            case RecurrencePatternParser.VAL_DAILY:
-               freqWheel.setCurrentItem( 3 );
-               break;
-            default :
-               freq = Integer.valueOf( -1 );
-               break;
+            switch ( freq.intValue() )
+            {
+               case RecurrencePatternParser.VAL_YEARLY:
+                  freqWheel.setCurrentItem( 0 );
+                  break;
+               case RecurrencePatternParser.VAL_MONTHLY:
+                  freqWheel.setCurrentItem( 1 );
+                  break;
+               case RecurrencePatternParser.VAL_WEEKLY:
+                  freqWheel.setCurrentItem( 2 );
+                  break;
+               case RecurrencePatternParser.VAL_DAILY:
+                  freqWheel.setCurrentItem( 3 );
+                  break;
+               default :
+                  freq = Integer.valueOf( -1 );
+                  break;
+            }
          }
+         else
+         {
+            freq = Integer.valueOf( -1 );
+         }
+         
+         if ( freq.intValue() == -1 )
+            freqWheel.setCurrentItem( 0 );
       }
-      else
-      {
-         freq = Integer.valueOf( -1 );
-      }
-      
-      if ( freq.intValue() == -1 )
-         freqWheel.setCurrentItem( 0 );
-   }
-   
-
-
-   private void initDynamicWheels()
-   {
-      // TODO Auto-generated method stub
-      
    }
    
 

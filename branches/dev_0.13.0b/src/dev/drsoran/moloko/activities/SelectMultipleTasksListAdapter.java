@@ -29,7 +29,6 @@ import java.util.List;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 
@@ -57,14 +56,12 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      final View v = super.getView( position, convertView, parent );
+      if ( convertView == null )
+         convertView = getInflater().inflate( getLayoutRessource(),
+                                              parent,
+                                              false );
       
-      if ( selectionState.get( position ) == null )
-         v.setBackgroundColor( R.color.select_multiple_listitem_unselected_bgnd );
-      else
-         v.setBackgroundColor( R.color.select_multiple_listitem_selected_bgnd );
-      
-      return v;
+      return super.getView( position, convertView, parent );
    }
    
 

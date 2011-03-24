@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import java.util.Collections;
 
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +61,15 @@ public class SelectMultipleTasksActivity extends TasksListActivity
    }
    
    
+
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      getListView().setChoiceMode( ListView.CHOICE_MODE_MULTIPLE );
+   }
+   
+
 
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
@@ -139,8 +149,6 @@ public class SelectMultipleTasksActivity extends TasksListActivity
    @Override
    protected void onListItemClick( ListView l, View v, int position, long id )
    {
-      toggleSelection( position );
-      getListView().invalidate();
    }
    
 

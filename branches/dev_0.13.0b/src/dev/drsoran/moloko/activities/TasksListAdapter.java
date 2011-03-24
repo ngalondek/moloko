@@ -98,6 +98,20 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
 
 
+   public LayoutInflater getInflater()
+   {
+      return inflater;
+   }
+   
+
+
+   public int getLayoutRessource()
+   {
+      return resourceId;
+   }
+   
+
+
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {

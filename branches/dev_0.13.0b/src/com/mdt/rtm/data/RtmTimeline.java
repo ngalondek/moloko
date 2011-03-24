@@ -187,6 +187,27 @@ public class RtmTimeline
    
 
 
+   public TimeLineMethod< RtmTaskList > tasks_setRecurrence( final String listId,
+                                                             final String taskSeriesId,
+                                                             final String taskId,
+                                                             final String repeat )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setRecurrence( id,
+                                                listId,
+                                                taskSeriesId,
+                                                taskId,
+                                                repeat );
+         }
+      };
+   }
+   
+
+
    public TimeLineMethod< RtmTaskList > tasks_setTags( final String listId,
                                                        final String taskSeriesId,
                                                        final String taskId,

@@ -26,7 +26,9 @@ import java.util.Collections;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.ListTask;
@@ -77,6 +79,11 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                 OptionsMenu.MENU_ORDER,
                 R.string.select_multiple_tasks_menu_opt_inv_selection );
       
+      menu.add( Menu.NONE,
+                OptionsMenu.DO_EDIT,
+                OptionsMenu.MENU_ORDER + 2,
+                R.string.select_multiple_tasks_menu_opt_do_edit );
+      
       return true;
    }
    
@@ -94,10 +101,12 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                               getListAdapter().getCount() > 1 );
       
       // TODO: Disable DO_EDIT if nothing selected
-      menu.add( Menu.NONE,
-                OptionsMenu.DO_EDIT,
-                OptionsMenu.MENU_ORDER + 2,
-                R.string.select_multiple_tasks_menu_opt_do_edit );
+      final MenuItem doEditItem = menu.findItem( OptionsMenu.DO_EDIT );
+      
+      if ( doEditItem != null )
+      {
+         
+      }
       
       return true;
    }
@@ -128,15 +137,33 @@ public class SelectMultipleTasksActivity extends TasksListActivity
 
 
    @Override
+   protected void onListItemClick( ListView l, View v, int position, long id )
+   {
+      toggleSelection( position );
+      getListView().invalidate();
+   }
+   
+
+
+   @Override
    protected ListAdapter createListAdapter( AsyncFillListResult result )
    {
       return new SelectMultipleTasksListAdapter( this,
-                                                 R.layout.taskslist_activity_listitem,
+                                                 R.layout.selectmultipletasks_activity_listitem,
                                                  result != null
                                                                ? result.tasks
                                                                : Collections.< ListTask > emptyList(),
                                                  result != null
                                                                ? result.filter
                                                                : new RtmSmartFilter( Strings.EMPTY_STRING ) );
+   }
+   
+
+
+   private void toggleSelection( int pos )
+   {
+      final SelectMultipleTasksListAdapter adapter = (SelectMultipleTasksListAdapter) getListAdapter();
+      
+      adapter.toggleSelection( pos );
    }
 }

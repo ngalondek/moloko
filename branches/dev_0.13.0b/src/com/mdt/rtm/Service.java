@@ -307,7 +307,11 @@ public interface Service
    
 
 
-   void tasks_setRecurrence() throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setRecurrence( String timelineId,
+                                                      String listId,
+                                                      String taskSeriesId,
+                                                      String taskId,
+                                                      String repeat ) throws ServiceException;
    
 
 

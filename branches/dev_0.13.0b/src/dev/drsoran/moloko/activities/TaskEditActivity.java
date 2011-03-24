@@ -591,6 +591,27 @@ public class TaskEditActivity extends Activity
             }
          }
          
+         // Recurrence
+         {
+            if ( SyncUtils.hasChanged( task.getRecurrence(),
+                                       mutableTask.recurrence ) )
+            {
+               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                          task.getTaskSeriesId() ),
+                                                                TaskSeries.RECURRENCE,
+                                                                mutableTask.recurrence ) );
+               
+               if ( SyncUtils.hasChanged( task.isEveryRecurrence(),
+                                          mutableTask.isEveryRecurrence ) )
+               {
+                  modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                             task.getTaskSeriesId() ),
+                                                                   TaskSeries.RECURRENCE_EVERY,
+                                                                   mutableTask.isEveryRecurrence ) );
+               }
+            }
+         }
+         
          // Estimate
          {
             if ( SyncUtils.hasChanged( task.getEstimateMillis(),

@@ -738,25 +738,53 @@ public class ServiceImpl implements Service
                                                            String taskId,
                                                            Priority priority ) throws ServiceException
    {
-      Element elt = invoker.invoke( new Param( "method",
-                                               "rtm.tasks.setPriority" ),
-                                    new Param( "timeline", timelineId ),
-                                    new Param( "list_id", listId ),
-                                    new Param( "taskseries_id", taskSeriesId ),
-                                    new Param( "task_id", taskId ),
-                                    new Param( "priority",
-                                               RtmTask.convertPriority( priority ) ),
-                                    new Param( "auth_token", currentAuthToken ),
-                                    new Param( "api_key",
-                                               applicationInfo.getApiKey() ) );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.setPriority" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "priority",
+                                                     RtmTask.convertPriority( priority ) ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
       return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 
 
-   public void tasks_setRecurrence()
+   public TimeLineResult< RtmTaskList > tasks_setRecurrence( String timelineId,
+                                                             String listId,
+                                                             String taskSeriesId,
+                                                             String taskId,
+                                                             String repeat ) throws ServiceException
    {
-      throw new UnsupportedOperationException( "Not supported yet." );
+      final Element elt;
+      
+      if ( !TextUtils.isEmpty( repeat ) )
+         elt = invoker.invoke( new Param( "method", "rtm.tasks.setName" ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "list_id", listId ),
+                               new Param( "taskseries_id", taskSeriesId ),
+                               new Param( "task_id", taskId ),
+                               new Param( "repeat", repeat ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ) );
+      else
+         elt = invoker.invoke( new Param( "method", "rtm.tasks.setName" ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "list_id", listId ),
+                               new Param( "taskseries_id", taskSeriesId ),
+                               new Param( "task_id", taskId ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ) );
+      
+      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
    }
    
 

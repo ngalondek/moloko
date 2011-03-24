@@ -88,6 +88,9 @@
 	<color name="taskslist_listitem_location_text_pressed">@color/app_tag_bgnd_pressed_fill</color>
 	<color name="taskslist_listitem_location_text_bgnd">@android:color/transparent</color>
    
+   <color name="select_multiple_listitem_unselected_bgnd">@color/app_light_gray</color>
+   <color name="select_multiple_listitem_selected_bgnd">@color/taskslist_tasklist_bgnd</color>
+   
    <color name="contactslist_list_bgnd">@android:color/white</color>
    <color name="contactslist_listitem_shared_tasks_text">@color/priority_2</color>
 

@@ -46,6 +46,7 @@ import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -191,6 +192,37 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                                    task.getId(),
                                                    taskSeries.getName() ),
                            properties.getModification( TaskSeries.TASKSERIES_NAME ) );
+         }
+         
+         // Recurrence
+         if ( SyncUtils.getSyncDirection( properties,
+                                          TaskSeries.RECURRENCE,
+                                          serverElement.taskSeries.getRecurrence(),
+                                          taskSeries.getRecurrence(),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            // The RTM API needs the repeat parameter as sentence, not pattern.
+            final String repeat;
+            
+            if ( taskSeries.getRecurrence() != null )
+               repeat = RecurrenceParsing.parseRecurrencePattern( taskSeries.getRecurrence(),
+                                                                  taskSeries.isEveryRecurrence() );
+            else
+               repeat = null;
+            
+            final List< Modification > modsList = new ArrayList< Modification >( 2 );
+            modsList.add( properties.getModification( TaskSeries.RECURRENCE ) );
+            
+            final Modification isEvryMod = properties.getModification( TaskSeries.RECURRENCE_EVERY );
+            
+            if ( isEvryMod != null )
+               modsList.add( isEvryMod );
+            
+            operation.add( timeline.tasks_setRecurrence( taskSeries.getListId(),
+                                                         taskSeries.getId(),
+                                                         task.getId(),
+                                                         repeat ),
+                           modsList );
          }
          
          // Tags

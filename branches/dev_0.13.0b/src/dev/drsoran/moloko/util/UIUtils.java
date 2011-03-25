@@ -142,6 +142,8 @@ public final class UIUtils
       
       view.setText( task.getName() );
       
+      boolean setTypeFace = false;
+      
       // description
       if ( task.getDue() != null )
       {
@@ -152,6 +154,7 @@ public final class UIUtils
          {
             view.setTypeface( Typeface.DEFAULT_BOLD );
             view.setText( task.getName() );
+            setTypeFace = true;
          }
          
          // Make underline and bold if overdue
@@ -167,9 +170,13 @@ public final class UIUtils
                content.setSpan( new UnderlineSpan(), 0, content.length(), 0 );
                view.setTypeface( Typeface.DEFAULT_BOLD );
                view.setText( content );
+               setTypeFace = true;
             }
          }
       }
+      
+      if ( !setTypeFace )
+         view.setTypeface( Typeface.DEFAULT );
    }
    
 
@@ -199,7 +206,7 @@ public final class UIUtils
                   final TextView tagView = (TextView) View.inflate( context,
                                                                     R.layout.tag_button,
                                                                     null );
-                  tagView.setEnabled( false );
+                  tagView.setClickable( false );
                   tagView.setText( tagText );
                   container.addView( tagView );
                }
@@ -234,7 +241,7 @@ public final class UIUtils
                      final TextView tagView = (TextView) View.inflate( context,
                                                                        R.layout.tag_button,
                                                                        null );
-                     tagView.setEnabled( !disable );
+                     tagView.setClickable( !disable );
                      tagView.setText( tagText );
                      container.addView( tagView );
                      
@@ -246,7 +253,7 @@ public final class UIUtils
                }
             }
          }
-         catch ( Exception e )
+         catch ( Throwable e )
          {
             throw new InflateException( e );
          }

@@ -82,6 +82,29 @@ public class TasksListActivity extends AbstractTasksListActivity implements
 
 
    @Override
+   protected void beforeQueryTasksAsync( Bundle configuration )
+   {
+      super.beforeQueryTasksAsync( configuration );
+      
+      final String title = configuration.getString( TITLE );
+      
+      final int titleIconId = configuration.getInt( TITLE_ICON, -1 );
+      
+      if ( title != null )
+      {
+         UIUtils.setTitle( this, title, titleIconId );
+      }
+      else
+      {
+         UIUtils.setTitle( this,
+                           getString( R.string.taskslist_titlebar,
+                                      getString( R.string.app_name ) ) );
+      }
+   }
+   
+
+
+   @Override
    protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
                                                   Bundle configuration )
    {
@@ -138,22 +161,6 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    protected void setTasksResult( AsyncFillListResult result )
    {
       switchEmptyView( emptyListView );
-      
-      final String title = result.configuration.getString( TITLE );
-      
-      final int titleIconId = result.configuration.getInt( TITLE_ICON, -1 );
-      
-      if ( title != null )
-      {
-         UIUtils.setTitle( this, title, titleIconId );
-      }
-      else
-      {
-         UIUtils.setTitle( this,
-                           getString( R.string.taskslist_titlebar,
-                                      getString( R.string.app_name ) ) );
-      }
-      
       setListAdapter( createListAdapter( result ) );
    }
    

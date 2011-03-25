@@ -53,6 +53,10 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    private final static String TAG = "Moloko."
       + TasksListAdapter.class.getName();
    
+   public final static int FLAG_NO_FILTER = 1 << 0;
+   
+   public final static int FLAG_NO_CLICKABLES = 1 << 1;
+   
    private final Context context;
    
    private final int resourceId;
@@ -65,22 +69,33 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
    private final String[] tagsToRemove;
    
+   private final int flags;
+   
    
 
    public TasksListAdapter( Context context, int resourceId,
       List< ListTask > tasks, RtmSmartFilter filter )
    {
+      this( context, resourceId, tasks, filter, 0 );
+   }
+   
+
+
+   public TasksListAdapter( Context context, int resourceId,
+      List< ListTask > tasks, RtmSmartFilter filter, int flags )
+   {
       super( context, 0, tasks );
       
       this.context = context;
+      this.flags = flags;
       this.resourceId = resourceId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
       this.filter = filter;
       
-      final ArrayList< RtmSmartFilterToken > tokens = filter.getTokens();
-      
+      if ( ( flags & FLAG_NO_FILTER ) != FLAG_NO_FILTER )
       {
-         final ArrayList< String > tagsToRemove = new ArrayList< String >();
+         final ArrayList< RtmSmartFilterToken > tokens = filter.getTokens();
+         final List< String > tagsToRemove = new ArrayList< String >();
          
          for ( RtmSmartFilterToken token : tokens )
          {
@@ -93,6 +108,10 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
          
          this.tagsToRemove = new String[ tagsToRemove.size() ];
          tagsToRemove.toArray( this.tagsToRemove );
+      }
+      else
+      {
+         this.tagsToRemove = null;
       }
    }
    
@@ -187,13 +206,17 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
 
    private final void setListName( TextView view, ListTask task )
    {
-      if ( !RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
-                                                       RtmSmartFilterLexer.OP_LIST,
-                                                       task.getListName(),
-                                                       false ) )
+      if ( ( flags & FLAG_NO_FILTER ) == FLAG_NO_FILTER
+         || !RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
+                                                        RtmSmartFilterLexer.OP_LIST,
+                                                        task.getListName(),
+                                                        false ) )
       {
          view.setVisibility( View.VISIBLE );
          view.setText( task.getListName() );
+         
+         if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
+            view.setClickable( false );
       }
       else
          view.setVisibility( View.GONE );
@@ -274,11 +297,11 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    private void setLocation( TextView view, ListTask task )
    {
       // If the task has no location
-      if ( TextUtils.isEmpty( task.getLocationName() )
-         || RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
-                                                       RtmSmartFilterLexer.OP_LOCATION,
-                                                       task.getLocationName(),
-                                                       false ) )
+      if ( ( flags & FLAG_NO_FILTER ) != FLAG_NO_FILTER
+         && ( TextUtils.isEmpty( task.getLocationName() ) || RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
+                                                                                                        RtmSmartFilterLexer.OP_LOCATION,
+                                                                                                        task.getLocationName(),
+                                                                                                        false ) ) )
       {
          view.setVisibility( View.GONE );
       }
@@ -286,6 +309,9 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       {
          view.setVisibility( View.VISIBLE );
          view.setText( task.getLocationName() );
+         
+         if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
+            view.setClickable( false );
       }
    }
    
@@ -295,10 +321,11 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    {
       final Bundle tagsConfig = new Bundle();
       
-      if ( tagsToRemove.length > 0 )
-      {
+      if ( tagsToRemove != null && tagsToRemove.length > 0 )
          tagsConfig.putStringArray( UIUtils.REMOVE_TAGS_EQUALS, tagsToRemove );
-      }
+      
+      if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
+         tagsConfig.putBoolean( UIUtils.DISABLE_ALL_TAGS, Boolean.TRUE );
       
       UIUtils.inflateTags( context,
                            tagsLayout,
@@ -313,5 +340,4 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    {
       view.setEnabled( task.getCompleted() != null );
    }
-   
 }

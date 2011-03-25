@@ -264,13 +264,17 @@ public final class Intents
 
 
    public final static Intent createSelectMultipleTasksIntent( Context context,
-                                                               RtmSmartFilter filter )
+                                                               RtmSmartFilter filter,
+                                                               int sortOrder )
    {
       final Intent intent = createSmartFilterIntent( context,
                                                      filter,
                                                      context.getString( R.string.select_multiple_tasks_titlebar ),
                                                      -1 );
       intent.setAction( Intent.ACTION_PICK );
+      
+      if ( sortOrder != -1 )
+         intent.putExtra( AbstractTasksListActivity.TASK_SORT_ORDER, sortOrder );
       
       return intent;
    }

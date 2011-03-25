@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,6 +44,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -62,7 +62,6 @@ import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.provider.Rtm.Notes;
@@ -100,31 +99,34 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
    protected class AsyncFillList extends
-            AsyncTask< Object, Void, AsyncFillListResult >
+            AsyncTask< ContentResolver, Void, AsyncFillListResult >
    {
+      private final Bundle configuration;
       
-      @Override
-      protected void onPreExecute()
+      
+
+      public AsyncFillList( Bundle configuration )
       {
-         UIUtils.setTitle( AbstractTasksListActivity.this, R.string.phr_loading );
+         this.configuration = configuration;
       }
       
 
 
       @Override
-      protected AsyncFillListResult doInBackground( Object... params )
+      protected void onPreExecute()
       {
-         if ( params.length < 2 )
-            throw new IllegalArgumentException( "Expected 2 parameters" );
+         beforeQueryTasksAsync( configuration );
+      }
+      
+
+
+      @Override
+      protected AsyncFillListResult doInBackground( ContentResolver... params )
+      {
+         if ( params.length < 1 )
+            throw new IllegalArgumentException( "Expected 1 parameter of type ContentResolver" );
          
-         if ( !( params[ 0 ] instanceof ContentResolver ) )
-            throw new IllegalArgumentException( "Expected ContentResolver" );
-         
-         if ( !( params[ 1 ] instanceof Bundle ) )
-            throw new IllegalArgumentException( "Expected Bundle" );
-         
-         return queryTasksAsync( (ContentResolver) params[ 0 ],
-                                 (Bundle) params[ 1 ] );
+         return queryTasksAsync( params[ 0 ], configuration );
       }
       
 
@@ -140,6 +142,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    protected class ClearAndAsyncFillList extends AsyncFillList
    {
+      public ClearAndAsyncFillList( Bundle configuration )
+      {
+         super( configuration );
+      }
+      
+
+
       @Override
       protected void onPreExecute()
       {
@@ -204,8 +213,9 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             asyncFillList.cancel( true );
          }
          
-         asyncFillList = new AsyncFillList();
-         asyncFillList.execute( getContentResolver(), getIntent().getExtras() );
+         asyncFillList = new AsyncFillList( AbstractTasksListActivity.this.getIntent()
+                                                                          .getExtras() );
+         asyncFillList.execute( getContentResolver() );
       }
    };
    
@@ -358,7 +368,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                               OptionsMenu.MENU_ORDER,
                               -1,
                               Intents.createSelectMultipleTasksIntent( this,
-                                                                       (RtmSmartFilter) getIntent().getParcelableExtra( FILTER ) ),
+                                                                       (RtmSmartFilter) getIntent().getParcelableExtra( FILTER ),
+                                                                       getTaskSort() ),
                               getListAdapter().getCount() > 1 );
       }
       
@@ -370,14 +381,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
-      // Handle item selection
       switch ( item.getItemId() )
       {
          case OptionsMenu.SORT:
             new AlertDialog.Builder( this ).setIcon( R.drawable.ic_dialog_sort )
                                            .setTitle( R.string.abstaskslist_dlg_sort_title )
                                            .setSingleChoiceItems( R.array.app_sort_options,
-                                                                  TaskSortPreference.getIndexOfValue( getTaskSort() ),
+                                                                  getTaskSortIndex( getTaskSort() ),
                                                                   this )
                                            .setNegativeButton( R.string.btn_cancel,
                                                                this )
@@ -599,9 +609,10 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                break;
             
             default :
-               final int newTaskSort = TaskSortPreference.getValueOfIndex( which );
+               final int newTaskSort = getTaskSortValue( which );
                
-               if ( !isSameTaskSortLikeCurrent( newTaskSort ) )
+               if ( newTaskSort != -1
+                  && !isSameTaskSortLikeCurrent( newTaskSort ) )
                {
                   setTaskSort( newTaskSort, true );
                }
@@ -790,6 +801,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
 
    /**
+    * Note: This will run in the GUI thread.
+    */
+   protected void beforeQueryTasksAsync( Bundle configuration )
+   {
+      UIUtils.setTitle( AbstractTasksListActivity.this, R.string.phr_loading );
+   }
+   
+
+
+   /**
     * Note: This will run in a background thread.
     */
    abstract protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
@@ -804,17 +825,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
+   abstract protected ListAdapter createListAdapter( AsyncFillListResult result );
+   
+
+
    abstract protected void handleIntent( Intent intent );
    
 
 
    protected void clearList( View emptyView )
    {
-      setListAdapter( new TasksListAdapter( this,
-                                            R.layout.taskslist_activity_listitem,
-                                            Collections.< ListTask > emptyList(),
-                                            new RtmSmartFilter( Strings.EMPTY_STRING ) ) );
-      
+      setListAdapter( createListAdapter( null ) );
       switchEmptyView( emptyView );
    }
    
@@ -832,9 +853,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                asyncFillList.cancel( true );
             }
             
-            asyncFillList = new ClearAndAsyncFillList();
-            asyncFillList.execute( getContentResolver(),
-                                   getIntent().getExtras() );
+            asyncFillList = new ClearAndAsyncFillList( getIntent().getExtras() );
+            asyncFillList.execute( getContentResolver() );
          }
       } );
    }
@@ -862,6 +882,20 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    protected final ListTask getTask( int pos )
    {
       return (ListTask) getListAdapter().getItem( pos );
+   }
+   
+
+
+   protected int getTaskSortValue( int idx )
+   {
+      return TaskSortPreference.getValueOfIndex( idx );
+   }
+   
+
+
+   protected int getTaskSortIndex( int value )
+   {
+      return TaskSortPreference.getIndexOfValue( value );
    }
    
 
@@ -922,6 +956,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             if ( iconId != -1 )
                item.setIcon( iconId );
          }
+         
+         item.setTitle( title );
          
          if ( intent != null )
             item.setIntent( intent );

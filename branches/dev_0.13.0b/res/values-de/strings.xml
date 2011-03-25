@@ -221,6 +221,8 @@
       <string name="select_multiple_tasks_menu_opt_unselect_all">Keinen wählen</string>
       <string name="select_multiple_tasks_menu_opt_inv_selection">Auswahl umkehren</string>
       <string name="select_multiple_tasks_menu_opt_do_edit">%1$d bearbeiten</string>
+      <string name="select_multiple_tasks_menu_ctx_select">Markiere %1$s</string>
+      <string name="select_multiple_tasks_menu_ctx_deselect">Entferne Markerung von %1$s</string>
      
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>

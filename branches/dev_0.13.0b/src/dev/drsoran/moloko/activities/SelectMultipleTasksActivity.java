@@ -25,11 +25,15 @@ package dev.drsoran.moloko.activities;
 import java.util.Collections;
 
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.Checkable;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.ListTask;
@@ -58,6 +62,12 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       public final static int SORT = START_IDX + 3;
       
       public final static int DO_EDIT = START_IDX + 4;
+   }
+   
+
+   protected static class CtxtMenu
+   {
+      public final static int TOGGLE_SELECTION = 0;
    }
    
    
@@ -141,6 +151,49 @@ public class SelectMultipleTasksActivity extends TasksListActivity
             return true;
          default :
             return super.onOptionsItemSelected( item );
+      }
+   }
+   
+
+
+   @Override
+   public void onCreateContextMenu( ContextMenu menu,
+                                    View v,
+                                    ContextMenuInfo menuInfo )
+   {
+      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+      final Checkable checkableView = (Checkable) info.targetView;
+      final ListTask task = getTask( info.position );
+      
+      if ( checkableView.isChecked() )
+         menu.add( Menu.NONE,
+                   CtxtMenu.TOGGLE_SELECTION,
+                   Menu.NONE,
+                   getString( R.string.select_multiple_tasks_menu_ctx_deselect,
+                              task.getName() ) );
+      else
+         menu.add( Menu.NONE,
+                   CtxtMenu.TOGGLE_SELECTION,
+                   Menu.NONE,
+                   getString( R.string.select_multiple_tasks_menu_ctx_select,
+                              task.getName() ) );
+   }
+   
+
+
+   @Override
+   public boolean onContextItemSelected( MenuItem item )
+   {
+      final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+      final Checkable checkableView = (Checkable) info.targetView;
+      
+      switch ( item.getItemId() )
+      {
+         case CtxtMenu.TOGGLE_SELECTION:
+            checkableView.toggle();
+            return true;
+         default :
+            return super.onContextItemSelected( item );
       }
    }
    

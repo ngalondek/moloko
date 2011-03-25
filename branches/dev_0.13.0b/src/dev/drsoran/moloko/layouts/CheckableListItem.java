@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -35,6 +34,8 @@ import dev.drsoran.moloko.widgets.FocusableWheelView;
 
 public class CheckableListItem extends LinearLayout implements Checkable
 {
+   // private final Drawable checkedDrawable;
+   
    private boolean checked = false;
    
    private static final int[] CHECKED_STATE_SET =
@@ -45,6 +46,8 @@ public class CheckableListItem extends LinearLayout implements Checkable
    public CheckableListItem( Context context )
    {
       super( context );
+      // checkedDrawable = context.getResources()
+      // .getDrawable( R.drawable.selectmultipletasks_listitem_bgnd );
    }
    
 
@@ -52,6 +55,8 @@ public class CheckableListItem extends LinearLayout implements Checkable
    public CheckableListItem( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      // checkedDrawable = context.getResources()
+      // .getDrawable( R.drawable.selectmultipletasks_listitem_bgnd );
    }
    
 
@@ -81,6 +86,11 @@ public class CheckableListItem extends LinearLayout implements Checkable
    
 
 
+   // public Drawable getCheckedDrawable()
+   // {
+   // return checkedDrawable;
+   // }
+   
    @Override
    public boolean performClick()
    {
@@ -140,32 +150,41 @@ public class CheckableListItem extends LinearLayout implements Checkable
       return drawableState;
    }
    
-
-
-   @Override
-   protected boolean verifyDrawable( Drawable who )
-   {
-      return super.verifyDrawable( who ) || who == getBackground();
-   }
    
-
-
-   @Override
-   protected void drawableStateChanged()
-   {
-      super.drawableStateChanged();
-      
-      if ( getBackground() != null )
-      {
-         final int[] myDrawableState = getDrawableState();
-         
-         // Set the state of the Drawable
-         getBackground().setState( myDrawableState );
-         
-         invalidate();
-      }
-   }
+   // @Override
+   // protected boolean verifyDrawable( Drawable who )
+   // {
+   // return super.verifyDrawable( who ) || who == getDrawable();
+   // }
+   //   
+   //
+   //
+   // @Override
+   // protected void drawableStateChanged()
+   // {
+   // super.drawableStateChanged();
+   //      
+   // if ( getBackground() != null )
+   // {
+   // final int[] myDrawableState = getDrawableState();
+   //         
+   // // Set the state of the Drawable
+   // getDrawable().setState( myDrawableState );
+   //         
+   // invalidate();
+   // }
+   // }
    
+   // private Drawable getDrawable()
+   // {
+   // if ( getChildCount() > 0 )
+   // {
+   // return getChildAt( 0 ).getBackground();
+   // }
+   // else
+   // return null;
+   // }
+   //   
    
    static class SavedState extends BaseSavedState
    {

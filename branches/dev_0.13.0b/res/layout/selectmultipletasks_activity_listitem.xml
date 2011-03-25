@@ -15,10 +15,10 @@
    android:id="@+id/selectmultipletasks_listitem"
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
-   android:minHeight="70dip"
-   android:background="@drawable/selectmultipletasks_listitem_bgnd">
+   android:minHeight="70dip">
 
    <include
+      android:id="@+id/selectmultipletasks_listitem_content"
       layout="@layout/taskslist_activity_listitem"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent" />

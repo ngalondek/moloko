@@ -57,9 +57,14 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
    public View getView( int position, View convertView, ViewGroup parent )
    {
       if ( convertView == null )
+      {
          convertView = getInflater().inflate( getLayoutRessource(),
                                               parent,
                                               false );
+         
+         // convertView.findViewById( R.id.selectmultipletasks_listitem_content )
+         // .setBackgroundDrawable( ( (CheckableListItem) convertView ).getCheckedDrawable() );
+      }
       
       return super.getView( position, convertView, parent );
    }

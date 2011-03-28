@@ -29,6 +29,7 @@
 	<string name="app_tasklists">Lists</string>
 	<string name="app_task">Task</string>
    <string name="app_task_edit">Edit Task</string>
+   <string name="app_task_edit_multiple">Edit %1$d %2$s</string>
    <string name="app_task_select_multiple">Select tasks to edit</string>
    <string name="app_change_tags">Change Tags of %1$s</string>
 	<string name="app_note">Note</string>
@@ -286,6 +287,11 @@
       <string name="select_multiple_tasks_dlg_complete">Complete %1$d %2$s?</string>
       <string name="select_multiple_tasks_dlg_uncomplete">Uncomplete %1$d %2$s?</string>
      
+   <!-- EditMultipleTasks activity -->
+   <string name="edit_multiple_tasks_titlebar">@string/app_task_edit_multiple</string>
+   <string name="edit_multiple_tasks_multiple_values">Different values</string>
+   <string name="edit_multiple_tasks_multiple_tags">Different tags</string>
+   
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">No contacts</string>
    <string name="contactslist_listitem_num_tasks">%1$d %2$s</string>

@@ -107,7 +107,7 @@ public class RecurrPickerDialog extends AbstractPickerDialog
          }
       } );
       
-      this.impl = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_time )
+      this.impl = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_recurrent )
                                                     .setTitle( R.string.dlg_recurr_picker_title )
                                                     .setView( container )
                                                     .setPositiveButton( R.string.btn_ok,

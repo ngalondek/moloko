@@ -32,20 +32,21 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.ListTask;
@@ -100,17 +101,20 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       menu.add( Menu.NONE,
                 OptionsMenu.SELECT_ALL,
                 OptionsMenu.MENU_ORDER,
-                R.string.select_multiple_tasks_menu_opt_select_all );
+                R.string.select_multiple_tasks_menu_opt_select_all )
+          .setIcon( R.drawable.ic_menu_select_all_tasks );
       
       menu.add( Menu.NONE,
                 OptionsMenu.DESELECT_ALL,
                 OptionsMenu.MENU_ORDER,
-                R.string.select_multiple_tasks_menu_opt_unselect_all );
+                R.string.select_multiple_tasks_menu_opt_unselect_all )
+          .setIcon( R.drawable.ic_menu_select_no_tasks );
       
       menu.add( Menu.NONE,
                 OptionsMenu.INVERT_SELECTION,
                 OptionsMenu.MENU_ORDER,
-                R.string.select_multiple_tasks_menu_opt_inv_selection );
+                R.string.select_multiple_tasks_menu_opt_inv_selection )
+          .setIcon( R.drawable.ic_menu_select_invert_tasks );
       
       return true;
    }
@@ -141,7 +145,7 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                               getString( R.string.select_multiple_tasks_menu_opt_do_edit,
                                          selCnt ),
                               OptionsMenu.MENU_ORDER + 2,
-                              -1,
+                              R.drawable.ic_menu_edit,
                               someSelected );
          
          int selCompl = 0, selUncompl = 0;
@@ -160,7 +164,7 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                               getString( R.string.select_multiple_tasks_menu_opt_complete,
                                          selCnt ),
                               OptionsMenu.MENU_ORDER + 3,
-                              -1,
+                              R.drawable.ic_menu_complete,
                               someSelected && selUncompl == selCnt );
          
          // The uncomplete task menu is only shown if all selected tasks are completed
@@ -169,7 +173,7 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                               getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
                                          selCnt ),
                               OptionsMenu.MENU_ORDER + 3,
-                              -1,
+                              R.drawable.ic_menu_incomplete,
                               someSelected && selCompl == selCnt );
          
          final MenuItem selAllItem = menu.findItem( OptionsMenu.SELECT_ALL );
@@ -177,6 +181,9 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          
          final MenuItem deselAllItem = menu.findItem( OptionsMenu.DESELECT_ALL );
          deselAllItem.setEnabled( someSelected );
+         
+         final MenuItem invSelItem = menu.findItem( OptionsMenu.INVERT_SELECTION );
+         invSelItem.setEnabled( !allSelected && someSelected );
          
          return true;
       }
@@ -433,7 +440,17 @@ public class SelectMultipleTasksActivity extends TasksListActivity
 
    private void onEditSelectedTasks()
    {
-      
+      final int selCnt = getListAdapter().getSelectedCount();
+      if ( selCnt > 0 )
+         if ( selCnt > 1 )
+            startActivityForResult( Intents.createEditMultipleTasksIntent( this,
+                                                                           getListAdapter().getSelectedTaskIds() ),
+                                    EditMultipleTasksActivity.REQ_EDIT_TASK );
+         else
+            startActivityForResult( Intents.createEditTaskIntent( this,
+                                                                  getListAdapter().getSelectedTaskIds()
+                                                                                  .get( 0 ) ),
+                                    TaskEditActivity.REQ_EDIT_TASK );
    }
    
 

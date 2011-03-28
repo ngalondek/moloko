@@ -165,6 +165,22 @@
          </intent-filter>
       </activity>
       
+      <activity
+         android:label="@string/app_task_edit_multiple"
+         android:name=".activities.EditMultipleTasksActivity"
+         android:launchMode="singleTop"
+         android:theme="@style/Theme.Moloko.Task">
+         <intent-filter>
+            <!-- Edit a list of tasks -->
+            <action
+               android:name="android.intent.action.EDIT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
+         </intent-filter>
+      </activity>
+      
       <activity         
          android:name=".activities.ChangeTagsActivity"
          android:launchMode="singleTop"

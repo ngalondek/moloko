@@ -101,7 +101,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        {
                                                         RawTasks.PATH + "."
                                                            + RawTasks._ID
-                                                           + " AS _id",
+                                                           + " AS rawTask_id",
                                                         TaskSeries.PATH + "."
                                                            + TaskSeries.LIST_ID
                                                            + " AS "
@@ -395,10 +395,7 @@ public class TasksProviderPart extends AbstractProviderPart
          // So we have to qualify it.
          if ( !projectionContainsId && column.endsWith( Tasks._ID ) )
          {
-            projectionSB.append( "subQuery." )
-                        .append( RawTasks._ID )
-                        .append( " AS " )
-                        .append( Tasks._ID );
+            projectionSB.append( "rawTask_id AS " ).append( Tasks._ID );
             
             projectionList.set( i, projectionSB.toString() );
             projectionContainsId = true;
@@ -449,8 +446,7 @@ public class TasksProviderPart extends AbstractProviderPart
       // Only if the ID is given in the projection we can use it
       if ( id != null && projectionContainsId )
       {
-         stringBuilder.append( " WHERE subQuery." )
-                      .append( RawTasks._ID )
+         stringBuilder.append( " WHERE rawTask_id" )
                       .append( " = " )
                       .append( id );
       }
@@ -461,6 +457,9 @@ public class TasksProviderPart extends AbstractProviderPart
       
       if ( !TextUtils.isEmpty( selection ) )
       {
+         selection = selection.replaceAll( Tasks._ID, "rawTask_id" );
+         
+         // Replace selection _ids
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
                                                     ? Queries.bindAll( selection,

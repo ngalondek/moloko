@@ -22,12 +22,15 @@
 
 package dev.drsoran.moloko.util;
 
+import java.util.ArrayList;
+
 import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
+import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
@@ -259,6 +262,18 @@ public final class Intents
    {
       return new Intent( Intent.ACTION_EDIT,
                          Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
+   }
+   
+
+
+   public final static Intent createEditMultipleTasksIntent( Context context,
+                                                             ArrayList< String > taskIds )
+   {
+      final Intent intent = new Intent( Intent.ACTION_EDIT, Tasks.CONTENT_URI );
+      intent.putStringArrayListExtra( EditMultipleTasksActivity.TASK_IDS,
+                                      taskIds );
+      
+      return intent;
    }
    
 

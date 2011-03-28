@@ -25,15 +25,18 @@ package dev.drsoran.moloko.layouts;
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
+import android.widget.Filterable;
+import android.widget.ListAdapter;
 import dev.drsoran.moloko.R;
 
 
 public class TitleWithEditTextLayout extends TitleWithViewLayout
 {
-   private EditText editText;
+   private AutoCompleteTextView editText;
    
    private int imeTypeEnabled;
    
@@ -72,6 +75,41 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    
 
 
+   public void addTextChangedListener( TextWatcher watcher )
+   {
+      editText.addTextChangedListener( watcher );
+   }
+   
+
+
+   public void removeTextChangedListener( TextWatcher watcher )
+   {
+      editText.removeTextChangedListener( watcher );
+   }
+   
+
+
+   public final void setHint( CharSequence hint )
+   {
+      editText.setHint( hint );
+   }
+   
+
+
+   public final void setHint( int resid )
+   {
+      editText.setHint( resid );
+   }
+   
+
+
+   public < T extends ListAdapter & Filterable > void setAutoCompletionAdapter( T adapter )
+   {
+      editText.setAdapter( adapter );
+   }
+   
+
+
    @Override
    public void setEnabled( boolean enabled )
    {
@@ -88,7 +126,7 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      editText = new EditText( context, attrs );
+      editText = new AutoCompleteTextView( context, attrs );
       editText.setLayoutParams( generateDefaultLayoutParams() );
       editText.setId( R.id.title_with_edit_text );
       

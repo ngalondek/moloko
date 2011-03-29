@@ -450,14 +450,11 @@ public class TasksProviderPart extends AbstractProviderPart
                       .append( " = " )
                       .append( id );
       }
-      else
-      {
-         // TODO: Throw exception in this case otherwise we get a list of all tasks and no error
-      }
       
       if ( !TextUtils.isEmpty( selection ) )
       {
-         selection = selection.replaceAll( Tasks._ID, "rawTask_id" );
+         selection = selection.replaceAll( "\\b" + Tasks._ID + "\\b",
+                                           "rawTask_id" );
          
          // Replace selection _ids
          stringBuilder.append( " WHERE ( " )

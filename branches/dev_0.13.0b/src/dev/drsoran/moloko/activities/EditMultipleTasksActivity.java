@@ -64,6 +64,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    
    private final static String STRING_MULTI_VALUE = Strings.EMPTY_STRING;
    
+   private final static String URL_MULTI_VALUE = null;
+   
    public final static String TAGS_MULTI_VALUE = "multi_tag";
    
    private final static long LONG_MULTI_VALUE = Long.valueOf( -1L );
@@ -196,7 +198,7 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
                                                     STRING_MULTI_VALUE,
                                                     String.class ),
                                    getInitialValue( Tasks.URL,
-                                                    STRING_MULTI_VALUE,
+                                                    URL_MULTI_VALUE,
                                                     String.class ) );
       }
       else

@@ -389,7 +389,10 @@ abstract class AbstractTaskEditActivity extends Activity
          @Override
          public void afterTextChanged( Editable s )
          {
-            putChange( Tasks.URL, s.toString(), String.class );
+            if ( TextUtils.isEmpty( s ) )
+               putChange( Tasks.URL, null, String.class );
+            else
+               putChange( Tasks.URL, s.toString(), String.class );
          }
       } );
    }

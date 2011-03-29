@@ -30,6 +30,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -68,6 +71,7 @@ import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
@@ -385,10 +389,7 @@ abstract class AbstractTaskEditActivity extends Activity
          @Override
          public void afterTextChanged( Editable s )
          {
-            if ( TextUtils.isEmpty( s ) )
-               putChange( Tasks.URL, null, String.class );
-            else
-               putChange( Tasks.URL, s.toString(), String.class );
+            putChange( Tasks.URL, s.toString(), String.class );
          }
       } );
    }
@@ -442,49 +443,98 @@ abstract class AbstractTaskEditActivity extends Activity
 
    public void onDone( View v )
    {
-      if ( validateInput() )
+      if ( changes.size() > 0 )
       {
-         final ModificationSet modifications = getModifications();
-         
-         int result = RESULT_EDIT_TASK_OK;
-         
-         // Apply the modifications to the DB.
-         if ( modifications != null && modifications.size() > 0 )
+         if ( validateInput() )
          {
-            // set the taskseries modification time to now
-            try
-            {
-               if ( new ApplyModificationsTask( this ).execute( modifications )
-                                                      .get() )
-               {
-                  result = RESULT_EDIT_TASK_CHANGED;
-               }
-               else
-               {
-                  result = RESULT_EDIT_TASK_FAILED;
-               }
-            }
-            catch ( InterruptedException e )
-            {
-               result = RESULT_EDIT_TASK_FAILED;
-            }
-            catch ( ExecutionException e )
-            {
-               result = RESULT_EDIT_TASK_FAILED;
-            }
+            new AlertDialog.Builder( this ).setMessage( R.string.abstracttask_edit_dlg_done )
+                                           .setPositiveButton( android.R.string.yes,
+                                                               new OnClickListener()
+                                                               {
+                                                                  public void onClick( DialogInterface dialog,
+                                                                                       int which )
+                                                                  {
+                                                                     final ModificationSet modifications = getModifications();
+                                                                     
+                                                                     int result = RESULT_EDIT_TASK_OK;
+                                                                     
+                                                                     // Apply the modifications to the DB.
+                                                                     if ( modifications != null
+                                                                        && modifications.size() > 0 )
+                                                                     {
+                                                                        // set the taskseries modification time to now
+                                                                        try
+                                                                        {
+                                                                           if ( new ApplyModificationsTask( AbstractTaskEditActivity.this ).execute( modifications )
+                                                                                                                                           .get() )
+                                                                           {
+                                                                              result = RESULT_EDIT_TASK_CHANGED;
+                                                                           }
+                                                                           else
+                                                                           {
+                                                                              result = RESULT_EDIT_TASK_FAILED;
+                                                                           }
+                                                                        }
+                                                                        catch ( InterruptedException e )
+                                                                        {
+                                                                           result = RESULT_EDIT_TASK_FAILED;
+                                                                        }
+                                                                        catch ( ExecutionException e )
+                                                                        {
+                                                                           result = RESULT_EDIT_TASK_FAILED;
+                                                                        }
+                                                                     }
+                                                                     
+                                                                     setResult( result );
+                                                                     finish();
+                                                                  }
+                                                               } )
+                                           .setNegativeButton( android.R.string.no,
+                                                               null )
+                                           .show();
          }
-         
-         setResult( result );
+      }
+      else
+      {
+         setResult( RESULT_EDIT_TASK_OK );
          finish();
       }
    }
    
 
 
+   @Override
+   public void onBackPressed()
+   {
+      onCancel( null );
+   }
+   
+
+
    public void onCancel( View v )
    {
-      setResult( RESULT_CANCELED );
-      finish();
+      if ( changes.size() > 0 )
+      {
+         new AlertDialog.Builder( this ).setMessage( R.string.abstracttask_edit_dlg_cancel )
+                                        .setPositiveButton( android.R.string.yes,
+                                                            new OnClickListener()
+                                                            {
+                                                               public void onClick( DialogInterface dialog,
+                                                                                    int which )
+                                                               {
+                                                                  setResult( RESULT_CANCELED );
+                                                                  finish();
+                                                               }
+                                                            } )
+                                        .setNegativeButton( android.R.string.no,
+                                                            null )
+                                        .show();
+      }
+      else
+      {
+         setResult( RESULT_CANCELED );
+         finish();
+      }
    }
    
 
@@ -539,8 +589,8 @@ abstract class AbstractTaskEditActivity extends Activity
 
    protected boolean validateName( TextView name )
    {
-      return !TextUtils.isEmpty( getChange( TaskSeries.TASKSERIES_NAME,
-                                            String.class ) );
+      return !TextUtils.isEmpty( getCurrentValue( TaskSeries.TASKSERIES_NAME,
+                                                  String.class ) );
    }
    
 
@@ -1107,7 +1157,8 @@ abstract class AbstractTaskEditActivity extends Activity
       if ( changes == null )
       {
          changes = new HashMap< String, Object >();
-         changes.put( key, value );
+         if ( SyncUtils.hasChanged( value, initialValues.get( key ) ) )
+            changes.put( key, value );
       }
       else
       {
@@ -1301,7 +1352,8 @@ abstract class AbstractTaskEditActivity extends Activity
          // URL
          if ( hasChange( Tasks.URL ) )
          {
-            final String newUrl = getCurrentValue( Tasks.URL, String.class );
+            final String newUrl = Strings.nullIfEmpty( getCurrentValue( Tasks.URL,
+                                                                        String.class ) );
             
             if ( SyncUtils.hasChanged( task.getUrl(), newUrl ) )
             {

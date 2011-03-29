@@ -205,6 +205,10 @@
       <string name="task_save_ok">Changes to the task have been saved.</string>
       <string name="task_save_error">Failed to save changes to the task.</string>
       
+   <!-- AbstractTaskEdit activity -->
+   <string name="abstracttask_edit_dlg_done">Applying changes?</string>
+   <string name="abstracttask_edit_dlg_cancel">Cancel editing and lose all changes?</string>
+      
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Task Name</string>
    <string name="task_edit_list">List</string>
@@ -224,6 +228,11 @@
    <string name="task_edit_validate_empty_name">The task name must not be empty</string>
    <string name="task_edit_validate_estimate">\'%1$s\' is not a valid estimation</string>
    <string name="task_edit_validate_due">\'%1$s\' is not a valid due</string>
+   
+    <!-- EditMultipleTasks activity -->
+   <string name="edit_multiple_tasks_titlebar">@string/app_task_edit_multiple</string>
+   <string name="edit_multiple_tasks_multiple_values">Different values</string>
+   <string name="edit_multiple_tasks_multiple_tags">Different tags</string>
    
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Comma separated tags</string>
@@ -286,12 +295,7 @@
       <!-- Dialogs -->
       <string name="select_multiple_tasks_dlg_complete">Complete %1$d %2$s?</string>
       <string name="select_multiple_tasks_dlg_uncomplete">Uncomplete %1$d %2$s?</string>
-     
-   <!-- EditMultipleTasks activity -->
-   <string name="edit_multiple_tasks_titlebar">@string/app_task_edit_multiple</string>
-   <string name="edit_multiple_tasks_multiple_values">Different values</string>
-   <string name="edit_multiple_tasks_multiple_tags">Different tags</string>
-   
+  
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">No contacts</string>
    <string name="contactslist_listitem_num_tasks">%1$d %2$s</string>

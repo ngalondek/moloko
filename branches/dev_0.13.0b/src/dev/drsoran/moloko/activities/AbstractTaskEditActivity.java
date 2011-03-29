@@ -1047,7 +1047,7 @@ abstract class AbstractTaskEditActivity extends Activity
          if ( o == null || o.getClass() == type )
             res = type.cast( o );
          else
-            throw new IllegalArgumentException( "Expected type " + type
+            throw new IllegalArgumentException( "Expected type " + o.getClass()
                + " for " + key );
       }
       
@@ -1079,8 +1079,8 @@ abstract class AbstractTaskEditActivity extends Activity
       if ( o.getClass() == type )
          return type.cast( o );
       else
-         throw new IllegalArgumentException( "Expected type " + type + " for "
-            + key );
+         throw new IllegalArgumentException( "Expected type " + o.getClass()
+            + " for " + key );
    }
    
 

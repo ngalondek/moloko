@@ -22,10 +22,8 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +34,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTask;
@@ -68,9 +67,9 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    
    private final static long LONG_MULTI_VALUE = Long.valueOf( -1L );
    
-   private List< Task > tasks;
-   
    private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
+   
+   private List< Task > tasks;
    
    
 
@@ -85,18 +84,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          
          if ( client != null )
          {
-            final StringBuilder sb = new StringBuilder();
-            
-            for ( Iterator< String > i = taskIds.iterator(); i.hasNext(); )
-            {
-               sb.append( Tasks._ID ).append( " = " ).append( i.next() );
-               
-               if ( i.hasNext() )
-                  sb.append( " OR " );
-            }
-            
             tasks = TasksProviderPart.getTasks( client,
-                                                sb.toString(),
+                                                TextUtils.join( " OR ", taskIds ),
                                                 Tasks.DEFAULT_SORT_ORDER );
             client.release();
             
@@ -433,17 +422,43 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    @Override
    protected void refreshTags( WrappingLayout tagsLayout )
    {
-      if ( !isCommonAttrib( Tasks.TAGS )
-         && getCurrentValue( Tasks.TAGS, String.class ).equals( TAGS_MULTI_VALUE ) )
-      {
-         UIUtils.inflateTags( this,
-                              tagsLayout,
-                              Collections.singletonList( getString( R.string.edit_multiple_tasks_multiple_tags ) ),
-                              null,
-                              null );
-      }
-      else
-         super.refreshTags( tagsLayout );
+      tagsLayout.setVisibility( View.GONE );
+      
+      // if ( !isCommonAttrib( Tasks.TAGS )
+      // && getCurrentValue( Tasks.TAGS, String.class ).equals( TAGS_MULTI_VALUE ) )
+      // {
+      // UIUtils.inflateTags( this,
+      // tagsLayout,
+      // Collections.singletonList( getString( R.string.edit_multiple_tasks_multiple_tags ) ),
+      // null,
+      // null );
+      // }
+      // else
+      // super.refreshTags( tagsLayout );
+   }
+   
+
+
+   @Override
+   protected void refreshDue( EditText dueEdit )
+   {
+      dueEdit.setVisibility( View.GONE );
+   }
+   
+
+
+   @Override
+   protected void refreshEstimate( EditText estimateEdit )
+   {
+      estimateEdit.setVisibility( View.GONE );
+   }
+   
+
+
+   @Override
+   protected void refreshRecurrence( EditText recurrEdit )
+   {
+      recurrEdit.setVisibility( View.GONE );
    }
    
 
@@ -451,8 +466,9 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    @Override
    protected ModificationSet getModifications()
    {
-      // TODO Auto-generated method stub
-      return null;
+      final ModificationSet modifications = new ModificationSet();
+      
+      return modifications;
    }
    
 

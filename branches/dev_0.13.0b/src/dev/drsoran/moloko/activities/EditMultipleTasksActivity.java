@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,6 +68,11 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    
    private final static long LONG_MULTI_VALUE = Long.valueOf( -1L );
    
+   /**
+    * Map< Task attribute, Map< attribute value, number of tasks with attribute > >
+    * 
+    * e.g. Map< Tasks.TASKSERIES_NAME, Map< "Task", 2 > >
+    */
    private final Map< String, Map< Object, Integer > > attributeCount = new HashMap< String, Map< Object, Integer > >();
    
    private List< Task > tasks;
@@ -84,8 +90,18 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          
          if ( client != null )
          {
+            final StringBuilder sb = new StringBuilder();
+            
+            for ( Iterator< String > i = taskIds.iterator(); i.hasNext(); )
+            {
+               sb.append( Tasks._ID ).append( " = " ).append( i.next() );
+               
+               if ( i.hasNext() )
+                  sb.append( " OR " );
+            }
+            
             tasks = TasksProviderPart.getTasks( client,
-                                                TextUtils.join( " OR ", taskIds ),
+                                                sb.toString(),
                                                 Tasks.DEFAULT_SORT_ORDER );
             client.release();
             
@@ -422,7 +438,7 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    @Override
    protected void refreshTags( WrappingLayout tagsLayout )
    {
-      tagsLayout.setVisibility( View.GONE );
+      tagsContainer.setVisibility( View.GONE );
       
       // if ( !isCommonAttrib( Tasks.TAGS )
       // && getCurrentValue( Tasks.TAGS, String.class ).equals( TAGS_MULTI_VALUE ) )
@@ -442,7 +458,7 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    @Override
    protected void refreshDue( EditText dueEdit )
    {
-      dueEdit.setVisibility( View.GONE );
+      dueContainer.setVisibility( View.GONE );
    }
    
 
@@ -450,7 +466,7 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    @Override
    protected void refreshEstimate( EditText estimateEdit )
    {
-      estimateEdit.setVisibility( View.GONE );
+      estimateContainer.setVisibility( View.GONE );
    }
    
 
@@ -458,7 +474,7 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    @Override
    protected void refreshRecurrence( EditText recurrEdit )
    {
-      recurrEdit.setVisibility( View.GONE );
+      recurrContainer.setVisibility( View.GONE );
    }
    
 
@@ -466,9 +482,10 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    @Override
    protected ModificationSet getModifications()
    {
-      final ModificationSet modifications = new ModificationSet();
-      
-      return modifications;
+      if ( tasks != null )
+         return createModificationSet( tasks );
+      else
+         return new ModificationSet();
    }
    
 

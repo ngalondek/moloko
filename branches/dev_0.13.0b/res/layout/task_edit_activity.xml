@@ -139,6 +139,7 @@
                android:text="@string/task_edit_tags" />
 
             <RelativeLayout
+               android:id="@+id/task_edit_tags_layout"
                android:layout_width="fill_parent"
                android:layout_height="wrap_content"
                android:layout_marginTop="3dip">

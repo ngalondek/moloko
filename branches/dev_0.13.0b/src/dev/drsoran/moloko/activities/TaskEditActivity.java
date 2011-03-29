@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.Collections;
+
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,16 +34,10 @@ import android.widget.TextView;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.Tags;
-import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -105,160 +101,10 @@ public class TaskEditActivity extends AbstractTaskEditActivity
    @Override
    protected ModificationSet getModifications()
    {
-      final ModificationSet modifications = new ModificationSet();
-      
-      // Task name
-      {
-         final String taskName = getCurrentValue( Tasks.TASKSERIES_NAME,
-                                                  String.class );
-         
-         if ( SyncUtils.hasChanged( task.getName(), taskName ) )
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.TASKSERIES_NAME,
-                                                             taskName ) );
-      }
-      
-      // List
-      {
-         final String selectedListId = getCurrentValue( Tasks.LIST_ID,
-                                                        String.class );
-         
-         if ( SyncUtils.hasChanged( task.getListId(), selectedListId ) )
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.LIST_ID,
-                                                             selectedListId ) );
-      }
-      
-      // Priority
-      {
-         final String selectedPriority = getCurrentValue( Tasks.PRIORITY,
-                                                          String.class );
-         
-         if ( SyncUtils.hasChanged( RtmTask.convertPriority( task.getPriority() ),
-                                    selectedPriority ) )
-            modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                       task.getId() ),
-                                                             RawTasks.PRIORITY,
-                                                             selectedPriority ) );
-      }
-      
-      // Tags
-      {
-         final String tags = getCurrentValue( Tasks.TAGS, String.class );
-         
-         if ( SyncUtils.hasChanged( tags, TextUtils.join( Tags.TAGS_SEPARATOR,
-                                                          task.getTags() ) ) )
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.TAGS,
-                                                             tags ) );
-      }
-      
-      // Due
-      {
-         Long newDue = getCurrentValue( Tasks.DUE_DATE, Long.class );
-         
-         if ( newDue == -1 )
-            newDue = null;
-         
-         if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( task.getDue() ),
-                                    newDue ) )
-         {
-            modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                       task.getId() ),
-                                                             RawTasks.DUE_DATE,
-                                                             newDue ) );
-            
-         }
-         
-         final boolean newHasDueTime = getCurrentValue( Tasks.HAS_DUE_TIME,
-                                                        Boolean.class );
-         
-         if ( SyncUtils.hasChanged( task.hasDueTime(), newHasDueTime ) )
-         {
-            modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                       task.getId() ),
-                                                             RawTasks.HAS_DUE_TIME,
-                                                             newHasDueTime ? 1
-                                                                          : 0 ) );
-         }
-      }
-      
-      // Recurrence
-      {
-         final String recurrence = getCurrentValue( Tasks.RECURRENCE,
-                                                    String.class );
-         
-         if ( SyncUtils.hasChanged( task.getRecurrence(), recurrence ) )
-         {
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.RECURRENCE,
-                                                             recurrence ) );
-            
-            final boolean isEveryRecurrence = getCurrentValue( Tasks.RECURRENCE_EVERY,
-                                                               Boolean.class );
-            
-            if ( SyncUtils.hasChanged( task.isEveryRecurrence(),
-                                       isEveryRecurrence ) )
-            {
-               modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                          task.getTaskSeriesId() ),
-                                                                TaskSeries.RECURRENCE_EVERY,
-                                                                isEveryRecurrence ) );
-            }
-         }
-      }
-      
-      // Estimate
-      {
-         final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
-                                                      Long.class );
-         
-         if ( SyncUtils.hasChanged( task.getEstimateMillis(), estimateMillis ) )
-         {
-            modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                       task.getId() ),
-                                                             RawTasks.ESTIMATE,
-                                                             getCurrentValue( RawTasks.ESTIMATE,
-                                                                              String.class ) ) );
-            
-            modifications.add( Modification.newModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                       task.getId() ),
-                                                             RawTasks.ESTIMATE_MILLIS,
-                                                             estimateMillis ) );
-         }
-      }
-      
-      // Location
-      {
-         final String selectedLocation = getCurrentValue( Tasks.LOCATION_ID,
-                                                          String.class );
-         
-         if ( SyncUtils.hasChanged( task.getLocationId(), selectedLocation ) )
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.LOCATION_ID,
-                                                             selectedLocation ) );
-      }
-      
-      // URL
-      {
-         final String newUrl = getCurrentValue( Tasks.URL, String.class );
-         
-         if ( SyncUtils.hasChanged( task.getUrl(), newUrl ) )
-            modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                       task.getTaskSeriesId() ),
-                                                             TaskSeries.URL,
-                                                             newUrl ) );
-      }
-      
-      // set the taskseries modification time to now
-      modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
-      
-      return modifications;
+      if ( task != null )
+         return createModificationSet( Collections.singletonList( task ) );
+      else
+         return new ModificationSet();
    }
    
 

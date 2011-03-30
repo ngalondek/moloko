@@ -116,6 +116,7 @@
    <string name="btn_done">Fertig</string>
    <string name="btn_complete">Erledigt</string>
    <string name="btn_uncomplete">Unerledigt</string>
+   <string name="btn_postpone">Aufschieben</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>

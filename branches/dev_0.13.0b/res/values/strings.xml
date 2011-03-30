@@ -157,6 +157,7 @@
    <string name="btn_done">Done</string>
    <string name="btn_complete">Complete</string>
    <string name="btn_uncomplete">Uncomplete</string>
+   <string name="btn_postpone">Postpone</string>
 	
 	<!-- Global menu items -->
    <string name="menu_opt_search_task_title">Search for tasks</string>

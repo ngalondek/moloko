@@ -113,6 +113,20 @@ public class MolokoDateUtils
    
 
 
+   public static boolean isBefore( long when, long reference )
+   {
+      return ( getTimespanInDays( when, reference ) < 0 );
+   }
+   
+
+
+   public static boolean isAfter( long when, long reference )
+   {
+      return ( getTimespanInDays( when, reference ) > 0 );
+   }
+   
+
+
    public static int getTimespanInDays( long start, long end )
    {
       final TimeZone timeZone = MolokoApp.getSettings().getTimezone();

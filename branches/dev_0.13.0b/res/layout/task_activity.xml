@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
-      free software: you can redistribute it and/or modify it under the terms of
-      the GNU General Public License as published by the Free Software
-      Foundation, either version 3 of the License, or (at your option) any later
-      version. Moloko is distributed in the hope that it will be useful, but
-      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-      for more details. You should have received a copy of the GNU General
-      Public License along with Moloko. If not, see
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
       implementation
    -->
@@ -17,7 +18,8 @@
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    style="@style/Task"
-   android:layout_width="fill_parent" android:layout_height="fill_parent">
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
 
    <ScrollView
       android:layout_width="fill_parent"
@@ -85,7 +87,7 @@
                   android:layout_alignWithParentIfMissing="true"
                   android:layout_marginTop="3dip"
                   android:layout_marginRight="?android:attr/scrollbarSize">
-                  
+
                   <TextView
                      android:id="@+id/task_overview_postponed"
                      style="@style/Task_Source_Text"
@@ -96,14 +98,14 @@
                      android:drawableLeft="@drawable/ic_small_black_postponed"
                      android:drawablePadding="2dip"
                      android:text="@string/task_postponed" />
-                     
+
                   <TextView
                      android:id="@+id/task_overview_src"
                      style="@style/Task_Source_Text"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:layout_alignParentRight="true"
-                     android:text="@string/task_source" />                     
+                     android:text="@string/task_source" />
                </RelativeLayout>
 
                <TextView
@@ -216,7 +218,7 @@
 
       </LinearLayout>
    </ScrollView>
-   
+
    <LinearLayout
       android:layout_width="fill_parent"
       android:layout_height="70dip"
@@ -227,12 +229,25 @@
          android:id="@+id/task_button_complete"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
+         android:layout_marginLeft="5dip"
          android:layout_marginTop="5dip"
          android:layout_marginBottom="5dip"
          android:layout_gravity="center"
-         android:layout_weight="1.0"
+         android:layout_weight="0.5"
          android:text="@string/btn_complete"
-         android:onClick="onCompleteTask" />    
+         android:onClick="onCompleteTask" />
+
+      <Button
+         android:id="@+id/task_button_postpone"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginRight="5dip"
+         android:layout_marginTop="5dip"
+         android:layout_marginBottom="5dip"
+         android:layout_gravity="center"
+         android:layout_weight="0.5"
+         android:text="@string/btn_postpone"
+         android:onClick="onPostponeTask" />
    </LinearLayout>
 
 </FrameLayout>

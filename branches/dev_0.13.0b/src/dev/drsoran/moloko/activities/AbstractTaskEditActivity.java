@@ -32,8 +32,8 @@ import java.util.concurrent.ExecutionException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
@@ -45,12 +45,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -58,11 +58,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
@@ -389,10 +389,9 @@ abstract class AbstractTaskEditActivity extends Activity
          @Override
          public void afterTextChanged( Editable s )
          {
-            if ( TextUtils.isEmpty( s ) )
-               putChange( Tasks.URL, null, String.class );
-            else
-               putChange( Tasks.URL, s.toString(), String.class );
+            putChange( Tasks.URL,
+                       Strings.nullIfEmpty( s.toString() ),
+                       String.class );
          }
       } );
    }
@@ -947,8 +946,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refeshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                    String.class ),
-                                   -1 );
+                                                    String.class ), -1 );
    }
    
 
@@ -1039,8 +1037,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByEntry( getCurrentValue( Tasks.LOCATION_ID,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
 

@@ -115,14 +115,14 @@ public class MolokoDateUtils
 
    public static boolean isBefore( long when, long reference )
    {
-      return ( getTimespanInDays( when, reference ) < 0 );
+      return ( getTimespanInDays( when, reference ) > 0 );
    }
    
 
 
    public static boolean isAfter( long when, long reference )
    {
-      return ( getTimespanInDays( when, reference ) > 0 );
+      return ( getTimespanInDays( when, reference ) < 0 );
    }
    
 
@@ -133,8 +133,10 @@ public class MolokoDateUtils
       final int offStart = timeZone.getOffset( start ) / 1000; // in sec.
       final int offEnd = timeZone.getOffset( end ) / 1000; // in sec.
       
-      return ( Time.getJulianDay( end, offEnd ) - Time.getJulianDay( start,
-                                                                     offStart ) );
+      final int span = Time.getJulianDay( end, offEnd )
+         - Time.getJulianDay( start, offStart );
+      
+      return span;
    }
    
 

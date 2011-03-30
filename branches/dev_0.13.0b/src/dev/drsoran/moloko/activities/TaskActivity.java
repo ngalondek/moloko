@@ -22,10 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.content.ContentProviderClient;
@@ -49,21 +46,17 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.LocationChooser;
-import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Participant;
 import dev.drsoran.rtm.ParticipantList;
@@ -261,18 +254,9 @@ public class TaskActivity extends Activity
    {
       if ( task != null )
       {
-         final ModificationSet modifications = new ModificationSet();
-         
-         modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                          task.getId(),
-                                                          RawTasks.COMPLETED_DATE,
-                                                          task.getCompleted() != null
-                                                                                     ? null
-                                                                                     : System.currentTimeMillis() ) );
-         
-         modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
-         
-         applyModifications( modifications );
+         TaskEditUtils.setTaskCompletion( this,
+                                          task,
+                                          task.getCompleted() == null );
       }
       
       finish();
@@ -284,45 +268,7 @@ public class TaskActivity extends Activity
    {
       if ( task != null )
       {
-         final ModificationSet modifications = new ModificationSet();
-         
-         final Date due = task.getDue();
-         final Calendar now = DateParser.getCalendar();
-         
-         // If the task has no due date or is overdue, its due date is set to today.
-         if ( due == null
-            || MolokoDateUtils.isBefore( due.getTime(), now.getTimeInMillis() ) )
-         {
-            modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                             task.getId(),
-                                                             RawTasks.DUE_DATE,
-                                                             now.getTimeInMillis() ) );
-            
-            if ( task.hasDueTime() )
-            {
-               modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                                task.getId(),
-                                                                RawTasks.HAS_DUE_TIME,
-                                                                false ) );
-            }
-         }
-         
-         // Otherwise, the task due date is advanced a day.
-         else
-         {
-            final Calendar cal = DateParser.getCalendar();
-            cal.setTime( due );
-            cal.roll( Calendar.DAY_OF_YEAR, true );
-            
-            modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                             task.getId(),
-                                                             RawTasks.DUE_DATE,
-                                                             cal.getTimeInMillis() ) );
-         }
-         
-         modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
-         
-         applyModifications( modifications );
+         TaskEditUtils.postponeTask( this, task );
       }
       
       finish();
@@ -691,31 +637,4 @@ public class TaskActivity extends Activity
          }
       }
    }
-   
-
-
-   private void applyModifications( final ModificationSet modifications )
-   {
-      boolean ok = false;
-      
-      try
-      {
-         ok = new ApplyModificationsTask( this ).execute( modifications ).get();
-      }
-      catch ( InterruptedException e )
-      {
-         Log.e( TAG, "Applying task changes failed", e );
-         ok = false;
-      }
-      catch ( ExecutionException e )
-      {
-         Log.e( TAG, "Applying task changes failed", e );
-         ok = false;
-      }
-      
-      Toast.makeText( this,
-                      ok ? R.string.task_save_ok : R.string.task_save_error,
-                      Toast.LENGTH_LONG ).show();
-   }
-   
 }

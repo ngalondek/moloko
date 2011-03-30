@@ -24,31 +24,25 @@ package dev.drsoran.moloko.activities;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
-import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.SelectableListTask;
@@ -79,6 +73,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       public final static int COMPLETE = START_IDX + 5;
       
       public final static int UNCOMPLETE = START_IDX + 6;
+      
+      public final static int POSTPONE = START_IDX + 7;
    }
    
 
@@ -176,6 +172,14 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                               R.drawable.ic_menu_incomplete,
                               someSelected && selCompl == selCnt );
          
+         addOptionalMenuItem( menu,
+                              OptionsMenu.POSTPONE,
+                              getString( R.string.select_multiple_tasks_menu_opt_postpone,
+                                         selCnt ),
+                              OptionsMenu.MENU_ORDER + 3,
+                              R.drawable.ic_menu_postponed,
+                              someSelected );
+         
          final MenuItem selAllItem = menu.findItem( OptionsMenu.SELECT_ALL );
          selAllItem.setEnabled( !allSelected );
          
@@ -264,6 +268,25 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                                                                           int which )
                                                                      {
                                                                         onSelectedTasksCompletion( false );
+                                                                     }
+                                                                  } )
+                                              .setNegativeButton( R.string.btn_cancel,
+                                                                  null )
+                                              .show();
+               return true;
+               
+            case OptionsMenu.POSTPONE:
+               new AlertDialog.Builder( this ).setMessage( getString( R.string.select_multiple_tasks_dlg_postpone,
+                                                                      adapter.getSelectedCount(),
+                                                                      getResources().getQuantityString( R.plurals.g_task,
+                                                                                                        adapter.getSelectedCount() ) ) )
+                                              .setPositiveButton( R.string.btn_postpone,
+                                                                  new OnClickListener()
+                                                                  {
+                                                                     public void onClick( DialogInterface dialog,
+                                                                                          int which )
+                                                                     {
+                                                                        onSelectedTasksPostpone();
                                                                      }
                                                                   } )
                                               .setNegativeButton( R.string.btn_cancel,
@@ -457,48 +480,15 @@ public class SelectMultipleTasksActivity extends TasksListActivity
 
    private void onSelectedTasksCompletion( boolean complete )
    {
-      final List< SelectableListTask > tasks = getListAdapter().getSelectedTasks();
-      
-      if ( !tasks.isEmpty() )
-      {
-         final ModificationSet modifications = new ModificationSet();
-         
-         for ( SelectableListTask task : tasks )
-         {
-            modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
-            
-            modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                             task.getId(),
-                                                             RawTasks.COMPLETED_DATE,
-                                                             complete
-                                                                     ? System.currentTimeMillis()
-                                                                     : null ) );
-         }
-         
-         boolean ok = false;
-         
-         try
-         {
-            ok = new ApplyModificationsTask( this ).execute( modifications )
-                                                   .get();
-         }
-         catch ( InterruptedException e )
-         {
-            Log.e( TAG, "Applying task changes failed", e );
-            ok = false;
-         }
-         catch ( ExecutionException e )
-         {
-            Log.e( TAG, "Applying task changes failed", e );
-            ok = false;
-         }
-         
-         Toast.makeText( this,
-                         ok ? R.string.task_save_ok : R.string.task_save_error,
-                         Toast.LENGTH_SHORT ).show();
-         
-         if ( ok )
-            fillListAsync();
-      }
+      TaskEditUtils.setTasksCompletion( this,
+                                        getListAdapter().getSelectedTasks(),
+                                        complete );
+   }
+   
+
+
+   private void onSelectedTasksPostpone()
+   {
+      TaskEditUtils.postponeTasks( this, getListAdapter().getSelectedTasks() );
    }
 }

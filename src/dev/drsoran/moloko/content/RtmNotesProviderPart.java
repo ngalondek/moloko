@@ -94,8 +94,11 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
       else
          values.putNull( Notes.NOTE_TITLE );
       
-      values.put( Notes.NOTE_TEXT, note.getText() );
-      
+      if ( !TextUtils.isEmpty( note.getText() ) )
+         values.put( Notes.NOTE_TEXT, note.getText() );
+      else
+         values.putNull( Notes.NOTE_TEXT );
+
       return values;
    }
    
@@ -224,9 +227,8 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          + Notes.NOTE_CREATED_DATE + " INTEGER NOT NULL, "
          + Notes.NOTE_MODIFIED_DATE + " INTEGER, " + Notes.NOTE_DELETED
          + " INTEGER, " + Notes.NOTE_TITLE + " TEXT, " + Notes.NOTE_TEXT
-         + " TEXT NOT NULL, " + "CONSTRAINT PK_NOTES PRIMARY KEY ( \""
-         + Notes._ID + "\" ), "
-         + "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( "
+         + " TEXT, " + "CONSTRAINT PK_NOTES PRIMARY KEY ( \"" + Notes._ID
+         + "\" ), " + "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( "
          + Notes.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH + " ( "
          + TaskSeries._ID + " ) );" );
    }
@@ -311,6 +313,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                                                   COL_INDICES.get( Notes.NOTE_DELETED ) ),
                               Queries.getOptString( c,
                                                     COL_INDICES.get( Notes.NOTE_TITLE ) ),
-                              c.getString( COL_INDICES.get( Notes.NOTE_TEXT ) ) );
+                              Queries.getOptString( c,
+                                                    COL_INDICES.get( Notes.NOTE_TEXT ) ) );
    }
 }

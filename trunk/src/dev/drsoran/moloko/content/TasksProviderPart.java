@@ -236,7 +236,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                    + Notes.PATH
                                                                    + "."
                                                                    + Notes.NOTE_DELETED
-                                                                   + "=0",
+                                                                   + " IS NULL",
                                                                 null,
                                                                 null,
                                                                 null,

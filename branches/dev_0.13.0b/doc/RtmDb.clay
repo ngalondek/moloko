@@ -292,6 +292,9 @@
 </table>
 <table id="8339e4:12d9ed556c8:-7fe6" name="modifications">
 <column-list>
+<column auto-increment="true" column-size="0" decimal-digits="0" default-value="" id="525ec3:12f0aaa76db:-7fe3" mandatory="true" name="_id">
+<data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
+</column>
 <column auto-increment="false" column-size="0" decimal-digits="0" default-value="" id="8339e4:12d9ed556c8:-7fdf" mandatory="true" name="entity_uri">
 <data-type name="TEXT" selected-variant-pattern="TEXT"/>
 </column>
@@ -308,7 +311,9 @@
 <data-type name="INTEGER" selected-variant-pattern="INTEGER"/>
 </column>
 </column-list>
-<primary-key id="8339e4:12d9ed556c8:-7fe5" name="PK_MODIFICATIONS"/>
+<primary-key id="8339e4:12d9ed556c8:-7fe5" name="PK_MODIFICATIONS">
+<primary-key-column name="_id"/>
+</primary-key>
 </table>
 <table id="1ecfc22:12e03bc8e0c:-7fe5" name="rollbacks">
 <column-list>

@@ -47,6 +47,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.rtm.Task;
 
@@ -126,6 +127,18 @@ public final class UIUtils
       else
       {
          activity.setTitle( text );
+      }
+   }
+   
+
+
+   public final static void showTitleBarAddTask( Activity activity, boolean show )
+   {
+      final TitleBarLayout titleBar = (TitleBarLayout) activity.findViewById( R.id.app_title_bar );
+      
+      if ( titleBar != null )
+      {
+         titleBar.showAddTaskInput( show );
       }
    }
    

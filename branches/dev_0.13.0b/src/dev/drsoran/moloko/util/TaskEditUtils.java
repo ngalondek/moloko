@@ -143,14 +143,6 @@ public final class TaskEditUtils
                                                                              task.getId(),
                                                                              RawTasks.DUE_DATE,
                                                                              cal.getTimeInMillis() ) );
-               
-               if ( task.hasDueTime() )
-               {
-                  modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
-                                                                                task.getId(),
-                                                                                RawTasks.HAS_DUE_TIME,
-                                                                                false ) );
-               }
             }
             
             // Otherwise, the task due date is advanced a day.

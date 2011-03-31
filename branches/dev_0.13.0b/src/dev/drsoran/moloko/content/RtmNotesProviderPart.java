@@ -119,7 +119,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                                                                    .append( taskSeriesId )
                                                                    .append( " AND " )
                                                                    .append( Notes.NOTE_DELETED )
-                                                                   .append( "=0" )
+                                                                   .append( " IS NULL" )
                                                                    .toString(),
                            null,
                            null );
@@ -174,7 +174,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
                                                          .append( noteId )
                                                          .append( " AND " )
                                                          .append( Notes.NOTE_DELETED )
-                                                         .append( "=0" )
+                                                         .append( " IS NULL" )
                                                          .toString(),
                            null,
                            null );

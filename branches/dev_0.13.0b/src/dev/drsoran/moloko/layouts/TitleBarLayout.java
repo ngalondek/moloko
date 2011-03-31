@@ -29,6 +29,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Checkable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
@@ -38,9 +39,16 @@ import dev.drsoran.moloko.activities.HomeActivity;
 public class TitleBarLayout extends LinearLayout implements
          View.OnClickListener
 {
+   private final Checkable addTaskBtn;
+   
+   
+
    public TitleBarLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      
+      setId( R.id.app_title_bar );
+      setOrientation( LinearLayout.VERTICAL );
       
       LayoutInflater.from( context )
                     .inflate( R.layout.app_titlebar, this, true );
@@ -54,23 +62,31 @@ public class TitleBarLayout extends LinearLayout implements
       if ( titleText != null )
          ( (TextView) findViewById( R.id.app_titlebar_text ) ).setText( titleText );
       
-      findViewById( R.id.app_titlebar_btn_home ).setOnClickListener( this );
-      findViewById( R.id.app_titlebar_btn_search ).setOnClickListener( this );
-      
       final int showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
       
       // Show search button
       if ( ( showButtons & 1 ) != 0 )
       {
          setVisible( R.id.app_titlebar_sep_search );
-         setVisible( R.id.app_titlebar_btn_search );
+         setBtnVisible( R.id.app_titlebar_btn_search );
       }
       
       // Show home button
       if ( ( showButtons & 2 ) != 0 )
       {
          setVisible( R.id.app_titlebar_sep_home );
-         setVisible( R.id.app_titlebar_btn_home );
+         setBtnVisible( R.id.app_titlebar_btn_home );
+      }
+      
+      // Show add task button
+      if ( ( showButtons & 4 ) != 0 )
+      {
+         setVisible( R.id.app_titlebar_sep_add_task );
+         addTaskBtn = (Checkable) setBtnVisible( R.id.app_titlebar_btn_add_task );
+      }
+      else
+      {
+         addTaskBtn = null;
       }
       
       array.recycle();
@@ -78,9 +94,34 @@ public class TitleBarLayout extends LinearLayout implements
    
 
 
+   public void showAddTaskInput( boolean visible )
+   {
+      if ( addTaskBtn != null )
+      {
+         if ( addTaskBtn.isChecked() != visible )
+         {
+            addTaskBtn.setChecked( visible );
+            addOrRemoveAddTaskLayout();
+         }
+      }
+   }
+   
+
+
    private void setVisible( int id )
    {
       findViewById( id ).setVisibility( VISIBLE );
+   }
+   
+
+
+   private View setBtnVisible( int id )
+   {
+      final View btn = findViewById( id );
+      btn.setOnClickListener( this );
+      btn.setVisibility( View.VISIBLE );
+      
+      return btn;
    }
    
 
@@ -104,8 +145,32 @@ public class TitleBarLayout extends LinearLayout implements
             getContext().startActivity( intent );
             break;
          
+         case R.id.app_titlebar_btn_add_task:
+            if ( addTaskBtn != null )
+               addOrRemoveAddTaskLayout();
+            break;
+         
          default :
             break;
       }
+   }
+   
+
+
+   private final void addOrRemoveAddTaskLayout()
+   {
+      if ( addTaskBtn.isChecked() )
+      {
+         LayoutInflater.from( getContext() )
+                       .inflate( R.layout.app_titlebar_quick_add_task,
+                                 this,
+                                 true )
+                       .findViewById( R.id.app_titlebar_quick_add_task_edit )
+                       .requestFocus();
+      }
+      else
+         removeView( findViewById( R.id.app_titlebar_quick_add_task_layout ) );
+      
+      requestLayout();
    }
 }

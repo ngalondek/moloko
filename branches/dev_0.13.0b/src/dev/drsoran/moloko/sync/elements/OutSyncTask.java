@@ -44,7 +44,6 @@ import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
-import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -55,6 +54,8 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
 {
+   private final static String TAG = OutSyncTask.class.toString();
+   
    
    private final static class LessIdComperator implements
             Comparator< OutSyncTask >
@@ -362,15 +363,35 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
          
          // Postponed
          {
-            final int serverPostponed = serverElement.task.getPostponed();
             final int localPostponed = task.getPostponed();
             
             if ( SyncUtils.getSyncDirection( properties,
                                              RawTasks.POSTPONED,
-                                             serverPostponed,
+                                             serverElement.task.getPostponed(),
                                              localPostponed,
                                              Integer.class ) == SyncResultDirection.SERVER )
             {
+               final int serverPostponed;
+               
+               // In case we have no server element (incremental sync), we look for the modification
+               if ( serverElement == this )
+               {
+                  final Modification modification = modifications.find( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                  task.getId() ),
+                                                                        RawTasks.POSTPONED );
+                  if ( modification != null )
+                     serverPostponed = modification.getSyncedValue( Integer.class );
+                  else
+                  {
+                     serverPostponed = localPostponed;
+                     Log.e( TAG, "Expected postponed modification" );
+                  }
+               }
+               else
+               {
+                  serverPostponed = serverElement.task.getPostponed();
+               }
+               
                // Postpone the task "the difference between local and server" times.
                final int diffPostponed = localPostponed - serverPostponed;
                
@@ -389,10 +410,9 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                }
                else
                {
-                  Log.w( LogUtils.toTag( OutSyncTask.class ),
-                         "Unexpected postponed difference " + diffPostponed
-                            + ". server=" + serverPostponed + ", local="
-                            + localPostponed );
+                  Log.w( TAG, "Unexpected postponed difference "
+                     + diffPostponed + ". server=" + serverPostponed
+                     + ", local=" + localPostponed );
                }
             }
          }

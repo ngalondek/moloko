@@ -38,6 +38,7 @@
 	<string name="app_sort_alpha">Task Name</string>
    <string name="app_sort_prio">Priority</string>
    <string name="app_sort_due_date">Due Date</string>
+   <string name="app_titlebar_add_task_hint">New task</string>
    
    <string name="svc_sync">RTM Synchronization</string>	
    <string name="svc_auth">RTM Authentication</string>
@@ -158,6 +159,7 @@
    <string name="btn_complete">Complete</string>
    <string name="btn_uncomplete">Uncomplete</string>
    <string name="btn_postpone">Postpone</string>
+   <string name="btn_add">Add</string>
 	
 	<!-- Global menu items -->
    <string name="menu_opt_search_task_title">Search for tasks</string>

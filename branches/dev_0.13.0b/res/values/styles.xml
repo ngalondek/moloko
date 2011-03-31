@@ -66,7 +66,13 @@
       <item
          name="android:layout_width">fill_parent</item>
       <item
-         name="android:layout_height">@dimen/app_titlebar_height</item>
+         name="android:layout_height">wrap_content</item>
+   </style>
+   
+   <style
+      name="App_TitleBar_Expanded">
+      <item
+         name="android:background">@drawable/app_titlebar_expanded_bgnd</item>
    </style>
 
    <style
@@ -88,6 +94,12 @@
       name="App_TitleBar_Btn">
       <item
          name="android:background">@drawable/app_titlebar_btn_bgnd</item>
+   </style>
+   
+   <style
+      name="App_TitleBar_Toggle_Btn">
+      <item
+         name="android:background">@drawable/app_titlebar_toggle_btn_bgnd</item>
    </style>
 
    <style

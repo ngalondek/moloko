@@ -39,14 +39,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -281,6 +281,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          asyncFillList.cancel( true );
       
       asyncFillList = null;
+      
+      UIUtils.showTitleBarAddTask( this, false );
    }
    
 
@@ -302,6 +304,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    @Override
    protected void onNewIntent( Intent intent )
    {
+      UIUtils.showTitleBarAddTask( this, false );
+      
       setIntent( intent );
       handleIntent( intent );
    }

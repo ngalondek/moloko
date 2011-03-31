@@ -638,7 +638,7 @@ public class ServiceImpl implements Service
                                                         String taskId ) throws ServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
-                                                     "rtm.tasks.moveTo" ),
+                                                     "rtm.tasks.postpone" ),
                                           new Param( "timeline", timelineId ),
                                           new Param( "list_id", listId ),
                                           new Param( "taskseries_id",

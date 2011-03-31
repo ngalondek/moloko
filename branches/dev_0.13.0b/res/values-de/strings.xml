@@ -36,6 +36,7 @@
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
    <string name="app_sort_due_date">Fälligkeitsdatum</string>
+   <string name="app_titlebar_add_task_hint">Neue Aufgabe</string>
    
    <string name="svc_sync">RTM Synchronisierung</string>	
    <string name="svc_auth">RTM Authentifizierung</string>
@@ -117,6 +118,7 @@
    <string name="btn_complete">Erledigt</string>
    <string name="btn_uncomplete">Unerledigt</string>
    <string name="btn_postpone">Aufschieben</string>
+   <string name="btn_add">Neu</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>

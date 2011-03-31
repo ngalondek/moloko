@@ -34,6 +34,7 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.rtm.ParcelableDate;
@@ -258,13 +259,13 @@ public class RtmTaskNote extends RtmData implements
       if ( SyncUtils.hasChanged( created, update.created ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Notes.NOTE_CREATED_DATE,
-                                                         update.created )
+                                                         MolokoDateUtils.getTime( update.created ) )
                                              .build() );
       
       if ( SyncUtils.hasChanged( modified, update.modified ) )
          result.add( ContentProviderOperation.newUpdate( uri )
                                              .withValue( Notes.NOTE_MODIFIED_DATE,
-                                                         update.modified )
+                                                         MolokoDateUtils.getTime( update.modified ) )
                                              .build() );
       
       if ( SyncUtils.hasChanged( title, update.title ) )

@@ -136,21 +136,21 @@ public class InSyncRtmTask implements IContentProviderSyncable< InSyncRtmTask >
                                     task.getPostponed() ) )
             operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                     .withValue( RawTasks.POSTPONED,
-                                                                task.getPostponed() )
+                                                                serverElement.task.getPostponed() )
                                                     .build() );
          
          if ( SyncUtils.hasChanged( serverElement.task.getEstimate(),
                                     task.getEstimate() ) )
             operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                     .withValue( RawTasks.ESTIMATE,
-                                                                task.getEstimate() )
+                                                                serverElement.task.getEstimate() )
                                                     .build() );
          
          if ( SyncUtils.hasChanged( serverElement.task.getEstimateMillis(),
                                     task.getEstimateMillis() ) )
             operations.add( ContentProviderOperation.newUpdate( contentUri )
                                                     .withValue( RawTasks.ESTIMATE_MILLIS,
-                                                                task.getEstimateMillis() )
+                                                                serverElement.task.getEstimateMillis() )
                                                     .build() );
       }
       

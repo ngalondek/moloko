@@ -113,6 +113,16 @@ public final class TaskEditUtils
    public final static boolean postponeTasks( Context context,
                                               List< ? extends Task > tasks )
    {
+      /**
+       * NOTE: RTM has no API to set the postponed count. One can only postpone a task and the count is the number of
+       * calls, which affects also the due date of the task. Since we want offline postponing a task, we must alter the
+       * due date only locally, but not sync it out. Finally the date becomes in sync with RTM if we call the postpone
+       * API method and using the returned result task.
+       * 
+       * All following due date modifications are non-persistent. Means they only appear locally but are not going to be
+       * synced out.
+       **/
+      
       boolean ok = true;
       
       if ( !tasks.isEmpty() )
@@ -122,38 +132,37 @@ public final class TaskEditUtils
          for ( Task task : tasks )
          {
             final Date due = task.getDue();
-            final Calendar now = DateParser.getCalendar();
+            final Calendar cal = DateParser.getCalendar();
             
             // If the task has no due date or is overdue, its due date is set to today.
             if ( due == null
                || MolokoDateUtils.isBefore( due.getTime(),
-                                            now.getTimeInMillis() ) )
+                                            cal.getTimeInMillis() ) )
             {
-               modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                                task.getId(),
-                                                                RawTasks.DUE_DATE,
-                                                                now.getTimeInMillis() ) );
+               modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
+                                                                             task.getId(),
+                                                                             RawTasks.DUE_DATE,
+                                                                             cal.getTimeInMillis() ) );
                
                if ( task.hasDueTime() )
                {
-                  modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                                   task.getId(),
-                                                                   RawTasks.HAS_DUE_TIME,
-                                                                   false ) );
+                  modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
+                                                                                task.getId(),
+                                                                                RawTasks.HAS_DUE_TIME,
+                                                                                false ) );
                }
             }
             
             // Otherwise, the task due date is advanced a day.
             else
             {
-               final Calendar cal = DateParser.getCalendar();
                cal.setTime( due );
                cal.roll( Calendar.DAY_OF_YEAR, true );
                
-               modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                                task.getId(),
-                                                                RawTasks.DUE_DATE,
-                                                                cal.getTimeInMillis() ) );
+               modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
+                                                                             task.getId(),
+                                                                             RawTasks.DUE_DATE,
+                                                                             cal.getTimeInMillis() ) );
             }
             
             modifications.add( Modification.newModification( RawTasks.CONTENT_URI,

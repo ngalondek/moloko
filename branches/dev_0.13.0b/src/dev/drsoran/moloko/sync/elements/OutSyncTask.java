@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
@@ -43,6 +44,7 @@ import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -141,7 +143,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       if ( serverElement == null )
          serverElement = this;
       
-      // RtmTaskSeries ///
+      /** RtmTaskSeries **/
       {
          final SyncProperties properties = SyncProperties.newInstance( serverElement == this
                                                                                             ? null
@@ -268,7 +270,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
          }
       }
       
-      // RtmTask ///
+      /** RtmTask **/
       {
          final SyncProperties properties = SyncProperties.newInstance( serverElement == this
                                                                                             ? null
@@ -356,6 +358,43 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                                                                               ? Strings.EMPTY_STRING
                                                                                               : task.getEstimate() ),
                            properties.getModification( TaskSeries.LOCATION_ID ) );
+         }
+         
+         // Postponed
+         {
+            final int serverPostponed = serverElement.task.getPostponed();
+            final int localPostponed = task.getPostponed();
+            
+            if ( SyncUtils.getSyncDirection( properties,
+                                             RawTasks.POSTPONED,
+                                             serverPostponed,
+                                             localPostponed,
+                                             Integer.class ) == SyncResultDirection.SERVER )
+            {
+               // Postpone the task "the difference between local and server" times.
+               final int diffPostponed = localPostponed - serverPostponed;
+               
+               if ( diffPostponed > 0 )
+               {
+                  for ( int i = 0; i < diffPostponed; i++ )
+                  {
+                     operation.add( timeline.tasks_postpone( taskSeries.getListId(),
+                                                             taskSeries.getId(),
+                                                             task.getId() ),
+                                    // Only the last method invocation clears the modification
+                                    i + 1 == diffPostponed
+                                                          ? properties.getModification( RawTasks.POSTPONED )
+                                                          : null );
+                  }
+               }
+               else
+               {
+                  Log.w( LogUtils.toTag( OutSyncTask.class ),
+                         "Unexpected postponed difference " + diffPostponed
+                            + ". server=" + serverPostponed + ", local="
+                            + localPostponed );
+               }
+            }
          }
       }
       

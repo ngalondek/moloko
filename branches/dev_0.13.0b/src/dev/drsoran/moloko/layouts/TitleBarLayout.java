@@ -22,24 +22,316 @@
 
 package dev.drsoran.moloko.layouts;
 
+import java.util.ArrayList;
+
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.Token;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Checkable;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
+import dev.drsoran.moloko.grammar.RtmSmartAddLexer;
+import dev.drsoran.moloko.grammar.RtmSmartAddParser;
+import dev.drsoran.moloko.util.ANTLRReusableStringStream;
+import dev.drsoran.moloko.widgets.ToggleImageButton;
+import dev.drsoran.moloko.widgets.ToggleImageButton.OnCheckedChangeListener;
 
 
 public class TitleBarLayout extends LinearLayout implements
-         View.OnClickListener
+         View.OnClickListener, OnCheckedChangeListener
 {
-   private final Checkable addTaskBtn;
+   private final class AddTaskSection extends LinearLayout implements
+            View.OnClickListener
+   {
+      // private final class Tokenizer implements
+      // MultiAutoCompleteTextView.Tokenizer
+      // {
+      //
+      // public int findTokenEnd( CharSequence text, int cursor )
+      // {
+      // AddTaskSection.this.parseInput( text );
+      //
+      // if ( tokens != null )
+      // {
+      // for ( int i = 0, cnt = tokens.size(); i < cnt; i++ )
+      // {
+      // final Token t = (Token) tokens.get( i );
+      // if ( t.getCharPositionInLine() >= cursor )
+      // return t.getCharPositionInLine() + t.getText().length();
+      // }
+      // }
+      //
+      // return text.length();
+      // }
+      //
+      //
+      //
+      // public int findTokenStart( CharSequence text, int cursor )
+      // {
+      // AddTaskSection.this.parseInput( text );
+      //
+      // if ( tokens != null )
+      // {
+      // for ( int i = tokens.size() - 1; i > -1; i-- )
+      // {
+      // final Token t = (Token) tokens.get( i );
+      // if ( t.getCharPositionInLine() + t.getText().length() <= cursor )
+      // return t.getCharPositionInLine();
+      // }
+      // }
+      //
+      // return 0;
+      // }
+      //
+      //
+      //
+      // public CharSequence terminateToken( CharSequence text )
+      // {
+      // return " ";
+      // }
+      // }
+      
+      private final View container;
+      
+      private final AutoCompleteTextView addTaskEdit;
+      
+      private final Button btnDue;
+      
+      private final Button btnPrio;
+      
+      private final Button btnListTags;
+      
+      private final Button btnLocation;
+      
+      private final Button btnRepeat;
+      
+      private final Button btnEstimate;
+      
+      private ANTLRReusableStringStream stringStream;
+      
+      private CommonTokenStream tokenStream;
+      
+      private RtmSmartAddLexer lexer;
+      
+      private RtmSmartAddParser parser;
+      
+      
+
+      public AddTaskSection( Context context )
+      {
+         super( context );
+         
+         container = LayoutInflater.from( context )
+                                   .inflate( R.layout.app_titlebar_quick_add_task,
+                                             this,
+                                             true )
+                                   .findViewById( R.id.app_titlebar_quick_add_task_layout );
+         addTaskEdit = (AutoCompleteTextView) container.findViewById( R.id.app_titlebar_quick_add_task_edit );
+         // addTaskEdit.setTokenizer( new Tokenizer() );
+         addTaskEdit.setThreshold( 0 );
+         addTaskEdit.addTextChangedListener( new TextWatcher()
+         {
+            public void onTextChanged( CharSequence s,
+                                       int start,
+                                       int before,
+                                       int count )
+            {
+            }
+            
+
+
+            public void beforeTextChanged( CharSequence s,
+                                           int start,
+                                           int count,
+                                           int after )
+            {
+            }
+            
+
+
+            public void afterTextChanged( Editable s )
+            {
+               parseInput( s );
+            }
+         } );
+         
+         btnDue = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_due_date ) );
+         btnPrio = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_prio ) );
+         btnListTags = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_list_tags ) );
+         btnLocation = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_location ) );
+         btnRepeat = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_repeat ) );
+         btnEstimate = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_estimate ) );
+         
+         btnDue.setOnClickListener( this );
+         btnPrio.setOnClickListener( this );
+         btnListTags.setOnClickListener( this );
+         btnLocation.setOnClickListener( this );
+         btnRepeat.setOnClickListener( this );
+         btnEstimate.setOnClickListener( this );
+      }
+      
+
+
+      public void show( boolean show )
+      {
+         container.setVisibility( show ? View.VISIBLE : View.GONE );
+         
+         if ( show )
+         {
+            addTaskEdit.requestFocus();
+         }
+      }
+      
+
+
+      public void onClick( View view )
+      {
+         switch ( view.getId() )
+         {
+            case R.id.app_titlebar_quick_add_task_btn_due_date:
+               addTaskEdit.getEditableText().append( " ^" );
+               break;
+            
+            case R.id.app_titlebar_quick_add_task_btn_prio:
+               addTaskEdit.getEditableText().append( " !" );
+               break;
+            
+            case R.id.app_titlebar_quick_add_task_btn_list_tags:
+               addTaskEdit.getEditableText().append( " #" );
+               break;
+            
+            case R.id.app_titlebar_quick_add_task_btn_location:
+               addTaskEdit.getEditableText().append( " @" );
+               break;
+            
+            case R.id.app_titlebar_quick_add_task_btn_repeat:
+               addTaskEdit.getEditableText().append( " *" );
+               break;
+            
+            case R.id.app_titlebar_quick_add_task_btn_estimate:
+               addTaskEdit.getEditableText().append( " =" );
+               break;
+            
+            default :
+               break;
+         }
+      }
+      
+
+
+      @Override
+      public Parcelable onSaveInstanceState()
+      {
+         return super.onSaveInstanceState();
+      }
+      
+
+
+      @Override
+      public void onRestoreInstanceState( Parcelable state )
+      {
+         super.onRestoreInstanceState( state );
+      }
+      
+
+
+      private void parseInput( CharSequence input )
+      {
+         if ( parser == null )
+            createParser();
+         
+         stringStream.reset( input.toString() );
+         lexer.setCharStream( stringStream );
+         
+         tokenStream.setTokenSource( lexer );
+         // parser.setTokenStream( tokenStream );
+         
+         @SuppressWarnings( "rawtypes" )
+         final ArrayList tokens = (ArrayList) tokenStream.getTokens();
+         
+         for ( int i = tokens.size() - 1; i > -1; i-- )
+         {
+            final Token t = (Token) tokens.get( i );
+            
+            switch ( t.getType() )
+            {
+               case RtmSmartAddLexer.OP_DUE_DATE:
+                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
+                                                                      android.R.layout.simple_dropdown_item_1line,
+                                                                      new String[]
+                                                                      { "DUE" } ) );
+                  addTaskEdit.showDropDown();
+                  return;
+               case RtmSmartAddLexer.OP_PRIORITY:
+                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
+                                                                      android.R.layout.simple_dropdown_item_1line,
+                                                                      new String[]
+                                                                      { "OP_PRIORITY" } ) );
+                  addTaskEdit.showDropDown();
+                  return;
+               case RtmSmartAddLexer.OP_LIST_OR_TAGS:
+                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
+                                                                      android.R.layout.simple_dropdown_item_1line,
+                                                                      new String[]
+                                                                      { "OP_LIST_OR_TAGS" } ) );
+                  addTaskEdit.showDropDown();
+                  return;
+               case RtmSmartAddLexer.OP_LOCATION:
+                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
+                                                                      android.R.layout.simple_dropdown_item_1line,
+                                                                      new String[]
+                                                                      { "OP_LOCATION" } ) );
+                  addTaskEdit.showDropDown();
+                  return;
+               case RtmSmartAddLexer.OP_REPEAT:
+                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
+                                                                      android.R.layout.simple_dropdown_item_1line,
+                                                                      new String[]
+                                                                      { "OP_REPEAT" } ) );
+                  addTaskEdit.showDropDown();
+                  return;
+               case RtmSmartAddLexer.OP_ESTIMATE:
+                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
+                                                                      android.R.layout.simple_dropdown_item_1line,
+                                                                      new String[]
+                                                                      { "OP_ESTIMATE" } ) );
+                  addTaskEdit.showDropDown();
+                  return;
+               default :
+                  break;
+            }
+         }
+      }
+      
+
+
+      private void createParser()
+      {
+         stringStream = new ANTLRReusableStringStream();
+         tokenStream = new CommonTokenStream();
+         lexer = new RtmSmartAddLexer();
+         parser = new RtmSmartAddParser( null );
+      }
+   }
+   
+   private final ToggleImageButton addTaskBtn;
+   
+   private AddTaskSection addTaskSection;
    
    
 
@@ -82,7 +374,8 @@ public class TitleBarLayout extends LinearLayout implements
       if ( ( showButtons & 4 ) != 0 )
       {
          setVisible( R.id.app_titlebar_sep_add_task );
-         addTaskBtn = (Checkable) setBtnVisible( R.id.app_titlebar_btn_add_task );
+         addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
+         addTaskBtn.setOnCheckedChangeListener( this );
       }
       else
       {
@@ -94,16 +387,52 @@ public class TitleBarLayout extends LinearLayout implements
    
 
 
+   @Override
+   protected Parcelable onSaveInstanceState()
+   {
+      final SavedState ss = new SavedState( super.onSaveInstanceState() );
+      
+      if ( addTaskSection != null )
+         ss.addTaskState = addTaskSection.onSaveInstanceState();
+      
+      return ss;
+   }
+   
+
+
+   @Override
+   protected void onRestoreInstanceState( Parcelable state )
+   {
+      final SavedState ss = (SavedState) state;
+      
+      if ( ss.addTaskState != null )
+      {
+         addTaskSection = new AddTaskSection( getContext() );
+         addTaskSection.onRestoreInstanceState( ss.addTaskState );
+         addView( addTaskSection );
+      }
+      
+      super.onRestoreInstanceState( ss.getSuperState() );
+      
+      requestLayout();
+   }
+   
+
+
    public void showAddTaskInput( boolean visible )
    {
       if ( addTaskBtn != null )
       {
          if ( addTaskBtn.isChecked() != visible )
-         {
             addTaskBtn.setChecked( visible );
-            addOrRemoveAddTaskLayout();
-         }
       }
+   }
+   
+
+
+   public void onCheckedChanged( ToggleImageButton button, boolean checked )
+   {
+      hideOrShowAddTaskLayout();
    }
    
 
@@ -145,11 +474,6 @@ public class TitleBarLayout extends LinearLayout implements
             getContext().startActivity( intent );
             break;
          
-         case R.id.app_titlebar_btn_add_task:
-            if ( addTaskBtn != null )
-               addOrRemoveAddTaskLayout();
-            break;
-         
          default :
             break;
       }
@@ -157,20 +481,69 @@ public class TitleBarLayout extends LinearLayout implements
    
 
 
-   private final void addOrRemoveAddTaskLayout()
+   private final void hideOrShowAddTaskLayout()
    {
       if ( addTaskBtn.isChecked() )
       {
-         LayoutInflater.from( getContext() )
-                       .inflate( R.layout.app_titlebar_quick_add_task,
-                                 this,
-                                 true )
-                       .findViewById( R.id.app_titlebar_quick_add_task_edit )
-                       .requestFocus();
+         if ( addTaskSection == null )
+         {
+            addTaskSection = new AddTaskSection( getContext() );
+            addView( addTaskSection );
+         }
+         
+         addTaskSection.show( true );
       }
       else
-         removeView( findViewById( R.id.app_titlebar_quick_add_task_layout ) );
+      {
+         if ( addTaskSection != null )
+            addTaskSection.show( false );
+      }
       
       requestLayout();
+   }
+   
+   
+   final static class SavedState extends BaseSavedState
+   {
+      Parcelable addTaskState;
+      
+      
+
+      SavedState( Parcelable superState )
+      {
+         super( superState );
+      }
+      
+
+
+      private SavedState( Parcel in )
+      {
+         super( in );
+         addTaskState = in.readParcelable( null );
+      }
+      
+
+
+      @Override
+      public void writeToParcel( Parcel out, int flags )
+      {
+         super.writeToParcel( out, flags );
+         out.writeParcelable( addTaskState, flags );
+      }
+      
+      public static final Parcelable.Creator< SavedState > CREATOR = new Parcelable.Creator< SavedState >()
+      {
+         public SavedState createFromParcel( Parcel in )
+         {
+            return new SavedState( in );
+         }
+         
+
+
+         public SavedState[] newArray( int size )
+         {
+            return new SavedState[ size ];
+         }
+      };
    }
 }

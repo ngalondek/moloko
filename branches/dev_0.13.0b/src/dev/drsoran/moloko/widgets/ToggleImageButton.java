@@ -34,7 +34,16 @@ import android.widget.ImageButton;
 
 public class ToggleImageButton extends ImageButton implements Checkable
 {
+   public interface OnCheckedChangeListener
+   {
+      void onCheckedChanged( ToggleImageButton button, boolean checked );
+   }
+   
    private boolean checked = false;
+   
+   private OnCheckedChangeListener onCheckedChangeListener;
+   
+   private boolean broadcasting = false;
    
    private static final int[] CHECKED_STATE_SET =
    { android.R.attr.state_checked };
@@ -75,6 +84,20 @@ public class ToggleImageButton extends ImageButton implements Checkable
       {
          this.checked = checked;
          refreshDrawableState();
+         
+         // Avoid infinite recursions if setChecked() is called from a listener
+         if ( broadcasting )
+         {
+            return;
+         }
+         
+         broadcasting = true;
+         if ( onCheckedChangeListener != null )
+         {
+            onCheckedChangeListener.onCheckedChanged( this, checked );
+         }
+         
+         broadcasting = false;
       }
    }
    
@@ -83,6 +106,13 @@ public class ToggleImageButton extends ImageButton implements Checkable
    public void toggle()
    {
       setChecked( !checked );
+   }
+   
+
+
+   public void setOnCheckedChangeListener( OnCheckedChangeListener listener )
+   {
+      onCheckedChangeListener = listener;
    }
    
 
@@ -173,7 +203,7 @@ public class ToggleImageButton extends ImageButton implements Checkable
    }
    
    
-   static class SavedState extends BaseSavedState
+   final static class SavedState extends BaseSavedState
    {
       boolean checked;
       
@@ -206,7 +236,7 @@ public class ToggleImageButton extends ImageButton implements Checkable
       @Override
       public String toString()
       {
-         return FocusableWheelView.class.getSimpleName() + ".SavedState{"
+         return ToggleImageButton.class.getSimpleName() + ".SavedState{"
             + Integer.toHexString( System.identityHashCode( this ) )
             + " checked=" + checked + "}";
       }

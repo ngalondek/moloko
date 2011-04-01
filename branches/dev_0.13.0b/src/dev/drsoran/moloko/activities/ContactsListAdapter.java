@@ -100,6 +100,8 @@ public class ContactsListAdapter extends ArrayAdapter< Contact >
       
       if ( photo != null )
          picture.setImageBitmap( photo );
+      else
+         picture.setImageResource( R.drawable.ic_list_contactslist_user );
       
       fullname.setText( contact.getFullname() );
       username.setText( contact.getUsername() );
@@ -113,9 +115,9 @@ public class ContactsListAdapter extends ArrayAdapter< Contact >
                                                                           numShared ) ) );
       
       callButton.setVisibility( contact.getLookUpKey() != null
-                                                                ? setCallButton( callButton,
-                                                                                 contact )
-                                                                : View.GONE );
+                                                              ? setCallButton( callButton,
+                                                                               contact )
+                                                              : View.GONE );
       
       return convertView;
    }

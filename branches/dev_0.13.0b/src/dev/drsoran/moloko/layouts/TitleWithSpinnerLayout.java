@@ -27,10 +27,10 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.AdapterView.OnItemSelectedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Strings;
@@ -143,16 +143,15 @@ public class TitleWithSpinnerLayout extends TitleWithViewLayout
 
    public void setSelectionByValue( String value, int notFoundIndex )
    {
-      if ( value == null )
-         throw new NullPointerException( "value is null" );
-      
       if ( values != null )
       {
          boolean found = false;
          
          for ( int i = 0; !found && i < values.length; i++ )
          {
-            if ( values[ i ].equals( value ) )
+            if ( value == null
+               && values[ i ] == null
+               || ( value != null && values[ i ] != null && value.equals( values[ i ] ) ) )
             {
                if ( spinner.getSelectedItemPosition() != i )
                   spinner.setSelection( i );

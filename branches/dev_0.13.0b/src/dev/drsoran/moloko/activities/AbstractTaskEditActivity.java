@@ -317,8 +317,8 @@ abstract class AbstractTaskEditActivity extends Activity
       {
          refreshHeadSection( addedDate, completedDate, postponed, source );
          refreshName( nameEdit );
-         refeshListSpinner( list );
-         refeshPrioritySpinner( priority );
+         refreshListSpinner( list );
+         refreshPrioritySpinner( priority );
          refreshTags( tagsLayout );
          refreshDue( dueEdit );
          refreshRecurrence( recurrEdit );
@@ -618,6 +618,8 @@ abstract class AbstractTaskEditActivity extends Activity
             {
                initializeListSpinner( list, names, values );
                
+               refreshListSpinner( list );
+               
                list.setOnItemSelectedListener( new OnItemSelectedListener()
                {
                   public void onItemSelected( AdapterView< ? > arg0,
@@ -685,26 +687,31 @@ abstract class AbstractTaskEditActivity extends Activity
             // Add the locations to the array
             values = Queries.fillStringArray( c, 0, values, 1 );
             
-            initializeLocationSpinner( location, locationNames, values );
-            
-            location.setOnItemSelectedListener( new OnItemSelectedListener()
+            if ( locationNames != null && values != null )
             {
-               public void onItemSelected( AdapterView< ? > arg0,
-                                           View arg1,
-                                           int arg2,
-                                           long arg3 )
-               {
-                  putChange( Tasks.LOCATION_ID,
-                             location.getSelectedValue(),
-                             String.class );
-               }
+               initializeLocationSpinner( location, locationNames, values );
                
-
-
-               public void onNothingSelected( AdapterView< ? > arg0 )
+               refreshLocationSpinner( location );
+               
+               location.setOnItemSelectedListener( new OnItemSelectedListener()
                {
-               }
-            } );
+                  public void onItemSelected( AdapterView< ? > arg0,
+                                              View arg1,
+                                              int arg2,
+                                              long arg3 )
+                  {
+                     putChange( Tasks.LOCATION_ID,
+                                location.getSelectedValue(),
+                                String.class );
+                  }
+                  
+
+
+                  public void onNothingSelected( AdapterView< ? > arg0 )
+                  {
+                  }
+               } );
+            }
          }
          else
             throw new Exception();
@@ -935,7 +942,7 @@ abstract class AbstractTaskEditActivity extends Activity
    
 
 
-   protected void refeshListSpinner( TitleWithSpinnerLayout spinner )
+   protected void refreshListSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID, String.class ),
                                    -1 );
@@ -943,7 +950,7 @@ abstract class AbstractTaskEditActivity extends Activity
    
 
 
-   protected void refeshPrioritySpinner( TitleWithSpinnerLayout spinner )
+   protected void refreshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
                                                     String.class ), -1 );
@@ -1036,7 +1043,7 @@ abstract class AbstractTaskEditActivity extends Activity
 
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
-      spinner.setSelectionByEntry( getCurrentValue( Tasks.LOCATION_ID,
+      spinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
                                                     String.class ), 0 );
    }
    

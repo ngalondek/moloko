@@ -22,11 +22,6 @@
 
 package dev.drsoran.moloko.layouts;
 
-import java.util.ArrayList;
-
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.Token;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -38,16 +33,14 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
-import dev.drsoran.moloko.grammar.RtmSmartAddLexer;
-import dev.drsoran.moloko.grammar.RtmSmartAddParser;
-import dev.drsoran.moloko.util.ANTLRReusableStringStream;
+import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.util.RtmSmartAddAdapter;
+import dev.drsoran.moloko.widgets.RtmSmartAddTextView;
 import dev.drsoran.moloko.widgets.ToggleImageButton;
 import dev.drsoran.moloko.widgets.ToggleImageButton.OnCheckedChangeListener;
 
@@ -58,57 +51,9 @@ public class TitleBarLayout extends LinearLayout implements
    private final class AddTaskSection extends LinearLayout implements
             View.OnClickListener
    {
-      // private final class Tokenizer implements
-      // MultiAutoCompleteTextView.Tokenizer
-      // {
-      //
-      // public int findTokenEnd( CharSequence text, int cursor )
-      // {
-      // AddTaskSection.this.parseInput( text );
-      //
-      // if ( tokens != null )
-      // {
-      // for ( int i = 0, cnt = tokens.size(); i < cnt; i++ )
-      // {
-      // final Token t = (Token) tokens.get( i );
-      // if ( t.getCharPositionInLine() >= cursor )
-      // return t.getCharPositionInLine() + t.getText().length();
-      // }
-      // }
-      //
-      // return text.length();
-      // }
-      //
-      //
-      //
-      // public int findTokenStart( CharSequence text, int cursor )
-      // {
-      // AddTaskSection.this.parseInput( text );
-      //
-      // if ( tokens != null )
-      // {
-      // for ( int i = tokens.size() - 1; i > -1; i-- )
-      // {
-      // final Token t = (Token) tokens.get( i );
-      // if ( t.getCharPositionInLine() + t.getText().length() <= cursor )
-      // return t.getCharPositionInLine();
-      // }
-      // }
-      //
-      // return 0;
-      // }
-      //
-      //
-      //
-      // public CharSequence terminateToken( CharSequence text )
-      // {
-      // return " ";
-      // }
-      // }
-      
       private final View container;
       
-      private final AutoCompleteTextView addTaskEdit;
+      private final RtmSmartAddTextView addTaskEdit;
       
       private final Button btnDue;
       
@@ -122,13 +67,9 @@ public class TitleBarLayout extends LinearLayout implements
       
       private final Button btnEstimate;
       
-      private ANTLRReusableStringStream stringStream;
+      // private List< RtmSmartAddTokenizer.Token > tokens;
       
-      private CommonTokenStream tokenStream;
-      
-      private RtmSmartAddLexer lexer;
-      
-      private RtmSmartAddParser parser;
+      private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
       
 
@@ -141,9 +82,10 @@ public class TitleBarLayout extends LinearLayout implements
                                              this,
                                              true )
                                    .findViewById( R.id.app_titlebar_quick_add_task_layout );
-         addTaskEdit = (AutoCompleteTextView) container.findViewById( R.id.app_titlebar_quick_add_task_edit );
-         // addTaskEdit.setTokenizer( new Tokenizer() );
-         addTaskEdit.setThreshold( 0 );
+         addTaskEdit = (RtmSmartAddTextView) container.findViewById( R.id.app_titlebar_quick_add_task_edit );
+         addTaskEdit.setTokenizer( smartAddTokenizer );
+         addTaskEdit.setThreshold( 1 );
+         addTaskEdit.setAdapter( new RtmSmartAddAdapter( getContext() ) );
          addTaskEdit.addTextChangedListener( new TextWatcher()
          {
             public void onTextChanged( CharSequence s,
@@ -166,7 +108,7 @@ public class TitleBarLayout extends LinearLayout implements
 
             public void afterTextChanged( Editable s )
             {
-               parseInput( s );
+               
             }
          } );
          
@@ -246,86 +188,6 @@ public class TitleBarLayout extends LinearLayout implements
       public void onRestoreInstanceState( Parcelable state )
       {
          super.onRestoreInstanceState( state );
-      }
-      
-
-
-      private void parseInput( CharSequence input )
-      {
-         if ( parser == null )
-            createParser();
-         
-         stringStream.reset( input.toString() );
-         lexer.setCharStream( stringStream );
-         
-         tokenStream.setTokenSource( lexer );
-         // parser.setTokenStream( tokenStream );
-         
-         @SuppressWarnings( "rawtypes" )
-         final ArrayList tokens = (ArrayList) tokenStream.getTokens();
-         
-         for ( int i = tokens.size() - 1; i > -1; i-- )
-         {
-            final Token t = (Token) tokens.get( i );
-            
-            switch ( t.getType() )
-            {
-               case RtmSmartAddLexer.OP_DUE_DATE:
-                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
-                                                                      android.R.layout.simple_dropdown_item_1line,
-                                                                      new String[]
-                                                                      { "DUE" } ) );
-                  addTaskEdit.showDropDown();
-                  return;
-               case RtmSmartAddLexer.OP_PRIORITY:
-                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
-                                                                      android.R.layout.simple_dropdown_item_1line,
-                                                                      new String[]
-                                                                      { "OP_PRIORITY" } ) );
-                  addTaskEdit.showDropDown();
-                  return;
-               case RtmSmartAddLexer.OP_LIST_OR_TAGS:
-                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
-                                                                      android.R.layout.simple_dropdown_item_1line,
-                                                                      new String[]
-                                                                      { "OP_LIST_OR_TAGS" } ) );
-                  addTaskEdit.showDropDown();
-                  return;
-               case RtmSmartAddLexer.OP_LOCATION:
-                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
-                                                                      android.R.layout.simple_dropdown_item_1line,
-                                                                      new String[]
-                                                                      { "OP_LOCATION" } ) );
-                  addTaskEdit.showDropDown();
-                  return;
-               case RtmSmartAddLexer.OP_REPEAT:
-                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
-                                                                      android.R.layout.simple_dropdown_item_1line,
-                                                                      new String[]
-                                                                      { "OP_REPEAT" } ) );
-                  addTaskEdit.showDropDown();
-                  return;
-               case RtmSmartAddLexer.OP_ESTIMATE:
-                  addTaskEdit.setAdapter( new ArrayAdapter< String >( TitleBarLayout.this.getContext(),
-                                                                      android.R.layout.simple_dropdown_item_1line,
-                                                                      new String[]
-                                                                      { "OP_ESTIMATE" } ) );
-                  addTaskEdit.showDropDown();
-                  return;
-               default :
-                  break;
-            }
-         }
-      }
-      
-
-
-      private void createParser()
-      {
-         stringStream = new ANTLRReusableStringStream();
-         tokenStream = new CommonTokenStream();
-         lexer = new RtmSmartAddLexer();
-         parser = new RtmSmartAddParser( null );
       }
    }
    

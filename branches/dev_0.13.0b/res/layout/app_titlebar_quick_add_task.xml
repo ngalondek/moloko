@@ -17,7 +17,7 @@
    android:layout_height="wrap_content"
    android:layout_width="fill_parent">
 
-   <AutoCompleteTextView
+   <dev.drsoran.moloko.widgets.RtmSmartAddTextView
       android:id="@+id/app_titlebar_quick_add_task_edit"
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"

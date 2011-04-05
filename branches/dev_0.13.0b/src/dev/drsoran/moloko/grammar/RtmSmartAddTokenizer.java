@@ -181,8 +181,8 @@ public class RtmSmartAddTokenizer implements Tokenizer
 
    public int findTokenStart( CharSequence text, int cursor )
    {
-      final int start = getPrevOperatorPos( text, cursor, null );
-      return findFirstNotSpace( text, start, cursor - 1 );
+      final int start = getPrevOperatorPos( text, cursor - 1, null );
+      return findFirstNotSpace( text, start, cursor );
    }
    
 
@@ -208,7 +208,7 @@ public class RtmSmartAddTokenizer implements Tokenizer
                                    int startIdx,
                                    Character ownOp )
    {
-      for ( int i = startIdx + 1, cnt = chars.length(); i < cnt; ++i )
+      for ( int i = startIdx, cnt = chars.length(); i < cnt; ++i )
       {
          final char charI = chars.charAt( i );
          if ( isOperator( charI, ownOp ) )
@@ -224,7 +224,7 @@ public class RtmSmartAddTokenizer implements Tokenizer
                                    int startIdx,
                                    Character ownOp )
    {
-      for ( int i = startIdx - 1; i > -1; --i )
+      for ( int i = startIdx; i > -1; --i )
       {
          final char charI = chars.charAt( i );
          if ( isOperator( charI, ownOp ) )
@@ -257,7 +257,7 @@ public class RtmSmartAddTokenizer implements Tokenizer
 
    private int findFirstNotSpace( CharSequence chars, int startIdx, int endIdx )
    {
-      for ( int i = startIdx; i < endIdx + 1; ++i )
+      for ( int i = startIdx; i < endIdx; ++i )
       {
          if ( chars.charAt( i ) != ' ' )
          {

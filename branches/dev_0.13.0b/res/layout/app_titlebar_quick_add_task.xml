@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
-   is free software: you can redistribute it and/or modify it under the terms 
-   of the GNU General Public License as published by the Free Software Foundation, 
-   either version 3 of the License, or (at your option) any later version. Moloko 
-   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-   PURPOSE. See the GNU General Public License for more details. You should 
-   have received a copy of the GNU General Public License along with Moloko. 
-   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation -->
+   <!--
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
 
 <RelativeLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
-   android:id="@+id/app_titlebar_quick_add_task_layout"
    style="@style/App_TitleBar_Expanded"
    android:layout_height="wrap_content"
    android:layout_width="fill_parent">
@@ -25,8 +28,8 @@
       android:layout_alignParentLeft="true"
       android:layout_toLeftOf="@+id/app_titlebar_quick_add_task_btn_add"
       android:hint="@string/app_titlebar_add_task_hint"
-      android:singleLine="true"
       android:imeOptions="actionDone"
+      android:inputType="text|textAutoComplete"
       android:textColor="@android:color/black" />
 
    <Button
@@ -38,7 +41,6 @@
       android:layout_alignTop="@id/app_titlebar_quick_add_task_edit"
       android:text="@string/btn_add" />
 
-   <!-- Smart add buttons -->
    <Button
       android:id="@+id/app_titlebar_quick_add_task_btn_due_date"
       android:layout_height="wrap_content"
@@ -92,5 +94,4 @@
       android:layout_toRightOf="@id/app_titlebar_quick_add_task_btn_repeat"
       android:minWidth="40dip"
       android:text="=" />
-
 </RelativeLayout>

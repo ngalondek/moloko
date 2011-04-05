@@ -28,9 +28,8 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -48,8 +47,7 @@ import dev.drsoran.moloko.widgets.ToggleImageButton.OnCheckedChangeListener;
 public class TitleBarLayout extends LinearLayout implements
          View.OnClickListener, OnCheckedChangeListener
 {
-   private final class AddTaskSection extends LinearLayout implements
-            View.OnClickListener
+   private final class AddTaskSection implements View.OnClickListener
    {
       private final View container;
       
@@ -67,50 +65,18 @@ public class TitleBarLayout extends LinearLayout implements
       
       private final Button btnEstimate;
       
-      // private List< RtmSmartAddTokenizer.Token > tokens;
-      
       private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
       
 
-      public AddTaskSection( Context context )
+      public AddTaskSection( View titleBar )
       {
-         super( context );
+         container = titleBar.findViewById( R.id.app_titlebar_quick_add_task_layout );
          
-         container = LayoutInflater.from( context )
-                                   .inflate( R.layout.app_titlebar_quick_add_task,
-                                             this,
-                                             true )
-                                   .findViewById( R.id.app_titlebar_quick_add_task_layout );
          addTaskEdit = (RtmSmartAddTextView) container.findViewById( R.id.app_titlebar_quick_add_task_edit );
          addTaskEdit.setTokenizer( smartAddTokenizer );
          addTaskEdit.setThreshold( 1 );
          addTaskEdit.setAdapter( new RtmSmartAddAdapter( getContext() ) );
-         addTaskEdit.addTextChangedListener( new TextWatcher()
-         {
-            public void onTextChanged( CharSequence s,
-                                       int start,
-                                       int before,
-                                       int count )
-            {
-            }
-            
-
-
-            public void beforeTextChanged( CharSequence s,
-                                           int start,
-                                           int count,
-                                           int after )
-            {
-            }
-            
-
-
-            public void afterTextChanged( Editable s )
-            {
-               
-            }
-         } );
          
          btnDue = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_due_date ) );
          btnPrio = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_prio ) );
@@ -173,22 +139,6 @@ public class TitleBarLayout extends LinearLayout implements
                break;
          }
       }
-      
-
-
-      @Override
-      public Parcelable onSaveInstanceState()
-      {
-         return super.onSaveInstanceState();
-      }
-      
-
-
-      @Override
-      public void onRestoreInstanceState( Parcelable state )
-      {
-         super.onRestoreInstanceState( state );
-      }
    }
    
    private final ToggleImageButton addTaskBtn;
@@ -202,7 +152,6 @@ public class TitleBarLayout extends LinearLayout implements
       super( context, attrs );
       
       setId( R.id.app_title_bar );
-      setOrientation( LinearLayout.VERTICAL );
       
       LayoutInflater.from( context )
                     .inflate( R.layout.app_titlebar, this, true );
@@ -250,33 +199,16 @@ public class TitleBarLayout extends LinearLayout implements
 
 
    @Override
-   protected Parcelable onSaveInstanceState()
+   public boolean dispatchKeyEvent( KeyEvent event )
    {
-      final SavedState ss = new SavedState( super.onSaveInstanceState() );
-      
-      if ( addTaskSection != null )
-         ss.addTaskState = addTaskSection.onSaveInstanceState();
-      
-      return ss;
-   }
-   
-
-
-   @Override
-   protected void onRestoreInstanceState( Parcelable state )
-   {
-      final SavedState ss = (SavedState) state;
-      
-      if ( ss.addTaskState != null )
+      if ( event.getKeyCode() == KeyEvent.KEYCODE_BACK && addTaskBtn != null
+         && addTaskBtn.isChecked() )
       {
-         addTaskSection = new AddTaskSection( getContext() );
-         addTaskSection.onRestoreInstanceState( ss.addTaskState );
-         addView( addTaskSection );
+         showAddTaskInput( false );
+         return true;
       }
-      
-      super.onRestoreInstanceState( ss.getSuperState() );
-      
-      requestLayout();
+      else
+         return super.dispatchKeyEvent( event );
    }
    
 
@@ -349,8 +281,7 @@ public class TitleBarLayout extends LinearLayout implements
       {
          if ( addTaskSection == null )
          {
-            addTaskSection = new AddTaskSection( getContext() );
-            addView( addTaskSection );
+            addTaskSection = new AddTaskSection( this );
          }
          
          addTaskSection.show( true );

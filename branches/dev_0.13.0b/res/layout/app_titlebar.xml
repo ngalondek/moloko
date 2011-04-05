@@ -1,81 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
-   is free software: you can redistribute it and/or modify it under the terms 
-   of the GNU General Public License as published by the Free Software Foundation, 
-   either version 3 of the License, or (at your option) any later version. Moloko 
-   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-   PURPOSE. See the GNU General Public License for more details. You should 
-   have received a copy of the GNU General Public License along with Moloko. 
-   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation -->
+   <!--
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
 
 <LinearLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
-   android:layout_height="@dimen/app_titlebar_height"
-   android:layout_width="fill_parent">
+   android:layout_height="wrap_content"
+   android:layout_width="fill_parent"
+   android:orientation="vertical">
 
-   <TextView
-      android:id="@+id/app_titlebar_text"
-      style="@style/App_TitleBar_Text"
-      android:layout_height="fill_parent"
-      android:layout_width="0dip"
-      android:layout_weight="1"
-      android:layout_alignParentLeft="true"
-      android:text="Text"
-      android:gravity="left|center"
-      android:singleLine="true"
-      android:ellipsize="end"
-      android:paddingLeft="5dip"
-      android:drawableLeft="@null"
-      android:drawablePadding="5dip" />
+   <LinearLayout
+      android:layout_height="@dimen/app_titlebar_height"
+      android:layout_width="fill_parent">
 
-   <ImageView
-      android:id="@+id/app_titlebar_sep_add_task"
-      style="@style/App_TitleBar_Separator"
-      android:layout_width="1dip"
-      android:layout_height="fill_parent"
-      android:visibility="gone" />
+      <TextView
+         android:id="@+id/app_titlebar_text"
+         style="@style/App_TitleBar_Text"
+         android:layout_height="fill_parent"
+         android:layout_width="0dip"
+         android:layout_weight="1"
+         android:layout_alignParentLeft="true"
+         android:text="Text"
+         android:gravity="left|center"
+         android:singleLine="true"
+         android:ellipsize="end"
+         android:paddingLeft="5dip"
+         android:drawableLeft="@null"
+         android:drawablePadding="5dip" />
 
-   <dev.drsoran.moloko.widgets.ToggleImageButton
-      android:id="@+id/app_titlebar_btn_add_task"
-      style="@style/App_TitleBar_Toggle_Btn"
-      android:layout_height="fill_parent"
-      android:layout_width="@dimen/app_titlebar_btn_width"
-      android:src="@drawable/ic_button_title_add_task"
-      android:scaleType="centerInside"
-      android:visibility="gone" />
+      <ImageView
+         android:id="@+id/app_titlebar_sep_add_task"
+         style="@style/App_TitleBar_Separator"
+         android:layout_width="1dip"
+         android:layout_height="fill_parent"
+         android:visibility="gone" />
 
-   <ImageView
-      android:id="@+id/app_titlebar_sep_home"
-      style="@style/App_TitleBar_Separator"
-      android:layout_width="1dip"
-      android:layout_height="fill_parent"
-      android:visibility="gone" />
+      <dev.drsoran.moloko.widgets.ToggleImageButton
+         android:id="@+id/app_titlebar_btn_add_task"
+         style="@style/App_TitleBar_Toggle_Btn"
+         android:layout_height="fill_parent"
+         android:layout_width="@dimen/app_titlebar_btn_width"
+         android:src="@drawable/ic_button_title_add_task"
+         android:scaleType="centerInside"
+         android:visibility="gone" />
 
-   <ImageButton
-      android:id="@+id/app_titlebar_btn_home"
-      style="@style/App_TitleBar_Btn"
-      android:layout_height="fill_parent"
-      android:layout_width="@dimen/app_titlebar_btn_width"
-      android:src="@drawable/ic_button_title_home"
-      android:scaleType="centerInside"
-      android:visibility="gone" />
+      <ImageView
+         android:id="@+id/app_titlebar_sep_home"
+         style="@style/App_TitleBar_Separator"
+         android:layout_width="1dip"
+         android:layout_height="fill_parent"
+         android:visibility="gone" />
 
-   <ImageView
-      android:id="@+id/app_titlebar_sep_search"
-      style="@style/App_TitleBar_Separator"
-      android:layout_width="1dip"
-      android:layout_height="fill_parent"
-      android:visibility="gone" />
+      <ImageButton
+         android:id="@+id/app_titlebar_btn_home"
+         style="@style/App_TitleBar_Btn"
+         android:layout_height="fill_parent"
+         android:layout_width="@dimen/app_titlebar_btn_width"
+         android:src="@drawable/ic_button_title_home"
+         android:scaleType="centerInside"
+         android:visibility="gone" />
 
-   <ImageButton
-      android:id="@+id/app_titlebar_btn_search"
-      style="@style/App_TitleBar_Btn"
-      android:layout_height="fill_parent"
-      android:layout_width="@dimen/app_titlebar_btn_width"
-      android:src="@drawable/ic_button_title_search"
-      android:scaleType="centerInside"
+      <ImageView
+         android:id="@+id/app_titlebar_sep_search"
+         style="@style/App_TitleBar_Separator"
+         android:layout_width="1dip"
+         android:layout_height="fill_parent"
+         android:visibility="gone" />
+
+      <ImageButton
+         android:id="@+id/app_titlebar_btn_search"
+         style="@style/App_TitleBar_Btn"
+         android:layout_height="fill_parent"
+         android:layout_width="@dimen/app_titlebar_btn_width"
+         android:src="@drawable/ic_button_title_search"
+         android:scaleType="centerInside"
+         android:visibility="gone" />
+   </LinearLayout>
+
+   <include
+      layout="@layout/app_titlebar_quick_add_task"      
+      android:id="@+id/app_titlebar_quick_add_task_layout"
+      android:layout_height="wrap_content"
+      android:layout_width="fill_parent"
       android:visibility="gone" />
 
 </LinearLayout>

@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
@@ -33,24 +34,29 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
 import android.widget.TextView;
+
+import com.mdt.rtm.data.RtmLocation;
+
+import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
+import dev.drsoran.provider.Rtm.Locations;
 
 
 public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
 {
    private final Context context;
    
-   private final Object dataLock = new Object();
+   private final Object lock = new Object();
    
    private final LayoutInflater infalter;
    
    private final Filter filter = new Filter();
    
-   private final List< String > data = new ArrayList< String >();
+   private List< String > data = new ArrayList< String >();
    
-   private List< String > locations;
+   private volatile List< String > locations;
    
-   private List< String > lists_and_tags;
+   private volatile List< String > lists_and_tags;
    
    
 
@@ -90,6 +96,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
       final TextView text = (TextView) view.findViewById( android.R.id.text1 );
       text.setText( data.get( position ) );
+      text.setTextColor( context.getResources()
+                                .getColor( android.R.color.black ) );
       
       return view;
    }
@@ -121,6 +129,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          
          if ( !TextUtils.isEmpty( constraint ) )
          {
+            List< String > newData = null;
+            
             switch ( constraint.charAt( 0 ) )
             {
                case RtmSmartAddTokenizer.OP_DUE_DATE:
@@ -133,6 +143,27 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   break;
                
                case RtmSmartAddTokenizer.OP_LOCATION:
+                  if ( locations == null )
+                  {
+                     final List< RtmLocation > dbLocs = RtmLocationsProviderPart.getAllLocations( context.getContentResolver()
+                                                                                                         .acquireContentProviderClient( Locations.CONTENT_URI ) );
+                     
+                     if ( dbLocs != null )
+                     {
+                        locations = new ArrayList< String >( dbLocs.size() );
+                        for ( RtmLocation rtmLocation : dbLocs )
+                           locations.add( rtmLocation.name );
+                     }
+                  }
+                  
+                  newData = new ArrayList< String >();
+                  
+                  for ( String locName : locations )
+                  {
+                     if ( shouldTake( locName, constraint ) )
+                        newData.add( locName );
+                  }
+                  
                   break;
                
                case RtmSmartAddTokenizer.OP_REPEAT:
@@ -142,12 +173,27 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   break;
                
                default :
+                  newData = null;
                   break;
+            }
+            
+            if ( newData != null )
+            {
+               results.values = newData;
+               results.count = newData.size();
+            }
+            else
+            {
+               synchronized ( lock )
+               {
+                  results.values = Collections.emptyList();
+                  results.count = 0;
+               }
             }
          }
          else
          {
-            synchronized ( dataLock )
+            synchronized ( lock )
             {
                results.values = new ArrayList< String >( data );
                results.count = data.size();
@@ -162,11 +208,13 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       /**
        * Runs in the UI thread
        */
+      @SuppressWarnings( "unchecked" )
       @Override
       protected void publishResults( CharSequence constraint,
                                      FilterResults results )
       {
-         // mObjects = (List< T >) results.values;
+         data = (List< String >) results.values;
+         
          if ( results.count > 0 )
          {
             notifyDataSetChanged();
@@ -175,6 +223,16 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          {
             notifyDataSetInvalidated();
          }
+      }
+      
+
+
+      private boolean shouldTake( String value, CharSequence prefix )
+      {
+         return value.toLowerCase()
+                     .startsWith( TextUtils.substring( prefix,
+                                                       1,
+                                                       prefix.length() ) );
       }
    }
 }

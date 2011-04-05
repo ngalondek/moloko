@@ -25,8 +25,10 @@ package dev.drsoran.moloko.util.parsing;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -36,6 +38,7 @@ import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.RecurrenceLexer;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.grammar.RecurrencePatternLexer;
 import dev.drsoran.moloko.grammar.RecurrencePatternParser;
@@ -53,6 +56,10 @@ public final class RecurrenceParsing
    private static RecurrencePatternParser patternParser;
    
    private static RecurrPatternLanguage lang;
+   
+   private static RecurrenceLexer recurrenceLexer;
+   
+   private static RecurrenceParser recurrenceParser;
    
    
 
@@ -115,6 +122,9 @@ public final class RecurrenceParsing
    
 
 
+   /**
+    * @return Map< Token type, values >
+    */
    public synchronized final static Map< Integer, List< Object >> parseRecurrencePattern( String pattern )
    {
       if ( TextUtils.isEmpty( pattern ) )
@@ -150,5 +160,54 @@ public final class RecurrenceParsing
       Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
       
       return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
+   }
+   
+
+
+   public synchronized final static String parseRecurrence( String recurrence )
+   {
+      String result = null;
+      
+      if ( recurrenceLexer == null )
+         recurrenceLexer = new RecurrenceLexer();
+      
+      if ( recurrenceParser == null )
+         recurrenceParser = new RecurrenceParser();
+      
+      recurrenceLexer.setCharStream( new ANTLRStringStream( recurrence ) );
+      final CommonTokenStream antlrTokens = new CommonTokenStream( recurrenceLexer );
+      recurrenceParser.setTokenStream( antlrTokens );
+      
+      try
+      {
+         final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence();
+         result = joinRecurrencePattern( patternObjects );
+      }
+      catch ( RecognitionException e )
+      {
+         Log.e( TAG, "Failed to parse recurrence " + recurrence, e );
+         result = null;
+      }
+      
+      return result;
+   }
+   
+
+
+   public final static String joinRecurrencePattern( Map< String, Object > parts )
+   {
+      final StringBuilder sb = new StringBuilder();
+      final Set< String > keys = parts.keySet();
+      
+      for ( Iterator< String > i = keys.iterator(); i.hasNext(); )
+      {
+         final String key = i.next();
+         sb.append( key ).append( "=" ).append( parts.get( key ) );
+         
+         if ( i.hasNext() )
+            sb.append( RecurrencePatternParser.OPERATOR_SEP );
+      }
+      
+      return sb.toString();
    }
 }

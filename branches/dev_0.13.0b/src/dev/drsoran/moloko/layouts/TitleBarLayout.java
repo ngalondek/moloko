@@ -22,16 +22,21 @@
 
 package dev.drsoran.moloko.layouts;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -52,6 +57,8 @@ public class TitleBarLayout extends LinearLayout implements
       private final View container;
       
       private final RtmSmartAddTextView addTaskEdit;
+      
+      private final Button btnAdd;
       
       private final Button btnDue;
       
@@ -78,6 +85,7 @@ public class TitleBarLayout extends LinearLayout implements
          addTaskEdit.setThreshold( 1 );
          addTaskEdit.setAdapter( new RtmSmartAddAdapter( getContext() ) );
          
+         btnAdd = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_add ) );
          btnDue = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_due_date ) );
          btnPrio = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_prio ) );
          btnListTags = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_list_tags ) );
@@ -85,6 +93,7 @@ public class TitleBarLayout extends LinearLayout implements
          btnRepeat = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_repeat ) );
          btnEstimate = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_estimate ) );
          
+         btnAdd.setOnClickListener( this );
          btnDue.setOnClickListener( this );
          btnPrio.setOnClickListener( this );
          btnListTags.setOnClickListener( this );
@@ -103,6 +112,13 @@ public class TitleBarLayout extends LinearLayout implements
          {
             addTaskEdit.requestFocus();
          }
+         else
+         {
+            // Hide the soft input on close
+            final InputMethodManager imm = (InputMethodManager) TitleBarLayout.this.getContext()
+                                                                                   .getSystemService( Context.INPUT_METHOD_SERVICE );
+            imm.hideSoftInputFromWindow( addTaskEdit.getWindowToken(), 0 );
+         }
       }
       
 
@@ -112,32 +128,58 @@ public class TitleBarLayout extends LinearLayout implements
          switch ( view.getId() )
          {
             case R.id.app_titlebar_quick_add_task_btn_due_date:
-               addTaskEdit.getEditableText().append( " ^" );
+               appendOperator( RtmSmartAddTokenizer.OP_DUE_DATE );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_prio:
-               addTaskEdit.getEditableText().append( " !" );
+               appendOperator( RtmSmartAddTokenizer.OP_PRIORITY );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_list_tags:
-               addTaskEdit.getEditableText().append( " #" );
+               appendOperator( RtmSmartAddTokenizer.OP_LIST_TAGS );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_location:
-               addTaskEdit.getEditableText().append( " @" );
+               appendOperator( RtmSmartAddTokenizer.OP_LOCATION );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_repeat:
-               addTaskEdit.getEditableText().append( " *" );
+               appendOperator( RtmSmartAddTokenizer.OP_REPEAT );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_estimate:
-               addTaskEdit.getEditableText().append( " =" );
+               appendOperator( RtmSmartAddTokenizer.OP_ESTIMATE );
+               break;
+            
+            case R.id.app_titlebar_quick_add_task_btn_add:
+               addNewTask();
                break;
             
             default :
                break;
          }
+      }
+      
+
+
+      private final void appendOperator( char operator )
+      {
+         final Editable text = addTaskEdit.getEditableText();
+         
+         if ( text.length() > 0 && text.charAt( text.length() - 1 ) != ' ' )
+            text.append( ' ' );
+         
+         text.append( operator );
+      }
+      
+
+
+      private final void addNewTask()
+      {
+         final CharSequence input = addTaskEdit.getText();
+         final List< RtmSmartAddTokenizer.Token > tokens = new LinkedList< RtmSmartAddTokenizer.Token >();
+         
+         smartAddTokenizer.getTokens( input, tokens );
       }
    }
    

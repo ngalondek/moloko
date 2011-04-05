@@ -23,11 +23,15 @@
 package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,18 +39,27 @@ import android.widget.BaseAdapter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.mdt.rtm.data.RtmList;
+import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
+import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTask.Priority;
 
+import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
+import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
+import dev.drsoran.provider.Rtm.Tags;
+import dev.drsoran.rtm.Tag;
 
 
 public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
 {
    private final Context context;
-   
-   private final Object lock = new Object();
    
    private final LayoutInflater infalter;
    
@@ -54,9 +67,17 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
    private List< String > data = new ArrayList< String >();
    
-   private volatile List< String > locations;
+   private volatile List< Pair< String, Long > > due_dates;
    
-   private volatile List< String > lists_and_tags;
+   private volatile List< Pair< String, String > > priorities;
+   
+   private volatile List< Pair< String, String > > locations;
+   
+   private volatile List< Pair< String, String > > lists_and_tags;
+   
+   private volatile List< Pair< String, Pair< String, Boolean > > > repeats;
+   
+   private volatile List< Pair< String, Long > > estimates;
    
    
 
@@ -130,16 +151,97 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          if ( !TextUtils.isEmpty( constraint ) )
          {
             List< String > newData = null;
+            final String opLessConstraint = TextUtils.substring( constraint,
+                                                                 1,
+                                                                 constraint.length() )
+                                                     .toLowerCase();
             
             switch ( constraint.charAt( 0 ) )
             {
                case RtmSmartAddTokenizer.OP_DUE_DATE:
+                  if ( due_dates == null )
+                  {
+                     due_dates = new LinkedList< Pair< String, Long > >();
+                     
+                     // Today
+                     due_dates.add( Pair.create( context.getString( R.string.phr_today ),
+                                                 Long.valueOf( System.currentTimeMillis() ) ) );
+                     
+                     final Calendar cal = MolokoDateUtils.newCalendar();
+                     
+                     // Tomorrow
+                     cal.roll( Calendar.DAY_OF_YEAR, true );
+                     due_dates.add( Pair.create( context.getString( R.string.phr_tomorrow ),
+                                                 Long.valueOf( cal.getTimeInMillis() ) ) );
+                     
+                     // The next 5 days after tomorrow
+                     for ( int i = 0; i < 5; ++i )
+                     {
+                        cal.roll( Calendar.DAY_OF_YEAR, true );
+                        due_dates.add( Pair.create( MolokoDateUtils.formatDate( cal.getTimeInMillis(),
+                                                                                MolokoDateUtils.FORMAT_ONLY_WEEKDAY ),
+                                                    Long.valueOf( cal.getTimeInMillis() ) ) );
+                     }
+                  }
+                  
+                  if ( due_dates != null )
+                     newData = filter( due_dates, opLessConstraint, false );
                   break;
                
                case RtmSmartAddTokenizer.OP_PRIORITY:
+                  if ( priorities == null )
+                  {
+                     priorities = new LinkedList< Pair< String, String > >();
+                     priorities.add( Pair.create( RtmTask.convertPriority( Priority.High ),
+                                                  RtmTask.convertPriority( Priority.High ) ) );
+                     priorities.add( Pair.create( RtmTask.convertPriority( Priority.Medium ),
+                                                  RtmTask.convertPriority( Priority.Medium ) ) );
+                     priorities.add( Pair.create( RtmTask.convertPriority( Priority.Low ),
+                                                  RtmTask.convertPriority( Priority.Low ) ) );
+                     priorities.add( Pair.create( RtmTask.convertPriority( Priority.None ),
+                                                  RtmTask.convertPriority( Priority.None ) ) );
+                  }
+                  
+                  if ( priorities != null )
+                     newData = filter( priorities, opLessConstraint, false );
                   break;
                
                case RtmSmartAddTokenizer.OP_LIST_TAGS:
+                  if ( lists_and_tags == null )
+                  {
+                     {
+                        final RtmLists lists = RtmListsProviderPart.getAllLists( context.getContentResolver()
+                                                                                        .acquireContentProviderClient( Lists.CONTENT_URI ),
+                                                                                 Lists.IS_SMART_LIST
+                                                                                    + "=0" );
+                        if ( lists != null )
+                        {
+                           lists_and_tags = new LinkedList< Pair< String, String > >();
+                           for ( RtmList rtmList : lists.getLists().values() )
+                              lists_and_tags.add( Pair.create( rtmList.getName(),
+                                                               rtmList.getId() ) );
+                        }
+                     }
+                     {
+                        final List< Tag > tags = TagsProviderPart.getAllTags( context.getContentResolver()
+                                                                                     .acquireContentProviderClient( Tags.CONTENT_URI ),
+                                                                              null,
+                                                                              null,
+                                                                              true );
+                        if ( tags != null )
+                        {
+                           if ( lists_and_tags == null )
+                              lists_and_tags = new LinkedList< Pair< String, String > >();
+                           
+                           for ( Tag tag : tags )
+                              lists_and_tags.add( Pair.create( tag.getTag(),
+                                                               (String) null ) );
+                        }
+                     }
+                  }
+                  
+                  if ( lists_and_tags != null )
+                     newData = filter( lists_and_tags, opLessConstraint, true );
                   break;
                
                case RtmSmartAddTokenizer.OP_LOCATION:
@@ -147,29 +249,59 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   {
                      final List< RtmLocation > dbLocs = RtmLocationsProviderPart.getAllLocations( context.getContentResolver()
                                                                                                          .acquireContentProviderClient( Locations.CONTENT_URI ) );
-                     
                      if ( dbLocs != null )
                      {
-                        locations = new ArrayList< String >( dbLocs.size() );
+                        locations = new LinkedList< Pair< String, String > >();
                         for ( RtmLocation rtmLocation : dbLocs )
-                           locations.add( rtmLocation.name );
+                           locations.add( Pair.create( rtmLocation.name,
+                                                       rtmLocation.id ) );
                      }
                   }
                   
-                  newData = new ArrayList< String >();
-                  
-                  for ( String locName : locations )
-                  {
-                     if ( shouldTake( locName, constraint ) )
-                        newData.add( locName );
-                  }
-                  
+                  if ( locations != null )
+                     newData = filter( locations, opLessConstraint, true );
                   break;
                
                case RtmSmartAddTokenizer.OP_REPEAT:
+                  if ( repeats == null )
+                  {
+                     repeats = new LinkedList< Pair< String, Pair< String, Boolean >> >();
+                     
+                     // every
+                     addRecurrence( "every day", true );
+                     addRecurrence( "every week", true );
+                     addRecurrence( "every 2 weeks", true );
+                     addRecurrence( "every month", true );
+                     addRecurrence( "every year", true );
+                     
+                     // after
+                     addRecurrence( "after 1 day", false );
+                     addRecurrence( "after 1 week", false );
+                     addRecurrence( "after 2 weeks", false );
+                     addRecurrence( "after 1 month", false );
+                     addRecurrence( "after 1 year", false );
+                  }
+                  
+                  if ( repeats != null )
+                     newData = filter( repeats, opLessConstraint, false );
                   break;
                
                case RtmSmartAddTokenizer.OP_ESTIMATE:
+                  if ( estimates == null )
+                  {
+                     estimates = new LinkedList< Pair< String, Long > >();
+                     
+                     addEstimate( 2 * DateUtils.MINUTE_IN_MILLIS );
+                     addEstimate( 5 * DateUtils.MINUTE_IN_MILLIS );
+                     addEstimate( 10 * DateUtils.MINUTE_IN_MILLIS );
+                     addEstimate( 15 * DateUtils.MINUTE_IN_MILLIS );
+                     addEstimate( 30 * DateUtils.MINUTE_IN_MILLIS );
+                     addEstimate( 45 * DateUtils.MINUTE_IN_MILLIS );
+                     addEstimate( DateUtils.HOUR_IN_MILLIS );
+                  }
+                  
+                  if ( estimates != null )
+                     newData = filter( estimates, opLessConstraint, false );
                   break;
                
                default :
@@ -184,20 +316,14 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
             }
             else
             {
-               synchronized ( lock )
-               {
-                  results.values = Collections.emptyList();
-                  results.count = 0;
-               }
+               results.values = Collections.emptyList();
+               results.count = 0;
             }
          }
          else
          {
-            synchronized ( lock )
-            {
-               results.values = new ArrayList< String >( data );
-               results.count = data.size();
-            }
+            results.values = Collections.emptyList();
+            results.count = 0;
          }
          
          return results;
@@ -227,12 +353,42 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
 
 
-      private boolean shouldTake( String value, CharSequence prefix )
+      private < T > List< String > filter( List< Pair< String, T > > list,
+                                           String prefix,
+                                           boolean sort )
       {
-         return value.toLowerCase()
-                     .startsWith( TextUtils.substring( prefix,
-                                                       1,
-                                                       prefix.length() ) );
+         List< String > newData = new ArrayList< String >();
+         
+         for ( Pair< String, T > value : list )
+            if ( value.first.toLowerCase().startsWith( prefix ) )
+               newData.add( value.first );
+         
+         if ( sort )
+            Collections.sort( newData );
+         
+         return newData;
+      }
+      
+
+
+      private void addRecurrence( String sentence, boolean every )
+      {
+         final String pattern = RecurrenceParsing.parseRecurrence( sentence );
+         final String translatedSentence = RecurrenceParsing.parseRecurrencePattern( pattern,
+                                                                                     every );
+         if ( pattern != null && translatedSentence != null )
+            repeats.add( Pair.create( translatedSentence,
+                                      Pair.create( pattern,
+                                                   Boolean.valueOf( every ) ) ) );
+      }
+      
+
+
+      private void addEstimate( long estimate )
+      {
+         estimates.add( Pair.create( MolokoDateUtils.formatEstimated( context,
+                                                                      estimate ),
+                                     Long.valueOf( estimate ) ) );
       }
    }
 }

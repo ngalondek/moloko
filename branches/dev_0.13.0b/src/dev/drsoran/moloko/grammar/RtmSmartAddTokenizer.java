@@ -38,9 +38,7 @@ public class RtmSmartAddTokenizer implements Tokenizer
       
       public int end = -1;
       
-      public int startTxt = -1;
-      
-      public int endTxt = -1;
+      public String text;
       
       
 
@@ -51,22 +49,10 @@ public class RtmSmartAddTokenizer implements Tokenizer
       
 
 
-      public String getText( CharSequence chars )
-      {
-         if ( startTxt == -1 || endTxt == -1 )
-            return "";
-         else
-            return TextUtils.substring( chars,
-                                        startTxt,
-                                        ( endTxt - startTxt ) + 1 );
-      }
-      
-
-
       @Override
       public String toString()
       {
-         return type + ":" + start + "-" + startTxt + "," + end + "-" + endTxt;
+         return type + ":" + start + "," + end + "," + text;
       }
       
    }
@@ -117,49 +103,49 @@ public class RtmSmartAddTokenizer implements Tokenizer
                t = new Token( DUE_DATE_TYPE );
                t.start = i;
                t.end = getNextOperatorPos( input, i, OP_DUE_DATE ) - 1;
-               setTextPositions( t, input, t.start + 1, t.end );
+               setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_PRIORITY:
                t = new Token( PRIORITY_TYPE );
                t.start = i;
                t.end = getNextOperatorPos( input, i, OP_PRIORITY ) - 1;
-               setTextPositions( t, input, t.start + 1, t.end );
+               setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_LIST_TAGS:
                t = new Token( LIST_TAGS_TYPE );
                t.start = i;
                t.end = getNextOperatorPos( input, i, OP_LIST_TAGS ) - 1;
-               setTextPositions( t, input, t.start + 1, t.end );
+               setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_LOCATION:
                t = new Token( LOCATION_TYPE );
                t.start = i;
                t.end = getNextOperatorPos( input, i, OP_LOCATION ) - 1;
-               setTextPositions( t, input, t.start + 1, t.end );
+               setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_REPEAT:
                t = new Token( REPEAT_TYPE );
                t.start = i;
                t.end = getNextOperatorPos( input, i, OP_REPEAT ) - 1;
-               setTextPositions( t, input, t.start + 1, t.end );
+               setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_ESTIMATE:
                t = new Token( ESTIMATE_TYPE );
                t.start = i;
                t.end = getNextOperatorPos( input, i, OP_ESTIMATE ) - 1;
-               setTextPositions( t, input, t.start + 1, t.end );
+               setText( t, input, t.start + 1, t.end );
                break;
             
             default :
                t = new Token( TASK_NAME_TYPE );
                t.start = i;
                t.end = getNextOperatorPos( input, i, null ) - 1;
-               setTextPositions( t, input, t.start, t.end );
+               setText( t, input, t.start, t.end );
                break;
          }
          
@@ -174,7 +160,10 @@ public class RtmSmartAddTokenizer implements Tokenizer
    public int findTokenEnd( CharSequence text, int cursor )
    {
       final int end = getNextOperatorPos( text, cursor, null );
-      return revFindFirstNotSpace( text, cursor, end );
+      return revFindFirstNotSpace( text,
+                                   cursor,
+                                   end >= text.length() ? text.length() - 1
+                                                       : end );
    }
    
 
@@ -189,12 +178,12 @@ public class RtmSmartAddTokenizer implements Tokenizer
 
    public CharSequence terminateToken( CharSequence text )
    {
-      return " ";
+      return text + " ";
    }
    
 
 
-   public boolean isOperator( char character, Character ownOp )
+   public static boolean isOperator( char character, Character ownOp )
    {
       return ( ownOp == null || character != ownOp.charValue() )
          && ( character == OP_DUE_DATE || character == OP_PRIORITY
@@ -226,9 +215,18 @@ public class RtmSmartAddTokenizer implements Tokenizer
    {
       for ( int i = startIdx; i > -1; --i )
       {
-         final char charI = chars.charAt( i );
+         char charI = chars.charAt( i );
+         
+         // SPECIAL CASE @: Some locations my have the
+         // form @Loc, so the text would be @@Loc. We
+         // have to find the very first @ in the sequence.
          if ( isOperator( charI, ownOp ) )
+         {
+            while ( i > 0 && chars.charAt( i - 1 ) == charI )
+               --i;
+            
             return i;
+         }
       }
       
       return 0;
@@ -236,21 +234,22 @@ public class RtmSmartAddTokenizer implements Tokenizer
    
 
 
-   private void setTextPositions( Token token,
-                                  CharSequence chars,
-                                  int startIdx,
-                                  int endIdx )
+   private void setText( Token token,
+                         CharSequence chars,
+                         int startIdx,
+                         int endIdx )
    {
       // Find first character not space
-      token.startTxt = token.endTxt = findFirstNotSpace( chars,
-                                                         startIdx,
-                                                         endIdx );
+      int endTxt = 0;
+      int startTxt = endTxt = findFirstNotSpace( chars, startIdx, endIdx );
       
-      if ( token.start < endIdx )
+      if ( startTxt < endIdx )
       {
          // Find last character not space
-         token.endTxt = revFindFirstNotSpace( chars, startIdx, endIdx );
+         endTxt = revFindFirstNotSpace( chars, startTxt, endIdx );
       }
+      
+      token.text = TextUtils.substring( chars, startTxt, endTxt + 1 );
    }
    
 
@@ -282,6 +281,6 @@ public class RtmSmartAddTokenizer implements Tokenizer
          }
       }
       
-      return 0;
+      return startIdx;
    }
 }

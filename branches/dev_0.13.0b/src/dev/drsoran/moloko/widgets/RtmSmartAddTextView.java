@@ -22,24 +22,24 @@
 
 package dev.drsoran.moloko.widgets;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.method.QwertyKeyListener;
 import android.util.AttributeSet;
-import android.widget.ArrayAdapter;
 import android.widget.MultiAutoCompleteTextView;
+import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 
 
 public class RtmSmartAddTextView extends MultiAutoCompleteTextView
 {
-   private final Map< Integer, ArrayAdapter< String > > operatorAdapters = new HashMap< Integer, ArrayAdapter< String > >();
+   private Tokenizer tokenizer;
    
    
 
-   public RtmSmartAddTextView( Context context, AttributeSet attrs, int defStyle )
+   public RtmSmartAddTextView( Context context )
    {
-      super( context, attrs, defStyle );
+      super( context );
    }
    
 
@@ -51,26 +51,41 @@ public class RtmSmartAddTextView extends MultiAutoCompleteTextView
    
 
 
-   public RtmSmartAddTextView( Context context )
+   public RtmSmartAddTextView( Context context, AttributeSet attrs, int defStyle )
    {
-      super( context );
-      
+      super( context, attrs, defStyle );
    }
    
 
 
-   ArrayAdapter< String > addApdapterForOperator( int operator )
+   @Override
+   public void setTokenizer( Tokenizer t )
    {
-      ArrayAdapter< String > adapter = operatorAdapters.get( Integer.valueOf( operator ) );
-      
-      if ( adapter == null )
-      {
-         adapter = new ArrayAdapter< String >( getContext(),
-                                               android.R.layout.simple_dropdown_item_1line,
-                                               android.R.id.text1 );
-         operatorAdapters.put( Integer.valueOf( operator ), adapter );
-      }
-      
-      return adapter;
+      super.setTokenizer( t );
+      tokenizer = t;
    }
+   
+
+
+   @Override
+   protected void replaceText( CharSequence text )
+   {
+      clearComposingText();
+      
+      final Editable editable = getText();
+      
+      final int end = getSelectionEnd();
+      final int start = tokenizer.findTokenStart( editable, end );
+      final String original = TextUtils.substring( editable, start, end );
+      
+      // If the original to be replaced starts with an operator, we pass
+      // the operator to the tokenizer, otherwise it would get lost.
+      if ( original.length() > 0
+         && RtmSmartAddTokenizer.isOperator( original.charAt( 0 ), null ) )
+         text = TextUtils.concat( String.valueOf( original.charAt( 0 ) ), text );
+      
+      QwertyKeyListener.markAsReplaced( editable, start, end, original );
+      editable.replace( start, end, tokenizer.terminateToken( text ) );
+   }
+   
 }

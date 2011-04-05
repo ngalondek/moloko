@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -74,7 +74,7 @@ public class TagsProviderPart extends AbstractProviderPart
                                                        COL_INDICES );
       
       QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                   false,
+      false,
                                                    
                                                    // tables
                                                    TaskSeries.PATH + ","
@@ -162,10 +162,11 @@ public class TagsProviderPart extends AbstractProviderPart
                                                                Tags.TAGS_SEPARATOR );
                   ok = tagStrings != null;
                   
-                  for ( String tagStr : tagStrings )
-                  {
-                     tags.add( new Tag( taskSeriesId, tagStr ) );
-                  }
+                  if ( ok )
+                     for ( String tagStr : tagStrings )
+                     {
+                        tags.add( new Tag( taskSeriesId, tagStr ) );
+                     }
                }
             }
             

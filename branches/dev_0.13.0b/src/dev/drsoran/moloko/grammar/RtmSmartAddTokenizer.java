@@ -54,7 +54,6 @@ public class RtmSmartAddTokenizer implements Tokenizer
       {
          return type + ":" + start + "," + end + "," + text;
       }
-      
    }
    
    public final static char OP_DUE_DATE = '^';

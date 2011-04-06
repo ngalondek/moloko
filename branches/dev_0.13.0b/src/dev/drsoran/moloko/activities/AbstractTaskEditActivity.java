@@ -245,7 +245,7 @@ abstract class AbstractTaskEditActivity extends Activity
       
       final Intent intent = getIntent();
       
-      if ( intent.getAction().equals( Intent.ACTION_EDIT ) )
+      if ( shouldHandleIntentAction( intent.getAction() ) )
       {
          final InitialValues initialVals = onCreateImpl( intent );
          
@@ -346,6 +346,13 @@ abstract class AbstractTaskEditActivity extends Activity
             }
          } );
       }
+   }
+   
+
+
+   protected boolean shouldHandleIntentAction( String action )
+   {
+      return action.equals( Intent.ACTION_EDIT );
    }
    
 

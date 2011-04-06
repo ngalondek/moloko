@@ -181,6 +181,22 @@
          </intent-filter>
       </activity>
       
+      <activity
+         android:label="@string/app_task_add"
+         android:name=".activities.AddTaskActivity"
+         android:launchMode="singleTop"
+         android:theme="@style/Theme.Moloko.Task">
+         <intent-filter>
+            <!-- Add a new task -->
+            <action
+               android:name="android.intent.action.INSERT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
+         </intent-filter>
+      </activity>
+      
       <activity         
          android:name=".activities.ChangeTagsActivity"
          android:launchMode="singleTop"

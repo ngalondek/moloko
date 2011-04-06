@@ -30,6 +30,7 @@
 	<string name="app_task">Task</string>
    <string name="app_task_edit">Edit Task</string>
    <string name="app_task_edit_multiple">Edit %1$d %2$s</string>
+   <string name="app_task_add">Add Task</string>
    <string name="app_task_select_multiple">Select tasks to edit</string>
    <string name="app_change_tags">Change Tags of %1$s</string>
 	<string name="app_note">Note</string>

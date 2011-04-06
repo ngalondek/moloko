@@ -28,6 +28,7 @@
 	<string name="app_task">Aufgabe</string>
    <string name="app_task_edit">Aufgabe bearbeiten</string>
    <string name="app_task_edit_multiple">%1$d %2$s bearbeiten</string>
+   <string name="app_task_add">Neue Aufgabe</string>
    <string name="app_task_select_multiple">Aufgaben zum bearb. wählen</string>
    <string name="app_change_tags">Tags von %1$s bearbeiten</string>
 	<string name="app_note">Notiz</string>

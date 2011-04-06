@@ -29,24 +29,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.RtmSmartAddAdapter;
 import dev.drsoran.moloko.widgets.RtmSmartAddTextView;
 import dev.drsoran.moloko.widgets.ToggleImageButton;
 import dev.drsoran.moloko.widgets.ToggleImageButton.OnCheckedChangeListener;
+import dev.drsoran.provider.Rtm.Tasks;
 
 
 public class TitleBarLayout extends LinearLayout implements
@@ -174,12 +179,69 @@ public class TitleBarLayout extends LinearLayout implements
       
 
 
+      @SuppressWarnings( "unchecked" )
       private final void addNewTask()
       {
          final CharSequence input = addTaskEdit.getText();
          final List< RtmSmartAddTokenizer.Token > tokens = new LinkedList< RtmSmartAddTokenizer.Token >();
          
          smartAddTokenizer.getTokens( input, tokens );
+         
+         final Bundle config = new Bundle();
+         
+         if ( tokens.size() > 0 )
+         {
+            final ListAdapter adapter = addTaskEdit.getAdapter();
+            if ( adapter instanceof RtmSmartAddAdapter )
+            {
+               final RtmSmartAddAdapter rtmSmartAddAdapter = (RtmSmartAddAdapter) adapter;
+               
+               for ( Token token : tokens )
+               {
+                  // Check if the token value comes from a taken suggestion
+                  final Object value = rtmSmartAddAdapter.getSuggestionValue( token.type,
+                                                                              token.text );
+                  
+                  if ( value != null )
+                     switch ( token.type )
+                     {
+                        case RtmSmartAddTokenizer.TASK_NAME_TYPE:
+                           config.putString( Tasks.TASKSERIES_NAME, token.text );
+                           break;
+                        
+                        case RtmSmartAddTokenizer.DUE_DATE_TYPE:
+                           config.putLong( Tasks.DUE_DATE, (Long) value );
+                           break;
+                        
+                        case RtmSmartAddTokenizer.PRIORITY_TYPE:
+                           config.putString( Tasks.PRIORITY, token.text );
+                           break;
+                        
+                        case RtmSmartAddTokenizer.LIST_TAGS_TYPE:
+                           // config.putString( Tasks.TASKSERIES_NAME, token.text );
+                           break;
+                        
+                        case RtmSmartAddTokenizer.LOCATION_TYPE:
+                           config.putString( Tasks.LOCATION_ID, (String) value );
+                           break;
+                        
+                        case RtmSmartAddTokenizer.REPEAT_TYPE:
+                           final Pair< String, Boolean > recurr = (Pair< String, Boolean >) value;
+                           config.putString( Tasks.RECURRENCE, recurr.first );
+                           config.putBoolean( Tasks.RECURRENCE_EVERY,
+                                              recurr.second );
+                           break;
+                        
+                        case RtmSmartAddTokenizer.ESTIMATE_TYPE:
+                           config.putLong( Tasks.ESTIMATE_MILLIS, (Long) value );
+                           break;
+                        
+                        default :
+                           break;
+                     }
+               }
+            }
+         }
       }
    }
    

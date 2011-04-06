@@ -137,6 +137,46 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       return data.size();
    }
    
+
+
+   public Object getSuggestionValue( int tokenType, String tokenText )
+   {
+      switch ( tokenType )
+      {
+         case RtmSmartAddTokenizer.DUE_DATE_TYPE:
+            return findSuggestion( due_dates, tokenText );
+         case RtmSmartAddTokenizer.PRIORITY_TYPE:
+            return findSuggestion( priorities, tokenText );
+         case RtmSmartAddTokenizer.LIST_TAGS_TYPE:
+            return findSuggestion( lists_and_tags, tokenText );
+         case RtmSmartAddTokenizer.LOCATION_TYPE:
+            return findSuggestion( locations, tokenText );
+         case RtmSmartAddTokenizer.REPEAT_TYPE:
+            return findSuggestion( repeats, tokenText );
+         case RtmSmartAddTokenizer.ESTIMATE_TYPE:
+            return findSuggestion( estimates, tokenText );
+         default :
+            return null;
+      }
+   }
+   
+
+
+   private final static < T > T findSuggestion( List< Pair< String, T > > list,
+                                                String text )
+   {
+      if ( list == null )
+         return null;
+      
+      for ( Pair< String, T > pair : list )
+      {
+         if ( pair.first.equalsIgnoreCase( text ) )
+            return pair.second;
+      }
+      
+      return null;
+   }
+   
    
    private final class Filter extends android.widget.Filter
    {

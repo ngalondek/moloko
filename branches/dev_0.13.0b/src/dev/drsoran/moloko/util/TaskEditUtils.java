@@ -35,7 +35,6 @@ import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.Task;
 
@@ -132,7 +131,7 @@ public final class TaskEditUtils
          for ( Task task : tasks )
          {
             final Date due = task.getDue();
-            final Calendar cal = DateParser.getCalendar();
+            final Calendar cal = MolokoDateUtils.newCalendarUTC();
             
             // If the task has no due date or is overdue, its due date is set to today.
             if ( due == null

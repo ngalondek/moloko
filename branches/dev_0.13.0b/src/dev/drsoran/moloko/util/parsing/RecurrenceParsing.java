@@ -37,6 +37,7 @@ import org.antlr.runtime.RecognitionException;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.RecurrenceLexer;
 import dev.drsoran.moloko.grammar.RecurrenceParser;
@@ -164,9 +165,9 @@ public final class RecurrenceParsing
    
 
 
-   public synchronized final static String parseRecurrence( String recurrence )
+   public synchronized final static Pair< String, Boolean > parseRecurrence( String recurrence )
    {
-      String result = null;
+      Pair< String, Boolean > result;
       
       if ( recurrenceLexer == null )
          recurrenceLexer = new RecurrenceLexer();
@@ -181,7 +182,8 @@ public final class RecurrenceParsing
       try
       {
          final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence();
-         result = joinRecurrencePattern( patternObjects );
+         final Boolean isEvery = (Boolean) patternObjects.remove( RecurrencePatternParser.IS_EVERY );
+         result = Pair.create( joinRecurrencePattern( patternObjects ), isEvery );
       }
       catch ( RecognitionException e )
       {

@@ -38,6 +38,7 @@ import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -140,11 +141,9 @@ public class TaskEditActivity extends AbstractTaskEditActivity
       
       if ( !TextUtils.isEmpty( task.getSource() ) )
       {
-         String sourceStr = task.getSource();
-         if ( sourceStr.equalsIgnoreCase( "js" ) )
-            sourceStr = "web";
-         
-         source.setText( getString( R.string.task_source, sourceStr ) );
+         source.setText( getString( R.string.task_source,
+                                    UIUtils.convertSource( this,
+                                                           task.getSource() ) ) );
       }
       else
          source.setText( "?" );

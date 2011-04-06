@@ -126,6 +126,7 @@
    
    <!-- Global Dialogs -->
    <string name="dlg_save_task">Speichere Änderungen...</string>
+   <string name="dlg_insert_task">Füge neue Aufgabe hinzu...</string>
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
    <string name="dlg_recurr_picker_title">Wiederholung</string>
@@ -186,7 +187,10 @@
    
    <!-- EditMultipleTasks activity -->
    <string name="edit_multiple_tasks_multiple_values">Verschiedene Werte</string>
-   <string name="edit_multiple_tasks_multiple_tags">Verschiedene Tags</string>   
+   <string name="edit_multiple_tasks_multiple_tags">Verschiedene Tags</string>
+   
+   <!-- AddTask activity -->
+   <string name="add_task_edit_dlg_cancel">Neue Aufgabe verwerfen?</string>
    
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Durch Komma getrennte Tags</string>

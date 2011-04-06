@@ -167,6 +167,7 @@
    
    <!-- Global Dialogs -->
    <string name="dlg_save_task">Saving task changes...</string>
+   <string name="dlg_insert_task">Adding new task...</string>
    <string name="dlg_estimate_picker_title">How long does it take?</string>
    <string name="dlg_due_picker_title">Set due</string>
    <string name="dlg_due_picker_no_time">---</string>
@@ -237,6 +238,9 @@
    <string name="edit_multiple_tasks_titlebar">@string/app_task_edit_multiple</string>
    <string name="edit_multiple_tasks_multiple_values">Different values</string>
    <string name="edit_multiple_tasks_multiple_tags">Different tags</string>
+   
+   <!-- AddTask activity -->
+   <string name="add_task_edit_dlg_cancel">Cancel adding new task?</string>
    
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Comma separated tags</string>

@@ -24,11 +24,14 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -37,10 +40,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTaskSeries;
 
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
@@ -60,6 +65,22 @@ public class TasksProviderPart extends AbstractProviderPart
 {
    private static final String TAG = "Moloko."
       + TasksProviderPart.class.getSimpleName();
+   
+   
+   public final static class NewTaskIds
+   {
+      public final String taskSeriesId;
+      
+      public final String rawTaskId;
+      
+      
+
+      public NewTaskIds( String taskSeriesId, String rawTaskId )
+      {
+         this.taskSeriesId = taskSeriesId;
+         this.rawTaskId = rawTaskId;
+      }
+   }
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -82,6 +103,10 @@ public class TasksProviderPart extends AbstractProviderPart
    
    private final static String NUM_NOTES_SUBQUERY;
    
+   private final static String NEW_TASK_SERIES_ID_STUB = TaskSeries.PATH + "_";
+   
+   private final static String NEW_RAW_TASK_ID_STUB = RawTasks.PATH + "_";
+   
    static
    {
       AbstractProviderPart.initProjectionDependent( PROJECTION,
@@ -89,7 +114,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                       false,
+      false,
                                                        
                                                        // tables
                                                        TaskSeries.PATH + ","
@@ -156,7 +181,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        null );
       
       PARTICIPANTS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                    false,
+      false,
                                                                     
                                                                     // tables
                                                                     TaskSeries.PATH
@@ -211,7 +236,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                     null );
       
       NUM_NOTES_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                false,
+      false,
                                                                 
                                                                 // tables
                                                                 Notes.PATH,
@@ -359,6 +384,62 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       
       return tasks;
+   }
+   
+
+
+   public final static List< ContentProviderOperation > insertTask( ContentResolver contentResolver,
+                                                                    Task task )
+   {
+      List< ContentProviderOperation > operations = null;
+      final ContentProviderClient client = contentResolver.acquireContentProviderClient( Rtm.AUTHORITY );
+      
+      boolean ok = client != null;
+      
+      NewTaskIds newIds = null;
+      
+      if ( ok )
+      {
+         newIds = TasksProviderPart.generateIdsForNewTask( client );
+         ok = newIds != null;
+      }
+      
+      if ( client != null )
+         client.release();
+      
+      if ( ok )
+      {
+         final RtmTask rtmTask = new RtmTask( newIds.rawTaskId,
+                                              newIds.taskSeriesId,
+                                              task.getDue(),
+                                              task.hasDueTime() ? 1 : 0,
+                                              task.getAdded(),
+                                              task.getCompleted(),
+                                              task.getDeleted(),
+                                              task.getPriority(),
+                                              task.getPosponed(),
+                                              task.getEstimate(),
+                                              task.getEstimateMillis() );
+         
+         final RtmTaskSeries rtmTaskSeries = new RtmTaskSeries( newIds.taskSeriesId,
+                                                                task.getListId(),
+                                                                task.getCreated(),
+                                                                task.getModified(),
+                                                                task.getName(),
+                                                                task.getSource(),
+                                                                Collections.singletonList( rtmTask ),
+                                                                null,
+                                                                task.getLocationId(),
+                                                                task.getUrl(),
+                                                                task.getRecurrence(),
+                                                                task.isEveryRecurrence(),
+                                                                task.getTags(),
+                                                                task.getParticipants() );
+         
+         operations = RtmTaskSeriesProviderPart.insertTaskSeries( rtmTaskSeries );
+      }
+      
+      return operations;
    }
    
 
@@ -637,5 +718,81 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       
       return participantList;
+   }
+   
+
+
+   private final static NewTaskIds generateIdsForNewTask( ContentProviderClient client )
+   {
+      String nextTaskSeriesId = getNextId( client,
+                                           TaskSeries.CONTENT_URI,
+                                           NEW_TASK_SERIES_ID_STUB );
+      String nextRawTaskId = null;
+      
+      if ( nextTaskSeriesId != null )
+         nextRawTaskId = getNextId( client,
+                                    RawTasks.CONTENT_URI,
+                                    NEW_RAW_TASK_ID_STUB );
+      
+      if ( nextTaskSeriesId != null && nextRawTaskId != null )
+         return new NewTaskIds( nextTaskSeriesId, nextRawTaskId );
+      else
+         return null;
+   }
+   
+
+
+   private final static String getNextId( ContentProviderClient client,
+                                          Uri contentUri,
+                                          String stub )
+   {
+      Cursor c = null;
+      String newId = null;
+      
+      try
+      {
+         c = client.query( contentUri,
+                           new String[]
+                           { BaseColumns._ID },
+                           BaseColumns._ID + " like '%" + stub + "%'",
+                           null,
+                           BaseColumns._ID + " ASC" );
+         
+         if ( c != null )
+         {
+            if ( c.getCount() > 0 )
+            {
+               if ( c.moveToLast() )
+               {
+                  final String[] parts = TextUtils.split( c.getString( 0 ),
+                                                          stub );
+                  if ( parts.length == 2 )
+                  {
+                     try
+                     {
+                        newId = stub + ( Long.parseLong( parts[ 1 ] ) + 1 );
+                     }
+                     catch ( NumberFormatException e )
+                     {
+                        Log.e( TAG, "Invalid new ID suffix", e );
+                     }
+                  }
+               }
+            }
+            else
+               newId = stub + 0;
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query new IDs failed. ", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return newId;
    }
 }

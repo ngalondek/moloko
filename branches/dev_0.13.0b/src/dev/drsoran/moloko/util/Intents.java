@@ -28,6 +28,7 @@ import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
 import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
@@ -290,6 +291,19 @@ public final class Intents
       
       if ( sortOrder != -1 )
          intent.putExtra( AbstractTasksListActivity.TASK_SORT_ORDER, sortOrder );
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createAddTaskIntent( Context context,
+                                                   Bundle initialValues )
+   {
+      final Intent intent = new Intent( Intent.ACTION_INSERT, Tasks.CONTENT_URI );
+      
+      if ( initialValues != null )
+         intent.putExtras( initialValues );
       
       return intent;
    }

@@ -121,6 +121,34 @@ public class RtmTaskSeries extends RtmData
       String locationId, String url, String recurrence,
       boolean isEveryRecurrence, String tags, ParticipantList participants )
    {
+      this( id,
+            listId,
+            created,
+            modified,
+            name,
+            source,
+            tasks,
+            notes,
+            locationId,
+            url,
+            recurrence,
+            isEveryRecurrence,
+            tags != null
+                        ? Arrays.asList( TextUtils.split( tags,
+                                                          TaskSeries.TAGS_SEPARATOR ) )
+                        : Collections.< String > emptyList(),
+            participants );
+   }
+   
+
+
+   public RtmTaskSeries( String id, String listId, Date created, Date modified,
+      String name, String source, List< RtmTask > tasks, RtmTaskNotes notes,
+      String locationId, String url, String recurrence,
+      boolean isEveryRecurrence, List< String > tags,
+      ParticipantList participants )
+   {
+      
       this.id = id;
       this.listId = listId;
       this.created = ( created != null ) ? new ParcelableDate( created ) : null;
@@ -134,8 +162,7 @@ public class RtmTaskSeries extends RtmData
       this.url = url;
       this.recurrence = recurrence;
       this.isEveryRecurrence = isEveryRecurrence;
-      this.tags = new ArrayList< String >( Arrays.asList( TextUtils.split( tags,
-                                                                           TaskSeries.TAGS_SEPARATOR ) ) );
+      this.tags = tags;
       this.participants = participants == null ? new ParticipantList( id )
                                               : participants;
    }

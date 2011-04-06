@@ -397,11 +397,9 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          
          if ( !TextUtils.isEmpty( task.getSource() ) )
          {
-            String sourceStr = task.getSource();
-            if ( sourceStr.equalsIgnoreCase( "js" ) )
-               sourceStr = "web";
-            
-            source.setText( getString( R.string.task_source, sourceStr ) );
+            source.setText( getString( R.string.task_source,
+                                       UIUtils.convertSource( this,
+                                                              task.getSource() ) ) );
          }
          else
             source.setText( "?" );

@@ -21,6 +21,7 @@ options
    import java.util.HashMap;
    
    import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
+   import dev.drsoran.moloko.util.MolokoDateUtils;
 }
 
 @members
@@ -44,7 +45,7 @@ options
 
    public final static Calendar getCalendar()
    {
-      final Calendar cal = Calendar.getInstance();
+      final Calendar cal = MolokoDateUtils.newCalendar();
 
       cal.clear( Calendar.HOUR );
       cal.clear( Calendar.HOUR_OF_DAY );

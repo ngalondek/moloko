@@ -395,6 +395,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                // Postpone the task "the difference between local and server" times.
                final int diffPostponed = localPostponed - serverPostponed;
                
+               // Check that on server side the task was not also postponed.
                if ( diffPostponed > 0 )
                {
                   for ( int i = 0; i < diffPostponed; i++ )
@@ -407,12 +408,6 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                                           ? properties.getModification( RawTasks.POSTPONED )
                                                           : null );
                   }
-               }
-               else
-               {
-                  Log.w( TAG, "Unexpected postponed difference "
-                     + diffPostponed + ". server=" + serverPostponed
-                     + ", local=" + localPostponed );
                }
             }
          }

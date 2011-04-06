@@ -107,6 +107,13 @@ public class MolokoDateUtils
    
 
 
+   public final static Calendar newCalendarUTC()
+   {
+      return Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
+   }
+   
+
+
    public final static Time newTime()
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );

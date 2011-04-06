@@ -22,18 +22,102 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+
+import com.mdt.rtm.data.RtmTask;
+
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.util.AsyncInsertTask;
+import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.ParticipantList;
+import dev.drsoran.rtm.Task;
 
 
 public class AddTaskActivity extends AbstractTaskEditActivity
 {
+   public final static int RESULT_INSERT_TASK_OK = 1 << 0;
+   
+   public final static int RESULT_INSERT_TASK_FAILED = 1 << 1;
+   
+   private Date created;
+   
+   
+
    @Override
    protected InitialValues onCreateImpl( Intent intent )
    {
-      // TODO Auto-generated method stub
-      return null;
+      created = new Date();
+      
+      final List< String > tags = new ArrayList< String >( Arrays.asList( TextUtils.split( emptyIfNull( intent.getStringExtra( Tasks.TAGS ) ),
+                                                                                           Tasks.TAGS_SEPARATOR ) ) );
+      
+      // Try to determine the list ID
+      String listId = null;
+      
+      if ( intent.hasExtra( Tasks.LIST_ID ) )
+         listId = intent.getStringExtra( Tasks.LIST_ID );
+      else if ( intent.hasExtra( Tasks.LIST_NAME ) )
+         listId = getListIdByName( intent.getStringExtra( Tasks.LIST_NAME ) );
+      
+      // Check if the list name is part of the tags. This can happen
+      // if the list name has been entered w/o taken the suggestion.
+      // So it has been parsed as a tag since the operator (#) is the
+      // same.
+      else
+      {
+         for ( Iterator< String > i = tags.iterator(); i.hasNext()
+            && listId == null; )
+         {
+            final String tag = i.next();
+            // Check if the tag is a list name
+            listId = getListIdByName( tag );
+            
+            if ( listId != null )
+               i.remove();
+         }
+      }
+      
+      // Try to determine the location ID
+      String locationId = null;
+      
+      if ( intent.hasExtra( Tasks.LOCATION_ID ) )
+         locationId = intent.getStringExtra( Tasks.LOCATION_ID );
+      else if ( intent.hasExtra( Tasks.LOCATION_NAME ) )
+         locationId = getLocationIdByName( intent.getStringExtra( Tasks.LOCATION_NAME ) );
+      
+      return new InitialValues( intent.getStringExtra( Tasks.TASKSERIES_NAME ),
+                                listId,
+                                RtmTask.convertPriority( RtmTask.convertPriority( emptyIfNull( intent.getStringExtra( Tasks.PRIORITY ) ) ) ),
+                                TextUtils.join( Tasks.TAGS_SEPARATOR, tags ),
+                                intent.getLongExtra( Tasks.DUE_DATE, -1 ),
+                                intent.getBooleanExtra( Tasks.HAS_DUE_TIME,
+                                                        false ),
+                                intent.getStringExtra( Tasks.RECURRENCE ),
+                                intent.getBooleanExtra( Tasks.RECURRENCE_EVERY,
+                                                        true ),
+                                intent.getStringExtra( Tasks.ESTIMATE ),
+                                intent.getLongExtra( Tasks.ESTIMATE_MILLIS, -1 ),
+                                locationId,
+                                (String) null );
    }
    
 
@@ -52,8 +136,73 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                                       TextView postponed,
                                       TextView source )
    {
-      // TODO Auto-generated method stub
+      addedDate.setText( MolokoDateUtils.formatDateTime( created.getTime(),
+                                                         FULL_DATE_FLAGS ) );
+      completedDate.setVisibility( View.GONE );
+      postponed.setVisibility( View.GONE );
       
+      source.setText( getString( R.string.task_source,
+                                 getString( R.string.app_name ) ) );
+   }
+   
+
+
+   @Override
+   public void onDone( View v )
+   {
+      if ( validateInput() )
+      {
+         Uri newTaskUri = null;
+         
+         // Apply the modifications to the DB.
+         // set the taskseries modification time to now
+         try
+         {
+            final Task newTask = newTask();
+            newTaskUri = new AsyncInsertTask( AddTaskActivity.this ).execute( newTask )
+                                                                    .get();
+         }
+         catch ( InterruptedException e )
+         {
+            Log.e( LogUtils.toTag( AddTaskActivity.class ),
+                   "Failed to insert new task",
+                   e );
+         }
+         catch ( ExecutionException e )
+         {
+            Log.e( LogUtils.toTag( AddTaskActivity.class ),
+                   "Failed to insert new task",
+                   e );
+         }
+         
+         if ( newTaskUri != null )
+            setResult( RESULT_INSERT_TASK_OK, getIntent().setData( newTaskUri ) );
+         else
+            setResult( RESULT_INSERT_TASK_FAILED );
+         
+         finish();
+      }
+   }
+   
+
+
+   @Override
+   public void onCancel( View v )
+   {
+      new AlertDialog.Builder( this ).setMessage( R.string.add_task_edit_dlg_cancel )
+                                     .setPositiveButton( android.R.string.yes,
+                                                         new OnClickListener()
+                                                         {
+                                                            public void onClick( DialogInterface dialog,
+                                                                                 int which )
+                                                            {
+                                                               setResult( RESULT_CANCELED );
+                                                               finish();
+                                                            }
+                                                         } )
+                                     .setNegativeButton( android.R.string.no,
+                                                         null )
+                                     .show();
    }
    
 
@@ -61,7 +210,77 @@ public class AddTaskActivity extends AbstractTaskEditActivity
    @Override
    protected ModificationSet getModifications()
    {
-      // TODO Auto-generated method stub
-      return null;
+      return new ModificationSet();
+   }
+   
+
+
+   private String getListIdByName( String listName )
+   {
+      String res = null;
+      
+      if ( listNames_2_listId != null )
+         res = listNames_2_listId.get( listName.toLowerCase() );
+      
+      return res;
+   }
+   
+
+
+   private String getLocationIdByName( String locationName )
+   {
+      String res = null;
+      
+      if ( locationNames_2_locationIds != null )
+         res = locationNames_2_locationIds.get( locationName.toLowerCase() );
+      
+      return res;
+   }
+   
+
+
+   private final Task newTask()
+   {
+      final long dueDate = getCurrentValue( Tasks.DUE_DATE, Long.class );
+      
+      return new Task( (String) null,
+                       (String) null,
+                       (String) null,
+                       false,
+                       created,
+                       created,
+                       getCurrentValue( Tasks.TASKSERIES_NAME, String.class ),
+                       source.getText().toString(),
+                       getCurrentValue( Tasks.URL, String.class ),
+                       getCurrentValue( Tasks.RECURRENCE, String.class ),
+                       getCurrentValue( Tasks.RECURRENCE_EVERY, Boolean.class ),
+                       getCurrentValue( Tasks.LOCATION_ID, String.class ),
+                       getCurrentValue( Tasks.LIST_ID, String.class ),
+                       dueDate == -1 ? null : new Date( dueDate ),
+                       getCurrentValue( Tasks.HAS_DUE_TIME, Boolean.class ),
+                       created,
+                       (Date) null,
+                       (Date) null,
+                       RtmTask.convertPriority( getCurrentValue( Tasks.PRIORITY,
+                                                                 String.class ) ),
+                       0,
+                       getCurrentValue( Tasks.ESTIMATE, String.class ),
+                       getCurrentValue( Tasks.ESTIMATE_MILLIS, Long.class ),
+                       (String) null,
+                       0.0f,
+                       0.0f,
+                       (String) null,
+                       false,
+                       0,
+                       getCurrentValue( Tasks.TAGS, String.class ),
+                       (ParticipantList) null,
+                       0 );
+   }
+   
+
+
+   private final static String emptyIfNull( String string )
+   {
+      return string == null ? Strings.EMPTY_STRING : string;
    }
 }

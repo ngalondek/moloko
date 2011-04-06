@@ -101,42 +101,42 @@ public class RtmSmartAddTokenizer implements Tokenizer
             case OP_DUE_DATE:
                t = new Token( DUE_DATE_TYPE );
                t.start = i;
-               t.end = getNextOperatorPos( input, i, OP_DUE_DATE ) - 1;
+               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
                setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_PRIORITY:
                t = new Token( PRIORITY_TYPE );
                t.start = i;
-               t.end = getNextOperatorPos( input, i, OP_PRIORITY ) - 1;
+               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
                setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_LIST_TAGS:
                t = new Token( LIST_TAGS_TYPE );
                t.start = i;
-               t.end = getNextOperatorPos( input, i, OP_LIST_TAGS ) - 1;
+               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
                setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_LOCATION:
                t = new Token( LOCATION_TYPE );
                t.start = i;
-               t.end = getNextOperatorPos( input, i, OP_LOCATION ) - 1;
+               t.end = getNextOperatorPos( input, i + 1, OP_LOCATION ) - 1;
                setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_REPEAT:
                t = new Token( REPEAT_TYPE );
                t.start = i;
-               t.end = getNextOperatorPos( input, i, OP_REPEAT ) - 1;
+               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
                setText( t, input, t.start + 1, t.end );
                break;
             
             case OP_ESTIMATE:
                t = new Token( ESTIMATE_TYPE );
                t.start = i;
-               t.end = getNextOperatorPos( input, i, OP_ESTIMATE ) - 1;
+               t.end = getNextOperatorPos( input, i + 1, null ) - 1;
                setText( t, input, t.start + 1, t.end );
                break;
             
@@ -238,6 +238,13 @@ public class RtmSmartAddTokenizer implements Tokenizer
                          int startIdx,
                          int endIdx )
    {
+      token.text = getText( chars, startIdx, endIdx );
+   }
+   
+
+
+   private String getText( CharSequence chars, int startIdx, int endIdx )
+   {
       // Find first character not space
       int endTxt = 0;
       int startTxt = endTxt = findFirstNotSpace( chars, startIdx, endIdx );
@@ -248,7 +255,7 @@ public class RtmSmartAddTokenizer implements Tokenizer
          endTxt = revFindFirstNotSpace( chars, startTxt, endIdx );
       }
       
-      token.text = TextUtils.substring( chars, startTxt, endTxt + 1 );
+      return TextUtils.substring( chars, startTxt, endTxt + 1 );
    }
    
 

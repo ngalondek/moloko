@@ -472,4 +472,16 @@ public final class UIUtils
       }
    }
    
+
+
+   public final static String convertSource( Context context, String source )
+   {
+      if ( source.equalsIgnoreCase( "js" ) )
+         return "web";
+      
+      if ( source.equalsIgnoreCase( "api" ) )
+         return context.getString( R.string.app_name );
+      
+      return source;
+   }
 }

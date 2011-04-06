@@ -193,7 +193,7 @@
             <category
                android:name="android.intent.category.DEFAULT" />
             <data
-               android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
          </intent-filter>
       </activity>
       

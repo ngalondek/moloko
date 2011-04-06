@@ -32,8 +32,8 @@ import java.util.concurrent.ExecutionException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
@@ -45,12 +45,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -58,11 +58,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
@@ -236,6 +236,10 @@ abstract class AbstractTaskEditActivity extends Activity
    
    protected Map< String, Object > changes;
    
+   protected Map< String, String > listNames_2_listId;
+   
+   protected Map< String, String > locationNames_2_locationIds;
+   
    
 
    @Override
@@ -247,48 +251,48 @@ abstract class AbstractTaskEditActivity extends Activity
       
       if ( shouldHandleIntentAction( intent.getAction() ) )
       {
+         setContentView( R.layout.task_edit_activity );
+         
+         try
+         {
+            taskContainer = (ViewGroup) findViewById( R.id.task_edit_container );
+            addedDate = (TextView) taskContainer.findViewById( R.id.task_edit_added_date );
+            completedDate = (TextView) taskContainer.findViewById( R.id.task_edit_completed_date );
+            source = (TextView) taskContainer.findViewById( R.id.task_edit_src );
+            postponed = (TextView) taskContainer.findViewById( R.id.task_edit_postponed );
+            
+            // Editables
+            nameEdit = (EditText) taskContainer.findViewById( R.id.task_edit_desc );
+            list = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_list );
+            priority = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_priority );
+            tagsContainer = (ViewGroup) taskContainer.findViewById( R.id.task_edit_tags_layout );
+            tagsLayout = (WrappingLayout) taskContainer.findViewById( R.id.task_edit_tags_container );
+            dueContainer = (ViewGroup) taskContainer.findViewById( R.id.task_edit_due_layout );
+            dueEdit = (EditText) dueContainer.findViewById( R.id.task_edit_due_text );
+            recurrContainer = (ViewGroup) taskContainer.findViewById( R.id.task_edit_recurrence_layout );
+            recurrEdit = (EditText) recurrContainer.findViewById( R.id.task_edit_recurrence_text );
+            estimateContainer = (ViewGroup) taskContainer.findViewById( R.id.task_edit_estimate_layout );
+            estimateEdit = (EditText) estimateContainer.findViewById( R.id.task_edit_estim_text );
+            location = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_location );
+            url = (TitleWithEditTextLayout) taskContainer.findViewById( R.id.task_edit_url );
+         }
+         catch ( final ClassCastException e )
+         {
+            Log.e( TAG, "Invalid layout spec.", e );
+            throw e;
+         }
+         
+         queryLists();
+         queryPriorities();
+         queryLocations();
+         
          final InitialValues initialVals = onCreateImpl( intent );
          
          if ( initialVals != null )
          {
             initialValues = initialVals.toMap();
             
-            setContentView( R.layout.task_edit_activity );
-            
-            try
-            {
-               taskContainer = (ViewGroup) findViewById( R.id.task_edit_container );
-               addedDate = (TextView) taskContainer.findViewById( R.id.task_edit_added_date );
-               completedDate = (TextView) taskContainer.findViewById( R.id.task_edit_completed_date );
-               source = (TextView) taskContainer.findViewById( R.id.task_edit_src );
-               postponed = (TextView) taskContainer.findViewById( R.id.task_edit_postponed );
-               
-               // Editables
-               nameEdit = (EditText) taskContainer.findViewById( R.id.task_edit_desc );
-               list = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_list );
-               priority = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_priority );
-               tagsContainer = (ViewGroup) taskContainer.findViewById( R.id.task_edit_tags_layout );
-               tagsLayout = (WrappingLayout) taskContainer.findViewById( R.id.task_edit_tags_container );
-               dueContainer = (ViewGroup) taskContainer.findViewById( R.id.task_edit_due_layout );
-               dueEdit = (EditText) dueContainer.findViewById( R.id.task_edit_due_text );
-               recurrContainer = (ViewGroup) taskContainer.findViewById( R.id.task_edit_recurrence_layout );
-               recurrEdit = (EditText) recurrContainer.findViewById( R.id.task_edit_recurrence_text );
-               estimateContainer = (ViewGroup) taskContainer.findViewById( R.id.task_edit_estimate_layout );
-               estimateEdit = (EditText) estimateContainer.findViewById( R.id.task_edit_estim_text );
-               location = (TitleWithSpinnerLayout) taskContainer.findViewById( R.id.task_edit_location );
-               url = (TitleWithEditTextLayout) taskContainer.findViewById( R.id.task_edit_url );
-            }
-            catch ( final ClassCastException e )
-            {
-               Log.e( TAG, "Invalid layout spec.", e );
-               throw e;
-            }
-            
             initViews();
-            
-            queryLists();
-            queryPriorities();
-            queryLocations();
          }
          else
          {
@@ -623,9 +627,12 @@ abstract class AbstractTaskEditActivity extends Activity
             
             if ( names != null && values != null )
             {
-               initializeListSpinner( list, names, values );
+               listNames_2_listId = new HashMap< String, String >( names.length );
                
-               refreshListSpinner( list );
+               for ( int i = 0, cnt = values.length; i < cnt; ++i )
+                  listNames_2_listId.put( names[ i ].toLowerCase(), values[ i ] );
+               
+               initializeListSpinner( list, names, values );
                
                list.setOnItemSelectedListener( new OnItemSelectedListener()
                {
@@ -696,9 +703,14 @@ abstract class AbstractTaskEditActivity extends Activity
             
             if ( locationNames != null && values != null )
             {
-               initializeLocationSpinner( location, locationNames, values );
+               // -1: Leave out "nowhere"
+               locationNames_2_locationIds = new HashMap< String, String >( locationNames.length - 1 );
                
-               refreshLocationSpinner( location );
+               for ( int i = 1, cnt = values.length; i < cnt; ++i )
+                  locationNames_2_locationIds.put( locationNames[ i ].toLowerCase(),
+                                                   values[ i ] );
+               
+               initializeLocationSpinner( location, locationNames, values );
                
                location.setOnItemSelectedListener( new OnItemSelectedListener()
                {
@@ -952,7 +964,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshListSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID, String.class ),
-                                   -1 );
+                                   0 );
    }
    
 
@@ -960,7 +972,8 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                    String.class ), -1 );
+                                                    String.class ),
+                                   0 );
    }
    
 
@@ -1051,7 +1064,8 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                    String.class ), 0 );
+                                                    String.class ),
+                                   0 );
    }
    
 

@@ -22,8 +22,11 @@
 
 package dev.drsoran.moloko.layouts;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import android.app.Activity;
 import android.content.Context;
@@ -33,13 +36,16 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -47,7 +53,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
+import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.RtmSmartAddAdapter;
+import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.moloko.widgets.RtmSmartAddTextView;
 import dev.drsoran.moloko.widgets.ToggleImageButton;
 import dev.drsoran.moloko.widgets.ToggleImageButton.OnCheckedChangeListener;
@@ -57,6 +67,10 @@ import dev.drsoran.provider.Rtm.Tasks;
 public class TitleBarLayout extends LinearLayout implements
          View.OnClickListener, OnCheckedChangeListener
 {
+   private final static String TAG = "Moloko."
+      + TitleBarLayout.class.getSimpleName();
+   
+   
    private final class AddTaskSection implements View.OnClickListener
    {
       private final View container;
@@ -65,17 +79,17 @@ public class TitleBarLayout extends LinearLayout implements
       
       private final Button btnAdd;
       
-      private final Button btnDue;
+      private final ImageButton btnDue;
       
-      private final Button btnPrio;
+      private final ImageButton btnPrio;
       
-      private final Button btnListTags;
+      private final ImageButton btnListTags;
       
-      private final Button btnLocation;
+      private final ImageButton btnLocation;
       
-      private final Button btnRepeat;
+      private final ImageButton btnRepeat;
       
-      private final Button btnEstimate;
+      private final ImageButton btnEstimate;
       
       private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
@@ -91,12 +105,12 @@ public class TitleBarLayout extends LinearLayout implements
          addTaskEdit.setAdapter( new RtmSmartAddAdapter( getContext() ) );
          
          btnAdd = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_add ) );
-         btnDue = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_due_date ) );
-         btnPrio = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_prio ) );
-         btnListTags = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_list_tags ) );
-         btnLocation = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_location ) );
-         btnRepeat = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_repeat ) );
-         btnEstimate = ( (Button) container.findViewById( R.id.app_titlebar_quick_add_task_btn_estimate ) );
+         btnDue = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_due_date ) );
+         btnPrio = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_prio ) );
+         btnListTags = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_list_tags ) );
+         btnLocation = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_location ) );
+         btnRepeat = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_repeat ) );
+         btnEstimate = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_estimate ) );
          
          btnAdd.setOnClickListener( this );
          btnDue.setOnClickListener( this );
@@ -183,9 +197,13 @@ public class TitleBarLayout extends LinearLayout implements
       private final void addNewTask()
       {
          final CharSequence input = addTaskEdit.getText();
-         final List< RtmSmartAddTokenizer.Token > tokens = new LinkedList< RtmSmartAddTokenizer.Token >();
          
+         Log.i( TAG, "Creating tokens for '" + input + "'" );
+         
+         final List< RtmSmartAddTokenizer.Token > tokens = new LinkedList< RtmSmartAddTokenizer.Token >();
          smartAddTokenizer.getTokens( input, tokens );
+         
+         Log.i( TAG, "Tokens: " + tokens );
          
          final Bundle config = new Bundle();
          
@@ -195,22 +213,40 @@ public class TitleBarLayout extends LinearLayout implements
             if ( adapter instanceof RtmSmartAddAdapter )
             {
                final RtmSmartAddAdapter rtmSmartAddAdapter = (RtmSmartAddAdapter) adapter;
+               Set< String > tags = null;
                
                for ( Token token : tokens )
                {
-                  // Check if the token value comes from a taken suggestion
-                  final Object value = rtmSmartAddAdapter.getSuggestionValue( token.type,
-                                                                              token.text );
-                  
-                  if ( value != null )
+                  if ( token.type == RtmSmartAddTokenizer.TASK_NAME_TYPE )
+                  {
+                     config.putString( Tasks.TASKSERIES_NAME, token.text );
+                  }
+                  else
+                  {
+                     // Check if the token value comes from a taken suggestion
+                     final Object value = rtmSmartAddAdapter.getSuggestionValue( token.type,
+                                                                                 token.text );
+                     
                      switch ( token.type )
                      {
-                        case RtmSmartAddTokenizer.TASK_NAME_TYPE:
-                           config.putString( Tasks.TASKSERIES_NAME, token.text );
-                           break;
-                        
                         case RtmSmartAddTokenizer.DUE_DATE_TYPE:
-                           config.putLong( Tasks.DUE_DATE, (Long) value );
+                           if ( value != null )
+                           {
+                              config.putLong( Tasks.DUE_DATE, (Long) value );
+                              config.putBoolean( Tasks.HAS_DUE_TIME,
+                                                 Boolean.FALSE );
+                           }
+                           else
+                           {
+                              final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( token.text );
+                              if ( cal != null )
+                              {
+                                 config.putLong( Tasks.DUE_DATE,
+                                                 cal.getTimeInMillis() );
+                                 config.putBoolean( Tasks.HAS_DUE_TIME,
+                                                    cal.isSet( Calendar.HOUR_OF_DAY ) );
+                              }
+                           }
                            break;
                         
                         case RtmSmartAddTokenizer.PRIORITY_TYPE:
@@ -218,30 +254,89 @@ public class TitleBarLayout extends LinearLayout implements
                            break;
                         
                         case RtmSmartAddTokenizer.LIST_TAGS_TYPE:
-                           // config.putString( Tasks.TASKSERIES_NAME, token.text );
+                           boolean isTag = true;
+                           
+                           if ( value != null )
+                           {
+                              final Pair< String, Boolean > list_or_tag = (Pair< String, Boolean >) value;
+                              if ( list_or_tag.second )
+                              {
+                                 config.putString( Tasks.LIST_ID,
+                                                   list_or_tag.first );
+                                 isTag = false;
+                              }
+                           }
+                           
+                           if ( isTag )
+                           {
+                              if ( tags == null )
+                                 tags = new TreeSet< String >();
+                              tags.add( token.text );
+                           }
                            break;
                         
                         case RtmSmartAddTokenizer.LOCATION_TYPE:
-                           config.putString( Tasks.LOCATION_ID, (String) value );
+                           if ( value != null )
+                              config.putString( Tasks.LOCATION_ID,
+                                                (String) value );
+                           else
+                              config.putString( Tasks.LOCATION_NAME, token.text );
                            break;
                         
                         case RtmSmartAddTokenizer.REPEAT_TYPE:
-                           final Pair< String, Boolean > recurr = (Pair< String, Boolean >) value;
-                           config.putString( Tasks.RECURRENCE, recurr.first );
-                           config.putBoolean( Tasks.RECURRENCE_EVERY,
-                                              recurr.second );
+                           final Pair< String, Boolean > recurr;
+                           
+                           if ( value != null )
+                              recurr = (Pair< String, Boolean >) value;
+                           else
+                              recurr = RecurrenceParsing.parseRecurrence( token.text );
+                           
+                           if ( recurr != null )
+                           {
+                              config.putString( Tasks.RECURRENCE, recurr.first );
+                              config.putBoolean( Tasks.RECURRENCE_EVERY,
+                                                 recurr.second );
+                           }
+                           
                            break;
                         
                         case RtmSmartAddTokenizer.ESTIMATE_TYPE:
-                           config.putLong( Tasks.ESTIMATE_MILLIS, (Long) value );
+                           if ( value != null )
+                           {
+                              config.putString( Tasks.ESTIMATE, token.text );
+                              config.putLong( Tasks.ESTIMATE_MILLIS,
+                                              (Long) value );
+                           }
+                           else
+                           {
+                              final long estimated = RtmDateTimeParsing.parseEstimated( token.text );
+                              if ( estimated != -1 )
+                              {
+                                 config.putString( Tasks.ESTIMATE,
+                                                   MolokoDateUtils.formatEstimated( getContext(),
+                                                                                    estimated ) );
+                                 config.putLong( Tasks.ESTIMATE_MILLIS,
+                                                 Long.valueOf( estimated ) );
+                              }
+                           }
                            break;
                         
                         default :
                            break;
                      }
+                  }
+               }
+               
+               if ( tags != null && tags.size() > 0 )
+               {
+                  config.putString( Tasks.TAGS,
+                                    TextUtils.join( Tasks.TAGS_SEPARATOR, tags ) );
                }
             }
          }
+         
+         getContext().startActivity( Intents.createAddTaskIntent( getContext(),
+                                                                  config ) );
       }
    }
    

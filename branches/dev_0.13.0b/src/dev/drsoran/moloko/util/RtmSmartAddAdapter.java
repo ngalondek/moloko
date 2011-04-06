@@ -73,7 +73,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
    private volatile List< Pair< String, String > > locations;
    
-   private volatile List< Pair< String, String > > lists_and_tags;
+   private volatile List< Pair< String, Pair< String, Boolean > > > lists_and_tags;
    
    private volatile List< Pair< String, Pair< String, Boolean > > > repeats;
    
@@ -256,10 +256,11 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                                                                                     + "=0" );
                         if ( lists != null )
                         {
-                           lists_and_tags = new LinkedList< Pair< String, String > >();
+                           lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();
                            for ( RtmList rtmList : lists.getLists().values() )
                               lists_and_tags.add( Pair.create( rtmList.getName(),
-                                                               rtmList.getId() ) );
+                                                               Pair.create( rtmList.getId(),
+                                                                            Boolean.TRUE ) ) );
                         }
                      }
                      {
@@ -271,11 +272,12 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                         if ( tags != null )
                         {
                            if ( lists_and_tags == null )
-                              lists_and_tags = new LinkedList< Pair< String, String > >();
+                              lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();
                            
                            for ( Tag tag : tags )
                               lists_and_tags.add( Pair.create( tag.getTag(),
-                                                               (String) null ) );
+                                                               Pair.create( (String) null,
+                                                                            Boolean.FALSE ) ) );
                         }
                      }
                   }
@@ -413,13 +415,18 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
 
       private void addRecurrence( String sentence, boolean every )
       {
-         final String pattern = RecurrenceParsing.parseRecurrence( sentence );
-         final String translatedSentence = RecurrenceParsing.parseRecurrencePattern( pattern,
-                                                                                     every );
-         if ( pattern != null && translatedSentence != null )
-            repeats.add( Pair.create( translatedSentence,
-                                      Pair.create( pattern,
-                                                   Boolean.valueOf( every ) ) ) );
+         final Pair< String, Boolean > result = RecurrenceParsing.parseRecurrence( sentence );
+         
+         if ( result != null )
+         {
+            final String pattern = result.first;
+            final String translatedSentence = RecurrenceParsing.parseRecurrencePattern( pattern,
+                                                                                        every );
+            if ( pattern != null && translatedSentence != null )
+               repeats.add( Pair.create( translatedSentence,
+                                         Pair.create( pattern,
+                                                      Boolean.valueOf( every ) ) ) );
+         }
       }
       
 

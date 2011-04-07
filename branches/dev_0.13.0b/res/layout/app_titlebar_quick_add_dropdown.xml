@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="60dip">
+
+   <ImageView
+      android:id="@android:id/icon"
+      android:layout_width="32dip"
+      android:layout_height="32dip"
+      android:layout_gravity="center_vertical"
+      android:src="@drawable/ic_button_task_location" />
+
+   <TextView
+      android:id="@android:id/text1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginLeft="5dip"
+      android:textSize="18dip"
+      android:text="Text" />
+</LinearLayout>

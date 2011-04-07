@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmList;
@@ -65,7 +66,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
    private final Filter filter = new Filter();
    
-   private List< String > data = new ArrayList< String >();
+   // Icon ID, Text
+   private List< Pair< Integer, String > > data = new ArrayList< Pair< Integer, String > >();
    
    private volatile List< Pair< String, Long > > due_dates;
    
@@ -92,7 +94,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
 
    public Object getItem( int position )
    {
-      return data.get( position );
+      return data.get( position ).second;
    }
    
 
@@ -109,14 +111,19 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       final View view;
       
       if ( convertView == null )
-         view = infalter.inflate( android.R.layout.simple_dropdown_item_1line,
+         view = infalter.inflate( R.layout.app_titlebar_quick_add_dropdown,
                                   parent,
                                   false );
       else
          view = convertView;
       
+      final Pair< Integer, String > item = data.get( position );
+      
+      final ImageView icon = (ImageView) view.findViewById( android.R.id.icon );
+      icon.setImageResource( item.first );
+      
       final TextView text = (TextView) view.findViewById( android.R.id.text1 );
-      text.setText( data.get( position ) );
+      text.setText( item.second );
       text.setTextColor( context.getResources()
                                 .getColor( android.R.color.black ) );
       
@@ -180,6 +187,10 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
    private final class Filter extends android.widget.Filter
    {
+      private int listsCnt = 0;
+      
+      
+
       /**
        * Runs in a background thread
        */
@@ -190,7 +201,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          
          if ( !TextUtils.isEmpty( constraint ) )
          {
-            List< String > newData = null;
+            List< Pair< Integer, String > > newData = null;
             final String opLessConstraint = TextUtils.substring( constraint,
                                                                  1,
                                                                  constraint.length() )
@@ -225,7 +236,9 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   }
                   
                   if ( due_dates != null )
-                     newData = filter( due_dates, opLessConstraint, false );
+                     newData = filter( due_dates,
+                                       opLessConstraint,
+                                       R.drawable.ic_button_task_time );
                   break;
                
                case RtmSmartAddTokenizer.OP_PRIORITY:
@@ -243,7 +256,9 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   }
                   
                   if ( priorities != null )
-                     newData = filter( priorities, opLessConstraint, false );
+                     newData = filter( priorities,
+                                       opLessConstraint,
+                                       R.drawable.ic_button_task_priority );
                   break;
                
                case RtmSmartAddTokenizer.OP_LIST_TAGS:
@@ -261,6 +276,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                               lists_and_tags.add( Pair.create( rtmList.getName(),
                                                                Pair.create( rtmList.getId(),
                                                                             Boolean.TRUE ) ) );
+                           
+                           listsCnt = lists_and_tags.size();
                         }
                      }
                      {
@@ -283,7 +300,11 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   }
                   
                   if ( lists_and_tags != null )
-                     newData = filter( lists_and_tags, opLessConstraint, true );
+                     newData = filter( lists_and_tags,
+                                       opLessConstraint,
+                                       listsCnt - 1,
+                                       R.drawable.ic_button_task_list,
+                                       R.drawable.ic_list_change_tags_tag );
                   break;
                
                case RtmSmartAddTokenizer.OP_LOCATION:
@@ -301,7 +322,9 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   }
                   
                   if ( locations != null )
-                     newData = filter( locations, opLessConstraint, true );
+                     newData = filter( locations,
+                                       opLessConstraint,
+                                       R.drawable.ic_button_task_location );
                   break;
                
                case RtmSmartAddTokenizer.OP_REPEAT:
@@ -325,7 +348,9 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   }
                   
                   if ( repeats != null )
-                     newData = filter( repeats, opLessConstraint, false );
+                     newData = filter( repeats,
+                                       opLessConstraint,
+                                       R.drawable.ic_button_task_recurrent );
                   break;
                
                case RtmSmartAddTokenizer.OP_ESTIMATE:
@@ -343,7 +368,9 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   }
                   
                   if ( estimates != null )
-                     newData = filter( estimates, opLessConstraint, false );
+                     newData = filter( estimates,
+                                       opLessConstraint,
+                                       R.drawable.ic_button_task_thumb );
                   break;
                
                default :
@@ -381,7 +408,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       protected void publishResults( CharSequence constraint,
                                      FilterResults results )
       {
-         data = (List< String >) results.values;
+         data = (List< Pair< Integer, String >>) results.values;
          
          if ( results.count > 0 )
          {
@@ -395,18 +422,37 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
 
 
-      private < T > List< String > filter( List< Pair< String, T > > list,
-                                           String prefix,
-                                           boolean sort )
+      private < T > List< Pair< Integer, String > > filter( List< Pair< String, T > > list,
+                                                            String prefix,
+                                                            int iconId )
       {
-         List< String > newData = new ArrayList< String >();
+         List< Pair< Integer, String > > newData = new LinkedList< Pair< Integer, String > >();
          
          for ( Pair< String, T > value : list )
             if ( value.first.toLowerCase().startsWith( prefix ) )
-               newData.add( value.first );
+               newData.add( Pair.create( iconId, value.first ) );
          
-         if ( sort )
-            Collections.sort( newData );
+         return newData;
+      }
+      
+
+
+      private < T > List< Pair< Integer, String > > filter( List< Pair< String, T > > list,
+                                                            String prefix,
+                                                            int toIdx,
+                                                            int toIconId,
+                                                            int elseIconId )
+      {
+         List< Pair< Integer, String > > newData = new LinkedList< Pair< Integer, String > >();
+         
+         for ( int i = 0, cnt = list.size(); i < cnt; i++ )
+         {
+            final Pair< String, T > value = list.get( i );
+            
+            if ( value.first.toLowerCase().startsWith( prefix ) )
+               newData.add( Pair.create( i <= toIdx ? toIconId : elseIconId,
+                                         value.first ) );
+         }
          
          return newData;
       }

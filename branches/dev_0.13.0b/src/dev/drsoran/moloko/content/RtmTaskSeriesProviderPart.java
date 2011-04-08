@@ -182,6 +182,56 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
 
 
+   public final static List< RtmTaskSeries > getTaskSeriesCreatedSince( ContentProviderClient client,
+                                                                        long dateUtc )
+   {
+      List< RtmTaskSeries > taskSerieses = null;
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Rtm.TaskSeries.CONTENT_URI,
+                           PROJECTION,
+                           TaskSeries.TASKSERIES_CREATED_DATE + ">=" + dateUtc,
+                           null,
+                           null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            taskSerieses = new ArrayList< RtmTaskSeries >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmTaskSeries taskSeries = createRtmTaskSeries( client,
+                                                                        c );
+                  ok = taskSeries != null;
+                  
+                  if ( ok )
+                     taskSerieses.add( taskSeries );
+               }
+            }
+         }
+      }
+      catch ( final RemoteException e )
+      {
+         Log.e( TAG, "Query taskseries failed. ", e );
+         taskSerieses = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return taskSerieses;
+   }
+   
+
+
    public final static RtmTaskList getAllTaskSeriesForList( ContentProviderClient client,
                                                             String listId )
    {

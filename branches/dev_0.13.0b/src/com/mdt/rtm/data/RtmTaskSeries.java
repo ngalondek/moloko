@@ -423,6 +423,21 @@ public class RtmTaskSeries extends RtmData
    
 
 
+   public String getRecurrenceSentence()
+   {
+      final String repeat;
+      
+      if ( recurrence != null )
+         repeat = RecurrenceParsing.parseRecurrencePattern( recurrence,
+                                                            isEveryRecurrence );
+      else
+         repeat = null;
+      
+      return repeat;
+   }
+   
+
+
    public boolean isEveryRecurrence()
    {
       return isEveryRecurrence;

@@ -41,7 +41,7 @@ public final class RtmServiceConstants
 
       public final static boolean isAuthError( int errorCode )
       {
-         return errorCode <= INVALID_API_KEY;
+         return errorCode > NO_ERROR && errorCode <= INVALID_API_KEY;
       }
       
 
@@ -58,6 +58,8 @@ public final class RtmServiceConstants
       {
          return errorCode > INVALID_XML_RPC_CALL;
       }
+      
+      public final static int NO_ERROR = 0;
       
       public final static int INVALID_SIGNATURE = 96;
       

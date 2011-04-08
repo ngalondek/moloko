@@ -24,18 +24,23 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.ProgressDialog;
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.provider.Rtm;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -91,16 +96,43 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
       final RtmProvider rtmProvider = (RtmProvider) provider;
       final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
       
+      String newTaskId = null;
+      
       try
       {
          transactionalAccess.beginTransaction();
          
-         provider.applyBatch( new ArrayList< ContentProviderOperation >( operations ) );
+         final ContentProviderResult[] res = provider.applyBatch( new ArrayList< ContentProviderOperation >( operations ) );
+         
+         for ( int i = 0, cnt = res.length; newTaskId == null && i < cnt; ++i )
+         {
+            final Pattern pattern = Pattern.compile( "/" + RawTasks.PATH
+               + "/(.*)" );
+            
+            final ContentProviderResult contentProviderResult = res[ i ];
+            
+            if ( contentProviderResult != null
+               && contentProviderResult.uri != null )
+            {
+               final Uri uri = contentProviderResult.uri;
+               final String path = uri.getPath();
+               
+               if ( path != null )
+               {
+                  final Matcher matcher = pattern.matcher( path );
+                  if ( matcher.matches() && matcher.groupCount() == 1 )
+                     newTaskId = matcher.group( 1 );
+               }
+            }
+         }
          
          transactionalAccess.setTransactionSuccessful();
       }
       catch ( Throwable e )
       {
+         Log.e( LogUtils.toTag( AsyncInsertTask.class ),
+                "Inserting new task failed",
+                e );
          return null;
       }
       finally
@@ -108,7 +140,7 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
          transactionalAccess.endTransaction();
       }
       
-      return Queries.contentUriWithId( Tasks.CONTENT_URI, "" );
+      return Queries.contentUriWithId( Tasks.CONTENT_URI, newTaskId );
    }
    
 

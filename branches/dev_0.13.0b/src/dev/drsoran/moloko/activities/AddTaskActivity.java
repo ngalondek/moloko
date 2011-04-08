@@ -210,7 +210,7 @@ public class AddTaskActivity extends AbstractTaskEditActivity
    @Override
    protected ModificationSet getModifications()
    {
-      return new ModificationSet();
+      return ModificationSet.EMPTY_MODIFICATION_SET;
    }
    
 
@@ -250,7 +250,7 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                        created,
                        created,
                        getCurrentValue( Tasks.TASKSERIES_NAME, String.class ),
-                       source.getText().toString(),
+                       getString( R.string.app_name ),
                        getCurrentValue( Tasks.URL, String.class ),
                        getCurrentValue( Tasks.RECURRENCE, String.class ),
                        getCurrentValue( Tasks.RECURRENCE_EVERY, Boolean.class ),

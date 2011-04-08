@@ -173,34 +173,20 @@ public class SyncDiffer
       // Get all local elements which have not been touched during the diff.
       for ( int i = 0; i < localTouchedElements.length; i++ )
       {
+         // SERVER UPDATE: The local element was modified since the last sync and the
+         // server element was not seen.
          if ( !localTouchedElements[ i ] )
          {
             final T localElement = sortedLocalList.get( i );
-            final Date localElementCreated = localElement.getCreatedDate();
+            final Date localElementModified = localElement.getModifiedDate();
             
-            // SERVER INSERT: The local element has been created after the last sync.
-            if ( localElementCreated != null
-               && ( lastSync == null || lastSync.before( localElementCreated ) ) )
+            if ( localElementModified != null
+               && ( lastSync == null || lastSync.before( localElementModified ) ) )
             {
                localTouchedElements[ i ] = true;
-               operations.add( sortedLocalList.get( i )
-                                              .computeServerInsertOperation( timeLine ) );
-            }
-            
-            // SERVER UPDATE: The local element was modified since the last sync and the
-            // server element was not seen.
-            else
-            {
-               final Date localElementModified = localElement.getModifiedDate();
-               
-               if ( localElementModified != null
-                  && ( lastSync == null || lastSync.before( localElementModified ) ) )
-               {
-                  localTouchedElements[ i ] = true;
-                  operations.add( localElement.computeServerUpdateOperation( timeLine,
-                                                                             modifications,
-                                                                             null ) );
-               }
+               operations.add( localElement.computeServerUpdateOperation( timeLine,
+                                                                          modifications,
+                                                                          null ) );
             }
          }
       }

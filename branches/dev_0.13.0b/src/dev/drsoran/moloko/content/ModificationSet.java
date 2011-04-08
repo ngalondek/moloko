@@ -42,7 +42,7 @@ public class ModificationSet implements Set< Modification >
 {
    private final Set< Modification > impl;
    
-   
+   public final static ModificationSet EMPTY_MODIFICATION_SET = new ModificationSet();
 
    public ModificationSet()
    {

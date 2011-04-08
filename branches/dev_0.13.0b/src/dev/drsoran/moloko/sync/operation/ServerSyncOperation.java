@@ -86,6 +86,17 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       
 
 
+      public Builder< T > add( TimeLineMethod< T > method )
+      {
+         if ( method == null )
+            throw new NullPointerException( "method is null" );
+         
+         methods.put( method, Collections.< Modification > emptyList() );
+         return this;
+      }
+      
+
+
       public Builder< T > add( TimeLineMethod< T > method,
                                Modification modification )
       {

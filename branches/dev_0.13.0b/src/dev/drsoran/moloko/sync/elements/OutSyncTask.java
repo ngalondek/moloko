@@ -47,7 +47,6 @@ import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -73,6 +72,21 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    private final RtmTask task;
    
    
+
+   public OutSyncTask( RtmTaskSeries taskSeries )
+   {
+      if ( taskSeries == null )
+         throw new NullPointerException( "taskseries is null" );
+      
+      if ( taskSeries.getTasks().size() != 1 )
+         throw new IllegalStateException( "Expected taskseries with 1 task, found "
+            + taskSeries.getTasks().size() + " task(s)" );
+      
+      this.taskSeries = taskSeries;
+      this.task = taskSeries.getTasks().get( 0 );
+   }
+   
+
 
    public OutSyncTask( RtmTaskSeries taskSeries, String taskId )
    {
@@ -106,6 +120,20 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
+   public RtmTaskSeries getTaskSeries()
+   {
+      return taskSeries;
+   }
+   
+
+
+   public RtmTask getTask()
+   {
+      return task;
+   }
+   
+
+
    public Date getCreatedDate()
    {
       return taskSeries.getCreatedDate();
@@ -127,9 +155,104 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
-   public IServerSyncOperation< RtmTaskList > computeServerInsertOperation( RtmTimeline timeLine )
+   public IServerSyncOperation< RtmTaskList > computeServerAfterInsertOperation( RtmTimeline timeline,
+                                                                                 OutSyncTask serverElement )
    {
-      return NoopServerSyncOperation.newInstance();
+      TaskServerSyncOperation.Builder< RtmTaskList > operation = TaskServerSyncOperation.newInsert();
+      
+      /**
+       * Note: If we detect changes, we use the local value with IDs from the server element cause after the insert,
+       * local IDs are obsolete and unknown on server side.
+       **/
+      
+      /** RtmTaskSeries **/
+      
+      // Recurrence
+      if ( SyncUtils.hasChanged( taskSeries.getRecurrence(),
+                                 serverElement.taskSeries.getRecurrence() ) )
+         operation.add( timeline.tasks_setRecurrence( serverElement.taskSeries.getListId(),
+                                                      serverElement.taskSeries.getId(),
+                                                      serverElement.task.getId(),
+                                                      taskSeries.getRecurrenceSentence() ) );
+      
+      // Tags
+      if ( SyncUtils.hasChanged( taskSeries.getTagsJoined(),
+                                 serverElement.taskSeries.getTagsJoined() ) )
+         operation.add( timeline.tasks_setTags( serverElement.taskSeries.getListId(),
+                                                serverElement.taskSeries.getId(),
+                                                serverElement.task.getId(),
+                                                taskSeries.getTags() ) );
+      
+      // Location
+      if ( SyncUtils.hasChanged( taskSeries.getLocationId(),
+                                 serverElement.taskSeries.getLocationId() ) )
+         operation.add( timeline.tasks_setLocation( serverElement.taskSeries.getListId(),
+                                                    serverElement.taskSeries.getId(),
+                                                    serverElement.task.getId(),
+                                                    taskSeries.getLocationId() ) );
+      // URL
+      if ( SyncUtils.hasChanged( taskSeries.getURL(),
+                                 serverElement.taskSeries.getURL() ) )
+         operation.add( timeline.tasks_setURL( serverElement.taskSeries.getListId(),
+                                               serverElement.taskSeries.getId(),
+                                               serverElement.task.getId(),
+                                               taskSeries.getURL() ) );
+      
+      /** RtmTask **/
+      
+      // Priority
+      if ( SyncUtils.hasChanged( task.getPriority(),
+                                 serverElement.task.getPriority() ) )
+         operation.add( timeline.tasks_setPriority( serverElement.taskSeries.getListId(),
+                                                    serverElement.taskSeries.getId(),
+                                                    serverElement.task.getId(),
+                                                    task.getPriority() ) );
+      
+      // Completed date
+      if ( SyncUtils.hasChanged( task.getCompleted(),
+                                 serverElement.task.getCompleted() ) )
+      {
+         if ( task.getCompleted() != null )
+            operation.add( timeline.tasks_complete( serverElement.taskSeries.getListId(),
+                                                    serverElement.taskSeries.getId(),
+                                                    serverElement.task.getId() ) );
+         else
+            operation.add( timeline.tasks_uncomplete( serverElement.taskSeries.getListId(),
+                                                      serverElement.taskSeries.getId(),
+                                                      serverElement.task.getId() ) );
+      }
+      
+      // Due date
+      if ( SyncUtils.hasChanged( task.getDue(), serverElement.task.getDue() )
+         || SyncUtils.hasChanged( task.getHasDueTime(),
+                                  serverElement.task.getHasDueTime() ) )
+      {
+         operation.add( timeline.tasks_setDueDate( serverElement.taskSeries.getListId(),
+                                                   serverElement.taskSeries.getId(),
+                                                   serverElement.task.getId(),
+                                                   task.getDue(),
+                                                   task.getHasDueTime() != 0
+                                                                            ? true
+                                                                            : false ) );
+      }
+      
+      // Estimate
+      if ( SyncUtils.hasChanged( task.getEstimate(),
+                                 serverElement.task.getEstimate() ) )
+         operation.add( timeline.tasks_setEstimate( serverElement.taskSeries.getListId(),
+                                                    serverElement.taskSeries.getId(),
+                                                    serverElement.task.getId(),
+                                                    TextUtils.isEmpty( task.getEstimate() )
+                                                                                           ? Strings.EMPTY_STRING
+                                                                                           : task.getEstimate() ) );
+      
+      /**
+       * Postponed can not be synced. Otherwise we had to store the initial due date on local task creation of the task
+       * and set this initial date after creation of the task on RTM side. After this, we could call postpone 1..n
+       * times. This is not supported atm.
+       **/
+      
+      return operation.build( TaskServerSyncOperation.class );
    }
    
 
@@ -205,13 +328,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                           String.class ) == SyncResultDirection.SERVER )
          {
             // The RTM API needs the repeat parameter as sentence, not pattern.
-            final String repeat;
-            
-            if ( taskSeries.getRecurrence() != null )
-               repeat = RecurrenceParsing.parseRecurrencePattern( taskSeries.getRecurrence(),
-                                                                  taskSeries.isEveryRecurrence() );
-            else
-               repeat = null;
+            final String repeat = taskSeries.getRecurrenceSentence();
             
             final List< Modification > modsList = new ArrayList< Modification >( 2 );
             modsList.add( properties.getModification( TaskSeries.RECURRENCE ) );

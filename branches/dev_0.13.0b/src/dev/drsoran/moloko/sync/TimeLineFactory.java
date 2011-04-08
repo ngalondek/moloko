@@ -50,11 +50,24 @@ public final class TimeLineFactory
    public final RtmTimeline createTimeline() throws ServiceException
    {
       if ( timeline == null )
-      {
-         timeline = service.timelines_create();
-         Log.i( TAG, "Created new time line " + timeline );
-      }
+         timeline = createTimelineImpl();
       
       return timeline;
+   }
+   
+
+
+   public final RtmTimeline createOneShotTimeline() throws ServiceException
+   {
+      return createTimelineImpl();
+   }
+   
+
+
+   private final RtmTimeline createTimelineImpl() throws ServiceException
+   {
+      final RtmTimeline newTimeline = service.timelines_create();
+      Log.i( TAG, "Created new time line " + timeline );
+      return newTimeline;
    }
 }

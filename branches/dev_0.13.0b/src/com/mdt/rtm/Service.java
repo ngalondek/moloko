@@ -204,7 +204,9 @@ public interface Service
 
    // ////// TASKS /////////////////////////////
    
-   RtmTaskSeries tasks_add( String timelineId, String listId, String name ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_add( String timelineId,
+                                            String listId,
+                                            String name ) throws ServiceException;
    
 
 

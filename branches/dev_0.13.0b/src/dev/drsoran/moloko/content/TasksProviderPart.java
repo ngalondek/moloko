@@ -103,10 +103,6 @@ public class TasksProviderPart extends AbstractProviderPart
    
    private final static String NUM_NOTES_SUBQUERY;
    
-   private final static String NEW_TASK_SERIES_ID_STUB = TaskSeries.PATH + "_";
-   
-   private final static String NEW_RAW_TASK_ID_STUB = RawTasks.PATH + "_";
-   
    static
    {
       AbstractProviderPart.initProjectionDependent( PROJECTION,
@@ -724,15 +720,11 @@ public class TasksProviderPart extends AbstractProviderPart
 
    private final static NewTaskIds generateIdsForNewTask( ContentProviderClient client )
    {
-      String nextTaskSeriesId = getNextId( client,
-                                           TaskSeries.CONTENT_URI,
-                                           NEW_TASK_SERIES_ID_STUB );
+      String nextTaskSeriesId = getNextId( client, TaskSeries.CONTENT_URI );
       String nextRawTaskId = null;
       
       if ( nextTaskSeriesId != null )
-         nextRawTaskId = getNextId( client,
-                                    RawTasks.CONTENT_URI,
-                                    NEW_RAW_TASK_ID_STUB );
+         nextRawTaskId = getNextId( client, RawTasks.CONTENT_URI );
       
       if ( nextTaskSeriesId != null && nextRawTaskId != null )
          return new NewTaskIds( nextTaskSeriesId, nextRawTaskId );
@@ -743,49 +735,38 @@ public class TasksProviderPart extends AbstractProviderPart
 
 
    private final static String getNextId( ContentProviderClient client,
-                                          Uri contentUri,
-                                          String stub )
+                                          Uri contentUri )
    {
       Cursor c = null;
       String newId = null;
       
       try
       {
-         c = client.query( contentUri,
-                           new String[]
-                           { BaseColumns._ID },
-                           BaseColumns._ID + " like '%" + stub + "%'",
-                           null,
-                           BaseColumns._ID + " ASC" );
+         c = client.query( contentUri, new String[]
+         { BaseColumns._ID }, null, null, null );
          
          if ( c != null )
          {
             if ( c.getCount() > 0 )
             {
-               if ( c.moveToLast() )
+               long longId = -1;
+               
+               for ( boolean ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
                {
-                  final String[] parts = TextUtils.split( c.getString( 0 ),
-                                                          stub );
-                  if ( parts.length == 2 )
-                  {
-                     try
-                     {
-                        newId = stub + ( Long.parseLong( parts[ 1 ] ) + 1 );
-                     }
-                     catch ( NumberFormatException e )
-                     {
-                        Log.e( TAG, "Invalid new ID suffix", e );
-                     }
-                  }
+                  final long id = c.getLong( 0 );
+                  if ( id > longId )
+                     longId = id;
                }
+               
+               newId = String.valueOf( longId + 1 );
             }
             else
-               newId = stub + 0;
+               newId = String.valueOf( 1L );
          }
       }
-      catch ( RemoteException e )
+      catch ( Throwable e )
       {
-         Log.e( TAG, "Query new IDs failed. ", e );
+         Log.e( TAG, "Generating new ID failed. ", e );
       }
       finally
       {

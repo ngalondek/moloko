@@ -71,6 +71,21 @@ public class RtmTimeline
    
 
 
+   public TimeLineMethod< RtmTaskList > tasks_add( final String listId,
+                                                   final String name )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_add( id, listId, name );
+         }
+      };
+   }
+   
+
+
    public TimeLineMethod< RtmTaskList > tasks_complete( final String listId,
                                                         final String taskSeriesId,
                                                         final String taskId )

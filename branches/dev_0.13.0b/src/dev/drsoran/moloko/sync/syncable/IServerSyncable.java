@@ -45,7 +45,8 @@ public interface IServerSyncable< T, V >
    
 
 
-   public IServerSyncOperation< V > computeServerInsertOperation( RtmTimeline timeline );
+   public IServerSyncOperation< V > computeServerAfterInsertOperation( RtmTimeline timeline,
+                                                                       T serverElement );
    
 
 

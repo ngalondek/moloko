@@ -74,6 +74,13 @@ public class SyncRtmTaskList
    
    
 
+   public SyncRtmTaskList()
+   {
+      series = new ArrayList< RtmTaskSeries >();
+   }
+   
+
+
    public SyncRtmTaskList( List< RtmTaskSeries > taskSeries )
    {
       if ( taskSeries == null )
@@ -123,13 +130,21 @@ public class SyncRtmTaskList
 
    public List< OutSyncTask > getOutSyncTasks()
    {
+      return getOutSyncTasks( OutSyncTask.LESS_ID );
+   }
+   
+
+
+   public List< OutSyncTask > getOutSyncTasks( Comparator< ? super OutSyncTask > cmp )
+   {
       final List< OutSyncTask > res = new LinkedList< OutSyncTask >();
       
       for ( RtmTaskSeries taskSeries : series )
          for ( RtmTask task : taskSeries.getTasks() )
             res.add( new OutSyncTask( taskSeries, task ) );
       
-      GetMode.SORTED.perform( res, OutSyncTask.LESS_ID );
+      if ( cmp != null )
+         GetMode.SORTED.perform( res, cmp );
       
       return res;
    }
@@ -139,6 +154,30 @@ public class SyncRtmTaskList
    public void add( RtmTaskSeries taskSeries )
    {
       series.add( taskSeries );
+   }
+   
+
+
+   public void remove( RtmTaskSeries taskSeries )
+   {
+      final int pos = Collections.binarySearch( series, taskSeries, LESS_ID );
+      
+      if ( pos >= 0 )
+         series.remove( pos );
+   }
+   
+
+
+   public RtmTaskSeries get( int location )
+   {
+      return series.get( location );
+   }
+   
+
+
+   public int size()
+   {
+      return series.size();
    }
    
 

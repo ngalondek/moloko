@@ -440,27 +440,29 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmTaskSeries tasks_add( String timelineId, String listId, String name ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_add( String timelineId,
+                                                   String listId,
+                                                   String name ) throws ServiceException
    {
-      Element response = invoker.invoke( new Param( "method", "rtm.tasks.add" ),
-                                         new Param( "timeline", timelineId ),
-                                         new Param( "list_id", listId ),
-                                         new Param( "name", name ),
-                                         new Param( "auth_token",
-                                                    currentAuthToken ),
-                                         new Param( "api_key",
-                                                    applicationInfo.getApiKey() ) );
-      RtmTaskList rtmTaskList = new RtmTaskList( response );
-      if ( rtmTaskList.getSeries().size() == 1 )
-      {
-         return rtmTaskList.getSeries().get( 0 );
-      }
-      else if ( rtmTaskList.getSeries().size() > 1 )
-      {
-         throw new ServiceInternalException( "Internal error: more that one task ("
-            + rtmTaskList.getSeries().size() + ") has been created" );
-      }
-      throw new ServiceInternalException( "Internal error: no task has been created" );
+      final Element elt;
+      
+      if ( listId != null )
+         elt = invoker.invoke( new Param( "method", "rtm.tasks.add" ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "list_id", listId ),
+                               new Param( "name", name ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ) );
+      else
+         elt = invoker.invoke( new Param( "method", "rtm.tasks.add" ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "name", name ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ) );
+      
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -489,7 +491,7 @@ public class ServiceImpl implements Service
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
       
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -510,7 +512,7 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -602,9 +604,7 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId,
-
-      elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -627,7 +627,7 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -648,7 +648,7 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -695,7 +695,7 @@ public class ServiceImpl implements Service
                                           applicationInfo.getApiKey() ) );
       }
       
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -718,7 +718,7 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -741,7 +741,7 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -765,7 +765,7 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -798,7 +798,7 @@ public class ServiceImpl implements Service
                                new Param( "api_key",
                                           applicationInfo.getApiKey() ) );
       
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -823,7 +823,7 @@ public class ServiceImpl implements Service
                                                      currentAuthToken ),
                                           new Param( "api_key",
                                                      applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -844,7 +844,7 @@ public class ServiceImpl implements Service
                                     new Param( "auth_token", currentAuthToken ),
                                     new Param( "api_key",
                                                applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -864,7 +864,7 @@ public class ServiceImpl implements Service
                                     new Param( "auth_token", currentAuthToken ),
                                     new Param( "api_key",
                                                applicationInfo.getApiKey() ) );
-      return newTaskResult( timelineId, taskSeriesId, taskId, elt );
+      return newTaskResult( timelineId, elt );
    }
    
 
@@ -1000,10 +1000,9 @@ public class ServiceImpl implements Service
 
 
    private final static TimeLineResult< RtmTaskList > newTaskResult( String timelineId,
-                                                                     String taskSeriesId,
-                                                                     String taskId,
                                                                      Element elt ) throws ServiceException
    {
+      // TODO: Check for Android > 2.1
       // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       

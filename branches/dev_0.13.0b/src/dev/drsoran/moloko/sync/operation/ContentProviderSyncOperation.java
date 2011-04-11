@@ -29,6 +29,10 @@ import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.content.SyncResult;
+import android.util.Log;
+import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.TransactionalAccess;
+import dev.drsoran.moloko.util.LogUtils;
 
 
 public class ContentProviderSyncOperation implements
@@ -189,6 +193,35 @@ public class ContentProviderSyncOperation implements
    public int size()
    {
       return operations.size();
+   }
+   
+
+
+   public boolean applyTransactional( RtmProvider rtmProvider )
+   {
+      final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
+      
+      try
+      {
+         transactionalAccess.beginTransaction();
+         
+         rtmProvider.applyBatch( new ArrayList< ContentProviderOperation >( operations ) );
+         
+         transactionalAccess.setTransactionSuccessful();
+      }
+      catch ( Throwable e )
+      {
+         Log.e( LogUtils.toTag( ContentProviderSyncOperation.class ),
+                LogUtils.GENERIC_DB_ERROR,
+                e );
+         return false;
+      }
+      finally
+      {
+         transactionalAccess.endTransaction();
+      }
+      
+      return true;
    }
    
 

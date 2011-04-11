@@ -37,6 +37,7 @@ import com.mdt.rtm.data.RtmData;
 import dev.drsoran.moloko.content.RtmContactsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -210,5 +211,12 @@ public class RtmContact extends RtmData implements
                                              .build() );
       
       return result.build();
+   }
+   
+
+
+   public IContentProviderSyncOperation computeAfterServerInsertOperation( RtmContact serverElement )
+   {
+      return NoopContentProviderSyncOperation.INSTANCE;
    }
 }

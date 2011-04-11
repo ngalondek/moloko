@@ -45,8 +45,7 @@ public interface IServerSyncable< T, V >
    
 
 
-   public IServerSyncOperation< V > computeServerAfterInsertOperation( RtmTimeline timeline,
-                                                                       T serverElement );
+   public boolean hasModification( ModificationSet modificationSet );
    
 
 

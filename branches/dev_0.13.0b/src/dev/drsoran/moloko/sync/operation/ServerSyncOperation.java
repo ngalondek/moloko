@@ -240,7 +240,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
                   removeModOps.add( ModificationsProviderPart.getRemoveModificationOps( modification.getEntityUri() ) );
       }
       
-      if ( removeModOps.size() > 0 )
+      if ( removeModOps.size() > 0 && rtmProvider != null )
       {
          Log.i( TAG, "Removing " + removeModOps.size() + " modifications" );
          

@@ -834,16 +834,29 @@ public class ServiceImpl implements Service
                                                            String taskId,
                                                            String locationId ) throws ServiceException
    {
-      Element elt = invoker.invoke( new Param( "method",
-                                               "rtm.tasks.setLocation" ),
-                                    new Param( "timeline", timelineId ),
-                                    new Param( "list_id", listId ),
-                                    new Param( "taskseries_id", taskSeriesId ),
-                                    new Param( "task_id", taskId ),
-                                    new Param( "location_id", locationId ),
-                                    new Param( "auth_token", currentAuthToken ),
-                                    new Param( "api_key",
-                                               applicationInfo.getApiKey() ) );
+      
+      final Element elt;
+      
+      if ( locationId != null )
+         elt = invoker.invoke( new Param( "method", "rtm.tasks.setLocation" ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "list_id", listId ),
+                               new Param( "taskseries_id", taskSeriesId ),
+                               new Param( "task_id", taskId ),
+                               new Param( "location_id", locationId ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ) );
+      else
+         elt = invoker.invoke( new Param( "method", "rtm.tasks.setLocation" ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "list_id", listId ),
+                               new Param( "taskseries_id", taskSeriesId ),
+                               new Param( "task_id", taskId ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ) );
+      
       return newTaskResult( timelineId, elt );
    }
    

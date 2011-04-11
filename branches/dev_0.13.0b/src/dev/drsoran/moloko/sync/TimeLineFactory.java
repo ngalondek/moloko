@@ -67,7 +67,7 @@ public final class TimeLineFactory
    private final RtmTimeline createTimelineImpl() throws ServiceException
    {
       final RtmTimeline newTimeline = service.timelines_create();
-      Log.i( TAG, "Created new time line " + timeline );
+      Log.i( TAG, "Created new time line " + newTimeline );
       return newTimeline;
    }
 }

@@ -67,6 +67,8 @@
          name="android:layout_width">fill_parent</item>
       <item
          name="android:layout_height">wrap_content</item>
+      <item
+         name="android:minHeight">@dimen/app_titlebar_height</item>
    </style>
    
    <style
@@ -384,6 +386,8 @@
    <style
       name="StartUp.Error"
       parent="Error">
+      <item
+         name="android:layout_height">fill_parent</item>
    </style>
 
    <style

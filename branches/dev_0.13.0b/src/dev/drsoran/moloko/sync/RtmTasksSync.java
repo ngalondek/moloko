@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.sync;
 
-import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentProviderClient;
@@ -35,6 +35,7 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.TimeLineResult;
 import com.mdt.rtm.TimeLineResult.Transaction;
 import com.mdt.rtm.data.RtmTaskList;
+import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
@@ -51,6 +52,7 @@ import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -61,47 +63,25 @@ public final class RtmTasksSync
       + RtmTasksSync.class.getSimpleName();
    
    
-   private final static class CmpGreaterCreatedDate implements
-            Comparator< OutSyncTask >
-   {
-      public int compare( OutSyncTask object1, OutSyncTask object2 )
-      {
-         return object2.getCreatedDate().compareTo( object1.getCreatedDate() );
-      }
-   }
-   
-   
 
-   public static boolean sendNewTasks( Service service,
-                                       ContentProviderClient provider,
-                                       TimeLineFactory timeLineFactory,
-                                       SyncRtmTaskList localTasks,
-                                       SyncRtmTaskList serverTasks,
-                                       Date lastSync,
-                                       MolokoSyncResult syncResult )
+   public static void sendNewTasks( Service service,
+                                    RtmProvider provider,
+                                    TimeLineFactory timeLineFactory,
+                                    SyncRtmTaskList localTasks,
+                                    SyncRtmTaskList serverTasks,
+                                    MolokoSyncResult syncResult )
    {
-      List< OutSyncTask > localOutSyncTasks = null;
+      List< OutSyncTask > newOutSyncTasks = new LinkedList< OutSyncTask >();
       
+      for ( OutSyncTask outSyncTask : localTasks.getOutSyncTasks() )
       {
-         final List< OutSyncTask > sortedOutSyncTasks = localTasks.getOutSyncTasks( new CmpGreaterCreatedDate() );
-         
-         // Find the end of the new added tasks
-         int endOfNewTasksIdx = 0;
-         for ( OutSyncTask outSyncTask : sortedOutSyncTasks )
-         {
-            if ( outSyncTask.getCreatedDate().after( lastSync ) )
-               ++endOfNewTasksIdx;
-            else
-               break;
-         }
-         
-         localOutSyncTasks = sortedOutSyncTasks.subList( 0,
-                                                         endOfNewTasksIdx + 1 );
+         if ( outSyncTask.isNew() )
+            newOutSyncTasks.add( outSyncTask );
       }
       
-      if ( localOutSyncTasks.size() > 0 )
+      if ( newOutSyncTasks.size() > 0 )
       {
-         Log.i( TAG, "Sending " + localOutSyncTasks.size() + " new task(s)" );
+         Log.i( TAG, "Sending " + newOutSyncTasks.size() + " new task(s)" );
          
          RtmTimeline timeline = null;
          
@@ -113,28 +93,31 @@ public final class RtmTasksSync
          {
             Log.e( TAG, "Creating new time line failed", e );
             handleResponseCode( syncResult, e );
-            return false;
+            return;
          }
          
-         for ( OutSyncTask localOutSyncTask : localOutSyncTasks )
+         for ( OutSyncTask newOutSyncTask : newOutSyncTasks )
          {
-            if ( sendTask( service,
-                           (RtmProvider) provider.getLocalContentProvider(),
-                           timeline,
-                           localOutSyncTask,
-                           serverTasks,
-                           syncResult ) )
+            final RtmTaskList newTask = sendTask( service,
+                                                  provider,
+                                                  timeline,
+                                                  newOutSyncTask,
+                                                  syncResult );
+            if ( newTask != null )
             {
-               // Remove the sent task from the local list of tasks
-               localTasks.remove( localOutSyncTask.getTaskSeries() );
+               // Put the new added task with the new IDs and set values back to the server list.
+               serverTasks.update( newTask );
                
-               // TODO: Remove the local task from the DB since it will
-               // be replaced by the RTM version
+               localTasks.remove( newOutSyncTask.getTaskSeries() );
+               
+               provider.delete( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                          newOutSyncTask.getTask()
+                                                                        .getId() ),
+                                null,
+                                null );
             }
          }
       }
-      
-      return true;
    }
    
 
@@ -142,7 +125,6 @@ public final class RtmTasksSync
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       TimeLineFactory timeLineFactory,
-                                      ModificationSet modifications,
                                       Date lastSync,
                                       MolokoSyncResult syncResult )
    {
@@ -181,23 +163,39 @@ public final class RtmTasksSync
       // Check if we have server write access
       if ( timeLineFactory != null )
       {
-         if ( lastSync != null )
+         // Send new tasks
+         sendNewTasks( service,
+                       (RtmProvider) provider.getLocalContentProvider(),
+                       timeLineFactory,
+                       local_SyncTaskList,
+                       server_SyncTaskList,
+                       syncResult );
+         
+         // IMPORTANT: Retrieve all modifications after sending tasks cause sending tasks may have altered modifications
+         ModificationSet modifications;
+         try
          {
-            // Send new tasks
-            if ( !sendNewTasks( service,
-                                provider,
-                                timeLineFactory,
-                                server_SyncTaskList,
-                                local_SyncTaskList,
-                                lastSync,
-                                syncResult ) )
-               return false;
+            modifications = SyncAdapter.getModificationsFor( syncResult.context,
+                                                             TaskSeries.CONTENT_URI,
+                                                             RawTasks.CONTENT_URI );
+         }
+         catch ( Throwable e )
+         {
+            Log.e( TAG, "Retrieving modifications failed", e );
+            modifications = null;
          }
          
+         /**
+          * Even if modifications are null, we must not return here. We need to apply changes made by adding a new task
+          * below.
+          **/
+         
          // Check if we have outgoing changes
-         if ( modifications.hasModifications( TaskSeries.CONTENT_URI )
-            || modifications.hasModifications( RawTasks.CONTENT_URI ) )
+         if ( modifications != null && modifications.size() > 0 )
          {
+            Log.i( TAG, "Retrieved " + modifications.size()
+               + " modification(s)" );
+            
             final List< OutSyncTask > server_Tasks = server_SyncTaskList.getOutSyncTasks();
             final List< OutSyncTask > local_Tasks = local_SyncTaskList.getOutSyncTasks();
             
@@ -245,86 +243,81 @@ public final class RtmTasksSync
    
 
 
-   private final static boolean sendTask( Service service,
-                                          RtmProvider rtmProvider,
-                                          RtmTimeline timeline,
-                                          OutSyncTask localOutSyncTask,
-                                          SyncRtmTaskList serverTasks,
-                                          MolokoSyncResult syncResult )
+   private final static RtmTaskList sendTask( Service service,
+                                              RtmProvider provider,
+                                              RtmTimeline timeline,
+                                              OutSyncTask localOutSyncTask,
+                                              MolokoSyncResult syncResult )
    {
-      boolean ok = true;
+      final RtmTaskList[] resultList = new RtmTaskList[ 1 ];
+      final Transaction[] transaction = new Transaction[ 1 ];
       
-      RtmTaskList[] resultList = new RtmTaskList[ 1 ];
-      Transaction[] transaction = new Transaction[ 1 ];
-      
-      int respcode = RtmServiceConstants.RtmErrorCodes.LIST_INVALID_ID;
       // Create a new task on RTM side with List + Name
-      {
+      int respcode = addTask( timeline,
+                              localOutSyncTask.getTaskSeries().getName(),
+                              localOutSyncTask.getTaskSeries().getListId(),
+                              resultList,
+                              transaction );
+      
+      // If our list ID is not accepted, we try again w/o a list ID. So the task will
+      // be added to the InBox. This can happen if our local list does not
+      // exists anymore on server side.
+      if ( respcode == RtmServiceConstants.RtmErrorCodes.LIST_INVALID_ID )
          respcode = addTask( timeline,
                              localOutSyncTask.getTaskSeries().getName(),
-                             localOutSyncTask.getTaskSeries().getListId(),
+                             null,
                              resultList,
                              transaction );
-         
-         // If our list ID is not accepted, we try again w/o a list ID. So the task will
-         // be added to the InBox. This can happen if our local list does not
-         // exists anymore on server side.
-         if ( respcode == RtmServiceConstants.RtmErrorCodes.LIST_INVALID_ID )
-            respcode = addTask( timeline,
-                                localOutSyncTask.getTaskSeries().getName(),
-                                null,
-                                resultList,
-                                transaction );
-      }
       
-      ok = respcode == RtmServiceConstants.RtmErrorCodes.NO_ERROR;
-      
-      if ( ok && resultList[ 0 ] != null
-         && resultList[ 0 ].getSeries().size() > 0 )
+      if ( resultList[ 0 ] != null && resultList[ 0 ].getSeries().size() > 0 )
       {
-         /** Now we should have the new task IDs from RTM. **/
+         final RtmTaskSeries newServerTaskSeries = resultList[ 0 ].getSeries()
+                                                                  .get( 0 );
          
-         // This has the IDs
-         final OutSyncTask serverTaskSeries = new OutSyncTask( resultList[ 0 ].getSeries()
-                                                                              .get( 0 ) );
-         
-         // Update the task with the new IDs with the local values
-         final IServerSyncOperation< RtmTaskList > operation = localOutSyncTask.computeServerAfterInsertOperation( timeline,
-                                                                                                                   serverTaskSeries );
-         try
+         // Put all differences between local task and new server task as modification in the DB.
+         // So, in case of an sync interruption, we still have the changes for the next time.
          {
-            resultList[ 0 ] = operation.execute( rtmProvider );
-            
-            // Put the new added task with the new IDs and set values back to the server list.
-            serverTasks.update( resultList[ 0 ] );
+            final IContentProviderSyncOperation modifications = localOutSyncTask.toInSyncRtmTaskSeries()
+                                                                                .computeAfterServerInsertOperation( new InSyncRtmTaskSeries( newServerTaskSeries ) );
+            modifications.applyTransactional( provider );
          }
-         catch ( ServiceException e )
+         
+         // Read the modifications
          {
-            ok = false;
-            
-            Log.e( TAG,
-                   "Applying server operation failed. Reverting changes",
-                   e );
-            
-            // If something failed, we undo all changes made so far
-            operation.revert( service );
-            
-            if ( transaction[ 0 ] != null && transaction[ 0 ].undoable )
+            final ModificationSet modifications = SyncAdapter.getModificationsFor( syncResult.context,
+                                                                                   Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                                             newServerTaskSeries.getId() ),
+                                                                                   Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                             newServerTaskSeries.getTasks()
+                                                                                                                                .get( 0 )
+                                                                                                                                .getId() ) );
+            if ( modifications != null && modifications.size() > 0 )
             {
+               final IServerSyncOperation< RtmTaskList > serverOp = new OutSyncTask( newServerTaskSeries ).computeServerUpdateOperation( timeline,
+                                                                                                                                         modifications,
+                                                                                                                                         null /*
+                                                                                                                                               * Force
+                                                                                                                                               * outgoing
+                                                                                                                                               * changes
+                                                                                                                                               */);
                try
                {
-                  service.transactions_undo( transaction[ 0 ].timelineId,
-                                             transaction[ 0 ].transactionId );
+                  final RtmTaskList list = serverOp.execute( provider );
+                  if ( list != null )
+                     return list;
                }
-               catch ( ServiceException te )
+               catch ( ServiceException e )
                {
-                  Log.e( TAG, "Undo of transaction failed! Help us god!", te );
+                  Log.e( TAG, "Updating server task after insert failed", e );
+                  return null;
                }
             }
          }
+         
+         return resultList[ 0 ];
       }
-      
-      return ok;
+      else
+         return null;
    }
    
 

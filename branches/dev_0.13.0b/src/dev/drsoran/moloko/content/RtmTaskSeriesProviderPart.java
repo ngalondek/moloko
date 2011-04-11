@@ -480,6 +480,22 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + " = old." + TaskSeries._ID + "; DELETE FROM " + Participants.PATH
          + " WHERE " + Participants.TASKSERIES_ID + " = old." + TaskSeries._ID
          + "; END;" );
+      
+      // Triggers: If a taskseries ID gets updates (e.g. after inserting on RTM side),
+      // we also update:
+      // - all raw tasks
+      // - all referenced notes
+      // - all referenced participants
+      db.execSQL( "CREATE TRIGGER " + path
+         + "_update_taskseries AFTER UPDATE OF " + TaskSeries._ID + " ON "
+         + path + " FOR EACH ROW BEGIN UPDATE " + RawTasks.PATH + " SET "
+         + RawTasks.TASKSERIES_ID + " = new." + TaskSeries._ID + " WHERE "
+         + RawTasks.TASKSERIES_ID + " = old." + TaskSeries._ID + "; UPDATE "
+         + Notes.PATH + " SET " + Notes.TASKSERIES_ID + " = new."
+         + TaskSeries._ID + " WHERE " + Notes.TASKSERIES_ID + " = old."
+         + TaskSeries._ID + "; UPDATE " + Participants.PATH + " SET "
+         + Participants.TASKSERIES_ID + " = new." + TaskSeries._ID + " WHERE "
+         + Participants.TASKSERIES_ID + " = old." + TaskSeries._ID + "; END;" );
    }
    
 

@@ -180,8 +180,8 @@ public class SyncDiffer
             final T localElement = sortedLocalList.get( i );
             final Date localElementModified = localElement.getModifiedDate();
             
-            if ( localElementModified != null
-               && ( lastSync == null || lastSync.before( localElementModified ) ) )
+            if ( ( localElementModified != null && ( lastSync == null || lastSync.before( localElementModified ) ) )
+               || localElement.hasModification( modifications ) )
             {
                localTouchedElements[ i ] = true;
                operations.add( localElement.computeServerUpdateOperation( timeLine,

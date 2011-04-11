@@ -250,7 +250,7 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                        created,
                        created,
                        getCurrentValue( Tasks.TASKSERIES_NAME, String.class ),
-                       getString( R.string.app_name ),
+                       "Moloko",
                        getCurrentValue( Tasks.URL, String.class ),
                        getCurrentValue( Tasks.RECURRENCE, String.class ),
                        getCurrentValue( Tasks.RECURRENCE_EVERY, Boolean.class ),

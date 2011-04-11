@@ -102,7 +102,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       
       String syncedValue = null;
       
-      if ( !modification.isSyncedValueSet() )
+      if ( contentResolver != null && !modification.isSyncedValueSet() )
       {
          final ContentProviderClient entityClient = contentResolver.acquireContentProviderClient( modification.getEntityUri() );
          
@@ -192,26 +192,39 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
 
 
    public final static List< Modification > getModifications( ContentProviderClient client,
-                                                              Uri entityUri )
+                                                              Uri[] entityUris )
    {
       List< Modification > modifications = null;
       Cursor c = null;
       
       try
       {
-         if ( entityUri == null )
+         if ( entityUris == null || entityUris.length == 0 )
             c = client.query( Modifications.CONTENT_URI,
                               PROJECTION,
                               null,
                               null,
                               null );
          else
+         {
+            final StringBuilder selection = new StringBuilder( Modifications.ENTITY_URI ).append( " like '" );
+            
+            for ( int i = 0; i < entityUris.length; ++i )
+            {
+               selection.append( entityUris[ i ].toString() ).append( "%'" );
+               
+               if ( i + 1 < entityUris.length )
+                  selection.append( " OR " )
+                           .append( Modifications.ENTITY_URI )
+                           .append( " like '" );
+            }
+            
             c = client.query( Modifications.CONTENT_URI,
                               PROJECTION,
-                              SEL_QUERY_MODIFICATIONS,
-                              new String[]
-                              { entityUri.toString() },
+                              selection.toString(),
+                              null,
                               null );
+         }
          
          boolean ok = c != null;
          if ( ok )

@@ -120,6 +120,13 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
+   public final InSyncRtmTaskSeries toInSyncRtmTaskSeries()
+   {
+      return new InSyncRtmTaskSeries( taskSeries );
+   }
+   
+
+
    public RtmTaskSeries getTaskSeries()
    {
       return taskSeries;
@@ -155,104 +162,21 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
-   public IServerSyncOperation< RtmTaskList > computeServerAfterInsertOperation( RtmTimeline timeline,
-                                                                                 OutSyncTask serverElement )
+   public boolean isNew()
    {
-      TaskServerSyncOperation.Builder< RtmTaskList > operation = TaskServerSyncOperation.newInsert();
+      return taskSeries.getSource() != null
+         && taskSeries.getSource().equalsIgnoreCase( "Moloko" );
+   }
+   
+
+
+   public boolean hasModification( ModificationSet modificationSet )
+   {
+      return modificationSet.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                        taskSeries.getId() ) )
+         || modificationSet.hasModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                       task.getId() ) );
       
-      /**
-       * Note: If we detect changes, we use the local value with IDs from the server element cause after the insert,
-       * local IDs are obsolete and unknown on server side.
-       **/
-      
-      /** RtmTaskSeries **/
-      
-      // Recurrence
-      if ( SyncUtils.hasChanged( taskSeries.getRecurrence(),
-                                 serverElement.taskSeries.getRecurrence() ) )
-         operation.add( timeline.tasks_setRecurrence( serverElement.taskSeries.getListId(),
-                                                      serverElement.taskSeries.getId(),
-                                                      serverElement.task.getId(),
-                                                      taskSeries.getRecurrenceSentence() ) );
-      
-      // Tags
-      if ( SyncUtils.hasChanged( taskSeries.getTagsJoined(),
-                                 serverElement.taskSeries.getTagsJoined() ) )
-         operation.add( timeline.tasks_setTags( serverElement.taskSeries.getListId(),
-                                                serverElement.taskSeries.getId(),
-                                                serverElement.task.getId(),
-                                                taskSeries.getTags() ) );
-      
-      // Location
-      if ( SyncUtils.hasChanged( taskSeries.getLocationId(),
-                                 serverElement.taskSeries.getLocationId() ) )
-         operation.add( timeline.tasks_setLocation( serverElement.taskSeries.getListId(),
-                                                    serverElement.taskSeries.getId(),
-                                                    serverElement.task.getId(),
-                                                    taskSeries.getLocationId() ) );
-      // URL
-      if ( SyncUtils.hasChanged( taskSeries.getURL(),
-                                 serverElement.taskSeries.getURL() ) )
-         operation.add( timeline.tasks_setURL( serverElement.taskSeries.getListId(),
-                                               serverElement.taskSeries.getId(),
-                                               serverElement.task.getId(),
-                                               taskSeries.getURL() ) );
-      
-      /** RtmTask **/
-      
-      // Priority
-      if ( SyncUtils.hasChanged( task.getPriority(),
-                                 serverElement.task.getPriority() ) )
-         operation.add( timeline.tasks_setPriority( serverElement.taskSeries.getListId(),
-                                                    serverElement.taskSeries.getId(),
-                                                    serverElement.task.getId(),
-                                                    task.getPriority() ) );
-      
-      // Completed date
-      if ( SyncUtils.hasChanged( task.getCompleted(),
-                                 serverElement.task.getCompleted() ) )
-      {
-         if ( task.getCompleted() != null )
-            operation.add( timeline.tasks_complete( serverElement.taskSeries.getListId(),
-                                                    serverElement.taskSeries.getId(),
-                                                    serverElement.task.getId() ) );
-         else
-            operation.add( timeline.tasks_uncomplete( serverElement.taskSeries.getListId(),
-                                                      serverElement.taskSeries.getId(),
-                                                      serverElement.task.getId() ) );
-      }
-      
-      // Due date
-      if ( SyncUtils.hasChanged( task.getDue(), serverElement.task.getDue() )
-         || SyncUtils.hasChanged( task.getHasDueTime(),
-                                  serverElement.task.getHasDueTime() ) )
-      {
-         operation.add( timeline.tasks_setDueDate( serverElement.taskSeries.getListId(),
-                                                   serverElement.taskSeries.getId(),
-                                                   serverElement.task.getId(),
-                                                   task.getDue(),
-                                                   task.getHasDueTime() != 0
-                                                                            ? true
-                                                                            : false ) );
-      }
-      
-      // Estimate
-      if ( SyncUtils.hasChanged( task.getEstimate(),
-                                 serverElement.task.getEstimate() ) )
-         operation.add( timeline.tasks_setEstimate( serverElement.taskSeries.getListId(),
-                                                    serverElement.taskSeries.getId(),
-                                                    serverElement.task.getId(),
-                                                    TextUtils.isEmpty( task.getEstimate() )
-                                                                                           ? Strings.EMPTY_STRING
-                                                                                           : task.getEstimate() ) );
-      
-      /**
-       * Postponed can not be synced. Otherwise we had to store the initial due date on local task creation of the task
-       * and set this initial date after creation of the task on RTM side. After this, we could call postpone 1..n
-       * times. This is not supported atm.
-       **/
-      
-      return operation.build( TaskServerSyncOperation.class );
    }
    
 
@@ -475,7 +399,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                                        TextUtils.isEmpty( task.getEstimate() )
                                                                                               ? Strings.EMPTY_STRING
                                                                                               : task.getEstimate() ),
-                           properties.getModification( TaskSeries.LOCATION_ID ) );
+                           properties.getModification( RawTasks.ESTIMATE ) );
          }
          
          // Postponed

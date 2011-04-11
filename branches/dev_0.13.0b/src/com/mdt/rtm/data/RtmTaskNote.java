@@ -32,6 +32,7 @@ import android.os.Parcelable;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -281,6 +282,13 @@ public class RtmTaskNote extends RtmData implements
                                              .build() );
       
       return result.build();
+   }
+   
+
+
+   public IContentProviderSyncOperation computeAfterServerInsertOperation( RtmTaskNote serverElement )
+   {
+      return NoopContentProviderSyncOperation.INSTANCE;
    }
    
 }

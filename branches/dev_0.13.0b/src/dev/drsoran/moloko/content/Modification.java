@@ -25,10 +25,12 @@ package dev.drsoran.moloko.content;
 import java.util.Comparator;
 import java.util.Date;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
@@ -237,6 +239,21 @@ public class Modification implements Comparable< Modification >
    
 
 
+   public final static < T > ContentProviderOperation newModificationOperation( Uri entityUri,
+                                                                                String colName,
+                                                                                T newValue )
+   {
+      return ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
+                                     .withValues( ModificationsProviderPart.getContentValues( null,
+                                                                                              newModification( entityUri,
+                                                                                                               colName,
+                                                                                                               newValue ),
+                                                                                              true ) )
+                                     .build();
+   }
+   
+
+
    public final static < T > Modification newNonPersistentModification( Uri contentUri,
                                                                         String id,
                                                                         String colName,
@@ -266,12 +283,41 @@ public class Modification implements Comparable< Modification >
    
 
 
+   public final static < T > ContentProviderOperation newNonPersistentModificationOperation( Uri entityUri,
+                                                                                             String colName,
+                                                                                             T newValue )
+   {
+      return ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
+                                     .withValues( ModificationsProviderPart.getContentValues( null,
+                                                                                              newNonPersistentModification( entityUri,
+                                                                                                                            colName,
+                                                                                                                            newValue ),
+                                                                                              true ) )
+                                     .build();
+   }
+   
+
+
    public final static Modification newTaskModified( String taskSeriesId )
    {
       return newNonPersistentModification( TaskSeries.CONTENT_URI,
                                            taskSeriesId,
                                            TaskSeries.MODIFIED_DATE,
                                            System.currentTimeMillis() );
+   }
+   
+
+
+   public final static ContentProviderOperation newTaskModifiedOperation( String taskSeriesId )
+   {
+      return ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
+                                     .withValues( ModificationsProviderPart.getContentValues( null,
+                                                                                              newNonPersistentModification( TaskSeries.CONTENT_URI,
+                                                                                                                            taskSeriesId,
+                                                                                                                            TaskSeries.MODIFIED_DATE,
+                                                                                                                            System.currentTimeMillis() ),
+                                                                                              true ) )
+                                     .build();
    }
    
 

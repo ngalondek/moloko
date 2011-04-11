@@ -311,4 +311,11 @@ public class RtmSettings extends RtmData implements
       return result.build();
    }
    
+
+
+   public IContentProviderSyncOperation computeAfterServerInsertOperation( RtmSettings serverElement )
+   {
+      return NoopContentProviderSyncOperation.INSTANCE;
+   }
+   
 }

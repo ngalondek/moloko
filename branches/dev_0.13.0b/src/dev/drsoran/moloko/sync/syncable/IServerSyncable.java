@@ -49,11 +49,12 @@ public interface IServerSyncable< T, V >
    
 
 
-   public IServerSyncOperation< V > computeServerDeleteOperation( RtmTimeline timeline );
-   
-
-
    public IServerSyncOperation< V > computeServerUpdateOperation( RtmTimeline timeline,
                                                                   ModificationSet modifications,
                                                                   T serverElement );
+   
+
+
+   public IServerSyncOperation< V > computeServerDeleteOperation( RtmTimeline timeline );
+   
 }

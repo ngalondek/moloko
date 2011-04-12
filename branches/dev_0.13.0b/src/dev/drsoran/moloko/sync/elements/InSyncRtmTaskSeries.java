@@ -29,13 +29,11 @@ import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.net.Uri;
-import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 
-import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
@@ -45,7 +43,6 @@ import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Notes;
@@ -292,59 +289,5 @@ public class InSyncRtmTaskSeries implements
       }
       
       return operations.build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeAfterServerInsertOperation( InSyncRtmTaskSeries serverElement )
-   {
-      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
-      
-      // All differences to the new server element will be added as modification
-      final Uri newUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                   serverElement.taskSeries.getId() );
-      
-      // Recurrence
-      if ( SyncUtils.hasChanged( taskSeries.getRecurrence(),
-                                 serverElement.taskSeries.getRecurrence() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               TaskSeries.RECURRENCE,
-                                                               taskSeries.getRecurrenceSentence() ) );
-      
-      // Tags
-      if ( SyncUtils.hasChanged( taskSeries.getTagsJoined(),
-                                 serverElement.taskSeries.getTagsJoined() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               TaskSeries.TAGS,
-                                                               taskSeries.getTagsJoined() ) );
-      
-      // Location
-      if ( SyncUtils.hasChanged( taskSeries.getLocationId(),
-                                 serverElement.taskSeries.getLocationId() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               TaskSeries.LOCATION_ID,
-                                                               taskSeries.getLocationId() ) );
-      // URL
-      if ( SyncUtils.hasChanged( taskSeries.getURL(),
-                                 serverElement.taskSeries.getURL() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               TaskSeries.URL,
-                                                               taskSeries.getURL() ) );
-      
-      final List< InSyncRtmTask > serverInSyncTasks = serverElement.getInSyncTasks();
-      
-      if ( serverInSyncTasks.size() == 1 )
-      {
-         operation.add( inSyncTasks.get( 0 )
-                                   .computeAfterServerInsertOperation( serverInSyncTasks.get( 0 ) ) );
-      }
-      else
-      {
-         Log.e( LogUtils.toTag( InSyncRtmTaskSeries.class ),
-                "Found server side InSyncRtmTaskSeries with "
-                   + serverInSyncTasks.size() + " raw tasks. Expected 1." );
-      }
-      
-      return operation.build();
    }
 }

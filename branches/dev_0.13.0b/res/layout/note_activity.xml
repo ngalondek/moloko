@@ -48,6 +48,7 @@
          android:layout_height="wrap_content"
          android:layout_alignParentLeft="true"
          android:src="@drawable/ic_button_arrow_up"
+         android:scaleType="fitXY"
          android:onClick="onPrevNote" />
 
       <Button
@@ -55,6 +56,8 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:layout_centerHorizontal="true"
+         android:layout_alignParentTop="true"
+         android:layout_alignParentBottom="true"
          android:text="@string/phr_close"
          android:onClick="onClose" />
 
@@ -62,8 +65,9 @@
          android:id="@+id/note_btn_next"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_alignParentRight="true"
+         android:layout_alignParentRight="true"         
          android:src="@drawable/ic_button_arrow_down"
+         android:scaleType="fitXY"
          android:onClick="onNextNote" />
    </RelativeLayout>
 

@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
-      Moloko is free software: you can redistribute it and/or modify it
-      under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      (at your option) any later version. Moloko is distributed in the
-      hope that it will be useful, but WITHOUT ANY WARRANTY; without
-      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-      PARTICULAR PURPOSE. See the GNU General Public License for more
-      details. You should have received a copy of the GNU General Public
-      License along with Moloko. If not, see
-      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
-   -->
+<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
+   is free software: you can redistribute it and/or modify it under the terms 
+   of the GNU General Public License as published by the Free Software Foundation, 
+   either version 3 of the License, or (at your option) any later version. Moloko 
+   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+   PURPOSE. See the GNU General Public License for more details. You should 
+   have received a copy of the GNU General Public License along with Moloko. 
+   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
+   - implementation -->
 
 <FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
@@ -196,7 +192,7 @@
                   moloko:text="http://code.google.com/p/moloko/" />
             </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                android:id="@+id/task_buttons"
                style="@style/Task_ButtonBar"
                android:layout_width="fill_parent"
@@ -209,13 +205,28 @@
                   android:id="@+id/task_buttons_edit"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:layout_gravity="center_vertical|left"
+                  android:layout_alignParentLeft="true"
                   android:src="@drawable/ic_button_task_edit"
                   android:scaleType="fitXY"
                   android:onClick="onEditTask" />
-            </LinearLayout>
+               <ImageButton
+                  android:id="@+id/task_buttons_postpone"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toRightOf="@id/task_buttons_edit"
+                  android:src="@drawable/ic_list_taskslist_postponed"
+                  android:scaleType="fitXY"
+                  android:onClick="onPostponeTask" />
+               <ImageButton
+                  android:id="@+id/task_buttons_complete"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true"
+                  android:src="@drawable/ic_list_checked_check"
+                  android:scaleType="fitXY"
+                  android:onClick="onCompleteTask" />
+            </RelativeLayout>
          </FrameLayout>
-
       </LinearLayout>
    </ScrollView>
 
@@ -227,28 +238,14 @@
       android:layout_gravity="bottom">
 
       <Button
-         android:id="@+id/task_button_complete"
-         android:layout_width="wrap_content"
+         android:id="@+id/task_button_back"
+         android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:layout_marginLeft="5dip"
-         android:layout_marginTop="5dip"
-         android:layout_marginBottom="5dip"
+         android:layout_marginLeft="15dip"
+         android:layout_marginRight="15dip"
          android:layout_gravity="center"
-         android:layout_weight="0.5"
-         android:text="@string/btn_complete"
-         android:onClick="onCompleteTask" />
-
-      <Button
-         android:id="@+id/task_button_postpone"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_marginRight="5dip"
-         android:layout_marginTop="5dip"
-         android:layout_marginBottom="5dip"
-         android:layout_gravity="center"
-         android:layout_weight="0.5"
-         android:text="@string/btn_postpone"
-         android:onClick="onPostponeTask" />
+         android:text="@string/btn_back"
+         android:onClick="onBack" />
    </LinearLayout>
 
 </FrameLayout>

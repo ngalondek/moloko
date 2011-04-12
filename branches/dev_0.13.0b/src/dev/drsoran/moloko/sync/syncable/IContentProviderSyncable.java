@@ -42,8 +42,4 @@ public interface IContentProviderSyncable< T extends IContentProviderSyncable< T
 
 
    public IContentProviderSyncOperation computeContentProviderDeleteOperation();
-   
-
-
-   public IContentProviderSyncOperation computeAfterServerInsertOperation( T serverElement );
 }

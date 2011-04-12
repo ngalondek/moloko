@@ -40,7 +40,6 @@ import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 
@@ -208,12 +207,5 @@ public class ParticipantList implements
                                                                   syncList,
                                                                   true /* always full sync */) )
                                          .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeAfterServerInsertOperation( ParticipantList serverElement )
-   {
-      return NoopContentProviderSyncOperation.INSTANCE;
    }
 }

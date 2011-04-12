@@ -120,8 +120,8 @@
    <string name="phr_tomorrow">Tomorrow</string>
    <string name="phr_tomorrow_with_date">Tomorrow the %1$s</string>
    <string name="phr_establish_connection">Establish an Internet connection to continue.</string>
-   <string name="phr_open_with_name">Open %1$s</string>
-   <string name="phr_edit_with_name">Edit %1$s</string>
+   <string name="phr_open_with_name">Open \'%1$s\'</string>
+   <string name="phr_edit_with_name">Edit \'%1$s\'</string>   
    <string name="phr_ok">OK</string>
    <string name="phr_close">Close</string>
    <string name="phr_settings">Settings</string>
@@ -161,6 +161,7 @@
    <string name="btn_uncomplete">Uncomplete</string>
    <string name="btn_postpone">Postpone</string>
    <string name="btn_add">Add</string>
+   <string name="btn_back">Back</string>
 	
 	<!-- Global menu items -->
    <string name="menu_opt_search_task_title">Search for tasks</string>
@@ -268,9 +269,12 @@
      <!-- Menus -->
      <string name="abstaskslist_menu_opt_sort">Sort by</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Edit multiple</string>
-     <string name="abstaskslist_listitem_ctx_open_list">Open list %1$s</string>
-     <string name="abstaskslist_listitem_ctx_tasks_at_location">Tasks at %1$s</string>
-     <string name="abstaskslist_listitem_ctx_open_location">Open %1$s</string>
+     <string name="abstaskslist_listitem_ctx_complete_task">Complete \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_uncomplete_task">Uncomplete \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_postpone_task">Postpone \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_open_list">Open list \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_tasks_at_location">Tasks at \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_open_location">Open \'%1$s\'</string>
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">and</string>
      <string name="abstaskslist_dlg_show_tags_or">or</string>

@@ -55,8 +55,8 @@
 		<item quantity="other">Open notes</item>
 	</plurals>
 	<plurals name="taskslist_listitem_ctx_tags">
-		<item quantity="one">All tasks with same tag</item>
-		<item quantity="other">All tasks tagged with...</item>
+		<item quantity="one">Show tasks with \'%1$s\'</item>
+		<item quantity="other">Show tasks tagged with...</item>
 	</plurals>
    
 </resources>

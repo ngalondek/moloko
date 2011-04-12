@@ -338,10 +338,9 @@ public class TitleBarLayout extends LinearLayout implements
          
          getContext().startActivity( Intents.createAddTaskIntent( getContext(),
                                                                   config ) );
+         showAddTaskInput( false );
       }
    }
-   
-   private final int showButtons;
    
    private final ToggleImageButton addTaskBtn;
    
@@ -367,7 +366,7 @@ public class TitleBarLayout extends LinearLayout implements
       if ( titleText != null )
          ( (TextView) findViewById( R.id.app_titlebar_text ) ).setText( titleText );
       
-      showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
+      final int showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
       
       // Show search button
       if ( ( showButtons & 1 ) != 0 )
@@ -383,31 +382,20 @@ public class TitleBarLayout extends LinearLayout implements
          setBtnVisible( R.id.app_titlebar_btn_home );
       }
       
-      // Show add task button will be done in the layout
-      addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
-      addTaskBtn.setOnCheckedChangeListener( this );
-      
-      array.recycle();
-   }
-   
-
-
-   @Override
-   protected void onLayout( boolean changed, int l, int t, int r, int b )
-   {
-      // Show add task button. This has to be evaluated every time cause
-      // the user may upgrade his account and we have to show the button then.
+      // Show add task button
       if ( ( showButtons & 4 ) != 0
          && !AccountUtils.isReadOnlyAccess( getContext() ) )
       {
-         addTaskBtn.setVisibility( View.VISIBLE );
+         setVisible( R.id.app_titlebar_sep_add_task );
+         addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
+         addTaskBtn.setOnCheckedChangeListener( this );
       }
       else
       {
-         addTaskBtn.setVisibility( View.GONE );
+         addTaskBtn = null;
       }
       
-      super.onLayout( changed, l, t, r, b );
+      array.recycle();
    }
    
 

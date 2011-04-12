@@ -32,7 +32,6 @@ import android.os.Parcelable;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -231,12 +230,4 @@ public class Participant implements IContentProviderSyncable< Participant >,
       
       return result.build();
    }
-   
-
-
-   public IContentProviderSyncOperation computeAfterServerInsertOperation( Participant serverElement )
-   {
-      return NoopContentProviderSyncOperation.INSTANCE;
-   }
-   
 }

@@ -30,7 +30,6 @@ import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -166,58 +165,5 @@ public class InSyncRtmTask implements IContentProviderSyncable< InSyncRtmTask >
                                                                                                                    task.getId() ) )
                                                                              .build() )
                                          .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeAfterServerInsertOperation( InSyncRtmTask serverElement )
-   {
-      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
-      
-      // All differences to the new server element will be added as modification
-      final Uri newUri = Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                   serverElement.task.getId() );
-      
-      // Priority
-      if ( SyncUtils.hasChanged( task.getPriority(),
-                                 serverElement.task.getPriority() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               RawTasks.PRIORITY,
-                                                               RtmTask.convertPriority( task.getPriority() ) ) );
-      
-      // Completed date
-      if ( SyncUtils.hasChanged( task.getCompleted(),
-                                 serverElement.task.getCompleted() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               RawTasks.COMPLETED_DATE,
-                                                               MolokoDateUtils.getTime( task.getCompleted() ) ) );
-      
-      // Due date
-      if ( SyncUtils.hasChanged( task.getDue(), serverElement.task.getDue() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               RawTasks.DUE_DATE,
-                                                               MolokoDateUtils.getTime( task.getDue() ) ) );
-      
-      // Has due time
-      if ( SyncUtils.hasChanged( task.getHasDueTime(),
-                                 serverElement.task.getHasDueTime() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               RawTasks.HAS_DUE_TIME,
-                                                               task.getHasDueTime() ) );
-      
-      // Estimate
-      if ( SyncUtils.hasChanged( task.getEstimate(),
-                                 serverElement.task.getEstimate() ) )
-         operation.add( Modification.newModificationOperation( newUri,
-                                                               RawTasks.ESTIMATE,
-                                                               task.getEstimate() ) );
-      
-      /**
-       * Postponed can not be synced. Otherwise we had to store the initial due date on local task creation of the task
-       * and set this initial date after creation of the task on RTM side. After this, we could call postpone 1..n
-       * times. This is not supported atm.
-       **/
-      
-      return operation.build();
    }
 }

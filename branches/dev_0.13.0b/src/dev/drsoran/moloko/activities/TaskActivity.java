@@ -37,7 +37,7 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,7 +100,7 @@ public class TaskActivity extends Activity
    
    private View editTaskBtn;
    
-   private Button completeTaskBtn;
+   private ImageButton completeTaskBtn;
    
    
 
@@ -153,7 +153,7 @@ public class TaskActivity extends Activity
                participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
                urlSection = taskContainer.findViewById( R.id.task_url );
                editTaskBtn = taskContainer.findViewById( R.id.task_buttons_edit );
-               completeTaskBtn = (Button) findViewById( R.id.task_button_complete );
+               completeTaskBtn = (ImageButton) taskContainer.findViewById( R.id.task_buttons_complete );
                
                inflateNotes( taskContainer, task );
             }
@@ -186,6 +186,14 @@ public class TaskActivity extends Activity
    {
       super.onResume();
       loadTask();
+      
+      // Deactivate controls which are not usable in read only mode
+      if ( AccountUtils.isReadOnlyAccess( this ) )
+         taskContainer.findViewById( R.id.task_buttons )
+                      .setVisibility( View.GONE );
+      else
+         taskContainer.findViewById( R.id.task_buttons )
+                      .setVisibility( View.VISIBLE );
    }
    
 
@@ -276,6 +284,13 @@ public class TaskActivity extends Activity
    
 
 
+   public void onBack( View v )
+   {
+      finish();
+   }
+   
+
+
    private void loadTask()
    {
       if ( task != null )
@@ -292,12 +307,12 @@ public class TaskActivity extends Activity
             completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                        .getTime(),
                                                                    FULL_DATE_FLAGS ) );
-            completeTaskBtn.setText( R.string.btn_uncomplete );
+            completeTaskBtn.setImageResource( R.drawable.ic_list_unchecked_check );
          }
          else
          {
             completedDate.setVisibility( View.GONE );
-            completeTaskBtn.setText( R.string.btn_complete );
+            completeTaskBtn.setImageResource( R.drawable.ic_list_checked_check );
          }
          
          if ( task.getPosponed() > 0 )

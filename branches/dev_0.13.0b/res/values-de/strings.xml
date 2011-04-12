@@ -81,8 +81,8 @@
    <string name="phr_tomorrow">Morgen</string>
    <string name="phr_tomorrow_with_date">Morgen, der %1$s</string>
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
-   <string name="phr_open_with_name">Öffne %1$s</string>
-   <string name="phr_edit_with_name">Bearbeite %1$s</string>
+   <string name="phr_open_with_name">\'%1$s\' öffnen</string>
+   <string name="phr_edit_with_name">\'%1$s\' bearbeiten</string>
    <string name="phr_close">Schliessen</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
@@ -120,6 +120,7 @@
    <string name="btn_uncomplete">Unerledigt</string>
    <string name="btn_postpone">Aufschieben</string>
    <string name="btn_add">Neu</string>
+   <string name="btn_back">Zurück</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
@@ -218,9 +219,12 @@
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Mehrere bearb.</string>
-	  <string name="abstaskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>
-     <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort %1$s</string>
-     <string name="abstaskslist_listitem_ctx_open_location">Öffne Ort %1$s</string>
+     <string name="abstaskslist_listitem_ctx_complete_task">\'%1$s\' erledigt</string>
+     <string name="abstaskslist_listitem_ctx_uncomplete_task">\'%1$s\' unerledigt</string>
+     <string name="abstaskslist_listitem_ctx_postpone_task">\'%1$s\' aufschieben</string>
+	  <string name="abstaskslist_listitem_ctx_open_list">Liste \'%1$s\' öffnen</string>
+     <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_open_location">Ort \'%1$s\' öffnen</string>
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>

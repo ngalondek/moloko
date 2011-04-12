@@ -47,6 +47,7 @@ import dev.drsoran.moloko.util.AsyncInsertTask;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
@@ -250,7 +251,7 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                        created,
                        created,
                        getCurrentValue( Tasks.TASKSERIES_NAME, String.class ),
-                       "Moloko",
+                       TaskSeries.NEW_TASK_SOURCE,
                        getCurrentValue( Tasks.URL, String.class ),
                        getCurrentValue( Tasks.RECURRENCE, String.class ),
                        getCurrentValue( Tasks.RECURRENCE_EVERY, Boolean.class ),

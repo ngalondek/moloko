@@ -39,14 +39,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -63,6 +63,7 @@ import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.provider.Rtm.Notes;
@@ -195,13 +196,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       public final static int EDIT_TASK = 2;
       
-      public final static int OPEN_LIST = 3;
+      public final static int COMPLETE_TASK = 3;
       
-      public final static int TAGS = 4;
+      public final static int POSTPONE_TASK = 4;
       
-      public final static int TASKS_AT_LOCATION = 5;
+      public final static int OPEN_LIST = 5;
       
-      public final static int NOTES = 6;
+      public final static int TAGS = 6;
+      
+      public final static int TASKS_AT_LOCATION = 7;
+      
+      public final static int NOTES = 8;
    }
    
    protected final Runnable dontClearAndfillListRunnable = new Runnable()
@@ -423,10 +428,24 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                 getString( R.string.phr_open_with_name, task.getName() ) );
       
       if ( !AccountUtils.isReadOnlyAccess( this ) )
+      {
          menu.add( Menu.NONE,
                    CtxtMenu.EDIT_TASK,
                    Menu.NONE,
                    getString( R.string.phr_edit_with_name, task.getName() ) );
+         menu.add( Menu.NONE,
+                   CtxtMenu.COMPLETE_TASK,
+                   Menu.NONE,
+                   getString( task.getCompleted() == null
+                                                         ? R.string.abstaskslist_listitem_ctx_complete_task
+                                                         : R.string.abstaskslist_listitem_ctx_uncomplete_task,
+                              task.getName() ) );
+         menu.add( Menu.NONE,
+                   CtxtMenu.POSTPONE_TASK,
+                   Menu.NONE,
+                   getString( R.string.abstaskslist_listitem_ctx_postpone_task,
+                              task.getName() ) );
+      }
       
       final RtmSmartFilter filter = getIntent().getParcelableExtra( FILTER );
       
@@ -455,7 +474,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                       CtxtMenu.TAGS,
                       Menu.NONE,
                       getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
-                                                        tagsCount ) );
+                                                        tagsCount,
+                                                        task.getTags().get( 0 ) ) );
       }
       
       final String locationName = task.getLocationName();
@@ -497,6 +517,14 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             
          case CtxtMenu.EDIT_TASK:
             onTaskEdit( info.position );
+            return true;
+            
+         case CtxtMenu.COMPLETE_TASK:
+            onTaskComplete( info.position );
+            return true;
+            
+         case CtxtMenu.POSTPONE_TASK:
+            onTaskPostpone( info.position );
             return true;
             
          case CtxtMenu.OPEN_LIST:
@@ -659,6 +687,21 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    private void onTaskEdit( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
+   }
+   
+
+
+   private void onTaskComplete( int pos )
+   {
+      final ListTask task = getTask( pos );
+      TaskEditUtils.setTaskCompletion( this, task, task.getCompleted() == null );
+   }
+   
+
+
+   private void onTaskPostpone( int pos )
+   {
+      TaskEditUtils.postponeTask( this, getTask( pos ) );
    }
    
 

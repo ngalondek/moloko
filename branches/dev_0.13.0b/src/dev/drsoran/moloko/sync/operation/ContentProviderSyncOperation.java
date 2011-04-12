@@ -43,7 +43,7 @@ public class ContentProviderSyncOperation implements
    {
       private final Op operationType;
       
-      private final List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
+      private final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
       
       
 
@@ -161,7 +161,7 @@ public class ContentProviderSyncOperation implements
       }
    }
    
-   private final List< ContentProviderOperation > operations;
+   private final ArrayList< ContentProviderOperation > operations;
    
    private final Op operationType;
    
@@ -170,7 +170,7 @@ public class ContentProviderSyncOperation implements
    private ContentProviderSyncOperation( Builder builder )
    {
       this.operationType = builder.operationType;
-      this.operations = Collections.unmodifiableList( new ArrayList< ContentProviderOperation >( builder.operations ) );
+      this.operations = new ArrayList< ContentProviderOperation >( builder.operations );
    }
    
 
@@ -205,7 +205,7 @@ public class ContentProviderSyncOperation implements
       {
          transactionalAccess.beginTransaction();
          
-         rtmProvider.applyBatch( new ArrayList< ContentProviderOperation >( operations ) );
+         rtmProvider.applyBatch( operations );
          
          transactionalAccess.setTransactionSuccessful();
       }

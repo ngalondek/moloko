@@ -182,8 +182,7 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
 
 
-   public final static List< RtmTaskSeries > getTaskSeriesCreatedSince( ContentProviderClient client,
-                                                                        long dateUtc )
+   public final static List< RtmTaskSeries > getLocalCreatedTaskSeries( ContentProviderClient client )
    {
       List< RtmTaskSeries > taskSerieses = null;
       Cursor c = null;
@@ -192,7 +191,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       {
          c = client.query( Rtm.TaskSeries.CONTENT_URI,
                            PROJECTION,
-                           TaskSeries.TASKSERIES_CREATED_DATE + ">=" + dateUtc,
+                           TaskSeries.SOURCE + "='"
+                              + TaskSeries.NEW_TASK_SOURCE + "'",
                            null,
                            null );
          

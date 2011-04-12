@@ -39,14 +39,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -59,6 +59,7 @@ import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
@@ -374,7 +375,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                               Intents.createSelectMultipleTasksIntent( this,
                                                                        (RtmSmartFilter) getIntent().getParcelableExtra( FILTER ),
                                                                        getTaskSort() ),
-                              getListAdapter().getCount() > 1 );
+                              !AccountUtils.isReadOnlyAccess( this )
+                                 && getListAdapter().getCount() > 1 );
       }
       
       return true;
@@ -420,10 +422,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                 Menu.NONE,
                 getString( R.string.phr_open_with_name, task.getName() ) );
       
-      menu.add( Menu.NONE,
-                CtxtMenu.EDIT_TASK,
-                Menu.NONE,
-                getString( R.string.phr_edit_with_name, task.getName() ) );
+      if ( !AccountUtils.isReadOnlyAccess( this ) )
+         menu.add( Menu.NONE,
+                   CtxtMenu.EDIT_TASK,
+                   Menu.NONE,
+                   getString( R.string.phr_edit_with_name, task.getName() ) );
       
       final RtmSmartFilter filter = getIntent().getParcelableExtra( FILTER );
       

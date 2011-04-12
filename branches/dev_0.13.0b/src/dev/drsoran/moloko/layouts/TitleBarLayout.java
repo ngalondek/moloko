@@ -53,6 +53,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.RtmSmartAddAdapter;
@@ -340,6 +341,8 @@ public class TitleBarLayout extends LinearLayout implements
       }
    }
    
+   private final int showButtons;
+   
    private final ToggleImageButton addTaskBtn;
    
    private AddTaskSection addTaskSection;
@@ -364,7 +367,7 @@ public class TitleBarLayout extends LinearLayout implements
       if ( titleText != null )
          ( (TextView) findViewById( R.id.app_titlebar_text ) ).setText( titleText );
       
-      final int showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
+      showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
       
       // Show search button
       if ( ( showButtons & 1 ) != 0 )
@@ -380,19 +383,31 @@ public class TitleBarLayout extends LinearLayout implements
          setBtnVisible( R.id.app_titlebar_btn_home );
       }
       
-      // Show add task button
-      if ( ( showButtons & 4 ) != 0 )
+      // Show add task button will be done in the layout
+      addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
+      addTaskBtn.setOnCheckedChangeListener( this );
+      
+      array.recycle();
+   }
+   
+
+
+   @Override
+   protected void onLayout( boolean changed, int l, int t, int r, int b )
+   {
+      // Show add task button. This has to be evaluated every time cause
+      // the user may upgrade his account and we have to show the button then.
+      if ( ( showButtons & 4 ) != 0
+         && !AccountUtils.isReadOnlyAccess( getContext() ) )
       {
-         setVisible( R.id.app_titlebar_sep_add_task );
-         addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
-         addTaskBtn.setOnCheckedChangeListener( this );
+         addTaskBtn.setVisibility( View.VISIBLE );
       }
       else
       {
-         addTaskBtn = null;
+         addTaskBtn.setVisibility( View.GONE );
       }
       
-      array.recycle();
+      super.onLayout( changed, l, t, r, b );
    }
    
 

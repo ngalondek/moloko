@@ -46,6 +46,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -92,6 +93,8 @@ public class TitleBarLayout extends LinearLayout implements
       
       private final ImageButton btnEstimate;
       
+      private final ImageView btnClear;
+      
       private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
       
@@ -112,6 +115,7 @@ public class TitleBarLayout extends LinearLayout implements
          btnLocation = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_location ) );
          btnRepeat = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_repeat ) );
          btnEstimate = ( (ImageButton) container.findViewById( R.id.app_titlebar_quick_add_task_btn_estimate ) );
+         btnClear = ( (ImageView) container.findViewById( R.id.edittext_btn_clear ) );
          
          btnAdd.setOnClickListener( this );
          btnDue.setOnClickListener( this );
@@ -120,6 +124,7 @@ public class TitleBarLayout extends LinearLayout implements
          btnLocation.setOnClickListener( this );
          btnRepeat.setOnClickListener( this );
          btnEstimate.setOnClickListener( this );
+         btnClear.setOnClickListener( this );
       }
       
 
@@ -173,6 +178,11 @@ public class TitleBarLayout extends LinearLayout implements
             
             case R.id.app_titlebar_quick_add_task_btn_add:
                addNewTask();
+               break;
+            
+            case R.id.edittext_btn_clear:
+               addTaskEdit.clearComposingText();
+               addTaskEdit.getEditableText().clear();
                break;
             
             default :

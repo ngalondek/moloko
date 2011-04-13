@@ -30,16 +30,25 @@
          android:layout_width="fill_parent"
          android:hint="@string/app_titlebar_add_task_hint"
          android:imeOptions="actionDone"
-         android:inputType="text|textAutoComplete"
-         android:textColor="@android:color/black" />
+         android:inputType="text"
+         android:textColor="@android:color/black"
+         android:drawableRight="@drawable/ic_button_edittext_invisible_delete"
+         android:drawablePadding="3dip" />
          
       <ImageView
+         android:id="@+id/edittext_btn_clear"
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
          android:layout_alignParentRight="true"
          android:layout_centerVertical="true"
-         android:paddingRight="5dip"
-         android:src="@drawable/ic_list_taskslist_note" />
+         android:paddingRight="7dip"
+         android:paddingLeft="3dip"
+         android:paddingTop="2dip"
+         android:paddingBottom="2dip"
+         android:src="@drawable/app_edittext_clear"
+         android:clickable="true"
+         android:focusable="false"
+         android:focusableInTouchMode="false" />
    </RelativeLayout>
 
    <Button

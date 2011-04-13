@@ -28,15 +28,14 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
-import android.widget.Filterable;
-import android.widget.ListAdapter;
+import android.widget.EditText;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView;
 
 
 public class TitleWithEditTextLayout extends TitleWithViewLayout
 {
-   private AutoCompleteTextView editText;
+   private EditText editText;
    
    private int imeTypeEnabled;
    
@@ -103,13 +102,6 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    
 
 
-   public < T extends ListAdapter & Filterable > void setAutoCompletionAdapter( T adapter )
-   {
-      editText.setAdapter( adapter );
-   }
-   
-
-
    @Override
    public void setEnabled( boolean enabled )
    {
@@ -126,7 +118,7 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      editText = new AutoCompleteTextView( context, attrs );
+      editText = new ClearableAutoCompleteTextView( context, attrs );
       editText.setLayoutParams( generateDefaultLayoutParams() );
       editText.setId( R.id.title_with_edit_text );
       

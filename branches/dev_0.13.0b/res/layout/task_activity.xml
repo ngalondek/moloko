@@ -218,6 +218,14 @@
                   android:scaleType="fitXY"
                   android:onClick="onPostponeTask" />
                <ImageButton
+                  android:id="@+id/task_buttons_delete"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toRightOf="@id/task_buttons_postpone"
+                  android:src="@drawable/ic_menu_delete"
+                  android:scaleType="fitXY"
+                  android:onClick="onDeleteTask" />
+               <ImageButton
                   android:id="@+id/task_buttons_complete"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"

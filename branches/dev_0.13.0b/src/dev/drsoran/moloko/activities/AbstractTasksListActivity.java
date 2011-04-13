@@ -31,6 +31,7 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.AsyncTask;
@@ -200,13 +201,15 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       public final static int POSTPONE_TASK = 4;
       
-      public final static int OPEN_LIST = 5;
+      public final static int DELETE_TASK = 5;
       
-      public final static int TAGS = 6;
+      public final static int OPEN_LIST = 6;
       
-      public final static int TASKS_AT_LOCATION = 7;
+      public final static int TAGS = 7;
       
-      public final static int NOTES = 8;
+      public final static int TASKS_AT_LOCATION = 8;
+      
+      public final static int NOTES = 9;
    }
    
    protected final Runnable dontClearAndfillListRunnable = new Runnable()
@@ -445,6 +448,10 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                    Menu.NONE,
                    getString( R.string.abstaskslist_listitem_ctx_postpone_task,
                               task.getName() ) );
+         menu.add( Menu.NONE,
+                   CtxtMenu.DELETE_TASK,
+                   Menu.NONE,
+                   getString( R.string.phr_delete_with_name, task.getName() ) );
       }
       
       final RtmSmartFilter filter = getIntent().getParcelableExtra( FILTER );
@@ -525,6 +532,10 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             
          case CtxtMenu.POSTPONE_TASK:
             onTaskPostpone( info.position );
+            return true;
+            
+         case CtxtMenu.DELETE_TASK:
+            onTaskDelete( info.position );
             return true;
             
          case CtxtMenu.OPEN_LIST:
@@ -702,6 +713,29 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    private void onTaskPostpone( int pos )
    {
       TaskEditUtils.postponeTask( this, getTask( pos ) );
+   }
+   
+
+
+   private void onTaskDelete( int pos )
+   {
+      final ListTask task = getTask( pos );
+      
+      new AlertDialog.Builder( this ).setMessage( getString( R.string.abstaskslist_dlg_delete,
+                                                             task.getName() ) )
+                                     .setPositiveButton( R.string.btn_delete,
+                                                         new OnClickListener()
+                                                         {
+                                                            public void onClick( DialogInterface dialog,
+                                                                                 int which )
+                                                            {
+                                                               TaskEditUtils.deleteTask( AbstractTasksListActivity.this,
+                                                                                         task );
+                                                            }
+                                                         } )
+                                     .setNegativeButton( R.string.btn_cancel,
+                                                         null )
+                                     .show();
    }
    
 

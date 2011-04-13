@@ -83,7 +83,7 @@
                android:text="@string/task_source" />
          </RelativeLayout>
 
-         <AutoCompleteTextView
+         <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
             android:id="@+id/task_edit_desc"
             style="@style/Task_Overview_DescriptionText"
             android:layout_width="fill_parent"
@@ -195,7 +195,7 @@
                android:layout_below="@id/task_edit_due_title"
                android:orientation="horizontal">
 
-               <EditText
+               <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
                   android:id="@+id/task_edit_due_text"
                   android:layout_width="0dip"
                   android:layout_height="wrap_content"
@@ -242,7 +242,7 @@
                android:layout_below="@id/task_edit_recurrence_title"
                android:orientation="horizontal">
 
-               <EditText
+               <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
                   android:id="@+id/task_edit_recurrence_text"
                   android:layout_width="0dip"
                   android:layout_height="wrap_content"
@@ -289,7 +289,7 @@
                android:layout_below="@id/task_edit_estimate_title"
                android:orientation="horizontal">
 
-               <EditText
+               <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
                   android:id="@+id/task_edit_estim_text"
                   android:layout_width="0dip"
                   android:layout_height="wrap_content"

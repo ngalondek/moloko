@@ -24,7 +24,7 @@
       android:orientation="vertical"
       android:background="@color/app_default_bgnd">
 
-      <MultiAutoCompleteTextView
+      <dev.drsoran.moloko.widgets.ClearableMultiAutoCompleteTextView
          android:id="@+id/change_tags_activity_edit"
          android:layout_height="wrap_content"
          android:layout_width="fill_parent"

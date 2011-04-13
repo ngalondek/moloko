@@ -25,7 +25,10 @@ package dev.drsoran.moloko.activities;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentProviderClient;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -275,11 +278,34 @@ public class TaskActivity extends Activity
    public void onPostponeTask( View v )
    {
       if ( task != null )
-      {
          TaskEditUtils.postponeTask( this, task );
-      }
       
       finish();
+   }
+   
+
+
+   public void onDeleteTask( View v )
+   {
+      if ( task != null )
+      {
+         new AlertDialog.Builder( this ).setMessage( getString( R.string.abstaskslist_dlg_delete,
+                                                                task.getName() ) )
+                                        .setPositiveButton( R.string.btn_delete,
+                                                            new OnClickListener()
+                                                            {
+                                                               public void onClick( DialogInterface dialog,
+                                                                                    int which )
+                                                               {
+                                                                  TaskEditUtils.deleteTask( TaskActivity.this,
+                                                                                            task );
+                                                                  finish();
+                                                               }
+                                                            } )
+                                        .setNegativeButton( R.string.btn_cancel,
+                                                            null )
+                                        .show();
+      }
    }
    
 

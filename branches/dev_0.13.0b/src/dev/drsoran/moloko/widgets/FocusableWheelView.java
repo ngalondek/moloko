@@ -33,6 +33,7 @@ import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.UIUtils;
 
 
 public class FocusableWheelView extends WheelView implements Checkable
@@ -92,9 +93,6 @@ public class FocusableWheelView extends WheelView implements Checkable
    }
    
    private boolean checked = false;
-   
-   private static final int[] CHECKED_STATE_SET =
-   { android.R.attr.state_checked };
    
    
 
@@ -245,7 +243,7 @@ public class FocusableWheelView extends WheelView implements Checkable
       final int[] drawableState = super.onCreateDrawableState( extraSpace + 1 );
       if ( isChecked() )
       {
-         mergeDrawableStates( drawableState, CHECKED_STATE_SET );
+         mergeDrawableStates( drawableState, UIUtils.CHECKED_STATE_SET );
       }
       return drawableState;
    }

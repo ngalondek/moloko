@@ -75,6 +75,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       public final static int UNCOMPLETE = START_IDX + 6;
       
       public final static int POSTPONE = START_IDX + 7;
+      
+      public final static int DELETE = START_IDX + 8;
    }
    
 
@@ -178,6 +180,14 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                          selCnt ),
                               OptionsMenu.MENU_ORDER + 3,
                               R.drawable.ic_menu_postponed,
+                              someSelected );
+         
+         addOptionalMenuItem( menu,
+                              OptionsMenu.DELETE,
+                              getString( R.string.select_multiple_tasks_menu_opt_delete,
+                                         selCnt ),
+                              OptionsMenu.MENU_ORDER + 3,
+                              R.drawable.ic_menu_delete,
                               someSelected );
          
          final MenuItem selAllItem = menu.findItem( OptionsMenu.SELECT_ALL );
@@ -287,6 +297,23 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                                                                           int which )
                                                                      {
                                                                         onSelectedTasksPostpone();
+                                                                     }
+                                                                  } )
+                                              .setNegativeButton( R.string.btn_cancel,
+                                                                  null )
+                                              .show();
+            case OptionsMenu.DELETE:
+               new AlertDialog.Builder( this ).setMessage( getString( R.string.select_multiple_tasks_dlg_delete,
+                                                                      adapter.getSelectedCount(),
+                                                                      getResources().getQuantityString( R.plurals.g_task,
+                                                                                                        adapter.getSelectedCount() ) ) )
+                                              .setPositiveButton( R.string.btn_delete,
+                                                                  new OnClickListener()
+                                                                  {
+                                                                     public void onClick( DialogInterface dialog,
+                                                                                          int which )
+                                                                     {
+                                                                        onSelectedTasksDelete();
                                                                      }
                                                                   } )
                                               .setNegativeButton( R.string.btn_cancel,
@@ -490,5 +517,12 @@ public class SelectMultipleTasksActivity extends TasksListActivity
    private void onSelectedTasksPostpone()
    {
       TaskEditUtils.postponeTasks( this, getListAdapter().getSelectedTasks() );
+   }
+   
+
+
+   private void onSelectedTasksDelete()
+   {
+      TaskEditUtils.deleteTasks( this, getListAdapter().getSelectedTasks() );
    }
 }

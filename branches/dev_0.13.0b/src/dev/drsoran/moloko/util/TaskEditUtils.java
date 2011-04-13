@@ -174,6 +174,42 @@ public final class TaskEditUtils
    
 
 
+   public final static boolean deleteTask( Activity activity, Task task )
+   {
+      return deleteTasks( activity, Collections.singletonList( task ) );
+   }
+   
+
+
+   public final static boolean deleteTasks( Context context,
+                                            List< ? extends Task > tasks )
+   {
+      boolean ok = true;
+      
+      if ( !tasks.isEmpty() )
+      {
+         final ModificationSet modifications = new ModificationSet();
+         
+         for ( Task task : tasks )
+         {
+            modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
+                                                                          task.getId(),
+                                                                          RawTasks.DELETED_DATE,
+                                                                          System.currentTimeMillis() ) );
+            
+            modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
+         }
+         
+         ok = applyModifications( context, modifications );
+         
+         reportStatus( context, ok );
+      }
+      
+      return ok;
+   }
+   
+
+
    private final static void reportStatus( Context context, boolean ok )
    {
       Toast.makeText( context,

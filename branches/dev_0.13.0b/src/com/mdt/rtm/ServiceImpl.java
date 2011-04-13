@@ -517,18 +517,23 @@ public class ServiceImpl implements Service
    
 
 
-   public void tasks_delete( String timelineId,
-                             String listId,
-                             String taskSeriesId,
-                             String taskId ) throws ServiceException
+   public TimeLineResult< RtmTaskList > tasks_delete( String timelineId,
+                                                      String listId,
+                                                      String taskSeriesId,
+                                                      String taskId ) throws ServiceException
    {
-      invoker.invoke( new Param( "method", "rtm.tasks.delete" ),
-                      new Param( "timeline", timelineId ),
-                      new Param( "list_id", listId ),
-                      new Param( "taskseries_id", taskSeriesId ),
-                      new Param( "task_id", taskId ),
-                      new Param( "auth_token", currentAuthToken ),
-                      new Param( "api_key", applicationInfo.getApiKey() ) );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.delete" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newTaskResult( timelineId, elt );
    }
    
 

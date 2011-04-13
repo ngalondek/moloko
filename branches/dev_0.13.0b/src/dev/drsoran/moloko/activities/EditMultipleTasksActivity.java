@@ -237,18 +237,6 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       if ( !isCommonAttrib( Tasks.URL ) )
       {
          url.setHint( R.string.edit_multiple_tasks_multiple_values );
-         
-         final Set< String > urls = new HashSet< String >( tasks.size() );
-         
-         for ( Task task : tasks )
-            urls.add( task.getUrl() );
-         
-         final String[] urlStr = new String[ urls.size() ];
-         
-         url.setAutoCompletionAdapter( new ArrayAdapter< String >( this,
-                                                                   android.R.layout.simple_dropdown_item_1line,
-                                                                   android.R.id.text1,
-                                                                   urls.toArray( urlStr ) ) );
       }
    }
    

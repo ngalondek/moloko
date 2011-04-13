@@ -228,10 +228,10 @@ public interface Service
    
 
 
-   void tasks_delete( String timelineId,
-                      String listId,
-                      String taskSeriesId,
-                      String taskId ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_delete( String timelineId,
+                                               String listId,
+                                               String taskSeriesId,
+                                               String taskId ) throws ServiceException;
    
 
 

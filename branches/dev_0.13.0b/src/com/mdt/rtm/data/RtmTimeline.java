@@ -86,6 +86,22 @@ public class RtmTimeline
    
 
 
+   public TimeLineMethod< RtmTaskList > tasks_delete( final String listId,
+                                                      final String taskSeriesId,
+                                                      final String taskId )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_delete( id, listId, taskSeriesId, taskId );
+         }
+      };
+   }
+   
+
+
    public TimeLineMethod< RtmTaskList > tasks_complete( final String listId,
                                                         final String taskSeriesId,
                                                         final String taskId )

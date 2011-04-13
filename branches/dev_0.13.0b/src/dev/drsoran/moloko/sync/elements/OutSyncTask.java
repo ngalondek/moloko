@@ -41,7 +41,7 @@ import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.TaskServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncProperties;
@@ -548,7 +548,10 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
 
    public IServerSyncOperation< RtmTaskList > computeServerDeleteOperation( RtmTimeline timeLine )
    {
-      return NoopServerSyncOperation.newInstance();
+      return ServerSyncOperation.newDelete( timeLine.tasks_delete( taskSeries.getListId(),
+                                                                   taskSeries.getId(),
+                                                                   task.getId() ) )
+                                .build( TaskServerSyncOperation.class );
    }
    
 }

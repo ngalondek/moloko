@@ -398,9 +398,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
 
 
-   public final static < T > Builder< T > newDelete( TimeLineMethod< T > method,
-                                                     Modification modification )
+   public final static < T > Builder< T > newDelete( TimeLineMethod< T > method )
    {
-      return new Builder< T >( Op.DELETE, method, modification );
+      return new Builder< T >( Op.DELETE, method, null );
    }
 }

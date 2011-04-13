@@ -65,6 +65,9 @@ public final class UIUtils
    
    public static final String REMOVE_ALL_TAGS = "remove_all_tags";
    
+   public static final int[] CHECKED_STATE_SET =
+   { android.R.attr.state_checked };
+   
    
 
    private UIUtils()

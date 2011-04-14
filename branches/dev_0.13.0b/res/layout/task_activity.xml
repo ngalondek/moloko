@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
-   is free software: you can redistribute it and/or modify it under the terms 
-   of the GNU General Public License as published by the Free Software Foundation, 
-   either version 3 of the License, or (at your option) any later version. Moloko 
-   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-   PURPOSE. See the GNU General Public License for more details. You should 
-   have received a copy of the GNU General Public License along with Moloko. 
-   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation -->
+   <!--
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
 
 <FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
@@ -210,27 +214,27 @@
                   android:scaleType="fitXY"
                   android:onClick="onEditTask" />
                <ImageButton
-                  android:id="@+id/task_buttons_postpone"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_toRightOf="@id/task_buttons_edit"
-                  android:src="@drawable/ic_list_taskslist_postponed"
-                  android:scaleType="fitXY"
-                  android:onClick="onPostponeTask" />
-               <ImageButton
                   android:id="@+id/task_buttons_delete"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:layout_toRightOf="@id/task_buttons_postpone"
-                  android:src="@drawable/ic_menu_delete"
+                  android:layout_toRightOf="@id/task_buttons_edit"
+                  android:src="@drawable/ic_button_task_trash"
                   android:scaleType="fitXY"
                   android:onClick="onDeleteTask" />
+               <ImageButton
+                  android:id="@+id/task_buttons_postpone"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toRightOf="@id/task_buttons_delete"
+                  android:src="@drawable/ic_button_task_postponed"
+                  android:scaleType="fitXY"
+                  android:onClick="onPostponeTask" />
                <ImageButton
                   android:id="@+id/task_buttons_complete"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_alignParentRight="true"
-                  android:src="@drawable/ic_list_checked_check"
+                  android:src="@drawable/ic_button_task_checked_check"
                   android:scaleType="fitXY"
                   android:onClick="onCompleteTask" />
             </RelativeLayout>

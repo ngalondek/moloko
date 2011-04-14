@@ -30,14 +30,14 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.Intents;
@@ -187,7 +187,7 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                               getString( R.string.select_multiple_tasks_menu_opt_delete,
                                          selCnt ),
                               OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_delete,
+                              R.drawable.ic_menu_trash,
                               someSelected );
          
          final MenuItem selAllItem = menu.findItem( OptionsMenu.SELECT_ALL );

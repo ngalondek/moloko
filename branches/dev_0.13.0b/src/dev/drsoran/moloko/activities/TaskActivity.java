@@ -28,8 +28,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentProviderClient;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -333,12 +333,12 @@ public class TaskActivity extends Activity
             completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                        .getTime(),
                                                                    FULL_DATE_FLAGS ) );
-            completeTaskBtn.setImageResource( R.drawable.ic_list_unchecked_check );
+            completeTaskBtn.setImageResource( R.drawable.ic_button_task_unchecked_check );
          }
          else
          {
             completedDate.setVisibility( View.GONE );
-            completeTaskBtn.setImageResource( R.drawable.ic_list_checked_check );
+            completeTaskBtn.setImageResource( R.drawable.ic_button_task_checked_check );
          }
          
          if ( task.getPosponed() > 0 )

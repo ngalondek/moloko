@@ -597,7 +597,7 @@ public class ServiceImpl implements Service
                                                             boolean up ) throws ServiceException
    {
       final Element elt = invoker.invoke( new Param( "method",
-                                                     "rtm.tasks.moveTo" ),
+                                                     "rtm.tasks.movePriority" ),
                                           new Param( "timeline", timelineId ),
                                           new Param( "list_id", listId ),
                                           new Param( "taskseries_id",
@@ -784,7 +784,7 @@ public class ServiceImpl implements Service
       final Element elt;
       
       if ( !TextUtils.isEmpty( repeat ) )
-         elt = invoker.invoke( new Param( "method", "rtm.tasks.setName" ),
+         elt = invoker.invoke( new Param( "method", "rtm.tasks.setRecurrence" ),
                                new Param( "timeline", timelineId ),
                                new Param( "list_id", listId ),
                                new Param( "taskseries_id", taskSeriesId ),
@@ -794,7 +794,7 @@ public class ServiceImpl implements Service
                                new Param( "api_key",
                                           applicationInfo.getApiKey() ) );
       else
-         elt = invoker.invoke( new Param( "method", "rtm.tasks.setName" ),
+         elt = invoker.invoke( new Param( "method", "rtm.tasks.setRecurrence" ),
                                new Param( "timeline", timelineId ),
                                new Param( "list_id", listId ),
                                new Param( "taskseries_id", taskSeriesId ),

@@ -43,6 +43,7 @@ import com.mdt.rtm.data.RtmTimeline;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
+import dev.drsoran.moloko.content.RtmTasksProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.elements.InSyncRtmTaskSeries;
@@ -151,16 +152,18 @@ public final class RtmTasksSync
          catch ( Throwable e )
          {
             Log.e( TAG, "Retrieving modifications failed", e );
-            modifications = null;
+            modifications = new ModificationSet();
          }
          
-         /**
-          * Even if modifications are null, we must not return here. We need to apply changes made by adding a new task
-          * below.
-          **/
+         boolean doOutSync = modifications.size() > 0;
          
-         // Check if we have outgoing changes
-         if ( modifications != null && modifications.size() > 0 )
+         if ( !doOutSync )
+         {
+            final int numDeleted = RtmTasksProviderPart.getDeletedTasksCount( provider );
+            doOutSync = numDeleted > 0;
+         }
+         
+         if ( doOutSync )
          {
             Log.i( TAG, "Retrieved " + modifications.size()
                + " modification(s)" );
@@ -196,7 +199,7 @@ public final class RtmTasksSync
          }
       }
       
-      // At this point we have an up-to-date list of server TaskSeries
+      // . <-- At this point we have an up-to-date list of server TaskSeries
       // containing all changes made by outgoing sync.
       {
          final ContentProviderSyncableList< InSyncRtmTaskSeries > local_SyncList = new ContentProviderSyncableList< InSyncRtmTaskSeries >( local_SyncTaskList.getInSyncTasksSeries(),
@@ -239,12 +242,15 @@ public final class RtmTasksSync
          {
             for ( RtmTask localTask : localTaskSeries.getTasks() )
             {
-               sendTask( service,
-                         provider,
-                         timeline,
-                         localTaskSeries,
-                         localTask,
-                         syncResult );
+               // Do not send deleted tasks which have not yet been synced.
+               // These tasks were created and denlyed only locally.
+               if ( localTask.getDeletedDate() == null )
+                  sendTask( service,
+                            provider,
+                            timeline,
+                            localTaskSeries,
+                            localTask,
+                            syncResult );
             }
          }
       }

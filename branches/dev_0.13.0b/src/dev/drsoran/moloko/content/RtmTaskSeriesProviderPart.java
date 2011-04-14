@@ -378,7 +378,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       final String taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
       
       final List< RtmTask > tasks = RtmTasksProviderPart.getAllTasks( client,
-                                                                      taskSeriesId );
+                                                                      taskSeriesId,
+                                                                      true );
       
       boolean ok = tasks != null;
       

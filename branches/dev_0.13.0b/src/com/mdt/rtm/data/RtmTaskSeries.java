@@ -324,7 +324,13 @@ public class RtmTaskSeries extends RtmData
 
    public Date getDeletedDate()
    {
-      return tasks.get( 0 ).getDeletedDate();
+      for ( RtmTask task : tasks )
+      {
+         if ( task.getDeletedDate() != null )
+            return task.getDeletedDate();
+      }
+      
+      return null;
    }
    
 

@@ -156,15 +156,13 @@ public class InSyncRtmTaskSeries implements
    {
       // RtmTaskSeries, Notes, Participant gets deleted by a RtmTaskSeriesProvider DB trigger if it references no more
       // RawTasks.
-      
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newDelete();
       
       // Delete tasks
+      for ( InSyncRtmTask inSyncTask : inSyncTasks )
       {
-         for ( InSyncRtmTask inSyncTask : inSyncTasks )
-         {
+         if ( inSyncTask.getDeletedDate() != null )
             operation.add( inSyncTask.computeContentProviderDeleteOperation() );
-         }
       }
       
       return operation.build();

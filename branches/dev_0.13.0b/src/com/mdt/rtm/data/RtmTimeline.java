@@ -144,11 +144,11 @@ public class RtmTimeline
          @Override
          public TimeLineResult< RtmTaskList > call() throws ServiceException
          {
-            return service.tasks_setName( id,
-                                          listId,
-                                          taskSeriesId,
-                                          taskId,
-                                          estimate );
+            return service.tasks_setEstimate( id,
+                                              listId,
+                                              taskSeriesId,
+                                              taskId,
+                                              estimate );
          }
       };
    }

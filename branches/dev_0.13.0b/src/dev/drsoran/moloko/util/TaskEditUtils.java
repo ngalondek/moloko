@@ -127,17 +127,33 @@ public final class TaskEditUtils
       if ( !tasks.isEmpty() )
       {
          final ModificationSet modifications = new ModificationSet();
+         final Calendar cal = MolokoDateUtils.newCalendarUTC();
          
          for ( Task task : tasks )
          {
             final Date due = task.getDue();
-            final Calendar cal = MolokoDateUtils.newCalendarUTC();
+            cal.setTimeInMillis( System.currentTimeMillis() );
             
             // If the task has no due date or is overdue, its due date is set to today.
-            if ( due == null
-               || MolokoDateUtils.isBefore( due.getTime(),
-                                            cal.getTimeInMillis() ) )
+            if ( due == null )
             {
+               modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
+                                                                             task.getId(),
+                                                                             RawTasks.DUE_DATE,
+                                                                             cal.getTimeInMillis() ) );
+            }
+            else if ( MolokoDateUtils.isBefore( due.getTime(),
+                                                cal.getTimeInMillis() ) )
+            {
+               final Calendar tmp = MolokoDateUtils.newCalendarUTC( due.getTime() );
+               
+               // Preserve the original time when setting to today
+               cal.set( Calendar.HOUR_OF_DAY, tmp.get( Calendar.HOUR_OF_DAY ) );
+               cal.set( Calendar.HOUR, tmp.get( Calendar.HOUR ) );
+               cal.set( Calendar.MINUTE, tmp.get( Calendar.MINUTE ) );
+               cal.set( Calendar.SECOND, tmp.get( Calendar.SECOND ) );
+               cal.set( Calendar.MILLISECOND, 0 );
+               
                modifications.add( Modification.newNonPersistentModification( RawTasks.CONTENT_URI,
                                                                              task.getId(),
                                                                              RawTasks.DUE_DATE,

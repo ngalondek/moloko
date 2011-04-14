@@ -109,7 +109,16 @@ public class MolokoDateUtils
 
    public final static Calendar newCalendarUTC()
    {
-      return Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
+      return newCalendarUTC( System.currentTimeMillis() );
+   }
+   
+
+
+   public final static Calendar newCalendarUTC( long millis )
+   {
+      final Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
+      cal.setTimeInMillis( millis );
+      return cal;
    }
    
 

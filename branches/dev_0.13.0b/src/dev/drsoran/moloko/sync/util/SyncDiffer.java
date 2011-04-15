@@ -86,7 +86,7 @@ public class SyncDiffer
                                                                  serverElement ) );
             // DELETE: The server element is contained in the target list and is deleted.
             else
-               operations.add( localList.computeDeleteOperation( pos ) );
+               operations.add( serverElement.computeContentProviderDeleteOperation() );
          }
       }
       

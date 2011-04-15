@@ -46,7 +46,7 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
-public class RtmTasksProviderPart extends AbstractRtmProviderPart
+public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
 {
    private static final String TAG = "Moloko."
       + RtmTasksProviderPart.class.getSimpleName();
@@ -63,9 +63,9 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
    static
    {
-      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
-                                                       PROJECTION_MAP,
-                                                       COL_INDICES );
+      AbstractModificationsRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                                    PROJECTION_MAP,
+                                                                    COL_INDICES );
    }
    
    
@@ -307,6 +307,8 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          + RawTasks.TASKSERIES_ID + " AND NOT EXISTS (SELECT " + RawTasks._ID
          + " FROM " + path + " WHERE old." + RawTasks.TASKSERIES_ID + " = "
          + RawTasks.TASKSERIES_ID + "); END;" );
+      
+      createModificationsTrigger( db );
    }
    
 

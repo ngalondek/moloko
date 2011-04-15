@@ -46,7 +46,7 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class RtmListsProviderPart extends AbstractRtmProviderPart
+public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
 {
    private static final String TAG = "Moloko."
       + RtmListsProviderPart.class.getSimpleName();
@@ -62,9 +62,9 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
    
    static
    {
-      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
-                                                       PROJECTION_MAP,
-                                                       COL_INDICES );
+      AbstractModificationsRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                                    PROJECTION_MAP,
+                                                                    COL_INDICES );
    }
    
    
@@ -254,6 +254,8 @@ public class RtmListsProviderPart extends AbstractRtmProviderPart
        * " BEGIN SELECT RAISE ( ABORT, 'A locked list must always exist' ) WHERE EXISTS ( SELECT 1 FROM " + path +
        * " WHERE old." + Lists.LOCKED + " != 0 ); END;" );
        */
+
+      createModificationsTrigger( db );
    }
    
 

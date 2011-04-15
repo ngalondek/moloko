@@ -169,16 +169,19 @@ public class RtmSmartFilter extends RtmData
       {
          if ( filter.length() == 0 )
             if ( excludeCompleted )
-               evalFilter.append( RawTasks.COMPLETED_DATE ).append( " IS NULL" );
+               evalFilter.append( RawTasks.COMPLETED_DATE )
+                         .append( " IS NULL AND " )
+                         .append( RawTasks.DELETED_DATE )
+                         .append( " IS NULL" );
             else
-               evalFilter.append( "1" );
+               evalFilter.append( RawTasks.DELETED_DATE ).append( " IS NULL" );
          
          // Check if there was no operator used. If so it has the
          // same meaning as operator name:
          else
          {
             if ( !filter.contains( ":" ) )
-               filter = RtmSmartFilterLexer.OP_NAME_LIT + filter;
+               filter = RtmSmartFilterLexer.OP_NAME_LIT + "\"" + filter + "\"";
             
             final RtmSmartFilterReturn parserRes = RtmSmartFilterParsing.evaluateRtmSmartFilter( filter,
                                                                                                  tokens );
@@ -197,6 +200,11 @@ public class RtmSmartFilter extends RtmData
                             .append( RawTasks.COMPLETED_DATE )
                             .append( " IS NULL" );
                }
+               
+               // We always exclude deleted tasks
+               evalFilter.append( " AND " )
+                         .append( RawTasks.DELETED_DATE )
+                         .append( " IS NULL" );
                
                evalFilter.append( " )" );
             }

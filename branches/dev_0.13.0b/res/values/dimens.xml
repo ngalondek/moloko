@@ -29,7 +29,7 @@
    <dimen
       name="tasklists_group_height">45dip</dimen>
    <dimen
-      name="taskslist_listitem_row_space">10dip</dimen>
+      name="taskslist_listitem_row_space">12dip</dimen>
    <dimen
       name="taskslist_listitem_col_space">44dip</dimen>
    <dimen

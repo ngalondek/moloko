@@ -139,27 +139,27 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       
       final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
       
+      ImageView completed;
       TextView description;
+      ViewGroup additionalsLayout;
+      TextView listName;
+      TextView location;
       ImageView recurrent;
       ImageView hasNotes;
       ImageView postponed;
-      TextView listName;
       TextView dueDate;
-      ImageView completed;
-      ViewGroup tagsLayout;
-      TextView location;
       
       try
       {
+         completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
          description = (TextView) convertView.findViewById( R.id.taskslist_listitem_desc );
+         additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
          listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
+         location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
          recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
          hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
          postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
          dueDate = (TextView) convertView.findViewById( R.id.taskslist_listitem_due_date );
-         completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
-         tagsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_tags );
-         location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
       }
       catch ( ClassCastException e )
       {
@@ -192,7 +192,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       
       UIUtils.setPriorityColor( priority, task );
       
-      setTags( tagsLayout, task );
+      setTags( additionalsLayout, task );
       
       setLocation( location, task );
       

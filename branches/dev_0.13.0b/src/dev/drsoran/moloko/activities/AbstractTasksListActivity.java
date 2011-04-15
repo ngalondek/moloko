@@ -474,7 +474,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       final int tagsCount = task.getTags().size();
       if ( tagsCount > 0 )
       {
-         final View tagsContainer = info.targetView.findViewById( R.id.taskslist_listitem_tags );
+         final View tagsContainer = info.targetView.findViewById( R.id.taskslist_listitem_additionals_container );
          
          if ( tagsContainer.getVisibility() == View.VISIBLE )
             menu.add( Menu.NONE,

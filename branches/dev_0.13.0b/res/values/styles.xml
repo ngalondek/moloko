@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
-      free software: you can redistribute it and/or modify it under the terms of
-      the GNU General Public License as published by the Free Software
-      Foundation, either version 3 of the License, or (at your option) any later
-      version. Moloko is distributed in the hope that it will be useful, but
-      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-      for more details. You should have received a copy of the GNU General
-      Public License along with Moloko. If not, see
-      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
-   -->
+<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
+   is free software: you can redistribute it and/or modify it under the terms 
+   of the GNU General Public License as published by the Free Software Foundation, 
+   either version 3 of the License, or (at your option) any later version. Moloko 
+   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+   PURPOSE. See the GNU General Public License for more details. You should 
+   have received a copy of the GNU General Public License along with Moloko. 
+   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
+   - implementation -->
 
 <resources>
 
@@ -70,7 +67,7 @@
       <item
          name="android:minHeight">@dimen/app_titlebar_height</item>
    </style>
-   
+
    <style
       name="App_TitleBar_Expanded">
       <item
@@ -97,7 +94,7 @@
       <item
          name="android:background">@drawable/app_titlebar_btn_bgnd</item>
    </style>
-   
+
    <style
       name="App_TitleBar_Toggle_Btn">
       <item
@@ -177,10 +174,10 @@
       <item
          name="android:textStyle">italic|bold</item>
    </style>
-   
+
    <!-- ************ -->
-   <!-- Dialogs      -->
-   
+   <!-- Dialogs -->
+
    <style
       name="Dlg_DuePicker_Value"
       parent="@android:style/TextAppearance.Large">
@@ -191,7 +188,7 @@
       <item
          name="android:singleLine">true</item>
    </style>
-   
+
    <style
       name="Dlg_DuePicker_Weekday"
       parent="@android:style/TextAppearance.Medium">
@@ -200,7 +197,7 @@
       <item
          name="android:singleLine">true</item>
    </style>
-   
+
    <!-- ************ -->
    <!-- Notification -->
 
@@ -223,7 +220,7 @@
    </style>
 
    <!-- ********* -->
-   <!-- Home      -->
+   <!-- Home -->
 
    <style
       name="Home_Widget_Text">
@@ -244,7 +241,7 @@
    </style>
 
    <!-- ********* -->
-   <!-- Task      -->
+   <!-- Task -->
 
    <style
       name="Task">
@@ -334,7 +331,7 @@
       <item
          name="android:textStyle">bold</item>
    </style>
-   
+
    <style
       name="Task_Edit_ButtonBar">
       <item
@@ -343,7 +340,7 @@
 
 
    <!-- ********* -->
-   <!-- Note      -->
+   <!-- Note -->
 
    <style
       name="Note">
@@ -353,7 +350,7 @@
 
 
    <!-- ********* -->
-   <!-- Error     -->
+   <!-- Error -->
 
    <style
       name="Error">
@@ -381,7 +378,7 @@
 
 
    <!-- ********* -->
-   <!-- StartUp   -->
+   <!-- StartUp -->
 
    <style
       name="StartUp.Error"

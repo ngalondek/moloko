@@ -10,86 +10,85 @@
    If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
    - implementation -->
 
-<LinearLayout
+<RelativeLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:layout_width="fill_parent"
-   android:layout_height="wrap_content"
-   android:orientation="vertical"
+   android:layout_height="fill_parent"
    android:paddingTop="@dimen/taskslist_listitem_row_space"
    android:paddingBottom="@dimen/taskslist_listitem_row_space"
    android:minHeight="70dip">
 
-   <RelativeLayout
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content">
+   <ImageView
+      android:id="@+id/taskslist_listitem_check"
+      style="@style/TasksList_ListItem_Checked"
+      android:layout_height="24dip"
+      android:layout_width="24dip"
+      android:layout_toRightOf="@id/taskslist_listitem_priority"
+      android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
+      android:gravity="top"
+      android:focusable="false" />
 
-      <ImageView
-         android:id="@+id/taskslist_listitem_check"
-         style="@style/TasksList_ListItem_Checked"
-         android:layout_height="24dip"
-         android:layout_width="24dip"
-         android:layout_toRightOf="@id/taskslist_listitem_priority"
-         android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
-         android:gravity="top"
-         android:focusable="false" />
+   <TextView
+      android:id="@+id/taskslist_listitem_desc"
+      style="@style/TasksList_ListItem_DescriptionText"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_toRightOf="@id/taskslist_listitem_check"
+      android:layout_alignTop="@id/taskslist_listitem_check"
+      android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
+      android:text="task_desc"
+      android:focusable="false" />
 
-      <TextView
-         android:id="@+id/taskslist_listitem_desc"
-         style="@style/TasksList_ListItem_DescriptionText"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_toRightOf="@id/taskslist_listitem_check"
-         android:layout_alignTop="@id/taskslist_listitem_check"
-         android:layout_marginLeft="@dimen/taskslist_listitem_widget_space_lrg"
-         android:text="task_desc"
-         android:focusable="false" />
+   <dev.drsoran.moloko.layouts.WrappingLayout
+      xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+      android:id="@+id/taskslist_listitem_additionals_container"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:layout_below="@id/taskslist_listitem_desc"
+      android:layout_alignLeft="@id/taskslist_listitem_desc"
+      android:layout_toLeftOf="@+id/taskslist_listitem_due_container"
+      android:layout_marginTop="5dip"
+      android:layout_marginRight="?android:attr/scrollbarSize"
+      android:layout_marginBottom="3dip"
+      moloko:horizontal_spacing="5dip"
+      moloko:vertical_spacing="5dip">
 
       <Button
          android:id="@+id/taskslist_listitem_btn_list_name"
+         android:tag="list_name"
          style="@style/TasksList_ListItem_ListName"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_below="@id/taskslist_listitem_desc"
-         android:layout_alignLeft="@id/taskslist_listitem_desc"
-         android:layout_marginTop="3dip"
          android:text="list_name"
          android:focusable="false"
          android:clickable="true"
          android:onClick="onListNameClicked" />
-   </RelativeLayout>
 
-   <dev.drsoran.moloko.layouts.WrappingLayout
-      android:id="@+id/taskslist_listitem_tags"
-      android:layout_height="wrap_content"
-      android:layout_width="fill_parent"
-      android:layout_marginTop="5dip"
-      android:layout_marginLeft="@dimen/taskslist_listitem_col_space"
-      android:layout_marginRight="?android:attr/scrollbarSize"
-      android:layout_marginBottom="3dip" />
+      <TextView
+         android:id="@+id/taskslist_listitem_location"
+         android:tag="location_name"
+         style="@style/TasksList_ListItem_Location"
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:text="location_name"
+         android:focusable="false"
+         android:clickable="true"
+         android:onClick="onLocationClicked" />
+   </dev.drsoran.moloko.layouts.WrappingLayout>
 
-   <TextView
-      android:id="@+id/taskslist_listitem_location"
-      style="@style/TasksList_ListItem_Location"
+   <LinearLayout
+      android:id="@+id/taskslist_listitem_due_container"
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"
-      android:layout_marginLeft="@dimen/taskslist_listitem_col_space"
       android:layout_marginRight="?android:attr/scrollbarSize"
-      android:text="location"
-      android:focusable="false"
-      android:clickable="true"
-      android:onClick="onLocationClicked" />
-
-   <RelativeLayout
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content">
-
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true">
+      
       <ImageView
          android:id="@+id/taskslist_listitem_has_notes"
          android:layout_width="20dip"
          android:layout_height="20dip"
-         android:layout_marginRight="5dip"
-         android:layout_toLeftOf="@+id/taskslist_listitem_postponed"
-         android:layout_alignWithParentIfMissing="true"
+         android:layout_marginRight="3dip"
          android:src="@drawable/ic_list_taskslist_note"
          android:focusable="false"
          android:visibility="gone" />
@@ -98,9 +97,7 @@
          android:id="@+id/taskslist_listitem_postponed"
          android:layout_width="20dip"
          android:layout_height="20dip"
-         android:layout_marginRight="5dip"
-         android:layout_toLeftOf="@+id/taskslist_listitem_recurrent"
-         android:layout_alignWithParentIfMissing="true"
+         android:layout_marginRight="3dip"
          android:src="@drawable/ic_list_taskslist_postponed"
          android:focusable="false"
          android:visibility="gone" />
@@ -109,9 +106,7 @@
          android:id="@+id/taskslist_listitem_recurrent"
          android:layout_width="20dip"
          android:layout_height="20dip"
-         android:layout_marginRight="5dip"
-         android:layout_toLeftOf="@+id/taskslist_listitem_due_date"
-         android:layout_alignWithParentIfMissing="true"
+         android:layout_marginRight="3dip"
          android:src="@drawable/ic_list_taskslist_recurrent"
          android:focusable="false"
          android:visibility="gone" />
@@ -121,11 +116,8 @@
          style="@style/TasksList_ListItem_DueDate"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_alignParentRight="true"
-         android:layout_marginRight="?android:attr/scrollbarSize"
          android:text="due_date"
          android:singleLine="true"
          android:focusable="false" />
-   </RelativeLayout>
-
-</LinearLayout>
+   </LinearLayout>
+</RelativeLayout>

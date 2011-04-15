@@ -37,6 +37,7 @@ import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.util.Pair;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -203,12 +204,13 @@ public final class UIUtils
                                          Bundle configuration,
                                          OnClickListener listener ) throws InflateException
    {
-      boolean anyInflated = false;
-      
       if ( configuration == null )
          configuration = new Bundle();
       
-      container.removeAllViews();
+      final int tagPos = getTaggedViewPos( container, "tag_name" );
+      
+      if ( tagPos != -1 )
+         container.removeViews( tagPos, container.getChildCount() - tagPos );
       
       // inflate the stub and add tags
       if ( tags.size() > 0 && !configuration.containsKey( REMOVE_ALL_TAGS ) )
@@ -226,8 +228,6 @@ public final class UIUtils
                   tagView.setText( tagText );
                   container.addView( tagView );
                }
-               
-               anyInflated = true;
             }
             else
             {
@@ -263,8 +263,6 @@ public final class UIUtils
                      
                      if ( !disable && listener != null )
                         tagView.setOnClickListener( listener );
-                     
-                     anyInflated = true;
                   }
                }
             }
@@ -275,7 +273,7 @@ public final class UIUtils
          }
       }
       
-      if ( anyInflated )
+      if ( container.getChildCount() > 0 )
          container.setVisibility( View.VISIBLE );
       else
          container.setVisibility( View.GONE );
@@ -486,5 +484,45 @@ public final class UIUtils
          return context.getString( R.string.app_name );
       
       return source;
+   }
+   
+
+
+   public final static Pair< Integer, Integer > getTaggedViewRange( ViewGroup container,
+                                                                    String tag )
+   {
+      int tagStart = -1;
+      int tagEnd = -1;
+      
+      final int cnt = container.getChildCount();
+      
+      for ( int i = 0; i < cnt && ( tagStart == -1 || tagEnd == -1 ); ++i )
+      {
+         if ( tagStart == -1 && tag.equals( container.getChildAt( i ).getTag() ) )
+            tagStart = i;
+         else if ( tagStart != -1
+            && !tag.equals( container.getChildAt( i ).getTag() ) )
+            tagEnd = i;
+      }
+      
+      if ( tagStart != -1 )
+         return Pair.create( tagStart, tagEnd != -1 ? tagEnd : cnt );
+      else
+         return Pair.create( 0, 0 );
+   }
+   
+
+
+   public final static int getTaggedViewPos( ViewGroup container, String tag )
+   {
+      int pos = -1;
+      
+      for ( int i = 0, cnt = container.getChildCount(); i < cnt && pos == -1; ++i )
+      {
+         if ( container.getChildAt( i ).getTag().equals( tag ) )
+            pos = i;
+      }
+      
+      return pos;
    }
 }

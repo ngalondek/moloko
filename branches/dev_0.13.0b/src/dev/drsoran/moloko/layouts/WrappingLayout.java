@@ -16,13 +16,17 @@
 package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import dev.drsoran.moloko.R;
 
 
 public class WrappingLayout extends ViewGroup
 {
+   private WrappingLayout.LayoutParams wrappingLayoutParams = new WrappingLayout.LayoutParams( 1,
+                                                                                               1 );
    
    private int line_height;
    
@@ -61,6 +65,36 @@ public class WrappingLayout extends ViewGroup
    public WrappingLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
+      
+      // WrappingLayout
+      final TypedArray array = context.obtainStyledAttributes( attrs,
+                                                               R.styleable.WrappingLayout,
+                                                               0,
+                                                               0 );
+      
+      final int hor_spc = array.getDimensionPixelOffset( R.styleable.WrappingLayout_horizontal_spacing,
+                                                         1 );
+      final int ver_spc = array.getDimensionPixelOffset( R.styleable.WrappingLayout_vertical_spacing,
+                                                         1 );
+      
+      wrappingLayoutParams = new WrappingLayout.LayoutParams( hor_spc, ver_spc );
+      
+      array.recycle();
+   }
+   
+
+
+   @Override
+   protected void onFinishInflate()
+   {
+      super.onFinishInflate();
+      
+      for ( int i = 0, cnt = getChildCount(); i < cnt; ++i )
+      {
+         final View childView = getChildAt( i );
+         if ( !checkLayoutParams( childView.getLayoutParams() ) )
+            childView.setLayoutParams( wrappingLayoutParams );
+      }
    }
    
 
@@ -138,7 +172,7 @@ public class WrappingLayout extends ViewGroup
    @Override
    protected ViewGroup.LayoutParams generateDefaultLayoutParams()
    {
-      return new LayoutParams( 1, 1 ); // default of 1px spacing
+      return wrappingLayoutParams;
    }
    
 

@@ -14,7 +14,7 @@
    xmlns:android="http://schemas.android.com/apk/res/android"
    android:id="@+id/taskslist_listitem"
    android:layout_width="fill_parent"
-   android:layout_height="wrap_content">
+   android:layout_height="fill_parent">
 
    <Button
       android:id="@+id/taskslist_listitem_priority"
@@ -32,5 +32,5 @@
       android:id="@+id/taskslist_listitem_base"
       layout="@layout/taskslist_activity_listitem_base"
       android:layout_width="fill_parent"
-      android:layout_height="wrap_content" />
+      android:layout_height="fill_parent" />
 </LinearLayout>

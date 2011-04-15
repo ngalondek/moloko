@@ -37,7 +37,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmList;
@@ -111,7 +110,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       final View view;
       
       if ( convertView == null )
-         view = infalter.inflate( R.layout.app_titlebar_quick_add_dropdown,
+         view = infalter.inflate( android.R.layout.simple_dropdown_item_1line,
                                   parent,
                                   false );
       else
@@ -119,13 +118,12 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       
       final Pair< Integer, String > item = data.get( position );
       
-      final ImageView icon = (ImageView) view.findViewById( android.R.id.icon );
-      icon.setImageResource( item.first );
-      
       final TextView text = (TextView) view.findViewById( android.R.id.text1 );
       text.setText( item.second );
       text.setTextColor( context.getResources()
                                 .getColor( android.R.color.black ) );
+      text.setCompoundDrawablePadding( 5 );
+      text.setCompoundDrawablesWithIntrinsicBounds( item.first, 0, 0, 0 );
       
       return view;
    }

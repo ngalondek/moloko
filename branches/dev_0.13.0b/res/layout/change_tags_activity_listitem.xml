@@ -5,7 +5,9 @@
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
    android:minHeight="?android:attr/listPreferredItemHeight">
-   
+
+   <!-- NOTE: Cannot be replaced by a CompoundDrawable since the TextView 
+      has a different background -->
    <ImageView
       android:id="@+id/change_tags_activity_listitem_icon"
       android:layout_width="wrap_content"
@@ -13,7 +15,7 @@
       android:layout_gravity="center_vertical"
       android:layout_marginLeft="5dip"
       android:src="@drawable/ic_list_change_tags_tag" />
-      
+
    <TextView
       android:id="@+id/change_tags_activity_listitem_tag"
       style="@style/App_Tag"

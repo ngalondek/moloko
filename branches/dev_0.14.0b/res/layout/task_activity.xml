@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <!--
+      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Moloko is free software: you can redistribute it and/or modify it
+      under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version. Moloko is distributed in the
+      hope that it will be useful, but WITHOUT ANY WARRANTY; without
+      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+      PARTICULAR PURPOSE. See the GNU General Public License for more
+      details. You should have received a copy of the GNU General Public
+      License along with Moloko. If not, see
+      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
+      implementation
+   -->
+
+<FrameLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+   style="@style/Task"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
+
+   <ScrollView
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:paddingBottom="70dip">
+
+      <LinearLayout
+         android:id="@+id/task_container"
+         android:orientation="vertical"
+         android:layout_height="wrap_content"
+         android:layout_width="fill_parent"
+         android:layout_marginRight="?android:attr/scrollbarSize"
+         android:paddingLeft="10dip"
+         android:paddingTop="8dip"
+         android:paddingBottom="8dip">
+
+         <FrameLayout
+            style="@style/Task_Section"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent">
+
+            <RelativeLayout
+               android:layout_height="fill_parent"
+               android:layout_width="fill_parent"
+               android:paddingBottom="70dip">
+
+               <View
+                  android:id="@+id/task_overview_priority_bar"
+                  android:layout_alignParentTop="true"
+                  android:layout_alignParentLeft="true"
+                  android:layout_alignParentRight="true"
+                  android:layout_height="@dimen/task_overview_corner_radius"
+                  android:layout_width="fill_parent"
+                  android:background="@drawable/app_simple_line" />
+
+               <TextView
+                  android:id="@+id/task_overview_added_date"
+                  style="@style/Task_Date_Text"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="10dip"
+                  android:layout_marginRight="?android:attr/scrollbarSize"
+                  android:layout_alignParentRight="true"
+                  android:text="Added_Date" />
+
+               <TextView
+                  android:id="@+id/task_overview_completed_date"
+                  style="@style/Task_Date_Text"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="3dip"
+                  android:layout_marginRight="?android:attr/scrollbarSize"
+                  android:layout_alignParentRight="true"
+                  android:layout_below="@id/task_overview_added_date"
+                  android:drawableLeft="@drawable/ic_small_green_check"
+                  android:drawablePadding="2dip"
+                  android:text="Completed_Date" />
+
+               <RelativeLayout
+                  android:id="@+id/task_overview_status_container"
+                  android:layout_height="wrap_content"
+                  android:layout_width="wrap_content"
+                  android:layout_alignParentRight="true"
+                  android:layout_below="@id/task_overview_completed_date"
+                  android:layout_alignWithParentIfMissing="true"
+                  android:layout_marginTop="3dip"
+                  android:layout_marginRight="?android:attr/scrollbarSize">
+
+                  <TextView
+                     android:id="@+id/task_overview_postponed"
+                     style="@style/Task_Source_Text"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_toLeftOf="@+id/task_overview_src"
+                     android:layout_marginRight="5dip"
+                     android:drawableLeft="@drawable/ic_small_black_postponed"
+                     android:drawablePadding="2dip"
+                     android:text="@string/task_postponed" />
+
+                  <TextView
+                     android:id="@+id/task_overview_src"
+                     style="@style/Task_Source_Text"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentRight="true"
+                     android:text="@string/task_source" />
+               </RelativeLayout>
+
+               <TextView
+                  android:id="@+id/task_overview_desc"
+                  style="@style/Task_Overview_DescriptionText"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@id/task_overview_status_container"
+                  android:layout_alignWithParentIfMissing="true"
+                  android:layout_marginLeft="10dip"
+                  android:layout_marginRight="10dip"
+                  android:text="Task_Desc" />
+
+               <TextView
+                  android:id="@+id/task_overview_list_name"
+                  style="@style/Task_Overview_ListName"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="3dip"
+                  android:layout_marginRight="10dip"
+                  android:layout_below="@id/task_overview_desc"
+                  android:layout_alignLeft="@id/task_overview_desc"
+                  android:text="List_Name" />
+
+               <dev.drsoran.moloko.layouts.WrappingLayout
+                  android:id="@+id/task_overview_tags"
+                  android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:layout_marginTop="3dip"
+                  android:layout_marginRight="10dip"
+                  android:layout_below="@id/task_overview_list_name"
+                  android:layout_alignLeft="@id/task_overview_list_name" />
+
+
+               <dev.drsoran.moloko.layouts.TitleWithTextLayout
+                  android:id="@+id/task_dateTime"
+                  style="@style/Task_TitleWithText"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="10dip"
+                  android:layout_marginRight="10dip"
+                  android:layout_below="@id/task_overview_tags"
+                  android:layout_alignLeft="@id/task_overview_list_name"
+                  android:layout_alignWithParentIfMissing="true"
+                  moloko:titlePaddingTop="10dip"
+                  moloko:title="dateTime_title"
+                  moloko:text="dateTime_text" />
+
+               <dev.drsoran.moloko.layouts.TitleWithTextLayout
+                  android:id="@+id/task_location"
+                  style="@style/Task_TitleWithText"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="10dip"
+                  android:layout_marginRight="10dip"
+                  android:layout_below="@id/task_dateTime"
+                  android:layout_alignLeft="@id/task_overview_list_name"
+                  android:layout_alignWithParentIfMissing="true"
+                  moloko:titlePaddingTop="10dip"
+                  moloko:title="@string/task_location"
+                  moloko:text="Somewhere" />
+
+               <dev.drsoran.moloko.layouts.TitleWithWrappingLayout
+                  android:id="@+id/task_participants"
+                  style="@style/Task_TitleWithWrappingLayout"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="10dip"
+                  android:layout_marginRight="10dip"
+                  android:layout_below="@id/task_location"
+                  android:layout_alignLeft="@id/task_overview_list_name"
+                  android:layout_alignWithParentIfMissing="true"
+                  moloko:titlePaddingTop="10dip"
+                  moloko:title="@string/task_participants" />
+
+               <dev.drsoran.moloko.layouts.TitleWithTextLayout
+                  android:id="@+id/task_url"
+                  style="@style/Task_TitleWithText"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="10dip"
+                  android:layout_marginRight="10dip"
+                  android:layout_below="@id/task_participants"
+                  android:layout_alignLeft="@id/task_overview_list_name"
+                  android:layout_alignWithParentIfMissing="true"
+                  moloko:titlePaddingTop="10dip"
+                  moloko:title="@string/task_url"
+                  moloko:text="http://code.google.com/p/moloko/" />
+            </RelativeLayout>
+
+            <RelativeLayout
+               android:id="@+id/task_buttons"
+               style="@style/Task_ButtonBar"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:layout_gravity="bottom"
+               android:layout_margin="@dimen/task_overview_stroke_width"
+               android:padding="3dip"
+               android:orientation="horizontal">
+               <ImageButton
+                  android:id="@+id/task_buttons_edit"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentLeft="true"
+                  android:src="@drawable/ic_button_task_edit"
+                  android:scaleType="fitXY"
+                  android:onClick="onEditTask" />
+               <ImageButton
+                  android:id="@+id/task_buttons_delete"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toRightOf="@id/task_buttons_edit"
+                  android:src="@drawable/ic_button_task_trash"
+                  android:scaleType="fitXY"
+                  android:onClick="onDeleteTask" />
+               <ImageButton
+                  android:id="@+id/task_buttons_postpone"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toRightOf="@id/task_buttons_delete"
+                  android:src="@drawable/ic_button_task_postponed"
+                  android:scaleType="fitXY"
+                  android:onClick="onPostponeTask" />
+               <ImageButton
+                  android:id="@+id/task_buttons_complete"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true"
+                  android:src="@drawable/ic_button_task_checked_check"
+                  android:scaleType="fitXY"
+                  android:onClick="onCompleteTask" />
+            </RelativeLayout>
+         </FrameLayout>
+      </LinearLayout>
+   </ScrollView>
+
+   <LinearLayout
+      android:id="@+id/task_bottom_button_bar"
+      android:layout_width="fill_parent"
+      android:layout_height="70dip"
+      android:background="@color/app_btnbar_bgnd_fill"
+      android:layout_gravity="bottom">
+
+      <Button
+         android:id="@+id/task_button_back"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginLeft="15dip"
+         android:layout_marginRight="15dip"
+         android:layout_gravity="center"
+         android:text="@string/btn_back"
+         android:onClick="onBack" />
+   </LinearLayout>
+
+</FrameLayout>

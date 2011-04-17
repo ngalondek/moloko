@@ -173,9 +173,19 @@ public abstract class SyncableList< T, O >
    
 
 
-   public abstract O computeDeleteOperation( T elementToDelete );
+   public O computeDeleteOperation( int pos )
+
+   {
+      touchedElements[ pos ] = true;
+      
+      return internalComputeDeleteOperation( impl.get( pos ) );
+   }
    
 
 
    protected abstract O internalComputeUpdateOperation( T old, T updateElement );
+   
+
+
+   protected abstract O internalComputeDeleteOperation( T elementToDelete );
 }

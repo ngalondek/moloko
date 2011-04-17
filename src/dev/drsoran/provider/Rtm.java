@@ -521,6 +521,11 @@ public class Rtm
       public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.taskseries";
       
       /**
+       * This tags a TaskSeries as 'new' and corresponds to the {@link TaskSeriesColumns} SOURCE field.
+       */
+      public final static String NEW_TASK_SOURCE = "Moloko";
+      
+      /**
        * The default sort order for this table
        */
       public final static String DEFAULT_SORT_ORDER = _ID + " ASC";

@@ -50,57 +50,61 @@ public class SyncDiffer
    
 
 
-   public final static < T extends IContentProviderSyncable< T >> List< IContentProviderSyncOperation > inDiff( Iterable< T > reference,
-                                                                                                                ContentProviderSyncableList< T > target,
+   public final static < T extends IContentProviderSyncable< T >> List< IContentProviderSyncOperation > inDiff( Iterable< T > serverIterable,
+                                                                                                                ContentProviderSyncableList< T > localList,
                                                                                                                 boolean fullSync )
    {
-      if ( reference == null || target == null )
+      if ( serverIterable == null || localList == null )
          throw new NullPointerException();
       
       final List< IContentProviderSyncOperation > operations = new ArrayList< IContentProviderSyncOperation >();
       
-      // for each element of the reference list
-      for ( T refElement : reference )
+      // for each element of the server list
+      for ( T serverElement : serverIterable )
       {
-         final int pos = target.find( refElement );
+         final int pos = localList.find( serverElement );
          
          if ( pos < 0 )
          {
             // Check if the server element is not deleted
-            // INSERT: The reference element is not contained in the target list.
-            if ( refElement.getDeletedDate() == null )
+            // INSERT: The server element is not contained in the local list.
+            if ( serverElement.getDeletedDate() == null )
             {
-               final IContentProviderSyncOperation operation = target.computeInsertOperation( refElement );
+               final IContentProviderSyncOperation operation = localList.computeInsertOperation( serverElement );
                if ( !( operation instanceof INoopSyncOperation ) )
                   operations.add( operation );
             }
             
-            // We never had this element locally, just skip it.
+            // We never had this server element locally, just skip it.
          }
          
          else
          {
-            // UPDATE: The reference element is contained in the target list.
-            if ( refElement.getDeletedDate() == null )
-               operations.add( target.computeUpdateOperation( pos, refElement ) );
-            // DELETE: The reference element is contained in the target list and is deleted.
+            // UPDATE: The server element is contained in the local list.
+            if ( serverElement.getDeletedDate() == null )
+               operations.add( localList.computeUpdateOperation( pos,
+                                                                 serverElement ) );
+            // DELETE: The server element is contained in the target list and is deleted.
             else
-               operations.add( target.computeDeleteOperation( refElement ) );
+               operations.add( serverElement.computeContentProviderDeleteOperation() );
          }
       }
       
-      // Check if we have a full sync. Otherwise we would delete elements
-      // which have not changed.
-      if ( fullSync )
+      // DELETE: Get all local elements which have not been touched during the
+      // diff.
+      // These elements are not in the server list.
+      final List< T > untouchedElements = localList.getUntouchedElements();
+      
+      for ( T localElement : untouchedElements )
       {
-         // DELETE: Get all elements which have not been touched during the
-         // diff.
-         // These elements are not in the reference list.
-         final List< T > untouchedElements = target.getUntouchedElements();
-         
-         for ( T tgtElement : untouchedElements )
+         // Check if we have a full sync. Otherwise we would delete local elements
+         // which have not changed.
+         //
+         // If we have no full sync, we have to delete local elements which have been
+         // created and deleted locally but never synced to the server.
+         if ( fullSync || localElement.getDeletedDate() != null )
          {
-            final IContentProviderSyncOperation operation = target.computeDeleteOperation( tgtElement );
+            final IContentProviderSyncOperation operation = localElement.computeContentProviderDeleteOperation();
             
             if ( operation == null )
                throw new NullPointerException( "operation is null" );
@@ -156,7 +160,7 @@ public class SyncDiffer
                if ( localElementDeleted != null
                   && localElementDeleted.after( serverElementModified ) )
                {
-                  operations.add( serverElement.computeServerDeleteOperation( timeLine ) );
+                  operations.add( localElement.computeServerDeleteOperation( timeLine ) );
                }
                
                // MERGE: The local element is not deleted or deleted before server modification.
@@ -176,25 +180,23 @@ public class SyncDiffer
          if ( !localTouchedElements[ i ] )
          {
             final T localElement = sortedLocalList.get( i );
-            final Date localElementCreated = localElement.getCreatedDate();
+            final Date localElementDeleted = localElement.getDeletedDate();
             
-            // SERVER INSERT: The local element has been created after the last sync.
-            if ( localElementCreated != null
-               && ( lastSync == null || lastSync.before( localElementCreated ) ) )
+            // SERVER DELETE: The local element is marked as deleted and the
+            // server element was not seen.
+            if ( localElementDeleted != null )
             {
                localTouchedElements[ i ] = true;
-               operations.add( sortedLocalList.get( i )
-                                              .computeServerInsertOperation( timeLine ) );
+               operations.add( localElement.computeServerDeleteOperation( timeLine ) );
             }
-            
-            // SERVER UPDATE: The local element was modified since the last sync and the
-            // server element was not seen.
             else
             {
                final Date localElementModified = localElement.getModifiedDate();
                
-               if ( localElementModified != null
-                  && ( lastSync == null || lastSync.before( localElementModified ) ) )
+               // SERVER UPDATE: The local element was modified since the last sync and the
+               // server element was not seen.
+               if ( ( localElementModified != null && ( lastSync == null || lastSync.before( localElementModified ) ) )
+                  || localElement.hasModification( modifications ) )
                {
                   localTouchedElements[ i ] = true;
                   operations.add( localElement.computeServerUpdateOperation( timeLine,

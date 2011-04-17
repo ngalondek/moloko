@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.AsyncTask;
@@ -40,13 +40,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -59,10 +60,11 @@ import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.provider.Rtm.Notes;
@@ -100,31 +102,34 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
    protected class AsyncFillList extends
-            AsyncTask< Object, Void, AsyncFillListResult >
+            AsyncTask< ContentResolver, Void, AsyncFillListResult >
    {
+      private final Bundle configuration;
       
-      @Override
-      protected void onPreExecute()
+      
+
+      public AsyncFillList( Bundle configuration )
       {
-         UIUtils.setTitle( AbstractTasksListActivity.this, R.string.phr_loading );
+         this.configuration = configuration;
       }
       
 
 
       @Override
-      protected AsyncFillListResult doInBackground( Object... params )
+      protected void onPreExecute()
       {
-         if ( params.length < 2 )
-            throw new IllegalArgumentException( "Expected 2 parameters" );
+         beforeQueryTasksAsync( configuration );
+      }
+      
+
+
+      @Override
+      protected AsyncFillListResult doInBackground( ContentResolver... params )
+      {
+         if ( params.length < 1 )
+            throw new IllegalArgumentException( "Expected 1 parameter of type ContentResolver" );
          
-         if ( !( params[ 0 ] instanceof ContentResolver ) )
-            throw new IllegalArgumentException( "Expected ContentResolver" );
-         
-         if ( !( params[ 1 ] instanceof Bundle ) )
-            throw new IllegalArgumentException( "Expected Bundle" );
-         
-         return queryTasksAsync( (ContentResolver) params[ 0 ],
-                                 (Bundle) params[ 1 ] );
+         return queryTasksAsync( params[ 0 ], configuration );
       }
       
 
@@ -140,6 +145,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    protected class ClearAndAsyncFillList extends AsyncFillList
    {
+      public ClearAndAsyncFillList( Bundle configuration )
+      {
+         super( configuration );
+      }
+      
+
+
       @Override
       protected void onPreExecute()
       {
@@ -174,6 +186,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public final static int SETTINGS = START_IDX + 2;
       
       public final static int SYNC = START_IDX + 3;
+      
+      public final static int EDIT_MULTIPLE_TASKS = START_IDX + 4;
    }
    
 
@@ -183,13 +197,19 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       public final static int EDIT_TASK = 2;
       
-      public final static int OPEN_LIST = 3;
+      public final static int COMPLETE_TASK = 3;
       
-      public final static int TAGS = 4;
+      public final static int POSTPONE_TASK = 4;
       
-      public final static int TASKS_AT_LOCATION = 5;
+      public final static int DELETE_TASK = 5;
       
-      public final static int NOTES = 6;
+      public final static int OPEN_LIST = 6;
+      
+      public final static int TAGS = 7;
+      
+      public final static int TASKS_AT_LOCATION = 8;
+      
+      public final static int NOTES = 9;
    }
    
    protected final Runnable dontClearAndfillListRunnable = new Runnable()
@@ -202,8 +222,9 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             asyncFillList.cancel( true );
          }
          
-         asyncFillList = new AsyncFillList();
-         asyncFillList.execute( getContentResolver(), getIntent().getExtras() );
+         asyncFillList = new AsyncFillList( AbstractTasksListActivity.this.getIntent()
+                                                                          .getExtras() );
+         asyncFillList.execute( getContentResolver() );
       }
    };
    
@@ -269,6 +290,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          asyncFillList.cancel( true );
       
       asyncFillList = null;
+      
+      UIUtils.showTitleBarAddTask( this, false );
    }
    
 
@@ -290,6 +313,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    @Override
    protected void onNewIntent( Intent intent )
    {
+      UIUtils.showTitleBarAddTask( this, false );
+      
       setIntent( intent );
       handleIntent( intent );
    }
@@ -342,12 +367,25 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                OptionsMenu.MENU_ORDER_FRONT );
       
       if ( getListAdapter() != null )
+      {
          addOptionalMenuItem( menu,
                               OptionsMenu.SORT,
                               getString( R.string.abstaskslist_menu_opt_sort ),
                               OptionsMenu.MENU_ORDER,
                               R.drawable.ic_menu_sort,
                               getListAdapter().getCount() > 1 );
+         
+         addOptionalMenuItem( menu,
+                              OptionsMenu.EDIT_MULTIPLE_TASKS,
+                              getString( R.string.abstaskslist_menu_opt_edit_multiple ),
+                              OptionsMenu.MENU_ORDER,
+                              R.drawable.ic_menu_edit_multiple_tasks,
+                              Intents.createSelectMultipleTasksIntent( this,
+                                                                       (RtmSmartFilter) getIntent().getParcelableExtra( FILTER ),
+                                                                       getTaskSort() ),
+                              !AccountUtils.isReadOnlyAccess( this )
+                                 && getListAdapter().getCount() > 1 );
+      }
       
       return true;
    }
@@ -357,14 +395,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
-      // Handle item selection
       switch ( item.getItemId() )
       {
          case OptionsMenu.SORT:
             new AlertDialog.Builder( this ).setIcon( R.drawable.ic_dialog_sort )
                                            .setTitle( R.string.abstaskslist_dlg_sort_title )
                                            .setSingleChoiceItems( R.array.app_sort_options,
-                                                                  TaskSortPreference.getIndexOfValue( getTaskSort() ),
+                                                                  getTaskSortIndex( getTaskSort() ),
                                                                   this )
                                            .setNegativeButton( R.string.btn_cancel,
                                                                this )
@@ -393,10 +430,29 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                 Menu.NONE,
                 getString( R.string.phr_open_with_name, task.getName() ) );
       
-      menu.add( Menu.NONE,
-                CtxtMenu.EDIT_TASK,
-                Menu.NONE,
-                getString( R.string.phr_edit_with_name, task.getName() ) );
+      if ( !AccountUtils.isReadOnlyAccess( this ) )
+      {
+         menu.add( Menu.NONE,
+                   CtxtMenu.EDIT_TASK,
+                   Menu.NONE,
+                   getString( R.string.phr_edit_with_name, task.getName() ) );
+         menu.add( Menu.NONE,
+                   CtxtMenu.COMPLETE_TASK,
+                   Menu.NONE,
+                   getString( task.getCompleted() == null
+                                                         ? R.string.abstaskslist_listitem_ctx_complete_task
+                                                         : R.string.abstaskslist_listitem_ctx_uncomplete_task,
+                              task.getName() ) );
+         menu.add( Menu.NONE,
+                   CtxtMenu.POSTPONE_TASK,
+                   Menu.NONE,
+                   getString( R.string.abstaskslist_listitem_ctx_postpone_task,
+                              task.getName() ) );
+         menu.add( Menu.NONE,
+                   CtxtMenu.DELETE_TASK,
+                   Menu.NONE,
+                   getString( R.string.phr_delete_with_name, task.getName() ) );
+      }
       
       final RtmSmartFilter filter = getIntent().getParcelableExtra( FILTER );
       
@@ -418,14 +474,15 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       final int tagsCount = task.getTags().size();
       if ( tagsCount > 0 )
       {
-         final View tagsContainer = info.targetView.findViewById( R.id.taskslist_listitem_tags );
+         final View tagsContainer = info.targetView.findViewById( R.id.taskslist_listitem_additionals_container );
          
          if ( tagsContainer.getVisibility() == View.VISIBLE )
             menu.add( Menu.NONE,
                       CtxtMenu.TAGS,
                       Menu.NONE,
                       getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
-                                                        tagsCount ) );
+                                                        tagsCount,
+                                                        task.getTags().get( 0 ) ) );
       }
       
       final String locationName = task.getLocationName();
@@ -467,6 +524,18 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             
          case CtxtMenu.EDIT_TASK:
             onTaskEdit( info.position );
+            return true;
+            
+         case CtxtMenu.COMPLETE_TASK:
+            onTaskComplete( info.position );
+            return true;
+            
+         case CtxtMenu.POSTPONE_TASK:
+            onTaskPostpone( info.position );
+            return true;
+            
+         case CtxtMenu.DELETE_TASK:
+            onTaskDelete( info.position );
             return true;
             
          case CtxtMenu.OPEN_LIST:
@@ -586,9 +655,10 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                break;
             
             default :
-               final int newTaskSort = TaskSortPreference.getValueOfIndex( which );
+               final int newTaskSort = getTaskSortValue( which );
                
-               if ( !isSameTaskSortLikeCurrent( newTaskSort ) )
+               if ( newTaskSort != -1
+                  && !isSameTaskSortLikeCurrent( newTaskSort ) )
                {
                   setTaskSort( newTaskSort, true );
                }
@@ -628,6 +698,44 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    private void onTaskEdit( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
+   }
+   
+
+
+   private void onTaskComplete( int pos )
+   {
+      final ListTask task = getTask( pos );
+      TaskEditUtils.setTaskCompletion( this, task, task.getCompleted() == null );
+   }
+   
+
+
+   private void onTaskPostpone( int pos )
+   {
+      TaskEditUtils.postponeTask( this, getTask( pos ) );
+   }
+   
+
+
+   private void onTaskDelete( int pos )
+   {
+      final ListTask task = getTask( pos );
+      
+      new AlertDialog.Builder( this ).setMessage( getString( R.string.abstaskslist_dlg_delete,
+                                                             task.getName() ) )
+                                     .setPositiveButton( R.string.btn_delete,
+                                                         new OnClickListener()
+                                                         {
+                                                            public void onClick( DialogInterface dialog,
+                                                                                 int which )
+                                                            {
+                                                               TaskEditUtils.deleteTask( AbstractTasksListActivity.this,
+                                                                                         task );
+                                                            }
+                                                         } )
+                                     .setNegativeButton( R.string.btn_cancel,
+                                                         null )
+                                     .show();
    }
    
 
@@ -777,9 +885,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
 
    /**
+    * Note: This will run in the GUI thread.
+    */
+   protected void beforeQueryTasksAsync( Bundle configuration )
+   {
+      UIUtils.setTitle( AbstractTasksListActivity.this, R.string.phr_loading );
+   }
+   
+
+
+   /**
     * Note: This will run in a background thread.
-    * 
-    * @param params
     */
    abstract protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
                                                            Bundle configuration );
@@ -793,17 +909,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
+   abstract protected ListAdapter createListAdapter( AsyncFillListResult result );
+   
+
+
    abstract protected void handleIntent( Intent intent );
    
 
 
    protected void clearList( View emptyView )
    {
-      setListAdapter( new TasksListAdapter( this,
-                                            R.layout.taskslist_activity_listitem,
-                                            Collections.< ListTask > emptyList(),
-                                            new RtmSmartFilter( Strings.EMPTY_STRING ) ) );
-      
+      setListAdapter( createListAdapter( null ) );
       switchEmptyView( emptyView );
    }
    
@@ -821,9 +937,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                asyncFillList.cancel( true );
             }
             
-            asyncFillList = new ClearAndAsyncFillList();
-            asyncFillList.execute( getContentResolver(),
-                                   getIntent().getExtras() );
+            asyncFillList = new ClearAndAsyncFillList( getIntent().getExtras() );
+            asyncFillList.execute( getContentResolver() );
          }
       } );
    }
@@ -851,6 +966,20 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    protected final ListTask getTask( int pos )
    {
       return (ListTask) getListAdapter().getItem( pos );
+   }
+   
+
+
+   protected int getTaskSortValue( int idx )
+   {
+      return TaskSortPreference.getValueOfIndex( idx );
+   }
+   
+
+
+   protected int getTaskSortIndex( int value )
+   {
+      return TaskSortPreference.getIndexOfValue( value );
    }
    
 
@@ -887,6 +1016,19 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                        int iconId,
                                        boolean show )
    {
+      addOptionalMenuItem( menu, id, title, order, iconId, null, show );
+   }
+   
+
+
+   protected void addOptionalMenuItem( Menu menu,
+                                       int id,
+                                       String title,
+                                       int order,
+                                       int iconId,
+                                       Intent intent,
+                                       boolean show )
+   {
       if ( show )
       {
          MenuItem item = menu.findItem( id );
@@ -898,6 +1040,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             if ( iconId != -1 )
                item.setIcon( iconId );
          }
+         
+         item.setTitle( title );
+         
+         if ( intent != null )
+            item.setIntent( intent );
       }
       else
       {

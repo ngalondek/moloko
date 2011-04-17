@@ -13,7 +13,8 @@
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
    package="dev.drsoran.moloko"
-   android:versionName="0.12.2b" android:versionCode="73730">
+   android:versionName="0.13.0b"
+   android:versionCode="77824">
 
    <uses-sdk
       android:minSdkVersion="5"
@@ -117,6 +118,21 @@
             android:name="android.app.searchable"
             android:resource="@xml/searchable" />
       </activity>
+      
+      <activity
+         android:label="@string/app_task_select_multiple"
+         android:name=".activities.SelectMultipleTasksActivity"
+         android:theme="@style/Theme.Moloko">
+         <intent-filter>
+            <!-- Choose multiple tasks from a list of tasks -->
+            <action
+               android:name="android.intent.action.PICK" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
+         </intent-filter>
+      </activity>
 
       <activity
          android:label="@string/app_task"
@@ -146,6 +162,38 @@
                android:name="android.intent.category.DEFAULT" />
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
+         </intent-filter>
+      </activity>
+      
+      <activity
+         android:label="@string/app_task_edit_multiple"
+         android:name=".activities.EditMultipleTasksActivity"
+         android:launchMode="singleTop"
+         android:theme="@style/Theme.Moloko.Task">
+         <intent-filter>
+            <!-- Edit a list of tasks -->
+            <action
+               android:name="android.intent.action.EDIT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
+         </intent-filter>
+      </activity>
+      
+      <activity
+         android:label="@string/app_task_add"
+         android:name=".activities.AddTaskActivity"
+         android:launchMode="singleTop"
+         android:theme="@style/Theme.Moloko.Task">
+         <intent-filter>
+            <!-- Add a new task -->
+            <action
+               android:name="android.intent.action.INSERT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
          </intent-filter>
       </activity>
       

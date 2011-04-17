@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
@@ -77,6 +78,11 @@ public class HomeAdapter extends BaseAdapter
                                    R.drawable.ic_home_user,
                                    new Intent( context,
                                                ContactsListActivity.class ) ),
+       new SimpleHomeWidgetLayout( context,
+                                   null,
+                                   R.string.app_task_add,
+                                   R.drawable.ic_home_add_task,
+                                   Intents.createAddTaskIntent( context, null ) ),
        
        new SimpleHomeWidgetLayout( context,
                                    null,

@@ -33,6 +33,9 @@ import android.content.res.Resources;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
+
+import com.mdt.rtm.data.RtmData;
+
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
@@ -53,6 +56,8 @@ public class MolokoDateUtils
    public final static int FORMAT_ABR_WEEKDAY = 1 << 4;
    
    public final static int FORMAT_ABR_MONTH = 1 << 5;
+   
+   public final static int FORMAT_ONLY_WEEKDAY = 1 << 6;
    
    public final static int FORMAT_ABR_ALL = FORMAT_ABR_WEEKDAY
       | FORMAT_ABR_MONTH;
@@ -85,6 +90,39 @@ public class MolokoDateUtils
    
 
 
+   public final static Calendar newCalendar()
+   {
+      return Calendar.getInstance( MolokoApp.getSettings().getTimezone() );
+   }
+   
+
+
+   public final static Calendar newCalendar( long millis )
+   {
+      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
+                                                          .getTimezone() );
+      cal.setTimeInMillis( millis );
+      return cal;
+   }
+   
+
+
+   public final static Calendar newCalendarUTC()
+   {
+      return newCalendarUTC( System.currentTimeMillis() );
+   }
+   
+
+
+   public final static Calendar newCalendarUTC( long millis )
+   {
+      final Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
+      cal.setTimeInMillis( millis );
+      return cal;
+   }
+   
+
+
    public final static Time newTime()
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
@@ -110,14 +148,30 @@ public class MolokoDateUtils
    
 
 
+   public static boolean isBefore( long when, long reference )
+   {
+      return ( getTimespanInDays( when, reference ) > 0 );
+   }
+   
+
+
+   public static boolean isAfter( long when, long reference )
+   {
+      return ( getTimespanInDays( when, reference ) < 0 );
+   }
+   
+
+
    public static int getTimespanInDays( long start, long end )
    {
       final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
       final int offStart = timeZone.getOffset( start ) / 1000; // in sec.
       final int offEnd = timeZone.getOffset( end ) / 1000; // in sec.
       
-      return ( Time.getJulianDay( end, offEnd ) - Time.getJulianDay( start,
-                                                                     offStart ) );
+      final int span = Time.getJulianDay( end, offEnd )
+         - Time.getJulianDay( start, offStart );
+      
+      return span;
    }
    
 
@@ -160,6 +214,20 @@ public class MolokoDateUtils
       cal.clear( Calendar.AM_PM );
       
       return cal;
+   }
+   
+
+
+   public final static Date parseRtmDate( String rtmDateStr )
+   {
+      try
+      {
+         return RtmData.parseDate( rtmDateStr );
+      }
+      catch ( RuntimeException e )
+      {
+         throw new IllegalArgumentException( e );
+      }
    }
    
 
@@ -350,51 +418,58 @@ public class MolokoDateUtils
       // Date
       if ( date )
       {
-         if ( ( flags & FORMAT_SHOW_WEEKDAY ) != 0 )
-            pattern.append( ( ( flags & FORMAT_ABR_WEEKDAY ) != 0 ) ? "E, "
-                                                                   : "EEEE, " );
-         
-         // Date EU
-         if ( settings.getDateformat() == Settings.DATEFORMAT_EU )
-         {
-            if ( ( flags & FORMAT_NUMERIC ) != 0 )
-               if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                  pattern.append( "d.M.yyyy" );
-               else
-                  pattern.append( "d.M" );
-            else
-            {
-               if ( ( flags & FORMAT_ABR_MONTH ) != 0 )
-                  pattern.append( "d. MMM" );
-               else
-                  pattern.append( "d. MMMM" );
-               
-               if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                  pattern.append( " yyyy" );
-            }
-         }
-         
-         // Date US
+         if ( ( flags & FORMAT_ONLY_WEEKDAY ) != 0 )
+            pattern.append( ( ( flags & FORMAT_ABR_WEEKDAY ) != 0 ) ? "E"
+                                                                   : "EEEE" );
          else
          {
-            if ( ( flags & FORMAT_NUMERIC ) != 0 )
-               if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                  // the parser needs the EU format. (day first)
-                  if ( ( flags & FORMAT_PARSER ) == FORMAT_PARSER )
-                     pattern.append( "d/M/yyyy" );
+            if ( ( flags & FORMAT_SHOW_WEEKDAY ) != 0 )
+               pattern.append( ( ( flags & FORMAT_ABR_WEEKDAY ) != 0 )
+                                                                      ? "E, "
+                                                                      : "EEEE, " );
+            
+            // Date EU
+            if ( settings.getDateformat() == Settings.DATEFORMAT_EU )
+            {
+               if ( ( flags & FORMAT_NUMERIC ) != 0 )
+                  if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
+                     pattern.append( "d.M.yyyy" );
                   else
-                     pattern.append( "M/d/yyyy" );
+                     pattern.append( "d.M" );
                else
-                  pattern.append( "M/d" );
+               {
+                  if ( ( flags & FORMAT_ABR_MONTH ) != 0 )
+                     pattern.append( "d. MMM" );
+                  else
+                     pattern.append( "d. MMMM" );
+                  
+                  if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
+                     pattern.append( " yyyy" );
+               }
+            }
+            
+            // Date US
             else
             {
-               if ( ( flags & FORMAT_ABR_MONTH ) != 0 )
-                  pattern.append( "MMM d" );
+               if ( ( flags & FORMAT_NUMERIC ) != 0 )
+                  if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
+                     // the parser needs the EU format. (day first)
+                     if ( ( flags & FORMAT_PARSER ) == FORMAT_PARSER )
+                        pattern.append( "d/M/yyyy" );
+                     else
+                        pattern.append( "M/d/yyyy" );
+                  else
+                     pattern.append( "M/d" );
                else
-                  pattern.append( "MMMM d" );
-               
-               if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
-                  pattern.append( ", yyyy" );
+               {
+                  if ( ( flags & FORMAT_ABR_MONTH ) != 0 )
+                     pattern.append( "MMM d" );
+                  else
+                     pattern.append( "MMMM d" );
+                  
+                  if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
+                     pattern.append( ", yyyy" );
+               }
             }
          }
       }

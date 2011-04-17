@@ -39,12 +39,12 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ContactOverviewsProviderPart;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
@@ -226,6 +226,8 @@ public class ContactsListActivity extends ListActivity
          asyncQueryContacts.cancel( true );
       
       asyncQueryContacts = null;
+      
+      UIUtils.showTitleBarAddTask( this, false );
    }
    
 

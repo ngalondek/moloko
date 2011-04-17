@@ -22,22 +22,21 @@
 
    <dev.drsoran.moloko.layouts.TitleBarLayout
       android:id="@+id/title_bar"
-      style="@style/App_TitleBar"
-      android:layout_width="fill_parent"
-      android:layout_height="@dimen/app_titlebar_height"
+      style="@style/App_TitleBar"      
       moloko:titleText="@string/app_name"
       moloko:showButton="none" />
 
    <ScrollView
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:layout_below="@id/title_bar">
+      android:layout_below="@id/title_bar"
+      android:layout_marginTop="@dimen/app_titlebar_height">
 
       <LinearLayout
          android:id="@android:id/widget_frame"
          android:orientation="vertical"
          android:layout_width="fill_parent"
-         android:layout_height="fill_parent"
+         android:layout_height="wrap_content"
          android:layout_margin="10dip">
       </LinearLayout>
    </ScrollView>

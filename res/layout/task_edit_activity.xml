@@ -13,7 +13,7 @@
       implementation
    -->
 
-<FrameLayout
+<merge
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    style="@style/Task"
@@ -29,7 +29,7 @@
       <RelativeLayout
          android:id="@+id/task_edit_container"
          android:orientation="vertical"
-         android:layout_height="fill_parent"
+         android:layout_height="wrap_content"
          android:layout_width="fill_parent"
          android:layout_marginRight="?android:attr/scrollbarSize">
 
@@ -83,7 +83,7 @@
                android:text="@string/task_source" />
          </RelativeLayout>
 
-         <EditText
+         <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
             android:id="@+id/task_edit_desc"
             style="@style/Task_Overview_DescriptionText"
             android:layout_width="fill_parent"
@@ -117,9 +117,7 @@
             android:layout_marginTop="3dip"
             android:layout_below="@id/task_edit_list"
             android:layout_alignLeft="@id/task_edit_desc"
-            moloko:title="@string/task_edit_priority"
-            moloko:spinnerEntries="@array/rtm_priorities"
-            moloko:spinnerValues="@array/rtm_priority_values" />
+            moloko:title="@string/task_edit_priority" />
 
          <!-- Tags -->
          <LinearLayout
@@ -141,6 +139,7 @@
                android:text="@string/task_edit_tags" />
 
             <RelativeLayout
+               android:id="@+id/task_edit_tags_layout"
                android:layout_width="fill_parent"
                android:layout_height="wrap_content"
                android:layout_marginTop="3dip">
@@ -155,7 +154,7 @@
                   android:id="@+id/task_edit_tags_btn_change"
                   android:layout_height="wrap_content"
                   android:layout_width="wrap_content"
-                  android:layout_marginLeft="3dip"                  
+                  android:layout_marginLeft="3dip"
                   android:layout_alignParentRight="true"
                   android:scaleType="fitXY"
                   android:src="@drawable/ic_button_task_tag_change"
@@ -196,13 +195,13 @@
                android:layout_below="@id/task_edit_due_title"
                android:orientation="horizontal">
 
-               <EditText
+               <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
                   android:id="@+id/task_edit_due_text"
                   android:layout_width="0dip"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:hint="@string/task_edit_due_never"
-                  android:inputType="text"
+                  android:inputType="none"
                   android:imeOptions="actionDone"
                   android:selectAllOnFocus="true"
                   android:enabled="false" />
@@ -211,6 +210,7 @@
                   android:id="@+id/task_edit_due_btn_picker"
                   android:layout_height="wrap_content"
                   android:layout_width="wrap_content"
+                  android:layout_gravity="center_vertical"
                   android:scaleType="fitXY"
                   android:src="@drawable/ic_button_task_time"
                   android:onClick="onDue" />
@@ -224,8 +224,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/task_edit_due_layout"
             android:layout_alignLeft="@id/task_edit_desc"
-            android:layout_marginTop="10dip"
-            android:visibility="gone">
+            android:layout_marginTop="10dip">
 
             <TextView
                android:id="@+id/task_edit_recurrence_title"
@@ -243,15 +242,16 @@
                android:layout_below="@id/task_edit_recurrence_title"
                android:orientation="horizontal">
 
-               <EditText
+               <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
                   android:id="@+id/task_edit_recurrence_text"
                   android:layout_width="0dip"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:hint="@string/task_edit_recurrence_no"
-                  android:inputType="text|textMultiLine"
+                  android:inputType="none"
                   android:imeOptions="actionDone"
-                  android:selectAllOnFocus="true" />
+                  android:selectAllOnFocus="true"
+                  android:enabled="false" />
 
                <ImageButton
                   android:id="@+id/task_edit_recurrence_btn_picker"
@@ -259,7 +259,8 @@
                   android:layout_width="wrap_content"
                   android:layout_gravity="center_vertical"
                   android:scaleType="fitXY"
-                  android:src="@drawable/ic_button_task_recurrent" />
+                  android:src="@drawable/ic_button_task_recurrent"
+                  android:onClick="onRecurrence" />
             </LinearLayout>
          </RelativeLayout>
 
@@ -288,13 +289,13 @@
                android:layout_below="@id/task_edit_estimate_title"
                android:orientation="horizontal">
 
-               <EditText
+               <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
                   android:id="@+id/task_edit_estim_text"
                   android:layout_width="0dip"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:hint="@string/task_edit_estimate_nothing"
-                  android:inputType="text|textNoSuggestions"
+                  android:inputType="none"
                   android:imeOptions="actionDone"
                   android:selectAllOnFocus="true"
                   android:enabled="false" />
@@ -303,6 +304,7 @@
                   android:id="@+id/task_edit_estim_btn_picker"
                   android:layout_height="wrap_content"
                   android:layout_width="wrap_content"
+                  android:layout_gravity="center_vertical"
                   android:scaleType="fitXY"
                   android:src="@drawable/ic_button_task_thumb"
                   android:onClick="onEstimate" />
@@ -364,4 +366,4 @@
          android:text="@string/btn_cancel"
          android:onClick="onCancel" />
    </LinearLayout>
-</FrameLayout>
+</merge>

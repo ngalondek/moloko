@@ -282,5 +282,4 @@ public class RtmTaskNote extends RtmData implements
       
       return result.build();
    }
-   
 }

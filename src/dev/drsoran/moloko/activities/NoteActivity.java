@@ -236,6 +236,8 @@ public class NoteActivity extends Activity
       
       if ( rtmTaskNotes != null )
       {
+         found = true;
+         
          // Check if we have a notePos from a saved instance state.
          if ( notePos != -1 && notePos < notes.size() )
          {
@@ -245,21 +247,20 @@ public class NoteActivity extends Activity
          {
             initializeNotesList( rtmTaskNotes.getNotes() );
             
-            if ( startNoteId != null )
+            boolean foundStartNote = false;
+            
+            while ( startNoteId != null && notePos < notes.size()
+               && !foundStartNote )
             {
-               boolean foundStartNote = false;
-               while ( notePos < notes.size() && !foundStartNote )
-               {
-                  foundStartNote = notes.get( notePos )
-                                        .getId()
-                                        .equals( startNoteId );
-                  if ( !foundStartNote )
-                     ++notePos;
-               }
-               
+               foundStartNote = notes.get( notePos )
+                                     .getId()
+                                     .equals( startNoteId );
                if ( !foundStartNote )
-                  notePos = 0;
+                  ++notePos;
             }
+            
+            if ( !foundStartNote )
+               notePos = 0;
          }
       }
       else

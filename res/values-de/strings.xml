@@ -27,6 +27,9 @@
 	<string name="app_tasklists">Listen</string>
 	<string name="app_task">Aufgabe</string>
    <string name="app_task_edit">Aufgabe bearbeiten</string>
+   <string name="app_task_edit_multiple">%1$d %2$s bearbeiten</string>
+   <string name="app_task_add">Neue Aufgabe</string>
+   <string name="app_task_select_multiple">Aufgaben zum bearb. wählen</string>
    <string name="app_change_tags">Tags von %1$s bearbeiten</string>
 	<string name="app_note">Notiz</string>
 	<string name="app_tagcloud">Tags</string>
@@ -34,6 +37,7 @@
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
    <string name="app_sort_due_date">Fälligkeitsdatum</string>
+   <string name="app_titlebar_add_task_hint">Neue Aufgabe</string>
    
    <string name="svc_sync">RTM Synchronisierung</string>	
    <string name="svc_auth">RTM Authentifizierung</string>
@@ -77,8 +81,9 @@
    <string name="phr_tomorrow">Morgen</string>
    <string name="phr_tomorrow_with_date">Morgen, der %1$s</string>
    <string name="phr_establish_connection">Stellen Sie eine Internet-Vebindung her um fortzufahren.</string>
-   <string name="phr_open_with_name">Öffne %1$s</string>
-   <string name="phr_edit_with_name">Bearbeite %1$s</string>
+   <string name="phr_open_with_name">Öffne \'%1$s\'</string>
+   <string name="phr_edit_with_name">Bearbeite \'%1$s\'</string>
+   <string name="phr_delete_with_name">Lösche \'%1$s\'</string>
    <string name="phr_close">Schliessen</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
@@ -114,15 +119,23 @@
    <string name="btn_done">Fertig</string>
    <string name="btn_complete">Erledigt</string>
    <string name="btn_uncomplete">Unerledigt</string>
+   <string name="btn_postpone">Aufschieben</string>
+   <string name="btn_delete">Löschen</string>
+   <string name="btn_add">Neu</string>
+   <string name="btn_back">Zurück</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
    
    <!-- Global Dialogs -->
    <string name="dlg_save_task">Speichere Änderungen...</string>
+   <string name="dlg_insert_task">Füge neue Aufgabe hinzu...</string>
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
-	
+   <string name="dlg_recurr_picker_title">Wiederholung</string>
+   <string name="dlg_recurr_picker_every">Alle</string>   
+   <string name="dlg_recurr_picker_after">Nach</string>
+   
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
@@ -145,12 +158,16 @@
    <string name="task_datetime_err_recurr">Das Wiederholungsmuster konnte nicht ausgewertet werden</string>
    <string name="task_participants">Freigegeben für</string>
    <string name="task_location">Ort</string>
-   <!-- Dialogs -->
+      <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Öffne Ort mit...</string>         
-   <!-- Toasts -->
+      <!-- Toasts -->
      <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>
      <string name="task_save_ok">Die Änderungen an der Aufgabe wurden gespeichert.</string>   
      <string name="task_save_error">Die Änderungen an der Aufgabe konnten nicht gespeichert werden.</string>
+   
+   <!-- AbstractTaskEdit activity -->
+   <string name="abstracttask_edit_dlg_done">Änderungen übernehmen?</string>
+   <string name="abstracttask_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
      
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Name der Aufgabe</string>
@@ -170,6 +187,13 @@
    <string name="task_edit_validate_empty_name">Der Name der Aufgabe darf nicht leer sein</string>   
    <string name="task_edit_validate_estimate">\'%1$s\' ist keine gültige Zeitschätzung</string>
    <string name="task_edit_validate_due">\'%1$s\' ist keine gültige Fälligkeit</string>
+   
+   <!-- EditMultipleTasks activity -->
+   <string name="edit_multiple_tasks_multiple_values">Verschiedene Werte</string>
+   <string name="edit_multiple_tasks_multiple_tags">Verschiedene Tags</string>
+   
+   <!-- AddTask activity -->
+   <string name="add_task_edit_dlg_cancel">Neue Aufgabe verwerfen?</string>
    
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Durch Komma getrennte Tags</string>
@@ -196,13 +220,18 @@
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
-	  <string name="abstaskslist_listitem_ctx_open_list">Öffne Liste %1$s</string>
-     <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort %1$s</string>
-     <string name="abstaskslist_listitem_ctx_open_location">Öffne Ort %1$s</string>
+     <string name="abstaskslist_menu_opt_edit_multiple">Mehrere bearb.</string>
+     <string name="abstaskslist_listitem_ctx_complete_task">Erledigt \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_uncomplete_task">Unerledigt \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_postpone_task">Schiebe \'%1$s\' auf</string>
+	  <string name="abstaskslist_listitem_ctx_open_list">Liste \'%1$s\' öffnen</string>
+     <string name="abstaskslist_listitem_ctx_tasks_at_location">Aufgaben am Ort \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_open_location">Ort \'%1$s\' öffnen</string>
      <!-- Dialogs -->
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
+     <string name="abstaskslist_dlg_delete">\'%1$s\' löschen?</string>
 	
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>
@@ -210,9 +239,28 @@
      <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
      
+   <!-- SelectMultipleTasks activity -->
+      <string name="select_multiple_tasks_sort_selection">Auswahl</string>
+      <!-- Menus -->
+      <string name="select_multiple_tasks_menu_opt_select_all">Alle</string>
+      <string name="select_multiple_tasks_menu_opt_unselect_all">Keine</string>
+      <string name="select_multiple_tasks_menu_opt_inv_selection">Umkehren</string>
+      <string name="select_multiple_tasks_menu_opt_do_edit">%1$d bearbeiten</string>
+      <string name="select_multiple_tasks_menu_opt_complete">%1$d erledigt</string>
+      <string name="select_multiple_tasks_menu_opt_uncomplete">%1$d unerledigt</string>
+      <string name="select_multiple_tasks_menu_opt_postpone">%1$d aufschieben</string>
+      <string name="select_multiple_tasks_menu_opt_delete">%1$d löschen</string>
+      <string name="select_multiple_tasks_menu_ctx_select">Markiere %1$s</string>
+      <string name="select_multiple_tasks_menu_ctx_deselect">Entferne Markierung von %1$s</string>
+      <!-- Dialogs -->
+      <string name="select_multiple_tasks_dlg_complete">%1$d %2$s erledigt?</string>
+      <string name="select_multiple_tasks_dlg_uncomplete">%1$d %2$s unerledigt?</string>
+      <string name="select_multiple_tasks_dlg_postpone">%1$d %2$s aufschieben?</string>
+      <string name="select_multiple_tasks_dlg_delete">%1$d %2$s löschen?</string>
+      
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>
-   <!-- Menus -->
+      <!-- Menus -->
       <string name="contactslist_listitem_open_tasks">Für %1$s freigegeben</string>
       <string name="contactslist_listitem_open_contact">Details von %1$s</string>
       

@@ -41,7 +41,7 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
    
    @SuppressWarnings( "unused" )
    private static final String TAG = "Moloko."
-      + RtmTasksProviderPart.class.getSimpleName();
+      + AbstractRtmProviderPart.class.getSimpleName();
    
    
 

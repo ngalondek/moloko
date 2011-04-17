@@ -27,7 +27,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
@@ -36,8 +38,10 @@ import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.TaskServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncProperties;
@@ -52,6 +56,8 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 
 public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
 {
+   private final static String TAG = OutSyncTask.class.toString();
+   
    
    private final static class LessIdComperator implements
             Comparator< OutSyncTask >
@@ -69,6 +75,21 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    private final RtmTask task;
    
    
+
+   public OutSyncTask( RtmTaskSeries taskSeries )
+   {
+      if ( taskSeries == null )
+         throw new NullPointerException( "taskseries is null" );
+      
+      if ( taskSeries.getTasks().size() != 1 )
+         throw new IllegalStateException( "Expected taskseries with 1 task, found "
+            + taskSeries.getTasks().size() + " task(s)" );
+      
+      this.taskSeries = taskSeries;
+      this.task = taskSeries.getTasks().get( 0 );
+   }
+   
+
 
    public OutSyncTask( RtmTaskSeries taskSeries, String taskId )
    {
@@ -102,6 +123,20 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
+   public RtmTaskSeries getTaskSeries()
+   {
+      return taskSeries;
+   }
+   
+
+
+   public RtmTask getTask()
+   {
+      return task;
+   }
+   
+
+
    public Date getCreatedDate()
    {
       return taskSeries.getCreatedDate();
@@ -123,9 +158,112 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
-   public IServerSyncOperation< RtmTaskList > computeServerInsertOperation( RtmTimeline timeLine )
+   public boolean isNew()
    {
-      return NoopServerSyncOperation.newInstance();
+      return taskSeries.getSource() != null
+         && taskSeries.getSource()
+                      .equalsIgnoreCase( TaskSeries.NEW_TASK_SOURCE );
+   }
+   
+
+
+   public boolean hasModification( ModificationSet modificationSet )
+   {
+      return modificationSet.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                        taskSeries.getId() ) )
+         || modificationSet.hasModification( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                       task.getId() ) );
+      
+   }
+   
+
+
+   public IContentProviderSyncOperation computeServerInsertModification( OutSyncTask serverElement )
+   {
+      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
+      
+      /** RtmTaskSeries **/
+      {
+         // All differences to the new server element will be added as modification
+         final Uri newUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                      serverElement.taskSeries.getId() );
+         
+         // Recurrence
+         if ( SyncUtils.hasChanged( taskSeries.getRecurrence(),
+                                    serverElement.taskSeries.getRecurrence() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  TaskSeries.RECURRENCE,
+                                                                  taskSeries.getRecurrenceSentence() ) );
+         
+         // Tags
+         if ( SyncUtils.hasChanged( taskSeries.getTagsJoined(),
+                                    serverElement.taskSeries.getTagsJoined() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  TaskSeries.TAGS,
+                                                                  taskSeries.getTagsJoined() ) );
+         
+         // Location
+         if ( SyncUtils.hasChanged( taskSeries.getLocationId(),
+                                    serverElement.taskSeries.getLocationId() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  TaskSeries.LOCATION_ID,
+                                                                  taskSeries.getLocationId() ) );
+         // URL
+         if ( SyncUtils.hasChanged( taskSeries.getURL(),
+                                    serverElement.taskSeries.getURL() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  TaskSeries.URL,
+                                                                  taskSeries.getURL() ) );
+      }
+      
+      /** RtmTask **/
+      {
+         // All differences to the new server element will be added as modification
+         final Uri newUri = Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                      serverElement.task.getId() );
+         
+         // Priority
+         if ( SyncUtils.hasChanged( task.getPriority(),
+                                    serverElement.task.getPriority() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  RawTasks.PRIORITY,
+                                                                  RtmTask.convertPriority( task.getPriority() ) ) );
+         
+         // Completed date
+         if ( SyncUtils.hasChanged( task.getCompleted(),
+                                    serverElement.task.getCompleted() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  RawTasks.COMPLETED_DATE,
+                                                                  MolokoDateUtils.getTime( task.getCompleted() ) ) );
+         
+         // Due date
+         if ( SyncUtils.hasChanged( task.getDue(), serverElement.task.getDue() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  RawTasks.DUE_DATE,
+                                                                  MolokoDateUtils.getTime( task.getDue() ) ) );
+         
+         // Has due time
+         if ( SyncUtils.hasChanged( task.getHasDueTime(),
+                                    serverElement.task.getHasDueTime() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  RawTasks.HAS_DUE_TIME,
+                                                                  task.getHasDueTime() ) );
+         
+         // Estimate
+         if ( SyncUtils.hasChanged( task.getEstimate(),
+                                    serverElement.task.getEstimate() ) )
+            operation.add( Modification.newModificationOperation( newUri,
+                                                                  RawTasks.ESTIMATE,
+                                                                  task.getEstimate() ) );
+         
+         /**
+          * Postponed can not be synced. Otherwise we had to store the initial due date on local task creation of the
+          * task and set this initial date after creation of the task on RTM side. After this, we could call postpone
+          * 1..n times. This is not supported atm.
+          **/
+      }
+      
+      return operation.build();
    }
    
 
@@ -140,7 +278,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       if ( serverElement == null )
          serverElement = this;
       
-      // RtmTaskSeries ///
+      /** RtmTaskSeries **/
       {
          final SyncProperties properties = SyncProperties.newInstance( serverElement == this
                                                                                             ? null
@@ -193,6 +331,31 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                            properties.getModification( TaskSeries.TASKSERIES_NAME ) );
          }
          
+         // Recurrence
+         if ( SyncUtils.getSyncDirection( properties,
+                                          TaskSeries.RECURRENCE,
+                                          serverElement.taskSeries.getRecurrence(),
+                                          taskSeries.getRecurrence(),
+                                          String.class ) == SyncResultDirection.SERVER )
+         {
+            // The RTM API needs the repeat parameter as sentence, not pattern.
+            final String repeat = taskSeries.getRecurrenceSentence();
+            
+            final List< Modification > modsList = new ArrayList< Modification >( 2 );
+            modsList.add( properties.getModification( TaskSeries.RECURRENCE ) );
+            
+            final Modification isEvryMod = properties.getModification( TaskSeries.RECURRENCE_EVERY );
+            
+            if ( isEvryMod != null )
+               modsList.add( isEvryMod );
+            
+            operation.add( timeline.tasks_setRecurrence( taskSeries.getListId(),
+                                                         taskSeries.getId(),
+                                                         task.getId(),
+                                                         repeat ),
+                           modsList );
+         }
+         
          // Tags
          if ( SyncUtils.getSyncDirection( properties,
                                           TaskSeries.TAGS,
@@ -236,7 +399,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
          }
       }
       
-      // RtmTask ///
+      /** RtmTask **/
       {
          final SyncProperties properties = SyncProperties.newInstance( serverElement == this
                                                                                             ? null
@@ -323,7 +486,58 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                                        TextUtils.isEmpty( task.getEstimate() )
                                                                                               ? Strings.EMPTY_STRING
                                                                                               : task.getEstimate() ),
-                           properties.getModification( TaskSeries.LOCATION_ID ) );
+                           properties.getModification( RawTasks.ESTIMATE ) );
+         }
+         
+         // Postponed
+         {
+            final int localPostponed = task.getPostponed();
+            
+            if ( SyncUtils.getSyncDirection( properties,
+                                             RawTasks.POSTPONED,
+                                             serverElement.task.getPostponed(),
+                                             localPostponed,
+                                             Integer.class ) == SyncResultDirection.SERVER )
+            {
+               final int serverPostponed;
+               
+               // In case we have no server element (incremental sync), we look for the modification
+               if ( serverElement == this )
+               {
+                  final Modification modification = modifications.find( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                                  task.getId() ),
+                                                                        RawTasks.POSTPONED );
+                  if ( modification != null )
+                     serverPostponed = modification.getSyncedValue( Integer.class );
+                  else
+                  {
+                     serverPostponed = localPostponed;
+                     Log.e( TAG, "Expected postponed modification" );
+                  }
+               }
+               else
+               {
+                  serverPostponed = serverElement.task.getPostponed();
+               }
+               
+               // Postpone the task "the difference between local and server" times.
+               final int diffPostponed = localPostponed - serverPostponed;
+               
+               // Check that on server side the task was not also postponed.
+               if ( diffPostponed > 0 )
+               {
+                  for ( int i = 0; i < diffPostponed; i++ )
+                  {
+                     operation.add( timeline.tasks_postpone( taskSeries.getListId(),
+                                                             taskSeries.getId(),
+                                                             task.getId() ),
+                                    // Only the last method invocation clears the modification
+                                    i + 1 == diffPostponed
+                                                          ? properties.getModification( RawTasks.POSTPONED )
+                                                          : null );
+                  }
+               }
+            }
          }
       }
       
@@ -334,7 +548,10 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
 
    public IServerSyncOperation< RtmTaskList > computeServerDeleteOperation( RtmTimeline timeLine )
    {
-      return NoopServerSyncOperation.newInstance();
+      return ServerSyncOperation.newDelete( timeLine.tasks_delete( taskSeries.getListId(),
+                                                                   taskSeries.getId(),
+                                                                   task.getId() ) )
+                                .build( TaskServerSyncOperation.class );
    }
    
 }

@@ -188,7 +188,7 @@ public final class Queries
       else
          res = array;
       
-      if ( res.length > 0 && c.getCount() < array.length )
+      if ( res.length > 0 && c.getCount() <= res.length )
       {
          boolean ok = c.moveToFirst();
          

@@ -23,10 +23,8 @@
    <dev.drsoran.moloko.layouts.TitleBarLayout
       xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
       style="@style/App_TitleBar"
-      android:layout_width="fill_parent"
-      android:layout_height="@dimen/app_titlebar_height"
       moloko:titleText="@string/app_tasklists"
-      moloko:showButton="home|search" />
+      moloko:showButton="add_task|home|search" />
 
    <ExpandableListView
       android:id="@+id/android:list"

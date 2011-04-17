@@ -31,9 +31,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
-import dev.drsoran.moloko.grammar.RecurrenceParser;
-import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.ParticipantList;
@@ -122,6 +121,34 @@ public class RtmTaskSeries extends RtmData
       String locationId, String url, String recurrence,
       boolean isEveryRecurrence, String tags, ParticipantList participants )
    {
+      this( id,
+            listId,
+            created,
+            modified,
+            name,
+            source,
+            tasks,
+            notes,
+            locationId,
+            url,
+            recurrence,
+            isEveryRecurrence,
+            tags != null
+                        ? Arrays.asList( TextUtils.split( tags,
+                                                          TaskSeries.TAGS_SEPARATOR ) )
+                        : Collections.< String > emptyList(),
+            participants );
+   }
+   
+
+
+   public RtmTaskSeries( String id, String listId, Date created, Date modified,
+      String name, String source, List< RtmTask > tasks, RtmTaskNotes notes,
+      String locationId, String url, String recurrence,
+      boolean isEveryRecurrence, List< String > tags,
+      ParticipantList participants )
+   {
+      
       this.id = id;
       this.listId = listId;
       this.created = ( created != null ) ? new ParcelableDate( created ) : null;
@@ -135,8 +162,7 @@ public class RtmTaskSeries extends RtmData
       this.url = url;
       this.recurrence = recurrence;
       this.isEveryRecurrence = isEveryRecurrence;
-      this.tags = new ArrayList< String >( Arrays.asList( TextUtils.split( tags,
-                                                                           TaskSeries.TAGS_SEPARATOR ) ) );
+      this.tags = tags;
       this.participants = participants == null ? new ParticipantList( id )
                                               : participants;
    }
@@ -166,7 +192,7 @@ public class RtmTaskSeries extends RtmData
          {
             isEveryRecurrence = Integer.parseInt( textNullIfEmpty( recurrenceRule,
                                                                    "every" ) ) != 0;
-            recurrence = ensureRecurrencePatternOrder( recurrence );
+            recurrence = RecurrenceParsing.ensureRecurrencePatternOrder( recurrence );
          }
          catch ( NumberFormatException nfe )
          {
@@ -298,7 +324,13 @@ public class RtmTaskSeries extends RtmData
 
    public Date getDeletedDate()
    {
-      return tasks.get( 0 ).getDeletedDate();
+      for ( RtmTask task : tasks )
+      {
+         if ( task.getDeletedDate() != null )
+            return task.getDeletedDate();
+      }
+      
+      return null;
    }
    
 
@@ -397,6 +429,21 @@ public class RtmTaskSeries extends RtmData
    
 
 
+   public String getRecurrenceSentence()
+   {
+      final String repeat;
+      
+      if ( recurrence != null )
+         repeat = RecurrenceParsing.parseRecurrencePattern( recurrence,
+                                                            isEveryRecurrence );
+      else
+         repeat = null;
+      
+      return repeat;
+   }
+   
+
+
    public boolean isEveryRecurrence()
    {
       return isEveryRecurrence;
@@ -435,15 +482,5 @@ public class RtmTaskSeries extends RtmData
    public String toString()
    {
       return "TaskSeries<" + id + "," + name + ">";
-   }
-   
-
-
-   private final static String ensureRecurrencePatternOrder( String recurrencePattern )
-   {
-      final String[] operators = recurrencePattern.split( RecurrencePatternParser.OPERATOR_SEP );
-      Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
-      
-      return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
    }
 }

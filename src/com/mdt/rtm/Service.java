@@ -27,12 +27,12 @@ import com.mdt.rtm.data.RtmFrob;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
@@ -204,7 +204,9 @@ public interface Service
 
    // ////// TASKS /////////////////////////////
    
-   RtmTaskSeries tasks_add( String timelineId, String listId, String name ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_add( String timelineId,
+                                            String listId,
+                                            String name ) throws ServiceException;
    
 
 
@@ -226,10 +228,10 @@ public interface Service
    
 
 
-   void tasks_delete( String timelineId,
-                      String listId,
-                      String taskSeriesId,
-                      String taskId ) throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_delete( String timelineId,
+                                               String listId,
+                                               String taskSeriesId,
+                                               String taskId ) throws ServiceException;
    
 
 
@@ -266,7 +268,10 @@ public interface Service
    
 
 
-   void tasks_postpone() throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_postpone( String timelineId,
+                                                 String listId,
+                                                 String taskSeriesId,
+                                                 String taskId ) throws ServiceException;
    
 
 
@@ -307,7 +312,11 @@ public interface Service
    
 
 
-   void tasks_setRecurrence() throws ServiceException;
+   TimeLineResult< RtmTaskList > tasks_setRecurrence( String timelineId,
+                                                      String listId,
+                                                      String taskSeriesId,
+                                                      String taskId,
+                                                      String repeat ) throws ServiceException;
    
 
 

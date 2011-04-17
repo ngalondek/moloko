@@ -41,6 +41,7 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.content.SyncResult;
 import android.database.SQLException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
@@ -150,14 +151,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                      final RtmAuth.Perms permission = AccountUtils.getAccessLevel( getContext() );
                      Log.i( TAG, "Sync with permission " + permission );
                      
-                     // Retrieve all modifications done so far.
-                     final ModificationSet modifications = getAllModifications();
-                     if ( modifications == null )
-                        throw new SQLException( "Retrieving the modifications failed" );
-                     else
-                        Log.i( TAG, "Retrieved " + modifications.size()
-                           + " modifications" );
-                     
                      // We can only create a time line with write permission. However, we need delete
                      // permission to make the server sync transactional. So without delete permissions
                      // we do only an incoming sync, indicated by timeLine == null.
@@ -167,12 +160,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                         timeLineFactory = new TimeLineFactory( service );
                      }
                      
-                     final MolokoSyncResult batch = new MolokoSyncResult( syncResult );
+                     final MolokoSyncResult batch = new MolokoSyncResult( context,
+                                                                          syncResult );
                      
                      if ( computeOperationsBatch( service,
                                                   provider,
                                                   timeLineFactory,
-                                                  modifications,
                                                   extras,
                                                   batch ) )
                      {
@@ -365,7 +358,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    private boolean computeOperationsBatch( Service service,
                                            ContentProviderClient provider,
                                            TimeLineFactory timeLineFactory,
-                                           ModificationSet modifications,
                                            Bundle extras,
                                            MolokoSyncResult batch )
    {
@@ -385,11 +377,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          // Sync RtmList
          ok = ok
-            && RtmListsSync.computeSync( service,
-                                         provider,
-                                         modifications,
-                                         lastSyncOut,
-                                         batch );
+            && RtmListsSync.computeSync( service, provider, lastSyncOut, batch );
          
          ok = ok && logSyncStep( "RtmLists", ok );
          
@@ -398,7 +386,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             && RtmTasksSync.computeSync( service,
                                          provider,
                                          timeLineFactory,
-                                         modifications,
                                          lastSyncOut,
                                          batch );
          
@@ -467,7 +454,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   private final ModificationSet getAllModifications()
+   public final static ModificationSet getAllModifications( Context context )
    {
       ModificationSet modifications = null;
       
@@ -481,8 +468,38 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          client.release();
          
          if ( allMods != null )
-         {
             modifications = new ModificationSet( allMods );
+         else
+            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+      }
+      else
+         Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+      
+      return modifications;
+   }
+   
+
+
+   public final static ModificationSet getModificationsFor( Context context,
+                                                            Uri... entityUris )
+   {
+      ModificationSet modifications = new ModificationSet();
+      
+      if ( entityUris.length > 0 )
+      {
+         final ContentProviderClient client = context.getContentResolver()
+                                                     .acquireContentProviderClient( Modifications.CONTENT_URI );
+         
+         if ( client != null )
+         {
+            final List< Modification > mods = ModificationsProviderPart.getModifications( client,
+                                                                                          entityUris );
+            client.release();
+            
+            if ( mods != null )
+               modifications = new ModificationSet( mods );
+            else
+               Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
          }
          else
             Log.e( TAG, LogUtils.GENERIC_DB_ERROR );

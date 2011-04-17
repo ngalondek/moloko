@@ -47,7 +47,7 @@ public class AutoComplLanguage extends Language
 
    public List< String > getSuggestions( int state, String unit, int quantity )
    {
-      return super.getPluralStings( String.valueOf( state ),
+      return super.getPluralStrings( String.valueOf( state ),
                                     unit,
                                     String.valueOf( quantity ) );
    }

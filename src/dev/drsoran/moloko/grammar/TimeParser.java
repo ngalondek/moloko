@@ -16,6 +16,8 @@ import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 
+import dev.drsoran.moloko.util.MolokoDateUtils;
+
 
 public class TimeParser extends Parser
 {
@@ -129,6 +131,7 @@ public class TimeParser extends Parser
    
 
 
+   @Override
    public String[] getTokenNames()
    {
       return TimeParser.tokenNames;
@@ -136,6 +139,7 @@ public class TimeParser extends Parser
    
 
 
+   @Override
    public String getGrammarFileName()
    {
       return "F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\TimeParser.g";
@@ -152,8 +156,7 @@ public class TimeParser extends Parser
 
    public final static Calendar getCalendar()
    {
-      final Calendar cal = Calendar.getInstance();
-      return cal;
+      return MolokoDateUtils.newCalendar();
    }
    
 

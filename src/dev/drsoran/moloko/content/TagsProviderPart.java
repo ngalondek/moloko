@@ -162,10 +162,11 @@ public class TagsProviderPart extends AbstractProviderPart
                                                                Tags.TAGS_SEPARATOR );
                   ok = tagStrings != null;
                   
-                  for ( String tagStr : tagStrings )
-                  {
-                     tags.add( new Tag( taskSeriesId, tagStr ) );
-                  }
+                  if ( ok )
+                     for ( String tagStr : tagStrings )
+                     {
+                        tags.add( new Tag( taskSeriesId, tagStr ) );
+                     }
                }
             }
             

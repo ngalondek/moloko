@@ -37,6 +37,7 @@ import android.text.format.Time;
 import android.text.method.LinkMovementMethod;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.util.Pair;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +48,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.rtm.Task;
 
@@ -63,6 +65,9 @@ public final class UIUtils
    public static final String DISABLE_ALL_TAGS = "disable_all_tags";
    
    public static final String REMOVE_ALL_TAGS = "remove_all_tags";
+   
+   public static final int[] CHECKED_STATE_SET =
+   { android.R.attr.state_checked };
    
    
 
@@ -131,6 +136,18 @@ public final class UIUtils
    
 
 
+   public final static void showTitleBarAddTask( Activity activity, boolean show )
+   {
+      final TitleBarLayout titleBar = (TitleBarLayout) activity.findViewById( R.id.app_title_bar );
+      
+      if ( titleBar != null )
+      {
+         titleBar.showAddTaskInput( show );
+      }
+   }
+   
+
+
    public final static void setTaskDescription( TextView view,
                                                 Task task,
                                                 Time timeBase )
@@ -142,6 +159,8 @@ public final class UIUtils
       
       view.setText( task.getName() );
       
+      boolean setTypeFace = false;
+      
       // description
       if ( task.getDue() != null )
       {
@@ -152,6 +171,7 @@ public final class UIUtils
          {
             view.setTypeface( Typeface.DEFAULT_BOLD );
             view.setText( task.getName() );
+            setTypeFace = true;
          }
          
          // Make underline and bold if overdue
@@ -167,9 +187,13 @@ public final class UIUtils
                content.setSpan( new UnderlineSpan(), 0, content.length(), 0 );
                view.setTypeface( Typeface.DEFAULT_BOLD );
                view.setText( content );
+               setTypeFace = true;
             }
          }
       }
+      
+      if ( !setTypeFace )
+         view.setTypeface( Typeface.DEFAULT );
    }
    
 
@@ -180,12 +204,13 @@ public final class UIUtils
                                          Bundle configuration,
                                          OnClickListener listener ) throws InflateException
    {
-      boolean anyInflated = false;
-      
       if ( configuration == null )
          configuration = new Bundle();
       
-      container.removeAllViews();
+      final int tagPos = getTaggedViewPos( container, "tag_name" );
+      
+      if ( tagPos != -1 )
+         container.removeViews( tagPos, container.getChildCount() - tagPos );
       
       // inflate the stub and add tags
       if ( tags.size() > 0 && !configuration.containsKey( REMOVE_ALL_TAGS ) )
@@ -199,12 +224,10 @@ public final class UIUtils
                   final TextView tagView = (TextView) View.inflate( context,
                                                                     R.layout.tag_button,
                                                                     null );
-                  tagView.setEnabled( false );
+                  tagView.setClickable( false );
                   tagView.setText( tagText );
                   container.addView( tagView );
                }
-               
-               anyInflated = true;
             }
             else
             {
@@ -234,25 +257,23 @@ public final class UIUtils
                      final TextView tagView = (TextView) View.inflate( context,
                                                                        R.layout.tag_button,
                                                                        null );
-                     tagView.setEnabled( !disable );
+                     tagView.setClickable( !disable );
                      tagView.setText( tagText );
                      container.addView( tagView );
                      
                      if ( !disable && listener != null )
                         tagView.setOnClickListener( listener );
-                     
-                     anyInflated = true;
                   }
                }
             }
          }
-         catch ( Exception e )
+         catch ( Throwable e )
          {
             throw new InflateException( e );
          }
       }
       
-      if ( anyInflated )
+      if ( container.getChildCount() > 0 )
          container.setVisibility( View.VISIBLE );
       else
          container.setVisibility( View.GONE );
@@ -452,4 +473,56 @@ public final class UIUtils
       }
    }
    
+
+
+   public final static String convertSource( Context context, String source )
+   {
+      if ( source.equalsIgnoreCase( "js" ) )
+         return "web";
+      
+      if ( source.equalsIgnoreCase( "api" ) )
+         return context.getString( R.string.app_name );
+      
+      return source;
+   }
+   
+
+
+   public final static Pair< Integer, Integer > getTaggedViewRange( ViewGroup container,
+                                                                    String tag )
+   {
+      int tagStart = -1;
+      int tagEnd = -1;
+      
+      final int cnt = container.getChildCount();
+      
+      for ( int i = 0; i < cnt && ( tagStart == -1 || tagEnd == -1 ); ++i )
+      {
+         if ( tagStart == -1 && tag.equals( container.getChildAt( i ).getTag() ) )
+            tagStart = i;
+         else if ( tagStart != -1
+            && !tag.equals( container.getChildAt( i ).getTag() ) )
+            tagEnd = i;
+      }
+      
+      if ( tagStart != -1 )
+         return Pair.create( tagStart, tagEnd != -1 ? tagEnd : cnt );
+      else
+         return Pair.create( 0, 0 );
+   }
+   
+
+
+   public final static int getTaggedViewPos( ViewGroup container, String tag )
+   {
+      int pos = -1;
+      
+      for ( int i = 0, cnt = container.getChildCount(); i < cnt && pos == -1; ++i )
+      {
+         if ( container.getChildAt( i ).getTag().equals( tag ) )
+            pos = i;
+      }
+      
+      return pos;
+   }
 }

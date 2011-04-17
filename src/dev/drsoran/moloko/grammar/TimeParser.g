@@ -13,6 +13,8 @@ options
    import java.text.ParseException;
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
+   
+   import dev.drsoran.moloko.util.MolokoDateUtils;
 }
 
 @members
@@ -24,9 +26,8 @@ options
 
 
    public final static Calendar getCalendar()
-   {
-      final Calendar cal = Calendar.getInstance();
-      return cal;
+   {      
+      return MolokoDateUtils.newCalendar();;
    }
 
 

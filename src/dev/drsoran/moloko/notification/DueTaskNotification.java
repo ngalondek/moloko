@@ -25,6 +25,7 @@ package dev.drsoran.moloko.notification;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.text.format.DateUtils;
 import android.widget.RemoteViews;
@@ -167,7 +168,12 @@ public class DueTaskNotification
       if ( vibrate )
          this.notification.defaults |= Notification.DEFAULT_VIBRATE;
       if ( led )
-         this.notification.defaults |= Notification.DEFAULT_LIGHTS;
+      {
+         this.notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+         this.notification.ledARGB = Color.GREEN;
+         this.notification.ledOffMS = 400;
+         this.notification.ledOnMS = 300;
+      }
       
       this.notification.sound = sound;
       

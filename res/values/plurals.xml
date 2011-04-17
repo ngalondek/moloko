@@ -15,6 +15,18 @@
 
 <resources>
    <!-- Globals -->
+   <plurals name="g_year">
+      <item quantity="one">year</item>
+      <item quantity="other">years</item>
+   </plurals>
+   <plurals name="g_month">
+      <item quantity="one">month</item>
+      <item quantity="other">months</item>
+   </plurals>
+   <plurals name="g_week">
+      <item quantity="one">week</item>
+      <item quantity="other">weeks</item>
+   </plurals>
    <plurals name="g_day">
       <item quantity="one">day</item>
       <item quantity="other">days</item>
@@ -43,8 +55,8 @@
 		<item quantity="other">Open notes</item>
 	</plurals>
 	<plurals name="taskslist_listitem_ctx_tags">
-		<item quantity="one">All tasks with same tag</item>
-		<item quantity="other">All tasks tagged with...</item>
+		<item quantity="one">Show tasks with \'%1$s\'</item>
+		<item quantity="other">Show tasks tagged with...</item>
 	</plurals>
    
 </resources>

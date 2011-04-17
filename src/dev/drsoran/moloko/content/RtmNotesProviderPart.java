@@ -46,7 +46,7 @@ import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
-public class RtmNotesProviderPart extends AbstractRtmProviderPart
+public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
 {
    private static final String TAG = "Moloko."
       + RtmNotesProviderPart.class.getSimpleName();
@@ -62,9 +62,9 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
    
    static
    {
-      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
-                                                       PROJECTION_MAP,
-                                                       COL_INDICES );
+      AbstractModificationsRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                                    PROJECTION_MAP,
+                                                                    COL_INDICES );
    }
    
    
@@ -98,7 +98,7 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          values.put( Notes.NOTE_TEXT, note.getText() );
       else
          values.putNull( Notes.NOTE_TEXT );
-
+      
       return values;
    }
    
@@ -231,6 +231,8 @@ public class RtmNotesProviderPart extends AbstractRtmProviderPart
          + "\" ), " + "CONSTRAINT notes_taskseries_ref FOREIGN KEY ( "
          + Notes.TASKSERIES_ID + " ) REFERENCES " + TaskSeries.PATH + " ( "
          + TaskSeries._ID + " ) );" );
+      
+      createModificationsTrigger( db );
    }
    
 

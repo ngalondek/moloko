@@ -149,12 +149,12 @@ public class CalendarHomeWidget extends AsyncLoadingHomeWidget
 
    private Calendar getCalendar()
    {
-      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
-                                                          .getTimezone() );
+      final Calendar cal = MolokoDateUtils.newCalendar();
+      
       switch ( type )
       {
          case TOMORROW:
-            cal.roll( Calendar.DAY_OF_MONTH, true );
+            cal.roll( Calendar.DAY_OF_YEAR, true );
          case TODAY:
          default :
             break;

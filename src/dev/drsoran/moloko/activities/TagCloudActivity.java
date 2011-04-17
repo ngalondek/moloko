@@ -367,6 +367,8 @@ public class TagCloudActivity extends Activity
          asyncFillCloud.cancel( true );
       
       asyncFillCloud = null;
+      
+      UIUtils.showTitleBarAddTask( this, false );
    }
    
 

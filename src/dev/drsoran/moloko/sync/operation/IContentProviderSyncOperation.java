@@ -25,11 +25,15 @@ package dev.drsoran.moloko.sync.operation;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
+import dev.drsoran.moloko.content.RtmProvider;
 
 
 public interface IContentProviderSyncOperation extends ISyncOperation
 {
+   public boolean applyTransactional( RtmProvider rtmProvider );
    
+
+
    public int getBatch( List< ContentProviderOperation > batch );
    
 

@@ -12,7 +12,7 @@
       <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
       implementation
    -->
-<FrameLayout
+<merge
    xmlns:android="http://schemas.android.com/apk/res/android"   
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
@@ -24,7 +24,7 @@
       android:orientation="vertical"
       android:background="@color/app_default_bgnd">
 
-      <MultiAutoCompleteTextView
+      <dev.drsoran.moloko.widgets.ClearableMultiAutoCompleteTextView
          android:id="@+id/change_tags_activity_edit"
          android:layout_height="wrap_content"
          android:layout_width="fill_parent"
@@ -90,5 +90,4 @@
          android:text="@string/btn_cancel"
          android:onClick="onCancel" />
    </LinearLayout>
-
-</FrameLayout>
+</merge>

@@ -22,12 +22,16 @@
 
 package dev.drsoran.moloko.util;
 
+import java.util.ArrayList;
+
 import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
+import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
@@ -259,5 +263,48 @@ public final class Intents
    {
       return new Intent( Intent.ACTION_EDIT,
                          Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
+   }
+   
+
+
+   public final static Intent createEditMultipleTasksIntent( Context context,
+                                                             ArrayList< String > taskIds )
+   {
+      final Intent intent = new Intent( Intent.ACTION_EDIT, Tasks.CONTENT_URI );
+      intent.putStringArrayListExtra( EditMultipleTasksActivity.TASK_IDS,
+                                      taskIds );
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createSelectMultipleTasksIntent( Context context,
+                                                               RtmSmartFilter filter,
+                                                               int sortOrder )
+   {
+      final Intent intent = createSmartFilterIntent( context,
+                                                     filter,
+                                                     context.getString( R.string.select_multiple_tasks_titlebar ),
+                                                     -1 );
+      intent.setAction( Intent.ACTION_PICK );
+      
+      if ( sortOrder != -1 )
+         intent.putExtra( AbstractTasksListActivity.TASK_SORT_ORDER, sortOrder );
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createAddTaskIntent( Context context,
+                                                   Bundle initialValues )
+   {
+      final Intent intent = new Intent( Intent.ACTION_INSERT, Tasks.CONTENT_URI );
+      
+      if ( initialValues != null )
+         intent.putExtras( initialValues );
+      
+      return intent;
    }
 }

@@ -86,6 +86,17 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       
 
 
+      public Builder< T > add( TimeLineMethod< T > method )
+      {
+         if ( method == null )
+            throw new NullPointerException( "method is null" );
+         
+         methods.put( method, Collections.< Modification > emptyList() );
+         return this;
+      }
+      
+
+
       public Builder< T > add( TimeLineMethod< T > method,
                                Modification modification )
       {
@@ -229,7 +240,7 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
                   removeModOps.add( ModificationsProviderPart.getRemoveModificationOps( modification.getEntityUri() ) );
       }
       
-      if ( removeModOps.size() > 0 )
+      if ( removeModOps.size() > 0 && rtmProvider != null )
       {
          Log.i( TAG, "Removing " + removeModOps.size() + " modifications" );
          
@@ -387,9 +398,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    
 
 
-   public final static < T > Builder< T > newDelete( TimeLineMethod< T > method,
-                                                     Modification modification )
+   public final static < T > Builder< T > newDelete( TimeLineMethod< T > method )
    {
-      return new Builder< T >( Op.DELETE, method, modification );
+      return new Builder< T >( Op.DELETE, method, null );
    }
 }

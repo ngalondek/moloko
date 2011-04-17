@@ -29,6 +29,10 @@ import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.content.SyncResult;
+import android.util.Log;
+import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.TransactionalAccess;
+import dev.drsoran.moloko.util.LogUtils;
 
 
 public class ContentProviderSyncOperation implements
@@ -39,7 +43,7 @@ public class ContentProviderSyncOperation implements
    {
       private final Op operationType;
       
-      private final List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
+      private final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
       
       
 
@@ -157,7 +161,7 @@ public class ContentProviderSyncOperation implements
       }
    }
    
-   private final List< ContentProviderOperation > operations;
+   private final ArrayList< ContentProviderOperation > operations;
    
    private final Op operationType;
    
@@ -166,7 +170,7 @@ public class ContentProviderSyncOperation implements
    private ContentProviderSyncOperation( Builder builder )
    {
       this.operationType = builder.operationType;
-      this.operations = Collections.unmodifiableList( new ArrayList< ContentProviderOperation >( builder.operations ) );
+      this.operations = new ArrayList< ContentProviderOperation >( builder.operations );
    }
    
 
@@ -189,6 +193,35 @@ public class ContentProviderSyncOperation implements
    public int size()
    {
       return operations.size();
+   }
+   
+
+
+   public boolean applyTransactional( RtmProvider rtmProvider )
+   {
+      final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
+      
+      try
+      {
+         transactionalAccess.beginTransaction();
+         
+         rtmProvider.applyBatch( operations );
+         
+         transactionalAccess.setTransactionSuccessful();
+      }
+      catch ( Throwable e )
+      {
+         Log.e( LogUtils.toTag( ContentProviderSyncOperation.class ),
+                LogUtils.GENERIC_DB_ERROR,
+                e );
+         return false;
+      }
+      finally
+      {
+         transactionalAccess.endTransaction();
+      }
+      
+      return true;
    }
    
 

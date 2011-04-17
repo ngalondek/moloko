@@ -25,20 +25,24 @@ package dev.drsoran.moloko.sync;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.content.Context;
 import android.content.SyncResult;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 
 
 public final class MolokoSyncResult
 {
+   public final Context context;
+   
    public final SyncResult androidSyncResult;
    
    public final List< IContentProviderSyncOperation > localOps = new LinkedList< IContentProviderSyncOperation >();
    
    
 
-   public MolokoSyncResult( SyncResult result )
+   public MolokoSyncResult( Context context, SyncResult result )
    {
+      this.context = context;
       this.androidSyncResult = result;
    }
 }

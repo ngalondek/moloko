@@ -230,5 +230,4 @@ public class Participant implements IContentProviderSyncable< Participant >,
       
       return result.build();
    }
-   
 }

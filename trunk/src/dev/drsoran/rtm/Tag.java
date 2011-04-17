@@ -117,8 +117,11 @@ public class Tag implements Parcelable
       
       final Tag other = (Tag) o;
       
-      return taskSeriesId.equals( other.taskSeriesId )
-         && tag.equals( other.tag );
+      boolean equal = taskSeriesId == null
+                                          ? other.taskSeriesId == null
+                                          : taskSeriesId.equals( other.taskSeriesId );
+      
+      return equal && tag.equals( other.tag );
    }
    
 
@@ -128,7 +131,8 @@ public class Tag implements Parcelable
    {
       int result = 17;
       
-      result = 31 * result + taskSeriesId.hashCode();
+      result = 31 * result
+         + ( taskSeriesId != null ? taskSeriesId.hashCode() : 0 );
       result = 31 * result + tag.hashCode();
       
       return result;

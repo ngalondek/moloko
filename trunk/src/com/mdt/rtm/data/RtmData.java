@@ -167,7 +167,7 @@ public abstract class RtmData implements Parcelable
          }
          catch ( ParseException e )
          {
-            throw new RuntimeException( e );
+            throw new IllegalArgumentException( e );
          }
       }
       

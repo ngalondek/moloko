@@ -25,10 +25,12 @@ package dev.drsoran.moloko.layouts;
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView;
 
 
 public class TitleWithEditTextLayout extends TitleWithViewLayout
@@ -72,6 +74,34 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    
 
 
+   public void addTextChangedListener( TextWatcher watcher )
+   {
+      editText.addTextChangedListener( watcher );
+   }
+   
+
+
+   public void removeTextChangedListener( TextWatcher watcher )
+   {
+      editText.removeTextChangedListener( watcher );
+   }
+   
+
+
+   public final void setHint( CharSequence hint )
+   {
+      editText.setHint( hint );
+   }
+   
+
+
+   public final void setHint( int resid )
+   {
+      editText.setHint( resid );
+   }
+   
+
+
    @Override
    public void setEnabled( boolean enabled )
    {
@@ -88,7 +118,7 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      editText = new EditText( context, attrs );
+      editText = new ClearableAutoCompleteTextView( context, attrs );
       editText.setLayoutParams( generateDefaultLayoutParams() );
       editText.setId( R.id.title_with_edit_text );
       

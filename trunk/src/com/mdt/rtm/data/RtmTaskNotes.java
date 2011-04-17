@@ -20,6 +20,7 @@
 package com.mdt.rtm.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -94,7 +95,7 @@ public class RtmTaskNotes extends RtmData
 
    public List< RtmTaskNote > getNotes()
    {
-      return notes;
+      return notes == null ? Collections.< RtmTaskNote > emptyList() : notes;
    }
    
 

@@ -43,7 +43,7 @@
          <solid
             android:color="@color/app_titlebar_btn_bgnd_normal" />
          <stroke 
-            android:width="2dip"
+            android:width="1dip"
             android:color="@color/app_titlebar_btn_focused" />
       </shape>
    </item>

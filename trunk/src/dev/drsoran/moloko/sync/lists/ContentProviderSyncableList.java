@@ -56,9 +56,9 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
 
 
    @Override
-   public IContentProviderSyncOperation computeDeleteOperation( T elementToDelete )
+   public IContentProviderSyncOperation computeDeleteOperation( int pos )
    {
-      return elementToDelete.computeContentProviderDeleteOperation();
+      return super.computeDeleteOperation( pos );
    }
    
 
@@ -77,5 +77,13 @@ public class ContentProviderSyncableList< T extends IContentProviderSyncable< T 
                                                                            T updateElement )
    {
       return old.computeContentProviderUpdateOperation( updateElement );
+   }
+   
+
+
+   @Override
+   protected IContentProviderSyncOperation internalComputeDeleteOperation( T elementToDelete )
+   {
+      return elementToDelete.computeContentProviderDeleteOperation();
    }
 }

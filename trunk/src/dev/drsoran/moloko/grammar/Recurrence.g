@@ -18,6 +18,7 @@ grammar Recurrence;
    import java.util.Locale;
    import java.util.Set;
    import java.util.TreeSet;
+   import java.util.TreeMap;
 
    import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
    import dev.drsoran.moloko.grammar.RecurrencePatternParser;
@@ -131,10 +132,10 @@ grammar Recurrence;
 
 // RULES
 
-parseRecurrence returns[HashMap< String, Object > res]
+parseRecurrence returns[Map< String, Object > res]
    @init
    {
-      res                               = new HashMap< String, Object >();
+      res                               = new TreeMap< String, Object >( CMP_OPERATORS );
       Boolean isEvery                   = Boolean.FALSE;
 
       final TreeSet< String >  weekdays = new TreeSet< String >( CMP_WEEKDAY );

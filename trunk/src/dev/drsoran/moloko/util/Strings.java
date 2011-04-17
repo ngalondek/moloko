@@ -42,4 +42,5 @@ public final class Strings
    {
       return ( TextUtils.isEmpty( string ) ? null : string );
    }
+   
 }

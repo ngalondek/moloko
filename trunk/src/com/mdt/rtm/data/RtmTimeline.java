@@ -71,6 +71,37 @@ public class RtmTimeline
    
 
 
+   public TimeLineMethod< RtmTaskList > tasks_add( final String listId,
+                                                   final String name )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_add( id, listId, name );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_delete( final String listId,
+                                                      final String taskSeriesId,
+                                                      final String taskId )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_delete( id, listId, taskSeriesId, taskId );
+         }
+      };
+   }
+   
+
+
    public TimeLineMethod< RtmTaskList > tasks_complete( final String listId,
                                                         final String taskSeriesId,
                                                         final String taskId )
@@ -113,11 +144,11 @@ public class RtmTimeline
          @Override
          public TimeLineResult< RtmTaskList > call() throws ServiceException
          {
-            return service.tasks_setName( id,
-                                          listId,
-                                          taskSeriesId,
-                                          taskId,
-                                          estimate );
+            return service.tasks_setEstimate( id,
+                                              listId,
+                                              taskSeriesId,
+                                              taskId,
+                                              estimate );
          }
       };
    }
@@ -187,6 +218,27 @@ public class RtmTimeline
    
 
 
+   public TimeLineMethod< RtmTaskList > tasks_setRecurrence( final String listId,
+                                                             final String taskSeriesId,
+                                                             final String taskId,
+                                                             final String repeat )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_setRecurrence( id,
+                                                listId,
+                                                taskSeriesId,
+                                                taskId,
+                                                repeat );
+         }
+      };
+   }
+   
+
+
    public TimeLineMethod< RtmTaskList > tasks_setTags( final String listId,
                                                        final String taskSeriesId,
                                                        final String taskId,
@@ -223,6 +275,22 @@ public class RtmTimeline
                                          toListId,
                                          taskSeriesId,
                                          taskId );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmTaskList > tasks_postpone( final String listId,
+                                                        final String taskSeriesId,
+                                                        final String taskId )
+   {
+      return new TimeLineMethod< RtmTaskList >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskList > call() throws ServiceException
+         {
+            return service.tasks_postpone( id, listId, taskSeriesId, taskId );
          }
       };
    }

@@ -46,7 +46,7 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
-public class RtmTasksProviderPart extends AbstractRtmProviderPart
+public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
 {
    private static final String TAG = "Moloko."
       + RtmTasksProviderPart.class.getSimpleName();
@@ -63,9 +63,9 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
    static
    {
-      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
-                                                       PROJECTION_MAP,
-                                                       COL_INDICES );
+      AbstractModificationsRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                                    PROJECTION_MAP,
+                                                                    COL_INDICES );
    }
    
    
@@ -169,6 +169,15 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    public final static List< RtmTask > getAllTasks( ContentProviderClient client,
                                                     String taskSeriesId )
    {
+      return getAllTasks( client, taskSeriesId, false );
+   }
+   
+
+
+   public final static List< RtmTask > getAllTasks( ContentProviderClient client,
+                                                    String taskSeriesId,
+                                                    boolean includeDeleted )
+   {
       ArrayList< RtmTask > tasks = null;
       
       if ( !TextUtils.isEmpty( taskSeriesId ) )
@@ -177,15 +186,20 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          
          try
          {
+            final StringBuilder selection = new StringBuilder( RawTasks.TASKSERIES_ID ).append( "=" )
+                                                                                       .append( taskSeriesId );
+            
+            if ( !includeDeleted )
+            {
+               selection.append( " AND " )
+                        .append( RawTasks.DELETED_DATE )
+                        .append( " IS NULL" );
+            }
+            
             // Only non-deleted tasks
             c = client.query( RawTasks.CONTENT_URI,
                               PROJECTION,
-                              new StringBuilder( RawTasks.TASKSERIES_ID ).append( "=" )
-                                                                         .append( taskSeriesId )
-                                                                         .append( " AND " )
-                                                                         .append( RawTasks.DELETED_DATE )
-                                                                         .append( " IS NULL" )
-                                                                         .toString(),
+                              selection.toString(),
                               null,
                               null );
             
@@ -228,6 +242,40 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
    
 
 
+   public final static int getDeletedTasksCount( ContentProviderClient client )
+   {
+      int cnt = -1;
+      
+      Cursor c = null;
+      
+      try
+      {
+         // Only non-deleted tasks
+         c = client.query( RawTasks.CONTENT_URI, new String[]
+         { RawTasks._ID }, RawTasks.DELETED_DATE + " IS NOT NULL", null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            cnt = c.getCount();
+         }
+      }
+      catch ( final RemoteException e )
+      {
+         Log.e( TAG, "Query rawtasks failed. ", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return cnt;
+   }
+   
+
+
    public RtmTasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, RawTasks.PATH );
@@ -259,6 +307,8 @@ public class RtmTasksProviderPart extends AbstractRtmProviderPart
          + RawTasks.TASKSERIES_ID + " AND NOT EXISTS (SELECT " + RawTasks._ID
          + " FROM " + path + " WHERE old." + RawTasks.TASKSERIES_ID + " = "
          + RawTasks.TASKSERIES_ID + "); END;" );
+      
+      createModificationsTrigger( db );
    }
    
 

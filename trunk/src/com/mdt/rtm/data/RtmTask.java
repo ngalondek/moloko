@@ -106,6 +106,9 @@ public class RtmTask extends RtmData
 
    public static Priority convertPriority( String priority )
    {
+      if ( TextUtils.isEmpty( priority ) )
+         return Priority.None;
+      
       switch ( priority.charAt( 0 ) )
       {
          case 'n':

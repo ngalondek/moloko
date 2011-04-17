@@ -82,13 +82,9 @@ public final class SyncUtils
          Log.e( TAG, exception.responseMessage, internalException );
          
          if ( internalException instanceof IOException )
-         {
             ++syncResult.stats.numIoExceptions;
-         }
          else
-         {
             ++syncResult.stats.numParseExceptions;
-         }
       }
       else
       {

@@ -24,11 +24,14 @@ package dev.drsoran.moloko.content;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -37,10 +40,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTaskSeries;
 
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm;
@@ -60,6 +65,22 @@ public class TasksProviderPart extends AbstractProviderPart
 {
    private static final String TAG = "Moloko."
       + TasksProviderPart.class.getSimpleName();
+   
+   
+   public final static class NewTaskIds
+   {
+      public final String taskSeriesId;
+      
+      public final String rawTaskId;
+      
+      
+
+      public NewTaskIds( String taskSeriesId, String rawTaskId )
+      {
+         this.taskSeriesId = taskSeriesId;
+         this.rawTaskId = rawTaskId;
+      }
+   }
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -89,7 +110,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                       false,
+      false,
                                                        
                                                        // tables
                                                        TaskSeries.PATH + ","
@@ -101,7 +122,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        {
                                                         RawTasks.PATH + "."
                                                            + RawTasks._ID
-                                                           + " AS _id",
+                                                           + " AS rawTask_id",
                                                         TaskSeries.PATH + "."
                                                            + TaskSeries.LIST_ID
                                                            + " AS "
@@ -156,7 +177,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        null );
       
       PARTICIPANTS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                    false,
+      false,
                                                                     
                                                                     // tables
                                                                     TaskSeries.PATH
@@ -211,7 +232,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                     null );
       
       NUM_NOTES_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-                                                                false,
+      false,
                                                                 
                                                                 // tables
                                                                 Notes.PATH,
@@ -363,6 +384,62 @@ public class TasksProviderPart extends AbstractProviderPart
    
 
 
+   public final static List< ContentProviderOperation > insertTask( ContentResolver contentResolver,
+                                                                    Task task )
+   {
+      List< ContentProviderOperation > operations = null;
+      final ContentProviderClient client = contentResolver.acquireContentProviderClient( Rtm.AUTHORITY );
+      
+      boolean ok = client != null;
+      
+      NewTaskIds newIds = null;
+      
+      if ( ok )
+      {
+         newIds = TasksProviderPart.generateIdsForNewTask( client );
+         ok = newIds != null;
+      }
+      
+      if ( client != null )
+         client.release();
+      
+      if ( ok )
+      {
+         final RtmTask rtmTask = new RtmTask( newIds.rawTaskId,
+                                              newIds.taskSeriesId,
+                                              task.getDue(),
+                                              task.hasDueTime() ? 1 : 0,
+                                              task.getAdded(),
+                                              task.getCompleted(),
+                                              task.getDeleted(),
+                                              task.getPriority(),
+                                              task.getPosponed(),
+                                              task.getEstimate(),
+                                              task.getEstimateMillis() );
+         
+         final RtmTaskSeries rtmTaskSeries = new RtmTaskSeries( newIds.taskSeriesId,
+                                                                task.getListId(),
+                                                                task.getCreated(),
+                                                                task.getModified(),
+                                                                task.getName(),
+                                                                task.getSource(),
+                                                                Collections.singletonList( rtmTask ),
+                                                                null,
+                                                                task.getLocationId(),
+                                                                task.getUrl(),
+                                                                task.getRecurrence(),
+                                                                task.isEveryRecurrence(),
+                                                                task.getTags(),
+                                                                task.getParticipants() );
+         
+         operations = RtmTaskSeriesProviderPart.insertTaskSeries( rtmTaskSeries );
+      }
+      
+      return operations;
+   }
+   
+
+
    public TasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Tasks.PATH );
@@ -395,10 +472,7 @@ public class TasksProviderPart extends AbstractProviderPart
          // So we have to qualify it.
          if ( !projectionContainsId && column.endsWith( Tasks._ID ) )
          {
-            projectionSB.append( "subQuery." )
-                        .append( RawTasks._ID )
-                        .append( " AS " )
-                        .append( Tasks._ID );
+            projectionSB.append( "rawTask_id AS " ).append( Tasks._ID );
             
             projectionList.set( i, projectionSB.toString() );
             projectionContainsId = true;
@@ -449,18 +523,17 @@ public class TasksProviderPart extends AbstractProviderPart
       // Only if the ID is given in the projection we can use it
       if ( id != null && projectionContainsId )
       {
-         stringBuilder.append( " WHERE subQuery." )
-                      .append( RawTasks._ID )
+         stringBuilder.append( " WHERE rawTask_id" )
                       .append( " = " )
                       .append( id );
-      }
-      else
-      {
-         // TODO: Throw exception in this case otherwise we get a list of all tasks and no error
       }
       
       if ( !TextUtils.isEmpty( selection ) )
       {
+         selection = selection.replaceAll( "\\b" + Tasks._ID + "\\b",
+                                           "rawTask_id" );
+         
+         // Replace selection _ids
          stringBuilder.append( " WHERE ( " )
                       .append( selectionArgs != null
                                                     ? Queries.bindAll( selection,
@@ -641,5 +714,66 @@ public class TasksProviderPart extends AbstractProviderPart
       }
       
       return participantList;
+   }
+   
+
+
+   private final static NewTaskIds generateIdsForNewTask( ContentProviderClient client )
+   {
+      String nextTaskSeriesId = getNextId( client, TaskSeries.CONTENT_URI );
+      String nextRawTaskId = null;
+      
+      if ( nextTaskSeriesId != null )
+         nextRawTaskId = getNextId( client, RawTasks.CONTENT_URI );
+      
+      if ( nextTaskSeriesId != null && nextRawTaskId != null )
+         return new NewTaskIds( nextTaskSeriesId, nextRawTaskId );
+      else
+         return null;
+   }
+   
+
+
+   private final static String getNextId( ContentProviderClient client,
+                                          Uri contentUri )
+   {
+      Cursor c = null;
+      String newId = null;
+      
+      try
+      {
+         c = client.query( contentUri, new String[]
+         { BaseColumns._ID }, null, null, null );
+         
+         if ( c != null )
+         {
+            if ( c.getCount() > 0 )
+            {
+               long longId = -1;
+               
+               for ( boolean ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final long id = c.getLong( 0 );
+                  if ( id > longId )
+                     longId = id;
+               }
+               
+               newId = String.valueOf( longId + 1 );
+            }
+            else
+               newId = String.valueOf( 1L );
+         }
+      }
+      catch ( Throwable e )
+      {
+         Log.e( TAG, "Generating new ID failed. ", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return newId;
    }
 }

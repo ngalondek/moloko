@@ -45,15 +45,16 @@ public interface IServerSyncable< T, V >
    
 
 
-   public IServerSyncOperation< V > computeServerInsertOperation( RtmTimeline timeline );
-   
-
-
-   public IServerSyncOperation< V > computeServerDeleteOperation( RtmTimeline timeline );
+   public boolean hasModification( ModificationSet modificationSet );
    
 
 
    public IServerSyncOperation< V > computeServerUpdateOperation( RtmTimeline timeline,
                                                                   ModificationSet modifications,
                                                                   T serverElement );
+   
+
+
+   public IServerSyncOperation< V > computeServerDeleteOperation( RtmTimeline timeline );
+   
 }

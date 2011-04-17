@@ -43,6 +43,13 @@ public class RecurrPatternLanguage extends Language
    
 
 
+   public RecurrPatternLanguage( RecurrPatternLanguage other )
+   {
+      super( other );
+   }
+   
+
+
    public void add( StringBuilder sb, String key )
    {
       final String res = dictionary.get( key );

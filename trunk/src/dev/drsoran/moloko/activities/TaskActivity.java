@@ -23,11 +23,13 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentProviderClient;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -38,7 +40,7 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,20 +49,17 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.Modification;
-import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Participant;
 import dev.drsoran.rtm.ParticipantList;
@@ -104,7 +103,7 @@ public class TaskActivity extends Activity
    
    private View editTaskBtn;
    
-   private Button completeTaskBtn;
+   private ImageButton completeTaskBtn;
    
    
 
@@ -157,7 +156,7 @@ public class TaskActivity extends Activity
                participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
                urlSection = taskContainer.findViewById( R.id.task_url );
                editTaskBtn = taskContainer.findViewById( R.id.task_buttons_edit );
-               completeTaskBtn = (Button) findViewById( R.id.task_button_complete );
+               completeTaskBtn = (ImageButton) taskContainer.findViewById( R.id.task_buttons_complete );
                
                inflateNotes( taskContainer, task );
             }
@@ -190,6 +189,14 @@ public class TaskActivity extends Activity
    {
       super.onResume();
       loadTask();
+      
+      // Deactivate controls which are not usable in read only mode
+      if ( AccountUtils.isReadOnlyAccess( this ) )
+         taskContainer.findViewById( R.id.task_buttons )
+                      .setVisibility( View.GONE );
+      else
+         taskContainer.findViewById( R.id.task_buttons )
+                      .setVisibility( View.VISIBLE );
    }
    
 
@@ -256,38 +263,55 @@ public class TaskActivity extends Activity
 
    public void onCompleteTask( View v )
    {
-      final ModificationSet modifications = new ModificationSet();
-      
-      modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                       task.getId(),
-                                                       RawTasks.COMPLETED_DATE,
-                                                       task.getCompleted() != null
-                                                                                  ? null
-                                                                                  : System.currentTimeMillis() ) );
-      
-      modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
-      
-      boolean ok = false;
-      
-      try
+      if ( task != null )
       {
-         ok = new ApplyModificationsTask( this ).execute( modifications ).get();
-      }
-      catch ( InterruptedException e )
-      {
-         Log.e( TAG, "Applying task changes failed", e );
-         ok = false;
-      }
-      catch ( ExecutionException e )
-      {
-         Log.e( TAG, "Applying task changes failed", e );
-         ok = false;
+         TaskEditUtils.setTaskCompletion( this,
+                                          task,
+                                          task.getCompleted() == null );
       }
       
-      Toast.makeText( this,
-                      ok ? R.string.task_save_ok : R.string.task_save_error,
-                      Toast.LENGTH_LONG ).show();
+      finish();
+   }
+   
+
+
+   public void onPostponeTask( View v )
+   {
+      if ( task != null )
+         TaskEditUtils.postponeTask( this, task );
       
+      finish();
+   }
+   
+
+
+   public void onDeleteTask( View v )
+   {
+      if ( task != null )
+      {
+         new AlertDialog.Builder( this ).setMessage( getString( R.string.abstaskslist_dlg_delete,
+                                                                task.getName() ) )
+                                        .setPositiveButton( R.string.btn_delete,
+                                                            new OnClickListener()
+                                                            {
+                                                               public void onClick( DialogInterface dialog,
+                                                                                    int which )
+                                                               {
+                                                                  TaskEditUtils.deleteTask( TaskActivity.this,
+                                                                                            task );
+                                                                  finish();
+                                                               }
+                                                            } )
+                                        .setNegativeButton( R.string.btn_cancel,
+                                                            null )
+                                        .show();
+      }
+   }
+   
+
+
+   public void onBack( View v )
+   {
       finish();
    }
    
@@ -309,12 +333,12 @@ public class TaskActivity extends Activity
             completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
                                                                        .getTime(),
                                                                    FULL_DATE_FLAGS ) );
-            completeTaskBtn.setText( R.string.btn_uncomplete );
+            completeTaskBtn.setImageResource( R.drawable.ic_button_task_unchecked_check );
          }
          else
          {
             completedDate.setVisibility( View.GONE );
-            completeTaskBtn.setText( R.string.btn_complete );
+            completeTaskBtn.setImageResource( R.drawable.ic_button_task_checked_check );
          }
          
          if ( task.getPosponed() > 0 )

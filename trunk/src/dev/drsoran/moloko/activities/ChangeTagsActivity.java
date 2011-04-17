@@ -70,6 +70,8 @@ public class ChangeTagsActivity extends ListActivity
    
    public final static String INTENT_EXTRA_TASK_NAME = "task_name";
    
+   public final static String INTENT_EXTRA_TASKS_COUNT = "tasks_count";
+   
    public final static String INTENT_EXTRA_TAGS = "tags";
    
    private final Set< String > chosenTags = new TreeSet< String >();
@@ -81,6 +83,8 @@ public class ChangeTagsActivity extends ListActivity
    private AsyncTask< ContentProviderClient, Void, List< Tag > > asyncQueryTags;
    
    private MultiAutoCompleteTextView editView;
+   
+   private boolean isMutltiTaskMode = false;
    
    
 
@@ -95,6 +99,17 @@ public class ChangeTagsActivity extends ListActivity
          UIUtils.setTitle( this,
                            getString( R.string.app_change_tags,
                                       intent.getStringExtra( INTENT_EXTRA_TASK_NAME ) ) );
+      else if ( intent.hasExtra( INTENT_EXTRA_TASKS_COUNT ) )
+      {
+         final String title = intent.getIntExtra( INTENT_EXTRA_TASKS_COUNT, 1 )
+            + " "
+            + getResources().getQuantityString( R.plurals.g_task,
+                                                intent.getIntExtra( INTENT_EXTRA_TASKS_COUNT,
+                                                                    1 ) );
+         UIUtils.setTitle( this, getString( R.string.app_change_tags, title ) );
+         
+         isMutltiTaskMode = true;
+      }
       else
          UIUtils.setTitle( this,
                            getString( R.string.app_change_tags,
@@ -140,6 +155,9 @@ public class ChangeTagsActivity extends ListActivity
       }
       
       editView.setText( TextUtils.join( ", ", chosenTags ) );
+      
+      if ( isMutltiTaskMode )
+         editView.setHint( R.string.edit_multiple_tasks_multiple_tags );
    }
    
 
@@ -175,7 +193,11 @@ public class ChangeTagsActivity extends ListActivity
       String[] resultTags = new String[ chosenTags.size() ];
       resultTags = chosenTags.toArray( resultTags );
       
-      intent.putExtra( INTENT_EXTRA_TAGS, resultTags );
+      if ( isMutltiTaskMode && resultTags.length == 0 )
+         intent.putExtra( INTENT_EXTRA_TAGS, new String[]
+         { EditMultipleTasksActivity.TAGS_MULTI_VALUE } );
+      else
+         intent.putExtra( INTENT_EXTRA_TAGS, resultTags );
       
       setResult( RESULT_OK, intent );
       finish();

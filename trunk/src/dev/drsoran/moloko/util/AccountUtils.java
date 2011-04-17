@@ -118,4 +118,12 @@ public final class AccountUtils
       
       return permission;
    }
+   
+
+
+   public final static boolean isReadOnlyAccess( Context context )
+   {
+      final Perms level = getAccessLevel( context );
+      return level == Perms.nothing || level == Perms.read;
+   }
 }

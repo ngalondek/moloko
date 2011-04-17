@@ -310,5 +310,4 @@ public class RtmSettings extends RtmData implements
       
       return result.build();
    }
-   
 }

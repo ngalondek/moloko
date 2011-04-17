@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
+import dev.drsoran.moloko.content.RtmProvider;
 
 
 public final class NoopContentProviderSyncOperation implements
@@ -66,5 +67,12 @@ public final class NoopContentProviderSyncOperation implements
    public int size()
    {
       return 0;
+   }
+   
+
+
+   public boolean applyTransactional( RtmProvider rtmProvider )
+   {
+      return true;
    }
 }

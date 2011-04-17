@@ -62,7 +62,8 @@ import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParticipantList;
 
 
-public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
+public class RtmTaskSeriesProviderPart extends
+         AbstractModificationsRtmProviderPart
 {
    private static final String TAG = "Moloko."
       + RtmTaskSeriesProviderPart.class.getSimpleName();
@@ -79,9 +80,9 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
    
    static
    {
-      AbstractRtmProviderPart.initProjectionDependent( PROJECTION,
-                                                       PROJECTION_MAP,
-                                                       COL_INDICES );
+      AbstractModificationsRtmProviderPart.initProjectionDependent( PROJECTION,
+                                                                    PROJECTION_MAP,
+                                                                    COL_INDICES );
    }
    
    
@@ -178,6 +179,56 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       }
       
       return taskSeries;
+   }
+   
+
+
+   public final static List< RtmTaskSeries > getLocalCreatedTaskSeries( ContentProviderClient client )
+   {
+      List< RtmTaskSeries > taskSerieses = null;
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Rtm.TaskSeries.CONTENT_URI,
+                           PROJECTION,
+                           TaskSeries.SOURCE + "='"
+                              + TaskSeries.NEW_TASK_SOURCE + "'",
+                           null,
+                           null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            taskSerieses = new ArrayList< RtmTaskSeries >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmTaskSeries taskSeries = createRtmTaskSeries( client,
+                                                                        c );
+                  ok = taskSeries != null;
+                  
+                  if ( ok )
+                     taskSerieses.add( taskSeries );
+               }
+            }
+         }
+      }
+      catch ( final RemoteException e )
+      {
+         Log.e( TAG, "Query taskseries failed. ", e );
+         taskSerieses = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return taskSerieses;
    }
    
 
@@ -328,7 +379,8 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
       final String taskSeriesId = c.getString( COL_INDICES.get( TaskSeries._ID ) );
       
       final List< RtmTask > tasks = RtmTasksProviderPart.getAllTasks( client,
-                                                                      taskSeriesId );
+                                                                      taskSeriesId,
+                                                                      true );
       
       boolean ok = tasks != null;
       
@@ -430,6 +482,24 @@ public class RtmTaskSeriesProviderPart extends AbstractRtmProviderPart
          + " = old." + TaskSeries._ID + "; DELETE FROM " + Participants.PATH
          + " WHERE " + Participants.TASKSERIES_ID + " = old." + TaskSeries._ID
          + "; END;" );
+      
+      // Triggers: If a taskseries ID gets updates (e.g. after inserting on RTM side),
+      // we also update:
+      // - all raw tasks
+      // - all referenced notes
+      // - all referenced participants
+      db.execSQL( "CREATE TRIGGER " + path
+         + "_update_taskseries AFTER UPDATE OF " + TaskSeries._ID + " ON "
+         + path + " FOR EACH ROW BEGIN UPDATE " + RawTasks.PATH + " SET "
+         + RawTasks.TASKSERIES_ID + " = new." + TaskSeries._ID + " WHERE "
+         + RawTasks.TASKSERIES_ID + " = old." + TaskSeries._ID + "; UPDATE "
+         + Notes.PATH + " SET " + Notes.TASKSERIES_ID + " = new."
+         + TaskSeries._ID + " WHERE " + Notes.TASKSERIES_ID + " = old."
+         + TaskSeries._ID + "; UPDATE " + Participants.PATH + " SET "
+         + Participants.TASKSERIES_ID + " = new." + TaskSeries._ID + " WHERE "
+         + Participants.TASKSERIES_ID + " = old." + TaskSeries._ID + "; END;" );
+      
+      createModificationsTrigger( db );
    }
    
 

@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.layouts;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +31,6 @@ import dev.drsoran.moloko.R;
 
 public class TitleWithWrappingLayout extends TitleWithViewLayout
 {
-   private WrappingLayout.LayoutParams wrappingLayoutParams = new WrappingLayout.LayoutParams( 1,
-                                                                                               1 );
-   
    private WrappingLayout wrappingLayout;
    
    
@@ -69,23 +65,8 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      wrappingLayout = new WrappingLayout( context );
+      wrappingLayout = new WrappingLayout( context, attrs );
       wrappingLayout.setId( R.id.title_with_wrapping_layout );
-      
-      // WrappingLayout
-      TypedArray array = context.obtainStyledAttributes( attrs,
-                                                         R.styleable.WrappingLayout,
-                                                         0,
-                                                         0 );
-      
-      final int hor_spc = array.getDimensionPixelOffset( R.styleable.WrappingLayout_horizontal_spacing,
-                                                         1 );
-      final int ver_spc = array.getDimensionPixelOffset( R.styleable.WrappingLayout_vertical_spacing,
-                                                         1 );
-      
-      wrappingLayoutParams = new WrappingLayout.LayoutParams( hor_spc, ver_spc );
-      
-      array.recycle();
       
       container.addView( wrappingLayout );
    }
@@ -95,7 +76,6 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
    @Override
    public void addView( View child )
    {
-      child.setLayoutParams( wrappingLayoutParams );
       wrappingLayout.addView( child );
    }
    

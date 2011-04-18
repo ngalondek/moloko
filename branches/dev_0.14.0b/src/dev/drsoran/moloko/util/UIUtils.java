@@ -519,10 +519,21 @@ public final class UIUtils
       
       for ( int i = 0, cnt = container.getChildCount(); i < cnt && pos == -1; ++i )
       {
-         if ( container.getChildAt( i ).getTag().equals( tag ) )
+         if ( tag.equals( container.getChildAt( i ).getTag() ) )
             pos = i;
       }
       
       return pos;
+   }
+   
+
+
+   public final static void removeTaggedViews( ViewGroup container, String tag )
+   {
+      for ( int i = 0; i < container.getChildCount(); ++i )
+      {
+         if ( tag.equals( container.getChildAt( i ).getTag() ) )
+            container.removeViewAt( i );
+      }
    }
 }

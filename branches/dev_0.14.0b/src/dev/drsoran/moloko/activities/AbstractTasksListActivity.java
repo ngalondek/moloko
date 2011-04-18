@@ -63,11 +63,9 @@ import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -825,32 +823,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       if ( notes.size() > 0 )
       {
-         // Show only this note, the task has only this one.
          if ( notes.size() == 1 )
-         {
-            final Intent intent = new Intent( Intent.ACTION_VIEW,
-                                              Queries.contentUriWithId( Notes.CONTENT_URI,
-                                                                        notes.get( 0 )
-                                                                             .getId() ) );
-            
-            startActivity( intent );
-         }
-         
-         // Show all notes of the task.
+            startActivity( Intents.createOpenNotesIntent( this,
+                                                          null,
+                                                          notes.get( 0 )
+                                                               .getId() ) );
          else
-         {
-            
-            final Intent intent = new Intent( Intent.ACTION_VIEW,
-                                              Notes.CONTENT_URI );
-            intent.putExtra( Notes.TASKSERIES_ID, task.getTaskSeriesId() );
-            
-            // If a startNoteId is given we use this as entry point if
-            // multiple notes are available.
-            if ( startNoteId != null )
-               intent.putExtra( Notes._ID, startNoteId );
-            
-            startActivity( intent );
-         }
+            startActivity( Intents.createOpenNotesIntent( this,
+                                                          notes.get( 0 )
+                                                               .getTaskSeriesId(),
+                                                          startNoteId ) );
       }
       else
       {

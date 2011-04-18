@@ -34,6 +34,7 @@
    <string name="app_task_select_multiple">Select tasks to edit</string>
    <string name="app_change_tags">Change Tags of %1$s</string>
 	<string name="app_note">Note</string>
+   <string name="app_note_edit">Edit Note</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Contacts</string>
 	<string name="app_sort_alpha">Task Name</string>
@@ -321,6 +322,10 @@
       <!-- Menus -->
       <string name="contactslist_listitem_open_tasks">Shared with %1$s</string>
       <string name="contactslist_listitem_open_contact">Details of %1$s</string>
+      
+   <!-- NoteEdit activity -->
+   <string name="note_edit_title_hint">Note title</string>
+   <string name="note_edit_text_hint">Enter note here</string>
       
    <!-- Authenticator activity -->
    <string name="auth_api_key_label">API key</string>

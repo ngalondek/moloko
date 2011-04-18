@@ -94,7 +94,7 @@
             android:layout_marginLeft="10dip"
             android:text="Task_Desc"
             android:hint="@string/task_edit_desc_hint"
-            android:inputType="textAutoCorrect"
+            android:inputType="text|textAutoCorrect"
             android:imeOptions="actionDone"
             android:selectAllOnFocus="true" />
 

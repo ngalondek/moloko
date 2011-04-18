@@ -32,6 +32,7 @@
    <string name="app_task_select_multiple">Aufgaben zum bearb. wählen</string>
    <string name="app_change_tags">Tags von %1$s bearbeiten</string>
 	<string name="app_note">Notiz</string>
+   <string name="app_note_edit">Notiz bearbeiten</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Kontakte</string>
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
@@ -257,6 +258,10 @@
       <string name="select_multiple_tasks_dlg_uncomplete">%1$d %2$s unerledigt?</string>
       <string name="select_multiple_tasks_dlg_postpone">%1$d %2$s aufschieben?</string>
       <string name="select_multiple_tasks_dlg_delete">%1$d %2$s löschen?</string>
+   
+   <!-- NoteEdit activity -->
+   <string name="note_edit_title_hint">Titel der Notiz</string>
+   <string name="note_edit_text_hint">Notiz hier eingeben</string>
       
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>

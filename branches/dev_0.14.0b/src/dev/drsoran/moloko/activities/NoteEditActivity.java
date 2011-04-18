@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -31,11 +32,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class NoteActivity extends AbstractNoteActivity
+public class NoteEditActivity extends AbstractNoteActivity
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
-      + NoteActivity.class.getSimpleName();
+      + NoteEditActivity.class.getSimpleName();
    
    
 
@@ -44,11 +45,11 @@ public class NoteActivity extends AbstractNoteActivity
    {
       super.onCreate( savedInstanceState );
       
-      setContentView( R.layout.note_activity );
+      setContentView( R.layout.note_edit_activity );
       
       final Intent intent = getIntent();
       
-      if ( !intent.getAction().equals( Intent.ACTION_VIEW ) )
+      if ( !intent.getAction().equals( Intent.ACTION_EDIT ) )
       {
          UIUtils.initializeErrorWithIcon( this,
                                           R.string.err_unsupported_intent_action,
@@ -63,9 +64,7 @@ public class NoteActivity extends AbstractNoteActivity
    {
       super.displayNote( note );
       
-      if ( !UIUtils.initializeTitleWithTextLayout( findViewById( R.id.note ),
-                                                   note.getTitle(),
-                                                   note.getText() ) )
-         throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+      ( (TextView) findViewById( R.id.note_edit_title ) ).setText( note.getTitle() );
+      ( (TextView) findViewById( R.id.note_edit_text ) ).setText( note.getText() );
    }
 }

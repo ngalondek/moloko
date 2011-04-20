@@ -460,7 +460,7 @@ abstract class AbstractTaskEditActivity extends Activity
       {
          if ( validateInput() )
          {
-            new AlertDialog.Builder( this ).setMessage( R.string.abstracttask_edit_dlg_done )
+            new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_done )
                                            .setPositiveButton( android.R.string.yes,
                                                                new OnClickListener()
                                                                {
@@ -528,7 +528,7 @@ abstract class AbstractTaskEditActivity extends Activity
    {
       if ( changes.size() > 0 )
       {
-         new AlertDialog.Builder( this ).setMessage( R.string.abstracttask_edit_dlg_cancel )
+         new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_cancel )
                                         .setPositiveButton( android.R.string.yes,
                                                             new OnClickListener()
                                                             {

@@ -42,7 +42,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTaskNote;
@@ -210,6 +209,8 @@ public class TaskActivity extends Activity
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
+      boolean reloadTask = false;
+      
       if ( task != null )
       {
          switch ( requestCode )
@@ -217,40 +218,48 @@ public class TaskActivity extends Activity
             case TaskEditActivity.REQ_EDIT_TASK:
                switch ( resultCode )
                {
-                  case TaskEditActivity.RESULT_EDIT_TASK_FAILED:
-                     Toast.makeText( this,
-                                     R.string.task_save_error,
-                                     Toast.LENGTH_LONG ).show();
-                     break;
-                  
                   case TaskEditActivity.RESULT_EDIT_TASK_CHANGED:
-                     final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
-                     
-                     if ( client != null )
-                     {
-                        final Task oldTask = task;
-                        task = TasksProviderPart.getTask( client, task.getId() );
-                        client.release();
-                        
-                        if ( task == null )
-                           task = oldTask;
-                        else
-                           Toast.makeText( this,
-                                           R.string.task_save_ok,
-                                           Toast.LENGTH_LONG ).show();
-                     }
-                     else
-                     {
-                        LogUtils.logDBError( this, TAG, "Task" );
-                     }
+                     reloadTask = true;
                      break;
                   
                   default :
                      break;
                }
                break;
+            
+            case NoteEditActivity.REQ_EDIT_NOTE:
+               switch ( resultCode )
+               {
+                  case NoteEditActivity.RESULT_EDIT_NOTE_CHANGED:
+                     reloadTask = true;
+                     break;
+                  
+                  default :
+                     break;
+               }
+               break;
+            
             default :
                break;
+         }
+      }
+      
+      if ( reloadTask )
+      {
+         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+         
+         if ( client != null )
+         {
+            final Task oldTask = task;
+            task = TasksProviderPart.getTask( client, task.getId() );
+            client.release();
+            
+            if ( task == null )
+               task = oldTask;
+         }
+         else
+         {
+            LogUtils.logDBError( this, TAG, "Task" );
          }
       }
    }
@@ -308,7 +317,10 @@ public class TaskActivity extends Activity
 
    public void onEditNote( View v )
    {
-      startActivity( Intents.createEditNoteIntent( this, (String) v.getTag() ) );
+      startActivityForResult( Intents.createEditNoteIntent( this,
+                                                            (String) v.getTag(),
+                                                            true ),
+                              NoteEditActivity.REQ_EDIT_NOTE );
    }
    
 

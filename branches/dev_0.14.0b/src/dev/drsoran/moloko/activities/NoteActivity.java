@@ -24,10 +24,12 @@ package dev.drsoran.moloko.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -54,6 +56,22 @@ public class NoteActivity extends AbstractNoteActivity
                                           R.string.err_unsupported_intent_action,
                                           intent.getAction() );
       }
+   }
+   
+
+
+   public void onEditNote( View v )
+   {
+      startActivity( Intents.createEditNoteIntent( this,
+                                                   getNote().getId(),
+                                                   false ) );
+   }
+   
+
+
+   public void onDeleteNote( View v )
+   {
+      
    }
    
 

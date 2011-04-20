@@ -31,6 +31,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Modifications;
+import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
@@ -303,6 +304,16 @@ public class Modification implements Comparable< Modification >
       return newNonPersistentModification( TaskSeries.CONTENT_URI,
                                            taskSeriesId,
                                            TaskSeries.MODIFIED_DATE,
+                                           System.currentTimeMillis() );
+   }
+   
+
+
+   public final static Modification newNoteModified( String noteId )
+   {
+      return newNonPersistentModification( Notes.CONTENT_URI,
+                                           noteId,
+                                           Notes.NOTE_MODIFIED_DATE,
                                            System.currentTimeMillis() );
    }
    

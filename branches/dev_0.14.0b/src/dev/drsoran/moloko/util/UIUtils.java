@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.util;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import android.accounts.Account;
 import android.app.Activity;
@@ -530,10 +532,22 @@ public final class UIUtils
 
    public final static void removeTaggedViews( ViewGroup container, String tag )
    {
-      for ( int i = 0; i < container.getChildCount(); ++i )
+      List< View > views = null;
+      
+      for ( int i = 0, cnt = container.getChildCount(); i < cnt; ++i )
       {
-         if ( tag.equals( container.getChildAt( i ).getTag() ) )
-            container.removeViewAt( i );
+         final View v = container.getChildAt( i );
+         if ( v != null && tag.equals( v.getTag() ) )
+         {
+            if ( views == null )
+               views = new LinkedList< View >();
+            
+            views.add( v );
+         }
       }
+      
+      if ( views != null )
+         for ( View view : views )
+            container.removeView( view );
    }
 }

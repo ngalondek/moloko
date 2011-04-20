@@ -139,6 +139,8 @@
    <string name="phr_manuell">Manual</string>
    <string name="phr_password_set">set</string>
    <string name="phr_loading">Loading...</string>
+   <string name="phr_edit_dlg_done">Applying changes?</string>
+   <string name="phr_edit_dlg_cancel">Cancel editing and lose all changes?</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>
@@ -214,9 +216,6 @@
       <string name="task_save_ok">Changes to the task have been saved.</string>
       <string name="task_save_error">Failed to save changes to the task.</string>
       
-   <!-- AbstractTaskEdit activity -->
-   <string name="abstracttask_edit_dlg_done">Applying changes?</string>
-   <string name="abstracttask_edit_dlg_cancel">Cancel editing and lose all changes?</string>
       
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Task Name</string>
@@ -323,9 +322,14 @@
       <string name="contactslist_listitem_open_tasks">Shared with %1$s</string>
       <string name="contactslist_listitem_open_contact">Details of %1$s</string>
       
+   <!-- Note activity -->      
+      <!-- Toasts -->
+      <string name="note_save_ok">Changes to the note have been saved.</string>
+      <string name="note_save_error">Failed to save changes to the note.</string>
+      
    <!-- NoteEdit activity -->
    <string name="note_edit_title_hint">Note title</string>
-   <string name="note_edit_text_hint">Enter note here</string>
+   <string name="note_edit_text_hint">Enter note here</string>      
       
    <!-- Authenticator activity -->
    <string name="auth_api_key_label">API key</string>

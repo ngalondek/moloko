@@ -99,6 +99,8 @@
    <string name="phr_manuell">Manuell</string>
    <string name="phr_password_set">gesetzt</string>
    <string name="phr_loading">Lädt gerade...</string>
+   <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
+   <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -165,11 +167,7 @@
      <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>
      <string name="task_save_ok">Die Änderungen an der Aufgabe wurden gespeichert.</string>   
      <string name="task_save_error">Die Änderungen an der Aufgabe konnten nicht gespeichert werden.</string>
-   
-   <!-- AbstractTaskEdit activity -->
-   <string name="abstracttask_edit_dlg_done">Änderungen übernehmen?</string>
-   <string name="abstracttask_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
-     
+        
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Name der Aufgabe</string>
    <string name="task_edit_list">Liste</string>
@@ -258,6 +256,11 @@
       <string name="select_multiple_tasks_dlg_uncomplete">%1$d %2$s unerledigt?</string>
       <string name="select_multiple_tasks_dlg_postpone">%1$d %2$s aufschieben?</string>
       <string name="select_multiple_tasks_dlg_delete">%1$d %2$s löschen?</string>
+   
+   <!-- Note activity -->      
+      <!-- Toasts -->
+      <string name="note_save_ok">Die Änderungen an der Aufgabe wurden gespeichert.</string>
+      <string name="note_save_error">Die Änderungen an der Aufgabe konnten nicht gespeichert werden.</string>
    
    <!-- NoteEdit activity -->
    <string name="note_edit_title_hint">Titel der Notiz</string>

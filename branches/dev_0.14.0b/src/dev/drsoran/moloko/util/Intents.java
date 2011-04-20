@@ -345,14 +345,16 @@ public final class Intents
 
 
    public final static Intent createEditNoteIntent( Context context,
-                                                    String noteId )
+                                                    String noteId,
+                                                    boolean showOtherNotes )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT,
                                         Queries.contentUriWithId( Notes.CONTENT_URI,
                                                                   noteId ) );
       
-      intent.putExtra( NoteEditActivity.EXTRA_SHOW_ALL_NOTES_OF_TASK,
-                       Boolean.TRUE );
+      if ( showOtherNotes )
+         intent.putExtra( NoteEditActivity.EXTRA_SHOW_ALL_NOTES_OF_TASK,
+                          Boolean.TRUE );
       
       return intent;
    }

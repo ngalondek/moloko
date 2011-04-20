@@ -920,11 +920,11 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmTaskNote tasks_notes_edit( String timelineId,
-                                        String taskSeriesId,
-                                        String noteId,
-                                        String title,
-                                        String text ) throws ServiceException
+   public TimeLineResult< RtmTaskNote > tasks_notes_edit( String timelineId,
+                                                          String taskSeriesId,
+                                                          String noteId,
+                                                          String title,
+                                                          String text ) throws ServiceException
    {
       Element elt = invoker.invoke( new Param( "method", "rtm.tasks.notes.edit" ),
                                     new Param( "timeline", timelineId ),
@@ -934,7 +934,7 @@ public class ServiceImpl implements Service
                                     new Param( "auth_token", currentAuthToken ),
                                     new Param( "api_key",
                                                applicationInfo.getApiKey() ) );
-      return new RtmTaskNote( elt, taskSeriesId );
+      return newNoteResult( timelineId, elt, taskSeriesId );
    }
    
 
@@ -1070,4 +1070,44 @@ public class ServiceImpl implements Service
       }
    }
    
+
+
+   private final static TimeLineResult< RtmTaskNote > newNoteResult( String timelineId,
+                                                                     Element elt,
+                                                                     String taskSeriesId ) throws ServiceException
+   {
+      // TODO: Check for Android > 2.1
+      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
+      final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
+      
+      if ( nodes.getLength() < 2 )
+         throw new ServiceInternalException( "Expected at least 2 nodes in response" );
+      
+      final Node transactionNode = nodes.item( 0 );
+      
+      if ( transactionNode != null
+         && transactionNode.getNodeName().equalsIgnoreCase( "transaction" )
+         && transactionNode.getNodeType() == Node.ELEMENT_NODE )
+      {
+         final Node noteNode = nodes.item( 1 );
+         
+         if ( noteNode != null
+            && noteNode.getNodeName().equalsIgnoreCase( "note" )
+            && noteNode.getNodeType() == Node.ELEMENT_NODE )
+         {
+            final RtmTaskNote note = new RtmTaskNote( (Element) noteNode,
+                                                      taskSeriesId );
+            
+            return TimeLineResult.newResult( elt, timelineId, note );
+         }
+         else
+         {
+            throw new ServiceInternalException( "Expected <note> node in response" );
+         }
+      }
+      else
+      {
+         throw new ServiceInternalException( "Expected <transaction> node in response" );
+      }
+   }
 }

@@ -163,6 +163,13 @@ abstract class AbstractNoteActivity extends Activity
    
 
 
+   public RtmTaskNote getNote()
+   {
+      return notes.get( notePos );
+   }
+   
+
+
    protected void displayNote( RtmTaskNote note )
    {
       final TextView createdDate = (TextView) findViewById( R.id.note_created_date );

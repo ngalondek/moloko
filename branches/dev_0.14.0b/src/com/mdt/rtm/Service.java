@@ -359,11 +359,11 @@ public interface Service
    
 
 
-   RtmTaskNote tasks_notes_edit( String timelineId,
-                                 String taskSeriesId,
-                                 String noteId,
-                                 String title,
-                                 String text ) throws ServiceException;
+   TimeLineResult< RtmTaskNote > tasks_notes_edit( String timelineId,
+                                                   String taskSeriesId,
+                                                   String noteId,
+                                                   String title,
+                                                   String text ) throws ServiceException;
    
 
 

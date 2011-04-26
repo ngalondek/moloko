@@ -131,8 +131,9 @@
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
    
    <!-- Global Dialogs -->
-   <string name="dlg_save_task">Speichere Änderungen...</string>
+   <string name="dlg_save_task">Speichere Änderungen an der Aufgabe...</string>
    <string name="dlg_insert_task">Füge neue Aufgabe hinzu...</string>
+   <string name="dlg_save_note">Speichere Änderungen an der Notiz...</string>
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
    <string name="dlg_recurr_picker_title">Wiederholung</string>

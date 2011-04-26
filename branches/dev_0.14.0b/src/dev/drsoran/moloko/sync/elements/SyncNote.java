@@ -27,35 +27,41 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import android.content.ContentProviderOperation;
+import android.net.Uri;
+
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.ServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoteServerSyncOperation;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncProperties;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Notes;
 
 
-public class OutSyncNote implements IServerSyncable< OutSyncNote, RtmTaskNote >
+public class SyncNote implements IContentProviderSyncable< SyncNote >,
+         IServerSyncable< SyncNote, RtmTaskNote >
 {
    @SuppressWarnings( "unused" )
-   private final static String TAG = OutSyncNote.class.toString();
+   private final static String TAG = SyncNote.class.toString();
    
    
-   private final static class LessIdComperator implements
-            Comparator< OutSyncNote >
+   private final static class LessIdComperator implements Comparator< SyncNote >
    {
-      public int compare( OutSyncNote object1, OutSyncNote object2 )
+      public int compare( SyncNote object1, SyncNote object2 )
       {
          return object1.note.getId().compareTo( object2.note.getId() );
       }
@@ -67,12 +73,19 @@ public class OutSyncNote implements IServerSyncable< OutSyncNote, RtmTaskNote >
    
    
 
-   public OutSyncNote( RtmTaskNote note )
+   public SyncNote( RtmTaskNote note )
    {
       if ( note == null )
          throw new NullPointerException( "note is null" );
       
       this.note = note;
+   }
+   
+
+
+   public String getId()
+   {
+      return note.getId();
    }
    
 
@@ -113,7 +126,69 @@ public class OutSyncNote implements IServerSyncable< OutSyncNote, RtmTaskNote >
    
 
 
-   public IContentProviderSyncOperation computeServerInsertModification( OutSyncNote serverElement )
+   public IContentProviderSyncOperation computeContentProviderInsertOperation()
+   {
+      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                                                             .withValues( RtmNotesProviderPart.getContentValues( note,
+                                                                                                                                 true ) )
+                                                                             .build() )
+                                         .build();
+   }
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderUpdateOperation( SyncNote serverElement )
+   {
+      if ( !note.getId().equals( serverElement.note.getId() ) )
+         throw new IllegalArgumentException( "Update id "
+            + serverElement.note.getId() + " differs this id " + note.getId() );
+      
+      final Uri uri = Queries.contentUriWithId( Notes.CONTENT_URI, note.getId() );
+      
+      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
+      
+      if ( SyncUtils.hasChanged( note.getCreatedDate(),
+                                 serverElement.getCreatedDate() ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_CREATED_DATE,
+                                                         MolokoDateUtils.getTime( serverElement.getCreatedDate() ) )
+                                             .build() );
+      
+      if ( SyncUtils.hasChanged( note.getModifiedDate(),
+                                 serverElement.getModifiedDate() ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_MODIFIED_DATE,
+                                                         MolokoDateUtils.getTime( serverElement.getModifiedDate() ) )
+                                             .build() );
+      
+      if ( SyncUtils.hasChanged( note.getTitle(), serverElement.note.getTitle() ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_TITLE,
+                                                         serverElement.note.getTitle() )
+                                             .build() );
+      
+      if ( SyncUtils.hasChanged( note.getText(), serverElement.note.getText() ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Notes.NOTE_TEXT,
+                                                         serverElement.note.getText() )
+                                             .build() );
+      
+      return result.build();
+   }
+   
+
+
+   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
+   {
+      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                                   note.getId() ) )
+                                                                             .build() )
+                                         .build();
+   }
+   
+
+
+   public IContentProviderSyncOperation computeServerInsertModification( SyncNote serverElement )
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
       
@@ -124,9 +199,13 @@ public class OutSyncNote implements IServerSyncable< OutSyncNote, RtmTaskNote >
 
    public IServerSyncOperation< RtmTaskNote > computeServerUpdateOperation( RtmTimeline timeline,
                                                                             ModificationSet modifications,
-                                                                            OutSyncNote serverElement )
+                                                                            SyncNote serverElement )
    {
-      ServerSyncOperation.Builder< RtmTaskNote > operation = ServerSyncOperation.newUpdate();
+      NoteServerSyncOperation.Builder< RtmTaskNote > operation = NoteServerSyncOperation.newUpdate();
+      
+      // In case we have no server element (incremental sync)
+      if ( serverElement == null )
+         serverElement = this;
       
       final SyncProperties properties = SyncProperties.newInstance( serverElement == this
                                                                                          ? null
@@ -162,7 +241,7 @@ public class OutSyncNote implements IServerSyncable< OutSyncNote, RtmTaskNote >
                         modsList );
       }
       
-      return operation.build();
+      return operation.build( NoteServerSyncOperation.class );
    }
    
 
@@ -171,4 +250,5 @@ public class OutSyncNote implements IServerSyncable< OutSyncNote, RtmTaskNote >
    {
       return NoopServerSyncOperation.newInstance();
    }
+   
 }

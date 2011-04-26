@@ -695,7 +695,7 @@ public class TaskActivity extends Activity
       
       if ( client != null )
       {
-         final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
+         final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getNotes( client,
                                                                          task.getTaskSeriesId() );
          client.release();
          

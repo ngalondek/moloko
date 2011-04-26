@@ -25,6 +25,7 @@ package dev.drsoran.moloko.content;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
@@ -104,8 +105,49 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
 
 
-   public final static RtmTaskNotes getAllNotes( ContentProviderClient client,
-                                                 String taskSeriesId )
+   public final static List< RtmTaskNote > getAllNotes( ContentProviderClient client )
+   {
+      List< RtmTaskNote > notes = null;
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Notes.CONTENT_URI, PROJECTION, null, null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            notes = new ArrayList< RtmTaskNote >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmTaskNote taskNote = createNote( c );
+                  notes.add( taskNote );
+               }
+            }
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query notes failed. ", e );
+         notes = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return notes;
+   }
+   
+
+
+   public final static RtmTaskNotes getNotes( ContentProviderClient client,
+                                              String taskSeriesId )
    {
       RtmTaskNotes notes = null;
       Cursor c = null;
@@ -202,20 +244,40 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
 
 
-   public RtmNotesProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public final static int getDeletedNotesCount( ContentProviderClient client )
    {
-      super( context, dbAccess, Notes.PATH );
+      int cnt = -1;
+      
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Notes.CONTENT_URI, new String[]
+         { Notes._ID }, Notes.NOTE_DELETED + " IS NOT NULL", null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+            cnt = c.getCount();
+      }
+      catch ( final RemoteException e )
+      {
+         Log.e( TAG, "Query notes failed. ", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return cnt;
    }
    
 
 
-   @Override
-   public Object getElement( Uri uri )
+   public RtmNotesProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
-      if ( matchUri( uri ) == MATCH_ITEM_TYPE )
-         return getNote( aquireContentProviderClient( uri ),
-                         uri.getLastPathSegment() );
-      return null;
+      super( context, dbAccess, Notes.PATH );
    }
    
 

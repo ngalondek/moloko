@@ -210,7 +210,14 @@ public final class RtmTasksSync
          syncResult.localOps.addAll( syncOperations );
       }
       
-      return true;
+      // Sync notes
+      return RtmNotesSync.computeSync( service,
+                                       provider,
+                                       timeLineFactory,
+                                       server_SyncTaskList,
+                                       local_SyncTaskList,
+                                       lastSync,
+                                       syncResult );
    }
    
 
@@ -243,7 +250,7 @@ public final class RtmTasksSync
             for ( RtmTask localTask : localTaskSeries.getTasks() )
             {
                // Do not send deleted tasks which have not yet been synced.
-               // These tasks were created and denlyed only locally.
+               // These tasks were created and deleted only locally.
                if ( localTask.getDeletedDate() == null )
                   sendTask( service,
                             provider,

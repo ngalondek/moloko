@@ -381,7 +381,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          ok = ok && logSyncStep( "RtmLists", ok );
          
-         // Sync RtmTasks
+         // Sync RtmTasks + Notes
          ok = ok
             && RtmTasksSync.computeSync( service,
                                          provider,
@@ -389,7 +389,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                          lastSyncOut,
                                          batch );
          
-         ok = ok && logSyncStep( "RtmTasks", ok );
+         ok = ok && logSyncStep( "RtmTasks and Notes", ok );
          
          // Sync locations
          ok = ok

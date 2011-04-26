@@ -89,8 +89,8 @@ public final class NoteEditUtils
       {
          try
          {
-            ok = new ApplyModificationsTask( context ).execute( modifications )
-                                                      .get();
+            ok = new ApplyModificationsTask( context, R.string.dlg_save_note ).execute( modifications )
+                                                                              .get();
          }
          catch ( InterruptedException e )
          {

@@ -244,8 +244,8 @@ public final class TaskEditUtils
       {
          try
          {
-            ok = new ApplyModificationsTask( context ).execute( modifications )
-                                                      .get();
+            ok = new ApplyModificationsTask( context, R.string.dlg_save_task ).execute( modifications )
+                                                                              .get();
          }
          catch ( InterruptedException e )
          {

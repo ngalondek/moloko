@@ -478,8 +478,9 @@ abstract class AbstractTaskEditActivity extends Activity
                                                                         // set the taskseries modification time to now
                                                                         try
                                                                         {
-                                                                           if ( new ApplyModificationsTask( AbstractTaskEditActivity.this ).execute( modifications )
-                                                                                                                                           .get() )
+                                                                           if ( new ApplyModificationsTask( AbstractTaskEditActivity.this,
+                                                                                                            R.string.dlg_save_task ).execute( modifications )
+                                                                                                                                    .get() )
                                                                            {
                                                                               result = RESULT_EDIT_TASK_CHANGED;
                                                                            }

@@ -184,18 +184,6 @@ public class InSyncRtmTaskSeries implements
          operations.add( taskOperations );
       }
       
-      // Sync notes
-      {
-         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( taskSeries.getNotes()
-                                                                                                                                    .getNotes(),
-                                                                                                                          RtmTaskNote.LESS_ID );
-         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.inDiff( serverElement.taskSeries.getNotes()
-                                                                                                                 .getNotes(),
-                                                                                         syncNotesList,
-                                                                                         true /* always full sync */);
-         operations.add( noteOperations );
-      }
-      
       // Sync participants
       {
          operations.add( taskSeries.getParticipants()

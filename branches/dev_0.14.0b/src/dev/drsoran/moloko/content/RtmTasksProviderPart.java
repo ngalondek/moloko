@@ -250,7 +250,6 @@ public class RtmTasksProviderPart extends AbstractModificationsRtmProviderPart
       
       try
       {
-         // Only non-deleted tasks
          c = client.query( RawTasks.CONTENT_URI, new String[]
          { RawTasks._ID }, RawTasks.DELETED_DATE + " IS NOT NULL", null, null );
          

@@ -390,7 +390,7 @@ public class RtmTaskSeriesProviderPart extends
       RtmTaskNotes notes = null;
       if ( ok )
       {
-         notes = RtmNotesProviderPart.getAllNotes( client, taskSeriesId );
+         notes = RtmNotesProviderPart.getNotes( client, taskSeriesId );
          ok = notes != null;
       }
       

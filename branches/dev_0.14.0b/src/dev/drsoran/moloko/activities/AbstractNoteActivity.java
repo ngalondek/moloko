@@ -249,7 +249,7 @@ abstract class AbstractNoteActivity extends Activity
          return false;
       
       // Query all notes of task
-      final RtmTaskNotes rtmTaskNotes = RtmNotesProviderPart.getAllNotes( client,
+      final RtmTaskNotes rtmTaskNotes = RtmNotesProviderPart.getNotes( client,
                                                                           taskId );
       
       if ( rtmTaskNotes != null )

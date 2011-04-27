@@ -39,7 +39,6 @@ import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoopServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoteServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
@@ -248,7 +247,8 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
 
    public IServerSyncOperation< RtmTaskNote > computeServerDeleteOperation( RtmTimeline timeLine )
    {
-      return NoopServerSyncOperation.newInstance();
+      return NoteServerSyncOperation.newDelete( timeLine.tasks_notes_delete( note.getTaskSeriesId(),
+                                                                             note.getId() ) )
+                                    .build( NoteServerSyncOperation.class );
    }
-   
 }

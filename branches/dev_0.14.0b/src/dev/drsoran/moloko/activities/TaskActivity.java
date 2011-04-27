@@ -55,6 +55,7 @@ import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -327,7 +328,27 @@ public class TaskActivity extends Activity
 
    public void onDeleteNote( View v )
    {
-      
+      if ( task != null )
+      {
+         final String noteId = (String) v.getTag();
+         
+         new AlertDialog.Builder( this ).setMessage( getString( R.string.phr_delete_note ) )
+                                        .setPositiveButton( R.string.btn_delete,
+                                                            new OnClickListener()
+                                                            {
+                                                               public void onClick( DialogInterface dialog,
+                                                                                    int which )
+                                                               {
+                                                                  NoteEditUtils.deleteNote( TaskActivity.this,
+                                                                                            noteId );
+                                                                  loadAndInflateNotes( taskContainer,
+                                                                                       task );
+                                                               }
+                                                            } )
+                                        .setNegativeButton( R.string.btn_cancel,
+                                                            null )
+                                        .show();
+      }
    }
    
 
@@ -405,9 +426,7 @@ public class TaskActivity extends Activity
             urlSection.setVisibility( View.GONE );
          }
          
-         loadNotes();
-         
-         inflateNotes( taskContainer, task );
+         loadAndInflateNotes( taskContainer, task );
          
          permission.setVisible( taskButtons );
       }
@@ -627,6 +646,27 @@ public class TaskActivity extends Activity
    
 
 
+   private void loadAndInflateNotes( ViewGroup taskContainer, Task task )
+   {
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getNotes( client,
+                                                                      task.getTaskSeriesId() );
+         client.release();
+         
+         if ( rtmNotes != null )
+            this.rtmNotes = rtmNotes.getNotes();
+         else
+            LogUtils.logDBError( this, TAG, "Notes" );
+         
+         inflateNotes( taskContainer, task );
+      }
+   }
+   
+
+
    private void inflateNotes( ViewGroup taskContainer, Task task )
    {
       UIUtils.removeTaggedViews( taskContainer, "note" );
@@ -684,25 +724,6 @@ public class TaskActivity extends Activity
       else
       {
          LogUtils.logDBError( this, TAG, "Notes" );
-      }
-   }
-   
-
-
-   private void loadNotes()
-   {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getNotes( client,
-                                                                         task.getTaskSeriesId() );
-         client.release();
-         
-         if ( rtmNotes != null )
-            this.rtmNotes = rtmNotes.getNotes();
-         else
-            LogUtils.logDBError( this, TAG, "Notes" );
       }
    }
 }

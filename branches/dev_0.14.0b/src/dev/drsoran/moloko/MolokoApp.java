@@ -24,14 +24,18 @@ package dev.drsoran.moloko;
 
 import java.lang.reflect.Method;
 
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+
 import android.accounts.Account;
 import android.app.Activity;
+import android.app.Application;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SyncStatusObserver;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -48,8 +52,18 @@ import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm;
 
 
-public class MolokoApp extends org.acra.CrashReportingApplication implements
-         SyncStatusObserver
+@ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ",
+                 mode = ReportingInteractionMode.NOTIFICATION,
+                 resNotifTickerText = R.string.acra_crash_notif_ticker_text,
+                 resNotifTitle = R.string.acra_crash_notif_title,
+                 resNotifText = R.string.acra_crash_notif_text,
+                 resNotifIcon = android.R.drawable.stat_notify_error,
+                 resDialogText = R.string.acra_crash_dialog_text,
+                 resDialogIcon = android.R.drawable.ic_dialog_info,
+                 resDialogTitle = R.string.acra_crash_dialog_title,
+                 resDialogCommentPrompt = R.string.acra_crash_comment_prompt,
+                 resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
+public class MolokoApp extends Application implements SyncStatusObserver
 {
    private final static String TAG = "Moloko."
       + MolokoApp.class.getSimpleName();
@@ -73,6 +87,8 @@ public class MolokoApp extends org.acra.CrashReportingApplication implements
    @Override
    public void onCreate()
    {
+      ACRA.init( this );
+      
       super.onCreate();
       
       // NOTE: Instantiate the ListenerLists at first cause other components may register in ctor.
@@ -267,36 +283,6 @@ public class MolokoApp extends org.acra.CrashReportingApplication implements
    
 
 
-   @Override
-   public String getFormId()
-   {
-      return "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ";
-   }
-   
-
-
-   @Override
-   public Bundle getCrashResources()
-   {
-      final Bundle result = new Bundle();
-      result.putInt( RES_NOTIF_TICKER_TEXT,
-                     R.string.acra_crash_notif_ticker_text );
-      result.putInt( RES_NOTIF_TITLE, R.string.acra_crash_notif_title );
-      result.putInt( RES_NOTIF_TEXT, R.string.acra_crash_notif_text );
-      result.putInt( RES_DIALOG_TITLE, R.string.acra_crash_dialog_title );
-      result.putInt( RES_DIALOG_TEXT, R.string.acra_crash_dialog_text );
-      result.putInt( RES_DIALOG_COMMENT_PROMPT,
-                     R.string.acra_crash_comment_prompt ); // optional. when defined, adds a user text field input
-      // with this text resource as a label
-      result.putInt( RES_DIALOG_OK_TOAST, R.string.acra_crash_dialog_ok_toast ); // optional. Displays a Toast when the
-      // user
-      // accepts to send a report ("Thank you !"
-      // for example)
-      return result;
-   }
-   
-
-
    private final static < T > Method findMethod( Class< T > cls, String name ) throws NoSuchMethodException
    {
       Method method = null;
@@ -352,7 +338,5 @@ public class MolokoApp extends org.acra.CrashReportingApplication implements
          if ( !handled )
             super.handleMessage( msg );
       }
-      
    };
-   
 }

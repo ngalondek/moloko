@@ -34,6 +34,7 @@
    <string name="app_task_select_multiple">Select tasks to edit</string>
    <string name="app_change_tags">Change Tags of %1$s</string>
 	<string name="app_note">Note</string>
+   <string name="app_note_multiple">Note (%1$d/%2$d)</string>
    <string name="app_note_edit">Edit Note</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Contacts</string>
@@ -124,6 +125,7 @@
    <string name="phr_open_with_name">Open \'%1$s\'</string>
    <string name="phr_edit_with_name">Edit \'%1$s\'</string>   
    <string name="phr_delete_with_name">Delete \'%1$s\'</string>
+   <string name="phr_delete_note">Delete note?</string>
    <string name="phr_ok">OK</string>
    <string name="phr_close">Close</string>
    <string name="phr_settings">Settings</string>
@@ -282,7 +284,7 @@
      <string name="abstaskslist_dlg_show_tags_and">and</string>
      <string name="abstaskslist_dlg_show_tags_or">or</string>
      <string name="abstaskslist_dlg_sort_title">Sort by...</string>
-     <string name="abstaskslist_dlg_delete">Delete \'%1$s\'?</string>
+     <string name="abstaskslist_dlg_delete">Delete \'%1$s\'?</string>     
 	
 	<!-- TasksList activity -->
 	<string name="taskslist_titlebar">%1$s</string>
@@ -404,7 +406,7 @@
    <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
    <string name="moloko_prefs_notification_permanent_default_value">2</string>
    <string name="moloko_prefs_cat_help_dev_title">Support development</string>
-   <string name="moloko_prefs_acra_title">Disable error reporting</string>
+   <string name="moloko_prefs_acra_title">Enable error reporting</string>
    <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
    <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
    <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>

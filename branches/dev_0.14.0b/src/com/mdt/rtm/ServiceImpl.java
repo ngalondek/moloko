@@ -909,13 +909,19 @@ public class ServiceImpl implements Service
    
 
 
-   public void tasks_notes_delete( String timelineId, String noteId ) throws ServiceException
+   public TimeLineResult< RtmTaskNote > tasks_notes_delete( String timelineId,
+                                                            String taskSeriesId,
+                                                            String noteId ) throws ServiceException
    {
-      invoker.invoke( new Param( "method", "rtm.tasks.notes.delete" ),
-                      new Param( "timeline", timelineId ),
-                      new Param( "note_id", noteId ),
-                      new Param( "auth_token", currentAuthToken ),
-                      new Param( "api_key", applicationInfo.getApiKey() ) );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.notes.delete" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "note_id", noteId ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newNoteResult( timelineId, elt, noteId, taskSeriesId );
    }
    
 
@@ -926,15 +932,17 @@ public class ServiceImpl implements Service
                                                           String title,
                                                           String text ) throws ServiceException
    {
-      Element elt = invoker.invoke( new Param( "method", "rtm.tasks.notes.edit" ),
-                                    new Param( "timeline", timelineId ),
-                                    new Param( "note_id", noteId ),
-                                    new Param( "note_title", title ),
-                                    new Param( "note_text", text ),
-                                    new Param( "auth_token", currentAuthToken ),
-                                    new Param( "api_key",
-                                               applicationInfo.getApiKey() ) );
-      return newNoteResult( timelineId, elt, taskSeriesId );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.notes.edit" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "note_id", noteId ),
+                                          new Param( "note_title", title ),
+                                          new Param( "note_text", text ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newNoteResult( timelineId, elt, noteId, taskSeriesId );
    }
    
 
@@ -1074,14 +1082,15 @@ public class ServiceImpl implements Service
 
    private final static TimeLineResult< RtmTaskNote > newNoteResult( String timelineId,
                                                                      Element elt,
+                                                                     String noteId,
                                                                      String taskSeriesId ) throws ServiceException
    {
       // TODO: Check for Android > 2.1
       // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
-      if ( nodes.getLength() < 2 )
-         throw new ServiceInternalException( "Expected at least 2 nodes in response" );
+      if ( nodes.getLength() < 1 )
+         throw new ServiceInternalException( "Expected at least 1 node in response" );
       
       final Node transactionNode = nodes.item( 0 );
       
@@ -1089,20 +1098,37 @@ public class ServiceImpl implements Service
          && transactionNode.getNodeName().equalsIgnoreCase( "transaction" )
          && transactionNode.getNodeType() == Node.ELEMENT_NODE )
       {
-         final Node noteNode = nodes.item( 1 );
-         
-         if ( noteNode != null
-            && noteNode.getNodeName().equalsIgnoreCase( "note" )
-            && noteNode.getNodeType() == Node.ELEMENT_NODE )
+         // The <note> element is not present in case of deleting a note.
+         if ( nodes.getLength() > 1 )
          {
-            final RtmTaskNote note = new RtmTaskNote( (Element) noteNode,
-                                                      taskSeriesId );
+            final Node noteNode = nodes.item( 1 );
             
-            return TimeLineResult.newResult( elt, timelineId, note );
+            if ( noteNode != null
+               && noteNode.getNodeName().equalsIgnoreCase( "note" )
+               && noteNode.getNodeType() == Node.ELEMENT_NODE )
+            {
+               final RtmTaskNote note = new RtmTaskNote( (Element) noteNode,
+                                                         taskSeriesId );
+               
+               return TimeLineResult.newResult( elt, timelineId, note );
+            }
+            else
+            {
+               throw new ServiceInternalException( "Expected <note> node in response" );
+            }
          }
          else
          {
-            throw new ServiceInternalException( "Expected <note> node in response" );
+            // Create a temporary note that is deleted.
+            return TimeLineResult.newResult( elt,
+                                             timelineId,
+                                             new RtmTaskNote( noteId,
+                                                              taskSeriesId,
+                                                              null,
+                                                              null,
+                                                              new Date(),
+                                                              null,
+                                                              null ) );
          }
       }
       else

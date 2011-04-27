@@ -376,4 +376,19 @@ public class RtmTimeline
          }
       };
    }
+   
+
+
+   public TimeLineMethod< RtmTaskNote > tasks_notes_delete( final String taskSeriesId,
+                                                            final String noteId )
+   {
+      return new TimeLineMethod< RtmTaskNote >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskNote > call() throws ServiceException
+         {
+            return service.tasks_notes_delete( id, taskSeriesId, noteId );
+         }
+      };
+   }
 }

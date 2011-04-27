@@ -157,16 +157,18 @@ public final class RtmTasksSync
          
          boolean doOutSync = modifications.size() > 0;
          
+         int numDeleted = 0;
+         
          if ( !doOutSync )
          {
-            final int numDeleted = RtmTasksProviderPart.getDeletedTasksCount( provider );
+            numDeleted = RtmTasksProviderPart.getDeletedTasksCount( provider );
             doOutSync = numDeleted > 0;
          }
          
          if ( doOutSync )
          {
             Log.i( TAG, "Retrieved " + modifications.size()
-               + " modification(s)" );
+               + " modification(s) and " + numDeleted + " deletion(s)" );
             
             final List< OutSyncTask > server_Tasks = server_SyncTaskList.getOutSyncTasks();
             final List< OutSyncTask > local_Tasks = local_SyncTaskList.getOutSyncTasks();
@@ -215,7 +217,6 @@ public final class RtmTasksSync
                                        provider,
                                        timeLineFactory,
                                        server_SyncTaskList,
-                                       local_SyncTaskList,
                                        lastSync,
                                        syncResult );
    }

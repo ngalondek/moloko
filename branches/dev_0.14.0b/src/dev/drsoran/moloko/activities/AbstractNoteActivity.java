@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -53,7 +52,7 @@ abstract class AbstractNoteActivity extends Activity
    
    private final static String NOTE_POS = "note_pos";
    
-   protected List< RtmTaskNote > notes = Collections.emptyList();
+   protected List< RtmTaskNote > notes = new ArrayList< RtmTaskNote >();
    
    protected int notePos = -1;
    
@@ -170,6 +169,28 @@ abstract class AbstractNoteActivity extends Activity
    
 
 
+   protected void removeCurrentNode()
+   {
+      final int tmpPos = notePos;
+      
+      if ( !hasNext() && hasPrev() )
+         --notePos;
+      else
+         notePos = -1;
+      
+      notes.remove( tmpPos );
+      
+      if ( notePos != -1 )
+      {
+         displayNote( getNote() );
+         updateUi();
+      }
+      else
+         finish();
+   }
+   
+
+
    protected void displayNote( RtmTaskNote note )
    {
       final TextView createdDate = (TextView) findViewById( R.id.note_created_date );
@@ -198,8 +219,13 @@ abstract class AbstractNoteActivity extends Activity
       
       if ( notes.size() > 1 )
       {
-         setTitle( getString( R.string.app_note ) + " (" + ( notePos + 1 )
-            + "/" + notes.size() + ")" );
+         setTitle( getString( R.string.app_note_multiple,
+                              notePos + 1,
+                              notes.size() ) );
+      }
+      else
+      {
+         setTitle( R.string.app_note );
       }
    }
    
@@ -214,7 +240,7 @@ abstract class AbstractNoteActivity extends Activity
       
       if ( note != null )
       {
-         final ArrayList< RtmTaskNote > tmp = new ArrayList< RtmTaskNote >( 1 );
+         final List< RtmTaskNote > tmp = new ArrayList< RtmTaskNote >( 1 );
          tmp.add( note );
          
          initializeNotesList( tmp );
@@ -250,7 +276,7 @@ abstract class AbstractNoteActivity extends Activity
       
       // Query all notes of task
       final RtmTaskNotes rtmTaskNotes = RtmNotesProviderPart.getNotes( client,
-                                                                          taskId );
+                                                                       taskId );
       
       if ( rtmTaskNotes != null )
       {
@@ -293,7 +319,7 @@ abstract class AbstractNoteActivity extends Activity
 
    private void initializeNotesList( List< RtmTaskNote > notes )
    {
-      this.notes = Collections.unmodifiableList( notes );
+      this.notes = new ArrayList< RtmTaskNote >( notes );
       this.notePos = 0;
    }
    
@@ -301,7 +327,7 @@ abstract class AbstractNoteActivity extends Activity
 
    private void initializeNotesList( List< RtmTaskNote > notes, int notePos )
    {
-      this.notes = Collections.unmodifiableList( notes );
+      this.notes = new ArrayList< RtmTaskNote >( notes );
       this.notePos = notePos;
    }
    

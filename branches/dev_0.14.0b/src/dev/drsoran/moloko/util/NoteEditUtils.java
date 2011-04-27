@@ -69,6 +69,21 @@ public final class NoteEditUtils
    
 
 
+   public final static boolean deleteNote( Context context, String noteId )
+   {
+      final ModificationSet modifications = new ModificationSet();
+      
+      modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                              noteId ),
+                                                                    Notes.NOTE_DELETED,
+                                                                    System.currentTimeMillis() ) );
+      modifications.add( Modification.newNoteModified( noteId ) );
+      
+      return reportStatus( context, applyModifications( context, modifications ) );
+   }
+   
+
+
    private final static boolean reportStatus( Context context, boolean ok )
    {
       Toast.makeText( context,

@@ -355,7 +355,9 @@ public interface Service
    
 
 
-   void tasks_notes_delete( String timelineId, String noteId ) throws ServiceException;
+   TimeLineResult< RtmTaskNote > tasks_notes_delete( String timelineId,
+                                                     String taskSeriesId,
+                                                     String noteId ) throws ServiceException;
    
 
 

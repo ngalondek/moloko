@@ -61,7 +61,6 @@ public final class RtmNotesSync
                                       ContentProviderClient provider,
                                       TimeLineFactory timeLineFactory,
                                       SyncRtmTaskList serverTasks,
-                                      SyncRtmTaskList localTasks,
                                       Date lastSync,
                                       MolokoSyncResult syncResult )
    {
@@ -87,8 +86,21 @@ public final class RtmNotesSync
          // }
       }
       
+      SyncRtmTaskNotesList local_Notes;
+      {
+         final List< RtmTaskNote > notes = RtmNotesProviderPart.getAllNotes( provider );
+         
+         if ( notes == null )
+         {
+            syncResult.androidSyncResult.databaseError = true;
+            Log.e( TAG, "Getting local notes failed." );
+            return false;
+         }
+         else
+            local_Notes = new SyncRtmTaskNotesList( notes );
+      }
+      
       final SyncRtmTaskNotesList server_Notes = serverTasks.getSyncNotesList();
-      final SyncRtmTaskNotesList local_Notes = localTasks.getSyncNotesList();
       
       if ( timeLineFactory != null )
       {
@@ -106,16 +118,18 @@ public final class RtmNotesSync
          
          boolean doOutSync = modifications.size() > 0;
          
+         int numDeleted = 0;
+         
          if ( !doOutSync )
          {
-            final int numDeleted = RtmNotesProviderPart.getDeletedNotesCount( provider );
+            numDeleted = RtmNotesProviderPart.getDeletedNotesCount( provider );
             doOutSync = numDeleted > 0;
          }
          
          if ( doOutSync )
          {
             Log.i( TAG, "Retrieved " + modifications.size()
-               + " modification(s)" );
+               + " modification(s) and " + numDeleted + " deletion(s)" );
             
             RtmTimeline timeline = null;
             

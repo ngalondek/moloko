@@ -32,6 +32,7 @@
    <string name="app_task_select_multiple">Aufgaben zum bearb. wählen</string>
    <string name="app_change_tags">Tags von %1$s bearbeiten</string>
 	<string name="app_note">Notiz</string>
+   <string name="app_note_multiple">Notiz (%1$d/%2$d)</string>
    <string name="app_note_edit">Notiz bearbeiten</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Kontakte</string>
@@ -85,6 +86,7 @@
    <string name="phr_open_with_name">Öffne \'%1$s\'</string>
    <string name="phr_edit_with_name">Bearbeite \'%1$s\'</string>
    <string name="phr_delete_with_name">Lösche \'%1$s\'</string>
+   <string name="phr_delete_note">Notiz löschen?</string>
    <string name="phr_close">Schliessen</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
@@ -231,7 +233,7 @@
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
-     <string name="abstaskslist_dlg_delete">\'%1$s\' löschen?</string>
+     <string name="abstaskslist_dlg_delete">\'%1$s\' löschen?</string>     
 	
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>
@@ -336,7 +338,7 @@
    <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
    <string name="moloko_prefs_cat_help_dev_title">Helfen Sie bei der Entwicklung</string>
-   <string name="moloko_prefs_acra_title">Keine Fehlerberichte senden</string>
+   <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
    <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>
    <string name="moloko_prefs_acra_summary_off">Bitte unterstützen Sie die Entwicklung durch das Senden von Fehlerberichten</string>
    <string name="moloko_prefs_send_log_text">Moloko Geräte-Log an Entwickler senden</string> 

@@ -34,12 +34,12 @@
 	<string name="app_note">Notiz</string>
    <string name="app_note_multiple">Notiz (%1$d/%2$d)</string>
    <string name="app_note_edit">Notiz bearbeiten</string>
+   <string name="app_note_add">Neue Notiz</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Kontakte</string>
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
-   <string name="app_sort_due_date">Fälligkeitsdatum</string>
-   <string name="app_titlebar_add_task_hint">Neue Aufgabe</string>
+   <string name="app_sort_due_date">Fälligkeitsdatum</string>   
    
    <string name="svc_sync">RTM Synchronisierung</string>	
    <string name="svc_auth">RTM Authentifizierung</string>
@@ -135,6 +135,7 @@
    <!-- Global Dialogs -->
    <string name="dlg_save_task">Speichere Änderungen an der Aufgabe...</string>
    <string name="dlg_insert_task">Füge neue Aufgabe hinzu...</string>
+   <string name="dlg_insert_note">Füge neue Notiz hinzu...</string>
    <string name="dlg_save_note">Speichere Änderungen an der Notiz...</string>
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>

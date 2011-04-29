@@ -31,7 +31,9 @@ import android.util.Log;
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
+import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskNote;
+import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.ModificationSet;
@@ -60,30 +62,30 @@ public final class RtmNotesSync
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       TimeLineFactory timeLineFactory,
+                                      SyncRtmTaskList localTasks,
                                       SyncRtmTaskList serverTasks,
                                       Date lastSync,
                                       MolokoSyncResult syncResult )
    {
       // Check if we have server write access
-      if ( timeLineFactory != null )
+      if ( timeLineFactory != null && lastSync != null )
       {
-         // TODO: Send new notes here
-         // final List< RtmTaskSeries > tasks = RtmTaskSeriesProviderPart.getLocalCreatedTaskSeries( provider );
-         //
-         // if ( tasks != null )
-         // {
-         // // Send new tasks
-         // sendNewTasks( service,
-         // (RtmProvider) provider.getLocalContentProvider(),
-         // timeLineFactory,
-         // tasks,
-         // syncResult );
-         // }
-         // else
-         // {
-         // syncResult.androidSyncResult.databaseError = true;
-         // Log.e( TAG, "Getting new created local tasks failed." );
-         // }
+         final List< RtmTaskNote > newNotes = RtmNotesProviderPart.getCreatedNotesSince( provider,
+                                                                                         lastSync.getTime() );
+         
+         if ( newNotes != null )
+         {
+            sendNewNotes( service,
+                          (RtmProvider) provider.getLocalContentProvider(),
+                          timeLineFactory,
+                          newNotes,
+                          syncResult );
+         }
+         else
+         {
+            syncResult.androidSyncResult.databaseError = true;
+            Log.e( TAG, "Getting new created local notes failed." );
+         }
       }
       
       SyncRtmTaskNotesList local_Notes;
@@ -171,6 +173,49 @@ public final class RtmNotesSync
       }
       
       return true;
+   }
+   
+
+
+   private final static boolean sendNewNotes( Service service,
+                                              RtmProvider localContentProvider,
+                                              TimeLineFactory timeLineFactory,
+                                              List< RtmTaskNote > newNotes,
+                                              MolokoSyncResult syncResult )
+   {
+      if ( newNotes.size() > 0 )
+      {
+         Log.i( TAG, "Sending " + newNotes.size() + " new note(s)" );
+         
+         RtmTimeline timeline = null;
+         
+         try
+         {
+            timeline = timeLineFactory.createTimeline();
+         }
+         catch ( ServiceException e )
+         {
+            Log.e( TAG, "Creating new time line failed", e );
+            handleResponseCode( syncResult, e );
+            return false;
+         }
+         
+         for ( RtmTaskSeries localTaskSeries : localTaskSerieses )
+         {
+            for ( RtmTask localTask : localTaskSeries.getTasks() )
+            {
+               // Do not send deleted tasks which have not yet been synced.
+               // These tasks were created and deleted only locally.
+               if ( localTask.getDeletedDate() == null )
+                  sendTask( service,
+                            provider,
+                            timeline,
+                            localTaskSeries,
+                            localTask,
+                            syncResult );
+            }
+         }
+      }
    }
    
 

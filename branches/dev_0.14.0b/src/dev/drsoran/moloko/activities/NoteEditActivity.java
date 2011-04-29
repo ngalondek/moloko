@@ -67,6 +67,9 @@ public class NoteEditActivity extends AbstractNoteActivity
       
       setContentView( R.layout.note_edit_activity );
       
+      title = (EditText) findViewById( R.id.note_edit_title );
+      text = (EditText) findViewById( R.id.note_edit_text );
+      
       final Intent intent = getIntent();
       
       if ( !intent.getAction().equals( Intent.ACTION_EDIT ) )
@@ -74,11 +77,6 @@ public class NoteEditActivity extends AbstractNoteActivity
          UIUtils.initializeErrorWithIcon( this,
                                           R.string.err_unsupported_intent_action,
                                           intent.getAction() );
-      }
-      else
-      {
-         title = (EditText) findViewById( R.id.note_edit_title );
-         text = (EditText) findViewById( R.id.note_edit_text );
       }
    }
    

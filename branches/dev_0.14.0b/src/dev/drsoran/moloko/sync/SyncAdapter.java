@@ -179,21 +179,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                                                  syncResult );
                            
                            transactionalAccess.setTransactionSuccessful();
+                           
+                           // If we synced only the settings, we do not update the
+                           // last sync time cause this was no full sync.
+                           if ( !extras.getBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
+                                                    false ) )
+                              updateSyncTime();
+                           
+                           Log.i( TAG,
+                                  "Applying sync operations batch succeded. "
+                                     + syncResult );
                         }
+                        // let outer try catch the exception
                         finally
                         {
                            transactionalAccess.endTransaction();
                         }
-                        
-                        // If we synced only the settings, we do not update the
-                        // last sync time cause this was no full sync.
-                        if ( !extras.getBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
-                                                 false ) )
-                           updateSyncTime();
-                        
-                        Log.i( TAG, "Applying sync operations batch succeded. "
-                           + syncResult );
                      }
+                     
+                     // computeOperationsBatch failed
                      else
                      {
                         if ( syncResult.stats.numAuthExceptions > 0 )
@@ -212,6 +216,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
                      }
                   }
                }
+               
+               // AuthToken is null
                else
                {
                   accountManager.invalidateAuthToken( Constants.ACCOUNT_TYPE,
@@ -305,56 +311,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    
 
 
-   // TODO: Commented
-   // private void rollbackFailedSync( Service service,
-   // ContentProviderClient provider,
-   // RtmAuth.Perms permission ) throws RemoteException
-   // {
-   // final List< Rollback > rollbacks = RollbacksProviderPart.getRollbacks( provider );
-   //
-   // if ( rollbacks != null )
-   // {
-   // if ( rollbacks.size() > 0 )
-   // {
-   // // We can only revert with delete permissions
-   // if ( permission == Perms.delete )
-   // {
-   // for ( Rollback rollback : rollbacks )
-   // {
-   // try
-   // {
-   // service.transactions_undo( rollback.getTimeLineId(),
-   // rollback.getTransactionId() );
-   // Log.e( TAG, "Rolled back change " + rollback );
-   // }
-   // catch ( ServiceException e )
-   // {
-   // Log.e( TAG,
-   // "Rolling back change " + rollback + " failed",
-   // e );
-   // }
-   // }
-   // }
-   // else
-   // {
-   // Log.w( TAG,
-   // "Couldn't rollback changes due to lack of RTM access right" );
-   // }
-   //
-   // // Remove all stored rollbacks netherless they succeeded or not. If
-   // // we couldn't revert them then we have no hope.
-   // //
-   // // Here we use no transaction cause this is a single operation.
-   // provider.delete( Rollbacks.CONTENT_URI, "1", null );
-   // }
-   // }
-   // else
-   // {
-   // Log.e( TAG, "Retrieving rollbacks failed" );
-   // throw new RemoteException();
-   // }
-   // }
-   
    private boolean computeOperationsBatch( Service service,
                                            ContentProviderClient provider,
                                            TimeLineFactory timeLineFactory,

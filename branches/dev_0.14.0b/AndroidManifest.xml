@@ -236,6 +236,21 @@
                android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />            
          </intent-filter>
       </activity>
+      
+      <activity
+         android:label="@string/app_note_add"
+         android:name=".activities.AddNoteActivity"
+         android:theme="@style/Theme.Moloko.Note">
+         <intent-filter>
+            <!-- Add a new note -->
+            <action
+               android:name="android.intent.action.INSERT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />            
+         </intent-filter>
+      </activity>
 
       <activity
          android:label="@string/app_contacts"

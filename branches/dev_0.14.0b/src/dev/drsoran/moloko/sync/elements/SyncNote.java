@@ -31,6 +31,7 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTaskNote;
+import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.Modification;
@@ -68,15 +69,21 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
+   private final RtmTaskSeries taskSeries;
+   
    private final RtmTaskNote note;
    
    
 
-   public SyncNote( RtmTaskNote note )
+   public SyncNote( RtmTaskSeries taskSeries, RtmTaskNote note )
    {
       if ( note == null )
          throw new NullPointerException( "note is null" );
       
+      // The taskSeries is only needed for the case we add a new node
+      // to RTM. But this is only the local->server direction.
+      // So this may be null in case of server->local direction.
+      this.taskSeries = taskSeries;
       this.note = note;
    }
    
@@ -85,6 +92,27 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    public String getId()
    {
       return note.getId();
+   }
+   
+
+
+   public String getTaskSeriesId()
+   {
+      return note.getTaskSeriesId();
+   }
+   
+
+
+   public String getTaskId()
+   {
+      return taskSeries != null ? taskSeries.getTasks().get( 0 ).getId() : null;
+   }
+   
+
+
+   public String getListId()
+   {
+      return taskSeries != null ? taskSeries.getListId() : null;
    }
    
 
@@ -183,15 +211,6 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
                                                                                                                    note.getId() ) )
                                                                              .build() )
                                          .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeServerInsertModification( SyncNote serverElement )
-   {
-      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
-      
-      return operation.build();
    }
    
 

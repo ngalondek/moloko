@@ -358,4 +358,16 @@ public final class Intents
       
       return intent;
    }
+   
+
+
+   public final static Intent createAddNoteIntent( Context context,
+                                                   String taskSeriesId )
+   {
+      final Intent intent = new Intent( Intent.ACTION_INSERT, Notes.CONTENT_URI );
+      
+      intent.putExtra( Notes.TASKSERIES_ID, taskSeriesId );
+      
+      return intent;
+   }
 }

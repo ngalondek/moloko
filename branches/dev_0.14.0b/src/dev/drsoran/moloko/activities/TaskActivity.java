@@ -240,6 +240,18 @@ public class TaskActivity extends Activity
                }
                break;
             
+            case AddNoteActivity.REQ_INSERT_NOTE:
+               switch ( resultCode )
+               {
+                  case AddNoteActivity.RESULT_INSERT_NOTE_OK:
+                     reloadTask = true;
+                     break;
+                  
+                  default :
+                     break;
+               }
+               break;
+            
             default :
                break;
          }
@@ -322,6 +334,18 @@ public class TaskActivity extends Activity
                                                             (String) v.getTag(),
                                                             true ),
                               NoteEditActivity.REQ_EDIT_NOTE );
+   }
+   
+
+
+   public void onAddNote( View v )
+   {
+      if ( task != null )
+      {
+         startActivityForResult( Intents.createAddNoteIntent( this,
+                                                              task.getTaskSeriesId() ),
+                                 AddNoteActivity.REQ_INSERT_NOTE );
+      }
    }
    
 

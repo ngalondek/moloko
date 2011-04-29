@@ -346,12 +346,12 @@ public interface Service
 
    // ////// NOTES /////////////////////////////
    
-   RtmTaskNote tasks_notes_add( String timelineId,
-                                String listId,
-                                String taskSeriesId,
-                                String taskId,
-                                String title,
-                                String text ) throws ServiceException;
+   TimeLineResult< RtmTaskNote > tasks_notes_add( String timelineId,
+                                                  String listId,
+                                                  String taskSeriesId,
+                                                  String taskId,
+                                                  String title,
+                                                  String text ) throws ServiceException;
    
 
 

@@ -169,6 +169,22 @@ abstract class AbstractNoteActivity extends Activity
    
 
 
+   protected void insertNewNote( RtmTaskNote note )
+   {
+      if ( notePos != -1 )
+         notes.add( notePos, note );
+      else
+      {
+         notes.add( note );
+         notePos = 0;
+      }
+      
+      displayNote( getNote() );
+      updateUi();
+   }
+   
+
+
    protected void removeCurrentNode()
    {
       final int tmpPos = notePos;

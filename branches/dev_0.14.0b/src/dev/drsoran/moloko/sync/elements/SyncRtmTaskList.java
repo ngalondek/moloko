@@ -153,12 +153,13 @@ public class SyncRtmTaskList
 
    public SyncRtmTaskNotesList getSyncNotesList()
    {
-      final List< RtmTaskNote > res = new LinkedList< RtmTaskNote >();
+      final SyncRtmTaskNotesList res = new SyncRtmTaskNotesList();
       
       for ( RtmTaskSeries taskSeries : series )
-         res.addAll( taskSeries.getNotes().getNotes() );
+         for ( RtmTaskNote note : taskSeries.getNotes().getNotes() )
+            res.add( new SyncNote( taskSeries, note ) );
       
-      return new SyncRtmTaskNotesList( res );
+      return res;
    }
    
 

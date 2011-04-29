@@ -26,6 +26,7 @@ import java.util.Collections;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.sync.elements.SyncNote;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskNotesList;
 
 
@@ -58,7 +59,7 @@ public class NoteServerSyncOperation extends ServerSyncOperation< RtmTaskNote >
             // Finally we want to have one list with RtmTaskNotes containing
             // all changes from all server operations. So we merge the current
             // change to the final resultList.
-            resultList.update( result );
+            resultList.update( new SyncNote( null, result ) );
          }
       }
       

@@ -23,23 +23,28 @@
 package dev.drsoran.moloko.activities;
 
 import android.app.AlertDialog;
+import android.content.ContentProviderClient;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.provider.Rtm.Notes;
 
 
 public class NoteActivity extends AbstractNoteActivity
 {
-   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + NoteActivity.class.getSimpleName();
    
@@ -73,6 +78,15 @@ public class NoteActivity extends AbstractNoteActivity
    
 
 
+   public void onAddNote( View v )
+   {
+      startActivityForResult( Intents.createAddNoteIntent( this,
+                                                           getNote().getTaskSeriesId() ),
+                              AddNoteActivity.REQ_INSERT_NOTE );
+   }
+   
+
+
    public void onDeleteNote( View v )
    {
       new AlertDialog.Builder( this ).setMessage( getString( R.string.phr_delete_note ) )
@@ -90,6 +104,56 @@ public class NoteActivity extends AbstractNoteActivity
                                      .setNegativeButton( R.string.btn_cancel,
                                                          null )
                                      .show();
+   }
+   
+
+
+   @Override
+   protected void onActivityResult( int requestCode, int resultCode, Intent data )
+   {
+      if ( requestCode == AddNoteActivity.REQ_INSERT_NOTE )
+      {
+         switch ( resultCode )
+         {
+            case AddNoteActivity.RESULT_INSERT_NOTE_OK:
+               final Uri noteUri = data.getData();
+               
+               if ( noteUri != null )
+               {
+                  final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+                  
+                  if ( client != null )
+                  {
+                     final RtmTaskNote note = RtmNotesProviderPart.getNote( client,
+                                                                            noteUri.getLastPathSegment() );
+                     client.release();
+                     
+                     if ( note != null )
+                     {
+                        insertNewNote( note );
+                     }
+                     else
+                     {
+                        Log.e( TAG, "Invalid URI after note insert: " + noteUri );
+                     }
+                  }
+                  else
+                  {
+                     LogUtils.logDBError( this, TAG, "Notes" );
+                  }
+               }
+               else
+               {
+                  Log.e( TAG, "Result URI is null after note insert" );
+               }
+               break;
+            
+            default :
+               break;
+         }
+      }
+      else
+         super.onActivityResult( requestCode, resultCode, data );
    }
    
 

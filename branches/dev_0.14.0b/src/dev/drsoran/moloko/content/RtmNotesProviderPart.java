@@ -244,6 +244,53 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
 
 
+   public final static List< RtmTaskNote > getCreatedNotesSince( ContentProviderClient client,
+                                                                 long date )
+   {
+      List< RtmTaskNote > notes = null;
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Notes.CONTENT_URI,
+                           PROJECTION,
+                           Notes.NOTE_CREATED_DATE + ">"
+                              + String.valueOf( date ),
+                           null,
+                           null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            notes = new ArrayList< RtmTaskNote >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmTaskNote taskNote = createNote( c );
+                  notes.add( taskNote );
+               }
+            }
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query notes failed. ", e );
+         notes = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return notes;
+   }
+   
+
+
    public final static int getDeletedNotesCount( ContentProviderClient client )
    {
       int cnt = -1;

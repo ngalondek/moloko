@@ -25,7 +25,6 @@ package dev.drsoran.moloko.sync.elements;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.mdt.rtm.data.RtmTaskNote;
@@ -58,21 +57,21 @@ public class SyncRtmTaskNotesList
       
    }
    
-   private static final Comparator< RtmTaskNote > LESS_ID = new Comparator< RtmTaskNote >()
+   private static final Comparator< SyncNote > LESS_ID = new Comparator< SyncNote >()
    {
-      public int compare( RtmTaskNote object1, RtmTaskNote object2 )
+      public int compare( SyncNote object1, SyncNote object2 )
       {
          return object1.getId().compareTo( object2.getId() );
       }
    };
    
-   private final List< RtmTaskNote > notes;
+   private final List< SyncNote > notes;
    
    
 
    public SyncRtmTaskNotesList()
    {
-      notes = new ArrayList< RtmTaskNote >();
+      notes = new ArrayList< SyncNote >();
    }
    
 
@@ -82,7 +81,10 @@ public class SyncRtmTaskNotesList
       if ( notes == null )
          throw new NullPointerException( "notes is null" );
       
-      this.notes = new ArrayList< RtmTaskNote >( notes );
+      this.notes = new ArrayList< SyncNote >( notes.size() );
+      
+      for ( RtmTaskNote rtmTaskNote : notes )
+         this.notes.add( new SyncNote( null, rtmTaskNote ) );
       
       Collections.sort( this.notes, LESS_ID );
    }
@@ -98,10 +100,7 @@ public class SyncRtmTaskNotesList
 
    public List< SyncNote > getSyncNotes( Comparator< ? super SyncNote > cmp )
    {
-      final List< SyncNote > res = new LinkedList< SyncNote >();
-      
-      for ( RtmTaskNote note : notes )
-         res.add( new SyncNote( note ) );
+      final List< SyncNote > res = new ArrayList< SyncNote >( notes );
       
       if ( cmp != null )
          GetMode.SORTED.perform( res, cmp );
@@ -111,14 +110,14 @@ public class SyncRtmTaskNotesList
    
 
 
-   public void add( RtmTaskNote note )
+   public void add( SyncNote note )
    {
       update( note );
    }
    
 
 
-   public void remove( RtmTaskNote note )
+   public void remove( SyncNote note )
    {
       final int pos = Collections.binarySearch( notes, note, LESS_ID );
       
@@ -128,7 +127,7 @@ public class SyncRtmTaskNotesList
    
 
 
-   public RtmTaskNote get( int location )
+   public SyncNote get( int location )
    {
       return notes.get( location );
    }
@@ -142,7 +141,7 @@ public class SyncRtmTaskNotesList
    
 
 
-   public void update( RtmTaskNote note )
+   public void update( SyncNote note )
    {
       if ( note == null )
          throw new NullPointerException( "note is null" );

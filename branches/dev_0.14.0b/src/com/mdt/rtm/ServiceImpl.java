@@ -873,38 +873,44 @@ public class ServiceImpl implements Service
                                                       String taskId,
                                                       String url ) throws ServiceException
    {
-      Element elt = invoker.invoke( new Param( "method", "rtm.tasks.setURL" ),
-                                    new Param( "timeline", timelineId ),
-                                    new Param( "list_id", listId ),
-                                    new Param( "taskseries_id", taskSeriesId ),
-                                    new Param( "task_id", taskId ),
-                                    new Param( "url", url ),
-                                    new Param( "auth_token", currentAuthToken ),
-                                    new Param( "api_key",
-                                               applicationInfo.getApiKey() ) );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.setURL" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "url", url ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
       return newTaskResult( timelineId, elt );
    }
    
 
 
-   public RtmTaskNote tasks_notes_add( String timelineId,
-                                       String listId,
-                                       String taskSeriesId,
-                                       String taskId,
-                                       String title,
-                                       String text ) throws ServiceException
+   public TimeLineResult< RtmTaskNote > tasks_notes_add( String timelineId,
+                                                         String listId,
+                                                         String taskSeriesId,
+                                                         String taskId,
+                                                         String title,
+                                                         String text ) throws ServiceException
    {
-      Element elt = invoker.invoke( new Param( "method", "rtm.tasks.notes.add" ),
-                                    new Param( "timeline", timelineId ),
-                                    new Param( "list_id", listId ),
-                                    new Param( "taskseries_id", taskSeriesId ),
-                                    new Param( "task_id", taskId ),
-                                    new Param( "note_title", title ),
-                                    new Param( "note_text", text ),
-                                    new Param( "auth_token", currentAuthToken ),
-                                    new Param( "api_key",
-                                               applicationInfo.getApiKey() ) );
-      return new RtmTaskNote( elt, taskSeriesId );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.tasks.notes.add" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "taskseries_id",
+                                                     taskSeriesId ),
+                                          new Param( "task_id", taskId ),
+                                          new Param( "note_title", title ),
+                                          new Param( "note_text", text ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newNoteResult( timelineId, elt, null, taskSeriesId );
    }
    
 

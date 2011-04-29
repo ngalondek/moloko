@@ -216,6 +216,7 @@ public final class RtmTasksSync
       return RtmNotesSync.computeSync( service,
                                        provider,
                                        timeLineFactory,
+                                       local_SyncTaskList,
                                        server_SyncTaskList,
                                        lastSync,
                                        syncResult );

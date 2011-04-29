@@ -178,6 +178,11 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
+   /**
+    * This stores only outgoing differences between the local task and the server task as modification.
+    * 
+    * This is needed due to the fact that add a task on RTM side is no single operation and may be interrupted.
+    */
    public IContentProviderSyncOperation computeServerInsertModification( OutSyncTask serverElement )
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();

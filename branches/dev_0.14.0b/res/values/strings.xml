@@ -30,18 +30,19 @@
 	<string name="app_task">Task</string>
    <string name="app_task_edit">Edit Task</string>
    <string name="app_task_edit_multiple">Edit %1$d %2$s</string>
-   <string name="app_task_add">Add Task</string>
+   <string name="app_task_add">New Task</string>
    <string name="app_task_select_multiple">Select tasks to edit</string>
    <string name="app_change_tags">Change Tags of %1$s</string>
 	<string name="app_note">Note</string>
    <string name="app_note_multiple">Note (%1$d/%2$d)</string>
    <string name="app_note_edit">Edit Note</string>
+   <string name="app_note_add">New Note</string>
 	<string name="app_tagcloud">Tags</string>
    <string name="app_contacts">Contacts</string>
 	<string name="app_sort_alpha">Task Name</string>
    <string name="app_sort_prio">Priority</string>
    <string name="app_sort_due_date">Due Date</string>
-   <string name="app_titlebar_add_task_hint">New task</string>
+   <string name="app_titlebar_add_task_hint">@string/app_task_add</string>
    
    <string name="svc_sync">RTM Synchronization</string>	
    <string name="svc_auth">RTM Authentication</string>
@@ -176,6 +177,7 @@
    <!-- Global Dialogs -->
    <string name="dlg_save_task">Saving task changes...</string>
    <string name="dlg_insert_task">Adding new task...</string>
+   <string name="dlg_insert_note">Adding new note...</string>
    <string name="dlg_save_note">Saving note changes...</string>
    <string name="dlg_estimate_picker_title">How long does it take?</string>
    <string name="dlg_due_picker_title">Set due</string>

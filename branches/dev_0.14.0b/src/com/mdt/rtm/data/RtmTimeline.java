@@ -358,6 +358,29 @@ public class RtmTimeline
    
 
 
+   public TimeLineMethod< RtmTaskNote > tasks_notes_add( final String listId,
+                                                         final String taskSeriesId,
+                                                         final String taskId,
+                                                         final String title,
+                                                         final String text )
+   {
+      return new TimeLineMethod< RtmTaskNote >()
+      {
+         @Override
+         public TimeLineResult< RtmTaskNote > call() throws ServiceException
+         {
+            return service.tasks_notes_add( id,
+                                            listId,
+                                            taskSeriesId,
+                                            taskId,
+                                            title,
+                                            text );
+         }
+      };
+   }
+   
+
+
    public TimeLineMethod< RtmTaskNote > tasks_notes_edit( final String taskSeriesId,
                                                           final String noteId,
                                                           final String title,

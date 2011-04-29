@@ -60,11 +60,23 @@
             android:scaleType="fitXY"
             android:onClick="onEditNote" />
 
+         <!-- TODO: New icon for add note; remove align top + bottom -->
+         <ImageButton
+            android:id="@+id/note_buttons_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/note_buttons_edit"
+            android:layout_alignTop="@id/note_buttons_edit"
+            android:layout_alignBottom="@id/note_buttons_edit"
+            android:src="@drawable/ic_button_add"
+            android:scaleType="fitXY"
+            android:onClick="onAddNote" />
+
          <ImageButton
             android:id="@+id/note_buttons_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/note_buttons_edit"
+            android:layout_toRightOf="@id/note_buttons_add"
             android:src="@drawable/ic_button_task_trash"
             android:scaleType="fitXY"
             android:onClick="onDeleteNote" />

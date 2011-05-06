@@ -34,8 +34,10 @@ import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -138,9 +140,16 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    
 
 
-   public boolean isNew()
+   public String getTitle()
    {
-      return false;
+      return note.getTitle();
+   }
+   
+
+
+   public String getText()
+   {
+      return note.getText();
    }
    
 
@@ -160,6 +169,32 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
                                                                                                                                  true ) )
                                                                              .build() )
                                          .build();
+   }
+   
+
+
+   public IContentProviderSyncOperation handleAfterServerInsert( SyncNote serverElement )
+   {
+      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
+      
+      /**
+       * Change the ID of the local note to the ID of the server note.
+       **/
+      operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                   note.getId() ) )
+                                             .withValue( Notes._ID,
+                                                         serverElement.note.getId() )
+                                             .build() );
+      
+      /** Remove the old note from the creations table, marking this note as send **/
+      operation.add( CreationsProviderPart.deleteCreation( Notes.CONTENT_URI,
+                                                           note.getId() ) );
+      
+      /** Remove all modifications with the old note ID **/
+      operation.add( ModificationsProviderPart.getRemoveModificationOps( Notes.CONTENT_URI,
+                                                                         note.getId() ) );
+      
+      return operation.build();
    }
    
 

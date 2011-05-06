@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -51,6 +52,12 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
 {
    private static final String TAG = "Moloko."
       + RtmNotesProviderPart.class.getSimpleName();
+   
+   
+   public final static class NewNoteId
+   {
+      public String noteId;
+   }
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -244,46 +251,62 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
 
 
-   public final static List< RtmTaskNote > getCreatedNotesSince( ContentProviderClient client,
-                                                                 long date )
+   public final static List< RtmTaskNote > getLocalCreatedNotes( ContentProviderClient client )
    {
       List< RtmTaskNote > notes = null;
-      Cursor c = null;
       
-      try
+      final List< Creation > creations = CreationsProviderPart.getCreations( client,
+                                                                             Notes.CONTENT_URI );
+      
+      if ( creations != null )
       {
-         c = client.query( Notes.CONTENT_URI,
-                           PROJECTION,
-                           Notes.NOTE_CREATED_DATE + ">"
-                              + String.valueOf( date ),
-                           null,
-                           null );
-         
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( creations.size() == 0 )
+            notes = new ArrayList< RtmTaskNote >( 0 );
+         else
          {
-            notes = new ArrayList< RtmTaskNote >( c.getCount() );
+            final String selection = Queries.toColumnList( creations,
+                                                           Notes._ID,
+                                                           " OR " );
+            Cursor c = null;
             
-            if ( c.getCount() > 0 )
+            try
             {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               c = client.query( Notes.CONTENT_URI,
+                                 PROJECTION,
+                                 selection,
+                                 null,
+                                 null );
+               
+               boolean ok = c != null;
+               
+               if ( ok )
                {
-                  final RtmTaskNote taskNote = createNote( c );
-                  notes.add( taskNote );
+                  notes = new ArrayList< RtmTaskNote >( c.getCount() );
+                  
+                  if ( c.getCount() > 0 )
+                  {
+                     for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                     {
+                        final RtmTaskNote note = createNote( c );
+                        ok = note != null;
+                        
+                        if ( ok )
+                           notes.add( note );
+                     }
+                  }
                }
             }
+            catch ( final RemoteException e )
+            {
+               Log.e( TAG, "Query notes failed. ", e );
+               notes = null;
+            }
+            finally
+            {
+               if ( c != null )
+                  c.close();
+            }
          }
-      }
-      catch ( RemoteException e )
-      {
-         Log.e( TAG, "Query notes failed. ", e );
-         notes = null;
-      }
-      finally
-      {
-         if ( c != null )
-            c.close();
       }
       
       return notes;
@@ -318,6 +341,43 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       }
       
       return cnt;
+   }
+   
+
+
+   public final static ContentProviderOperation insertLocalCreatedNote( ContentProviderClient client,
+                                                                        RtmTaskNote note,
+                                                                        NewNoteId outNewId )
+   {
+      ContentProviderOperation operation = null;
+      
+      boolean ok = client != null;
+      NewNoteId newId = null;
+      
+      if ( ok )
+      {
+         newId = new NewNoteId();
+         newId.noteId = Queries.getNextId( client, Notes.CONTENT_URI );
+         ok = newId.noteId != null;
+      }
+      
+      if ( ok )
+      {
+         operation = ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                             .withValues( getContentValues( new RtmTaskNote( newId.noteId,
+                                                                                             note.getTaskSeriesId(),
+                                                                                             note.getCreatedDate(),
+                                                                                             note.getModifiedDate(),
+                                                                                             note.getDeletedDate(),
+                                                                                             note.getTitle(),
+                                                                                             note.getText() ),
+                                                                            true ) )
+                                             .build();
+         if ( outNewId != null )
+            outNewId.noteId = newId.noteId;
+      }
+      
+      return operation;
    }
    
 

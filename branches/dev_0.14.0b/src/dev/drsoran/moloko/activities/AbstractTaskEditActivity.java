@@ -282,15 +282,15 @@ abstract class AbstractTaskEditActivity extends Activity
             throw e;
          }
          
-         queryLists();
-         queryPriorities();
-         queryLocations();
-         
          final InitialValues initialVals = onCreateImpl( intent );
          
          if ( initialVals != null )
          {
             initialValues = initialVals.toMap();
+            
+            queryLists();
+            queryPriorities();
+            queryLocations();
             
             initViews();
          }

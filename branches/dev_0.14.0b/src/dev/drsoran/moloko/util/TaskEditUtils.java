@@ -22,25 +22,28 @@
 
 package dev.drsoran.moloko.util;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
+import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.Task;
 
 
 public final class TaskEditUtils
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + TaskEditUtils.class.getSimpleName();
    
@@ -92,7 +95,9 @@ public final class TaskEditUtils
             }
          }
          
-         ok = applyModifications( context, modifications );
+         ok = Queries.applyModifications( context,
+                                          modifications,
+                                          R.string.dlg_save_task );
          
          reportStatus( context, ok );
       }
@@ -180,7 +185,9 @@ public final class TaskEditUtils
             modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
          }
          
-         ok = applyModifications( context, modifications );
+         ok = Queries.applyModifications( context,
+                                          modifications,
+                                          R.string.dlg_save_task );
          
          reportStatus( context, ok );
       }
@@ -205,6 +212,7 @@ public final class TaskEditUtils
       if ( !tasks.isEmpty() )
       {
          final ModificationSet modifications = new ModificationSet();
+         final ArrayList< ContentProviderOperation > removeCreatedOperations = new ArrayList< ContentProviderOperation >();
          
          for ( Task task : tasks )
          {
@@ -214,9 +222,21 @@ public final class TaskEditUtils
                                                                           System.currentTimeMillis() ) );
             
             modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
+            
+            removeCreatedOperations.add( CreationsProviderPart.deleteCreation( TaskSeries.CONTENT_URI,
+                                                                               task.getTaskSeriesId() ) );
+            removeCreatedOperations.add( CreationsProviderPart.deleteCreation( RawTasks.CONTENT_URI,
+                                                                               task.getId() ) );
          }
          
-         ok = applyModifications( context, modifications );
+         ok = Queries.applyModifications( context,
+                                          modifications,
+                                          R.string.dlg_save_task );
+         
+         ok = ok
+            && Queries.transactionalApplyOperations( context,
+                                                     removeCreatedOperations,
+                                                     R.string.dlg_save_task );
          
          reportStatus( context, ok );
       }
@@ -231,34 +251,5 @@ public final class TaskEditUtils
       Toast.makeText( context,
                       ok ? R.string.task_save_ok : R.string.task_save_error,
                       Toast.LENGTH_SHORT ).show();
-   }
-   
-
-
-   private final static boolean applyModifications( Context context,
-                                                    ModificationSet modifications )
-   {
-      boolean ok = true;
-      
-      if ( modifications.size() > 0 )
-      {
-         try
-         {
-            ok = new ApplyModificationsTask( context, R.string.dlg_save_task ).execute( modifications )
-                                                                              .get();
-         }
-         catch ( InterruptedException e )
-         {
-            Log.e( TAG, "Applying task changes failed", e );
-            ok = false;
-         }
-         catch ( ExecutionException e )
-         {
-            Log.e( TAG, "Applying task changes failed", e );
-            ok = false;
-         }
-      }
-      
-      return ok;
    }
 }

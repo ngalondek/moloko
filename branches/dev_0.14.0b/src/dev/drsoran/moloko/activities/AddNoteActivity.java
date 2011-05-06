@@ -22,13 +22,14 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -45,9 +46,12 @@ import android.widget.TextView;
 import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
 import dev.drsoran.moloko.util.AsyncInsertEntity;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
@@ -142,10 +146,26 @@ public class AddNoteActivity extends Activity
                protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
                                                                                RtmTaskNote entity )
                {
-                  return Collections.singletonList( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                                                            .withValues( RtmNotesProviderPart.getContentValues( entity,
-                                                                                                                                true ) )
-                                                                            .build() );
+                  final ContentProviderClient client = contentResolver.acquireContentProviderClient( Notes.CONTENT_URI );
+                  
+                  if ( client != null )
+                  {
+                     final NewNoteId newId = new NewNoteId();
+                     final List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >( 2 );
+                     
+                     operations.add( RtmNotesProviderPart.insertLocalCreatedNote( client,
+                                                                                  entity,
+                                                                                  newId ) );
+                     client.release();
+                     
+                     operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                  newId.noteId ),
+                                                                        entity.getCreatedDate()
+                                                                              .getTime() ) );
+                     return operations;
+                  }
+                  
+                  return null;
                }
                
 

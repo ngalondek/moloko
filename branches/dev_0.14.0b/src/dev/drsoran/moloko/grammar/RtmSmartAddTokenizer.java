@@ -192,6 +192,36 @@ public class RtmSmartAddTokenizer implements Tokenizer
    
 
 
+   public static Character getOperatorFromRtmSmartFilterTokenType( int rtmSmartFilterTokenType )
+   {
+      switch ( rtmSmartFilterTokenType )
+      {
+         case RtmSmartFilterLexer.OP_DUE:
+         case RtmSmartFilterLexer.OP_DUE_AFTER:
+         case RtmSmartFilterLexer.OP_DUE_BEFORE:
+         case RtmSmartFilterLexer.OP_DUE_WITHIN:
+            return Character.valueOf( OP_DUE_DATE );
+            
+         case RtmSmartFilterLexer.OP_PRIORITY:
+            return Character.valueOf( OP_PRIORITY );
+            
+         case RtmSmartFilterLexer.OP_LIST:
+         case RtmSmartFilterLexer.OP_TAG:
+            return Character.valueOf( OP_LIST_TAGS );
+            
+         case RtmSmartFilterLexer.OP_LOCATION:
+            return Character.valueOf( OP_LOCATION );
+            
+         case RtmSmartFilterLexer.OP_TIME_ESTIMATE:
+            return Character.valueOf( OP_ESTIMATE );
+            
+         default :
+            return null;
+      }
+   }
+   
+
+
    private int getNextOperatorPos( CharSequence chars,
                                    int startIdx,
                                    Character ownOp )

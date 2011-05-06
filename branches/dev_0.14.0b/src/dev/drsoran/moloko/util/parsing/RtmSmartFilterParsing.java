@@ -125,7 +125,7 @@ public final class RtmSmartFilterParsing
       for ( RtmSmartFilterToken token : tokens )
       {
          final int tokenType = token.operatorType;
-         if ( ( tokenType == RtmSmartFilterLexer.OP_STATUS && token.value.equalsIgnoreCase( RtmSmartFilterLexer.TRUE_LIT ) )
+         if ( ( tokenType == RtmSmartFilterLexer.OP_STATUS && token.value.equalsIgnoreCase( RtmSmartFilterLexer.COMPLETED_LIT ) )
             || tokenType == RtmSmartFilterLexer.OP_COMPLETED
             || tokenType == RtmSmartFilterLexer.OP_COMPLETED_AFTER
             || tokenType == RtmSmartFilterLexer.OP_COMPLETED_BEFORE

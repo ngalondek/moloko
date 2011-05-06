@@ -55,8 +55,6 @@ import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
@@ -251,15 +249,12 @@ public final class RtmTasksSync
          {
             for ( RtmTask localTask : localTaskSeries.getTasks() )
             {
-               // Do not send deleted tasks which have not yet been synced.
-               // These tasks were created and deleted only locally.
-               if ( localTask.getDeletedDate() == null )
-                  sendTask( service,
-                            provider,
-                            timeline,
-                            localTaskSeries,
-                            localTask,
-                            syncResult );
+               sendTask( service,
+                         provider,
+                         timeline,
+                         localTaskSeries,
+                         localTask,
+                         syncResult );
             }
          }
       }
@@ -300,33 +295,13 @@ public final class RtmTasksSync
          {
             final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
             
-            // Source. Mark the task as added on server side by removing the "new task flag".
-            operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                          localTaskSeries.getId() ) )
-                                                    .withValue( TaskSeries.SOURCE,
-                                                                Strings.EMPTY_STRING )
-                                                    .build() );
-            
-            // Change the ID of the local taskseries to the ID of the server taskseries. Referencing entities will also
-            // be changed by a DB trigger.
-            operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                          localTaskSeries.getId() ) )
-                                                    .withValue( TaskSeries._ID,
-                                                                newServerTaskSeries.getId() )
-                                                    .build() );
-            
-            // Change the ID of the local rawtask to the ID of the server rawtask.
-            operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
-                                                                                          localTask.getId() ) )
-                                                    .withValue( RawTasks._ID,
-                                                                serverOutSyncTask.getTask()
-                                                                                 .getId() )
-                                                    .build() );
+            localOutSyncTask.handleAfterServerInsert( serverOutSyncTask )
+                            .getBatch( operations );
             
             // Put all differences between local task and new server task as modification in the DB.
             // So, in case of a sync interruption, we still have the changes for the next time.
-            final IContentProviderSyncOperation modifications = localOutSyncTask.computeServerInsertModification( serverOutSyncTask );
-            modifications.getBatch( operations );
+            localOutSyncTask.computeServerInsertModification( serverOutSyncTask )
+                            .getBatch( operations );
             
             final TransactionalAccess transactionalAccess = provider.newTransactionalAccess();
             try

@@ -22,14 +22,21 @@
 
 package dev.drsoran.moloko.util;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
+import android.util.Log;
+import dev.drsoran.moloko.content.ModificationSet;
 
 
 public final class Queries
@@ -66,6 +73,27 @@ public final class Queries
          return TextUtils.join( ",", values );
       else
          return "";
+   }
+   
+
+
+   public final static < T > String toColumnList( Iterable< T > set,
+                                                  String colName,
+                                                  String seperator )
+   {
+      final StringBuilder sb = new StringBuilder();
+      
+      for ( Iterator< T > i = set.iterator(); i.hasNext(); )
+      {
+         final T obj = i.next();
+         
+         sb.append( colName ).append( "=" ).append( obj.toString() );
+         
+         if ( i.hasNext() )
+            sb.append( seperator );
+      }
+      
+      return sb.toString();
    }
    
 
@@ -109,6 +137,53 @@ public final class Queries
                                                                                null,
                                                                                null )
                                                                : null;
+   }
+   
+
+
+   public final static String getNextId( ContentProviderClient client,
+                                         Uri contentUri )
+   {
+      Cursor c = null;
+      String newId = null;
+      
+      try
+      {
+         c = client.query( contentUri, new String[]
+         { BaseColumns._ID }, null, null, null );
+         
+         if ( c != null )
+         {
+            if ( c.getCount() > 0 )
+            {
+               long longId = -1;
+               
+               for ( boolean ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final long id = c.getLong( 0 );
+                  if ( id > longId )
+                     longId = id;
+               }
+               
+               newId = String.valueOf( longId + 1 );
+            }
+            else
+               newId = String.valueOf( 1L );
+         }
+      }
+      catch ( Throwable e )
+      {
+         Log.e( LogUtils.toTag( Queries.class ),
+                "Generating new ID failed. ",
+                e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return newId;
    }
    
 
@@ -202,5 +277,74 @@ public final class Queries
       }
       
       return res;
+   }
+   
+
+
+   public final static boolean applyModifications( Context context,
+                                                   ModificationSet modifications,
+                                                   int progressTextId )
+   {
+      boolean ok = true;
+      
+      if ( modifications.size() > 0 )
+      {
+         try
+         {
+            ok = new ApplyModificationsTask( context, progressTextId ).execute( modifications )
+                                                                      .get();
+         }
+         catch ( InterruptedException e )
+         {
+            Log.e( LogUtils.toTag( Queries.class ),
+                   "Applying modifications failed",
+                   e );
+            ok = false;
+         }
+         catch ( ExecutionException e )
+         {
+            Log.e( LogUtils.toTag( Queries.class ),
+                   "Applying modifications failed",
+                   e );
+            ok = false;
+         }
+      }
+      
+      return ok;
+   }
+   
+
+
+   @SuppressWarnings( "unchecked" )
+   public final static boolean transactionalApplyOperations( Context context,
+                                                             ArrayList< ContentProviderOperation > operations,
+                                                             int progressTextId )
+   {
+      boolean ok = true;
+      
+      if ( operations.size() > 0 )
+      {
+         try
+         {
+            ok = new ApplyOperationsTask( context, progressTextId, true ).execute( operations )
+                                                                         .get();
+         }
+         catch ( InterruptedException e )
+         {
+            Log.e( LogUtils.toTag( Queries.class ),
+                   "Applying operations failed",
+                   e );
+            ok = false;
+         }
+         catch ( ExecutionException e )
+         {
+            Log.e( LogUtils.toTag( Queries.class ),
+                   "Applying operations failed",
+                   e );
+            ok = false;
+         }
+      }
+      
+      return ok;
    }
 }

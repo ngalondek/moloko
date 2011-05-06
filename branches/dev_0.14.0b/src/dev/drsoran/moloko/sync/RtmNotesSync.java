@@ -22,23 +22,25 @@
 
 package dev.drsoran.moloko.sync;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.util.Log;
 
 import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
-import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.TimeLineResult;
 import com.mdt.rtm.data.RtmTaskNote;
-import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmProvider;
+import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.elements.SyncNote;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
@@ -68,17 +70,21 @@ public final class RtmNotesSync
                                       MolokoSyncResult syncResult )
    {
       // Check if we have server write access
-      if ( timeLineFactory != null && lastSync != null )
+      if ( timeLineFactory != null )
       {
-         final List< RtmTaskNote > newNotes = RtmNotesProviderPart.getCreatedNotesSince( provider,
-                                                                                         lastSync.getTime() );
+         final List< RtmTaskNote > newNotes = RtmNotesProviderPart.getLocalCreatedNotes( provider );
          
          if ( newNotes != null )
          {
+            // Get all local notes and filter them by keeping only the ones (newNotes)
+            // from above.
+            final SyncRtmTaskNotesList localNotes = localTasks.getSyncNotesList();
+            localNotes.intersect( newNotes );
+            
             sendNewNotes( service,
                           (RtmProvider) provider.getLocalContentProvider(),
                           timeLineFactory,
-                          newNotes,
+                          localNotes,
                           syncResult );
          }
          else
@@ -180,7 +186,7 @@ public final class RtmNotesSync
    private final static boolean sendNewNotes( Service service,
                                               RtmProvider localContentProvider,
                                               TimeLineFactory timeLineFactory,
-                                              List< RtmTaskNote > newNotes,
+                                              SyncRtmTaskNotesList newNotes,
                                               MolokoSyncResult syncResult )
    {
       if ( newNotes.size() > 0 )
@@ -200,22 +206,84 @@ public final class RtmNotesSync
             return false;
          }
          
-         for ( RtmTaskSeries localTaskSeries : localTaskSerieses )
+         for ( SyncNote note : newNotes.getSyncNotes() )
          {
-            for ( RtmTask localTask : localTaskSeries.getTasks() )
-            {
-               // Do not send deleted tasks which have not yet been synced.
-               // These tasks were created and deleted only locally.
-               if ( localTask.getDeletedDate() == null )
-                  sendTask( service,
-                            provider,
-                            timeline,
-                            localTaskSeries,
-                            localTask,
-                            syncResult );
-            }
+            sendNote( service, localContentProvider, timeline, note );
          }
       }
+      
+      return true;
+   }
+   
+
+
+   private final static RtmTaskNote sendNote( Service service,
+                                              RtmProvider provider,
+                                              RtmTimeline timeline,
+                                              SyncNote localNote )
+   {
+      // Create a new note on RTM side
+      final RtmTaskNote serverNote = addNote( timeline, localNote );
+      
+      if ( serverNote != null )
+      {
+         
+         final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
+         
+         localNote.handleAfterServerInsert( new SyncNote( null, serverNote ) )
+                  .getBatch( operations );
+         
+         final TransactionalAccess transactionalAccess = provider.newTransactionalAccess();
+         try
+         {
+            transactionalAccess.beginTransaction();
+            
+            provider.applyBatch( operations );
+            
+            transactionalAccess.setTransactionSuccessful();
+         }
+         catch ( Throwable e )
+         {
+            Log.e( TAG,
+                   "Applying local changes after sending new note failed",
+                   e );
+         }
+         finally
+         {
+            transactionalAccess.endTransaction();
+         }
+      }
+      
+      return serverNote;
+   }
+   
+
+
+   private final static RtmTaskNote addNote( RtmTimeline timeline, SyncNote note )
+   {
+      RtmTaskNote resultNote = null;
+      
+      try
+      {
+         final TimeLineResult< RtmTaskNote > res = timeline.tasks_notes_add( note.getListId(),
+                                                                             note.getTaskSeriesId(),
+                                                                             note.getTaskId(),
+                                                                             note.getTitle(),
+                                                                             note.getText() )
+                                                           .call();
+         
+         if ( res == null )
+            throw new ServiceException( -1,
+                                        "ServerOperation produced no result" );
+         
+         resultNote = res.element;
+      }
+      catch ( ServiceException e )
+      {
+         Log.e( TAG, "Executing server operation failed", e );
+      }
+      
+      return resultNote;
    }
    
 
@@ -235,7 +303,7 @@ public final class RtmNotesSync
                if ( result != null )
                   // If the set already contains an element in respect to the Comparator,
                   // then we update it by the new received.
-                  serverList.update( result );
+                  serverList.update( new SyncNote( null, result ) );
             }
             catch ( ServiceException e )
             {

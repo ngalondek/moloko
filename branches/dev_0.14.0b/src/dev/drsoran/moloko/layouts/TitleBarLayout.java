@@ -23,6 +23,8 @@
 package dev.drsoran.moloko.layouts;
 
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -59,10 +61,12 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.RtmSmartAddAdapter;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.moloko.widgets.RtmSmartAddTextView;
 import dev.drsoran.moloko.widgets.ToggleImageButton;
 import dev.drsoran.moloko.widgets.ToggleImageButton.OnCheckedChangeListener;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TitleBarLayout extends LinearLayout implements
@@ -94,9 +98,11 @@ public class TitleBarLayout extends LinearLayout implements
       
       private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
+      private final RtmSmartFilter filter;
+      
       
 
-      public AddTaskSection( View titleBar )
+      public AddTaskSection( View titleBar, RtmSmartFilter filter )
       {
          container = titleBar.findViewById( R.id.app_titlebar_quick_add_task_layout );
          
@@ -120,6 +126,8 @@ public class TitleBarLayout extends LinearLayout implements
          btnLocation.setOnClickListener( this );
          btnRepeat.setOnClickListener( this );
          btnEstimate.setOnClickListener( this );
+         
+         this.filter = filter;
       }
       
 
@@ -130,6 +138,12 @@ public class TitleBarLayout extends LinearLayout implements
          
          if ( show )
          {
+            // Depending on the used filter, pre-select certain operators
+            if ( filter != null )
+            {
+               
+            }
+            
             addTaskEdit.requestFocus();
          }
          else
@@ -182,7 +196,52 @@ public class TitleBarLayout extends LinearLayout implements
       
 
 
-      private final void appendOperator( char operator )
+      private final void preselectByFilter()
+      {
+         final List< RtmSmartFilterToken > filterTokens = new LinkedList< RtmSmartFilterToken >( filter.getTokens() );
+         
+         // Remove duplicate filter tokens. These can't be suggested
+         // since they are ambiguous.
+         {
+            Collections.sort( filterTokens,
+                              new Comparator< RtmSmartFilterToken >()
+                              {
+                                 public int compare( RtmSmartFilterToken object1,
+                                                     RtmSmartFilterToken object2 )
+                                 {
+                                    return object1.operatorType
+                                       - object2.operatorType;
+                                 }
+                              } );
+            
+            for ( int i = 0; i < filterTokens.size(); )
+            {
+               boolean ambiguous = false;
+               
+               RtmSmartFilterToken filterToken = filterTokens.get( i );
+               
+               int j = i + 1;
+               // Look ahead if we have a row of equal operators
+               while ( j < filterTokens.size()
+                  && filterTokens.get( j ).operatorType == filterToken.operatorType )
+               {
+                  ambiguous = true;
+                  filterTokens.set( j, null );
+               }
+               
+               if ( ambiguous )
+               {
+                  filterTokens.set( i, null );
+                  
+               }
+               i = j - 1;
+            }
+         }
+      }
+      
+
+
+      private final Editable appendOperator( char operator )
       {
          final Editable text = addTaskEdit.getEditableText();
          
@@ -190,6 +249,15 @@ public class TitleBarLayout extends LinearLayout implements
             text.append( ' ' );
          
          text.append( operator );
+         
+         return text;
+      }
+      
+
+
+      private final Editable appendOperatorAndValue( char operator, String value )
+      {
+         return appendOperator( operator ).append( value );
       }
       
 
@@ -346,6 +414,8 @@ public class TitleBarLayout extends LinearLayout implements
    
    private AddTaskSection addTaskSection;
    
+   private RtmSmartFilter addTaskFilter;
+   
    
 
    public TitleBarLayout( Context context, AttributeSet attrs )
@@ -426,6 +496,13 @@ public class TitleBarLayout extends LinearLayout implements
    
 
 
+   public void setAddTaskFilter( RtmSmartFilter filter )
+   {
+      addTaskFilter = filter;
+   }
+   
+
+
    public void onCheckedChanged( ToggleImageButton button, boolean checked )
    {
       hideOrShowAddTaskLayout();
@@ -483,7 +560,7 @@ public class TitleBarLayout extends LinearLayout implements
       {
          if ( addTaskSection == null )
          {
-            addTaskSection = new AddTaskSection( this );
+            addTaskSection = new AddTaskSection( this, addTaskFilter );
          }
          
          addTaskSection.show( true );

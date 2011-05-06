@@ -25,6 +25,7 @@ package dev.drsoran.moloko.sync.elements;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import com.mdt.rtm.data.RtmTaskNote;
@@ -123,6 +124,30 @@ public class SyncRtmTaskNotesList
       
       if ( pos >= 0 )
          notes.remove( pos );
+   }
+   
+
+
+   public void intersect( List< RtmTaskNote > notes )
+   {
+      for ( Iterator< SyncNote > i = this.notes.iterator(); i.hasNext(); )
+      {
+         SyncNote syncNote = i.next();
+         
+         boolean found = false;
+         
+         for ( RtmTaskNote rtmTaskNote : notes )
+         {
+            if ( rtmTaskNote.getId().equals( syncNote.getId() ) )
+            {
+               found = true;
+               break;
+            }
+         }
+         
+         if ( !found )
+            i.remove();
+      }
    }
    
 

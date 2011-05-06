@@ -101,16 +101,21 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                         modification.getNewValue() );
       
       final String syncedValue;
-      try
+      if ( !modification.isSyncedValueSet() && contentResolver != null )
       {
-         syncedValue = getSyncedValue( contentResolver,
-                                       modification.getEntityUri(),
-                                       modification.getColName() );
+         try
+         {
+            syncedValue = getSyncedValue( contentResolver,
+                                          modification.getEntityUri(),
+                                          modification.getColName() );
+         }
+         catch ( RemoteException e )
+         {
+            return null;
+         }
       }
-      catch ( RemoteException e )
-      {
-         return null;
-      }
+      else
+         syncedValue = modification.getSyncedValue();
       
       Modification.put( values, Modifications.SYNCED_VALUE, syncedValue );
       

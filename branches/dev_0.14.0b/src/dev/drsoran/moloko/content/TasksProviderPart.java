@@ -40,7 +40,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -69,9 +68,9 @@ public class TasksProviderPart extends AbstractProviderPart
    
    public final static class NewTaskIds
    {
-      public final String taskSeriesId;
+      public String taskSeriesId;
       
-      public final String rawTaskId;
+      public String rawTaskId;
       
       
 
@@ -384,8 +383,9 @@ public class TasksProviderPart extends AbstractProviderPart
    
 
 
-   public final static List< ContentProviderOperation > insertTask( ContentResolver contentResolver,
-                                                                    Task task )
+   public final static List< ContentProviderOperation > insertLocalCreatedTask( ContentResolver contentResolver,
+                                                                                Task task,
+                                                                                NewTaskIds outNewIds )
    {
       List< ContentProviderOperation > operations = null;
       final ContentProviderClient client = contentResolver.acquireContentProviderClient( Rtm.AUTHORITY );
@@ -433,6 +433,12 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                 task.getParticipants() );
          
          operations = RtmTaskSeriesProviderPart.insertTaskSeries( rtmTaskSeries );
+         
+         if ( outNewIds != null )
+         {
+            outNewIds.taskSeriesId = newIds.taskSeriesId;
+            outNewIds.rawTaskId = newIds.rawTaskId;
+         }
       }
       
       return operations;
@@ -720,11 +726,12 @@ public class TasksProviderPart extends AbstractProviderPart
 
    private final static NewTaskIds generateIdsForNewTask( ContentProviderClient client )
    {
-      String nextTaskSeriesId = getNextId( client, TaskSeries.CONTENT_URI );
+      String nextTaskSeriesId = Queries.getNextId( client,
+                                                   TaskSeries.CONTENT_URI );
       String nextRawTaskId = null;
       
       if ( nextTaskSeriesId != null )
-         nextRawTaskId = getNextId( client, RawTasks.CONTENT_URI );
+         nextRawTaskId = Queries.getNextId( client, RawTasks.CONTENT_URI );
       
       if ( nextTaskSeriesId != null && nextRawTaskId != null )
          return new NewTaskIds( nextTaskSeriesId, nextRawTaskId );
@@ -732,48 +739,4 @@ public class TasksProviderPart extends AbstractProviderPart
          return null;
    }
    
-
-
-   private final static String getNextId( ContentProviderClient client,
-                                          Uri contentUri )
-   {
-      Cursor c = null;
-      String newId = null;
-      
-      try
-      {
-         c = client.query( contentUri, new String[]
-         { BaseColumns._ID }, null, null, null );
-         
-         if ( c != null )
-         {
-            if ( c.getCount() > 0 )
-            {
-               long longId = -1;
-               
-               for ( boolean ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-               {
-                  final long id = c.getLong( 0 );
-                  if ( id > longId )
-                     longId = id;
-               }
-               
-               newId = String.valueOf( longId + 1 );
-            }
-            else
-               newId = String.valueOf( 1L );
-         }
-      }
-      catch ( Throwable e )
-      {
-         Log.e( TAG, "Generating new ID failed. ", e );
-      }
-      finally
-      {
-         if ( c != null )
-            c.close();
-      }
-      
-      return newId;
-   }
 }

@@ -59,6 +59,7 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.DelayedRun;
@@ -135,7 +136,9 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       @Override
       protected void onPostExecute( AsyncFillListResult result )
       {
+         updateTitleBarSmartFilter( result.filter );
          setTasksResult( result );
+         
          AbstractTasksListActivity.this.asyncFillList = null;
       }
    }
@@ -941,6 +944,14 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
       
       return ok;
+   }
+   
+
+
+   private void updateTitleBarSmartFilter( RtmSmartFilter filter )
+   {
+      TitleBarLayout titleBar = (TitleBarLayout) findViewById( R.id.app_title_bar );
+      titleBar.setAddTaskFilter( filter );
    }
    
 

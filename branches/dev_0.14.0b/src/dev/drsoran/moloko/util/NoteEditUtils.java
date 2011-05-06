@@ -22,12 +22,13 @@
 
 package dev.drsoran.moloko.util;
 
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
 
+import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.provider.Rtm.Notes;
@@ -35,6 +36,7 @@ import dev.drsoran.provider.Rtm.Notes;
 
 public final class NoteEditUtils
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + NoteEditUtils.class.getSimpleName();
    
@@ -64,7 +66,10 @@ public final class NoteEditUtils
                                                        text ) );
       modifications.add( Modification.newNoteModified( noteId ) );
       
-      return reportStatus( context, applyModifications( context, modifications ) );
+      return reportStatus( context,
+                           Queries.applyModifications( context,
+                                                       modifications,
+                                                       R.string.dlg_save_note ) );
    }
    
 
@@ -79,7 +84,17 @@ public final class NoteEditUtils
                                                                     System.currentTimeMillis() ) );
       modifications.add( Modification.newNoteModified( noteId ) );
       
-      return reportStatus( context, applyModifications( context, modifications ) );
+      final ArrayList< ContentProviderOperation > removeCreatedOperations = new ArrayList< ContentProviderOperation >( 1 );
+      removeCreatedOperations.add( CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                                                   noteId ) ) );
+      
+      return reportStatus( context,
+                           Queries.applyModifications( context,
+                                                       modifications,
+                                                       R.string.dlg_save_note )
+                              && Queries.transactionalApplyOperations( context,
+                                                                       removeCreatedOperations,
+                                                                       R.string.dlg_save_note ) );
    }
    
 
@@ -89,35 +104,6 @@ public final class NoteEditUtils
       Toast.makeText( context,
                       ok ? R.string.note_save_ok : R.string.note_save_error,
                       Toast.LENGTH_SHORT ).show();
-      
-      return ok;
-   }
-   
-
-
-   private final static boolean applyModifications( Context context,
-                                                    ModificationSet modifications )
-   {
-      boolean ok = true;
-      
-      if ( modifications.size() > 0 )
-      {
-         try
-         {
-            ok = new ApplyModificationsTask( context, R.string.dlg_save_note ).execute( modifications )
-                                                                              .get();
-         }
-         catch ( InterruptedException e )
-         {
-            Log.e( TAG, "Applying note changes failed", e );
-            ok = false;
-         }
-         catch ( ExecutionException e )
-         {
-            Log.e( TAG, "Applying note changes failed", e );
-            ok = false;
-         }
-      }
       
       return ok;
    }

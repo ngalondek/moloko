@@ -248,7 +248,7 @@
             <category
                android:name="android.intent.category.DEFAULT" />
             <data
-               android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />            
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.note" />            
          </intent-filter>
       </activity>
 

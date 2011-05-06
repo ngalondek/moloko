@@ -133,7 +133,7 @@ public class RtmProvider extends ContentProvider
        new RtmSettingsProviderPart( context, dbHelper ),
        new SyncProviderPart( context, dbHelper ),
        new ModificationsProviderPart( context, dbHelper ),
-       new RollbacksProviderPart( context, dbHelper ) } ) );
+       new CreationsProviderPart( context, dbHelper ) } ) );
       
       parts.addAll( mutableParts );
       

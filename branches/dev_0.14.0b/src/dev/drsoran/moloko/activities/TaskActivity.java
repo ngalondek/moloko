@@ -745,9 +745,5 @@ public class TaskActivity extends Activity
             throw e;
          }
       }
-      else
-      {
-         LogUtils.logDBError( this, TAG, "Notes" );
-      }
    }
 }

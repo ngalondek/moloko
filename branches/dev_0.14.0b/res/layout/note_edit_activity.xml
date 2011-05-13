@@ -89,6 +89,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="0.5"
             android:text="@string/btn_cancel"
+            android:singleLine="true"
             android:onClick="onCancel" />
       </LinearLayout>
 

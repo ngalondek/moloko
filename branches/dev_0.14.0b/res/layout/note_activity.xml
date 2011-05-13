@@ -68,7 +68,7 @@
             android:layout_toRightOf="@id/note_buttons_edit"
             android:layout_alignTop="@id/note_buttons_edit"
             android:layout_alignBottom="@id/note_buttons_edit"
-            android:src="@drawable/ic_button_add"
+            android:src="@drawable/ic_button_task_add_note"
             android:scaleType="fitXY"
             android:onClick="onAddNote" />
 

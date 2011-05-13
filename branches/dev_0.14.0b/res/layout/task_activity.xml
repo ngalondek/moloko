@@ -232,7 +232,7 @@
                   android:layout_toRightOf="@id/task_buttons_postpone"
                   android:layout_alignTop="@id/task_buttons_postpone"
                   android:layout_alignBottom="@id/task_buttons_postpone"
-                  android:src="@drawable/ic_button_add"
+                  android:src="@drawable/ic_button_task_add_note"
                   android:scaleType="fitXY"
                   android:onClick="onAddNote" />
                <ImageButton

@@ -23,6 +23,11 @@
 package dev.drsoran.moloko.util.parsing;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.antlr.runtime.RecognitionException;
 
@@ -87,11 +92,11 @@ public final class RtmSmartFilterParsing
    
 
 
-   public final static boolean hasOperator( ArrayList< RtmSmartFilterToken > tokens,
+   public final static boolean hasOperator( List< RtmSmartFilterToken > tokens,
                                             int operator,
                                             boolean negated )
    {
-      for ( RtmSmartFilterToken token : tokens )
+      for ( RtmSmartFilterToken token : removeAmbiguousTokens( tokens ) )
       {
          if ( token.operatorType == operator && token.isNegated == negated )
             return true;
@@ -102,12 +107,12 @@ public final class RtmSmartFilterParsing
    
 
 
-   public final static boolean hasOperatorAndValue( ArrayList< RtmSmartFilterToken > tokens,
+   public final static boolean hasOperatorAndValue( List< RtmSmartFilterToken > tokens,
                                                     int operator,
                                                     String value,
                                                     boolean negated )
    {
-      for ( RtmSmartFilterToken token : tokens )
+      for ( RtmSmartFilterToken token : removeAmbiguousTokens( tokens ) )
       {
          if ( token.operatorType == operator
             && token.value.equalsIgnoreCase( value )
@@ -120,7 +125,7 @@ public final class RtmSmartFilterParsing
    
 
 
-   public final static boolean hasCompletedOperator( ArrayList< RtmSmartFilterToken > tokens )
+   public final static boolean hasCompletedOperator( List< RtmSmartFilterToken > tokens )
    {
       for ( RtmSmartFilterToken token : tokens )
       {
@@ -134,5 +139,51 @@ public final class RtmSmartFilterParsing
       }
       
       return false;
+   }
+   
+
+
+   public final static List< RtmSmartFilterToken > removeAmbiguousTokens( List< RtmSmartFilterToken > tokens )
+   {
+      final List< RtmSmartFilterToken > filterTokens = new LinkedList< RtmSmartFilterToken >( tokens );
+      
+      Collections.sort( filterTokens, new Comparator< RtmSmartFilterToken >()
+      {
+         public int compare( RtmSmartFilterToken object1,
+                             RtmSmartFilterToken object2 )
+         {
+            return object1.operatorType - object2.operatorType;
+         }
+      } );
+      
+      for ( int i = 0, cnt = filterTokens.size(); i < cnt; )
+      {
+         boolean ambiguous = false;
+         
+         RtmSmartFilterToken filterToken = filterTokens.get( i );
+         
+         // next token
+         int startI = i++;
+         
+         // Look ahead if we have a row of equal operators
+         for ( ; i < cnt
+            && filterTokens.get( i ).operatorType == filterToken.operatorType; ++i )
+         {
+            ambiguous = true;
+            
+            // remove equal token in row
+            filterTokens.set( i, null );
+         }
+         
+         if ( ambiguous )
+            // Remove first token of the row
+            filterTokens.set( startI, null );
+      }
+      
+      for ( Iterator< RtmSmartFilterToken > i = filterTokens.iterator(); i.hasNext(); )
+         if ( i.next() == null )
+            i.remove();
+      
+      return filterTokens;
    }
 }

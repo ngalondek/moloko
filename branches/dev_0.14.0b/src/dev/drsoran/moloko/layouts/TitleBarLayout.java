@@ -23,8 +23,6 @@
 package dev.drsoran.moloko.layouts;
 
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +36,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -61,6 +60,7 @@ import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.RtmSmartAddAdapter;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.moloko.widgets.RtmSmartAddTextView;
 import dev.drsoran.moloko.widgets.ToggleImageButton;
@@ -98,11 +98,11 @@ public class TitleBarLayout extends LinearLayout implements
       
       private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
-      private final RtmSmartFilter filter;
+      private RtmSmartFilter filter;
       
       
 
-      public AddTaskSection( View titleBar, RtmSmartFilter filter )
+      public AddTaskSection( View titleBar )
       {
          container = titleBar.findViewById( R.id.app_titlebar_quick_add_task_layout );
          
@@ -126,25 +126,33 @@ public class TitleBarLayout extends LinearLayout implements
          btnLocation.setOnClickListener( this );
          btnRepeat.setOnClickListener( this );
          btnEstimate.setOnClickListener( this );
-         
-         this.filter = filter;
       }
       
 
 
-      public void show( boolean show )
+      public void show( boolean show, RtmSmartFilter filter )
       {
          container.setVisibility( show ? View.VISIBLE : View.GONE );
          
          if ( show )
          {
-            // Depending on the used filter, pre-select certain operators
-            if ( filter != null )
-            {
-               
-            }
+            // If we get a new filter we clear the edit text.
+            if ( this.filter != filter )
+               addTaskEdit.getText().clear();
+            
+            this.filter = filter;
             
             addTaskEdit.requestFocus();
+            
+            // Depending on the used filter, pre-select certain operators
+            // Only do that if the edit field is empty cause this
+            // instance is kept even after closing the quick add field.
+            if ( filter != null && addTaskEdit.getText().length() == 0
+               && preselectByFilter( filter ) > 0 )
+            {
+               addTaskEdit.setText( " " + addTaskEdit.getText() );
+               Selection.setSelection( addTaskEdit.getText(), 0 );
+            }
          }
          else
          {
@@ -196,47 +204,25 @@ public class TitleBarLayout extends LinearLayout implements
       
 
 
-      private final void preselectByFilter()
+      private final int preselectByFilter( RtmSmartFilter filter )
       {
-         final List< RtmSmartFilterToken > filterTokens = new LinkedList< RtmSmartFilterToken >( filter.getTokens() );
+         int numPreselected = 0;
          
-         // Remove duplicate filter tokens. These can't be suggested
-         // since they are ambiguous.
+         // Iterate over all tokens and suggest all non-null tokens
+         for ( RtmSmartFilterToken rtmSmartFilterToken : RtmSmartFilterParsing.removeAmbiguousTokens( filter.getTokens() ) )
          {
-            Collections.sort( filterTokens,
-                              new Comparator< RtmSmartFilterToken >()
-                              {
-                                 public int compare( RtmSmartFilterToken object1,
-                                                     RtmSmartFilterToken object2 )
-                                 {
-                                    return object1.operatorType
-                                       - object2.operatorType;
-                                 }
-                              } );
+            final Character operator = RtmSmartAddTokenizer.getOperatorFromRtmSmartFilterTokenType( rtmSmartFilterToken.operatorType );
             
-            for ( int i = 0; i < filterTokens.size(); )
+            // Check if the RtmSmartFilterToken can be used as pre-selection
+            if ( operator != null )
             {
-               boolean ambiguous = false;
-               
-               RtmSmartFilterToken filterToken = filterTokens.get( i );
-               
-               int j = i + 1;
-               // Look ahead if we have a row of equal operators
-               while ( j < filterTokens.size()
-                  && filterTokens.get( j ).operatorType == filterToken.operatorType )
-               {
-                  ambiguous = true;
-                  filterTokens.set( j, null );
-               }
-               
-               if ( ambiguous )
-               {
-                  filterTokens.set( i, null );
-                  
-               }
-               i = j - 1;
+               appendOperatorAndValue( operator.charValue(),
+                                       rtmSmartFilterToken.value );
+               ++numPreselected;
             }
          }
+         
+         return numPreselected;
       }
       
 
@@ -257,7 +243,14 @@ public class TitleBarLayout extends LinearLayout implements
 
       private final Editable appendOperatorAndValue( char operator, String value )
       {
-         return appendOperator( operator ).append( value );
+         final Editable text = addTaskEdit.getEditableText();
+         
+         if ( text.length() > 0 && text.charAt( text.length() - 1 ) != ' ' )
+            text.append( ' ' );
+         
+         text.append( operator ).append( value );
+         
+         return text;
       }
       
 
@@ -286,7 +279,9 @@ public class TitleBarLayout extends LinearLayout implements
                
                for ( Token token : tokens )
                {
-                  if ( token.type == RtmSmartAddTokenizer.TASK_NAME_TYPE )
+                  // Check that the task name is not only a space character sequence
+                  if ( token.type == RtmSmartAddTokenizer.TASK_NAME_TYPE
+                     && !TextUtils.isEmpty( token.text.replaceAll( " ", "" ) ) )
                   {
                      config.putString( Tasks.TASKSERIES_NAME, token.text );
                   }
@@ -313,7 +308,7 @@ public class TitleBarLayout extends LinearLayout implements
                                  config.putLong( Tasks.DUE_DATE,
                                                  cal.getTimeInMillis() );
                                  config.putBoolean( Tasks.HAS_DUE_TIME,
-                                                    cal.isSet( Calendar.HOUR_OF_DAY ) );
+                                                    MolokoDateUtils.hasTime( cal ) );
                               }
                            }
                            break;
@@ -560,15 +555,15 @@ public class TitleBarLayout extends LinearLayout implements
       {
          if ( addTaskSection == null )
          {
-            addTaskSection = new AddTaskSection( this, addTaskFilter );
+            addTaskSection = new AddTaskSection( this );
          }
          
-         addTaskSection.show( true );
+         addTaskSection.show( true, addTaskFilter );
       }
       else
       {
          if ( addTaskSection != null )
-            addTaskSection.show( false );
+            addTaskSection.show( false, null );
       }
       
       requestLayout();

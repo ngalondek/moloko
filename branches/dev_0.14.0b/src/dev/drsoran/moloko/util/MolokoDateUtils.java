@@ -206,14 +206,20 @@ public class MolokoDateUtils
 
    public final static Calendar clearTime( Calendar cal )
    {
-      cal.clear( Calendar.HOUR );
-      cal.clear( Calendar.HOUR_OF_DAY );
       cal.clear( Calendar.MINUTE );
       cal.clear( Calendar.SECOND );
       cal.clear( Calendar.MILLISECOND );
       cal.clear( Calendar.AM_PM );
-      
+      cal.clear( Calendar.HOUR );
+      cal.clear( Calendar.HOUR_OF_DAY );
       return cal;
+   }
+   
+
+
+   public final static boolean hasTime( Calendar cal )
+   {
+      return cal.isSet( Calendar.HOUR_OF_DAY );
    }
    
 

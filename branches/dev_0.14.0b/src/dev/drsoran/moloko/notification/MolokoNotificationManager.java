@@ -545,8 +545,8 @@ public class MolokoNotificationManager implements
       }
       else
       {
-         Log.e( TAG, "Error evaluating RtmSmartFilter "
-            + filter.getFilterString() );
+         Log.e( TAG,
+                "Error evaluating RtmSmartFilter " + filter.getFilterString() );
       }
       
       return new Pair< String, Integer >( result, count );
@@ -569,13 +569,7 @@ public class MolokoNotificationManager implements
    {
       final Calendar cal = getCalendar( dayOffset );
       
-      cal.clear( Calendar.HOUR );
-      cal.clear( Calendar.HOUR_OF_DAY );
-      cal.clear( Calendar.MINUTE );
-      cal.clear( Calendar.SECOND );
-      cal.clear( Calendar.MILLISECOND );
-      
-      return cal;
+      return MolokoDateUtils.clearTime( cal );
    }
    
 

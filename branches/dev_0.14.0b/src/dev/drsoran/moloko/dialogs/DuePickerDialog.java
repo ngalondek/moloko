@@ -359,7 +359,7 @@ public class DuePickerDialog extends AbstractPickerDialog
             wheelViews[ 0 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
                                                                          calendar,
                                                                          DueTimeWheelTextAdapter.TYPE_HOUR_OF_DAY ) );
-            if ( !hasTime || !calendar.isSet( Calendar.HOUR_OF_DAY ) )
+            if ( !hasTime || !MolokoDateUtils.hasTime( calendar ) )
                wheelViews[ 0 ].setCurrentItem( offIndex );
             else
                wheelViews[ 0 ].setCurrentItem( calendar.get( Calendar.HOUR_OF_DAY ) + 1 );
@@ -369,7 +369,7 @@ public class DuePickerDialog extends AbstractPickerDialog
             wheelViews[ 0 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
                                                                          calendar,
                                                                          DueTimeWheelTextAdapter.TYPE_HOUR ) );
-            if ( !hasTime || !calendar.isSet( Calendar.HOUR ) )
+            if ( !hasTime || !MolokoDateUtils.hasTime( calendar ) )
                wheelViews[ 0 ].setCurrentItem( offIndex );
             else
                wheelViews[ 0 ].setCurrentItem( calendar.get( Calendar.HOUR ) + 1 );

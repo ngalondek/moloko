@@ -161,14 +161,12 @@ options
    }
 
 
-
-   private void equalsStringParam( String param )
+   private void likeStringParam( String param )
    {
-      result.append( " = '" );
+      result.append( " like '" );
       result.append( unquotify( param ) );
       result.append( "'" );
    }
-
 
 
    private void containsStringParam( String param )
@@ -203,6 +201,7 @@ options
 
       if ( cal != null )
       {
+         result.append( "(" );
          result.append( column );
          
       	// Check if we have 'NEVER'
@@ -230,6 +229,8 @@ options
             result.append( " < " );
             result.append( cal.getTimeInMillis() );
          }
+         
+         result.append( ")" );
       }
       else
          // Parser error
@@ -270,6 +271,7 @@ options
 
       if ( range != null )
       {
+         result.append( "(" );
          result.append( column );
          result.append( " >= " );
          result.append( !past ? range.startEpoch.getTimeInMillis() : range.endEpoch.getTimeInMillis() );
@@ -277,6 +279,7 @@ options
          result.append( column );
          result.append( " < " );
          result.append( !past ? range.endEpoch.getTimeInMillis() : range.startEpoch.getTimeInMillis() );
+         result.append( ")" );
       }
       else
         // Parser error
@@ -332,7 +335,7 @@ options
 OP_LIST     :  'list:' ( s=STRING | s=Q_STRING )
                {
                   result.append( Tasks.LIST_NAME );
-                  equalsStringParam( $s.getText() );
+                  likeStringParam( $s.getText() );
 
                   addRtmToken( OP_LIST, $s.getText() );
                };
@@ -340,7 +343,7 @@ OP_LIST     :  'list:' ( s=STRING | s=Q_STRING )
 OP_PRIORITY :  'priority:' s=STRING
                {
                   result.append( Tasks.PRIORITY );
-                  equalsStringParam( firstCharOf( unquotify( $s.getText() ) ) );
+                  likeStringParam( firstCharOf( unquotify( $s.getText() ) ) );
                   
                   addRtmToken( OP_PRIORITY, $s.getText() );
                };
@@ -368,6 +371,7 @@ OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
               {
                  final String unqString = unquotify( $s.getText() );
                  
+                 result.append( "(" );
                  result.append( Tasks.TAGS )
                  // Exact match if only 1 tag
                        .append( " = '" )
@@ -392,6 +396,7 @@ OP_TAG      : 'tag:' ( s=STRING | s=Q_STRING )
                        .append( Tags.TAGS_SEPARATOR )                       
                        .append( unqString )
                        .append( "'" );
+                 result.append( ")" );
                        
                  addRtmToken( OP_TAG, $s.getText() );
               };
@@ -427,19 +432,18 @@ OP_IS_TAGGED    : 'istagged:'
 OP_LOCATION : 'location:' ( s=STRING | s=Q_STRING )
                {
                   result.append( Tasks.LOCATION_NAME );
-                  containsStringParam( $s.getText() );
+                  likeStringParam( $s.getText() );
                   addRtmToken( OP_LOCATION, $s.getText() );
                };
 
 // OP_LOCATED_WITHIN
 
 OP_ISLOCATED : 'islocated:'
-               {
-                  result.append( Tasks.LOCATION_ID );
-               }
                (
                   TRUE
                   {
+                     result.append( "(" );
+                     result.append( Tasks.LOCATION_ID );
                      // Handle the case that shared tasks have a location
                      // ID but not from our DB.
                      result.append(" IS NOT NULL AND ");
@@ -449,12 +453,16 @@ OP_ISLOCATED : 'islocated:'
                      result.append(" FROM ");
                      result.append( Locations.PATH );
                      result.append(" )");
+                     result.append( ")" );
+                     
                      addRtmToken( OP_ISLOCATED, TRUE_LIT );
                   }
                   |
                   FALSE
                   {
+                     result.append( Tasks.LOCATION_ID );
                      result.append(" IS NULL");
+                     
                      addRtmToken( OP_ISLOCATED, FALSE_LIT );
                   }
                );
@@ -486,6 +494,7 @@ OP_NAME      : 'name:' ( s=STRING | s=Q_STRING )
 
 OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
                    {
+                      result.append( "(" );
                       result.append( " (SELECT " )
                             .append( Notes.TASKSERIES_ID )
                             .append( " FROM " )
@@ -499,6 +508,7 @@ OP_NOTE_CONTAINS : 'notecontains:' ( s=STRING | s=Q_STRING )
                       containsStringParam( s.getText() );
                       result.append( " OR " ).append( Notes.NOTE_TEXT );
                       containsStringParam( s.getText() );
+                      result.append( ")" );
                       result.append( ")" );
                       
                       addRtmToken( OP_NOTE_CONTAINS, $s.getText() );
@@ -597,6 +607,7 @@ OP_ADDED_WITHIN : 'addedwithin:' s=Q_STRING
 
 OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
                    {
+                      result.append( "(" );
                       result.append( Tasks.ESTIMATE_MILLIS );
 
                       final String param = unquotify( s.getText() );
@@ -620,7 +631,10 @@ OP_TIME_ESTIMATE : 'timeestimate:' s=Q_STRING
                       if ( estimatedMillis == -1 )
                          error = true;
                       else
+                      {
                          result.append( estimatedMillis );
+                         result.append( ")" );
+                      }
                          
                       addRtmToken( OP_TIME_ESTIMATE, $s.getText() );
                    };
@@ -661,12 +675,14 @@ OP_IS_SHARED : 'isshared:'
 
 OP_SHARED_WITH : 'sharedwith:' ( s=STRING | s=Q_STRING )
                  {
+                    result.append( "(" );
                     result.append( Tasks.PARTICIPANT_FULLNAMES );
                     containsStringParam( $s.getText() );
                     
                     result.append( " OR " );
                     result.append( Tasks.PARTICIPANT_USERNAMES );
                     containsStringParam( $s.getText() );
+                    result.append( ")" );
                     
                     addRtmToken( OP_SHARED_WITH, $s.getText() );
                  };

@@ -226,13 +226,16 @@ parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
    // will set them again.
    {
       if ( clearTime )
-      {
-         cal.clear( Calendar.HOUR );
-         cal.clear( Calendar.HOUR_OF_DAY );
-         cal.clear( Calendar.MINUTE );
-         cal.clear( Calendar.SECOND );
-         cal.clear( Calendar.MILLISECOND );
-      }
+         MolokoDateUtils.clearTime( cal );      
+   }
+   | NOW
+   {
+      // In case of NOW we do not respect the clearTime Parameter
+      // cause NOW has always a time.
+      final Calendar now = MolokoDateUtils.newCalendar();
+      
+      cal.setTimeInMillis( now.getTimeInMillis() );
+      cal.setTimeZone( now.getTimeZone() );
    }
    | EOF
    {
@@ -257,16 +260,8 @@ parseDateWithin[boolean past] returns [Calendar epochStart, Calendar epochEnd]
       retval.epochEnd.setTimeInMillis( retval.epochStart.getTimeInMillis() );
       retval.epochEnd.add( unit, past ? -amount : amount );
 
-      retval.epochStart.clear( Calendar.HOUR );
-      retval.epochStart.clear( Calendar.HOUR_OF_DAY );
-      retval.epochStart.clear( Calendar.MINUTE );
-      retval.epochStart.clear( Calendar.SECOND );
-      retval.epochStart.clear( Calendar.MILLISECOND );
-      retval.epochEnd.clear( Calendar.HOUR );
-      retval.epochEnd.clear( Calendar.HOUR_OF_DAY );
-      retval.epochEnd.clear( Calendar.MINUTE );
-      retval.epochEnd.clear( Calendar.SECOND );
-      retval.epochEnd.clear( Calendar.MILLISECOND );
+      MolokoDateUtils.clearTime( retval.epochStart );
+      MolokoDateUtils.clearTime( retval.epochEnd );
    }
    : (  a=INT
         {
@@ -337,7 +332,7 @@ date_full [Calendar cal]
                        false );
 
        // if year is missing and the date is
-       // befor now we roll to the next year.
+       // before now we roll to the next year.
        if ( pt3Str == null )
        {
           final Calendar now = getCalendar();

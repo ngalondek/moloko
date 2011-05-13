@@ -197,9 +197,6 @@ public class RtmSmartAddTokenizer implements Tokenizer
       switch ( rtmSmartFilterTokenType )
       {
          case RtmSmartFilterLexer.OP_DUE:
-         case RtmSmartFilterLexer.OP_DUE_AFTER:
-         case RtmSmartFilterLexer.OP_DUE_BEFORE:
-         case RtmSmartFilterLexer.OP_DUE_WITHIN:
             return Character.valueOf( OP_DUE_DATE );
             
          case RtmSmartFilterLexer.OP_PRIORITY:

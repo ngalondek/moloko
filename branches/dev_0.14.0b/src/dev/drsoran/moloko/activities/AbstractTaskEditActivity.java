@@ -786,8 +786,7 @@ abstract class AbstractTaskEditActivity extends Activity
             if ( cal != null )
             {
                onDueEdited( cal.getTimeInMillis(),
-                            cal.isSet( Calendar.HOUR_OF_DAY )
-                               || cal.isSet( Calendar.HOUR ) );
+                            MolokoDateUtils.hasTime( cal ) );
                refreshDue( dueEdit );
             }
             else

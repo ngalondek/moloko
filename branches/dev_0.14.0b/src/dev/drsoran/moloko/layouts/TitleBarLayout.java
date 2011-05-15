@@ -167,30 +167,32 @@ public class TitleBarLayout extends LinearLayout implements
 
       public void onClick( View view )
       {
+         final int pos = Selection.getSelectionStart( addTaskEdit.getText() );
+         
          switch ( view.getId() )
          {
             case R.id.app_titlebar_quick_add_task_btn_due_date:
-               appendOperator( RtmSmartAddTokenizer.OP_DUE_DATE );
+               insertOperator( RtmSmartAddTokenizer.OP_DUE_DATE, pos );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_prio:
-               appendOperator( RtmSmartAddTokenizer.OP_PRIORITY );
+               insertOperator( RtmSmartAddTokenizer.OP_PRIORITY, pos );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_list_tags:
-               appendOperator( RtmSmartAddTokenizer.OP_LIST_TAGS );
+               insertOperator( RtmSmartAddTokenizer.OP_LIST_TAGS, pos );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_location:
-               appendOperator( RtmSmartAddTokenizer.OP_LOCATION );
+               insertOperator( RtmSmartAddTokenizer.OP_LOCATION, pos );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_repeat:
-               appendOperator( RtmSmartAddTokenizer.OP_REPEAT );
+               insertOperator( RtmSmartAddTokenizer.OP_REPEAT, pos );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_estimate:
-               appendOperator( RtmSmartAddTokenizer.OP_ESTIMATE );
+               insertOperator( RtmSmartAddTokenizer.OP_ESTIMATE, pos );
                break;
             
             case R.id.app_titlebar_quick_add_task_btn_add:
@@ -216,8 +218,9 @@ public class TitleBarLayout extends LinearLayout implements
             // Check if the RtmSmartFilterToken can be used as pre-selection
             if ( operator != null )
             {
-               appendOperatorAndValue( operator.charValue(),
-                                       rtmSmartFilterToken.value );
+               insertOperatorAndValue( operator.charValue(),
+                                       rtmSmartFilterToken.value,
+                                       -1 );
                ++numPreselected;
             }
          }
@@ -227,28 +230,36 @@ public class TitleBarLayout extends LinearLayout implements
       
 
 
-      private final Editable appendOperator( char operator )
+      private final Editable insertOperator( char operator, int pos )
       {
          final Editable text = addTaskEdit.getEditableText();
          
-         if ( text.length() > 0 && text.charAt( text.length() - 1 ) != ' ' )
-            text.append( ' ' );
+         if ( pos == -1 )
+            pos = text.length();
          
-         text.append( operator );
+         if ( pos > 0 && text.charAt( pos - 1 ) != ' ' )
+            text.insert( pos++, " " );
+         
+         text.insert( pos, String.valueOf( operator ) );
          
          return text;
       }
       
 
 
-      private final Editable appendOperatorAndValue( char operator, String value )
+      private final Editable insertOperatorAndValue( char operator,
+                                                     String value,
+                                                     int pos )
       {
          final Editable text = addTaskEdit.getEditableText();
          
-         if ( text.length() > 0 && text.charAt( text.length() - 1 ) != ' ' )
-            text.append( ' ' );
+         if ( pos == -1 )
+            pos = text.length();
          
-         text.append( operator ).append( value );
+         if ( pos > 0 && text.charAt( pos - 1 ) != ' ' )
+            text.insert( pos++, " " );
+         
+         text.insert( pos, value ).insert( pos, String.valueOf( operator ) );
          
          return text;
       }

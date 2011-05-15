@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g 2011-03-22 11:55:02
+// $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g 2011-05-15 09:06:27
 
 package dev.drsoran.moloko.grammar;
 
@@ -110,7 +110,6 @@ public class RecurrencePatternParser extends Parser
    
 
 
-   @Override
    public String[] getTokenNames()
    {
       return RecurrencePatternParser.tokenNames;
@@ -118,10 +117,9 @@ public class RecurrencePatternParser extends Parser
    
 
 
-   @Override
    public String getGrammarFileName()
    {
-      return "F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g";
+      return "F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g";
    }
    
 
@@ -149,7 +147,7 @@ public class RecurrencePatternParser extends Parser
          else if ( operator.startsWith( OP_UNTIL_LIT ) )
             return 5;
          else if ( operator.startsWith( OP_COUNT_LIT ) )
-            return 5;
+            return 6;
          else
             return Integer.MAX_VALUE;
       }
@@ -247,7 +245,7 @@ public class RecurrencePatternParser extends Parser
    
 
    // $ANTLR start "parseRecurrencePattern"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:152:1:
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:152:1:
    // parseRecurrencePattern[RecurrPatternLanguage lang,\r\n boolean every] returns [String sentence] : OP_FREQ ( (
    // VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY parse_PatternWeekday[lang, sb, true] (
    // COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] ) )? ) | ( VAL_MONTHLY
@@ -268,34 +266,35 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:162:4: ( OP_FREQ ( (
-         // VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY parse_PatternWeekday[lang, sb,
-         // true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] ) )? ) | (
-         // VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY parse_PatternXst[lang, sb]
-         // ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA
-         // parse_PatternWeekday[lang, sb, false] )* ) ) )? ) | ( VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\",
-         // every] ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* )? )
-         // | ( VAL_DAILY parse_PatternInterval[lang, sb, \"day\", every] ) ) ( OP_UNTIL date= VAL_DATE | OP_COUNT
-         // count= INT )? )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:162:6: OP_FREQ ( (
-         // VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY parse_PatternWeekday[lang, sb,
-         // true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] ) )? ) | (
-         // VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY parse_PatternXst[lang, sb]
-         // ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA
-         // parse_PatternWeekday[lang, sb, false] )* ) ) )? ) | ( VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\",
-         // every] ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* )? )
-         // | ( VAL_DAILY parse_PatternInterval[lang, sb, \"day\", every] ) ) ( OP_UNTIL date= VAL_DATE | OP_COUNT
-         // count= INT )?
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:162:4: (
+         // OP_FREQ ( ( VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY
+         // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH
+         // parse_PatternMonth[lang, sb] ) )? ) | ( VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( (
+         // OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY
+         // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) ) )? ) | (
+         // VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang, sb, true]
+         // ( COMMA parse_PatternWeekday[lang, sb, false] )* )? ) | ( VAL_DAILY parse_PatternInterval[lang, sb, \"day\",
+         // every] ) ) ( OP_UNTIL date= VAL_DATE | OP_COUNT count= INT )? )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:162:6:
+         // OP_FREQ ( ( VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY
+         // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH
+         // parse_PatternMonth[lang, sb] ) )? ) | ( VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( (
+         // OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY
+         // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) ) )? ) | (
+         // VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang, sb, true]
+         // ( COMMA parse_PatternWeekday[lang, sb, false] )* )? ) | ( VAL_DAILY parse_PatternInterval[lang, sb, \"day\",
+         // every] ) ) ( OP_UNTIL date= VAL_DATE | OP_COUNT count= INT )?
          {
             match( input, OP_FREQ, FOLLOW_OP_FREQ_in_parseRecurrencePattern70 );
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:163:6: ( ( VAL_YEARLY
-            // parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY parse_PatternWeekday[lang, sb, true] (
-            // COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] ) )? ) | (
-            // VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY parse_PatternXst[lang,
-            // sb] ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA
-            // parse_PatternWeekday[lang, sb, false] )* ) ) )? ) | ( VAL_WEEKLY parse_PatternInterval[lang, sb,
-            // \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
-            // false] )* )? ) | ( VAL_DAILY parse_PatternInterval[lang, sb, \"day\", every] ) )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:163:6:
+            // ( ( VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY parse_PatternWeekday[lang,
+            // sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] ) )?
+            // ) | ( VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY
+            // parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY
+            // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) ) )? ) | (
+            // VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang, sb,
+            // true] ( COMMA parse_PatternWeekday[lang, sb, false] )* )? ) | ( VAL_DAILY parse_PatternInterval[lang, sb,
+            // \"day\", every] ) )
             int alt9 = 4;
             switch ( input.LA( 1 ) )
             {
@@ -331,19 +330,19 @@ public class RecurrencePatternParser extends Parser
             switch ( alt9 )
             {
                case 1:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:164:11: (
-                  // VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:164:11:
+                  // ( VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY
                   // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH
                   // parse_PatternMonth[lang, sb] ) )? )
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:164:11: (
-                  // VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:164:11:
+                  // ( VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY
                   // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH
                   // parse_PatternMonth[lang, sb] ) )? )
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:165:14: VAL_YEARLY
-                  // parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY parse_PatternWeekday[lang, sb,
-                  // true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] )
-                  // )?
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:165:14:
+                  // VAL_YEARLY parse_PatternInterval[lang, sb, \"year\", every] ( ( ( OP_BYDAY
+                  // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) OP_BYMONTH
+                  // parse_PatternMonth[lang, sb] ) )?
                   {
                      match( input,
                             VAL_YEARLY,
@@ -353,9 +352,9 @@ public class RecurrencePatternParser extends Parser
                      
                      state._fsp--;
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:166:14: ( ( (
-                     // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* )
-                     // OP_BYMONTH parse_PatternMonth[lang, sb] ) )?
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:166:14:
+                     // ( ( ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
+                     // false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] ) )?
                      int alt2 = 2;
                      int LA2_0 = input.LA( 1 );
                      
@@ -366,8 +365,8 @@ public class RecurrencePatternParser extends Parser
                      switch ( alt2 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:167:17: (
-                           // ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:167:17:
+                           // ( ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                            // false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] )
                         {
                            
@@ -375,17 +374,17 @@ public class RecurrencePatternParser extends Parser
                            lang.add( sb, "on_the" );
                            sb.append( " " );
                            
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:170:17: (
-                           // ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:170:17:
+                           // ( ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                            // false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb] )
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:171:20: (
-                           // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:171:20:
+                           // ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                            // false] )* ) OP_BYMONTH parse_PatternMonth[lang, sb]
                            {
-                              // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:171:20:
+                              // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:171:20:
                               // ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                               // false] )* )
-                              // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:171:21:
+                              // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:171:21:
                               // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                               // false] )*
                               {
@@ -397,7 +396,7 @@ public class RecurrencePatternParser extends Parser
                                  
                                  state._fsp--;
                                  
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:172:23:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:172:23:
                                  // ( COMMA parse_PatternWeekday[lang, sb, false] )*
                                  loop1: do
                                  {
@@ -412,7 +411,7 @@ public class RecurrencePatternParser extends Parser
                                     switch ( alt1 )
                                     {
                                        case 1:
-                                          // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:172:24:
+                                          // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:172:24:
                                           // COMMA parse_PatternWeekday[lang, sb, false]
                                        {
                                           match( input,
@@ -459,16 +458,16 @@ public class RecurrencePatternParser extends Parser
                }
                   break;
                case 2:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:180:11: (
-                  // VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:180:11:
+                  // ( VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY
                   // parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY
                   // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) ) )? )
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:180:11: (
-                  // VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:180:11:
+                  // ( VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY
                   // parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY
                   // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) ) )? )
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:181:14:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:181:14:
                   // VAL_MONTHLY parse_PatternInterval[lang, sb, \"month\", every] ( ( ( OP_BYMONTHDAY
                   // parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY
                   // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) ) )?
@@ -481,9 +480,10 @@ public class RecurrencePatternParser extends Parser
                      
                      state._fsp--;
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:182:14: ( ( (
-                     // OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | ( OP_BYDAY
-                     // parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* ) ) )?
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:182:14:
+                     // ( ( ( OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | (
+                     // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* )
+                     // ) )?
                      int alt6 = 2;
                      int LA6_0 = input.LA( 1 );
                      
@@ -494,8 +494,8 @@ public class RecurrencePatternParser extends Parser
                      switch ( alt6 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:183:17: (
-                           // ( OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | (
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:183:17:
+                           // ( ( OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | (
                            // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                            // false] )* ) )
                         {
@@ -504,8 +504,8 @@ public class RecurrencePatternParser extends Parser
                            lang.add( sb, "on_the" );
                            sb.append( " " );
                            
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:186:17: (
-                           // ( OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | (
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:186:17:
+                           // ( ( OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* ) | (
                            // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                            // false] )* ) )
                            int alt5 = 2;
@@ -531,12 +531,12 @@ public class RecurrencePatternParser extends Parser
                            switch ( alt5 )
                            {
                               case 1:
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:187:22:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:187:22:
                                  // ( OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* )
                               {
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:187:22:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:187:22:
                                  // ( OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )* )
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:188:25:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:188:25:
                                  // OP_BYMONTHDAY parse_PatternXst[lang, sb] ( COMMA parse_PatternXst[lang, sb] )*
                                  {
                                     match( input,
@@ -547,7 +547,7 @@ public class RecurrencePatternParser extends Parser
                                     
                                     state._fsp--;
                                     
-                                    // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:189:28:
+                                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:189:28:
                                     // ( COMMA parse_PatternXst[lang, sb] )*
                                     loop3: do
                                     {
@@ -562,7 +562,7 @@ public class RecurrencePatternParser extends Parser
                                        switch ( alt3 )
                                        {
                                           case 1:
-                                             // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:189:29:
+                                             // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:189:29:
                                              // COMMA parse_PatternXst[lang, sb]
                                           {
                                              match( input,
@@ -588,14 +588,14 @@ public class RecurrencePatternParser extends Parser
                               }
                                  break;
                               case 2:
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:191:22:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:191:22:
                                  // ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang,
                                  // sb, false] )* )
                               {
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:191:22:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:191:22:
                                  // ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang,
                                  // sb, false] )* )
-                                 // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:192:25:
+                                 // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:192:25:
                                  // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                                  // false] )*
                                  {
@@ -607,7 +607,7 @@ public class RecurrencePatternParser extends Parser
                                     
                                     state._fsp--;
                                     
-                                    // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:193:29:
+                                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:193:29:
                                     // ( COMMA parse_PatternWeekday[lang, sb, false] )*
                                     loop4: do
                                     {
@@ -622,7 +622,7 @@ public class RecurrencePatternParser extends Parser
                                        switch ( alt4 )
                                        {
                                           case 1:
-                                             // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:193:30:
+                                             // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:193:30:
                                              // COMMA parse_PatternWeekday[lang, sb, false]
                                           {
                                              match( input,
@@ -662,16 +662,16 @@ public class RecurrencePatternParser extends Parser
                }
                   break;
                case 3:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:198:11: (
-                  // VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang,
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:198:11:
+                  // ( VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang,
                   // sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* )? )
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:198:11: (
-                  // VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang,
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:198:11:
+                  // ( VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang,
                   // sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* )? )
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:199:14: VAL_WEEKLY
-                  // parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang, sb, true] (
-                  // COMMA parse_PatternWeekday[lang, sb, false] )* )?
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:199:14:
+                  // VAL_WEEKLY parse_PatternInterval[lang, sb, \"week\", every] ( OP_BYDAY parse_PatternWeekday[lang,
+                  // sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )* )?
                   {
                      match( input,
                             VAL_WEEKLY,
@@ -681,8 +681,8 @@ public class RecurrencePatternParser extends Parser
                      
                      state._fsp--;
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:200:14: (
-                     // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )*
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:200:14:
+                     // ( OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb, false] )*
                      // )?
                      int alt8 = 2;
                      int LA8_0 = input.LA( 1 );
@@ -694,7 +694,7 @@ public class RecurrencePatternParser extends Parser
                      switch ( alt8 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:201:17:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:201:17:
                            // OP_BYDAY parse_PatternWeekday[lang, sb, true] ( COMMA parse_PatternWeekday[lang, sb,
                            // false] )*
                         {
@@ -711,8 +711,8 @@ public class RecurrencePatternParser extends Parser
                            
                            state._fsp--;
                            
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:205:20: (
-                           // COMMA parse_PatternWeekday[lang, sb, false] )*
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:205:20:
+                           // ( COMMA parse_PatternWeekday[lang, sb, false] )*
                            loop7: do
                            {
                               int alt7 = 2;
@@ -726,7 +726,7 @@ public class RecurrencePatternParser extends Parser
                               switch ( alt7 )
                               {
                                  case 1:
-                                    // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:205:21:
+                                    // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:205:21:
                                     // COMMA parse_PatternWeekday[lang, sb, false]
                                  {
                                     match( input,
@@ -757,13 +757,13 @@ public class RecurrencePatternParser extends Parser
                }
                   break;
                case 4:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:208:11: (
-                  // VAL_DAILY parse_PatternInterval[lang, sb, \"day\", every] )
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:208:11:
+                  // ( VAL_DAILY parse_PatternInterval[lang, sb, \"day\", every] )
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:208:11: (
-                  // VAL_DAILY parse_PatternInterval[lang, sb, \"day\", every] )
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:209:14: VAL_DAILY
-                  // parse_PatternInterval[lang, sb, \"day\", every]
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:208:11:
+                  // ( VAL_DAILY parse_PatternInterval[lang, sb, \"day\", every] )
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:209:14:
+                  // VAL_DAILY parse_PatternInterval[lang, sb, \"day\", every]
                   {
                      match( input,
                             VAL_DAILY,
@@ -780,8 +780,8 @@ public class RecurrencePatternParser extends Parser
                
             }
             
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:212:6: ( OP_UNTIL date=
-            // VAL_DATE | OP_COUNT count= INT )?
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:212:6:
+            // ( OP_UNTIL date= VAL_DATE | OP_COUNT count= INT )?
             int alt10 = 3;
             int LA10_0 = input.LA( 1 );
             
@@ -796,8 +796,8 @@ public class RecurrencePatternParser extends Parser
             switch ( alt10 )
             {
                case 1:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:213:11: OP_UNTIL
-                  // date= VAL_DATE
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:213:11:
+                  // OP_UNTIL date= VAL_DATE
                {
                   match( input,
                          OP_UNTIL,
@@ -823,8 +823,8 @@ public class RecurrencePatternParser extends Parser
                }
                   break;
                case 2:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:225:11: OP_COUNT
-                  // count= INT
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:225:11:
+                  // OP_COUNT count= INT
                {
                   match( input,
                          OP_COUNT,
@@ -867,11 +867,11 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parseRecurrencePattern"
    
    // $ANTLR start "parseRecurrencePattern1"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:238:1: parseRecurrencePattern1
-   // returns [Map< Integer, List< Object > > elements] : OP_FREQ ( ( VAL_YEARLY parse_PatternInterval1[elements] (
-   // parse_PatternWeekday1[elements] parse_PatternMonth1[elements] )? ) | ( VAL_MONTHLY
-   // parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] | parse_PatternWeekday1[elements] )? ) | (
-   // VAL_WEEKLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? ) | ( VAL_DAILY
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:238:1:
+   // parseRecurrencePattern1 returns [Map< Integer, List< Object > > elements] : OP_FREQ ( ( VAL_YEARLY
+   // parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] parse_PatternMonth1[elements] )? ) | (
+   // VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] | parse_PatternWeekday1[elements]
+   // )? ) | ( VAL_WEEKLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? ) | ( VAL_DAILY
    // parse_PatternInterval1[elements] ) ) ( OP_UNTIL date= VAL_DATE | OP_COUNT count= INT )? ;
    public final Map< Integer, List< Object > > parseRecurrencePattern1() throws RecognitionException
    {
@@ -884,25 +884,26 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:243:4: ( OP_FREQ ( (
-         // VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] parse_PatternMonth1[elements]
-         // )? ) | ( VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] |
-         // parse_PatternWeekday1[elements] )? ) | ( VAL_WEEKLY parse_PatternInterval1[elements] (
-         // parse_PatternWeekday1[elements] )? ) | ( VAL_DAILY parse_PatternInterval1[elements] ) ) ( OP_UNTIL date=
-         // VAL_DATE | OP_COUNT count= INT )? )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:243:6: OP_FREQ ( (
-         // VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] parse_PatternMonth1[elements]
-         // )? ) | ( VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] |
-         // parse_PatternWeekday1[elements] )? ) | ( VAL_WEEKLY parse_PatternInterval1[elements] (
-         // parse_PatternWeekday1[elements] )? ) | ( VAL_DAILY parse_PatternInterval1[elements] ) ) ( OP_UNTIL date=
-         // VAL_DATE | OP_COUNT count= INT )?
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:243:4: (
+         // OP_FREQ ( ( VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements]
+         // parse_PatternMonth1[elements] )? ) | ( VAL_MONTHLY parse_PatternInterval1[elements] (
+         // parse_PatternMonthDay1[elements] | parse_PatternWeekday1[elements] )? ) | ( VAL_WEEKLY
+         // parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? ) | ( VAL_DAILY
+         // parse_PatternInterval1[elements] ) ) ( OP_UNTIL date= VAL_DATE | OP_COUNT count= INT )? )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:243:6:
+         // OP_FREQ ( ( VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements]
+         // parse_PatternMonth1[elements] )? ) | ( VAL_MONTHLY parse_PatternInterval1[elements] (
+         // parse_PatternMonthDay1[elements] | parse_PatternWeekday1[elements] )? ) | ( VAL_WEEKLY
+         // parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? ) | ( VAL_DAILY
+         // parse_PatternInterval1[elements] ) ) ( OP_UNTIL date= VAL_DATE | OP_COUNT count= INT )?
          {
             match( input, OP_FREQ, FOLLOW_OP_FREQ_in_parseRecurrencePattern1967 );
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:244:6: ( ( VAL_YEARLY
-            // parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] parse_PatternMonth1[elements] )? ) | (
-            // VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] |
-            // parse_PatternWeekday1[elements] )? ) | ( VAL_WEEKLY parse_PatternInterval1[elements] (
-            // parse_PatternWeekday1[elements] )? ) | ( VAL_DAILY parse_PatternInterval1[elements] ) )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:244:6:
+            // ( ( VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements]
+            // parse_PatternMonth1[elements] )? ) | ( VAL_MONTHLY parse_PatternInterval1[elements] (
+            // parse_PatternMonthDay1[elements] | parse_PatternWeekday1[elements] )? ) | ( VAL_WEEKLY
+            // parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? ) | ( VAL_DAILY
+            // parse_PatternInterval1[elements] ) )
             int alt14 = 4;
             switch ( input.LA( 1 ) )
             {
@@ -938,15 +939,16 @@ public class RecurrencePatternParser extends Parser
             switch ( alt14 )
             {
                case 1:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:245:11: (
-                  // VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements]
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:245:11:
+                  // ( VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements]
                   // parse_PatternMonth1[elements] )? )
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:245:11: (
-                  // VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements]
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:245:11:
+                  // ( VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements]
                   // parse_PatternMonth1[elements] )? )
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:246:14: VAL_YEARLY
-                  // parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] parse_PatternMonth1[elements] )?
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:246:14:
+                  // VAL_YEARLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements]
+                  // parse_PatternMonth1[elements] )?
                   {
                      match( input,
                             VAL_YEARLY,
@@ -958,8 +960,8 @@ public class RecurrencePatternParser extends Parser
                      
                      addElement( elements, OP_FREQ, VAL_YEARLY );
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:250:14: (
-                     // parse_PatternWeekday1[elements] parse_PatternMonth1[elements] )?
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:250:14:
+                     // ( parse_PatternWeekday1[elements] parse_PatternMonth1[elements] )?
                      int alt11 = 2;
                      int LA11_0 = input.LA( 1 );
                      
@@ -970,7 +972,7 @@ public class RecurrencePatternParser extends Parser
                      switch ( alt11 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:250:15:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:250:15:
                            // parse_PatternWeekday1[elements] parse_PatternMonth1[elements]
                         {
                            pushFollow( FOLLOW_parse_PatternWeekday1_in_parseRecurrencePattern11048 );
@@ -993,14 +995,14 @@ public class RecurrencePatternParser extends Parser
                }
                   break;
                case 2:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:252:11: (
-                  // VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] |
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:252:11:
+                  // ( VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] |
                   // parse_PatternWeekday1[elements] )? )
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:252:11: (
-                  // VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] |
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:252:11:
+                  // ( VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] |
                   // parse_PatternWeekday1[elements] )? )
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:253:14:
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:253:14:
                   // VAL_MONTHLY parse_PatternInterval1[elements] ( parse_PatternMonthDay1[elements] |
                   // parse_PatternWeekday1[elements] )?
                   {
@@ -1014,8 +1016,8 @@ public class RecurrencePatternParser extends Parser
                      
                      addElement( elements, OP_FREQ, VAL_MONTHLY );
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:257:14: (
-                     // parse_PatternMonthDay1[elements] | parse_PatternWeekday1[elements] )?
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:257:14:
+                     // ( parse_PatternMonthDay1[elements] | parse_PatternWeekday1[elements] )?
                      int alt12 = 3;
                      int LA12_0 = input.LA( 1 );
                      
@@ -1030,7 +1032,7 @@ public class RecurrencePatternParser extends Parser
                      switch ( alt12 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:257:15:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:257:15:
                            // parse_PatternMonthDay1[elements]
                         {
                            pushFollow( FOLLOW_parse_PatternMonthDay1_in_parseRecurrencePattern11127 );
@@ -1041,7 +1043,7 @@ public class RecurrencePatternParser extends Parser
                         }
                            break;
                         case 2:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:257:50:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:257:50:
                            // parse_PatternWeekday1[elements]
                         {
                            pushFollow( FOLLOW_parse_PatternWeekday1_in_parseRecurrencePattern11132 );
@@ -1059,13 +1061,13 @@ public class RecurrencePatternParser extends Parser
                }
                   break;
                case 3:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:259:11: (
-                  // VAL_WEEKLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? )
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:259:11:
+                  // ( VAL_WEEKLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? )
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:259:11: (
-                  // VAL_WEEKLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? )
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:260:14: VAL_WEEKLY
-                  // parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )?
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:259:11:
+                  // ( VAL_WEEKLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )? )
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:260:14:
+                  // VAL_WEEKLY parse_PatternInterval1[elements] ( parse_PatternWeekday1[elements] )?
                   {
                      match( input,
                             VAL_WEEKLY,
@@ -1077,8 +1079,8 @@ public class RecurrencePatternParser extends Parser
                      
                      addElement( elements, OP_FREQ, VAL_WEEKLY );
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:264:14: (
-                     // parse_PatternWeekday1[elements] )?
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:264:14:
+                     // ( parse_PatternWeekday1[elements] )?
                      int alt13 = 2;
                      int LA13_0 = input.LA( 1 );
                      
@@ -1089,7 +1091,7 @@ public class RecurrencePatternParser extends Parser
                      switch ( alt13 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:264:14:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:264:14:
                            // parse_PatternWeekday1[elements]
                         {
                            pushFollow( FOLLOW_parse_PatternWeekday1_in_parseRecurrencePattern11207 );
@@ -1107,13 +1109,13 @@ public class RecurrencePatternParser extends Parser
                }
                   break;
                case 4:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:266:11: (
-                  // VAL_DAILY parse_PatternInterval1[elements] )
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:266:11:
+                  // ( VAL_DAILY parse_PatternInterval1[elements] )
                {
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:266:11: (
-                  // VAL_DAILY parse_PatternInterval1[elements] )
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:267:14: VAL_DAILY
-                  // parse_PatternInterval1[elements]
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:266:11:
+                  // ( VAL_DAILY parse_PatternInterval1[elements] )
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:267:14:
+                  // VAL_DAILY parse_PatternInterval1[elements]
                   {
                      match( input,
                             VAL_DAILY,
@@ -1132,8 +1134,8 @@ public class RecurrencePatternParser extends Parser
                
             }
             
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:273:6: ( OP_UNTIL date=
-            // VAL_DATE | OP_COUNT count= INT )?
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:273:6:
+            // ( OP_UNTIL date= VAL_DATE | OP_COUNT count= INT )?
             int alt15 = 3;
             int LA15_0 = input.LA( 1 );
             
@@ -1148,8 +1150,8 @@ public class RecurrencePatternParser extends Parser
             switch ( alt15 )
             {
                case 1:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:274:11: OP_UNTIL
-                  // date= VAL_DATE
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:274:11:
+                  // OP_UNTIL date= VAL_DATE
                {
                   match( input,
                          OP_UNTIL,
@@ -1167,8 +1169,8 @@ public class RecurrencePatternParser extends Parser
                }
                   break;
                case 2:
-                  // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:278:11: OP_COUNT
-                  // count= INT
+                  // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:278:11:
+                  // OP_COUNT count= INT
                {
                   match( input,
                          OP_COUNT,
@@ -1214,7 +1216,7 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parseRecurrencePattern1"
    
    // $ANTLR start "parse_PatternInterval"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:293:1:
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:293:1:
    // parse_PatternInterval[RecurrPatternLanguage lang,\r\n StringBuilder sb,\r\n String unit,\r\n boolean isEvery] :
    // OP_INTERVAL interval= INT ;
    public final void parse_PatternInterval( RecurrPatternLanguage lang,
@@ -1226,10 +1228,10 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:297:4: ( OP_INTERVAL
-         // interval= INT )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:297:6: OP_INTERVAL
-         // interval= INT
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:297:4: (
+         // OP_INTERVAL interval= INT )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:297:6:
+         // OP_INTERVAL interval= INT
          {
             match( input,
                    OP_INTERVAL,
@@ -1265,7 +1267,7 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parse_PatternInterval"
    
    // $ANTLR start "parse_PatternInterval1"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:310:1:
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:310:1:
    // parse_PatternInterval1[Map< Integer, List< Object > > elements] : OP_INTERVAL interval= INT ;
    public final void parse_PatternInterval1( Map< Integer, List< Object > > elements ) throws RecognitionException
    {
@@ -1273,10 +1275,10 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:311:4: ( OP_INTERVAL
-         // interval= INT )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:311:6: OP_INTERVAL
-         // interval= INT
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:311:4: (
+         // OP_INTERVAL interval= INT )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:311:6:
+         // OP_INTERVAL interval= INT
          {
             match( input,
                    OP_INTERVAL,
@@ -1317,7 +1319,7 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parse_PatternInterval1"
    
    // $ANTLR start "parse_PatternXst"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:325:1:
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:325:1:
    // parse_PatternXst[RecurrPatternLanguage lang, StringBuilder sb] : x= INT ;
    public final void parse_PatternXst( RecurrPatternLanguage lang,
                                        StringBuilder sb ) throws RecognitionException
@@ -1326,8 +1328,10 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:326:4: (x= INT )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:326:6: x= INT
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:326:4:
+         // (x= INT )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:326:6:
+         // x= INT
          {
             x = (Token) match( input, INT, FOLLOW_INT_in_parse_PatternXst1491 );
             
@@ -1376,7 +1380,7 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parse_PatternXst"
    
    // $ANTLR start "parse_PatternWeekday"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:356:1:
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:356:1:
    // parse_PatternWeekday[RecurrPatternLanguage lang,\r\n StringBuilder sb,\r\n boolean respectXst] : ( (
    // parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY |
    // SATURDAY | SUNDAY ) ) ) ;
@@ -1388,22 +1392,22 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:359:4: ( ( (
-         // parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY |
-         // SATURDAY | SUNDAY ) ) ) )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:359:6: ( (
-         // parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY |
-         // SATURDAY | SUNDAY ) ) )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:359:4: (
+         // ( ( parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY |
+         // FRIDAY | SATURDAY | SUNDAY ) ) ) )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:359:6: (
+         // ( parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY
+         // | SATURDAY | SUNDAY ) ) )
          {
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:359:6: ( (
-            // parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY
-            // | SATURDAY | SUNDAY ) ) )
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:360:9: (
-            // parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY
-            // | SATURDAY | SUNDAY ) )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:359:6:
+            // ( ( parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY |
+            // FRIDAY | SATURDAY | SUNDAY ) ) )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:360:9:
+            // ( parse_PatternXst[lang, respectXst ? sb : null] )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY |
+            // FRIDAY | SATURDAY | SUNDAY ) )
             {
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:360:9: (
-               // parse_PatternXst[lang, respectXst ? sb : null] )?
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:360:9:
+               // ( parse_PatternXst[lang, respectXst ? sb : null] )?
                int alt16 = 2;
                int LA16_0 = input.LA( 1 );
                
@@ -1414,7 +1418,7 @@ public class RecurrencePatternParser extends Parser
                switch ( alt16 )
                {
                   case 1:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:361:12:
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:361:12:
                      // parse_PatternXst[lang, respectXst ? sb : null]
                   {
                      pushFollow( FOLLOW_parse_PatternXst_in_parse_PatternWeekday1562 );
@@ -1430,12 +1434,12 @@ public class RecurrencePatternParser extends Parser
                   
                }
                
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:367:9: (wd= ( MONDAY
-               // | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) )
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:368:12: wd= ( MONDAY
-               // | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY )
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:367:9:
+               // (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) )
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:368:12:
+               // wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY )
                {
-                  wd = input.LT( 1 );
+                  wd = (Token) input.LT( 1 );
                   if ( ( input.LA( 1 ) >= MONDAY && input.LA( 1 ) <= SUNDAY ) )
                   {
                      input.consume();
@@ -1474,9 +1478,9 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parse_PatternWeekday"
    
    // $ANTLR start "parse_PatternWeekday1"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:386:1: parse_PatternWeekday1[Map<
-   // Integer, List< Object > > elements] : OP_BYDAY ( (x= INT )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY |
-   // FRIDAY | SATURDAY | SUNDAY ) ) ( COMMA )? )+ ;
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:386:1:
+   // parse_PatternWeekday1[Map< Integer, List< Object > > elements] : OP_BYDAY ( (x= INT )? (wd= ( MONDAY | TUESDAY |
+   // WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) ( COMMA )? )+ ;
    public final void parse_PatternWeekday1( Map< Integer, List< Object > > elements ) throws RecognitionException
    {
       Token x = null;
@@ -1484,16 +1488,19 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:387:4: ( OP_BYDAY ( (x= INT
-         // )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) ( COMMA )? )+ )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:387:6: OP_BYDAY ( (x= INT
-         // )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) ( COMMA )? )+
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:387:4: (
+         // OP_BYDAY ( (x= INT )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) (
+         // COMMA )? )+ )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:387:6:
+         // OP_BYDAY ( (x= INT )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) (
+         // COMMA )? )+
          {
             match( input,
                    OP_BYDAY,
                    FOLLOW_OP_BYDAY_in_parse_PatternWeekday11790 );
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:388:6: ( (x= INT )? (wd=
-            // ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) ( COMMA )? )+
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:388:6:
+            // ( (x= INT )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) ( COMMA )?
+            // )+
             int cnt19 = 0;
             loop19: do
             {
@@ -1508,14 +1515,15 @@ public class RecurrencePatternParser extends Parser
                switch ( alt19 )
                {
                   case 1:
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:389:9: (x= INT
-                     // )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) ( COMMA )?
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:389:9:
+                     // (x= INT )? (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) ) (
+                     // COMMA )?
                   {
                      
                      Integer qualifier = null;
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:392:9: (x= INT
-                     // )?
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:392:9:
+                     // (x= INT )?
                      int alt17 = 2;
                      int LA17_0 = input.LA( 1 );
                      
@@ -1526,7 +1534,7 @@ public class RecurrencePatternParser extends Parser
                      switch ( alt17 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:393:12:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:393:12:
                            // x= INT
                         {
                            x = (Token) match( input,
@@ -1542,12 +1550,12 @@ public class RecurrencePatternParser extends Parser
                         
                      }
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:398:9: (wd= (
-                     // MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) )
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:399:12: wd= (
-                     // MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY )
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:398:9:
+                     // (wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY ) )
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:399:12:
+                     // wd= ( MONDAY | TUESDAY | WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY )
                      {
-                        wd = input.LT( 1 );
+                        wd = (Token) input.LT( 1 );
                         if ( ( input.LA( 1 ) >= MONDAY && input.LA( 1 ) <= SUNDAY ) )
                         {
                            input.consume();
@@ -1568,8 +1576,8 @@ public class RecurrencePatternParser extends Parser
                         
                      }
                      
-                     // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:409:11: ( COMMA
-                     // )?
+                     // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:409:11:
+                     // ( COMMA )?
                      int alt18 = 2;
                      int LA18_0 = input.LA( 1 );
                      
@@ -1580,7 +1588,7 @@ public class RecurrencePatternParser extends Parser
                      switch ( alt18 )
                      {
                         case 1:
-                           // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:409:11:
+                           // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:409:11:
                            // COMMA
                         {
                            match( input,
@@ -1631,7 +1639,7 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parse_PatternWeekday1"
    
    // $ANTLR start "parse_PatternMonth"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:421:1:
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:421:1:
    // parse_PatternMonth[RecurrPatternLanguage lang, StringBuilder sb] : m= INT ;
    public final void parse_PatternMonth( RecurrPatternLanguage lang,
                                          StringBuilder sb ) throws RecognitionException
@@ -1640,8 +1648,10 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:422:4: (m= INT )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:422:6: m= INT
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:422:4:
+         // (m= INT )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:422:6:
+         // m= INT
          {
             m = (Token) match( input, INT, FOLLOW_INT_in_parse_PatternMonth2084 );
             
@@ -1667,17 +1677,18 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parse_PatternMonth"
    
    // $ANTLR start "parse_PatternMonth1"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:432:1: parse_PatternMonth1[Map<
-   // Integer, List< Object > > elements] : OP_BYMONTH m= INT ;
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:432:1:
+   // parse_PatternMonth1[Map< Integer, List< Object > > elements] : OP_BYMONTH m= INT ;
    public final void parse_PatternMonth1( Map< Integer, List< Object > > elements ) throws RecognitionException
    {
       Token m = null;
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:433:4: ( OP_BYMONTH m= INT
-         // )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:433:6: OP_BYMONTH m= INT
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:433:4: (
+         // OP_BYMONTH m= INT )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:433:6:
+         // OP_BYMONTH m= INT
          {
             match( input,
                    OP_BYMONTH,
@@ -1716,7 +1727,7 @@ public class RecurrencePatternParser extends Parser
    // $ANTLR end "parse_PatternMonth1"
    
    // $ANTLR start "parse_PatternMonthDay1"
-   // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:447:1:
+   // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:447:1:
    // parse_PatternMonthDay1[Map< Integer, List< Object > > elements] : OP_BYMONTHDAY (m= INT ( COMMA m1= INT )* ) ;
    public final void parse_PatternMonthDay1( Map< Integer, List< Object > > elements ) throws RecognitionException
    {
@@ -1725,18 +1736,18 @@ public class RecurrencePatternParser extends Parser
       
       try
       {
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:448:4: ( OP_BYMONTHDAY (m=
-         // INT ( COMMA m1= INT )* ) )
-         // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:448:6: OP_BYMONTHDAY (m=
-         // INT ( COMMA m1= INT )* )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:448:4: (
+         // OP_BYMONTHDAY (m= INT ( COMMA m1= INT )* ) )
+         // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:448:6:
+         // OP_BYMONTHDAY (m= INT ( COMMA m1= INT )* )
          {
             match( input,
                    OP_BYMONTHDAY,
                    FOLLOW_OP_BYMONTHDAY_in_parse_PatternMonthDay12175 );
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:449:6: (m= INT ( COMMA
-            // m1= INT )* )
-            // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:450:9: m= INT ( COMMA
-            // m1= INT )*
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:449:6:
+            // (m= INT ( COMMA m1= INT )* )
+            // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:450:9:
+            // m= INT ( COMMA m1= INT )*
             {
                m = (Token) match( input,
                                   INT,
@@ -1746,8 +1757,8 @@ public class RecurrencePatternParser extends Parser
                            OP_BYMONTHDAY,
                            Integer.parseInt( ( m != null ? m.getText() : null ) ) );
                
-               // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:454:9: ( COMMA m1=
-               // INT )*
+               // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:454:9:
+               // ( COMMA m1= INT )*
                loop20: do
                {
                   int alt20 = 2;
@@ -1761,7 +1772,7 @@ public class RecurrencePatternParser extends Parser
                   switch ( alt20 )
                   {
                      case 1:
-                        // F:\\CppProjects\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:455:12:
+                        // F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g:455:12:
                         // COMMA m1= INT
                      {
                         match( input,

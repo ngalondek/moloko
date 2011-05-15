@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import android.content.ContentProviderOperation;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,8 +37,10 @@ import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTimeline;
 
+import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.ModificationsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
@@ -158,15 +161,6 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
-   public boolean isNew()
-   {
-      return taskSeries.getSource() != null
-         && taskSeries.getSource()
-                      .equalsIgnoreCase( TaskSeries.NEW_TASK_SOURCE );
-   }
-   
-
-
    public boolean hasModification( ModificationSet modificationSet )
    {
       return modificationSet.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
@@ -178,13 +172,59 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    
 
 
+   public IContentProviderSyncOperation handleAfterServerInsert( OutSyncTask serverElement )
+   {
+      final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
+      
+      /**
+       * Change the ID of the local taskseries to the ID of the server taskseries. Referencing entities will also be
+       * changed by a DB trigger.
+       **/
+      operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                   taskSeries.getId() ) )
+                                             .withValue( TaskSeries._ID,
+                                                         serverElement.taskSeries.getId() )
+                                             .build() );
+      
+      /** Change the ID of the local rawtask to the ID of the server rawtask. **/
+      operation.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                   task.getId() ) )
+                                             .withValue( RawTasks._ID,
+                                                         serverElement.task.getId() )
+                                             .build() );
+      
+      /** Remove the old task IDs from the creations table, marking this task as send **/
+      operation.add( CreationsProviderPart.deleteCreation( TaskSeries.CONTENT_URI,
+                                                           taskSeries.getId() ) );
+      operation.add( CreationsProviderPart.deleteCreation( RawTasks.CONTENT_URI,
+                                                           task.getId() ) );
+      
+      /** Remove all modifications with the old task IDs **/
+      
+      operation.add( ModificationsProviderPart.getRemoveModificationOps( TaskSeries.CONTENT_URI,
+                                                                         taskSeries.getId() ) );
+      operation.add( ModificationsProviderPart.getRemoveModificationOps( RawTasks.CONTENT_URI,
+                                                                         task.getId() ) );
+      
+      return operation.build();
+   }
+   
+
+
+   /**
+    * This stores only outgoing differences between the local task and the server task as modification.
+    * 
+    * This is needed due to the fact that add a task on RTM side is no single operation and may be interrupted.
+    */
    public IContentProviderSyncOperation computeServerInsertModification( OutSyncTask serverElement )
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
       
       /** RtmTaskSeries **/
       {
-         // All differences to the new server element will be added as modification
+         // All differences to the new server element will be added as modification. The Modification.newValue
+         // is the local task value and the Modification.syncedValue is the value from the new inserted task
+         // from RTM side.
          final Uri newUri = Queries.contentUriWithId( TaskSeries.CONTENT_URI,
                                                       serverElement.taskSeries.getId() );
          
@@ -193,27 +233,31 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                     serverElement.taskSeries.getRecurrence() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.RECURRENCE,
-                                                                  taskSeries.getRecurrenceSentence() ) );
+                                                                  taskSeries.getRecurrenceSentence(),
+                                                                  serverElement.taskSeries.getRecurrence() ) );
          
          // Tags
          if ( SyncUtils.hasChanged( taskSeries.getTagsJoined(),
                                     serverElement.taskSeries.getTagsJoined() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.TAGS,
-                                                                  taskSeries.getTagsJoined() ) );
+                                                                  taskSeries.getTagsJoined(),
+                                                                  serverElement.taskSeries.getTagsJoined() ) );
          
          // Location
          if ( SyncUtils.hasChanged( taskSeries.getLocationId(),
                                     serverElement.taskSeries.getLocationId() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.LOCATION_ID,
-                                                                  taskSeries.getLocationId() ) );
+                                                                  taskSeries.getLocationId(),
+                                                                  serverElement.taskSeries.getLocationId() ) );
          // URL
          if ( SyncUtils.hasChanged( taskSeries.getURL(),
                                     serverElement.taskSeries.getURL() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.URL,
-                                                                  taskSeries.getURL() ) );
+                                                                  taskSeries.getURL(),
+                                                                  serverElement.taskSeries.getURL() ) );
       }
       
       /** RtmTask **/
@@ -227,34 +271,39 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                     serverElement.task.getPriority() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.PRIORITY,
-                                                                  RtmTask.convertPriority( task.getPriority() ) ) );
+                                                                  RtmTask.convertPriority( task.getPriority() ),
+                                                                  RtmTask.convertPriority( serverElement.task.getPriority() ) ) );
          
          // Completed date
          if ( SyncUtils.hasChanged( task.getCompleted(),
                                     serverElement.task.getCompleted() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.COMPLETED_DATE,
-                                                                  MolokoDateUtils.getTime( task.getCompleted() ) ) );
+                                                                  MolokoDateUtils.getTime( task.getCompleted() ),
+                                                                  MolokoDateUtils.getTime( serverElement.task.getCompleted() ) ) );
          
          // Due date
          if ( SyncUtils.hasChanged( task.getDue(), serverElement.task.getDue() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.DUE_DATE,
-                                                                  MolokoDateUtils.getTime( task.getDue() ) ) );
+                                                                  MolokoDateUtils.getTime( task.getDue() ),
+                                                                  MolokoDateUtils.getTime( serverElement.task.getDue() ) ) );
          
          // Has due time
          if ( SyncUtils.hasChanged( task.getHasDueTime(),
                                     serverElement.task.getHasDueTime() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.HAS_DUE_TIME,
-                                                                  task.getHasDueTime() ) );
+                                                                  task.getHasDueTime(),
+                                                                  serverElement.task.getHasDueTime() ) );
          
          // Estimate
          if ( SyncUtils.hasChanged( task.getEstimate(),
                                     serverElement.task.getEstimate() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   RawTasks.ESTIMATE,
-                                                                  task.getEstimate() ) );
+                                                                  task.getEstimate(),
+                                                                  serverElement.task.getEstimate() ) );
          
          /**
           * Postponed can not be synced. Otherwise we had to store the initial due date on local task creation of the

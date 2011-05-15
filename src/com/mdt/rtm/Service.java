@@ -346,24 +346,26 @@ public interface Service
 
    // ////// NOTES /////////////////////////////
    
-   RtmTaskNote tasks_notes_add( String timelineId,
-                                String listId,
-                                String taskSeriesId,
-                                String taskId,
-                                String title,
-                                String text ) throws ServiceException;
+   TimeLineResult< RtmTaskNote > tasks_notes_add( String timelineId,
+                                                  String listId,
+                                                  String taskSeriesId,
+                                                  String taskId,
+                                                  String title,
+                                                  String text ) throws ServiceException;
    
 
 
-   void tasks_notes_delete( String timelineId, String noteId ) throws ServiceException;
+   TimeLineResult< RtmTaskNote > tasks_notes_delete( String timelineId,
+                                                     String taskSeriesId,
+                                                     String noteId ) throws ServiceException;
    
 
 
-   RtmTaskNote tasks_notes_edit( String timelineId,
-                                 String taskSeriesId,
-                                 String noteId,
-                                 String title,
-                                 String text ) throws ServiceException;
+   TimeLineResult< RtmTaskNote > tasks_notes_edit( String timelineId,
+                                                   String taskSeriesId,
+                                                   String noteId,
+                                                   String title,
+                                                   String text ) throws ServiceException;
    
 
 

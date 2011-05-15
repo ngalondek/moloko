@@ -31,6 +31,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Modifications;
+import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
 
 
@@ -239,15 +240,34 @@ public class Modification implements Comparable< Modification >
    
 
 
+   public final static < T > Modification newModification( Uri entityUri,
+                                                           String colName,
+                                                           T newValue,
+                                                           T synedValue )
+   {
+      return new Modification( null,
+                               entityUri,
+                               colName,
+                               toString( newValue ),
+                               toString( synedValue ),
+                               true,
+                               true,
+                               System.currentTimeMillis() );
+   }
+   
+
+
    public final static < T > ContentProviderOperation newModificationOperation( Uri entityUri,
                                                                                 String colName,
-                                                                                T newValue )
+                                                                                T newValue,
+                                                                                T syncedValue )
    {
       return ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
                                      .withValues( ModificationsProviderPart.getContentValues( null,
                                                                                               newModification( entityUri,
                                                                                                                colName,
-                                                                                                               newValue ),
+                                                                                                               newValue,
+                                                                                                               syncedValue ),
                                                                                               true ) )
                                      .build();
    }
@@ -303,6 +323,16 @@ public class Modification implements Comparable< Modification >
       return newNonPersistentModification( TaskSeries.CONTENT_URI,
                                            taskSeriesId,
                                            TaskSeries.MODIFIED_DATE,
+                                           System.currentTimeMillis() );
+   }
+   
+
+
+   public final static Modification newNoteModified( String noteId )
+   {
+      return newNonPersistentModification( Notes.CONTENT_URI,
+                                           noteId,
+                                           Notes.NOTE_MODIFIED_DATE,
                                            System.currentTimeMillis() );
    }
    

@@ -19,24 +19,13 @@
  */
 package com.mdt.rtm.data;
 
-import java.util.Comparator;
 import java.util.Date;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import android.content.ContentProviderOperation;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
-import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.rtm.ParcelableDate;
 
 
@@ -46,24 +35,11 @@ import dev.drsoran.rtm.ParcelableDate;
  * @author Edouard Mercier
  * @since 2008.04.22
  */
-public class RtmTaskNote extends RtmData implements
-         IContentProviderSyncable< RtmTaskNote >
+public class RtmTaskNote extends RtmData
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + RtmTaskNote.class.getSimpleName();
-   
-   
-   private final static class LessIdComperator implements
-            Comparator< RtmTaskNote >
-   {
-      
-      public int compare( RtmTaskNote object1, RtmTaskNote object2 )
-      {
-         return object1.id.compareTo( object2.id );
-      }
-      
-   }
    
    public static final Parcelable.Creator< RtmTaskNote > CREATOR = new Parcelable.Creator< RtmTaskNote >()
    {
@@ -81,8 +57,6 @@ public class RtmTaskNote extends RtmData implements
       }
       
    };
-   
-   public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    private final String id;
    
@@ -215,71 +189,5 @@ public class RtmTaskNote extends RtmData implements
       dest.writeParcelable( deleted, 0 );
       dest.writeString( title );
       dest.writeString( text );
-   }
-   
-
-
-   public Uri getContentUriWithId()
-   {
-      return Queries.contentUriWithId( Notes.CONTENT_URI, id );
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation()
-   {
-      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                                                             .withValues( RtmNotesProviderPart.getContentValues( this,
-                                                                                                                                 true ) )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
-   {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmTaskNote update )
-   {
-      if ( !id.equals( update.id ) )
-         throw new IllegalArgumentException( "Update id " + update.id
-            + " differs this id " + id );
-      
-      final Uri uri = getContentUriWithId();
-      
-      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
-      
-      if ( SyncUtils.hasChanged( created, update.created ) )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Notes.NOTE_CREATED_DATE,
-                                                         MolokoDateUtils.getTime( update.created ) )
-                                             .build() );
-      
-      if ( SyncUtils.hasChanged( modified, update.modified ) )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Notes.NOTE_MODIFIED_DATE,
-                                                         MolokoDateUtils.getTime( update.modified ) )
-                                             .build() );
-      
-      if ( SyncUtils.hasChanged( title, update.title ) )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Notes.NOTE_TITLE,
-                                                         update.title )
-                                             .build() );
-      
-      if ( SyncUtils.hasChanged( text, update.text ) )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Notes.NOTE_TEXT,
-                                                         update.text )
-                                             .build() );
-      
-      return result.build();
    }
 }

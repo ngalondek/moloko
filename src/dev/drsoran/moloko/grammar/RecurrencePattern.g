@@ -53,7 +53,7 @@ grammar RecurrencePattern;
          else if ( operator.startsWith( OP_UNTIL_LIT ) )
             return 5;
          else if ( operator.startsWith( OP_COUNT_LIT ) )
-            return 5;
+            return 6;
          else
             return Integer.MAX_VALUE;
       }

@@ -13,13 +13,14 @@ grammar Recurrence;
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
    import java.util.Comparator;
-   import java.util.HashMap;
+   import java.util.Map;
    import java.util.Iterator;
    import java.util.Locale;
    import java.util.Set;
    import java.util.TreeSet;
    import java.util.TreeMap;
 
+   import dev.drsoran.moloko.util.MolokoCalendar;
    import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
    import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 }
@@ -234,19 +235,10 @@ parseRecurrence returns[Map< String, Object > res]
                                               .replaceFirst( RecurrencePatternParser.OP_UNTIL_LIT +  "\\s*",
                                                              "" );
 
-           final Calendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
+           final MolokoCalendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
 
            if ( untilDate != null )
            {
-               if ( !untilDate.isSet( Calendar.HOUR_OF_DAY ) )
-               {
-                  untilDate.set( Calendar.HOUR, 0 );
-                  untilDate.set( Calendar.HOUR_OF_DAY, 0 );
-                  untilDate.set( Calendar.MINUTE, 0 );
-                  untilDate.set( Calendar.SECOND, 0 );
-                  untilDate.set( Calendar.MILLISECOND, 0 );
-               }
-
               final SimpleDateFormat sdf = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
               res.put( RecurrencePatternParser.OP_UNTIL_LIT, sdf.format( untilDate.getTime() ) );
            }

@@ -25,8 +25,10 @@ package dev.drsoran.moloko.auth;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import dev.drsoran.moloko.R;
 
 
 public class RtmWebLoginActivity extends Activity
@@ -68,8 +70,11 @@ public class RtmWebLoginActivity extends Activity
    @Override
    protected void onCreate( Bundle savedInstanceState )
    {
-      webView = new WebView( this );
-      setContentView( webView );
+      super.onCreate( savedInstanceState );
+      
+      setContentView( R.layout.rtmweblogin_activity );
+      
+      webView = (WebView) findViewById( R.id.webview );
       
       webView.getSettings().setJavaScriptEnabled( true );
       webView.setWebViewClient( new RtmWebViewClient() );
@@ -79,8 +84,13 @@ public class RtmWebLoginActivity extends Activity
       Log.d( TAG, "Open URL: " + uri );
       
       webView.loadUrl( uri );
-      
-      super.onCreate( savedInstanceState );
+   }
+   
+
+
+   public void onContinue( View v )
+   {
+      returnWithCode( ReturnCode.SUCCESS );
    }
    
 
@@ -88,7 +98,7 @@ public class RtmWebLoginActivity extends Activity
    @Override
    public void onBackPressed()
    {
-      returnWithCode( ReturnCode.SUCCESS );
+      onContinue( null );
    }
    
 

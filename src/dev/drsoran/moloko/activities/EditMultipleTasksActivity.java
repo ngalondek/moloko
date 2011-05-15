@@ -24,7 +24,6 @@ package dev.drsoran.moloko.activities;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +46,7 @@ import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -92,18 +92,11 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          
          if ( client != null )
          {
-            final StringBuilder sb = new StringBuilder();
-            
-            for ( Iterator< String > i = taskIds.iterator(); i.hasNext(); )
-            {
-               sb.append( Tasks._ID ).append( " = " ).append( i.next() );
-               
-               if ( i.hasNext() )
-                  sb.append( " OR " );
-            }
-            
+            final String selection = Queries.toColumnList( taskIds,
+                                                           Tasks._ID,
+                                                           " OR " );
             tasks = TasksProviderPart.getTasks( client,
-                                                sb.toString(),
+                                                selection,
                                                 Tasks.DEFAULT_SORT_ORDER );
             client.release();
             

@@ -30,6 +30,7 @@ import java.util.List;
 
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
+import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
@@ -62,7 +63,6 @@ public class SyncRtmTaskList
    }
    
    private static final Comparator< RtmTaskSeries > LESS_ID = new Comparator< RtmTaskSeries >()
-
    {
       public int compare( RtmTaskSeries object1, RtmTaskSeries object2 )
       {
@@ -151,9 +151,15 @@ public class SyncRtmTaskList
    
 
 
-   public void add( RtmTaskSeries taskSeries )
+   public SyncRtmTaskNotesList getSyncNotesList()
    {
-      series.add( taskSeries );
+      final SyncRtmTaskNotesList res = new SyncRtmTaskNotesList();
+      
+      for ( RtmTaskSeries taskSeries : series )
+         for ( RtmTaskNote note : taskSeries.getNotes().getNotes() )
+            res.add( new SyncNote( taskSeries, note ) );
+      
+      return res;
    }
    
 

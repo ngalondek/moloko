@@ -1,7 +1,7 @@
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -79,7 +79,7 @@ public class RecurrenceTestCase
       
       try
       {
-         final HashMap< String, Object > result = parser.parseRecurrence();
+         final Map< String, Object > result = parser.parseRecurrence();
          
          final String res_freq = (String) result.get( RecurrencePatternParser.OP_FREQ_LIT );
          final int res_interval = (Integer) result.get( RecurrencePatternParser.OP_INTERVAL_LIT );

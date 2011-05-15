@@ -154,7 +154,7 @@ public class ListTask extends Task
             
             if ( client != null )
             {
-               final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
+               final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getNotes( client,
                                                                                getTaskSeriesId() );
                client.release();
                

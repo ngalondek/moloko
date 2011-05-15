@@ -134,11 +134,11 @@
       android:title="@string/moloko_prefs_cat_help_dev_title">
 
       <CheckBoxPreference
-         android:key="acra.disable"
+         android:key="acra.enable"
          android:title="@string/moloko_prefs_acra_title"
-         android:summaryOn="@string/moloko_prefs_acra_summary_off"
-         android:summaryOff="@string/moloko_prefs_acra_summary_on"
-         android:defaultValue="false" />
+         android:summaryOn="@string/moloko_prefs_acra_summary_on"
+         android:summaryOff="@string/moloko_prefs_acra_summary_off"
+         android:defaultValue="true" />
 
       <dev.drsoran.moloko.prefs.SendLogPreference
          moloko:infoText="@string/moloko_prefs_send_log_text"

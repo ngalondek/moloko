@@ -28,8 +28,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentProviderClient;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -42,7 +42,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTaskNote;
@@ -56,6 +55,7 @@ import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -101,9 +101,13 @@ public class TaskActivity extends Activity
    
    private View urlSection;
    
-   private View editTaskBtn;
+   private View taskButtons;
    
    private ImageButton completeTaskBtn;
+   
+   private RtmAuth.Perms permission;
+   
+   private List< RtmTaskNote > rtmNotes;
    
    
 
@@ -154,11 +158,9 @@ public class TaskActivity extends Activity
                dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
                locationSection = taskContainer.findViewById( R.id.task_location );
                participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
+               taskButtons = taskContainer.findViewById( R.id.task_buttons );
                urlSection = taskContainer.findViewById( R.id.task_url );
-               editTaskBtn = taskContainer.findViewById( R.id.task_buttons_edit );
                completeTaskBtn = (ImageButton) taskContainer.findViewById( R.id.task_buttons_complete );
-               
-               inflateNotes( taskContainer, task );
             }
             catch ( final ClassCastException e )
             {
@@ -188,15 +190,9 @@ public class TaskActivity extends Activity
    protected void onResume()
    {
       super.onResume();
-      loadTask();
       
-      // Deactivate controls which are not usable in read only mode
-      if ( AccountUtils.isReadOnlyAccess( this ) )
-         taskContainer.findViewById( R.id.task_buttons )
-                      .setVisibility( View.GONE );
-      else
-         taskContainer.findViewById( R.id.task_buttons )
-                      .setVisibility( View.VISIBLE );
+      permission = AccountUtils.getAccessLevel( this );
+      loadTask();
    }
    
 
@@ -214,6 +210,8 @@ public class TaskActivity extends Activity
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
+      boolean reloadTask = false;
+      
       if ( task != null )
       {
          switch ( requestCode )
@@ -221,40 +219,60 @@ public class TaskActivity extends Activity
             case TaskEditActivity.REQ_EDIT_TASK:
                switch ( resultCode )
                {
-                  case TaskEditActivity.RESULT_EDIT_TASK_FAILED:
-                     Toast.makeText( this,
-                                     R.string.task_save_error,
-                                     Toast.LENGTH_LONG ).show();
-                     break;
-                  
                   case TaskEditActivity.RESULT_EDIT_TASK_CHANGED:
-                     final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
-                     
-                     if ( client != null )
-                     {
-                        final Task oldTask = task;
-                        task = TasksProviderPart.getTask( client, task.getId() );
-                        client.release();
-                        
-                        if ( task == null )
-                           task = oldTask;
-                        else
-                           Toast.makeText( this,
-                                           R.string.task_save_ok,
-                                           Toast.LENGTH_LONG ).show();
-                     }
-                     else
-                     {
-                        LogUtils.logDBError( this, TAG, "Task" );
-                     }
+                     reloadTask = true;
                      break;
                   
                   default :
                      break;
                }
                break;
+            
+            case NoteEditActivity.REQ_EDIT_NOTE:
+               switch ( resultCode )
+               {
+                  case NoteEditActivity.RESULT_EDIT_NOTE_CHANGED:
+                     reloadTask = true;
+                     break;
+                  
+                  default :
+                     break;
+               }
+               break;
+            
+            case AddNoteActivity.REQ_INSERT_NOTE:
+               switch ( resultCode )
+               {
+                  case AddNoteActivity.RESULT_INSERT_NOTE_OK:
+                     reloadTask = true;
+                     break;
+                  
+                  default :
+                     break;
+               }
+               break;
+            
             default :
                break;
+         }
+      }
+      
+      if ( reloadTask )
+      {
+         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+         
+         if ( client != null )
+         {
+            final Task oldTask = task;
+            task = TasksProviderPart.getTask( client, task.getId() );
+            client.release();
+            
+            if ( task == null )
+               task = oldTask;
+         }
+         else
+         {
+            LogUtils.logDBError( this, TAG, "Task" );
          }
       }
    }
@@ -300,6 +318,55 @@ public class TaskActivity extends Activity
                                                                   TaskEditUtils.deleteTask( TaskActivity.this,
                                                                                             task );
                                                                   finish();
+                                                               }
+                                                            } )
+                                        .setNegativeButton( R.string.btn_cancel,
+                                                            null )
+                                        .show();
+      }
+   }
+   
+
+
+   public void onEditNote( View v )
+   {
+      startActivityForResult( Intents.createEditNoteIntent( this,
+                                                            (String) v.getTag(),
+                                                            true ),
+                              NoteEditActivity.REQ_EDIT_NOTE );
+   }
+   
+
+
+   public void onAddNote( View v )
+   {
+      if ( task != null )
+      {
+         startActivityForResult( Intents.createAddNoteIntent( this,
+                                                              task.getTaskSeriesId() ),
+                                 AddNoteActivity.REQ_INSERT_NOTE );
+      }
+   }
+   
+
+
+   public void onDeleteNote( View v )
+   {
+      if ( task != null )
+      {
+         final String noteId = (String) v.getTag();
+         
+         new AlertDialog.Builder( this ).setMessage( getString( R.string.phr_delete_note ) )
+                                        .setPositiveButton( R.string.btn_delete,
+                                                            new OnClickListener()
+                                                            {
+                                                               public void onClick( DialogInterface dialog,
+                                                                                    int which )
+                                                               {
+                                                                  NoteEditUtils.deleteNote( TaskActivity.this,
+                                                                                            noteId );
+                                                                  loadAndInflateNotes( taskContainer,
+                                                                                       task );
                                                                }
                                                             } )
                                         .setNegativeButton( R.string.btn_cancel,
@@ -383,8 +450,9 @@ public class TaskActivity extends Activity
             urlSection.setVisibility( View.GONE );
          }
          
-         final RtmAuth.Perms permission = AccountUtils.getAccessLevel( this );
-         permission.setEditable( editTaskBtn );
+         loadAndInflateNotes( taskContainer, task );
+         
+         permission.setVisible( taskButtons );
       }
    }
    
@@ -602,79 +670,79 @@ public class TaskActivity extends Activity
    
 
 
+   private void loadAndInflateNotes( ViewGroup taskContainer, Task task )
+   {
+      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getNotes( client,
+                                                                      task.getTaskSeriesId() );
+         client.release();
+         
+         if ( rtmNotes != null )
+            this.rtmNotes = rtmNotes.getNotes();
+         else
+            LogUtils.logDBError( this, TAG, "Notes" );
+         
+         inflateNotes( taskContainer, task );
+      }
+   }
+   
+
+
    private void inflateNotes( ViewGroup taskContainer, Task task )
    {
-      if ( task.getNumberOfNotes() > 0 )
+      UIUtils.removeTaggedViews( taskContainer, "note" );
+      
+      if ( rtmNotes != null && rtmNotes.size() > 0 )
       {
-         List< RtmTaskNote > notes = null;
-         
-         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
-         
-         if ( client != null )
+         try
          {
-            final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                            task.getTaskSeriesId() );
-            if ( rtmNotes != null )
+            for ( final RtmTaskNote note : rtmNotes )
             {
-               notes = rtmNotes.getNotes();
-            }
-            else
-            {
-               LogUtils.logDBError( this, TAG, "Notes" );
-            }
-            
-            client.release();
-         }
-         
-         if ( notes != null )
-         {
-            try
-            {
-               for ( final RtmTaskNote note : notes )
+               final ViewGroup noteViewLayout = (ViewGroup) LayoutInflater.from( this )
+                                                                          .inflate( R.layout.task_note,
+                                                                                    taskContainer,
+                                                                                    false );
+               try
                {
-                  final ViewGroup noteViewLayout = (ViewGroup) LayoutInflater.from( this )
-                                                                             .inflate( R.layout.task_note,
-                                                                                       taskContainer,
-                                                                                       false );
+                  final TextView createdDate = (TextView) noteViewLayout.findViewById( R.id.note_created_date );
+                  createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
+                                                                           .getTime(),
+                                                                       FULL_DATE_FLAGS ) );
                   
-                  final View noteView = LayoutInflater.from( this )
-                                                      .inflate( R.layout.note,
-                                                                noteViewLayout,
-                                                                true );
-                  try
-                  {
-                     final TextView createdDate = (TextView) noteView.findViewById( R.id.note_created_date );
-                     createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
-                                                                              .getTime(),
-                                                                          FULL_DATE_FLAGS ) );
-                  }
-                  catch ( final ClassCastException e )
-                  {
-                     Log.e( TAG, "Invalid layout spec.", e );
-                     throw e;
-                  }
+               }
+               catch ( final ClassCastException e )
+               {
+                  Log.e( TAG, "Invalid layout spec.", e );
+                  throw e;
+               }
+               
+               if ( UIUtils.initializeTitleWithTextLayout( noteViewLayout,
+                                                           note.getTitle(),
+                                                           note.getText() ) )
+               {
+                  final View noteButtons = noteViewLayout.findViewById( R.id.note_buttons );
+                  permission.setVisible( noteButtons );
                   
-                  if ( UIUtils.initializeTitleWithTextLayout( noteView,
-                                                              note.getTitle(),
-                                                              note.getText() ) )
-                  {
-                     taskContainer.addView( noteViewLayout );
-                  }
-                  else
-                  {
-                     throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
-                  }
+                  noteButtons.findViewById( R.id.note_buttons_edit )
+                             .setTag( note.getId() );
+                  noteButtons.findViewById( R.id.note_buttons_delete )
+                             .setTag( note.getId() );
+                  
+                  taskContainer.addView( noteViewLayout );
+               }
+               else
+               {
+                  throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
                }
             }
-            catch ( final InflateException e )
-            {
-               Log.e( TAG, "Invalid layout spec.", e );
-               throw e;
-            }
          }
-         else
+         catch ( final InflateException e )
          {
-            LogUtils.logDBError( this, TAG, "Notes" );
+            Log.e( TAG, "Invalid layout spec.", e );
+            throw e;
          }
       }
    }

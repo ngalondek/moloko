@@ -22,39 +22,31 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentProviderClient;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
-import com.mdt.rtm.data.RtmTaskNotes;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
 
-public class NoteActivity extends Activity
+public class NoteActivity extends AbstractNoteActivity
 {
    private final static String TAG = "Moloko."
       + NoteActivity.class.getSimpleName();
-   
-   private final static String NOTE_POS = "note_pos";
-   
-   private List< RtmTaskNote > notes = Collections.emptyList();
-   
-   private int notePos = -1;
    
    
 
@@ -77,265 +69,103 @@ public class NoteActivity extends Activity
    
 
 
-   @Override
-   protected void onResume()
+   public void onEditNote( View v )
    {
-      super.onResume();
-      
-      boolean found = false;
-      final Intent intent = getIntent();
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         // Check if we should display a single note or all notes of a task
-         final String taskId = intent.getStringExtra( Notes.TASKSERIES_ID );
-         
-         if ( taskId == null )
-         {
-            found = getSingleNote( client, intent.getData()
-                                                 .getLastPathSegment() );
-         }
-         else
-         {
-            found = getAllNotesOfTask( client,
-                                       taskId,
-                                       intent.getStringExtra( Notes._ID ) );
-         }
-         
-         client.release();
-         
-         if ( found )
-         {
-            if ( notePos != -1 )
-               displayNote( notes.get( notePos ) );
-            
-            updateUi();
-         }
-      }
-      else
-      {
-         LogUtils.logDBError( this, TAG, "Notes" );
-      }
-      
-      if ( !found )
-      {
-         UIUtils.initializeErrorWithIcon( this,
-                                          R.string.err_entity_not_found,
-                                          getString( R.string.app_note ) );
-      }
+      startActivity( Intents.createEditNoteIntent( this,
+                                                   getNote().getId(),
+                                                   false ) );
+   }
+   
+
+
+   public void onAddNote( View v )
+   {
+      startActivityForResult( Intents.createAddNoteIntent( this,
+                                                           getNote().getTaskSeriesId() ),
+                              AddNoteActivity.REQ_INSERT_NOTE );
+   }
+   
+
+
+   public void onDeleteNote( View v )
+   {
+      new AlertDialog.Builder( this ).setMessage( getString( R.string.phr_delete_note ) )
+                                     .setPositiveButton( R.string.btn_delete,
+                                                         new OnClickListener()
+                                                         {
+                                                            public void onClick( DialogInterface dialog,
+                                                                                 int which )
+                                                            {
+                                                               NoteEditUtils.deleteNote( NoteActivity.this,
+                                                                                         getNote().getId() );
+                                                               removeCurrentNode();
+                                                            }
+                                                         } )
+                                     .setNegativeButton( R.string.btn_cancel,
+                                                         null )
+                                     .show();
    }
    
 
 
    @Override
-   protected void onSaveInstanceState( Bundle outState )
+   protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
-      super.onSaveInstanceState( outState );
-      
-      if ( outState != null )
-         outState.putInt( NOTE_POS, notePos );
+      if ( requestCode == AddNoteActivity.REQ_INSERT_NOTE )
+      {
+         switch ( resultCode )
+         {
+            case AddNoteActivity.RESULT_INSERT_NOTE_OK:
+               final Uri noteUri = data.getData();
+               
+               if ( noteUri != null )
+               {
+                  final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+                  
+                  if ( client != null )
+                  {
+                     final RtmTaskNote note = RtmNotesProviderPart.getNote( client,
+                                                                            noteUri.getLastPathSegment() );
+                     client.release();
+                     
+                     if ( note != null )
+                     {
+                        insertNewNote( note );
+                     }
+                     else
+                     {
+                        Log.e( TAG, "Invalid URI after note insert: " + noteUri );
+                     }
+                  }
+                  else
+                  {
+                     LogUtils.logDBError( this, TAG, "Notes" );
+                  }
+               }
+               else
+               {
+                  Log.e( TAG, "Result URI is null after note insert" );
+               }
+               break;
+            
+            default :
+               break;
+         }
+      }
+      else
+         super.onActivityResult( requestCode, resultCode, data );
    }
    
 
 
    @Override
-   protected void onRestoreInstanceState( Bundle savedInstanceState )
+   protected void displayNote( RtmTaskNote note )
    {
-      super.onRestoreInstanceState( savedInstanceState );
+      super.displayNote( note );
       
-      if ( savedInstanceState != null )
-         notePos = savedInstanceState.getInt( NOTE_POS, -1 );
+      if ( !UIUtils.initializeTitleWithTextLayout( findViewById( R.id.note ),
+                                                   note.getTitle(),
+                                                   note.getText() ) )
+         throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
    }
-   
-
-
-   public void onNextNote( View view )
-   {
-      displayNote( getNext() );
-      updateUi();
-   }
-   
-
-
-   public void onPrevNote( View view )
-   {
-      displayNote( getPrev() );
-      updateUi();
-   }
-   
-
-
-   public void onClose( View view )
-   {
-      finish();
-   }
-   
-
-
-   private void evaluateNavButtons()
-   {
-      findViewById( R.id.note_btn_next ).setVisibility( ( hasNext() )
-                                                                     ? View.VISIBLE
-                                                                     : View.GONE );
-      findViewById( R.id.note_btn_prev ).setVisibility( ( hasPrev() )
-                                                                     ? View.VISIBLE
-                                                                     : View.GONE );
-   }
-   
-
-
-   private void updateUi()
-   {
-      evaluateNavButtons();
-      
-      if ( notes.size() > 1 )
-      {
-         setTitle( getString( R.string.app_note ) + " (" + ( notePos + 1 )
-            + "/" + notes.size() + ")" );
-      }
-   }
-   
-
-
-   private boolean getSingleNote( ContentProviderClient client, String noteId )
-   {
-      boolean found = false;
-      
-      // Query note
-      final RtmTaskNote note = RtmNotesProviderPart.getNote( client, noteId );
-      
-      if ( note != null )
-      {
-         final ArrayList< RtmTaskNote > tmp = new ArrayList< RtmTaskNote >( 1 );
-         tmp.add( note );
-         
-         initializeNotesList( tmp );
-         
-         found = true;
-      }
-      else
-      {
-         LogUtils.logDBError( this, TAG, "Notes" );
-      }
-      
-      return found;
-   }
-   
-
-
-   private boolean getAllNotesOfTask( ContentProviderClient client,
-                                      String taskId,
-                                      String startNoteId )
-   {
-      boolean found = false;
-      
-      // Query all notes of task
-      final RtmTaskNotes rtmTaskNotes = RtmNotesProviderPart.getAllNotes( client,
-                                                                          taskId );
-      
-      if ( rtmTaskNotes != null )
-      {
-         found = true;
-         
-         // Check if we have a notePos from a saved instance state.
-         if ( notePos != -1 && notePos < notes.size() )
-         {
-            initializeNotesList( notes, notePos );
-         }
-         else
-         {
-            initializeNotesList( rtmTaskNotes.getNotes() );
-            
-            boolean foundStartNote = false;
-            
-            while ( startNoteId != null && notePos < notes.size()
-               && !foundStartNote )
-            {
-               foundStartNote = notes.get( notePos )
-                                     .getId()
-                                     .equals( startNoteId );
-               if ( !foundStartNote )
-                  ++notePos;
-            }
-            
-            if ( !foundStartNote )
-               notePos = 0;
-         }
-      }
-      else
-      {
-         LogUtils.logDBError( this, TAG, "Notes" );
-      }
-      
-      return found;
-   }
-   
-
-
-   private void initializeNotesList( List< RtmTaskNote > notes )
-   {
-      this.notes = Collections.unmodifiableList( notes );
-      this.notePos = 0;
-   }
-   
-
-
-   private void initializeNotesList( List< RtmTaskNote > notes, int notePos )
-   {
-      this.notes = Collections.unmodifiableList( notes );
-      this.notePos = notePos;
-   }
-   
-
-
-   private void displayNote( RtmTaskNote note )
-   {
-      try
-      {
-         final TextView createdDate = (TextView) findViewById( R.id.note_created_date );
-         createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
-                                                                  .getTime(),
-                                                              MolokoDateUtils.FORMAT_WITH_YEAR ) );
-         
-         if ( !UIUtils.initializeTitleWithTextLayout( findViewById( R.id.note ),
-                                                      note.getTitle(),
-                                                      note.getText() ) )
-            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
-      }
-      catch ( ClassCastException e )
-      {
-         Log.e( TAG, "Invalid layout spec.", e );
-         throw e;
-      }
-   }
-   
-
-
-   private boolean hasNext()
-   {
-      return notePos != -1 && notePos < notes.size() - 1;
-   }
-   
-
-
-   private RtmTaskNote getNext()
-   {
-      return notes.get( ++notePos );
-   }
-   
-
-
-   private boolean hasPrev()
-   {
-      return notePos > 0;
-   }
-   
-
-
-   private RtmTaskNote getPrev()
-   {
-      return notes.get( --notePos );
-   }
-   
 }

@@ -1096,26 +1096,18 @@ public class Rtm
    }
    
 
-   protected static interface RollbacksColumns
+   protected static interface CreationsColumns
    {
       /**
-       * The RTM timeline ID of the rollback.
+       * Designates the entity that has been created by it's Content URI with ID.
        * <P>
        * Type: TEXT
        * </P>
        */
-      public final static String TIMELINE_ID = "timeline_id";
+      public final static String ENTITY_URI = "entity_uri";
       
       /**
-       * The RTM transaction ID in the timeline of the rollback.
-       * <P>
-       * Type: TEXT
-       * </P>
-       */
-      public final static String TRANSACTION_ID = "transaction_id";
-      
-      /**
-       * The point of time when the rollback was inserted.
+       * The point of time when the entity was created.
        * <P>
        * Type: INTEGER(long)
        * </P>
@@ -1124,9 +1116,9 @@ public class Rtm
    }
    
 
-   public static final class Rollbacks implements BaseColumns, RollbacksColumns
+   public static final class Creations implements BaseColumns, CreationsColumns
    {
-      public final static String PATH = "rollbacks";
+      public final static String PATH = "creations";
       
       /**
        * The content:// style URL for this table
@@ -1135,14 +1127,14 @@ public class Rtm
          + "/" + PATH );
       
       /**
-       * The MIME type of {@link #CONTENT_URI} providing the rollback.
+       * The MIME type of {@link #CONTENT_URI} providing the creation.
        */
-      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.rollback";
+      public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rtm.creation";
       
       /**
-       * The MIME type of a {@link #CONTENT_URI} sub-directory of rollbacks.
+       * The MIME type of a {@link #CONTENT_URI} sub-directory of creations.
        */
-      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.rollbacks";
+      public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.rtm.creations";
       
       public static final String DEFAULT_SORT_ORDER = null;
    }

@@ -7,6 +7,7 @@ import org.antlr.runtime.RecognitionException;
 import dev.drsoran.moloko.grammar.DateTimeLexer;
 import dev.drsoran.moloko.grammar.TimeParser;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
+import dev.drsoran.moloko.util.MolokoCalendar;
 
 
 public class TimeParserTestCase
@@ -19,8 +20,7 @@ public class TimeParserTestCase
       
       System.out.println( ">input: " + string );
       
-      final Calendar cal = TimeParser.getCalendar();
-      cal.setTimeZone( TimeZone.getTimeZone( "Europe/Berlin" ) );
+      final MolokoCalendar cal = TimeParser.getCalendar();
       
       try
       {
@@ -29,12 +29,12 @@ public class TimeParserTestCase
          System.out.println( string + ": " + cal.getTimeInMillis() );
          System.out.println( string + ": " + cal.getTime() );
          System.out.println( string + " has time: "
-                             + cal.isSet( Calendar.HOUR_OF_DAY ) );
+                             + cal.hasTime() );
          
          Asserts.assertEquals( cal.get( Calendar.HOUR_OF_DAY ), h, "Hour is wrong." );
          Asserts.assertEquals( cal.get( Calendar.MINUTE ), m, "Minute is wrong." );
          Asserts.assertEquals( cal.get( Calendar.SECOND ), s, "Second is wrong." );
-         Asserts.assertTrue( cal.isSet( Calendar.HOUR_OF_DAY ), "Calendar has no time." );
+         Asserts.assertTrue( cal.hasTime(), "Calendar has no time." );
       }
       catch ( RecognitionException e )
       {
@@ -52,7 +52,7 @@ public class TimeParserTestCase
       
       System.out.println( ">input: " + string );
       
-      final Calendar cal = TimeParser.getCalendar();
+      final MolokoCalendar cal = TimeParser.getCalendar();
       cal.setTimeZone( TimeZone.getTimeZone( "Europe/Berlin" ) );
       
       try
@@ -62,12 +62,12 @@ public class TimeParserTestCase
          System.out.println( string + ": " + cal.getTimeInMillis() );
          System.out.println( string + ": " + cal.getTime() );
          System.out.println( string + " has time: "
-                             + cal.isSet( Calendar.HOUR_OF_DAY ) );
+                             + cal.hasTime() );
          
          Asserts.assertEquals( cal.get( Calendar.HOUR_OF_DAY ), h, "Hour is wrong." );
          Asserts.assertEquals( cal.get( Calendar.MINUTE ), m, "Minute is wrong." );
          Asserts.assertEquals( cal.get( Calendar.SECOND ), s, "Second is wrong." );
-         Asserts.assertTrue( cal.isSet( Calendar.HOUR_OF_DAY ), "Calendar has no time." );
+         Asserts.assertTrue( cal.hasTime(), "Calendar has no time." );
       }
       catch ( RecognitionException e )
       {

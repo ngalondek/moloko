@@ -31,21 +31,17 @@ import android.app.ProgressDialog;
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmProvider;
-import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.provider.Rtm;
-import dev.drsoran.provider.Rtm.RawTasks;
-import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.Task;
 
 
-public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
+public abstract class AsyncInsertEntity< T > extends AsyncTask< T, Void, Uri >
 {
    private final Context context;
    
@@ -53,7 +49,7 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
    
    
 
-   public AsyncInsertTask( Context context )
+   public AsyncInsertEntity( Context context )
    {
       if ( context == null )
          throw new NullPointerException( "context is null" );
@@ -63,11 +59,28 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
    
 
 
+   protected abstract int getProgressMessageId();
+   
+
+
+   protected abstract List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
+                                                                            T entity );
+   
+
+
+   protected abstract Uri getContentUri();
+   
+
+
+   protected abstract String getPath();
+   
+
+
    @Override
    protected void onPreExecute()
    {
       dialog = new ProgressDialog( context );
-      dialog.setMessage( context.getString( R.string.dlg_insert_task ) );
+      dialog.setMessage( context.getString( getProgressMessageId() ) );
       dialog.setCancelable( false );
       dialog.show();
    }
@@ -75,9 +88,9 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
 
 
    @Override
-   protected Uri doInBackground( Task... task )
+   protected Uri doInBackground( T... entity )
    {
-      if ( task == null || task.length < 1 )
+      if ( entity == null || entity.length < 1 )
          return null;
       
       final ContentProvider provider = context.getContentResolver()
@@ -87,8 +100,8 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
       if ( !( provider instanceof RtmProvider ) )
          return null;
       
-      final List< ContentProviderOperation > operations = TasksProviderPart.insertTask( context.getContentResolver(),
-                                                                                        task[ 0 ] );
+      final List< ContentProviderOperation > operations = getInsertOperations( context.getContentResolver(),
+                                                                               entity[ 0 ] );
       
       if ( operations == null )
          return null;
@@ -96,18 +109,18 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
       final RtmProvider rtmProvider = (RtmProvider) provider;
       final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
       
-      String newTaskId = null;
+      String newEntityId = null;
       
       try
       {
          transactionalAccess.beginTransaction();
          
          final ContentProviderResult[] res = provider.applyBatch( new ArrayList< ContentProviderOperation >( operations ) );
+         final String path = getPath();
          
-         for ( int i = 0, cnt = res.length; newTaskId == null && i < cnt; ++i )
+         for ( int i = 0, cnt = res.length; newEntityId == null && i < cnt; ++i )
          {
-            final Pattern pattern = Pattern.compile( "/" + RawTasks.PATH
-               + "/(.*)" );
+            final Pattern pattern = Pattern.compile( "/" + path + "/(.*)" );
             
             final ContentProviderResult contentProviderResult = res[ i ];
             
@@ -115,13 +128,13 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
                && contentProviderResult.uri != null )
             {
                final Uri uri = contentProviderResult.uri;
-               final String path = uri.getPath();
+               final String uriPath = uri.getPath();
                
-               if ( path != null )
+               if ( uriPath != null )
                {
-                  final Matcher matcher = pattern.matcher( path );
+                  final Matcher matcher = pattern.matcher( uriPath );
                   if ( matcher.matches() && matcher.groupCount() == 1 )
-                     newTaskId = matcher.group( 1 );
+                     newEntityId = matcher.group( 1 );
                }
             }
          }
@@ -130,8 +143,8 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
       }
       catch ( Throwable e )
       {
-         Log.e( LogUtils.toTag( AsyncInsertTask.class ),
-                "Inserting new task failed",
+         Log.e( LogUtils.toTag( AsyncInsertEntity.class ),
+                "Inserting new entity failed",
                 e );
          return null;
       }
@@ -140,7 +153,7 @@ public class AsyncInsertTask extends AsyncTask< Task, Void, Uri >
          transactionalAccess.endTransaction();
       }
       
-      return Queries.contentUriWithId( Tasks.CONTENT_URI, newTaskId );
+      return Queries.contentUriWithId( getContentUri(), newEntityId );
    }
    
 

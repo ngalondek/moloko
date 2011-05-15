@@ -38,9 +38,29 @@ public final class Strings
    
 
 
-   public final static String nullIfEmpty( String string )
+   public final static String emptyIfNull( String string )
    {
-      return ( TextUtils.isEmpty( string ) ? null : string );
+      return ( string == null ) ? EMPTY_STRING : string;
    }
    
+
+
+   public final static CharSequence emptyIfNull( CharSequence string )
+   {
+      return ( string == null ) ? EMPTY_STRING : string;
+   }
+   
+
+
+   public final static String nullIfEmpty( String string )
+   {
+      return ( TextUtils.isEmpty( string ) ) ? null : string;
+   }
+   
+
+
+   public final static CharSequence nullIfEmpty( CharSequence string )
+   {
+      return ( string == null || string.length() == 0 ) ? null : string;
+   }
 }

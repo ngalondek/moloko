@@ -100,49 +100,22 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                         Modifications.NEW_VALUE,
                         modification.getNewValue() );
       
-      String syncedValue = null;
-      
-      if ( contentResolver != null && !modification.isSyncedValueSet() )
+      final String syncedValue;
+      if ( !modification.isSyncedValueSet() && contentResolver != null )
       {
-         final ContentProviderClient entityClient = contentResolver.acquireContentProviderClient( modification.getEntityUri() );
-         
-         if ( entityClient == null )
-            throw new IllegalArgumentException( "Illegal content URI "
-               + modification.getEntityUri() );
-         
-         Cursor c = null;
-         
          try
          {
-            c = entityClient.query( modification.getEntityUri(), new String[]
-            { modification.getColName() }, null, null, null );
-            
-            if ( c == null || c.getCount() == 0 )
-               throw new IllegalArgumentException( "Illegal entity URI "
-                  + modification.getEntityUri() );
-            
-            if ( !c.moveToFirst() )
-               throw new SQLException( "Unable to move to 1st element" );
-            
-            syncedValue = c.getString( 0 );
+            syncedValue = getSyncedValue( contentResolver,
+                                          modification.getEntityUri(),
+                                          modification.getColName() );
          }
          catch ( RemoteException e )
          {
-            Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
-            values = null;
+            return null;
          }
-         finally
-         {
-            if ( c != null )
-               c.close();
-         }
-         
-         entityClient.release();
       }
       else
-      {
          syncedValue = modification.getSyncedValue();
-      }
       
       Modification.put( values, Modifications.SYNCED_VALUE, syncedValue );
       
@@ -362,27 +335,43 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                         }
                         else
                         {
-                           // Insert a new modification.
-                           operations.add( ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
-                                                                   .withValues( getContentValues( contentResolver,
-                                                                                                  modification,
-                                                                                                  true ) )
-                                                                   .build() );
+                           // Query the synced value and check if the new value is really different.
+                           try
+                           {
+                              final String syncedValue = getSyncedValue( contentResolver,
+                                                                         modification.getEntityUri(),
+                                                                         modification.getColName() );
+                              
+                              if ( SyncUtils.hasChanged( syncedValue,
+                                                         modification.getNewValue() ) )
+                                 // Insert a new modification.
+                                 operations.add( ContentProviderOperation.newInsert( Modifications.CONTENT_URI )
+                                                                         .withValues( getContentValues( contentResolver,
+                                                                                                        modification,
+                                                                                                        true ) )
+                                                                         .build() );
+                           }
+                           catch ( RemoteException e )
+                           {
+                              ok = false;
+                           }
                         }
                      }
                      
-                     // Update the entity itself
-                     operations.add( ContentProviderOperation.newUpdate( modification.getEntityUri() )
-                                                             .withValue( modification.getColName(),
-                                                                         modification.getNewValue() )
-                                                             .build() );
+                     if ( ok )
+                        // Update the entity itself
+                        operations.add( ContentProviderOperation.newUpdate( modification.getEntityUri() )
+                                                                .withValue( modification.getColName(),
+                                                                            modification.getNewValue() )
+                                                                .build() );
                   }
                   
                   // Apply the collected operations in a bulk.
-                  if ( operations.size() > 0 )
+                  if ( ok && operations.size() > 0 )
                      contentResolver.applyBatch( Rtm.AUTHORITY, operations );
                   
-                  transactionalAccess.setTransactionSuccessful();
+                  if ( ok )
+                     transactionalAccess.setTransactionSuccessful();
                }
                catch ( Exception e )
                {
@@ -405,6 +394,47 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
       
       return ok;
+   }
+   
+
+
+   public static String getSyncedValue( ContentResolver contentResolver,
+                                        Uri entityUri,
+                                        String colName ) throws RemoteException
+   {
+      final ContentProviderClient entityClient = contentResolver.acquireContentProviderClient( entityUri );
+      
+      if ( entityClient == null )
+         throw new IllegalArgumentException( "Illegal content URI " + entityUri );
+      
+      Cursor c = null;
+      
+      try
+      {
+         c = entityClient.query( entityUri, new String[]
+         { colName }, null, null, null );
+         
+         entityClient.release();
+         
+         if ( c == null || c.getCount() == 0 )
+            throw new IllegalArgumentException( "Illegal entity URI "
+               + entityUri );
+         
+         if ( !c.moveToFirst() )
+            throw new SQLException( "Unable to move to 1st element" );
+         
+         return c.getString( 0 );
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, LogUtils.GENERIC_DB_ERROR, e );
+         throw e;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
    }
    
 

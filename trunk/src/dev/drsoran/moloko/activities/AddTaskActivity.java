@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -42,11 +44,16 @@ import android.widget.TextView;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.util.AsyncInsertTask;
+import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
+import dev.drsoran.moloko.util.AsyncInsertEntity;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ParticipantList;
@@ -160,8 +167,53 @@ public class AddTaskActivity extends AbstractTaskEditActivity
          try
          {
             final Task newTask = newTask();
-            newTaskUri = new AsyncInsertTask( AddTaskActivity.this ).execute( newTask )
-                                                                    .get();
+            
+            newTaskUri = new AsyncInsertEntity< Task >( this )
+            {
+               @Override
+               protected int getProgressMessageId()
+               {
+                  return R.string.dlg_insert_task;
+               }
+               
+
+
+               @Override
+               protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
+                                                                               Task entity )
+               {
+                  final NewTaskIds newIds = new NewTaskIds( null, null );
+                  final List< ContentProviderOperation > operations = TasksProviderPart.insertLocalCreatedTask( contentResolver,
+                                                                                                                entity,
+                                                                                                                newIds );
+                  
+                  operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                               newIds.taskSeriesId ),
+                                                                     entity.getCreated()
+                                                                           .getTime() ) );
+                  operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                               newIds.rawTaskId ),
+                                                                     entity.getCreated()
+                                                                           .getTime() ) );
+                  return operations;
+               }
+               
+
+
+               @Override
+               protected Uri getContentUri()
+               {
+                  return Tasks.CONTENT_URI;
+               }
+               
+
+
+               @Override
+               protected String getPath()
+               {
+                  return RawTasks.PATH;
+               }
+            }.execute( newTask ).get();
          }
          catch ( InterruptedException e )
          {

@@ -32,40 +32,40 @@ import android.view.View;
  */
 public class RtmAuth extends RtmData
 {
-   public interface ISetEditable
+   public interface ISetVisible
    {
-      public void setEditable( View view );
+      public void setVisible( View view );
    }
    
 
-   public enum Perms implements ISetEditable
+   public enum Perms implements ISetVisible
    {
       nothing
       {
-         public void setEditable( View view )
+         public void setVisible( View view )
          {
-            view.setEnabled( false );
+            view.setVisibility( View.GONE );
          }
       },
       read
       {
-         public void setEditable( View view )
+         public void setVisible( View view )
          {
-            view.setEnabled( false );
+            view.setVisibility( View.GONE );
          }
       },
       write
       {
-         public void setEditable( View view )
+         public void setVisible( View view )
          {
-            view.setEnabled( true );
+            view.setVisibility( View.VISIBLE );
          }
       },
       delete
       {
-         public void setEditable( View view )
+         public void setVisible( View view )
          {
-            view.setEnabled( true );
+            view.setVisibility( View.VISIBLE );
          }
       };
    }

@@ -32,10 +32,12 @@ import android.os.Bundle;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
 import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
+import dev.drsoran.moloko.activities.NoteEditActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -304,6 +306,67 @@ public final class Intents
       
       if ( initialValues != null )
          intent.putExtras( initialValues );
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createOpenNotesIntent( Context context,
+                                                     String taskSeriesId,
+                                                     String startNoteId )
+   {
+      // Show only this note, the task has only this one.
+      if ( taskSeriesId == null && startNoteId != null )
+      {
+         return new Intent( Intent.ACTION_VIEW,
+                            Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                      startNoteId ) );
+      }
+      
+      // Show all notes of the task.
+      else if ( taskSeriesId != null )
+      {
+         final Intent intent = new Intent( Intent.ACTION_VIEW,
+                                           Notes.CONTENT_URI );
+         intent.putExtra( Notes.TASKSERIES_ID, taskSeriesId );
+         
+         // If a startNoteId is given we use this as entry point if
+         // multiple notes are available.
+         if ( startNoteId != null )
+            intent.putExtra( Notes._ID, startNoteId );
+         
+         return intent;
+      }
+      else
+         return null;
+   }
+   
+
+
+   public final static Intent createEditNoteIntent( Context context,
+                                                    String noteId,
+                                                    boolean showOtherNotes )
+   {
+      final Intent intent = new Intent( Intent.ACTION_EDIT,
+                                        Queries.contentUriWithId( Notes.CONTENT_URI,
+                                                                  noteId ) );
+      
+      if ( showOtherNotes )
+         intent.putExtra( NoteEditActivity.EXTRA_SHOW_ALL_NOTES_OF_TASK,
+                          Boolean.TRUE );
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createAddNoteIntent( Context context,
+                                                   String taskSeriesId )
+   {
+      final Intent intent = new Intent( Intent.ACTION_INSERT, Notes.CONTENT_URI );
+      
+      intent.putExtra( Notes.TASKSERIES_ID, taskSeriesId );
       
       return intent;
    }

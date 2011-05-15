@@ -13,8 +13,11 @@
       implementation
    -->
 
-<merge
-   xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:orientation="vertical">
 
    <TextView
       android:id="@+id/note_created_date"
@@ -34,5 +37,4 @@
       android:paddingTop="5dip"
       twt:title="note_title"
       twt:text="note_text" />
-
-</merge>
+</LinearLayout>

@@ -135,6 +135,14 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       
 
 
+      @SuppressWarnings( "unchecked" )
+      public IServerSyncOperation< T > build()
+      {
+         return build( ServerSyncOperation.class );
+      }
+      
+
+
       public < O extends IServerSyncOperation< T >> IServerSyncOperation< T > build( Class< O > opType )
       {
          if ( methods.size() == 0 )

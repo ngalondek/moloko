@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +31,8 @@ import java.util.concurrent.ExecutionException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
@@ -45,12 +44,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -58,17 +57,18 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -282,15 +282,15 @@ abstract class AbstractTaskEditActivity extends Activity
             throw e;
          }
          
-         queryLists();
-         queryPriorities();
-         queryLocations();
-         
          final InitialValues initialVals = onCreateImpl( intent );
          
          if ( initialVals != null )
          {
             initialValues = initialVals.toMap();
+            
+            queryLists();
+            queryPriorities();
+            queryLocations();
             
             initViews();
          }
@@ -460,7 +460,7 @@ abstract class AbstractTaskEditActivity extends Activity
       {
          if ( validateInput() )
          {
-            new AlertDialog.Builder( this ).setMessage( R.string.abstracttask_edit_dlg_done )
+            new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_done )
                                            .setPositiveButton( android.R.string.yes,
                                                                new OnClickListener()
                                                                {
@@ -478,8 +478,9 @@ abstract class AbstractTaskEditActivity extends Activity
                                                                         // set the taskseries modification time to now
                                                                         try
                                                                         {
-                                                                           if ( new ApplyModificationsTask( AbstractTaskEditActivity.this ).execute( modifications )
-                                                                                                                                           .get() )
+                                                                           if ( new ApplyModificationsTask( AbstractTaskEditActivity.this,
+                                                                                                            R.string.dlg_save_task ).execute( modifications )
+                                                                                                                                    .get() )
                                                                            {
                                                                               result = RESULT_EDIT_TASK_CHANGED;
                                                                            }
@@ -528,7 +529,7 @@ abstract class AbstractTaskEditActivity extends Activity
    {
       if ( changes.size() > 0 )
       {
-         new AlertDialog.Builder( this ).setMessage( R.string.abstracttask_edit_dlg_cancel )
+         new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_cancel )
                                         .setPositiveButton( android.R.string.yes,
                                                             new OnClickListener()
                                                             {
@@ -780,13 +781,11 @@ abstract class AbstractTaskEditActivity extends Activity
          
          if ( !TextUtils.isEmpty( dueStr ) )
          {
-            final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( dueStr );
+            final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( dueStr );
             
             if ( cal != null )
             {
-               onDueEdited( cal.getTimeInMillis(),
-                            cal.isSet( Calendar.HOUR_OF_DAY )
-                               || cal.isSet( Calendar.HOUR ) );
+               onDueEdited( cal.getTimeInMillis(), cal.hasTime() );
                refreshDue( dueEdit );
             }
             else
@@ -972,8 +971,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
 
@@ -1064,8 +1062,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
 

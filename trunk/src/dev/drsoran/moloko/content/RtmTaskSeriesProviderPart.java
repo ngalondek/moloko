@@ -52,7 +52,6 @@ import com.mdt.rtm.data.RtmTasks;
 
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.provider.Rtm.Notes;
@@ -156,11 +155,8 @@ public class RtmTaskSeriesProviderPart extends
       
       try
       {
-         c = client.query( Rtm.TaskSeries.CONTENT_URI,
-                           PROJECTION,
-                           TaskSeries._ID + " = " + id,
-                           null,
-                           null );
+         c = client.query( TaskSeries.CONTENT_URI, PROJECTION, TaskSeries._ID
+            + " = " + id, null, null );
          
          if ( c != null && c.moveToFirst() )
          {
@@ -186,46 +182,60 @@ public class RtmTaskSeriesProviderPart extends
    public final static List< RtmTaskSeries > getLocalCreatedTaskSeries( ContentProviderClient client )
    {
       List< RtmTaskSeries > taskSerieses = null;
-      Cursor c = null;
       
-      try
+      final List< Creation > creations = CreationsProviderPart.getCreations( client,
+                                                                             TaskSeries.CONTENT_URI );
+      
+      if ( creations != null )
       {
-         c = client.query( Rtm.TaskSeries.CONTENT_URI,
-                           PROJECTION,
-                           TaskSeries.SOURCE + "='"
-                              + TaskSeries.NEW_TASK_SOURCE + "'",
-                           null,
-                           null );
-         
-         boolean ok = c != null;
-         
-         if ( ok )
+         if ( creations.size() == 0 )
+            taskSerieses = new ArrayList< RtmTaskSeries >( 0 );
+         else
          {
-            taskSerieses = new ArrayList< RtmTaskSeries >( c.getCount() );
+            final String selection = Queries.toColumnList( creations,
+                                                           TaskSeries._ID,
+                                                           " OR " );
+            Cursor c = null;
             
-            if ( c.getCount() > 0 )
+            try
             {
-               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               c = client.query( TaskSeries.CONTENT_URI,
+                                 PROJECTION,
+                                 selection,
+                                 null,
+                                 null );
+               
+               boolean ok = c != null;
+               
+               if ( ok )
                {
-                  final RtmTaskSeries taskSeries = createRtmTaskSeries( client,
-                                                                        c );
-                  ok = taskSeries != null;
+                  taskSerieses = new ArrayList< RtmTaskSeries >( c.getCount() );
                   
-                  if ( ok )
-                     taskSerieses.add( taskSeries );
+                  if ( c.getCount() > 0 )
+                  {
+                     for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                     {
+                        final RtmTaskSeries taskSeries = createRtmTaskSeries( client,
+                                                                              c );
+                        ok = taskSeries != null;
+                        
+                        if ( ok )
+                           taskSerieses.add( taskSeries );
+                     }
+                  }
                }
             }
+            catch ( final RemoteException e )
+            {
+               Log.e( TAG, "Query taskseries failed. ", e );
+               taskSerieses = null;
+            }
+            finally
+            {
+               if ( c != null )
+                  c.close();
+            }
          }
-      }
-      catch ( final RemoteException e )
-      {
-         Log.e( TAG, "Query taskseries failed. ", e );
-         taskSerieses = null;
-      }
-      finally
-      {
-         if ( c != null )
-            c.close();
       }
       
       return taskSerieses;
@@ -241,7 +251,7 @@ public class RtmTaskSeriesProviderPart extends
       
       try
       {
-         c = client.query( Rtm.TaskSeries.CONTENT_URI,
+         c = client.query( TaskSeries.CONTENT_URI,
                            PROJECTION,
                            TaskSeries.LIST_ID + " = " + listId,
                            null,
@@ -390,7 +400,7 @@ public class RtmTaskSeriesProviderPart extends
       RtmTaskNotes notes = null;
       if ( ok )
       {
-         notes = RtmNotesProviderPart.getAllNotes( client, taskSeriesId );
+         notes = RtmNotesProviderPart.getNotes( client, taskSeriesId );
          ok = notes != null;
       }
       

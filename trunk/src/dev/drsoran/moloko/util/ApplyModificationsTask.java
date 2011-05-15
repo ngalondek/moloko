@@ -25,7 +25,6 @@ package dev.drsoran.moloko.util;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 
@@ -35,16 +34,19 @@ public class ApplyModificationsTask extends
 {
    private final Context context;
    
+   private final int progressTitle;
+   
    private ProgressDialog dialog;
    
    
 
-   public ApplyModificationsTask( Context context )
+   public ApplyModificationsTask( Context context, int progressTitle )
    {
       if ( context == null )
          throw new NullPointerException( "context is null" );
       
       this.context = context;
+      this.progressTitle = progressTitle;
    }
    
 
@@ -53,7 +55,10 @@ public class ApplyModificationsTask extends
    protected void onPreExecute()
    {
       dialog = new ProgressDialog( context );
-      dialog.setMessage( context.getString( R.string.dlg_save_task ) );
+      
+      if ( progressTitle != -1 )
+         dialog.setMessage( context.getString( progressTitle ) );
+      
       dialog.setCancelable( false );
       dialog.show();
    }

@@ -25,8 +25,10 @@ package dev.drsoran.moloko.content;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -50,6 +52,12 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
 {
    private static final String TAG = "Moloko."
       + RtmNotesProviderPart.class.getSimpleName();
+   
+   
+   public final static class NewNoteId
+   {
+      public String noteId;
+   }
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -104,8 +112,49 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
 
 
-   public final static RtmTaskNotes getAllNotes( ContentProviderClient client,
-                                                 String taskSeriesId )
+   public final static List< RtmTaskNote > getAllNotes( ContentProviderClient client )
+   {
+      List< RtmTaskNote > notes = null;
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Notes.CONTENT_URI, PROJECTION, null, null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            notes = new ArrayList< RtmTaskNote >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmTaskNote taskNote = createNote( c );
+                  notes.add( taskNote );
+               }
+            }
+         }
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query notes failed. ", e );
+         notes = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return notes;
+   }
+   
+
+
+   public final static RtmTaskNotes getNotes( ContentProviderClient client,
+                                              String taskSeriesId )
    {
       RtmTaskNotes notes = null;
       Cursor c = null;
@@ -202,20 +251,140 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    
 
 
-   public RtmNotesProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   public final static List< RtmTaskNote > getLocalCreatedNotes( ContentProviderClient client )
    {
-      super( context, dbAccess, Notes.PATH );
+      List< RtmTaskNote > notes = null;
+      
+      final List< Creation > creations = CreationsProviderPart.getCreations( client,
+                                                                             Notes.CONTENT_URI );
+      
+      if ( creations != null )
+      {
+         if ( creations.size() == 0 )
+            notes = new ArrayList< RtmTaskNote >( 0 );
+         else
+         {
+            final String selection = Queries.toColumnList( creations,
+                                                           Notes._ID,
+                                                           " OR " );
+            Cursor c = null;
+            
+            try
+            {
+               c = client.query( Notes.CONTENT_URI,
+                                 PROJECTION,
+                                 selection,
+                                 null,
+                                 null );
+               
+               boolean ok = c != null;
+               
+               if ( ok )
+               {
+                  notes = new ArrayList< RtmTaskNote >( c.getCount() );
+                  
+                  if ( c.getCount() > 0 )
+                  {
+                     for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                     {
+                        final RtmTaskNote note = createNote( c );
+                        ok = note != null;
+                        
+                        if ( ok )
+                           notes.add( note );
+                     }
+                  }
+               }
+            }
+            catch ( final RemoteException e )
+            {
+               Log.e( TAG, "Query notes failed. ", e );
+               notes = null;
+            }
+            finally
+            {
+               if ( c != null )
+                  c.close();
+            }
+         }
+      }
+      
+      return notes;
    }
    
 
 
-   @Override
-   public Object getElement( Uri uri )
+   public final static int getDeletedNotesCount( ContentProviderClient client )
    {
-      if ( matchUri( uri ) == MATCH_ITEM_TYPE )
-         return getNote( aquireContentProviderClient( uri ),
-                         uri.getLastPathSegment() );
-      return null;
+      int cnt = -1;
+      
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Notes.CONTENT_URI, new String[]
+         { Notes._ID }, Notes.NOTE_DELETED + " IS NOT NULL", null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+            cnt = c.getCount();
+      }
+      catch ( final RemoteException e )
+      {
+         Log.e( TAG, "Query notes failed. ", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return cnt;
+   }
+   
+
+
+   public final static ContentProviderOperation insertLocalCreatedNote( ContentProviderClient client,
+                                                                        RtmTaskNote note,
+                                                                        NewNoteId outNewId )
+   {
+      ContentProviderOperation operation = null;
+      
+      boolean ok = client != null;
+      NewNoteId newId = null;
+      
+      if ( ok )
+      {
+         newId = new NewNoteId();
+         newId.noteId = Queries.getNextId( client, Notes.CONTENT_URI );
+         ok = newId.noteId != null;
+      }
+      
+      if ( ok )
+      {
+         operation = ContentProviderOperation.newInsert( Notes.CONTENT_URI )
+                                             .withValues( getContentValues( new RtmTaskNote( newId.noteId,
+                                                                                             note.getTaskSeriesId(),
+                                                                                             note.getCreatedDate(),
+                                                                                             note.getModifiedDate(),
+                                                                                             note.getDeletedDate(),
+                                                                                             note.getTitle(),
+                                                                                             note.getText() ),
+                                                                            true ) )
+                                             .build();
+         if ( outNewId != null )
+            outNewId.noteId = newId.noteId;
+      }
+      
+      return operation;
+   }
+   
+
+
+   public RtmNotesProviderPart( Context context, SQLiteOpenHelper dbAccess )
+   {
+      super( context, dbAccess, Notes.PATH );
    }
    
 

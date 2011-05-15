@@ -30,18 +30,12 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -50,6 +44,7 @@ import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Connection;
@@ -59,7 +54,6 @@ import dev.drsoran.moloko.util.Connection;
  * Activity which displays login screen to the user.
  */
 public class AuthenticatorActivity extends AccountAuthenticatorActivity
-         implements TextWatcher
 {
    private static final String TAG = "Moloko."
       + AuthenticatorActivity.class.getSimpleName();
@@ -78,13 +72,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
    private AsyncRtmAuthenticator authenticator;
    
-   private EditText apiKeyEdit;
-   
-   private EditText sharedSecrectEdit;
-   
    private Spinner permDropDown;
-   
-   private Button continueBtn;
    
    private TextView messageText;
    
@@ -105,36 +93,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       
       accountManager = AccountManager.get( this );
       
-      apiKeyEdit = (EditText) findViewById( R.id.auth_edit_api_key );
-      apiKeyEdit.addTextChangedListener( this );
-      
-      sharedSecrectEdit = (EditText) findViewById( R.id.auth_edit_shared_secret );
-      sharedSecrectEdit.addTextChangedListener( this );
-      
       permDropDown = (Spinner) findViewById( R.id.auth_spin_permission );
       
-      continueBtn = (Button) findViewById( R.id.auth_btn_continue );
-      
       messageText = (TextView) findViewById( R.id.auth_text_message );
-      
-      // TODO: Remove this:
-      {
-         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-         
-         if ( prefs != null )
-         {
-            apiKeyEdit.setText( prefs.getString( getString( R.string.key_api_key ),
-                                                 "4070cf4b39d83778df99e7b988539cb7" ) );
-            sharedSecrectEdit.setText( prefs.getString( getString( R.string.key_shared_secret ),
-                                                        "8d263cfe92b542fa" ) );
-         }
-      }
       
       initializeGui();
       
       newAccount = getIntent().getStringExtra( AccountManager.KEY_ACCOUNT_NAME ) == null;
-      
-      continueBtn.setEnabled( checkButtonEnabled() );
    }
    
 
@@ -179,10 +144,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       
       if ( Connection.isConnected( this ) )
       {
-         final ApplicationInfo applicationInfo = new ApplicationInfo( apiKeyEdit.getText()
-                                                                                .toString(),
-                                                                      sharedSecrectEdit.getText()
-                                                                                       .toString(),
+         final ApplicationInfo applicationInfo = new ApplicationInfo( MolokoApp.getRtmApiKey( this ),
+                                                                      MolokoApp.getRtmSharedSecret( this ),
                                                                       getString( R.string.app_name ),
                                                                       null );
          
@@ -212,13 +175,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    public void onCancel( View view )
    {
       finish();
-   }
-   
-
-
-   public void onPermInfoClicked( View view )
-   {
-      // TODO: Show features for permission level
    }
    
 
@@ -322,11 +278,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
             {
                accountManager.setUserData( account,
                                            Constants.FEAT_API_KEY,
-                                           apiKeyEdit.getText().toString() );
+                                           MolokoApp.getRtmApiKey( this ) );
                accountManager.setUserData( account,
                                            Constants.FEAT_SHARED_SECRET,
-                                           sharedSecrectEdit.getText()
-                                                            .toString() );
+                                           MolokoApp.getRtmSharedSecret( this ) );
                accountManager.setUserData( account,
                                            Constants.FEAT_PERMISSION,
                                            rtmAuth.getPerms().toString() );
@@ -365,28 +320,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
 
 
-   public void afterTextChanged( Editable s )
-   {
-      continueBtn.setEnabled( checkButtonEnabled() );
-   }
-   
-
-
-   public void beforeTextChanged( CharSequence s,
-                                  int start,
-                                  int count,
-                                  int after )
-   {
-   }
-   
-
-
-   public void onTextChanged( CharSequence s, int start, int before, int count )
-   {
-   }
-   
-
-
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -410,14 +343,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       final Intent intent = getIntent();
       
       // Fill the widgets with all information we have
-      final String apiKey = intent.getStringExtra( Constants.FEAT_API_KEY );
-      final String sharedSecret = intent.getStringExtra( Constants.FEAT_SHARED_SECRET );
       final String permission = intent.getStringExtra( Constants.FEAT_PERMISSION );
       
-      if ( apiKey != null )
-         apiKeyEdit.setText( apiKey );
-      if ( sharedSecret != null )
-         sharedSecrectEdit.setText( sharedSecret );
       if ( permission != null )
          selectPermission( permission );
       
@@ -434,13 +361,6 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       {
          messageText.setText( getString( R.string.auth_info_text ) );
       }
-   }
-   
-
-
-   private boolean checkButtonEnabled()
-   {
-      return apiKeyEdit.length() > 0 && sharedSecrectEdit.length() > 0;
    }
    
 

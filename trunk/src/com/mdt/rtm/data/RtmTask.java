@@ -112,6 +112,7 @@ public class RtmTask extends RtmData
       switch ( priority.charAt( 0 ) )
       {
          case 'n':
+         case 'N':
             return Priority.None;
          case '3':
             return Priority.Low;

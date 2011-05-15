@@ -17,11 +17,9 @@ options
    import java.text.ParseException;
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
-   import java.util.Map;
-   import java.util.HashMap;
    
    import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
-   import dev.drsoran.moloko.util.MolokoDateUtils;
+   import dev.drsoran.moloko.util.MolokoCalendar;
 }
 
 @members
@@ -43,15 +41,11 @@ options
 
    
 
-   public final static Calendar getCalendar()
+   public final static MolokoCalendar getCalendar()
    {
-      final Calendar cal = MolokoDateUtils.newCalendar();
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
 
-      cal.clear( Calendar.HOUR );
-      cal.clear( Calendar.HOUR_OF_DAY );
-      cal.clear( Calendar.MINUTE );
-      cal.clear( Calendar.SECOND );
-      cal.clear( Calendar.MILLISECOND );
+      cal.setHasTime( false );
 
       return cal;
    }
@@ -88,11 +82,11 @@ options
 
 
 
-   private final void parseFullDate( Calendar cal,
-                                     String   day,
-                                     String   month,
-                                     String   year,
-                                     boolean  textMonth ) throws RecognitionException
+   private final void parseFullDate( MolokoCalendar cal,
+                                     String         day,
+                                     String         month,
+                                     String         year,
+                                     boolean        textMonth ) throws RecognitionException
    {
       try
       {
@@ -139,8 +133,8 @@ options
 
 
 
-   private final void parseTextMonth( Calendar cal,
-                                      String   month ) throws RecognitionException
+   private final void parseTextMonth( MolokoCalendar cal,
+                                      String         month ) throws RecognitionException
    {
       final int monthNum = getMonthNumber( month );
          
@@ -152,7 +146,7 @@ options
 
 
 
-   private final static void parseYear( Calendar cal, String yearStr ) throws RecognitionException
+   private final static void parseYear( MolokoCalendar cal, String yearStr ) throws RecognitionException
    {
       final int len = yearStr.length();
 
@@ -195,7 +189,7 @@ options
 
 
 
-   private final static void rollToEndOf( int field, Calendar cal )
+   private final static void rollToEndOf( int field, MolokoCalendar cal )
    {
       final int ref = cal.get( field );
       final int max = cal.getActualMaximum( field );
@@ -215,7 +209,7 @@ options
 /** RULES **/
 
 
-parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
+parseDate [MolokoCalendar cal, boolean clearTime] returns [boolean eof]
    : (   date_full         [$cal]
        | date_on           [$cal]
        | date_in_X_YMWD    [$cal]
@@ -225,14 +219,18 @@ parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
    // at last step cause the Calendar methods
    // will set them again.
    {
+      cal.setHasDate( true );
+      
       if ( clearTime )
-      {
-         cal.clear( Calendar.HOUR );
-         cal.clear( Calendar.HOUR_OF_DAY );
-         cal.clear( Calendar.MINUTE );
-         cal.clear( Calendar.SECOND );
-         cal.clear( Calendar.MILLISECOND );
-      }
+         cal.setHasTime( false );      
+   }
+   | NOW
+   {
+      // In case of NOW we do not respect the clearTime Parameter
+      // cause NOW has always a time.
+      cal.setTimeInMillis( System.currentTimeMillis() );
+      cal.setHasDate( true );
+      cal.setHasTime( true );
    }
    | EOF
    {
@@ -244,7 +242,7 @@ parseDate [Calendar cal, boolean clearTime] returns [boolean eof]
       throw e;
    }
 
-parseDateWithin[boolean past] returns [Calendar epochStart, Calendar epochEnd]
+parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar epochEnd]
    @init
    {
       retval.epochStart = getCalendar();
@@ -255,18 +253,7 @@ parseDateWithin[boolean past] returns [Calendar epochStart, Calendar epochEnd]
    {
       retval.epochEnd = getCalendar();
       retval.epochEnd.setTimeInMillis( retval.epochStart.getTimeInMillis() );
-      retval.epochEnd.add( unit, past ? -amount : amount );
-
-      retval.epochStart.clear( Calendar.HOUR );
-      retval.epochStart.clear( Calendar.HOUR_OF_DAY );
-      retval.epochStart.clear( Calendar.MINUTE );
-      retval.epochStart.clear( Calendar.SECOND );
-      retval.epochStart.clear( Calendar.MILLISECOND );
-      retval.epochEnd.clear( Calendar.HOUR );
-      retval.epochEnd.clear( Calendar.HOUR_OF_DAY );
-      retval.epochEnd.clear( Calendar.MINUTE );
-      retval.epochEnd.clear( Calendar.SECOND );
-      retval.epochEnd.clear( Calendar.MILLISECOND );
+      retval.epochEnd.add( unit, past ? -amount : amount );      
    }
    : (  a=INT
         {
@@ -305,7 +292,7 @@ parseDateWithin[boolean past] returns [Calendar epochStart, Calendar epochEnd]
       throw e;
    }
 
-date_full [Calendar cal]
+date_full [MolokoCalendar cal]
    @init
    {
       String pt1Str = null;
@@ -337,10 +324,10 @@ date_full [Calendar cal]
                        false );
 
        // if year is missing and the date is
-       // befor now we roll to the next year.
+       // before now we roll to the next year.
        if ( pt3Str == null )
        {
-          final Calendar now = getCalendar();
+          final MolokoCalendar now = getCalendar();
 
           if ( cal.before( now ) )
           {
@@ -350,7 +337,7 @@ date_full [Calendar cal]
      }
      ;
 
-date_on [Calendar cal]
+date_on [MolokoCalendar cal]
    : ON? (   date_on_Xst_of_M[$cal]
            | date_on_M_Xst   [$cal]
            | date_on_weekday [$cal])
@@ -360,10 +347,10 @@ date_on [Calendar cal]
       throw e;
    }
 
-date_on_Xst_of_M [Calendar cal]
+date_on_Xst_of_M [MolokoCalendar cal]
    @init
    {
-      final Calendar now = getCalendar();
+      final MolokoCalendar now = getCalendar();
       boolean hasMonth   = false;
       boolean hasYear    = false;
    }
@@ -406,7 +393,7 @@ date_on_Xst_of_M [Calendar cal]
       throw e;
    }
 
-date_on_M_Xst [Calendar cal]
+date_on_M_Xst [MolokoCalendar cal]
    @init
    {
       boolean hasYear = false;
@@ -443,7 +430,7 @@ date_on_M_Xst [Calendar cal]
       throw e;
    }
 
-date_on_weekday [Calendar cal]
+date_on_weekday [MolokoCalendar cal]
    @init
    {
       boolean nextWeek = false;
@@ -459,8 +446,12 @@ date_on_weekday [Calendar cal]
 
       cal.set( Calendar.DAY_OF_WEEK, parsedWeekDay );
 
-      // If the weekday is before today or today, we adjust to next week.
-      if ( parsedWeekDay <= currentWeekDay )
+      // If:
+      // - the weekday is before today or today,
+      // - today is sunday
+      // we adjust to next week.
+      if (    parsedWeekDay  <= currentWeekDay
+           || currentWeekDay == Calendar.SUNDAY )
          cal.add( Calendar.WEEK_OF_YEAR, 1 );
 
       // if the next week is explicitly enforced
@@ -473,7 +464,7 @@ date_on_weekday [Calendar cal]
       throw e;
    }
 
-date_in_X_YMWD [Calendar cal]
+date_in_X_YMWD [MolokoCalendar cal]
    :  IN?             date_in_X_YMWD_distance[$cal]
       (( AND| COMMA ) date_in_X_YMWD_distance[$cal])*
    ;
@@ -482,7 +473,7 @@ date_in_X_YMWD [Calendar cal]
       throw e;
    }
 
-date_in_X_YMWD_distance [Calendar cal]
+date_in_X_YMWD_distance [MolokoCalendar cal]
    @init
    {
       int amount   = -1;
@@ -514,7 +505,7 @@ date_in_X_YMWD_distance [Calendar cal]
       throw e;
    }
 
-date_end_of_the_MW [Calendar cal]
+date_end_of_the_MW [MolokoCalendar cal]
    : END OF? THE?
      (   WEEKS
          {
@@ -530,13 +521,14 @@ date_end_of_the_MW [Calendar cal]
       throw e;
    }
 
-date_natural [Calendar cal]
+date_natural [MolokoCalendar cal]
    : (TODAY | TONIGHT)
      {
      }
    | NEVER
      {
-        cal.clear( Calendar.DATE );
+        cal.setHasDate( false );
+        cal.setHasTime( false );
      }
    | TOMORROW
      {

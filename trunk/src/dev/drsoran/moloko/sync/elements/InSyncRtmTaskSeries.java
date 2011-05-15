@@ -31,11 +31,9 @@ import android.content.ContentProviderOperation;
 import android.net.Uri;
 
 import com.mdt.rtm.data.RtmTask;
-import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
@@ -45,7 +43,6 @@ import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.rtm.ParticipantList;
 
@@ -128,19 +125,6 @@ public class InSyncRtmTaskSeries implements
          }
       }
       
-      // Insert notes
-      {
-         final List< RtmTaskNote > notes = taskSeries.getNotes().getNotes();
-         
-         for ( RtmTaskNote rtmTaskNote : notes )
-         {
-            operation.add( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
-                                                   .withValues( RtmNotesProviderPart.getContentValues( rtmTaskNote,
-                                                                                                       true ) )
-                                                   .build() );
-         }
-      }
-      
       // Insert participants
       {
          final ParticipantList participantList = taskSeries.getParticipants();
@@ -182,18 +166,6 @@ public class InSyncRtmTaskSeries implements
                                                                                          syncTasksList,
                                                                                          false /* never full sync */);
          operations.add( taskOperations );
-      }
-      
-      // Sync notes
-      {
-         final ContentProviderSyncableList< RtmTaskNote > syncNotesList = new ContentProviderSyncableList< RtmTaskNote >( taskSeries.getNotes()
-                                                                                                                                    .getNotes(),
-                                                                                                                          RtmTaskNote.LESS_ID );
-         final List< IContentProviderSyncOperation > noteOperations = SyncDiffer.inDiff( serverElement.taskSeries.getNotes()
-                                                                                                                 .getNotes(),
-                                                                                         syncNotesList,
-                                                                                         true /* always full sync */);
-         operations.add( noteOperations );
       }
       
       // Sync participants

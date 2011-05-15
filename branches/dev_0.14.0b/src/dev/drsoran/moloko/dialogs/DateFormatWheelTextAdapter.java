@@ -34,8 +34,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
@@ -51,7 +51,7 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
    
    private final int type;
    
-   private final Calendar calendar;
+   private final MolokoCalendar calendar;
    
    private final int calField;
    
@@ -71,13 +71,12 @@ public class DateFormatWheelTextAdapter extends AbstractWheelAdapter
    
    
 
-   public DateFormatWheelTextAdapter( Context context, Calendar cal,
+   public DateFormatWheelTextAdapter( Context context, MolokoCalendar cal,
       int calField, String dateFormat, int type, int flags )
    {
-      this.calendar = Calendar.getInstance( MolokoApp.getSettings()
-                                                     .getTimezone() );
+      this.calendar = MolokoCalendar.getInstance();
       this.calendar.setTimeInMillis( cal.getTimeInMillis() );
-      MolokoDateUtils.clearTime( this.calendar );
+      this.calendar.setHasTime( false );
       
       this.calField = calField;
       this.type = type;

@@ -36,7 +36,7 @@ import android.view.View;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.MolokoCalendar;
 
 
 public class DuePickerDialog extends AbstractPickerDialog
@@ -51,7 +51,7 @@ public class DuePickerDialog extends AbstractPickerDialog
    
    private TimeWheelGroup timeWheelGroup;
    
-   private final Calendar calendar;
+   private final MolokoCalendar calendar;
    
    private int dateFormat;
    
@@ -66,13 +66,10 @@ public class DuePickerDialog extends AbstractPickerDialog
 
    public DuePickerDialog( Context context, long initial, boolean hasDueTime )
    {
-      this.calendar = Calendar.getInstance( MolokoApp.getSettings()
-                                                     .getTimezone() );
+      this.calendar = MolokoCalendar.getInstance();
       this.calendar.setTimeInMillis( initial != -1 ? initial
                                                   : System.currentTimeMillis() );
-      
-      if ( !hasDueTime )
-         MolokoDateUtils.clearTime( calendar );
+      this.calendar.setHasTime( hasDueTime );
       
       init( context, hasDueTime );
    }
@@ -146,7 +143,7 @@ public class DuePickerDialog extends AbstractPickerDialog
                                                                            public void onClick( DialogInterface dialog,
                                                                                                 int which )
                                                                            {
-                                                                              final Calendar cal = getCalendar();
+                                                                              final MolokoCalendar cal = getCalendar();
                                                                               notifyOnDialogCloseListener( CloseReason.OK,
                                                                                                            cal.getTimeInMillis(),
                                                                                                            Boolean.valueOf( hasTime() ) );
@@ -175,12 +172,11 @@ public class DuePickerDialog extends AbstractPickerDialog
    
 
 
-   public Calendar getCalendar()
+   public MolokoCalendar getCalendar()
    {
       updateCalendarDate();
       
-      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
-                                                          .getTimezone() );
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
       cal.setTimeInMillis( calendar.getTimeInMillis() );
       
       return timeWheelGroup.putTime( cal );
@@ -324,10 +320,10 @@ public class DuePickerDialog extends AbstractPickerDialog
       
 
 
-      public Calendar putTime( Calendar cal )
+      public MolokoCalendar putTime( MolokoCalendar cal )
       {
          if ( !hasTime )
-            return MolokoDateUtils.clearTime( cal );
+            cal.setHasTime( false );
          else
          {
             if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
@@ -345,9 +341,9 @@ public class DuePickerDialog extends AbstractPickerDialog
             
             cal.set( Calendar.SECOND, 0 );
             cal.set( Calendar.MILLISECOND, 0 );
-            
-            return cal;
          }
+         
+         return cal;
       }
       
 
@@ -359,7 +355,7 @@ public class DuePickerDialog extends AbstractPickerDialog
             wheelViews[ 0 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
                                                                          calendar,
                                                                          DueTimeWheelTextAdapter.TYPE_HOUR_OF_DAY ) );
-            if ( !hasTime || !MolokoDateUtils.hasTime( calendar ) )
+            if ( !hasTime || !calendar.hasTime() )
                wheelViews[ 0 ].setCurrentItem( offIndex );
             else
                wheelViews[ 0 ].setCurrentItem( calendar.get( Calendar.HOUR_OF_DAY ) + 1 );
@@ -369,7 +365,7 @@ public class DuePickerDialog extends AbstractPickerDialog
             wheelViews[ 0 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
                                                                          calendar,
                                                                          DueTimeWheelTextAdapter.TYPE_HOUR ) );
-            if ( !hasTime || !MolokoDateUtils.hasTime( calendar ) )
+            if ( !hasTime || !calendar.hasTime() )
                wheelViews[ 0 ].setCurrentItem( offIndex );
             else
                wheelViews[ 0 ].setCurrentItem( calendar.get( Calendar.HOUR ) + 1 );

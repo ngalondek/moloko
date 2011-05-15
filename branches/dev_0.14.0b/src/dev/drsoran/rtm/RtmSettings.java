@@ -22,7 +22,6 @@
 
 package dev.drsoran.rtm;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -44,6 +43,7 @@ import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Settings;
 
@@ -86,7 +86,9 @@ public class RtmSettings extends RtmData implements
 
    public static RtmSettings createDefaultSettings( Context context )
    {
-      final String timeZone = Calendar.getInstance().getTimeZone().getID();
+      final String timeZone = MolokoCalendar.getInstance()
+                                            .getTimeZone()
+                                            .getID();
       
       final char[] order = DateFormat.getDateFormatOrder( context );
       

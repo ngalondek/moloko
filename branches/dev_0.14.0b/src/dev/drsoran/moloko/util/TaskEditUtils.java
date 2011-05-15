@@ -132,7 +132,7 @@ public final class TaskEditUtils
       if ( !tasks.isEmpty() )
       {
          final ModificationSet modifications = new ModificationSet();
-         final Calendar cal = MolokoDateUtils.newCalendarUTC();
+         final MolokoCalendar cal = MolokoCalendar.getUTCInstance();
          
          for ( Task task : tasks )
          {
@@ -150,7 +150,7 @@ public final class TaskEditUtils
             else if ( MolokoDateUtils.isBefore( due.getTime(),
                                                 cal.getTimeInMillis() ) )
             {
-               final Calendar tmp = MolokoDateUtils.newCalendarUTC( due.getTime() );
+               final MolokoCalendar tmp = MolokoDateUtils.newCalendarUTC( due.getTime() );
                
                // Preserve the original time when setting to today
                cal.set( Calendar.HOUR_OF_DAY, tmp.get( Calendar.HOUR_OF_DAY ) );

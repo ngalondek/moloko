@@ -90,33 +90,18 @@ public class MolokoDateUtils
    
 
 
-   public final static Calendar newCalendar()
+   public final static MolokoCalendar newCalendar( long millis )
    {
-      return Calendar.getInstance( MolokoApp.getSettings().getTimezone() );
-   }
-   
-
-
-   public final static Calendar newCalendar( long millis )
-   {
-      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
-                                                          .getTimezone() );
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
       cal.setTimeInMillis( millis );
       return cal;
    }
    
 
 
-   public final static Calendar newCalendarUTC()
+   public final static MolokoCalendar newCalendarUTC( long millis )
    {
-      return newCalendarUTC( System.currentTimeMillis() );
-   }
-   
-
-
-   public final static Calendar newCalendarUTC( long millis )
-   {
-      final Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
+      final MolokoCalendar cal = MolokoCalendar.getUTCInstance();
       cal.setTimeInMillis( millis );
       return cal;
    }
@@ -200,26 +185,6 @@ public class MolokoDateUtils
       {
          return DateUtils.SECOND_IN_MILLIS;
       }
-   }
-   
-
-
-   public final static Calendar clearTime( Calendar cal )
-   {
-      cal.clear( Calendar.MINUTE );
-      cal.clear( Calendar.SECOND );
-      cal.clear( Calendar.MILLISECOND );
-      cal.clear( Calendar.AM_PM );
-      cal.clear( Calendar.HOUR );
-      cal.clear( Calendar.HOUR_OF_DAY );
-      return cal;
-   }
-   
-
-
-   public final static boolean hasTime( Calendar cal )
-   {
-      return cal.isSet( Calendar.HOUR_OF_DAY );
    }
    
 

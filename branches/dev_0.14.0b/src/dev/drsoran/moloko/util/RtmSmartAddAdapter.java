@@ -216,7 +216,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                      due_dates.add( Pair.create( context.getString( R.string.phr_today ),
                                                  Long.valueOf( System.currentTimeMillis() ) ) );
                      
-                     final Calendar cal = MolokoDateUtils.newCalendar();
+                     final MolokoCalendar cal = MolokoCalendar.getInstance();
                      
                      // Tomorrow
                      cal.roll( Calendar.DAY_OF_YEAR, true );

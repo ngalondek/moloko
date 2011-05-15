@@ -55,6 +55,7 @@ import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -254,7 +255,7 @@ public class MolokoNotificationManager implements
                                                                                         context.getString( R.string.moloko_prefs_notification_tasks_w_due_before_default_value ) ) );
                      
                      // today
-                     final Calendar cal = getDateOnlyCalendar( 0 );
+                     final MolokoCalendar cal = getDateOnlyCalendar( 0 );
                      
                      // Collect all tasks which due today + the reminder time span.
                      final StringBuilder buffer = new StringBuilder( Tasks.DUE_DATE );
@@ -545,8 +546,8 @@ public class MolokoNotificationManager implements
       }
       else
       {
-         Log.e( TAG,
-                "Error evaluating RtmSmartFilter " + filter.getFilterString() );
+         Log.e( TAG, "Error evaluating RtmSmartFilter "
+            + filter.getFilterString() );
       }
       
       return new Pair< String, Integer >( result, count );
@@ -554,10 +555,9 @@ public class MolokoNotificationManager implements
    
 
 
-   private Calendar getCalendar( int dayOffset )
+   private MolokoCalendar getCalendar( int dayOffset )
    {
-      final Calendar cal = Calendar.getInstance( MolokoApp.getSettings()
-                                                          .getTimezone() );
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
       cal.add( Calendar.DAY_OF_YEAR, dayOffset );
       
       return cal;
@@ -565,11 +565,12 @@ public class MolokoNotificationManager implements
    
 
 
-   private Calendar getDateOnlyCalendar( int dayOffset )
+   private MolokoCalendar getDateOnlyCalendar( int dayOffset )
    {
-      final Calendar cal = getCalendar( dayOffset );
+      final MolokoCalendar cal = getCalendar( dayOffset );
+      cal.setHasTime( false );
       
-      return MolokoDateUtils.clearTime( cal );
+      return cal;
    }
    
 

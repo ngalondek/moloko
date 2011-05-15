@@ -9,6 +9,7 @@ options
 {
    package dev.drsoran.moloko.grammar;
 
+   import dev.drsoran.moloko.util.MolokoCalendar;
    import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
    import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
    import dev.drsoran.provider.Rtm.Tasks;
@@ -197,7 +198,7 @@ options
 
    private void equalsTimeParam( String column, String param )
    {
-      final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( unquotify( param ) );
+      final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( unquotify( param ) );
 
       if ( cal != null )
       {
@@ -205,14 +206,14 @@ options
          result.append( column );
          
       	// Check if we have 'NEVER'
-      	if ( !cal.isSet( Calendar.DATE ) )
+      	if ( !cal.hasDate() )
       	{      	   
             result.append( " IS NULL" );
       	}
       	
          // Check if we have an explicit time
          // given.
-         else if ( cal.isSet( Calendar.HOUR_OF_DAY ) )
+         else if ( cal.hasTime() )
          {
             result.append( " == " );
             result.append( cal.getTimeInMillis() );
@@ -241,14 +242,14 @@ options
 
    private void differsTimeParam( String column, String param, boolean before )
    {
-      final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( unquotify( param ) );
+      final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( unquotify( param ) );
 
       if ( cal != null )
       {
 	      result.append( column );
 	      
    	   // Check if we have 'NEVER'
-      	if ( !cal.isSet( Calendar.DATE ) )
+      	if ( !cal.hasDate() )
       	{      	   
             result.append( " IS NOT NULL" );
       	}

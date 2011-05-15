@@ -44,6 +44,9 @@
    <string name="app_sort_due_date">Due Date</string>
    <string name="app_titlebar_add_task_hint">@string/app_task_add</string>
    
+   <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>
+   <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>
+   
    <string name="svc_sync">RTM Synchronization</string>	
    <string name="svc_auth">RTM Authentication</string>
    
@@ -69,10 +72,7 @@
          &lt;br>- &lt;a href="http://code.google.com/p/android-log-collector/">android-log-collector&lt;/a>
          &lt;br>- &lt;a href="http://code.google.com/p/android-wheel/>android-wheel&lt;/a>
    </string>
-   
-   <!-- TODO: to be removed -->   
-   <string name="key_api_key">api_key</string>
-   <string name="key_shared_secret">shared_secret</string>
+     
    <string name="key_permission">permission</string>   
 
 	<!-- Global keys -->

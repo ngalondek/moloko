@@ -41,6 +41,7 @@ import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -117,7 +118,7 @@ public class CalendarHomeWidget extends AsyncLoadingHomeWidget
 
    public void refresh()
    {
-      final Calendar cal = getCalendar();
+      final MolokoCalendar cal = getCalendar();
       
       {
          final TextView date = (TextView) findViewById( R.id.home_calendar_date );
@@ -147,9 +148,9 @@ public class CalendarHomeWidget extends AsyncLoadingHomeWidget
    
 
 
-   private Calendar getCalendar()
+   private MolokoCalendar getCalendar()
    {
-      final Calendar cal = MolokoDateUtils.newCalendar();
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
       
       switch ( type )
       {
@@ -167,7 +168,7 @@ public class CalendarHomeWidget extends AsyncLoadingHomeWidget
 
    public Intent getIntent()
    {
-      final Calendar cal = getCalendar();
+      final MolokoCalendar cal = getCalendar();
       final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_LIT
          + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
                                        MolokoDateUtils.FORMAT_PARSER ) );
@@ -193,7 +194,7 @@ public class CalendarHomeWidget extends AsyncLoadingHomeWidget
    @Override
    protected Cursor doBackgroundQuery()
    {
-      final Calendar cal = getCalendar();
+      final MolokoCalendar cal = getCalendar();
       
       final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_LIT
                                                            + MolokoDateUtils.formatDate( cal.getTimeInMillis(),

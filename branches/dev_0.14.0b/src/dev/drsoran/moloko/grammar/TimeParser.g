@@ -14,7 +14,7 @@ options
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
    
-   import dev.drsoran.moloko.util.MolokoDateUtils;
+   import dev.drsoran.moloko.util.MolokoCalendar;
 }
 
 @members
@@ -25,15 +25,15 @@ options
    }
 
 
-   public final static Calendar getCalendar()
+   public final static MolokoCalendar getCalendar()
    {      
-      return MolokoDateUtils.newCalendar();;
+      return MolokoCalendar.getInstance();
    }
 
 
 
-   private final static void setCalendarTime( Calendar cal,
-                                              String   pit ) throws RecognitionException
+   private final static void setCalendarTime( MolokoCalendar cal,
+                                              String         pit ) throws RecognitionException
    {
       final int len = pit.length();
 
@@ -83,11 +83,13 @@ options
 // with a date yet. E.g. today@12.
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
-parseTime [Calendar cal, boolean adjustDay] returns [boolean eof]
+parseTime [MolokoCalendar cal, boolean adjustDay] returns [boolean eof]
    : (AT | COMMA)? time_point_in_time[$cal]
    {
       if ( adjustDay && getCalendar().after( cal ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );
+      
+      cal.setHasTime( true );
    }
    | EOF
    {
@@ -99,10 +101,11 @@ parseTime [Calendar cal, boolean adjustDay] returns [boolean eof]
       throw e;
    }
 
-time_point_in_time [Calendar cal]
+time_point_in_time [MolokoCalendar cal]
    : NEVER
    {
-      cal.clear();
+      cal.setHasDate( false );
+      cal.setHasTime( false );
    }
    | MIDNIGHT
    {
@@ -135,7 +138,7 @@ time_point_in_time [Calendar cal]
       throw e;
    }
 
-am_pm [Calendar cal]
+am_pm [MolokoCalendar cal]
    : AM
    | PM
    {
@@ -159,10 +162,10 @@ am_pm [Calendar cal]
 // with a date yet. E.g. today@12.
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
-parseTimeSpec [Calendar cal, boolean adjustDay] returns [boolean eof]
+parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [boolean eof]
    @init
    {
-       cal.set( Calendar.HOUR_OF_DAY, 0 );
+      cal.set( Calendar.HOUR_OF_DAY, 0 );
       cal.set( Calendar.MINUTE,      0 );
       cal.set( Calendar.SECOND,      0 );
       cal.set( Calendar.MILLISECOND, 0 );
@@ -175,6 +178,8 @@ parseTimeSpec [Calendar cal, boolean adjustDay] returns [boolean eof]
    {
       if ( adjustDay && getCalendar().after( cal ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );
+      
+      cal.setHasTime( true );
    }
    | EOF
    {
@@ -186,7 +191,7 @@ parseTimeSpec [Calendar cal, boolean adjustDay] returns [boolean eof]
       throw e;
    }
 
-time_separatorspec [Calendar cal]
+time_separatorspec [MolokoCalendar cal]
    : (h=time_component
       {
          cal.set( Calendar.HOUR_OF_DAY, $h.value );
@@ -206,7 +211,7 @@ time_separatorspec [Calendar cal]
       throw e;
    }
 
-time_naturalspec [Calendar cal] returns [int seconds]
+time_naturalspec [MolokoCalendar cal] returns [int seconds]
    @init
    {
       int calType = -1;

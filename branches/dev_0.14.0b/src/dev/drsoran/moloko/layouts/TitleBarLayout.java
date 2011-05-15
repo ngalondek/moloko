@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.layouts;
 
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +55,7 @@ import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.RtmSmartAddAdapter;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -302,13 +302,13 @@ public class TitleBarLayout extends LinearLayout implements
                            }
                            else
                            {
-                              final Calendar cal = RtmDateTimeParsing.parseDateTimeSpec( token.text );
+                              final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( token.text );
                               if ( cal != null )
                               {
                                  config.putLong( Tasks.DUE_DATE,
                                                  cal.getTimeInMillis() );
                                  config.putBoolean( Tasks.HAS_DUE_TIME,
-                                                    MolokoDateUtils.hasTime( cal ) );
+                                                    cal.hasTime() );
                               }
                            }
                            break;

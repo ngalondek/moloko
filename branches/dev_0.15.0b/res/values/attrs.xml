@@ -56,6 +56,8 @@
 			<flag name="search" value="1" />
 			<flag name="home" value="2" />
          <flag name="add_task" value="4" />
+         <flag name="add_list" value="8" />
+         <flag name="save_search" value="16" />
 		</attr>
 	</declare-styleable>
 

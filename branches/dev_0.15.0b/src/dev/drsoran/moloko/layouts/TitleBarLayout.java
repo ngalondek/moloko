@@ -416,7 +416,7 @@ public class TitleBarLayout extends LinearLayout implements
       }
    }
    
-   private final ToggleImageButton addTaskBtn;
+   private ToggleImageButton addTaskBtn;
    
    private AddTaskSection addTaskSection;
    
@@ -458,17 +458,29 @@ public class TitleBarLayout extends LinearLayout implements
          setBtnVisible( R.id.app_titlebar_btn_home );
       }
       
-      // Show add task button
-      if ( ( showButtons & 4 ) != 0
-         && !AccountUtils.isReadOnlyAccess( getContext() ) )
+      if ( !AccountUtils.isReadOnlyAccess( getContext() ) )
       {
-         setVisible( R.id.app_titlebar_sep_add_task );
-         addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
-         addTaskBtn.setOnCheckedChangeListener( this );
-      }
-      else
-      {
-         addTaskBtn = null;
+         // Show add task button
+         if ( ( showButtons & 4 ) != 0 )
+         {
+            setVisible( R.id.app_titlebar_sep_add_task );
+            addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
+            addTaskBtn.setOnCheckedChangeListener( this );
+         }
+         
+         // Show add list button
+         if ( ( showButtons & 8 ) != 0 )
+         {
+            setVisible( R.id.app_titlebar_sep_add_list );
+            setBtnVisible( R.id.app_titlebar_btn_add_list );
+         }
+         
+         // Show save search button
+         if ( ( showButtons & 16 ) != 0 )
+         {
+            setVisible( R.id.app_titlebar_sep_save_search );
+            setBtnVisible( R.id.app_titlebar_btn_save_search );
+         }
       }
       
       array.recycle();
@@ -551,6 +563,12 @@ public class TitleBarLayout extends LinearLayout implements
             intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
             
             getContext().startActivity( intent );
+            break;
+         
+         case R.id.app_titlebar_btn_add_list:
+            break;
+         
+         case R.id.app_titlebar_btn_save_search:
             break;
          
          default :

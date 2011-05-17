@@ -128,10 +128,8 @@ public class AddNoteActivity extends Activity
                                                          createdDate,
                                                          createdDate,
                                                          null,
-                                                         Strings.nullIfEmpty( title.getText()
-                                                                                   .toString() ),
-                                                         Strings.nullIfEmpty( text.getText()
-                                                                                  .toString() ) );
+                                                         Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
+                                                         Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
             newNoteUri = new AsyncInsertEntity< RtmTaskNote >( this )
             {
                @Override
@@ -248,7 +246,7 @@ public class AddNoteActivity extends Activity
 
    private boolean hasChanged()
    {
-      return !TextUtils.isEmpty( title.getText() )
-         || !TextUtils.isEmpty( text.getText() );
+      return !TextUtils.isEmpty( UIUtils.getTrimmedText( title ) )
+         || !TextUtils.isEmpty( UIUtils.getTrimmedText( text ) );
    }
 }

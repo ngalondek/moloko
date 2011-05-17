@@ -63,6 +63,13 @@ public class ClearableMultiAutoCompleteTextView extends
    
 
 
+   public String getTextTrimmed()
+   {
+      return super.getText().toString().trim();
+   }
+   
+
+
    @Override
    public boolean onTouchEvent( MotionEvent event )
    {

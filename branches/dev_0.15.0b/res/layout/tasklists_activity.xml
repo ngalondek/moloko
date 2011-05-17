@@ -24,7 +24,7 @@
       xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
       style="@style/App_TitleBar"
       moloko:titleText="@string/app_tasklists"
-      moloko:showButton="add_task|home|search" />
+      moloko:showButton="add_list|home|search" />
 
    <ExpandableListView
       android:id="@+id/android:list"

@@ -95,9 +95,9 @@ public class NoteEditActivity extends AbstractNoteActivity
                                                                {
                                                                   final boolean ok = NoteEditUtils.setNoteTitleAndText( NoteEditActivity.this,
                                                                                                                         getNote().getId(),
-                                                                                                                        Strings.nullIfEmpty( title.getText() )
+                                                                                                                        Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) )
                                                                                                                                .toString(),
-                                                                                                                        Strings.nullIfEmpty( text.getText() )
+                                                                                                                        Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) )
                                                                                                                                .toString() );
                                                                   setResult( ok
                                                                                ? RESULT_EDIT_NOTE_CHANGED
@@ -169,7 +169,8 @@ public class NoteEditActivity extends AbstractNoteActivity
    {
       final RtmTaskNote note = getNote();
       
-      return SyncUtils.hasChanged( note.getTitle(), title.getText().toString() )
-         || SyncUtils.hasChanged( note.getText(), text.getText().toString() );
+      return SyncUtils.hasChanged( note.getTitle(),
+                                   UIUtils.getTrimmedText( title ) )
+         || SyncUtils.hasChanged( note.getText(), UIUtils.getTrimmedText( text ) );
    }
 }

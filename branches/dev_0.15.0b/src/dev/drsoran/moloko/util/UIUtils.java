@@ -80,6 +80,20 @@ public final class UIUtils
    
 
 
+   public final static String getTrimmedText( TextView textView )
+   {
+      return textView.getText().toString().trim();
+   }
+   
+
+
+   public final static CharSequence getTrimmedSequence( TextView textView )
+   {
+      return textView.getText().toString().trim();
+   }
+   
+
+
    public final static void setTitle( Activity activity, String text )
    {
       final View titleBarText = activity.findViewById( R.id.app_titlebar_text );

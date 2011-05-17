@@ -110,6 +110,13 @@ public class RtmListWithTaskCount
    
 
 
+   public RtmList getRtmList()
+   {
+      return impl;
+   }
+   
+
+
    public String getId()
    {
       return impl.getId();

@@ -51,6 +51,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
+import dev.drsoran.moloko.dialogs.AddRenameListDialog;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -58,6 +59,7 @@ import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.RtmSmartAddAdapter;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
@@ -269,7 +271,7 @@ public class TitleBarLayout extends LinearLayout implements
       @SuppressWarnings( "unchecked" )
       private final void addNewTask()
       {
-         final CharSequence input = addTaskEdit.getText();
+         final CharSequence input = UIUtils.getTrimmedSequence( addTaskEdit );
          
          Log.i( TAG, "Creating tokens for '" + input + "'" );
          
@@ -566,6 +568,7 @@ public class TitleBarLayout extends LinearLayout implements
             break;
          
          case R.id.app_titlebar_btn_add_list:
+            new AddRenameListDialog( getContext(), null ).show();
             break;
          
          case R.id.app_titlebar_btn_save_search:

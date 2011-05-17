@@ -35,10 +35,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -47,7 +47,9 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
+import dev.drsoran.moloko.dialogs.AddRenameListDialog;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
@@ -147,9 +149,13 @@ public class TaskListsActivity extends ExpandableListActivity implements
       
       public final static int COLLAPSE = 1 << 2;
       
-      public final static int MAKE_DEFAULT_LIST = 1 << 3;
+      public final static int DELETE = 1 << 3;
       
-      public final static int REMOVE_DEFAULT_LIST = 1 << 4;
+      public final static int RENAME = 1 << 4;
+      
+      public final static int MAKE_DEFAULT_LIST = 1 << 5;
+      
+      public final static int REMOVE_DEFAULT_LIST = 1 << 6;
    }
    
    
@@ -283,6 +289,20 @@ public class TaskListsActivity extends ExpandableListActivity implements
                               list.getName() ) );
       }
       
+      if ( list.getLocked() == 0 && !AccountUtils.isReadOnlyAccess( this ) )
+      {
+         menu.add( Menu.NONE,
+                   CtxtMenu.DELETE,
+                   Menu.NONE,
+                   getString( R.string.phr_delete_with_name, list.getName() ) );
+         
+         menu.add( Menu.NONE,
+                   CtxtMenu.RENAME,
+                   Menu.NONE,
+                   getString( R.string.tasklists_menu_ctx_rename_list,
+                              list.getName() ) );
+      }
+      
       if ( list.getId().equals( MolokoApp.getSettings().getDefaultListId() ) )
          menu.add( Menu.NONE,
                    CtxtMenu.REMOVE_DEFAULT_LIST,
@@ -314,6 +334,15 @@ public class TaskListsActivity extends ExpandableListActivity implements
             
          case CtxtMenu.COLLAPSE:
             getExpandableListView().collapseGroup( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
+            return true;
+            
+         case CtxtMenu.DELETE:
+            // TODO: Delete list
+            return true;
+            
+         case CtxtMenu.RENAME:
+            new AddRenameListDialog( this,
+                                     getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getRtmList() ).show();
             return true;
             
          case CtxtMenu.MAKE_DEFAULT_LIST:

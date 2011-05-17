@@ -140,9 +140,18 @@
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
    <string name="dlg_recurr_picker_title">Wiederholung</string>
-   <string name="dlg_recurr_picker_every">Alle</string>   
+   <string name="dlg_recurr_picker_every">Alle</string>
    <string name="dlg_recurr_picker_after">Nach</string>
-   
+      
+   <!-- Add/Rename list dialog -->
+   <string name="dlg_add_list_title">Neue Liste</string>
+   <string name="dlg_rename_list_title">Liste umbenennen</string>
+   <string name="dlg_add_rename_list_list_name_hint">Name der Liste</string>
+      <!-- Toasts -->
+      <string name="dlg_add_rename_list_toast_empty_list_name">Der Name der Liste kann nicht leer sein</string>
+      <string name="dlg_add_rename_list_toast_invalid_list_name">Der Name der Liste kann nicht \'Inbox\' oder \'Sent\' sein</string>
+      <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' ist kein gültiger Smart Filter</string>
+         
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
@@ -209,8 +218,9 @@
    <string name="tasklists_child_overdue">%1$s überfällig</string>
    <string name="tasklists_child_completed">%1$s erledigt</string>
      <!-- Menus -->
-     <string name="tasklists_menu_ctx_expand">Erweitere %1$s</string>
-     <string name="tasklists_menu_ctx_collapse">Reduziere %1$s</string>
+     <string name="tasklists_menu_ctx_expand">Erweitere \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_collapse">Reduziere \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_rename_list">Benenne \'%1$s\' um</string>     
      <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
      <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
      
@@ -358,10 +368,10 @@
    <string name="acra_crash_notif_title">Moloko ist oder war in einem fehlerhaften Zustand</string>
    <string name="acra_crash_notif_text">Dies tut uns leid. Bitte senden Sie einen Fehlerbericht um die Entwicklung zu unterstützen.</string>
    <string name="acra_crash_dialog_title">Moloko Fehlerbericht</string>
-   <string name="acra_crash_dialog_text">Wir entschuldigen uns für jegliche Unannehmlichkeiten. Durch das Senden eines Fehlerberichts unterstützen Sie die Berichtung dieses Fehlers in zukünftigen Versionen.</string>
+   <string name="acra_crash_dialog_text">Wir entschuldigen uns für jegliche Unannehmlichkeiten. Durch das Senden eines Fehlerberichts unterstützen Sie die Beseitigung dieses Fehlers in zukünftigen Versionen.</string>
    <string name="acra_crash_comment_prompt">Möglicherweise möchten Sie ein Kommentar hinterlassen:</string>
    <string name="acra_crash_dialog_ok_toast">Ihr Fehlerbericht wurde gesendet. Vielen Dank!</string>
-   <string name="send_log_dialog_text">Es wird die Log-Datei für Moloko erstellt. Die gesammelten Informationen werden mit einer Application Ihrer Wahl versendet. Sie erhalten die Möglichkeit diese vor dem Senden zu sehen und zu bearbeiten.</string>
+   <string name="send_log_dialog_text">Es wird die Log-Datei für Moloko erstellt. Die gesammelten Informationen werden mit einer Applikation Ihrer Wahl versendet. Sie erhalten die Möglichkeit das Log vor dem Senden zu sehen und zu bearbeiten.</string>
    <string name="send_log_aquiring_text">Sammle Moloko relevante Log-Informationen...</string>
    <string name="send_log_chooser_title">Bitte wählen Sie eine Anwendung zum Senden der Log-Informationen</string>
    <string name="send_log_failed">Das Sammeln der Log-Informationen für Moloko schlug fehl</string>

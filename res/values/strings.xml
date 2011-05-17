@@ -45,7 +45,9 @@
    <string name="app_titlebar_add_task_hint">@string/app_task_add</string>
    
    <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>
-   <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>
+   <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>   
+   <string name="app_list_name_inbox">Inbox</string>
+   <string name="app_list_name_sent">Sent</string>
    
    <string name="svc_sync">RTM Synchronization</string>	
    <string name="svc_auth">RTM Authentication</string>
@@ -180,11 +182,21 @@
    <string name="dlg_insert_note">Adding new note...</string>
    <string name="dlg_save_note">Saving note changes...</string>
    <string name="dlg_estimate_picker_title">How long does it take?</string>
-   <string name="dlg_due_picker_title">Set due</string>
+   <string name="dlg_due_picker_title">Set Due</string>
    <string name="dlg_due_picker_no_time">---</string>
-   <string name="dlg_recurr_picker_title">Set recurrence</string>
-   <string name="dlg_recurr_picker_every">Every</string>   
-   <string name="dlg_recurr_picker_after">After</string>   
+   <string name="dlg_recurr_picker_title">Set Recurrence</string>
+   <string name="dlg_recurr_picker_every">Every</string>
+   <string name="dlg_recurr_picker_after">After</string>
+      
+   <!-- Add/Rename list dialog -->      
+   <string name="dlg_add_list_title">New List</string>
+   <string name="dlg_rename_list_title">Rename List</string>
+   <string name="dlg_add_rename_list_list_name_hint">List name</string>
+   <string name="dlg_add_rename_list_smart_filter_hint">Smart List Filter</string>
+      <!-- Toasts -->
+      <string name="dlg_add_rename_list_toast_empty_list_name">The name of the list must not be empty</string>
+      <string name="dlg_add_rename_list_toast_invalid_list_name">The name of the list cannot be \'Inbox\' or \'Sent\'</string>
+      <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' is not a valid Smart Filter</string>
 	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>
@@ -261,8 +273,9 @@
    <string name="tasklists_child_overdue">%1$s overdue</string>
    <string name="tasklists_child_completed">%1$s completed</string>
      <!-- Menus -->
-     <string name="tasklists_menu_ctx_expand">Expand %1$s</string>
-     <string name="tasklists_menu_ctx_collapse">Reduce %1$s</string>
+     <string name="tasklists_menu_ctx_expand">Expand \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_collapse">Reduce \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_rename_list">Rename \'%1$s\'</string>     
      <string name="tasklists_menu_ctx_make_def_list">Set as default list</string>
      <string name="tasklists_menu_ctx_remove_def_list">Reset as default list</string>
      

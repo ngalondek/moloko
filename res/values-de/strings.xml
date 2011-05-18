@@ -86,7 +86,6 @@
    <string name="phr_open_with_name">Öffne \'%1$s\'</string>
    <string name="phr_edit_with_name">Bearbeite \'%1$s\'</string>
    <string name="phr_delete_with_name">Lösche \'%1$s\'</string>
-   <string name="phr_delete_note">Notiz löschen?</string>
    <string name="phr_close">Schliessen</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
@@ -203,10 +202,7 @@
    <!-- EditMultipleTasks activity -->
    <string name="edit_multiple_tasks_multiple_values">Verschiedene Werte</string>
    <string name="edit_multiple_tasks_multiple_tags">Verschiedene Tags</string>
-   
-   <!-- AddTask activity -->
-   <string name="add_task_edit_dlg_cancel">Neue Aufgabe verwerfen?</string>
-   
+      
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Durch Komma getrennte Tags</string>
    <string name="change_tags_empty">Diese Aufgabe hat keine Tags</string>
@@ -244,7 +240,6 @@
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
-     <string name="abstaskslist_dlg_delete">\'%1$s\' löschen?</string>     
 	
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>

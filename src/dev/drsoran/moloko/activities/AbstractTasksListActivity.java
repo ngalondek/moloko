@@ -31,7 +31,6 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.AsyncTask;
@@ -40,14 +39,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -722,21 +721,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       final ListTask task = getTask( pos );
       
-      new AlertDialog.Builder( this ).setMessage( getString( R.string.abstaskslist_dlg_delete,
-                                                             task.getName() ) )
-                                     .setPositiveButton( R.string.btn_delete,
-                                                         new OnClickListener()
-                                                         {
-                                                            public void onClick( DialogInterface dialog,
-                                                                                 int which )
-                                                            {
-                                                               TaskEditUtils.deleteTask( AbstractTasksListActivity.this,
-                                                                                         task );
-                                                            }
-                                                         } )
-                                     .setNegativeButton( R.string.btn_cancel,
-                                                         null )
-                                     .show();
+      UIUtils.newDeleteElementDialog( this, task.getName(), new Runnable()
+      {
+         public void run()
+         {
+            TaskEditUtils.deleteTask( AbstractTasksListActivity.this, task );
+         }
+      }, null ).show();
    }
    
 

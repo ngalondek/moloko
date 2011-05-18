@@ -22,10 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
-import android.app.AlertDialog;
 import android.content.ContentProviderClient;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -89,21 +86,19 @@ public class NoteActivity extends AbstractNoteActivity
 
    public void onDeleteNote( View v )
    {
-      new AlertDialog.Builder( this ).setMessage( getString( R.string.phr_delete_note ) )
-                                     .setPositiveButton( R.string.btn_delete,
-                                                         new OnClickListener()
-                                                         {
-                                                            public void onClick( DialogInterface dialog,
-                                                                                 int which )
-                                                            {
-                                                               NoteEditUtils.deleteNote( NoteActivity.this,
-                                                                                         getNote().getId() );
-                                                               removeCurrentNode();
-                                                            }
-                                                         } )
-                                     .setNegativeButton( R.string.btn_cancel,
-                                                         null )
-                                     .show();
+      UIUtils.newDeleteElementDialog( this,
+                                      getString( R.string.app_note ),
+                                      new Runnable()
+                                      {
+                                         public void run()
+                                         {
+                                            NoteEditUtils.deleteNote( NoteActivity.this,
+                                                                      getNote().getId() );
+                                            removeCurrentNode();
+                                         }
+                                      },
+                                      null )
+             .show();
    }
    
 

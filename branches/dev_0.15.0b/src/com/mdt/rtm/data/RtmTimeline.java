@@ -85,8 +85,8 @@ public class RtmTimeline
    
 
 
-   public TimeLineMethod< RtmList > lists_add( final String listId,
-                                               final String newName )
+   public TimeLineMethod< RtmList > lists_setName( final String listId,
+                                                   final String newName )
    {
       return new TimeLineMethod< RtmList >()
       {

@@ -24,24 +24,14 @@ import java.util.Date;
 
 import org.w3c.dom.Element;
 
-import android.content.ContentProviderOperation;
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import dev.drsoran.moloko.content.RtmListsProviderPart;
-import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
-import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.ParcelableDate;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class RtmList extends RtmData implements
-         IContentProviderSyncable< RtmList >
+public class RtmList extends RtmData
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko." + RtmList.class.getSimpleName();
@@ -121,7 +111,7 @@ public class RtmList extends RtmData implements
       if ( Integer.parseInt( elt.getAttribute( "deleted" ) ) == 0 )
          this.deleted = null;
       else
-         this.deleted = new ParcelableDate( new Date() );
+         this.deleted = new ParcelableDate( System.currentTimeMillis() );
       this.locked = Integer.parseInt( elt.getAttribute( "locked" ) );
       this.archived = Integer.parseInt( elt.getAttribute( "archived" ) );
       this.position = Integer.parseInt( elt.getAttribute( "position" ) );
@@ -249,111 +239,5 @@ public class RtmList extends RtmData implements
          + name
          + ( ( smartFilter != null ) ? "," + smartFilter.getFilterString()
                                     : Strings.EMPTY_STRING ) + ">";
-   }
-   
-
-
-   public Uri getContentUriWithId()
-   {
-      return Queries.contentUriWithId( Lists.CONTENT_URI, id );
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderInsertOperation()
-   {
-      return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Lists.CONTENT_URI )
-                                                                             .withValues( RtmListsProviderPart.getContentValues( this,
-                                                                                                                                 true ) )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderDeleteOperation()
-   {
-      return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( getContentUriWithId() )
-                                                                             .build() )
-                                         .build();
-   }
-   
-
-
-   public IContentProviderSyncOperation computeContentProviderUpdateOperation( RtmList update )
-   {
-      if ( !id.equals( update.id ) )
-         throw new IllegalArgumentException( "Update id " + update.id
-            + " differs this id " + id );
-      
-      final Uri uri = getContentUriWithId();
-      final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newUpdate();
-      
-      if ( SyncUtils.hasChanged( name, update.name ) )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.LIST_NAME,
-                                                         update.name )
-                                             .build() );
-      
-      if ( deleted != update.deleted )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.LIST_DELETED,
-                                                         update.deleted )
-                                             .build() );
-      
-      if ( locked != update.locked )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.LOCKED,
-                                                         update.locked )
-                                             .build() );
-      
-      if ( archived != update.archived )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.ARCHIVED,
-                                                         update.archived )
-                                             .build() );
-      
-      if ( position != update.position )
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.POSITION,
-                                                         update.position )
-                                             .build() );
-      
-      // This list gets smart
-      if ( smartFilter == null && update.smartFilter != null )
-      {
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.IS_SMART_LIST, 1 )
-                                             .build() );
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.FILTER,
-                                                         update.smartFilter.getFilterString() )
-                                             .build() );
-      }
-      
-      // This list gets normal
-      else if ( smartFilter != null && update.smartFilter == null )
-      {
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.IS_SMART_LIST, 0 )
-                                             .build() );
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.FILTER, null )
-                                             .build() );
-      }
-      
-      // Filter has changed
-      else if ( smartFilter != null
-         && update.smartFilter != null
-         && !smartFilter.getFilterString()
-                        .equals( update.smartFilter.getFilterString() ) )
-      {
-         result.add( ContentProviderOperation.newUpdate( uri )
-                                             .withValue( Lists.FILTER,
-                                                         update.smartFilter.getFilterString() )
-                                             .build() );
-      }
-      
-      return result.build();
    }
 }

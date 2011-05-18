@@ -127,8 +127,7 @@
    <string name="phr_establish_connection">Establish an Internet connection to continue.</string>
    <string name="phr_open_with_name">Open \'%1$s\'</string>
    <string name="phr_edit_with_name">Edit \'%1$s\'</string>   
-   <string name="phr_delete_with_name">Delete \'%1$s\'</string>
-   <string name="phr_delete_note">Delete note?</string>
+   <string name="phr_delete_with_name">Delete \'%1$s\'</string>   
    <string name="phr_ok">OK</string>
    <string name="phr_close">Close</string>
    <string name="phr_settings">Settings</string>
@@ -258,10 +257,7 @@
    <string name="edit_multiple_tasks_titlebar">@string/app_task_edit_multiple</string>
    <string name="edit_multiple_tasks_multiple_values">Different values</string>
    <string name="edit_multiple_tasks_multiple_tags">Different tags</string>
-   
-   <!-- AddTask activity -->
-   <string name="add_task_edit_dlg_cancel">Cancel adding new task?</string>
-   
+      
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Comma separated tags</string>
    <string name="change_tags_empty">This task has no tags</string>
@@ -299,7 +295,6 @@
      <string name="abstaskslist_dlg_show_tags_and">and</string>
      <string name="abstaskslist_dlg_show_tags_or">or</string>
      <string name="abstaskslist_dlg_sort_title">Sort by...</string>
-     <string name="abstaskslist_dlg_delete">Delete \'%1$s\'?</string>     
 	
 	<!-- TasksList activity -->
 	<string name="taskslist_titlebar">%1$s</string>

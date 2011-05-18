@@ -35,10 +35,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -337,7 +337,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
             return true;
             
          case CtxtMenu.DELETE:
-            // TODO: Delete list
+            deleteList( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ) );
             return true;
             
          case CtxtMenu.RENAME:
@@ -454,6 +454,19 @@ public class TaskListsActivity extends ExpandableListActivity implements
          
          startActivity( intent );
       }
+   }
+   
+
+
+   private void deleteList( RtmListWithTaskCount rtmList )
+   {
+      UIUtils.newDeleteElementDialog( this, rtmList.getName(), new Runnable()
+      {
+         public void run()
+         {
+            // TODO: Delete list here
+         }
+      }, null ).show();
    }
    
 

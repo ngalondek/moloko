@@ -71,6 +71,49 @@ public class RtmTimeline
    
 
 
+   public TimeLineMethod< RtmList > lists_add( final String listName )
+   {
+      return new TimeLineMethod< RtmList >()
+      {
+         @Override
+         public TimeLineResult< RtmList > call() throws ServiceException
+         {
+            return service.lists_add( id, listName );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmList > lists_add( final String listId,
+                                               final String newName )
+   {
+      return new TimeLineMethod< RtmList >()
+      {
+         @Override
+         public TimeLineResult< RtmList > call() throws ServiceException
+         {
+            return service.lists_setName( id, listId, newName );
+         }
+      };
+   }
+   
+
+
+   public TimeLineMethod< RtmList > lists_delete( final String listId )
+   {
+      return new TimeLineMethod< RtmList >()
+      {
+         @Override
+         public TimeLineResult< RtmList > call() throws ServiceException
+         {
+            return service.lists_delete( id, listId );
+         }
+      };
+   }
+   
+
+
    public TimeLineMethod< RtmTaskList > tasks_add( final String listId,
                                                    final String name )
    {

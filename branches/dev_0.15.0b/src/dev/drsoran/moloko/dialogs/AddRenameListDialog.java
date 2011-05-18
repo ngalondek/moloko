@@ -47,6 +47,10 @@ public class AddRenameListDialog
    // If list is != null we are in rename mode otherwise in add mode
    private final RtmList list;
    
+   private final TextView listNameEdit;
+   
+   private final TextView filterEdit;
+   
    
 
    public AddRenameListDialog( Context context, RtmList list )
@@ -59,12 +63,13 @@ public class AddRenameListDialog
                                      : R.string.dlg_rename_list_title );
       impl.setContentView( R.layout.add_rename_list_dialog );
       
+      listNameEdit = ( (TextView) impl.findViewById( R.id.add_rename_list_list_name ) );
+      filterEdit = ( (TextView) impl.findViewById( R.id.add_rename_list_smart_filter ) );
+      
       if ( list != null )
       {
-         ( (TextView) impl.findViewById( R.id.add_rename_list_list_name ) ).setText( list.getName() );
-         
-         impl.findViewById( R.id.add_rename_list_smart_filter )
-             .setVisibility( View.GONE );
+         listNameEdit.setText( list.getName() );
+         filterEdit.setVisibility( View.GONE );
       }
       
       impl.findViewById( R.id.btn_left )
@@ -103,7 +108,7 @@ public class AddRenameListDialog
 
    private void onOK()
    {
-      if ( validateInput() )
+      if ( !hasChanged() || validateInput() )
       {
          impl.dismiss();
       }
@@ -113,8 +118,18 @@ public class AddRenameListDialog
 
    private void onCancel()
    {
-      
-      impl.cancel();
+      if ( hasChanged() )
+      {
+         UIUtils.newCancelWithChangesDialog( context, new Runnable()
+         {
+            public void run()
+            {
+               impl.cancel();
+            }
+         }, null ).show();
+      }
+      else
+         impl.cancel();
    }
    
 
@@ -123,15 +138,14 @@ public class AddRenameListDialog
    {
       // Validate the list name
       {
-         final TextView listName = (TextView) impl.findViewById( R.id.add_rename_list_list_name );
-         final String text = UIUtils.getTrimmedText( listName );
+         final String text = UIUtils.getTrimmedText( listNameEdit );
          
          if ( TextUtils.isEmpty( text ) )
          {
             Toast.makeText( context,
                             R.string.dlg_add_rename_list_toast_empty_list_name,
                             Toast.LENGTH_LONG ).show();
-            listName.requestFocus();
+            listNameEdit.requestFocus();
             return false;
          }
          else
@@ -145,7 +159,7 @@ public class AddRenameListDialog
                                R.string.dlg_add_rename_list_toast_invalid_list_name,
                                Toast.LENGTH_LONG )
                     .show();
-               listName.requestFocus();
+               listNameEdit.requestFocus();
                return false;
             }
          }
@@ -154,8 +168,7 @@ public class AddRenameListDialog
       // Validate the smart filter
       if ( list == null )
       {
-         final TextView filter = (TextView) impl.findViewById( R.id.add_rename_list_smart_filter );
-         final String text = UIUtils.getTrimmedText( filter );
+         final String text = UIUtils.getTrimmedText( filterEdit );
          
          if ( !TextUtils.isEmpty( text ) )
          {
@@ -166,12 +179,26 @@ public class AddRenameListDialog
                                                   text ),
                                Toast.LENGTH_LONG )
                     .show();
-               filter.requestFocus();
+               filterEdit.requestFocus();
                return false;
             }
          }
       }
       
       return true;
+   }
+   
+
+
+   private final boolean hasChanged()
+   {
+      final String trimmedListName = UIUtils.getTrimmedText( listNameEdit );
+      
+      if ( list != null )
+         return !list.getName().equals( trimmedListName );
+      else
+         // Do not check for smart filter cause if the name is empty it is
+         // invalid anyway
+         return !TextUtils.isEmpty( trimmedListName );
    }
 }

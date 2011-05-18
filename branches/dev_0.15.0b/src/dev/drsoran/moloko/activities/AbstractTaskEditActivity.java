@@ -29,9 +29,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -44,12 +41,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -57,11 +54,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
@@ -462,52 +459,47 @@ abstract class AbstractTaskEditActivity extends Activity
       {
          if ( validateInput() )
          {
-            new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_done )
-                                           .setPositiveButton( android.R.string.yes,
-                                                               new OnClickListener()
-                                                               {
-                                                                  public void onClick( DialogInterface dialog,
-                                                                                       int which )
-                                                                  {
-                                                                     final ModificationSet modifications = getModifications();
-                                                                     
-                                                                     int result = RESULT_EDIT_TASK_OK;
-                                                                     
-                                                                     // Apply the modifications to the DB.
-                                                                     if ( modifications != null
-                                                                        && modifications.size() > 0 )
-                                                                     {
-                                                                        // set the taskseries modification time to now
-                                                                        try
-                                                                        {
-                                                                           if ( new ApplyModificationsTask( AbstractTaskEditActivity.this,
-                                                                                                            R.string.dlg_save_task ).execute( modifications )
-                                                                                                                                    .get() )
-                                                                           {
-                                                                              result = RESULT_EDIT_TASK_CHANGED;
-                                                                           }
-                                                                           else
-                                                                           {
-                                                                              result = RESULT_EDIT_TASK_FAILED;
-                                                                           }
-                                                                        }
-                                                                        catch ( InterruptedException e )
-                                                                        {
-                                                                           result = RESULT_EDIT_TASK_FAILED;
-                                                                        }
-                                                                        catch ( ExecutionException e )
-                                                                        {
-                                                                           result = RESULT_EDIT_TASK_FAILED;
-                                                                        }
-                                                                     }
-                                                                     
-                                                                     setResult( result );
-                                                                     finish();
-                                                                  }
-                                                               } )
-                                           .setNegativeButton( android.R.string.no,
-                                                               null )
-                                           .show();
+            UIUtils.newApplyChangesDialog( this, new Runnable()
+            {
+               public void run()
+               {
+                  final ModificationSet modifications = getModifications();
+                  
+                  int result = RESULT_EDIT_TASK_OK;
+                  
+                  // Apply the modifications to the DB.
+                  if ( modifications != null && modifications.size() > 0 )
+                  {
+                     // set the taskseries modification time to now
+                     try
+                     {
+                        if ( new ApplyModificationsTask( AbstractTaskEditActivity.this,
+                                                         R.string.dlg_save_task ).execute( modifications )
+                                                                                 .get() )
+                        {
+                           result = RESULT_EDIT_TASK_CHANGED;
+                        }
+                        else
+                        {
+                           result = RESULT_EDIT_TASK_FAILED;
+                        }
+                     }
+                     catch ( InterruptedException e )
+                     {
+                        result = RESULT_EDIT_TASK_FAILED;
+                     }
+                     catch ( ExecutionException e )
+                     {
+                        result = RESULT_EDIT_TASK_FAILED;
+                     }
+                  }
+                  
+                  setResult( result );
+                  finish();
+               }
+            },
+                                           null )
+                   .show();
          }
       }
       else
@@ -531,20 +523,14 @@ abstract class AbstractTaskEditActivity extends Activity
    {
       if ( changes.size() > 0 )
       {
-         new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_cancel )
-                                        .setPositiveButton( android.R.string.yes,
-                                                            new OnClickListener()
-                                                            {
-                                                               public void onClick( DialogInterface dialog,
-                                                                                    int which )
-                                                               {
-                                                                  setResult( RESULT_CANCELED );
-                                                                  finish();
-                                                               }
-                                                            } )
-                                        .setNegativeButton( android.R.string.no,
-                                                            null )
-                                        .show();
+         UIUtils.newCancelWithChangesDialog( this, new Runnable()
+         {
+            public void run()
+            {
+               setResult( RESULT_CANCELED );
+               finish();
+            }
+         }, null ).show();
       }
       else
       {
@@ -973,8 +959,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
 
@@ -1065,8 +1050,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
 

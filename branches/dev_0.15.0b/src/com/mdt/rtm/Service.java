@@ -27,12 +27,12 @@ import com.mdt.rtm.data.RtmFrob;
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
-import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
+import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
@@ -154,7 +154,7 @@ public interface Service
 
    // ////// LISTS /////////////////////////////
    
-   RtmList lists_add( String timelineId, String listName ) throws ServiceException;
+   TimeLineResult< RtmList > lists_add( String timelineId, String listName ) throws ServiceException;
    
 
 
@@ -162,7 +162,7 @@ public interface Service
    
 
 
-   void lists_delete( String timelineId, String listId ) throws ServiceException;
+   TimeLineResult< RtmList > lists_delete( String timelineId, String listId ) throws ServiceException;
    
 
 
@@ -178,7 +178,9 @@ public interface Service
    
 
 
-   RtmList lists_setName( String timelineId, String listId, String newName ) throws ServiceException;
+   TimeLineResult< RtmList > lists_setName( String timelineId,
+                                            String listId,
+                                            String newName ) throws ServiceException;
    
 
 

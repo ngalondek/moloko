@@ -28,7 +28,10 @@ import java.util.List;
 
 import android.accounts.Account;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -43,10 +46,10 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
@@ -564,4 +567,85 @@ public final class UIUtils
          for ( View view : views )
             container.removeView( view );
    }
+   
+
+
+   public final static Dialog newCancelWithChangesDialog( Context context,
+                                                          Runnable yesAction,
+                                                          Runnable noAction )
+   {
+      return newDialogWithActions( context,
+                                   context.getString( R.string.phr_edit_dlg_cancel ),
+                                   android.R.string.yes,
+                                   android.R.string.no,
+                                   yesAction,
+                                   noAction );
+   }
+   
+
+
+   public final static Dialog newApplyChangesDialog( Context context,
+                                                     Runnable yesAction,
+                                                     Runnable noAction )
+   {
+      return newDialogWithActions( context,
+                                   context.getString( R.string.phr_edit_dlg_done )
+                                      + "?",
+                                   android.R.string.yes,
+                                   android.R.string.no,
+                                   yesAction,
+                                   noAction );
+   }
+   
+
+
+   public final static Dialog newDeleteElementDialog( Context context,
+                                                      String elementName,
+                                                      Runnable yesAction,
+                                                      Runnable noAction )
+   {
+      return newDialogWithActions( context,
+                                   context.getString( R.string.phr_delete_with_name,
+                                                      elementName )
+                                      + "?",
+                                   R.string.btn_delete,
+                                   R.string.btn_cancel,
+                                   yesAction,
+                                   noAction );
+   }
+   
+
+
+   public final static Dialog newDialogWithActions( final Context context,
+                                                    String message,
+                                                    int positiveId,
+                                                    int negativeId,
+                                                    final Runnable yesAction,
+                                                    final Runnable noAction )
+   {
+      return new AlertDialog.Builder( context ).setMessage( message )
+                                               .setPositiveButton( positiveId,
+                                                                   yesAction != null
+                                                                                    ? new DialogInterface.OnClickListener()
+                                                                                    {
+                                                                                       public void onClick( DialogInterface dialog,
+                                                                                                            int which )
+                                                                                       {
+                                                                                          yesAction.run();
+                                                                                       }
+                                                                                    }
+                                                                                    : null )
+                                               .setNegativeButton( negativeId,
+                                                                   noAction != null
+                                                                                   ? new DialogInterface.OnClickListener()
+                                                                                   {
+                                                                                      public void onClick( DialogInterface dialog,
+                                                                                                           int which )
+                                                                                      {
+                                                                                         noAction.run();
+                                                                                      }
+                                                                                   }
+                                                                                   : null )
+                                               .create();
+   };
 }

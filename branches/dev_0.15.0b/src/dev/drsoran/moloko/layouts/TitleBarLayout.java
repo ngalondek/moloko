@@ -77,6 +77,16 @@ public class TitleBarLayout extends LinearLayout implements
    private final static String TAG = "Moloko."
       + TitleBarLayout.class.getSimpleName();
    
+   public final static int BUTTON_NONE = 0;
+   
+   public final static int BUTTON_SEARCH = 1 << 0;
+   
+   public final static int BUTTON_HOME = 1 << 1;
+   
+   public final static int BUTTON_ADD_TASK = 1 << 2;
+   
+   public final static int BUTTON_ADD_LIST = 1 << 3;
+   
    
    private final class AddTaskSection implements View.OnClickListener
    {
@@ -445,45 +455,7 @@ public class TitleBarLayout extends LinearLayout implements
          ( (TextView) findViewById( R.id.app_titlebar_text ) ).setText( titleText );
       
       final int showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
-      
-      // Show search button
-      if ( ( showButtons & 1 ) != 0 )
-      {
-         setVisible( R.id.app_titlebar_sep_search );
-         setBtnVisible( R.id.app_titlebar_btn_search );
-      }
-      
-      // Show home button
-      if ( ( showButtons & 2 ) != 0 )
-      {
-         setVisible( R.id.app_titlebar_sep_home );
-         setBtnVisible( R.id.app_titlebar_btn_home );
-      }
-      
-      if ( !AccountUtils.isReadOnlyAccess( getContext() ) )
-      {
-         // Show add task button
-         if ( ( showButtons & 4 ) != 0 )
-         {
-            setVisible( R.id.app_titlebar_sep_add_task );
-            addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
-            addTaskBtn.setOnCheckedChangeListener( this );
-         }
-         
-         // Show add list button
-         if ( ( showButtons & 8 ) != 0 )
-         {
-            setVisible( R.id.app_titlebar_sep_add_list );
-            setBtnVisible( R.id.app_titlebar_btn_add_list );
-         }
-         
-         // Show save search button
-         if ( ( showButtons & 16 ) != 0 )
-         {
-            setVisible( R.id.app_titlebar_sep_save_search );
-            setBtnVisible( R.id.app_titlebar_btn_save_search );
-         }
-      }
+      setButtonsVisible( showButtons );
       
       array.recycle();
    }
@@ -519,6 +491,43 @@ public class TitleBarLayout extends LinearLayout implements
    public void setAddTaskFilter( RtmSmartFilter filter )
    {
       addTaskFilter = filter;
+   }
+   
+
+
+   public void setButtonsVisible( int buttonMask )
+   {
+      // Show search button
+      if ( ( buttonMask & BUTTON_SEARCH ) == BUTTON_SEARCH )
+      {
+         setVisible( R.id.app_titlebar_sep_search );
+         setBtnVisible( R.id.app_titlebar_btn_search );
+      }
+      
+      // Show home button
+      if ( ( buttonMask & BUTTON_HOME ) == BUTTON_HOME )
+      {
+         setVisible( R.id.app_titlebar_sep_home );
+         setBtnVisible( R.id.app_titlebar_btn_home );
+      }
+      
+      if ( !AccountUtils.isReadOnlyAccess( getContext() ) )
+      {
+         // Show add task button
+         if ( ( buttonMask & BUTTON_ADD_TASK ) == BUTTON_ADD_TASK )
+         {
+            setVisible( R.id.app_titlebar_sep_add_task );
+            addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
+            addTaskBtn.setOnCheckedChangeListener( this );
+         }
+         
+         // Show add list button
+         if ( ( buttonMask & BUTTON_ADD_LIST ) == BUTTON_ADD_LIST )
+         {
+            setVisible( R.id.app_titlebar_sep_add_list );
+            setBtnVisible( R.id.app_titlebar_btn_add_list );
+         }
+      }
    }
    
 

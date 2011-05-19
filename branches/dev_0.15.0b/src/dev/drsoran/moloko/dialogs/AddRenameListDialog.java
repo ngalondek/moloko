@@ -22,9 +22,19 @@
 
 package dev.drsoran.moloko.dialogs;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 import android.app.Dialog;
+import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -33,12 +43,21 @@ import android.widget.Toast;
 import com.mdt.rtm.data.RtmList;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.content.CreationsProviderPart;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.content.RtmListsProviderPart.NewRtmListId;
+import dev.drsoran.moloko.util.AsyncInsertEntity;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class AddRenameListDialog
 {
+   private final static String TAG = "Moloko."
+      + AddRenameListDialog.class.getSimpleName();
    
    private final Context context;
    
@@ -108,10 +127,109 @@ public class AddRenameListDialog
 
    private void onOK()
    {
-      if ( !hasChanged() || validateInput() )
+      if ( hasChanged() )
       {
-         impl.dismiss();
+         if ( validateInput() )
+         {
+            // New list?
+            if ( list == null )
+            {
+               try
+               {
+                  final Date createdDate = new Date();
+                  
+                  final RtmList newList = new RtmList( null,
+                                                       UIUtils.getTrimmedText( listNameEdit ),
+                                                       createdDate,
+                                                       createdDate,
+                                                       null,
+                                                       0,
+                                                       0,
+                                                       0,
+                                                       getSmartFilter() );
+                  
+                  new AsyncInsertEntity< RtmList >( context )
+                  {
+                     @Override
+                     protected int getProgressMessageId()
+                     {
+                        return R.string.toast_insert_list;
+                     }
+                     
+
+
+                     @Override
+                     protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
+                                                                                     RtmList entity )
+                     {
+                        final ContentProviderClient client = contentResolver.acquireContentProviderClient( Lists.CONTENT_URI );
+                        
+                        if ( client != null )
+                        {
+                           final RtmListsProviderPart.NewRtmListId newId = new NewRtmListId();
+                           final List< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >( 2 );
+                           
+                           operations.add( RtmListsProviderPart.insertLocalCreatedList( client,
+                                                                                        entity,
+                                                                                        newId ) );
+                           client.release();
+                           
+                           operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                                        newId.rtmListId ),
+                                                                              entity.getCreatedDate()
+                                                                                    .getTime() ) );
+                           return operations;
+                        }
+                        
+                        return null;
+                     }
+                     
+
+
+                     @Override
+                     protected Uri getContentUri()
+                     {
+                        return Lists.CONTENT_URI;
+                     }
+                     
+
+
+                     @Override
+                     protected String getPath()
+                     {
+                        return Lists.PATH;
+                     }
+                  }.execute( newList ).get();
+               }
+               catch ( InterruptedException e )
+               {
+                  Log.e( TAG, "Failed to insert new list", e );
+               }
+               catch ( ExecutionException e )
+               {
+                  Log.e( TAG, "Failed to insert new list", e );
+               }
+            }
+            
+            // Rename list
+            else
+            {
+               UIUtils.newApplyChangesDialog( context, new Runnable()
+               {
+                  public void run()
+                  {
+                     RtmListEditUtils.setListName( context,
+                                                   list.getId(),
+                                                   UIUtils.getTrimmedText( listNameEdit ) );
+                  }
+               },
+                                              null )
+                      .show();
+            }
+         }
       }
+      
+      impl.dismiss();
    }
    
 
@@ -200,5 +318,22 @@ public class AddRenameListDialog
          // Do not check for smart filter cause if the name is empty it is
          // invalid anyway
          return !TextUtils.isEmpty( trimmedListName );
+   }
+   
+
+
+   private final RtmSmartFilter getSmartFilter()
+   {
+      RtmSmartFilter filter = null;
+      
+      final String text = UIUtils.getTrimmedText( filterEdit );
+      if ( !TextUtils.isDigitsOnly( text ) )
+      {
+         filter = new RtmSmartFilter( text );
+         if ( filter.getEvaluatedFilterString( false ) == null )
+            filter = null;
+      }
+      
+      return filter;
    }
 }

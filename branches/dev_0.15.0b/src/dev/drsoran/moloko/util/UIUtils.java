@@ -46,12 +46,13 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -589,8 +590,7 @@ public final class UIUtils
                                                      Runnable noAction )
    {
       return newDialogWithActions( context,
-                                   context.getString( R.string.phr_edit_dlg_done )
-                                      + "?",
+                                   context.getString( R.string.phr_edit_dlg_done ),
                                    android.R.string.yes,
                                    android.R.string.no,
                                    yesAction,
@@ -648,4 +648,17 @@ public final class UIUtils
                                                                                    : null )
                                                .create();
    };
+   
+
+
+   public final static boolean reportStatus( Context context,
+                                             int resIdOk,
+                                             int resIdFailed,
+                                             boolean ok )
+   {
+      Toast.makeText( context, ok ? resIdOk : resIdFailed, Toast.LENGTH_LONG )
+           .show();
+      
+      return ok;
+   }
 }

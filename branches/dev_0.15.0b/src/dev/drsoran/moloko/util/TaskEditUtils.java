@@ -31,7 +31,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
@@ -97,9 +96,12 @@ public final class TaskEditUtils
          
          ok = Queries.applyModifications( context,
                                           modifications,
-                                          R.string.dlg_save_task );
+                                          R.string.toast_save_task );
          
-         reportStatus( context, ok );
+         UIUtils.reportStatus( context,
+                               R.string.toast_save_task_ok,
+                               R.string.toast_save_task_failed,
+                               ok );
       }
       
       return ok;
@@ -187,9 +189,12 @@ public final class TaskEditUtils
          
          ok = Queries.applyModifications( context,
                                           modifications,
-                                          R.string.dlg_save_task );
+                                          R.string.toast_save_task );
          
-         reportStatus( context, ok );
+         UIUtils.reportStatus( context,
+                               R.string.toast_save_task_ok,
+                               R.string.toast_save_task_failed,
+                               ok );
       }
       
       return ok;
@@ -231,25 +236,19 @@ public final class TaskEditUtils
          
          ok = Queries.applyModifications( context,
                                           modifications,
-                                          R.string.dlg_save_task );
+                                          R.string.toast_save_task );
          
          ok = ok
             && Queries.transactionalApplyOperations( context,
                                                      removeCreatedOperations,
-                                                     R.string.dlg_save_task );
+                                                     R.string.toast_save_task );
          
-         reportStatus( context, ok );
+         UIUtils.reportStatus( context,
+                               R.string.toast_save_task_ok,
+                               R.string.toast_save_task_failed,
+                               ok );
       }
       
       return ok;
-   }
-   
-
-
-   private final static void reportStatus( Context context, boolean ok )
-   {
-      Toast.makeText( context,
-                      ok ? R.string.task_save_ok : R.string.task_save_error,
-                      Toast.LENGTH_SHORT ).show();
    }
 }

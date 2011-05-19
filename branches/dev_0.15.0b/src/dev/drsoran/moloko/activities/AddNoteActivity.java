@@ -132,7 +132,7 @@ public class AddNoteActivity extends Activity
                @Override
                protected int getProgressMessageId()
                {
-                  return R.string.dlg_insert_note;
+                  return R.string.toast_insert_note;
                }
                
 

@@ -41,12 +41,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -54,11 +54,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
@@ -474,8 +474,8 @@ abstract class AbstractTaskEditActivity extends Activity
                      try
                      {
                         if ( new ApplyModificationsTask( AbstractTaskEditActivity.this,
-                                                         R.string.dlg_save_task ).execute( modifications )
-                                                                                 .get() )
+                                                         R.string.toast_save_task ).execute( modifications )
+                                                                                   .get() )
                         {
                            result = RESULT_EDIT_TASK_CHANGED;
                         }
@@ -959,7 +959,8 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                    String.class ), 0 );
+                                                    String.class ),
+                                   0 );
    }
    
 
@@ -1050,7 +1051,8 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                    String.class ), 0 );
+                                                    String.class ),
+                                   0 );
    }
    
 

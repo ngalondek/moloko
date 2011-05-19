@@ -131,16 +131,44 @@
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
    
-   <!-- Global Dialogs -->
-   <string name="dlg_save_task">Speichere Änderungen an der Aufgabe...</string>
-   <string name="dlg_insert_task">Füge neue Aufgabe hinzu...</string>
-   <string name="dlg_insert_note">Füge neue Notiz hinzu...</string>
-   <string name="dlg_save_note">Speichere Änderungen an der Notiz...</string>
+   <!-- Global Dialogs -->   
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
    <string name="dlg_recurr_picker_title">Wiederholung</string>
    <string name="dlg_recurr_picker_every">Alle</string>
    <string name="dlg_recurr_picker_after">Nach</string>
+   
+   <!-- Global Toasts -->
+      <!-- Task -->   
+      <string name="toast_insert_task">Füge neue Aufgabe hinzu...</string>
+      <string name="toast_insert_task_ok">Neue Aufgabe hinzugefügt</string>
+      <string name="toast_insert_task_fail">Neue Aufgabe konnte nicht hinzugefügt werden</string>
+      <string name="toast_save_task">Speiche Änderungen an der Aufgabe...</string>
+      <string name="toast_save_task_ok">Änderungen an der Aufgabe gespeichert</string>
+      <string name="toast_save_task_failed">Änderungen an der Aufgabe konnten nicht gespeichert werden</string>
+      <string name="toast_delete_task">Lösche Aufgabe...</string>
+      <string name="toast_delete_task_ok">Aufgabe gelöscht</string>
+      <string name="toast_delete_task_failed">Aufgabe konnte nicht gelöscht werden</string>
+      <!-- Note -->
+      <string name="toast_insert_note">Füge neue Notiz hinzu...</string>
+      <string name="toast_insert_note_ok">Neue Notiz hinzugefügt</string>
+      <string name="toast_insert_note_fail">Neue Notiz konnte nicht hinzugefügt werden</string>
+      <string name="toast_save_note">Speiche Änderungen an der Notiz...</string>
+      <string name="toast_save_note_ok">Änderungen an der Notiz gespeichert</string>
+      <string name="toast_save_note_failed">Änderungen an der Notiz konnten nicht gespeichert werden</string>
+      <string name="toast_delete_note">Lösche Notiz...</string>
+      <string name="toast_delete_note_ok">Notiz gelöscht</string>
+      <string name="toast_delete_note_failed">Notiz konnte nicht gelöscht werden</string>
+      <!-- List -->
+      <string name="toast_insert_list">Füge neue Liste hinzu...</string>
+      <string name="toast_insert_list_ok">Neue Liste hinzugefügt</string>
+      <string name="toast_insert_list_fail">Neue Liste konnte nicht hinzugefügt werden</string>
+      <string name="toast_save_list">Speiche Änderungen an der Liste...</string>
+      <string name="toast_save_list_ok">Änderungen an der Liste gespeichert</string>
+      <string name="toast_save_list_failed">Änderungen an der Liste konnten nicht gespeichert werden</string>
+      <string name="toast_delete_list">Lösche Liste...</string>
+      <string name="toast_delete_list_ok">Liste gelöscht</string>
+      <string name="toast_delete_list_failed">Liste konnte nicht gelöscht werden</string>   
       
    <!-- Add/Rename list dialog -->
    <string name="dlg_add_list_title">Neue Liste</string>
@@ -176,9 +204,7 @@
       <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Öffne Ort mit...</string>         
       <!-- Toasts -->
-     <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>
-     <string name="task_save_ok">Die Änderungen an der Aufgabe wurden gespeichert.</string>   
-     <string name="task_save_error">Die Änderungen an der Aufgabe konnten nicht gespeichert werden.</string>
+     <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>     
         
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Name der Aufgabe</string>
@@ -265,12 +291,7 @@
       <string name="select_multiple_tasks_dlg_uncomplete">%1$d %2$s unerledigt?</string>
       <string name="select_multiple_tasks_dlg_postpone">%1$d %2$s aufschieben?</string>
       <string name="select_multiple_tasks_dlg_delete">%1$d %2$s löschen?</string>
-   
-   <!-- Note activity -->      
-      <!-- Toasts -->
-      <string name="note_save_ok">Die Änderungen an der Aufgabe wurden gespeichert.</string>
-      <string name="note_save_error">Die Änderungen an der Aufgabe konnten nicht gespeichert werden.</string>
-   
+  
    <!-- NoteEdit activity -->
    <string name="note_edit_title_hint">Titel der Notiz</string>
    <string name="note_edit_text_hint">Notiz hier eingeben</string>

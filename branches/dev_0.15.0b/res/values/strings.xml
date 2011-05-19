@@ -176,16 +176,44 @@
    <string name="menu_opt_search_task_title">Search for tasks</string>
    
    <!-- Global Dialogs -->
-   <string name="dlg_save_task">Saving task changes...</string>
-   <string name="dlg_insert_task">Adding new task...</string>
-   <string name="dlg_insert_note">Adding new note...</string>
-   <string name="dlg_save_note">Saving note changes...</string>
    <string name="dlg_estimate_picker_title">How long does it take?</string>
    <string name="dlg_due_picker_title">Set Due</string>
    <string name="dlg_due_picker_no_time">---</string>
    <string name="dlg_recurr_picker_title">Set Recurrence</string>
    <string name="dlg_recurr_picker_every">Every</string>
    <string name="dlg_recurr_picker_after">After</string>
+   
+   <!-- Global Toasts -->
+      <!-- Task -->   
+      <string name="toast_insert_task">Adding new task...</string>
+      <string name="toast_insert_task_ok">New task added</string>
+      <string name="toast_insert_task_fail">Failed to add new task</string>
+      <string name="toast_save_task">Saving task changes...</string>
+      <string name="toast_save_task_ok">Changes to the task have been saved</string>
+      <string name="toast_save_task_failed">Failed to save task changes</string>
+      <string name="toast_delete_task">Deleting task...</string>
+      <string name="toast_delete_task_ok">Task has been deleted</string>
+      <string name="toast_delete_task_failed">Failed to delete the task</string>
+      <!-- Note -->
+      <string name="toast_insert_note">Adding new note...</string>
+      <string name="toast_insert_note_ok">New task added</string>
+      <string name="toast_insert_note_fail">Failed to add new task</string>
+      <string name="toast_save_note">Saving note changes...</string>
+      <string name="toast_save_note_ok">Changes to the note have been saved</string>
+      <string name="toast_save_note_failed">Failed to save note changes</string>
+      <string name="toast_delete_note">Deleting note...</string>
+      <string name="toast_delete_note_ok">Note has been deleted</string>
+      <string name="toast_delete_note_failed">Failed to delete the note</string>
+      <!-- List -->
+      <string name="toast_insert_list">Adding new list...</string>
+      <string name="toast_insert_list_ok">New list added</string>
+      <string name="toast_insert_list_fail">Failed to add new list</string>
+      <string name="toast_save_list">Saving list changes...</string>
+      <string name="toast_save_list_ok">Changes to the list have been saved</string>
+      <string name="toast_save_list_failed">Failed to save list changes</string>
+      <string name="toast_delete_list">Deleting list...</string>
+      <string name="toast_delete_list_ok">List has been deleted</string>
+      <string name="toast_delete_list_failed">Failed to delete the list</string>
       
    <!-- Add/Rename list dialog -->      
    <string name="dlg_add_list_title">New List</string>
@@ -228,10 +256,7 @@
       <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Open location with...</string>
       <!-- Toasts -->
-      <string name="task_toast_no_google_maps">Location could not be displayed due to missing Google Maps App.</string>
-      <string name="task_save_ok">Changes to the task have been saved.</string>
-      <string name="task_save_error">Failed to save changes to the task.</string>
-      
+      <string name="task_toast_no_google_maps">Location could not be displayed due to missing Google Maps App.</string>            
       
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Task Name</string>
@@ -334,11 +359,6 @@
       <!-- Menus -->
       <string name="contactslist_listitem_open_tasks">Shared with %1$s</string>
       <string name="contactslist_listitem_open_contact">Details of %1$s</string>
-      
-   <!-- Note activity -->      
-      <!-- Toasts -->
-      <string name="note_save_ok">Changes to the note have been saved.</string>
-      <string name="note_save_error">Failed to save changes to the note.</string>
       
    <!-- NoteEdit activity -->
    <string name="note_edit_title_hint">Note title</string>

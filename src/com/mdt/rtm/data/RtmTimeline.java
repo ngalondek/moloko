@@ -71,14 +71,15 @@ public class RtmTimeline
    
 
 
-   public TimeLineMethod< RtmList > lists_add( final String listName )
+   public TimeLineMethod< RtmList > lists_add( final String listName,
+                                               final String smartFilter )
    {
       return new TimeLineMethod< RtmList >()
       {
          @Override
          public TimeLineResult< RtmList > call() throws ServiceException
          {
-            return service.lists_add( id, listName );
+            return service.lists_add( id, listName, smartFilter );
          }
       };
    }

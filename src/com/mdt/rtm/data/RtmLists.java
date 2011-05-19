@@ -19,6 +19,7 @@
  */
 package com.mdt.rtm.data;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +70,7 @@ public class RtmLists extends RtmData
       this.lists = new HashMap< String, RtmList >( children.size() );
       for ( Element listElt : children )
       {
-         RtmList list = new RtmList( listElt );
+         final RtmList list = new RtmList( listElt );
          lists.put( list.getId(), list );
       }
    }
@@ -81,7 +82,6 @@ public class RtmLists extends RtmData
       lists = new HashMap< String, RtmList >();
       
       final Bundle bundle = source.readBundle();
-      
       final Set< String > keys = bundle.keySet();
       
       for ( String key : keys )
@@ -102,6 +102,13 @@ public class RtmLists extends RtmData
    public Map< String, RtmList > getLists()
    {
       return Collections.unmodifiableMap( lists );
+   }
+   
+
+
+   public List< RtmList > getListsPlain()
+   {
+      return new ArrayList< RtmList >( lists.values() );
    }
    
 

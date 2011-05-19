@@ -22,7 +22,9 @@
 
 package dev.drsoran.moloko.content;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.ContentValues;
@@ -200,6 +202,100 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       }
       
       return lists;
+   }
+   
+
+
+   public final static List< RtmList > getLocalCreatedLists( ContentProviderClient client )
+   {
+      List< RtmList > lists = null;
+      
+      final List< Creation > creations = CreationsProviderPart.getCreations( client,
+                                                                             Lists.CONTENT_URI );
+      
+      if ( creations != null )
+      {
+         if ( creations.size() == 0 )
+            lists = new ArrayList< RtmList >( 0 );
+         else
+         {
+            final String selection = Queries.toColumnList( creations,
+                                                           Lists._ID,
+                                                           " OR " );
+            Cursor c = null;
+            
+            try
+            {
+               c = client.query( Lists.CONTENT_URI,
+                                 PROJECTION,
+                                 selection,
+                                 null,
+                                 null );
+               
+               boolean ok = c != null;
+               
+               if ( ok )
+               {
+                  lists = new ArrayList< RtmList >( c.getCount() );
+                  
+                  if ( c.getCount() > 0 )
+                  {
+                     for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+                     {
+                        final RtmList list = createList( c );
+                        ok = list != null;
+                        
+                        if ( ok )
+                           lists.add( list );
+                     }
+                  }
+               }
+            }
+            catch ( final RemoteException e )
+            {
+               Log.e( TAG, "Query lists failed. ", e );
+               lists = null;
+            }
+            finally
+            {
+               if ( c != null )
+                  c.close();
+            }
+         }
+      }
+      
+      return lists;
+   }
+   
+
+
+   public final static int getDeletedListsCount( ContentProviderClient client )
+   {
+      int cnt = -1;
+      
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Lists.CONTENT_URI, new String[]
+         { Lists._ID }, Lists.LIST_DELETED + " IS NOT NULL", null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+            cnt = c.getCount();
+      }
+      catch ( final RemoteException e )
+      {
+         Log.e( TAG, "Query lists failed. ", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return cnt;
    }
    
 

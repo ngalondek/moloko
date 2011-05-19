@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -52,6 +53,12 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
 {
    private static final String TAG = "Moloko."
       + RtmListsProviderPart.class.getSimpleName();
+   
+   
+   public final static class NewRtmListId
+   {
+      public String rtmListId;
+   }
    
    public final static HashMap< String, String > PROJECTION_MAP = new HashMap< String, String >();
    
@@ -296,6 +303,45 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       }
       
       return cnt;
+   }
+   
+
+
+   public final static ContentProviderOperation insertLocalCreatedList( ContentProviderClient client,
+                                                                        RtmList list,
+                                                                        NewRtmListId outNewId )
+   {
+      ContentProviderOperation operation = null;
+      
+      boolean ok = client != null;
+      NewRtmListId newId = null;
+      
+      if ( ok )
+      {
+         newId = new NewRtmListId();
+         newId.rtmListId = Queries.getNextId( client, Lists.CONTENT_URI );
+         ok = newId.rtmListId != null;
+      }
+      
+      if ( ok )
+      {
+         operation = ContentProviderOperation.newInsert( Lists.CONTENT_URI )
+                                             .withValues( getContentValues( new RtmList( outNewId.rtmListId,
+                                                                                         list.getName(),
+                                                                                         list.getCreatedDate(),
+                                                                                         list.getModifiedDate(),
+                                                                                         list.getDeletedDate(),
+                                                                                         list.getLocked(),
+                                                                                         list.getArchived(),
+                                                                                         list.getPosition(),
+                                                                                         list.getSmartFilter() ),
+                                                                            true ) )
+                                             .build();
+         if ( outNewId != null )
+            outNewId.rtmListId = newId.rtmListId;
+      }
+      
+      return operation;
    }
    
 

@@ -171,7 +171,7 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                @Override
                protected int getProgressMessageId()
                {
-                  return R.string.dlg_insert_task;
+                  return R.string.toast_insert_task;
                }
                
 

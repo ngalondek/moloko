@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -43,12 +43,12 @@ import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
+import com.mdt.rtm.data.RtmTask.Priority;
 import com.mdt.rtm.data.RtmTaskList;
 import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
-import com.mdt.rtm.data.RtmTask.Priority;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.RtmContacts;
@@ -1185,7 +1185,7 @@ public class ServiceImpl implements Service
             && listNode.getNodeName().equalsIgnoreCase( "list" )
             && listNode.getNodeType() == Node.ELEMENT_NODE )
          {
-            final RtmList list = new RtmList( elt );
+            final RtmList list = new RtmList( (Element) listNode );
             
             return TimeLineResult.newResult( elt, timelineId, list );
          }

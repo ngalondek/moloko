@@ -154,7 +154,9 @@ public interface Service
 
    // ////// LISTS /////////////////////////////
    
-   TimeLineResult< RtmList > lists_add( String timelineId, String listName ) throws ServiceException;
+   TimeLineResult< RtmList > lists_add( String timelineId,
+                                        String listName,
+                                        String smartFilter ) throws ServiceException;
    
 
 

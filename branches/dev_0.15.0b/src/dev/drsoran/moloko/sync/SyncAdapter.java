@@ -333,7 +333,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          // Sync RtmList
          ok = ok
-            && RtmListsSync.computeSync( service, provider, lastSyncOut, batch );
+            && RtmListsSync.computeSync( service,
+                                         provider,
+                                         timeLineFactory,
+                                         lastSyncOut,
+                                         batch );
          
          ok = ok && logSyncStep( "RtmLists", ok );
          

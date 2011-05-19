@@ -48,6 +48,7 @@ import dev.drsoran.moloko.sync.util.SyncUtils.SyncResultDirection;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
@@ -85,6 +86,20 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
    public String getId()
    {
       return list.getId();
+   }
+   
+
+
+   public String getName()
+   {
+      return list.getName();
+   }
+   
+
+
+   public RtmSmartFilter getSmartFilter()
+   {
+      return list.getSmartFilter();
    }
    
 

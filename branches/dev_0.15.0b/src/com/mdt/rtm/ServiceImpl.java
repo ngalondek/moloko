@@ -322,15 +322,27 @@ public class ServiceImpl implements Service
 
 
    public TimeLineResult< RtmList > lists_add( String timelineId,
-                                               String listName ) throws ServiceException
+                                               String listName,
+                                               String smartFilter ) throws ServiceException
    {
-      final Element elt = invoker.invoke( new Param( "method", "rtm.lists.add" ),
-                                          new Param( "auth_token",
-                                                     currentAuthToken ),
-                                          new Param( "api_key",
-                                                     applicationInfo.getApiKey() ),
-                                          new Param( "name", listName ),
-                                          new Param( "timeline", timelineId ) );
+      final Element elt;
+      
+      if ( TextUtils.isEmpty( smartFilter ) )
+         elt = invoker.invoke( new Param( "method", "rtm.lists.add" ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "name", listName ) );
+      else
+         elt = invoker.invoke( new Param( "method", "rtm.lists.add" ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "name", listName ),
+                               new Param( "filter", smartFilter ) );
+      
       return newListResult( timelineId, elt );
    }
    

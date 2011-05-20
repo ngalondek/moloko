@@ -64,6 +64,9 @@ import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
+// TODO: make thread safe
+// TODO: remove due notifications of local deleted tasks
+// TODO: after a sync, completely recreate due notifications cause the task IDs may have changed
 public class MolokoNotificationManager implements
          OnSharedPreferenceChangeListener, IOnBootCompletedListener,
          IOnTimeChangedListener, IOnSettingsChangedListener
@@ -216,7 +219,19 @@ public class MolokoNotificationManager implements
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
-      // TODO Auto-generated method stub
+      switch ( which )
+      {
+         case IOnSettingsChangedListener.RTM_DATEFORMAT:
+            reEvaluatePermanentNotifications();
+            break;
+         
+         case IOnSettingsChangedListener.RTM_TIMEFORMAT:
+            reEvaluateDueTaskNotifications( NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED );
+            break;
+         
+         default :
+            break;
+      }
       
    }
    
@@ -231,17 +246,9 @@ public class MolokoNotificationManager implements
          {
             reEvaluatePermanentNotifications();
          }
-         else if ( key.equals( context.getString( R.string.key_dateformat_local ) ) )
-         {
-            reEvaluatePermanentNotifications();
-         }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks ) ) )
          {
             reCreateDueTaskNotifications();
-         }
-         else if ( key.equals( context.getString( R.string.key_timeformat_local ) ) )
-         {
-            reEvaluateDueTaskNotifications( NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED );
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks_ringtone ) )
             || key.equals( context.getString( R.string.key_notify_due_tasks_vibrate ) )
@@ -599,8 +606,8 @@ public class MolokoNotificationManager implements
       }
       else
       {
-         Log.e( TAG,
-                "Error evaluating RtmSmartFilter " + filter.getFilterString() );
+         Log.e( TAG, "Error evaluating RtmSmartFilter "
+            + filter.getFilterString() );
       }
       
       return new Pair< String, Integer >( result, count );

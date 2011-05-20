@@ -325,6 +325,7 @@
 	<string name="taskslist_titlebar">%1$s</string>
 	  <!-- Menus -->
 	  <string name="taskslist_menu_opt_lists">@string/app_tasklists</string>
+     <string name="taskslist_menu_opt_delete_list">Delete List</string>
      
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar">%1$s</string>

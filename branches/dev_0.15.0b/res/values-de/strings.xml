@@ -266,6 +266,10 @@
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
+     
+   <!-- TasksList activity -->
+     <!-- Menus -->
+     <string name="taskslist_menu_opt_delete_list">Liste löschen</string>
 	
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>

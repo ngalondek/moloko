@@ -22,13 +22,18 @@
 
 package dev.drsoran.moloko.prefs;
 
+import java.util.List;
+
 import android.content.ContentProviderClient;
 import android.content.Context;
-import android.database.Cursor;
-import android.os.RemoteException;
 import android.util.AttributeSet;
+
+import com.mdt.rtm.data.RtmList;
+import com.mdt.rtm.data.RtmLists;
+
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Lists;
 
@@ -71,63 +76,42 @@ public class DefaultListPreference extends SyncableListPreference
       
       if ( client != null )
       {
-         Cursor c = null;
+         final RtmLists lists = RtmListsProviderPart.getAllLists( client,
+                                                                  RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
+         client.release();
          
-         try
+         if ( lists != null )
          {
-            c = client.query( Lists.CONTENT_URI, new String[]
-            { Lists._ID, Lists.LIST_NAME }, null, null, Lists.LIST_NAME );
+            final List< RtmList > plainLists = lists.getListsPlain();
             
-            boolean ok = c != null;
+            final CharSequence[] entries = new CharSequence[ plainLists.size() + 1 ]; // +1
+            // cause
+            // of
+            // "none"
+            final CharSequence[] entryValues = new CharSequence[ plainLists.size() + 1 ]; // +1
+            // cause
+            // of
+            // "none"
             
-            if ( ok )
+            entries[ EntriesAndValues.NONE_IDX ] = context.getResources()
+                                                          .getString( R.string.phr_none_f );
+            entryValues[ EntriesAndValues.NONE_IDX ] = Settings.NO_DEFAULT_LIST_ID;
+            
+            for ( int i = 0, cnt = plainLists.size(); i < cnt; ++i )
             {
-               CharSequence[] entries = new CharSequence[ c.getCount() + 1 ]; // +1
-               // cause
-               // of
-               // "none"
-               CharSequence[] entryValues = new CharSequence[ c.getCount() + 1 ]; // +1
-               // cause
-               // of
-               // "none"
-               
-               entries[ EntriesAndValues.NONE_IDX ] = context.getResources()
-                                                             .getString( R.string.phr_none_f );
-               entryValues[ EntriesAndValues.NONE_IDX ] = Settings.NO_DEFAULT_LIST_ID;
-               
-               if ( c.getCount() > 0 )
-               {
-                  for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
-                  {
-                     entryValues[ c.getPosition() + 1 ] = c.getString( 0 );
-                     entries[ c.getPosition() + 1 ] = c.getString( 1 );
-                  }
-               }
-               
-               if ( ok )
-               {
-                  entriesAndValues = new EntriesAndValues();
-                  entriesAndValues.entries = entries;
-                  entriesAndValues.values = entryValues;
-               }
+               entryValues[ i + 1 ] = plainLists.get( i ).getId();
+               entries[ i + 1 ] = plainLists.get( i ).getName();
             }
             
-            if ( c != null )
-               c.close();
-            
-            client.release();
+            entriesAndValues = new EntriesAndValues();
+            entriesAndValues.entries = entries;
+            entriesAndValues.values = entryValues;
          }
-         catch ( RemoteException e )
+         else
          {
             LogUtils.logDBError( context,
                                  LogUtils.toTag( DefaultListPreference.class ),
-                                 "Lists",
-                                 e );
-         }
-         finally
-         {
-            if ( c != null )
-               c.close();
+                                 "Lists" );
          }
       }
       else

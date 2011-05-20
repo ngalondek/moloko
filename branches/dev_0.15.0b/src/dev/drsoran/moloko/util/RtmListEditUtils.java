@@ -24,12 +24,20 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
+import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Context;
+
+import com.mdt.rtm.data.RtmList;
+
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
+import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.provider.Rtm.Lists;
 
 
@@ -70,28 +78,80 @@ public final class RtmListEditUtils
    
 
 
-   public final static boolean deleteList( Context context, String listId )
+   public final static boolean deleteListByName( Context context,
+                                                 String listName )
    {
+      final ContentProviderClient client = context.getContentResolver()
+                                                  .acquireContentProviderClient( Lists.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final RtmList list = RtmListsProviderPart.getListByName( client,
+                                                                  listName );
+         client.release();
+         
+         if ( list != null )
+            return deleteList( context, list );
+      }
+      
+      return false;
+   }
+   
+
+
+   public final static boolean deleteList( Context context, RtmList list )
+   {
+      final String listId = list.getId();
       final ModificationSet modifications = new ModificationSet();
+      
+      boolean ok = true;
       
       modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Lists.CONTENT_URI,
                                                                                               listId ),
                                                                     Lists.LIST_DELETED,
                                                                     System.currentTimeMillis() ) );
-      modifications.add( Modification.newNoteModified( listId ) );
+      modifications.add( Modification.newListModified( listId ) );
       
-      final ArrayList< ContentProviderOperation > removeCreatedOperations = new ArrayList< ContentProviderOperation >( 1 );
-      removeCreatedOperations.add( CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                                   listId ) ) );
+      final ArrayList< ContentProviderOperation > dependentOperations = new ArrayList< ContentProviderOperation >( 1 );
       
-      return UIUtils.reportStatus( context,
-                                   R.string.toast_delete_list_ok,
-                                   R.string.toast_delete_list_failed,
-                                   Queries.applyModifications( context,
-                                                               modifications,
-                                                               R.string.toast_delete_list )
-                                      && Queries.transactionalApplyOperations( context,
-                                                                               removeCreatedOperations,
-                                                                               R.string.toast_delete_list ) );
+      // Move all contained tasks of the deleted List to the Inbox, this only applies to non-smart lists.
+      if ( list.getSmartFilter() == null )
+      {
+         final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesProviderPart.moveTaskSeriesToInbox( context.getContentResolver(),
+                                                                                                                            listId,
+                                                                                                                            context.getString( R.string.app_list_name_inbox ) );
+         ok = moveTasksToInboxOps != null;
+         if ( ok )
+            dependentOperations.addAll( moveTasksToInboxOps );
+      }
+      
+      if ( ok )
+      {
+         dependentOperations.add( CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                                  listId ) ) );
+         ok = UIUtils.reportStatus( context,
+                                    R.string.toast_delete_list_ok,
+                                    R.string.toast_delete_list_failed,
+                                    Queries.applyModifications( context,
+                                                                modifications,
+                                                                R.string.toast_delete_list )
+                                       && Queries.transactionalApplyOperations( context,
+                                                                                dependentOperations,
+                                                                                R.string.toast_delete_list ) );
+      }
+      
+      // Remove the default list setting, if same list ID
+      if ( ok )
+      {
+         final String defaultListId = MolokoApp.getSettings()
+                                               .getDefaultListId();
+         if ( defaultListId.equals( listId ) )
+         {
+            MolokoApp.getSettings()
+                     .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+         }
+      }
+      
+      return ok;
    }
 }

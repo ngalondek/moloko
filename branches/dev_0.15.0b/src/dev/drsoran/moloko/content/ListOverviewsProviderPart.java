@@ -471,8 +471,10 @@ public class ListOverviewsProviderPart extends AbstractProviderPart
          try
          {
             final Cursor smartListTasks = client.query( Tasks.CONTENT_URI,
-                                                        new String[]
-                                                        { Tasks._ID },
+                                                        TasksProviderPart.PROJECTION /*
+                                                                                      * Always use full projection to
+                                                                                      * num_notes column
+                                                                                      */,
                                                         evalFilter,
                                                         null,
                                                         null );

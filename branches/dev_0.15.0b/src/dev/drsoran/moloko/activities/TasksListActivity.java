@@ -37,9 +37,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -60,6 +62,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       public final static int MENU_ORDER = AbstractTasksListActivity.OptionsMenu.MENU_ORDER - 1000;
       
       public final static int SHOW_LISTS = START_IDX + 0;
+      
+      public final static int DELETE_LIST = START_IDX + 1;
    }
    
    
@@ -70,13 +74,49 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       boolean ok = super.onCreateOptionsMenu( menu );
       
       if ( ok )
+      {
          menu.add( Menu.NONE,
                    OptionsMenu.SHOW_LISTS,
                    OptionsMenu.MENU_ORDER,
                    R.string.taskslist_menu_opt_lists )
              .setIcon( R.drawable.ic_menu_list );
+         
+         if ( getIntent().hasExtra( Lists.LIST_NAME ) )
+         {
+            menu.add( Menu.NONE,
+                      OptionsMenu.DELETE_LIST,
+                      OptionsMenu.MENU_ORDER,
+                      R.string.taskslist_menu_opt_delete_list )
+                .setIcon( R.drawable.ic_menu_trash );
+         }
+      }
       
       return ok && addOptionsMenuIntents( menu );
+   }
+   
+
+
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case OptionsMenu.DELETE_LIST:
+            final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
+            UIUtils.newDeleteElementDialog( this, listName, new Runnable()
+            {
+               public void run()
+               {
+                  RtmListEditUtils.deleteListByName( TasksListActivity.this,
+                                                     listName );
+                  finish();
+               }
+            },
+                                            null ).show();
+            return true;
+         default :
+            return super.onOptionsItemSelected( item );
+      }
    }
    
 
@@ -166,6 +206,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    protected ListAdapter createListAdapter( AsyncFillListResult result )
    {
       return new TasksListAdapter( this,

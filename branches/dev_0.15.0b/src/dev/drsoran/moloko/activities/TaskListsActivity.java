@@ -35,10 +35,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -47,12 +47,15 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.dialogs.AddRenameListDialog;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.DelayedRun;
+import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
@@ -77,7 +80,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
          if ( client != null )
          {
             final List< RtmListWithTaskCount > res = ListOverviewsProviderPart.getListsOverview( client,
-                                                                                                 null );
+                                                                                                 RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
             client.release();
             return res;
          }
@@ -451,6 +454,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
                + RtmSmartFilterLexer.quotify( listName ) );
          }
          
+         intent.putExtra( Lists.LIST_NAME, rtmList.getName() );
          intent.putExtra( AbstractTasksListActivity.FILTER, filter );
          
          startActivity( intent );
@@ -459,15 +463,17 @@ public class TaskListsActivity extends ExpandableListActivity implements
    
 
 
-   private void deleteList( RtmListWithTaskCount rtmList )
+   private void deleteList( final RtmListWithTaskCount rtmList )
    {
       UIUtils.newDeleteElementDialog( this, rtmList.getName(), new Runnable()
       {
          public void run()
          {
-            // TODO: Delete list here
+            RtmListEditUtils.deleteList( TaskListsActivity.this,
+                                         rtmList.getRtmList() );
          }
-      }, null ).show();
+      },
+                                      null ).show();
    }
    
 

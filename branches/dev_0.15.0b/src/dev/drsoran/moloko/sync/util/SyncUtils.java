@@ -302,7 +302,8 @@ public final class SyncUtils
                //
                // In case of equal dates we take the server value cause this
                // value we have transferred already.
-               if ( properties.serverModDate.getTime() >= properties.localModDate.getTime() )
+               if ( properties.serverModDate != null
+                  && ( properties.serverModDate.getTime() >= properties.localModDate.getTime() ) )
                   // LOCAL UPDATE: The server element was modified after the local value.
                   syncDir = SyncResultDirection.LOCAL;
                else

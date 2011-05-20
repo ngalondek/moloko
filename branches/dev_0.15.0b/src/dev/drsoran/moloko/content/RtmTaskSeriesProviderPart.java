@@ -31,6 +31,7 @@ import java.util.Set;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -42,6 +43,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmTask;
 import com.mdt.rtm.data.RtmTaskList;
@@ -50,6 +52,7 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import com.mdt.rtm.data.RtmTaskSeries;
 import com.mdt.rtm.data.RtmTasks;
 
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Lists;
@@ -295,7 +298,8 @@ public class RtmTaskSeriesProviderPart extends
       RtmTasks tasksLists = null;
       
       // Query all lists, including smart lists. So we get empty RtmTaskList instances too.
-      final RtmLists lists = RtmListsProviderPart.getAllLists( client, null );
+      final RtmLists lists = RtmListsProviderPart.getAllLists( client,
+                                                               RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
       
       if ( lists != null )
       {
@@ -324,6 +328,59 @@ public class RtmTaskSeriesProviderPart extends
       }
       
       return tasksLists;
+   }
+   
+
+
+   public final static ArrayList< ContentProviderOperation > moveTaskSeriesToInbox( ContentResolver contentResolver,
+                                                                                    String fromListId,
+                                                                                    String nameInbox )
+   {
+      ArrayList< ContentProviderOperation > operations = null;
+      RtmList inbox = null;
+      
+      {
+         final ContentProviderClient client = contentResolver.acquireContentProviderClient( Lists.CONTENT_URI );
+         if ( client != null )
+         {
+            inbox = RtmListsProviderPart.getListByName( client, nameInbox );
+            client.release();
+         }
+         else
+            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+      }
+      
+      if ( inbox != null )
+      {
+         final ContentProviderClient client = contentResolver.acquireContentProviderClient( TaskSeries.CONTENT_URI );
+         if ( client != null )
+         {
+            final RtmTaskList taskList = getAllTaskSeriesForList( client,
+                                                                  fromListId );
+            client.release();
+            
+            if ( taskList != null )
+            {
+               final List< RtmTaskSeries > tasks = taskList.getSeries();
+               operations = new ArrayList< ContentProviderOperation >( tasks.size() );
+               
+               for ( RtmTaskSeries rtmTaskSeries : tasks )
+               {
+                  operations.add( ContentProviderOperation.newUpdate( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                                rtmTaskSeries.getId() ) )
+                                                          .withValue( TaskSeries.LIST_ID,
+                                                                      inbox.getId() )
+                                                          .build() );
+               }
+            }
+         }
+         else
+            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
+      }
+      else
+         Log.e( TAG, "Query Inbox list failed" );
+      
+      return operations;
    }
    
 

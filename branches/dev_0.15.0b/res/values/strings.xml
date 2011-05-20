@@ -304,6 +304,7 @@
    <string name="notification_permanent">%1$d %2$s due, %3$d with high priority</string>
    <string name="notification_due_ticker">%1$s due %2$s</string>
    <string name="notification_due">due at %1$s</string>
+   <string name="notification_due_today_and_tomorrow_title">Tasks for %1$s, %2$s</string>
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">No tasks to display</string>
@@ -435,6 +436,7 @@
    <string name="moloko_prefs_notification_permanent_cat_title">Permanent notifications</string>
    <string name="moloko_prefs_notification_permanent_today">Tasks due today</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
+   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tasks due today and tomorrow</string>
    <string name="moloko_prefs_notification_permanent_default_value">2</string>
    <string name="moloko_prefs_cat_help_dev_title">Support development</string>
    <string name="moloko_prefs_acra_title">Enable error reporting</string>

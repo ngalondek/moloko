@@ -246,8 +246,8 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
    @init
    {
       retval.epochStart = getCalendar();
-      int amount        =  1;
-      int unit          = -1;
+      int amount        = 1;
+      int unit          = Calendar.DAY_OF_YEAR;
    }
    @after
    {
@@ -263,7 +263,7 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
         {
            amount = strToNumber( $n.text );
         }
-      | A)?
+      | A)
       (  DAYS
          {
             unit = Calendar.DAY_OF_YEAR;
@@ -280,7 +280,7 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
          {
             unit = Calendar.YEAR;
          }
-      )
+      )?
       (OF parseDate[retval.epochStart, false])?
    ;
    catch [NumberFormatException e]

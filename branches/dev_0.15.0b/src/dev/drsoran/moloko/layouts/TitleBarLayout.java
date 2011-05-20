@@ -434,6 +434,8 @@ public class TitleBarLayout extends LinearLayout implements
    
    private RtmSmartFilter addTaskFilter;
    
+   private RtmSmartFilter addSmartListFilter;
+   
    
 
    public TitleBarLayout( Context context, AttributeSet attrs )
@@ -495,38 +497,48 @@ public class TitleBarLayout extends LinearLayout implements
    
 
 
+   public void setAddSmartListFilter( RtmSmartFilter filter )
+   {
+      addSmartListFilter = filter;
+   }
+   
+
+
    public void setButtonsVisible( int buttonMask )
    {
       // Show search button
-      if ( ( buttonMask & BUTTON_SEARCH ) == BUTTON_SEARCH )
       {
-         setVisible( R.id.app_titlebar_sep_search );
-         setBtnVisible( R.id.app_titlebar_btn_search );
+         setVisible( R.id.app_titlebar_sep_search,
+                     ( buttonMask & BUTTON_SEARCH ) == BUTTON_SEARCH );
+         setBtnVisible( R.id.app_titlebar_btn_search,
+                        ( buttonMask & BUTTON_SEARCH ) == BUTTON_SEARCH );
       }
       
       // Show home button
-      if ( ( buttonMask & BUTTON_HOME ) == BUTTON_HOME )
       {
-         setVisible( R.id.app_titlebar_sep_home );
-         setBtnVisible( R.id.app_titlebar_btn_home );
+         setVisible( R.id.app_titlebar_sep_home,
+                     ( buttonMask & BUTTON_HOME ) == BUTTON_HOME );
+         setBtnVisible( R.id.app_titlebar_btn_home,
+                        ( buttonMask & BUTTON_HOME ) == BUTTON_HOME );
       }
       
-      if ( !AccountUtils.isReadOnlyAccess( getContext() ) )
+      final boolean hasWriteAccess = !AccountUtils.isReadOnlyAccess( getContext() );
+      
+      // Show add task button
       {
-         // Show add task button
-         if ( ( buttonMask & BUTTON_ADD_TASK ) == BUTTON_ADD_TASK )
-         {
-            setVisible( R.id.app_titlebar_sep_add_task );
-            addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
-            addTaskBtn.setOnCheckedChangeListener( this );
-         }
-         
-         // Show add list button
-         if ( ( buttonMask & BUTTON_ADD_LIST ) == BUTTON_ADD_LIST )
-         {
-            setVisible( R.id.app_titlebar_sep_add_list );
-            setBtnVisible( R.id.app_titlebar_btn_add_list );
-         }
+         setVisible( R.id.app_titlebar_sep_add_task,
+                     ( hasWriteAccess && ( ( buttonMask & BUTTON_ADD_TASK ) == BUTTON_ADD_TASK ) ) );
+         addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task,
+                                                         ( hasWriteAccess && ( ( buttonMask & BUTTON_ADD_TASK ) == BUTTON_ADD_TASK ) ) );
+         addTaskBtn.setOnCheckedChangeListener( this );
+      }
+      
+      // Show add list button
+      {
+         setVisible( R.id.app_titlebar_sep_add_list,
+                     ( hasWriteAccess && ( buttonMask & BUTTON_ADD_LIST ) == BUTTON_ADD_LIST ) );
+         setBtnVisible( R.id.app_titlebar_btn_add_list,
+                        ( hasWriteAccess && ( buttonMask & BUTTON_ADD_LIST ) == BUTTON_ADD_LIST ) );
       }
    }
    
@@ -539,18 +551,18 @@ public class TitleBarLayout extends LinearLayout implements
    
 
 
-   private void setVisible( int id )
+   private void setVisible( int id, boolean visible )
    {
-      findViewById( id ).setVisibility( VISIBLE );
+      findViewById( id ).setVisibility( visible ? VISIBLE : GONE );
    }
    
 
 
-   private View setBtnVisible( int id )
+   private View setBtnVisible( int id, boolean visible )
    {
       final View btn = findViewById( id );
       btn.setOnClickListener( this );
-      btn.setVisibility( View.VISIBLE );
+      btn.setVisibility( visible ? View.VISIBLE : GONE );
       
       return btn;
    }
@@ -577,10 +589,10 @@ public class TitleBarLayout extends LinearLayout implements
             break;
          
          case R.id.app_titlebar_btn_add_list:
-            new AddRenameListDialog( getContext(), null ).show();
-            break;
-         
-         case R.id.app_titlebar_btn_save_search:
+            showAddTaskInput( false );
+            AddRenameListDialog.newDialogWithFilter( getContext(),
+                                                     addSmartListFilter )
+                               .show();
             break;
          
          default :

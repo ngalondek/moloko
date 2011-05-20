@@ -135,7 +135,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       @Override
       protected void onPostExecute( AsyncFillListResult result )
       {
-         updateTitleBarSmartFilter( result.filter );
+         final TitleBarLayout titleBarLayout = updateTitleBarSmartFilter( result.filter );
+         updateTitleBar( titleBarLayout );
          setTasksResult( result );
          
          AbstractTasksListActivity.this.asyncFillList = null;
@@ -939,10 +940,19 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   private void updateTitleBarSmartFilter( RtmSmartFilter filter )
+   protected void updateTitleBar( TitleBarLayout titleBar )
+   {
+      
+   }
+   
+
+
+   private TitleBarLayout updateTitleBarSmartFilter( RtmSmartFilter filter )
    {
       TitleBarLayout titleBar = (TitleBarLayout) findViewById( R.id.app_title_bar );
       titleBar.setAddTaskFilter( filter );
+      
+      return titleBar;
    }
    
 

@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
@@ -115,6 +116,10 @@ public class TaskSearchResultActivity extends TasksListActivity
             getRecentSuggestions().saveRecentQuery( filter.getFilterString(),
                                                     null );
             
+            configureTitleBar( TitleBarLayout.BUTTON_ADD_LIST
+               | TitleBarLayout.BUTTON_ADD_TASK | TitleBarLayout.BUTTON_HOME
+               | TitleBarLayout.BUTTON_SEARCH, filter );
+            
             final Intent newIntent = Intents.createSmartFilterIntent( this,
                                                                       filter,
                                                                       getString( R.string.tasksearchresult_titlebar,
@@ -128,6 +133,9 @@ public class TaskSearchResultActivity extends TasksListActivity
             UIUtils.setTitle( this,
                               getString( R.string.tasksearchresult_titlebar_error ),
                               R.drawable.ic_title_error );
+            
+            configureTitleBar( TitleBarLayout.BUTTON_HOME
+               | TitleBarLayout.BUTTON_SEARCH, null );
             
             final View wrongSyntaxView = findViewById( R.id.tasksearchresult_wrong_syntax );
             final TextView text = (TextView) wrongSyntaxView.findViewById( R.id.title_with_text_text );
@@ -150,5 +158,15 @@ public class TaskSearchResultActivity extends TasksListActivity
       return new SearchRecentSuggestions( this,
                                           TasksSearchRecentSuggestionsProvider.AUTHORITY,
                                           TasksSearchRecentSuggestionsProvider.MODE );
+   }
+   
+
+
+   private final void configureTitleBar( int buttonMask,
+                                         RtmSmartFilter addSmartListFilter )
+   {
+      final TitleBarLayout titleBarLayout = (TitleBarLayout) findViewById( R.id.app_title_bar );
+      titleBarLayout.setButtonsVisible( buttonMask );
+      titleBarLayout.setAddSmartListFilter( addSmartListFilter );
    }
 }

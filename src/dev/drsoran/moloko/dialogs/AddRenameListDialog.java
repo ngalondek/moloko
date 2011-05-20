@@ -72,7 +72,8 @@ public class AddRenameListDialog
    
    
 
-   public AddRenameListDialog( Context context, RtmList list )
+   private AddRenameListDialog( Context context, RtmList list,
+      RtmSmartFilter filter )
    {
       this.context = context;
       this.list = list;
@@ -90,6 +91,9 @@ public class AddRenameListDialog
          listNameEdit.setText( list.getName() );
          filterEdit.setVisibility( View.GONE );
       }
+      
+      if ( filter != null )
+         filterEdit.setText( filter.getFilterString() );
       
       impl.findViewById( R.id.btn_left )
           .setOnClickListener( new OnClickListener()
@@ -226,10 +230,12 @@ public class AddRenameListDialog
                                               null )
                       .show();
             }
+            
+            impl.dismiss();
          }
       }
-      
-      impl.dismiss();
+      else
+         impl.dismiss();
    }
    
 
@@ -315,9 +321,8 @@ public class AddRenameListDialog
       if ( list != null )
          return !list.getName().equals( trimmedListName );
       else
-         // Do not check for smart filter cause if the name is empty it is
-         // invalid anyway
-         return !TextUtils.isEmpty( trimmedListName );
+         return !TextUtils.isEmpty( trimmedListName )
+            || !TextUtils.isEmpty( UIUtils.getTrimmedText( filterEdit ) );
    }
    
 
@@ -335,5 +340,28 @@ public class AddRenameListDialog
       }
       
       return filter;
+   }
+   
+
+
+   public final static AddRenameListDialog newDialog( Context context )
+   {
+      return new AddRenameListDialog( context, null, null );
+   }
+   
+
+
+   public final static AddRenameListDialog newDialogWithList( Context context,
+                                                              RtmList list )
+   {
+      return new AddRenameListDialog( context, list, null );
+   }
+   
+
+
+   public final static AddRenameListDialog newDialogWithFilter( Context context,
+                                                                RtmSmartFilter filter )
+   {
+      return new AddRenameListDialog( context, null, filter );
    }
 }

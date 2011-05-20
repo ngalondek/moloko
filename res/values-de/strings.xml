@@ -175,8 +175,8 @@
    <string name="dlg_rename_list_title">Liste umbenennen</string>
    <string name="dlg_add_rename_list_list_name_hint">Name der Liste</string>
       <!-- Toasts -->
-      <string name="dlg_add_rename_list_toast_empty_list_name">Der Name der Liste kann nicht leer sein</string>
-      <string name="dlg_add_rename_list_toast_invalid_list_name">Der Name der Liste kann nicht \'Inbox\' oder \'Sent\' sein</string>
+      <string name="dlg_add_rename_list_toast_empty_list_name">Der Name der Liste darf nicht leer sein</string>
+      <string name="dlg_add_rename_list_toast_invalid_list_name">Der Name der Liste darf nicht \'Inbox\' oder \'Sent\' sein</string>
       <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' ist kein gültiger Smart Filter</string>
          
 	<!-- Searchable -->

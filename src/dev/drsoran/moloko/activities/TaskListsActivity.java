@@ -341,8 +341,9 @@ public class TaskListsActivity extends ExpandableListActivity implements
             return true;
             
          case CtxtMenu.RENAME:
-            new AddRenameListDialog( this,
-                                     getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getRtmList() ).show();
+            AddRenameListDialog.newDialogWithList( this,
+                                                   getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ).getRtmList() )
+                               .show();
             return true;
             
          case CtxtMenu.MAKE_DEFAULT_LIST:

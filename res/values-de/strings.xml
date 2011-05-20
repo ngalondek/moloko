@@ -250,6 +250,7 @@
    <string name="notification_permanent">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
    <string name="notification_due_ticker">%1$s fällig %2$s</string>
    <string name="notification_due">fällig um %1$s</string>
+   <string name="notification_due_today_and_tomorrow_title">Aufgaben für %1$s, %2$s</string>
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
@@ -368,6 +369,7 @@
    <string name="moloko_prefs_notification_permanent_cat_title">Permanente Benachrichtigungen</string>
    <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
+   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Heutige und morgige Aufgaben</string>
    <string name="moloko_prefs_cat_help_dev_title">Helfen Sie bei der Entwicklung</string>
    <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
    <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>

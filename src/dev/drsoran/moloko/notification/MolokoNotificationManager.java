@@ -25,6 +25,7 @@ package dev.drsoran.moloko.notification;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,6 +48,7 @@ import android.util.Pair;
 import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.IOnBootCompletedListener;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -64,7 +66,7 @@ import dev.drsoran.rtm.Task;
 
 public class MolokoNotificationManager implements
          OnSharedPreferenceChangeListener, IOnBootCompletedListener,
-         IOnTimeChangedListener
+         IOnTimeChangedListener, IOnSettingsChangedListener
 {
    private final static String TAG = "Moloko."
       + MolokoNotificationManager.class.getName();
@@ -77,11 +79,15 @@ public class MolokoNotificationManager implements
    
    private final static int NOTIFICATION_PERM_TOMORROW = 2;
    
+   private final static int NOTIFICATION_PERM_TODAY_AND_TOMORROW = 3;
+   
    private final static int NOTIFICATION_DUE_UPD_REMIND_TIME = 0;
    
    private final static int NOTIFICATION_DUE_UPD_MINUTE_TICK = 1;
    
    private final static int NOTIFICATION_DUE_UPD_VIB_TONE_LED = 2;
+   
+   private final static int NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED = 3;
    
    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
    
@@ -128,7 +134,10 @@ public class MolokoNotificationManager implements
       MolokoApp.get( context ).registerOnBootCompletedListener( this );
       MolokoApp.get( context )
                .registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
-      
+      MolokoApp.get( context )
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DATEFORMAT
+                                                      | IOnSettingsChangedListener.RTM_TIMEFORMAT,
+                                                   this );
       {
          final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
          
@@ -155,6 +164,7 @@ public class MolokoNotificationManager implements
       
       // IOnBootCompletedListener will be unregistered in onBootCompleted().
       MolokoApp.get( context ).unregisterOnTimeChangedListener( this );
+      MolokoApp.get( context ).unregisterOnSettingsChangedListener( this );
       
       {
          final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
@@ -203,6 +213,15 @@ public class MolokoNotificationManager implements
    
 
 
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
+   {
+      // TODO Auto-generated method stub
+      
+   }
+   
+
+
    public void onSharedPreferenceChanged( final SharedPreferences sharedPreferences,
                                           final String key )
    {
@@ -212,9 +231,17 @@ public class MolokoNotificationManager implements
          {
             reEvaluatePermanentNotifications();
          }
+         else if ( key.equals( context.getString( R.string.key_dateformat_local ) ) )
+         {
+            reEvaluatePermanentNotifications();
+         }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks ) ) )
          {
             reCreateDueTaskNotifications();
+         }
+         else if ( key.equals( context.getString( R.string.key_timeformat_local ) ) )
+         {
+            reEvaluateDueTaskNotifications( NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED );
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks_ringtone ) )
             || key.equals( context.getString( R.string.key_notify_due_tasks_vibrate ) )
@@ -280,6 +307,11 @@ public class MolokoNotificationManager implements
                      // only incomplete tasks
                      buffer.append( " AND " );
                      buffer.append( Tasks.COMPLETED_DATE );
+                     buffer.append( " IS NULL" );
+                     
+                     // only non-deleted tasks
+                     buffer.append( " AND " );
+                     buffer.append( Tasks.DELETED_DATE );
                      buffer.append( " IS NULL" );
                      
                      final List< Task > tasks = TasksProviderPart.getTasks( client,
@@ -406,18 +438,36 @@ public class MolokoNotificationManager implements
                                                      context.getString( R.string.phr_today_with_date,
                                                                         MolokoDateUtils.formatDate( getCalendar( 0 ).getTimeInMillis(),
                                                                                                     0 ) ),
-                                                     DateParser.TODAY );
+                                                     RtmSmartFilterLexer.OP_DUE_LIT
+                                                        + DateParser.tokenNames[ DateParser.TODAY ] );
                         break;
+                     
                      case NOTIFICATION_PERM_TOMORROW:
                         updatePermanentNotification( client,
                                                      context.getString( R.string.phr_tomorrow_with_date,
                                                                         MolokoDateUtils.formatDate( getCalendar( 1 ).getTimeInMillis(),
                                                                                                     0 ) ),
-                                                     DateParser.TOMORROW );
+                                                     RtmSmartFilterLexer.OP_DUE_LIT
+                                                        + DateParser.tokenNames[ DateParser.TOMORROW ] );
                         break;
+                     
+                     case NOTIFICATION_PERM_TODAY_AND_TOMORROW:
+                        updatePermanentNotification( client,
+                                                     context.getString( R.string.notification_due_today_and_tomorrow_title,
+                                                                        MolokoDateUtils.formatDate( getCalendar( 0 ).getTimeInMillis(),
+                                                                                                    MolokoDateUtils.FORMAT_NUMERIC ),
+                                                                        MolokoDateUtils.formatDate( getCalendar( 1 ).getTimeInMillis(),
+                                                                                                    MolokoDateUtils.FORMAT_NUMERIC ) ),
+                                                     RtmSmartFilterLexer.OP_DUE_WITHIN_LIT
+                                                        + "\"2 of "
+                                                        + DateParser.tokenNames[ DateParser.TODAY ]
+                                                        + "\"" );
+                        break;
+                     
                      case NOTIFICATION_PERM_OFF:
                         permanentNotification.cancel();
                         break;
+                     
                      default :
                         break;
                   }
@@ -431,13 +481,12 @@ public class MolokoNotificationManager implements
 
    private void updatePermanentNotification( ContentProviderClient client,
                                              String title,
-                                             int filterType )
+                                             String filterString )
    {
       RtmSmartFilter filter = null;
       Pair< String, Integer > text = null;
       
-      filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_LIT
-         + DateParser.tokenNames[ filterType ] );
+      filter = new RtmSmartFilter( filterString );
       
       text = buildPermanentNotificationRowText( client, filter );
       
@@ -495,6 +544,10 @@ public class MolokoNotificationManager implements
                notification.updateMinuteTick();
                break;
             
+            case NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED:
+               notification.onTimeFormatChanged();
+               break;
+            
             default :
                Log.w( TAG, "Unknown due time notification update type " + what );
                break;
@@ -546,8 +599,8 @@ public class MolokoNotificationManager implements
       }
       else
       {
-         Log.e( TAG, "Error evaluating RtmSmartFilter "
-            + filter.getFilterString() );
+         Log.e( TAG,
+                "Error evaluating RtmSmartFilter " + filter.getFilterString() );
       }
       
       return new Pair< String, Integer >( result, count );
@@ -555,7 +608,7 @@ public class MolokoNotificationManager implements
    
 
 
-   private MolokoCalendar getCalendar( int dayOffset )
+   private static MolokoCalendar getCalendar( int dayOffset )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
       cal.add( Calendar.DAY_OF_YEAR, dayOffset );
@@ -565,7 +618,7 @@ public class MolokoNotificationManager implements
    
 
 
-   private MolokoCalendar getDateOnlyCalendar( int dayOffset )
+   private static MolokoCalendar getDateOnlyCalendar( int dayOffset )
    {
       final MolokoCalendar cal = getCalendar( dayOffset );
       cal.setHasTime( false );

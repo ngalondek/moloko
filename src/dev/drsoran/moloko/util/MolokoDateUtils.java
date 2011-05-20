@@ -406,7 +406,7 @@ public class MolokoDateUtils
                   if ( ( flags & FORMAT_WITH_YEAR ) != 0 )
                      pattern.append( "d.M.yyyy" );
                   else
-                     pattern.append( "d.M" );
+                     pattern.append( "d.M." );
                else
                {
                   if ( ( flags & FORMAT_ABR_MONTH ) != 0 )

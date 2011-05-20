@@ -69,6 +69,9 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
+   public final static String SELECTION_EXCLUDE_DELETED = Lists.LIST_DELETED
+      + " IS NULL";
+   
    static
    {
       AbstractModificationsRtmProviderPart.initProjectionDependent( PROJECTION,
@@ -132,9 +135,40 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       
       try
       {
-         // Only non-deleted lists
          c = client.query( Lists.CONTENT_URI, PROJECTION, Lists._ID + " = "
             + id, null, null );
+         
+         boolean ok = c != null && c.moveToFirst();
+         
+         if ( ok )
+            list = createList( c );
+      }
+      catch ( RemoteException e )
+      {
+         Log.e( TAG, "Query list failed. ", e );
+         list = null;
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return list;
+   }
+   
+
+
+   public final static RtmList getListByName( ContentProviderClient client,
+                                              String name )
+   {
+      RtmList list = null;
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Lists.CONTENT_URI, PROJECTION, Lists.LIST_NAME
+            + " like '" + name + "'", null, null );
          
          boolean ok = c != null && c.moveToFirst();
          
@@ -168,13 +202,7 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
          // Only non-deleted lists
          c = client.query( Rtm.Lists.CONTENT_URI,
                            PROJECTION,
-                           new StringBuilder( "(" ).append( selection != null
-                                                                             ? selection
-                                                                             : "1" )
-                                                   .append( " ) AND " )
-                                                   .append( Lists.LIST_DELETED )
-                                                   .append( " IS NULL" )
-                                                   .toString(),
+                           selection,
                            null,
                            null );
          
@@ -326,7 +354,7 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       if ( ok )
       {
          operation = ContentProviderOperation.newInsert( Lists.CONTENT_URI )
-                                             .withValues( getContentValues( new RtmList( outNewId.rtmListId,
+                                             .withValues( getContentValues( new RtmList( newId.rtmListId,
                                                                                          list.getName(),
                                                                                          list.getCreatedDate(),
                                                                                          list.getModifiedDate(),
@@ -378,16 +406,29 @@ public class RtmListsProviderPart extends AbstractModificationsRtmProviderPart
       
       // Trigger: If a list gets deleted, move all contained tasks to the
       // Inbox list.
-      db.execSQL( "CREATE TRIGGER " + path + "_delete_list AFTER DELETE ON "
-         + path + " BEGIN UPDATE " + TaskSeries.PATH + " SET "
-         + TaskSeries.LIST_ID + " = ( SELECT " + Lists._ID + " FROM " + path
-         + " WHERE " + Lists.LIST_NAME + " like 'Inbox' ); END;" );
+      // db.execSQL( "CREATE TRIGGER " + path + "_delete_list AFTER DELETE ON "
+      // + path + " BEGIN UPDATE " + TaskSeries.PATH + " SET "
+      // + TaskSeries.LIST_ID + " = ( SELECT " + Lists._ID + " FROM " + path
+      // + " WHERE " + Lists.LIST_NAME + " like 'Inbox' ) WHERE "
+      // + TaskSeries.LIST_ID + " = old." + Lists._ID + "; END;" );
       
       // Trigger: If a list gets deleted, check the default list setting
       db.execSQL( "CREATE TRIGGER " + path + "_default_list AFTER DELETE ON "
          + path + " BEGIN UPDATE " + Settings.PATH + " SET "
          + Settings.DEFAULTLIST_ID + " = NULL WHERE old." + Lists._ID + " = "
          + Settings.DEFAULTLIST_ID + "; END;" );
+      
+      // Triggers: If a list ID gets updated (e.g. after inserting on RTM side),
+      // we also update:
+      // - all referenced taskseries
+      // - default list in settings
+      db.execSQL( "CREATE TRIGGER " + path + "_update_list AFTER UPDATE OF "
+         + Lists._ID + " ON " + path + " FOR EACH ROW BEGIN UPDATE "
+         + TaskSeries.PATH + " SET " + TaskSeries.LIST_ID + " = new."
+         + Lists._ID + " WHERE " + TaskSeries.LIST_ID + " = old." + Lists._ID
+         + "; UPDATE " + Settings.PATH + " SET " + Settings.DEFAULTLIST_ID
+         + " = new." + Lists._ID + " WHERE " + Settings.DEFAULTLIST_ID
+         + " = old." + Lists._ID + "; END;" );
       
       // Trigger: A locked list should always exist and cannot be
       // deleted.

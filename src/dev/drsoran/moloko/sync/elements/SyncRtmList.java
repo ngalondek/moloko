@@ -38,7 +38,6 @@ import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
-import dev.drsoran.moloko.sync.operation.NoteServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.RtmListServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
@@ -185,6 +184,20 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
                                                          serverElement.list.getName() )
                                              .build() );
       
+      if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( list.getCreatedDate() ),
+                                 MolokoDateUtils.getTime( serverElement.list.getCreatedDate() ) ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.CREATED_DATE,
+                                                         MolokoDateUtils.getTime( serverElement.list.getCreatedDate() ) )
+                                             .build() );
+      
+      if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( list.getModifiedDate() ),
+                                 MolokoDateUtils.getTime( serverElement.list.getModifiedDate() ) ) )
+         result.add( ContentProviderOperation.newUpdate( uri )
+                                             .withValue( Lists.MODIFIED_DATE,
+                                                         MolokoDateUtils.getTime( serverElement.list.getModifiedDate() ) )
+                                             .build() );
+      
       if ( SyncUtils.hasChanged( MolokoDateUtils.getTime( list.getDeletedDate() ),
                                  MolokoDateUtils.getTime( serverElement.list.getDeletedDate() ) ) )
          result.add( ContentProviderOperation.newUpdate( uri )
@@ -303,7 +316,7 @@ public class SyncRtmList implements IContentProviderSyncable< SyncRtmList >,
 
    public IServerSyncOperation< RtmList > computeServerDeleteOperation( RtmTimeline timeLine )
    {
-      return NoteServerSyncOperation.newDelete( timeLine.lists_delete( list.getId() ) )
-                                    .build( RtmListServerSyncOperation.class );
+      return RtmListServerSyncOperation.newDelete( timeLine.lists_delete( list.getId() ) )
+                                       .build( RtmListServerSyncOperation.class );
    }
 }

@@ -152,7 +152,7 @@ public class AddRenameListDialog
                                                        0,
                                                        getSmartFilter() );
                   
-                  new AsyncInsertEntity< RtmList >( context )
+                  final Uri newUri = new AsyncInsertEntity< RtmList >( context )
                   {
                      @Override
                      protected int getProgressMessageId()
@@ -204,6 +204,11 @@ public class AddRenameListDialog
                         return Lists.PATH;
                      }
                   }.execute( newList ).get();
+                  
+                  UIUtils.reportStatus( context,
+                                        R.string.toast_insert_list_ok,
+                                        R.string.toast_insert_list_fail,
+                                        newUri != null );
                }
                catch ( InterruptedException e )
                {

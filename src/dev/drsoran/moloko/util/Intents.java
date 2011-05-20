@@ -37,6 +37,7 @@ import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -145,7 +146,7 @@ public final class Intents
       
       String filterString = Strings.EMPTY_STRING;
       
-      // If we open a non-smart list, we do not make the list names clickable.
+      // If we open a non-smart list
       if ( !list.hasSmartFilter() )
       {
          filterString = RtmSmartFilterLexer.OP_LIST_LIT
@@ -161,11 +162,12 @@ public final class Intents
       if ( filter != null )
       {
          if ( filterString.length() > 0 )
-            filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " " + filter );
+            filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " (" + filter + ")" );
          else
             filterString = filter;
       }
       
+      intent.putExtra( Lists.LIST_NAME, list.getName() );
       intent.putExtra( AbstractTasksListActivity.FILTER,
                        new RtmSmartFilter( filterString ) );
       

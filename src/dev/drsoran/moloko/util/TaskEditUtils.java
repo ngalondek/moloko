@@ -236,16 +236,16 @@ public final class TaskEditUtils
          
          ok = Queries.applyModifications( context,
                                           modifications,
-                                          R.string.toast_save_task );
+                                          R.string.toast_delete_task );
          
          ok = ok
             && Queries.transactionalApplyOperations( context,
                                                      removeCreatedOperations,
-                                                     R.string.toast_save_task );
+                                                     R.string.toast_delete_task );
          
          UIUtils.reportStatus( context,
-                               R.string.toast_save_task_ok,
-                               R.string.toast_save_task_failed,
+                               R.string.toast_delete_task_ok,
+                               R.string.toast_delete_task_failed,
                                ok );
       }
       

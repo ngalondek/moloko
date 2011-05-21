@@ -168,7 +168,8 @@
       <string name="toast_save_list_failed">Änderungen an der Liste konnten nicht gespeichert werden</string>
       <string name="toast_delete_list">Lösche Liste...</string>
       <string name="toast_delete_list_ok">Liste gelöscht</string>
-      <string name="toast_delete_list_failed">Liste konnte nicht gelöscht werden</string>   
+      <string name="toast_delete_list_failed">Liste konnte nicht gelöscht werden</string>
+      <string name="toast_delete_locked_list">Die Liste \'%1$s\' ist gesperrt and kann nicht gelöscht werden</string>
       
    <!-- Add/Rename list dialog -->
    <string name="dlg_add_list_title">Neue Liste</string>

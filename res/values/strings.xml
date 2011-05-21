@@ -214,6 +214,7 @@
       <string name="toast_delete_list">Deleting list...</string>
       <string name="toast_delete_list_ok">List has been deleted</string>
       <string name="toast_delete_list_failed">Failed to delete the list</string>
+      <string name="toast_delete_locked_list">The list \'%1$s\' is locked and cannot be deleted</string>
       
    <!-- Add/Rename list dialog -->      
    <string name="dlg_add_list_title">New List</string>

@@ -64,7 +64,6 @@ import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
-// TODO: make thread safe
 // TODO: remove due notifications of local deleted tasks
 // TODO: after a sync, completely recreate due notifications cause the task IDs may have changed
 public class MolokoNotificationManager implements
@@ -99,7 +98,7 @@ public class MolokoNotificationManager implements
       public void run()
       {
          reEvaluatePermanentNotifications();
-         reCreateDueTaskNotifications();
+         reCreateDueTaskNotifications( true );
       }
    };
    
@@ -109,7 +108,7 @@ public class MolokoNotificationManager implements
    
    private final PermanentNotification permanentNotification;
    
-   private final LinkedList< DueTaskNotification > dueTaskNotifications;
+   private final List< DueTaskNotification > dueTaskNotifications;
    
    
 
@@ -153,15 +152,17 @@ public class MolokoNotificationManager implements
       TasksProviderPart.registerContentObserver( context, dbObserver );
       
       reEvaluatePermanentNotifications();
-      reCreateDueTaskNotifications();
+      reCreateDueTaskNotifications( true );
    }
    
 
 
    public void shutdown()
    {
-      permanentNotification.cancel();
       cancelAllDueTaskNotifications();
+      shutdownExecutorService();
+      
+      permanentNotification.cancel();
       
       TasksProviderPart.unregisterContentObserver( context, dbObserver );
       
@@ -177,8 +178,6 @@ public class MolokoNotificationManager implements
             prefs.unregisterOnSharedPreferenceChangeListener( this );
          }
       }
-      
-      shutdownExecutorService();
    }
    
 
@@ -187,7 +186,7 @@ public class MolokoNotificationManager implements
    {
       MolokoApp.get( context ).unregisterOnBootCompletedListener( this );
       reEvaluatePermanentNotifications();
-      reCreateDueTaskNotifications();
+      reCreateDueTaskNotifications( true );
    }
    
 
@@ -198,7 +197,7 @@ public class MolokoNotificationManager implements
       {
          case IOnTimeChangedListener.MIDNIGHT:
             reEvaluatePermanentNotifications();
-            reCreateDueTaskNotifications();
+            reCreateDueTaskNotifications( false );
             break;
          
          case IOnTimeChangedListener.SYSTEM_TIME:
@@ -248,7 +247,7 @@ public class MolokoNotificationManager implements
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks ) ) )
          {
-            reCreateDueTaskNotifications();
+            reCreateDueTaskNotifications( false );
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks_ringtone ) )
             || key.equals( context.getString( R.string.key_notify_due_tasks_vibrate ) )
@@ -265,7 +264,7 @@ public class MolokoNotificationManager implements
    
 
 
-   public void reCreateDueTaskNotifications()
+   public void reCreateDueTaskNotifications( final boolean fullRecreation )
    {
       executorService.execute( new Runnable()
       {

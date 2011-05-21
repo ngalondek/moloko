@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
 
@@ -101,55 +102,66 @@ public final class RtmListEditUtils
 
    public final static boolean deleteList( Context context, RtmList list )
    {
-      final String listId = list.getId();
-      final ModificationSet modifications = new ModificationSet();
-      
       boolean ok = true;
       
-      modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                              listId ),
-                                                                    Lists.LIST_DELETED,
-                                                                    System.currentTimeMillis() ) );
-      modifications.add( Modification.newListModified( listId ) );
-      
-      final ArrayList< ContentProviderOperation > dependentOperations = new ArrayList< ContentProviderOperation >( 1 );
-      
-      // Move all contained tasks of the deleted List to the Inbox, this only applies to non-smart lists.
-      if ( list.getSmartFilter() == null )
+      if ( list.getLocked() == 0 )
       {
-         final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesProviderPart.moveTaskSeriesToInbox( context.getContentResolver(),
-                                                                                                                            listId,
-                                                                                                                            context.getString( R.string.app_list_name_inbox ) );
-         ok = moveTasksToInboxOps != null;
-         if ( ok )
-            dependentOperations.addAll( moveTasksToInboxOps );
-      }
-      
-      if ( ok )
-      {
-         dependentOperations.add( CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
-                                                                                                  listId ) ) );
-         ok = UIUtils.reportStatus( context,
-                                    R.string.toast_delete_list_ok,
-                                    R.string.toast_delete_list_failed,
-                                    Queries.applyModifications( context,
-                                                                modifications,
-                                                                R.string.toast_delete_list )
-                                       && Queries.transactionalApplyOperations( context,
-                                                                                dependentOperations,
-                                                                                R.string.toast_delete_list ) );
-      }
-      
-      // Remove the default list setting, if same list ID
-      if ( ok )
-      {
-         final String defaultListId = MolokoApp.getSettings()
-                                               .getDefaultListId();
-         if ( defaultListId.equals( listId ) )
+         final String listId = list.getId();
+         final ModificationSet modifications = new ModificationSet();
+         
+         modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                                 listId ),
+                                                                       Lists.LIST_DELETED,
+                                                                       System.currentTimeMillis() ) );
+         modifications.add( Modification.newListModified( listId ) );
+         
+         final ArrayList< ContentProviderOperation > dependentOperations = new ArrayList< ContentProviderOperation >( 1 );
+         
+         // Move all contained tasks of the deleted List to the Inbox, this only applies to non-smart lists.
+         if ( list.getSmartFilter() == null )
          {
-            MolokoApp.getSettings()
-                     .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+            final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesProviderPart.moveTaskSeriesToInbox( context.getContentResolver(),
+                                                                                                                               listId,
+                                                                                                                               context.getString( R.string.app_list_name_inbox ) );
+            ok = moveTasksToInboxOps != null;
+            if ( ok )
+               dependentOperations.addAll( moveTasksToInboxOps );
          }
+         
+         if ( ok )
+         {
+            dependentOperations.add( CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
+                                                                                                     listId ) ) );
+            ok = UIUtils.reportStatus( context,
+                                       R.string.toast_delete_list_ok,
+                                       R.string.toast_delete_list_failed,
+                                       Queries.applyModifications( context,
+                                                                   modifications,
+                                                                   R.string.toast_delete_list )
+                                          && Queries.transactionalApplyOperations( context,
+                                                                                   dependentOperations,
+                                                                                   R.string.toast_delete_list ) );
+         }
+         
+         // Remove the default list setting, if same list ID
+         if ( ok )
+         {
+            final String defaultListId = MolokoApp.getSettings()
+                                                  .getDefaultListId();
+            if ( defaultListId.equals( listId ) )
+            {
+               MolokoApp.getSettings()
+                        .setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+            }
+         }
+      }
+      else
+      {
+         Toast.makeText( context,
+                         context.getString( R.string.toast_delete_locked_list,
+                                            list.getName() ),
+                         Toast.LENGTH_LONG ).show();
+         ok = false;
       }
       
       return ok;

@@ -36,6 +36,7 @@ import android.widget.ListAdapter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.Strings;
@@ -81,7 +82,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                    R.string.taskslist_menu_opt_lists )
              .setIcon( R.drawable.ic_menu_list );
          
-         if ( getIntent().hasExtra( Lists.LIST_NAME ) )
+         if ( getIntent().hasExtra( Lists.LIST_NAME )
+            && !AccountUtils.isReadOnlyAccess( this ) )
          {
             menu.add( Menu.NONE,
                       OptionsMenu.DELETE_LIST,
@@ -136,9 +138,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       }
       else
       {
-         UIUtils.setTitle( this,
-                           getString( R.string.taskslist_titlebar,
-                                      getString( R.string.app_name ) ) );
+         UIUtils.setTitle( this, getString( R.string.taskslist_titlebar,
+                                            getString( R.string.app_name ) ) );
       }
    }
    

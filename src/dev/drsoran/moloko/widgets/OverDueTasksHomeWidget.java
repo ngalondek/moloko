@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -44,7 +45,8 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
+public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget implements
+         IOnTimeChangedListener
 {
    private final ViewGroup widgetContainer;
    
@@ -100,6 +102,10 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
       asyncReload();
       
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
+      MolokoApp.get( getContext() )
+               .registerOnTimeChangedListener( IOnTimeChangedListener.MINUTE_TICK
+                                                  | IOnTimeChangedListener.SYSTEM_TIME,
+                                               this );
    }
    
 
@@ -115,6 +121,7 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
    {
       super.stop();
       
+      MolokoApp.get( getContext() ).unregisterOnTimeChangedListener( this );
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
    }
    
@@ -133,7 +140,7 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
    public Intent getIntent()
    {
       final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-         + DateParser.tokenNames[ DateParser.TODAY ] );
+         + DateParser.tokenNames[ DateParser.NOW ] );
       
       return Intents.createSmartFilterIntent( getContext(),
                                               filter,
@@ -150,11 +157,18 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
    
 
 
+   public void onTimeChanged( int which )
+   {
+      asyncReloadWithoutSpinner();
+   }
+   
+
+
    @Override
    protected Cursor doBackgroundQuery()
    {
       final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-                                                           + DateParser.tokenNames[ DateParser.TODAY ],
+                                                           + DateParser.tokenNames[ DateParser.NOW ],
                                                         true );
       
       return getContext().getContentResolver().query( RawTasks.CONTENT_URI,
@@ -164,4 +178,5 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
                                                       null,
                                                       null );
    }
+   
 }

@@ -95,6 +95,42 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
    
 
 
+   protected void asyncReloadWithoutSpinner()
+   {
+      if ( query != null )
+         query.cancel( true );
+      
+      final View loadingView = findViewById( R.id.loading );
+      loadingView.setVisibility( View.GONE );
+      
+      final View contentView = findViewById( R.id.content );
+      contentView.setVisibility( View.VISIBLE );
+      
+      query = new AsyncTask< Void, Void, Cursor >()
+      {
+         @Override
+         protected Cursor doInBackground( Void... params )
+         {
+            return doBackgroundQuery();
+         }
+         
+
+
+         @Override
+         protected void onPostExecute( Cursor result )
+         {
+            handleAsyncResult( contentView, result );
+            
+            if ( result != null )
+               result.close();
+            
+            query = null;
+         }
+      }.execute();
+   }
+   
+
+
    protected abstract Cursor doBackgroundQuery();
    
 

@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.notification;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,15 +56,15 @@ import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
-// TODO: remove due notifications of local deleted tasks
-// TODO: after a sync, completely recreate due notifications cause the task IDs may have changed
 public class MolokoNotificationManager implements
          OnSharedPreferenceChangeListener, IOnBootCompletedListener,
          IOnTimeChangedListener, IOnSettingsChangedListener
@@ -91,6 +90,11 @@ public class MolokoNotificationManager implements
    
    private final static int NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED = 3;
    
+   private final static String DUE_TASKS_QUERY = Tasks.DUE_DATE + " >= ? AND "
+      + Tasks.DUE_DATE + " < ? AND " + Tasks.HAS_DUE_TIME + " != 0 AND "
+      + Tasks.COMPLETED_DATE + " IS NULL AND " + Tasks.DELETED_DATE
+      + " IS NULL";
+   
    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
    
    private final Runnable refreshNotificationsRunnable = new Runnable()
@@ -98,7 +102,7 @@ public class MolokoNotificationManager implements
       public void run()
       {
          reEvaluatePermanentNotifications();
-         reCreateDueTaskNotifications( true );
+         reCreateDueTaskNotifications();
       }
    };
    
@@ -152,7 +156,7 @@ public class MolokoNotificationManager implements
       TasksProviderPart.registerContentObserver( context, dbObserver );
       
       reEvaluatePermanentNotifications();
-      reCreateDueTaskNotifications( true );
+      reCreateDueTaskNotifications();
    }
    
 
@@ -186,7 +190,7 @@ public class MolokoNotificationManager implements
    {
       MolokoApp.get( context ).unregisterOnBootCompletedListener( this );
       reEvaluatePermanentNotifications();
-      reCreateDueTaskNotifications( true );
+      reCreateDueTaskNotifications();
    }
    
 
@@ -197,7 +201,7 @@ public class MolokoNotificationManager implements
       {
          case IOnTimeChangedListener.MIDNIGHT:
             reEvaluatePermanentNotifications();
-            reCreateDueTaskNotifications( false );
+            reCreateDueTaskNotifications();
             break;
          
          case IOnTimeChangedListener.SYSTEM_TIME:
@@ -247,7 +251,7 @@ public class MolokoNotificationManager implements
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks ) ) )
          {
-            reCreateDueTaskNotifications( false );
+            reCreateDueTaskNotifications();
          }
          else if ( key.equals( context.getString( R.string.key_notify_due_tasks_ringtone ) )
             || key.equals( context.getString( R.string.key_notify_due_tasks_vibrate ) )
@@ -264,7 +268,7 @@ public class MolokoNotificationManager implements
    
 
 
-   public void reCreateDueTaskNotifications( final boolean fullRecreation )
+   public void reCreateDueTaskNotifications()
    {
       executorService.execute( new Runnable()
       {
@@ -287,90 +291,18 @@ public class MolokoNotificationManager implements
                      final long remindBeforeMillis = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_due_tasks_before ),
                                                                                         context.getString( R.string.moloko_prefs_notification_tasks_w_due_before_default_value ) ) );
                      
-                     // today
-                     final MolokoCalendar cal = getDateOnlyCalendar( 0 );
-                     
-                     // Collect all tasks which due today + the reminder time span.
-                     final StringBuilder buffer = new StringBuilder( Tasks.DUE_DATE );
-                     
-                     buffer.append( " >= " );
-                     buffer.append( cal.getTimeInMillis() );
-                     buffer.append( " AND " );
-                     
-                     // tomorrow
-                     cal.roll( Calendar.DAY_OF_YEAR, true );
-                     
-                     buffer.append( Tasks.DUE_DATE );
-                     buffer.append( " < " );
-                     // + remind before time
-                     buffer.append( cal.getTimeInMillis() + remindBeforeMillis );
-                     
-                     // only tasks with due time
-                     buffer.append( " AND " );
-                     buffer.append( Tasks.HAS_DUE_TIME );
-                     buffer.append( " != 0" );
-                     
-                     // only incomplete tasks
-                     buffer.append( " AND " );
-                     buffer.append( Tasks.COMPLETED_DATE );
-                     buffer.append( " IS NULL" );
-                     
-                     // only non-deleted tasks
-                     buffer.append( " AND " );
-                     buffer.append( Tasks.DELETED_DATE );
-                     buffer.append( " IS NULL" );
-                     
                      final List< Task > tasks = TasksProviderPart.getTasks( client,
-                                                                            buffer.toString(),
+                                                                            getDueTasksSelection( remindBeforeMillis ),
                                                                             null );
+                     client.release();
+                     
                      if ( tasks != null )
                      {
-                        if ( tasks.size() > 0 )
-                        {
-                           // first: Tasks which tasks are new notifications.
-                           // second: DueTaskNotifications which must be canceled(false) or not.
-                           final Pair< List< Task >, BitSet > diff = diffDueNotifications( tasks );
-                           
-                           // Cancel no longer active DueTaskNotifications
-                           for ( int i = 0; i < dueTaskNotifications.size(); ++i )
-                           {
-                              if ( !diff.second.get( i ) )
-                              {
-                                 dueTaskNotifications.remove( i ).cancel();
-                              }
-                           }
-                           
-                           // Add new notifications
-                           for ( Task task : diff.first )
-                           {
-                              // TODO: Optimization: Read the config values for ringtone etc outside the loop.
-                              final String ringTone = prefs.getString( context.getString( R.string.key_notify_due_tasks_ringtone ),
-                                                                       null );
-                              
-                              Uri ringToneUri = null;
-                              
-                              if ( !TextUtils.isEmpty( ringTone ) )
-                              {
-                                 ringToneUri = Uri.parse( ringTone );
-                              }
-                              
-                              final DueTaskNotification newNotification = new DueTaskNotification( context,
-                                                                                                   task,
-                                                                                                   remindBeforeMillis,
-                                                                                                   prefs.getBoolean( context.getString( R.string.key_notify_due_tasks_vibrate ),
-                                                                                                                     false ),
-                                                                                                   prefs.getBoolean( context.getString( R.string.key_notify_due_tasks_led ),
-                                                                                                                     false ),
-                                                                                                   ringToneUri );
-                              dueTaskNotifications.add( newNotification );
-                              updateDueTaskNotification( newNotification,
-                                                         NOTIFICATION_DUE_UPD_VIB_TONE_LED );
-                           }
-                        }
+                        diffDueNotifications( tasks );
                      }
                      else
                      {
-                        Log.e( TAG, "Error during database query." );
+                        Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
                      }
                   }
                }
@@ -430,8 +362,8 @@ public class MolokoNotificationManager implements
             
             if ( prefs != null )
             {
-               int type = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_permanent ),
-                                                             "0" ) );
+               final int type = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_permanent ),
+                                                                   "0" ) );
                final ContentProviderClient client = context.getContentResolver()
                                                            .acquireContentProviderClient( Tasks.CONTENT_URI );
                
@@ -605,11 +537,29 @@ public class MolokoNotificationManager implements
       }
       else
       {
-         Log.e( TAG, "Error evaluating RtmSmartFilter "
-            + filter.getFilterString() );
+         Log.e( TAG,
+                "Error evaluating RtmSmartFilter " + filter.getFilterString() );
       }
       
       return new Pair< String, Integer >( result, count );
+   }
+   
+
+
+   private String getDueTasksSelection( long remindBeforeMillis )
+   {
+      final MolokoCalendar cal = getDateOnlyCalendar( 0 );
+      final long today = cal.getTimeInMillis();
+      
+      cal.roll( Calendar.DAY_OF_YEAR, true );
+      
+      final long tomorrowPlusReminder = cal.getTimeInMillis()
+         + remindBeforeMillis;
+      
+      final String result = Queries.bindAll( DUE_TASKS_QUERY, new String[]
+      { String.valueOf( today ), String.valueOf( tomorrowPlusReminder ) } );
+      
+      return result;
    }
    
 
@@ -634,14 +584,12 @@ public class MolokoNotificationManager implements
    
 
 
-   private Pair< List< Task >, BitSet > diffDueNotifications( List< Task > tasks )
+   private void diffDueNotifications( List< Task > tasks )
    {
-      // first: Tasks which tasks are new notifications.
-      // second: DueTaskNotifications which have been found or not.
-      final Pair< List< Task >, BitSet > result = new Pair< List< Task >, BitSet >( new ArrayList< Task >(),
-                                                                                    new BitSet( dueTaskNotifications.size() ) );
+      // Build a snapshot of the currently scheduled notifications
+      final List< DueTaskNotification > unhandledNotifications = new ArrayList< DueTaskNotification >( dueTaskNotifications );
       
-      result.second.clear();
+      List< Task > newNotifications = null;
       
       // Here we use O(n²) algorithm cause we do not expect so much notifications.
       for ( int i = 0, taskCount = tasks.size(); i < taskCount; ++i )
@@ -661,16 +609,74 @@ public class MolokoNotificationManager implements
                && notification.getDueTime() == task.getDue().getTime() )
             {
                foundNotification = true;
-               result.second.set( j );
+               unhandledNotifications.remove( notification );
             }
          }
          
          // If the task has no notification then it is a new notification
          if ( !foundNotification )
-            result.first.add( task );
+         {
+            if ( newNotifications == null )
+               newNotifications = new LinkedList< Task >();
+            
+            newNotifications.add( task );
+         }
       }
       
-      return result;
+      cancelDueTaskNotifications( unhandledNotifications );
+      
+      if ( newNotifications != null )
+         addNewDueTaskNotifications( newNotifications );
+   }
+   
+
+
+   private void addNewDueTaskNotifications( List< Task > tasks )
+   {
+      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+      
+      if ( prefs != null )
+      {
+         final String ringTone = prefs.getString( context.getString( R.string.key_notify_due_tasks_ringtone ),
+                                                  null );
+         
+         final long remindBeforeMillis = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_due_tasks_before ),
+                                                                            context.getString( R.string.moloko_prefs_notification_tasks_w_due_before_default_value ) ) );
+         
+         Uri ringToneUri = null;
+         
+         if ( !TextUtils.isEmpty( ringTone ) )
+            ringToneUri = Uri.parse( ringTone );
+         
+         for ( Task task : tasks )
+         {
+            final DueTaskNotification newNotification = new DueTaskNotification( context,
+                                                                                 task,
+                                                                                 remindBeforeMillis,
+                                                                                 prefs.getBoolean( context.getString( R.string.key_notify_due_tasks_vibrate ),
+                                                                                                   false ),
+                                                                                 prefs.getBoolean( context.getString( R.string.key_notify_due_tasks_led ),
+                                                                                                   false ),
+                                                                                 ringToneUri );
+            dueTaskNotifications.add( newNotification );
+            updateDueTaskNotification( newNotification,
+                                       NOTIFICATION_DUE_UPD_VIB_TONE_LED );
+         }
+      }
+   }
+   
+
+
+   private void cancelDueTaskNotifications( List< DueTaskNotification > notifications )
+   {
+      for ( DueTaskNotification dueTaskNotification : notifications )
+      {
+         final int idx = dueTaskNotifications.indexOf( dueTaskNotification );
+         if ( idx != -1 )
+         {
+            dueTaskNotifications.remove( idx ).cancel();
+         }
+      }
    }
    
 

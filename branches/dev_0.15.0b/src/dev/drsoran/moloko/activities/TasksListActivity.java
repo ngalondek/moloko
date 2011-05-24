@@ -30,6 +30,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListAdapter;
@@ -138,8 +139,9 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       }
       else
       {
-         UIUtils.setTitle( this, getString( R.string.taskslist_titlebar,
-                                            getString( R.string.app_name ) ) );
+         UIUtils.setTitle( this,
+                           getString( R.string.taskslist_titlebar,
+                                      getString( R.string.app_name ) ) );
       }
    }
    
@@ -163,14 +165,16 @@ public class TasksListActivity extends AbstractTasksListActivity implements
             
             if ( evaluatedFilter == null )
             {
-               // TODO: Show error if eval of filter failed
+               Log.e( TAG,
+                      "Error evaluating the filter "
+                         + smartFilter.getFilterString() );
                // RETURN: evaluation failed
                return null;
             }
          }
          else
          {
-            // TODO: Show error if no filter
+            Log.e( TAG, "Expecting filter in configuration" );
             // RETURN: no filter
             return null;
          }
@@ -184,7 +188,6 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                 Settings.resolveTaskSortToSqlite( taskSort ) );
          client.release();
          
-         // TODO: Handle null. Show error?
          return new AsyncFillListResult( ListTask.fromTaskList( tasks ),
                                          smartFilter,
                                          configuration );

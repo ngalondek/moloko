@@ -87,12 +87,6 @@ public class SimpleHomeWidgetLayout extends LinearLayout implements
    
 
 
-   public void refresh()
-   {
-   }
-   
-
-
    public void stop()
    {
    }

@@ -309,6 +309,7 @@
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">No tasks to display</string>
+   <string name="abstaskslist_query_error">An error happened during the retrieval of the tasks. Please send the Moloko log file to the developers in the settings.</string>
      <!-- Menus -->
      <string name="abstaskslist_menu_opt_sort">Sort by</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Edit multiple</string>
@@ -380,10 +381,12 @@
    <string name="auth_perm_delete">Read, Write and Delete</string>
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Request Auth-Token for access level \'%1$s\'</string>
+      <!-- Toasts -->
+      <string name="auth_toast_err_weblogin">An error happened while opening the RTM authenticator page. Please try again.</string>
       <!-- Errors -->
       <string name="auth_err_with_cause">Failed to create the account. Reason: %1$s</string>
       <string name="auth_err_cause_inv_auth_token">Invalid Auth-Token was received</string>
-      <string name="auth_err_cause_scurity">Security issue. </string>
+      <string name="auth_err_cause_scurity">Security issue</string>
       <string name="auth_err_cause_inv_login_url">Invalid Login-URL was received</string>
       
    <!-- AccountPreferences + activity -->

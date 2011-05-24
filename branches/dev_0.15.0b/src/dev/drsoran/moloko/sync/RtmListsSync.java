@@ -231,7 +231,6 @@ public final class RtmListsSync
                                           SyncRtmList localList )
    {
       // Create a new list on RTM side
-      // TODO: Handle case if the smart filter will not be accepted by RTM
       final RtmList serverList = addList( timeline, localList );
       
       if ( serverList != null )

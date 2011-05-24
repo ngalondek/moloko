@@ -137,7 +137,6 @@ public class HomeAdapter extends BaseAdapter
 
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      // TODO: Enhancement: recycle convertView
       return (View) WIDGETS[ position ];
    }
    
@@ -168,16 +167,6 @@ public class HomeAdapter extends BaseAdapter
       for ( int i = 0; i < WIDGETS.length; i++ )
       {
          WIDGETS[ i ].start();
-      }
-   }
-   
-
-
-   public void refreshWidgets()
-   {
-      for ( int i = 0; i < WIDGETS.length; i++ )
-      {
-         WIDGETS[ i ].refresh();
       }
    }
    

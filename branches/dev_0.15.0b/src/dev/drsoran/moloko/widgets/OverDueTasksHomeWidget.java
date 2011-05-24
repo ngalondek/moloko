@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import dev.drsoran.moloko.IOnTimeChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -45,8 +44,7 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget implements
-         IOnTimeChangedListener
+public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
 {
    private final ViewGroup widgetContainer;
    
@@ -97,21 +95,12 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget implements
    
 
 
+   @Override
    public void start()
    {
-      asyncReload();
+      super.start();
       
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
-      MolokoApp.get( getContext() )
-               .registerOnTimeChangedListener( IOnTimeChangedListener.MINUTE_TICK
-                                                  | IOnTimeChangedListener.SYSTEM_TIME,
-                                               this );
-   }
-   
-
-
-   public void refresh()
-   {
    }
    
 
@@ -121,7 +110,6 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget implements
    {
       super.stop();
       
-      MolokoApp.get( getContext() ).unregisterOnTimeChangedListener( this );
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
    }
    
@@ -157,13 +145,6 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget implements
    
 
 
-   public void onTimeChanged( int which )
-   {
-      asyncReloadWithoutSpinner();
-   }
-   
-
-
    @Override
    protected Cursor doBackgroundQuery()
    {
@@ -179,4 +160,19 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget implements
                                                       null );
    }
    
+
+
+   @Override
+   protected void onMinuteTick()
+   {
+      asyncReloadWithoutSpinner();
+   }
+   
+
+
+   @Override
+   protected void onSystemTimeChanged()
+   {
+      asyncReloadWithoutSpinner();
+   }
 }

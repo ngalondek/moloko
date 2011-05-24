@@ -47,7 +47,7 @@ import dev.drsoran.provider.Rtm.RawTasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class CalendarHomeWidget extends AsyncLoadingHomeWidget
+public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
 {
    private final ViewGroup widgetContainer;
    
@@ -107,23 +107,14 @@ public class CalendarHomeWidget extends AsyncLoadingHomeWidget
    
 
 
+   @Override
    public void start()
    {
-      asyncReload();
+      super.start();
       
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
-   }
-   
-
-
-   public void refresh()
-   {
-      final MolokoCalendar cal = getCalendar();
       
-      {
-         final TextView date = (TextView) findViewById( R.id.home_calendar_date );
-         date.setText( String.valueOf( cal.get( Calendar.DAY_OF_MONTH ) ) );
-      }
+      setCalendarDayInWidget();
    }
    
 
@@ -206,5 +197,32 @@ public class CalendarHomeWidget extends AsyncLoadingHomeWidget
                                                       selection,
                                                       null,
                                                       null );
+   }
+   
+
+
+   @Override
+   protected void onMidnight()
+   {
+      asyncReloadWithoutSpinner();
+      setCalendarDayInWidget();
+   }
+   
+
+
+   @Override
+   protected void onSystemTimeChanged()
+   {
+      asyncReloadWithoutSpinner();
+      setCalendarDayInWidget();
+   }
+   
+
+
+   private void setCalendarDayInWidget()
+   {
+      final MolokoCalendar cal = getCalendar();
+      final TextView date = (TextView) findViewById( R.id.home_calendar_date );
+      date.setText( String.valueOf( cal.get( Calendar.DAY_OF_MONTH ) ) );
    }
 }

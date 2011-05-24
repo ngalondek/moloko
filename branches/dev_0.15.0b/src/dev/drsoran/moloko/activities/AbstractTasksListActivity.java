@@ -39,14 +39,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -135,9 +135,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       @Override
       protected void onPostExecute( AsyncFillListResult result )
       {
-         final TitleBarLayout titleBarLayout = updateTitleBarSmartFilter( result.filter );
-         updateTitleBar( titleBarLayout );
-         setTasksResult( result );
+         if ( result != null )
+         {
+            final TitleBarLayout titleBarLayout = updateTitleBarSmartFilter( result.filter );
+            updateTitleBar( titleBarLayout );
+            setTasksResult( result );
+         }
+         else
+         {
+            showError( AbstractTasksListActivity.this.getString( R.string.abstaskslist_query_error ) );
+         }
          
          AbstractTasksListActivity.this.asyncFillList = null;
       }
@@ -1063,5 +1070,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          
          getListView().setEmptyView( newEmptyView );
       }
+   }
+   
+
+
+   protected void showError( CharSequence text )
+   {
+      final View errorView = findViewById( R.id.taskslist_activity_error );
+      final TextView textView = (TextView) errorView.findViewById( R.id.title_with_text_text );
+      
+      textView.setText( text );
+      
+      clearList( errorView );
    }
 }

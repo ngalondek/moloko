@@ -36,6 +36,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SyncStatusObserver;
+import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -45,14 +46,24 @@ import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.ListenerList;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.ListenerList.MessgageObject;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm;
 
 
-@ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ", mode = ReportingInteractionMode.NOTIFICATION, resNotifTickerText = R.string.acra_crash_notif_ticker_text, resNotifTitle = R.string.acra_crash_notif_title, resNotifText = R.string.acra_crash_notif_text, resNotifIcon = android.R.drawable.stat_notify_error, resDialogText = R.string.acra_crash_dialog_text, resDialogIcon = android.R.drawable.ic_dialog_info, resDialogTitle = R.string.acra_crash_dialog_title, resDialogCommentPrompt = R.string.acra_crash_comment_prompt, resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
+@ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ",
+                 mode = ReportingInteractionMode.NOTIFICATION,
+                 resNotifTickerText = R.string.acra_crash_notif_ticker_text,
+                 resNotifTitle = R.string.acra_crash_notif_title,
+                 resNotifText = R.string.acra_crash_notif_text,
+                 resNotifIcon = android.R.drawable.stat_notify_error,
+                 resDialogText = R.string.acra_crash_dialog_text,
+                 resDialogIcon = android.R.drawable.ic_dialog_info,
+                 resDialogTitle = R.string.acra_crash_dialog_title,
+                 resDialogCommentPrompt = R.string.acra_crash_comment_prompt,
+                 resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
 public class MolokoApp extends Application implements SyncStatusObserver
 {
    private final static String TAG = "Moloko."
@@ -114,9 +125,7 @@ public class MolokoApp extends Application implements SyncStatusObserver
       syncStatHandle = ContentResolver.addStatusChangeListener( Constants.SYNC_OBSERVER_TYPE_SETTINGS,
                                                                 this );
       
-      // TODO: Reinitialize the languages if system language changes.
-      RecurrenceParsing.initPatternLanguage( getResources() );
-      RtmDateTimeParsing.initLookupLanguage( getResources() );
+      initParserLanguages();
    }
    
 
@@ -131,6 +140,24 @@ public class MolokoApp extends Application implements SyncStatusObserver
       unregisterReceiver( TIME_TICK_RECEIVER );
       
       ContentResolver.removeStatusChangeListener( syncStatHandle );
+   }
+   
+
+
+   @Override
+   public void onConfigurationChanged( Configuration newConfig )
+   {
+      super.onConfigurationChanged( newConfig );
+      
+      initParserLanguages();
+   }
+   
+
+
+   private void initParserLanguages()
+   {
+      RecurrenceParsing.initPatternLanguage( getResources() );
+      RtmDateTimeParsing.initLookupLanguage( getResources() );
    }
    
 

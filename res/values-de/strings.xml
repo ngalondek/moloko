@@ -255,6 +255,7 @@
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
+   <string name="abstaskslist_query_error">Es ist ein Fehler bei der Abfrage der Aufgaben aufgetreten. Bitte senden Sie das Moloko-Log, unter Einstellungen, an die Entwickler.</string>
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Mehrere bearb.</string>
@@ -319,6 +320,8 @@
    <string name="auth_perm_delete">Lesen, Schreiben und Löschen</string>
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene \'%1$s\'</string>
+      <!-- Toasts -->
+      <string name="auth_toast_err_weblogin">Beim Aufrufen der RTM-Authentifizierungsseite ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
       <!-- Errors -->
       <string name="auth_err_with_cause">Fehler beim Erstellen des Kontos. Grund: %1$s</string>
       <string name="auth_err_cause_inv_auth_token">Ungüliges Auth-Token empfangen</string>

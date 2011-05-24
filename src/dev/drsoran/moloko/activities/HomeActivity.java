@@ -28,8 +28,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.UIUtils;
 
@@ -77,7 +77,7 @@ public class HomeActivity extends Activity implements OnItemClickListener
       
       if ( homeAdapter != null )
       {
-         homeAdapter.refreshWidgets();
+         homeAdapter.startWidgets();
          onContentChanged();
       }
    }
@@ -85,7 +85,7 @@ public class HomeActivity extends Activity implements OnItemClickListener
 
 
    @Override
-   protected void onDestroy()
+   protected void onStop()
    {
       super.onStop();
       
@@ -106,7 +106,6 @@ public class HomeActivity extends Activity implements OnItemClickListener
       final HomeAdapter adapter = new HomeAdapter( this );
       
       gridview.setAdapter( adapter );
-      adapter.startWidgets();
    }
    
 

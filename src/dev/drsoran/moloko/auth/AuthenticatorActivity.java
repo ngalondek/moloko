@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.ServiceImpl;
@@ -330,7 +331,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
       else
       {
-         // TODO: Set error message here.
+         Toast.makeText( this,
+                         R.string.auth_toast_err_weblogin,
+                         Toast.LENGTH_LONG ).show();
          removeDialog( 0 );
       }
    }

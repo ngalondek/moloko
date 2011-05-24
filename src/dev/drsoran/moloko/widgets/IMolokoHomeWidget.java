@@ -39,9 +39,5 @@ public interface IMolokoHomeWidget
    
 
 
-   public void refresh();
-   
-
-
    public void stop();
 }

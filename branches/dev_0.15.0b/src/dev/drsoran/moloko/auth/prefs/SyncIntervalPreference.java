@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.auth.prefs;
 
-import android.accounts.Account;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -32,9 +30,6 @@ import android.util.Log;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.prefs.AutoSummaryListPreference;
 import dev.drsoran.moloko.sync.Constants;
-import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.provider.Rtm;
 
 
 public class SyncIntervalPreference extends AutoSummaryListPreference
@@ -47,36 +42,6 @@ public class SyncIntervalPreference extends AutoSummaryListPreference
    public SyncIntervalPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
-   }
-   
-
-
-   @Override
-   public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
-                                          String key )
-   {
-      if ( sharedPreferences != null && key != null
-         && key.equals( getContext().getString( R.string.key_sync_inverval ) ) )
-      {
-         final Account account = AccountUtils.getRtmAccount( getContext() );
-         
-         if ( account != null )
-         {
-            final long syncInterval = getSyncInterval( getContext(),
-                                                       sharedPreferences );
-            
-            // enable auto sync
-            ContentResolver.setSyncAutomatically( account,
-                                                  Rtm.AUTHORITY,
-                                                  syncInterval != Constants.SYNC_INTERVAL_MANUAL );
-            
-            if ( syncInterval != Constants.SYNC_INTERVAL_MANUAL )
-               SyncUtils.scheduleSyncAlarm( getContext().getApplicationContext(),
-                                            syncInterval );
-         }
-      }
-      else
-         super.onSharedPreferenceChanged( sharedPreferences, key );
    }
    
 

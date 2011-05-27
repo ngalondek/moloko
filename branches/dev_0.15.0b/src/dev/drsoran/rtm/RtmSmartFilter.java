@@ -32,15 +32,16 @@ import android.os.Parcelable;
 
 import com.mdt.rtm.data.RtmData;
 
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing.RtmSmartFilterReturn;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
 import dev.drsoran.provider.Rtm.RawTasks;
 
 
-public class RtmSmartFilter extends RtmData
+public class RtmSmartFilter extends RtmData implements IFilter
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -216,6 +217,13 @@ public class RtmSmartFilter extends RtmData
          return null;
       
       return evalFilter.toString();
+   }
+   
+
+
+   public String getSqlSelection()
+   {
+      return getEvaluatedFilterString( true );
    }
    
 

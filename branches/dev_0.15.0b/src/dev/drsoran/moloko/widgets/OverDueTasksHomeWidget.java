@@ -35,12 +35,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -127,13 +129,12 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
 
    public Intent getIntent()
    {
-      final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-         + DateParser.tokenNames[ DateParser.NOW ] );
+      final SqlSelectionFilter filter = new SqlSelectionFilter( getSelection() );
       
-      return Intents.createSmartFilterIntent( getContext(),
-                                              filter,
-                                              label.getText().toString(),
-                                              -1 );
+      return Intents.createSqlSelectionFilterIntent( getContext(),
+                                                     filter,
+                                                     label.getText().toString(),
+                                                     -1 );
    }
    
 
@@ -146,18 +147,19 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
 
 
    @Override
-   protected Cursor doBackgroundQuery()
+   protected Integer doBackgroundQuery()
    {
-      final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-                                                           + DateParser.tokenNames[ DateParser.NOW ],
-                                                        true );
+      final Cursor c = getContext().getContentResolver()
+                                   .query( RawTasks.CONTENT_URI, new String[]
+                                   { RawTasks._ID }, getSelection(), null, null );
       
-      return getContext().getContentResolver().query( RawTasks.CONTENT_URI,
-                                                      new String[]
-                                                      { RawTasks._ID },
-                                                      selection,
-                                                      null,
-                                                      null );
+      if ( c != null )
+      {
+         c.close();
+         return Integer.valueOf( c.getCount() );
+      }
+      
+      return null;
    }
    
 
@@ -174,5 +176,24 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
    protected void onSystemTimeChanged()
    {
       asyncReloadWithoutSpinner();
+   }
+   
+
+
+   private final String getSelection()
+   {
+      final String tasksDueBeforeToday = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
+                                                                     + DateParser.tokenNames[ DateParser.TODAY ],
+                                                                  true );
+      final String tasksDueBeforeNow = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
+                                                                   + DateParser.tokenNames[ DateParser.NOW ],
+                                                                true );
+      
+      return new StringBuilder( tasksDueBeforeToday ).append( " OR ( " )
+                                                     .append( tasksDueBeforeNow )
+                                                     .append( " AND " )
+                                                     .append( Tasks.HAS_DUE_TIME )
+                                                     .append( " != 0 )" )
+                                                     .toString();
    }
 }

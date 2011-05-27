@@ -18,7 +18,7 @@
 
    <uses-sdk
       android:minSdkVersion="5"
-      android:targetSdkVersion="7" />
+      android:targetSdkVersion="8" />
 
    <application
       android:name=".MolokoApp"

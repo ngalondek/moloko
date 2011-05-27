@@ -46,14 +46,14 @@ public class ListenerList< T >
    {
       public final Class< T > type;
       
-      public final Object oldValue;
+      public final Object value;
       
       
 
-      public MessgageObject( Class< T > type, Object oldValue )
+      public MessgageObject( Class< T > type, Object value )
       {
          this.type = type;
-         this.oldValue = oldValue;
+         this.value = value;
       }
    }
    

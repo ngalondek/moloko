@@ -183,7 +183,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
 
 
    @Override
-   protected Cursor doBackgroundQuery()
+   protected Integer doBackgroundQuery()
    {
       final MolokoCalendar cal = getCalendar();
       
@@ -191,12 +191,18 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
                                                            + MolokoDateUtils.formatDate( cal.getTimeInMillis(),
                                                                                          MolokoDateUtils.FORMAT_PARSER ),
                                                         true );
-      return getContext().getContentResolver().query( RawTasks.CONTENT_URI,
-                                                      new String[]
-                                                      { RawTasks._ID },
-                                                      selection,
-                                                      null,
-                                                      null );
+      
+      final Cursor c = getContext().getContentResolver()
+                                   .query( RawTasks.CONTENT_URI, new String[]
+                                   { RawTasks._ID }, selection, null, null );
+      
+      if ( c != null )
+      {
+         c.close();
+         return Integer.valueOf( c.getCount() );
+      }
+      
+      return null;
    }
    
 

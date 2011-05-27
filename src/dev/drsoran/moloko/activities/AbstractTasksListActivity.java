@@ -50,6 +50,7 @@ import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -83,14 +84,14 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       public final List< ListTask > tasks;
       
-      public final RtmSmartFilter filter;
+      public final IFilter filter;
       
       public final Bundle configuration;
       
       
 
-      public AsyncFillListResult( List< ListTask > tasks,
-         RtmSmartFilter filter, Bundle configuration )
+      public AsyncFillListResult( List< ListTask > tasks, IFilter filter,
+         Bundle configuration )
       {
          this.tasks = tasks;
          this.filter = filter;
@@ -137,7 +138,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       {
          if ( result != null )
          {
-            final TitleBarLayout titleBarLayout = updateTitleBarSmartFilter( result.filter );
+            final TitleBarLayout titleBarLayout = (TitleBarLayout) findViewById( R.id.app_title_bar );
+            updateTitleBarSmartFilter( result.filter, titleBarLayout );
             updateTitleBar( titleBarLayout );
             setTasksResult( result );
          }
@@ -954,12 +956,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   private TitleBarLayout updateTitleBarSmartFilter( RtmSmartFilter filter )
+   private static void updateTitleBarSmartFilter( IFilter filter,
+                                                  TitleBarLayout titleBar )
    {
-      TitleBarLayout titleBar = (TitleBarLayout) findViewById( R.id.app_title_bar );
-      titleBar.setAddTaskFilter( filter );
-      
-      return titleBar;
+      if ( filter instanceof RtmSmartFilter )
+         titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
    }
    
 

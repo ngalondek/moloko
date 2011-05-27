@@ -31,9 +31,9 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Checkable;
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.rtm.ListTask;
-import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.SelectableListTask;
 
 
@@ -73,7 +73,7 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
    
 
    public SelectMultipleTasksListAdapter( Context context, int resourceId,
-      List< ListTask > tasks, RtmSmartFilter filter )
+      List< ListTask > tasks, IFilter filter )
    {
       super( context,
              resourceId,

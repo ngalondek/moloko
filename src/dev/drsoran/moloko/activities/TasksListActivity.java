@@ -34,6 +34,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListAdapter;
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
@@ -153,21 +154,19 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    {
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
       
+      String selectionSql = null;
+      
       if ( client != null )
       {
-         final RtmSmartFilter smartFilter = configuration.getParcelable( FILTER );
-         String evaluatedFilter = null;
+         final IFilter filter = configuration.getParcelable( FILTER );
          
-         if ( smartFilter != null )
+         if ( filter != null )
          {
-            // try to evaluate the filter
-            evaluatedFilter = smartFilter.getEvaluatedFilterString( true );
+            selectionSql = filter.getSqlSelection();
             
-            if ( evaluatedFilter == null )
+            if ( selectionSql == null )
             {
-               Log.e( TAG,
-                      "Error evaluating the filter "
-                         + smartFilter.getFilterString() );
+               Log.e( TAG, "Error evaluating the filter" );
                // RETURN: evaluation failed
                return null;
             }
@@ -184,12 +183,12 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                     Settings.TASK_SORT_DEFAULT );
          
          final List< Task > tasks = TasksProviderPart.getTasks( client,
-                                                                evaluatedFilter,
+                                                                selectionSql,
                                                                 Settings.resolveTaskSortToSqlite( taskSort ) );
          client.release();
          
          return new AsyncFillListResult( ListTask.fromTaskList( tasks ),
-                                         smartFilter,
+                                         filter,
                                          configuration );
       }
       else

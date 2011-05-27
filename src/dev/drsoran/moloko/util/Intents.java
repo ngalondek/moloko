@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
 import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
 import dev.drsoran.moloko.activities.NoteEditActivity;
@@ -243,6 +244,28 @@ public final class Intents
                                           ( title != null )
                                                            ? title
                                                            : filter.getFilterString() ) );
+      if ( iconId != -1 )
+         intent.putExtra( AbstractTasksListActivity.TITLE_ICON, iconId );
+      
+      intent.putExtra( AbstractTasksListActivity.FILTER, filter );
+      
+      return intent;
+   }
+   
+
+
+   public final static Intent createSqlSelectionFilterIntent( Context context,
+                                                              SqlSelectionFilter filter,
+                                                              String title,
+                                                              int iconId )
+   {
+      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
+      
+      intent.putExtra( AbstractTasksListActivity.TITLE,
+                       context.getString( R.string.taskslist_titlebar,
+                                          ( title != null )
+                                                           ? title
+                                                           : context.getString( R.string.app_name ) ) );
       if ( iconId != -1 )
          intent.putExtra( AbstractTasksListActivity.TITLE_ICON, iconId );
       

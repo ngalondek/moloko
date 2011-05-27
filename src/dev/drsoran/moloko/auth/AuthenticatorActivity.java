@@ -271,7 +271,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
                if ( ok )
                {
                   // Set RTM sync for this account.
-                  SyncUtils.scheduleSyncAlarm( getApplicationContext() );
+                  SyncUtils.schedulePeriodicSync( getApplicationContext() );
                }
             }
             

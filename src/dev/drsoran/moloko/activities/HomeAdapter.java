@@ -92,7 +92,7 @@ public class HomeAdapter extends BaseAdapter
                                    {
                                       public void run()
                                       {
-                                         SyncUtils.requestSync( context, true );
+                                         SyncUtils.requestManualSync( context );
                                       }
                                    } ),
        

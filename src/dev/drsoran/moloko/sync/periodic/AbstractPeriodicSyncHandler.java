@@ -23,25 +23,29 @@
 package dev.drsoran.moloko.sync.periodic;
 
 import android.accounts.Account;
-import android.content.ContentResolver;
+import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Handler;
 import android.preference.PreferenceManager;
-import dev.drsoran.moloko.IOnBootCompletedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.provider.Rtm;
 
 
 public abstract class AbstractPeriodicSyncHandler implements
-         IPeriodicSyncHandler, IOnBootCompletedListener,
-         OnSharedPreferenceChangeListener
+         IPeriodicSyncHandler, OnSharedPreferenceChangeListener,
+         OnAccountsUpdateListener
 {
+   private final Handler handler = new Handler();
+   
+   private boolean hasAccount = false;
+   
    protected final Context context;
    
    
@@ -49,21 +53,18 @@ public abstract class AbstractPeriodicSyncHandler implements
    protected AbstractPeriodicSyncHandler( Context context )
    {
       this.context = context;
-      MolokoApp.get( context ).registerOnBootCompletedListener( this );
       
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-      if ( prefs != null )
       {
-         prefs.registerOnSharedPreferenceChangeListener( this );
+         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+         if ( prefs != null )
+            prefs.registerOnSharedPreferenceChangeListener( this );
       }
-   }
-   
-
-
-   public void onBootCompleted()
-   {
-      SyncUtils.schedulePeriodicSync( context );
-      MolokoApp.get( context ).unregisterOnBootCompletedListener( this );
+      
+      {
+         final AccountManager accountManager = AccountManager.get( context );
+         if ( accountManager != null )
+            accountManager.addOnAccountsUpdatedListener( this, handler, true );
+      }
    }
    
 
@@ -81,15 +82,36 @@ public abstract class AbstractPeriodicSyncHandler implements
             final long syncInterval = SyncIntervalPreference.getSyncInterval( context,
                                                                               sharedPreferences );
             
-            // enable auto sync
-            ContentResolver.setSyncAutomatically( account,
-                                                  Rtm.AUTHORITY,
-                                                  syncInterval != Constants.SYNC_INTERVAL_MANUAL );
-            
             if ( syncInterval != Constants.SYNC_INTERVAL_MANUAL )
                SyncUtils.schedulePeriodicSync( context.getApplicationContext(),
                                                syncInterval );
+            else
+               MolokoApp.stopPeriodicSync();
          }
+      }
+   }
+   
+
+
+   public void onAccountsUpdated( Account[] accounts )
+   {
+      boolean foundAccount = false;
+      
+      if ( accounts != null )
+         for ( Account account : accounts )
+            if ( account != null
+               && account.type.equals( dev.drsoran.moloko.auth.Constants.ACCOUNT_TYPE ) )
+               foundAccount = true;
+      
+      if ( foundAccount && !hasAccount )
+      {
+         SyncUtils.schedulePeriodicSync( context );
+         hasAccount = true;
+      }
+      else if ( !foundAccount && hasAccount )
+      {
+         MolokoApp.stopPeriodicSync();
+         hasAccount = false;
       }
    }
    
@@ -99,12 +121,17 @@ public abstract class AbstractPeriodicSyncHandler implements
    {
       resetPeriodicSync();
       
-      MolokoApp.get( context ).unregisterOnBootCompletedListener( this );
-      
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
-      if ( prefs != null )
       {
-         prefs.unregisterOnSharedPreferenceChangeListener( this );
+         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
+         if ( prefs != null )
+            prefs.unregisterOnSharedPreferenceChangeListener( this );
+         
+      }
+      
+      {
+         final AccountManager accountManager = AccountManager.get( context );
+         if ( accountManager != null )
+            accountManager.removeOnAccountsUpdatedListener( this );
       }
    }
 }

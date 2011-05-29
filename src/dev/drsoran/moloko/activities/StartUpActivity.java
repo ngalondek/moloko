@@ -62,6 +62,8 @@ public class StartUpActivity extends Activity implements
    private final static String TAG = "Moloko."
       + StartUpActivity.class.getSimpleName();
    
+   public final static String ONLY_CHECK_ACCOUNT = "only_check_account";
+   
    private final static String STATE_INDEX_KEY = "state_index";
    
    private final static int MSG_STATE_CHANGED = 0;
@@ -125,7 +127,7 @@ public class StartUpActivity extends Activity implements
    
 
 
-   private void checkAccount()
+   private boolean checkAccount()
    {
       final Account account = AccountUtils.getRtmAccount( this );
       
@@ -151,11 +153,18 @@ public class StartUpActivity extends Activity implements
          setButtonIcon( btnCenter, R.drawable.ic_button_add );
          
          buttonBar.setVisibility( View.VISIBLE );
+         
       }
-      else
-      {
+      
+      return account != null;
+   }
+   
+
+
+   private void createAccountOrSwitchToNext()
+   {
+      if ( checkAccount() )
          switchToNextState();
-      }
    }
    
 
@@ -330,7 +339,13 @@ public class StartUpActivity extends Activity implements
 
    private void reEvaluateCurrentState()
    {
-      handler.sendEmptyMessage( MSG_STATE_CHANGED );
+      if ( getIntent().hasExtra( ONLY_CHECK_ACCOUNT ) )
+      {
+         if ( checkAccount() )
+            finish();
+      }
+      else
+         handler.sendEmptyMessage( MSG_STATE_CHANGED );
    }
    
 
@@ -371,7 +386,7 @@ public class StartUpActivity extends Activity implements
                switch ( stateIndex )
                {
                   case STATE_CHECK_ACCOUNT:
-                     checkAccount();
+                     createAccountOrSwitchToNext();
                      break;
                   
                   case STATE_DETERMINE_STARTUP_VIEW:

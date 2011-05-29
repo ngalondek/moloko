@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.accounts.Account;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -46,13 +45,13 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
+import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -473,23 +472,14 @@ public final class UIUtils
                                              R.string.phr_do_sync )
                                        .setIcon( R.drawable.ic_menu_refresh );
          
-         final Account account = SyncUtils.isReadyToSync( context );
-         
-         if ( account != null )
+         menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
          {
-            menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+            public boolean onMenuItemClick( MenuItem item )
             {
-               public boolean onMenuItemClick( MenuItem item )
-               {
-                  SyncUtils.requestSync( context, account, true );
-                  return true;
-               }
-            } );
-         }
-         else
-         {
-            menuItem.setEnabled( false );
-         }
+               SyncUtils.requestManualSync( context );
+               return true;
+            }
+         } );
       }
    }
    

@@ -90,6 +90,41 @@ public final class RtmDateTimeParsing
    
    
 
+   public synchronized final static MolokoCalendar parseTimeOrTimeSpec( String spec )
+   {
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( spec );
+      dateTimeLexer.setCharStream( stream );
+      
+      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
+      final MolokoCalendar cal = TimeParser.getCalendar();
+      
+      boolean error = false;
+      
+      timeParser.setTokenStream( antlrTokens );
+      
+      try
+      {
+         timeParser.parseTimeSpec( cal, false );
+      }
+      catch ( RecognitionException e )
+      {
+         antlrTokens.reset();
+         
+         try
+         {
+            timeParser.parseTime( cal, false );
+         }
+         catch ( RecognitionException e1 )
+         {
+            error = true;
+         }
+      }
+      
+      return ( !error ) ? cal : null;
+   }
+   
+
+
    public synchronized final static MolokoCalendar parseDateTimeSpec( String spec )
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( spec );

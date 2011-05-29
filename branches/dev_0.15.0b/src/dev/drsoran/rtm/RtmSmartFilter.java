@@ -36,8 +36,8 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
-import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing.RtmSmartFilterReturn;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
+import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing.RtmSmartFilterReturn;
 import dev.drsoran.provider.Rtm.RawTasks;
 
 
@@ -74,7 +74,7 @@ public class RtmSmartFilter extends RtmData implements IFilter
 
    public RtmSmartFilter( String filter )
    {
-      this.filter = filter;
+      this.filter = transformFilter( filter );
       this.evalFilter = null;
       this.tokens = null;
    }
@@ -86,7 +86,7 @@ public class RtmSmartFilter extends RtmData implements IFilter
       if ( elt.getChildNodes().getLength() > 0 )
       {
          final Text innerText = (Text) elt.getChildNodes().item( 0 );
-         filter = innerText.getData();
+         filter = transformFilter( innerText.getData() );
       }
       else
       {
@@ -154,7 +154,7 @@ public class RtmSmartFilter extends RtmData implements IFilter
 
    public static final String evaluate( String filter, boolean excludeCompleted )
    {
-      return evaluate( filter, null, excludeCompleted );
+      return evaluate( transformFilter( filter ), null, excludeCompleted );
    }
    
 
@@ -181,9 +181,6 @@ public class RtmSmartFilter extends RtmData implements IFilter
          // same meaning as operator name:
          else
          {
-            if ( !filter.contains( ":" ) )
-               filter = RtmSmartFilterLexer.OP_NAME_LIT + "\"" + filter + "\"";
-            
             final RtmSmartFilterReturn parserRes = RtmSmartFilterParsing.evaluateRtmSmartFilter( filter,
                                                                                                  tokens );
             
@@ -256,4 +253,14 @@ public class RtmSmartFilter extends RtmData implements IFilter
       dest.writeTypedList( tokens );
    }
    
+
+
+   private final static String transformFilter( String filter )
+   {
+      if ( filter.length() > 0 && !filter.contains( ":" ) )
+         filter = RtmSmartFilterLexer.OP_NAME_LIT
+            + RtmSmartFilterLexer.quotify( filter );
+      
+      return filter;
+   }
 }

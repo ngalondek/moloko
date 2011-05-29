@@ -29,14 +29,18 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity;
 import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
 import dev.drsoran.moloko.activities.NoteEditActivity;
+import dev.drsoran.moloko.activities.StartUpActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
 import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -72,6 +76,15 @@ public final class Intents
                                         0,
                                         onClickIntent,
                                         PendingIntent.FLAG_UPDATE_CURRENT );
+   }
+   
+
+
+   public final static Intent createNewAccountIntent( Context context )
+   {
+      final Intent intent = new Intent( context, StartUpActivity.class );
+      intent.putExtra( StartUpActivity.ONLY_CHECK_ACCOUNT, Boolean.TRUE );
+      return intent;
    }
    
 
@@ -145,7 +158,7 @@ public final class Intents
       
       String filterString = Strings.EMPTY_STRING;
       
-      // If we open a non-smart list, we do not make the list names clickable.
+      // If we open a non-smart list
       if ( !list.hasSmartFilter() )
       {
          filterString = RtmSmartFilterLexer.OP_LIST_LIT
@@ -161,11 +174,12 @@ public final class Intents
       if ( filter != null )
       {
          if ( filterString.length() > 0 )
-            filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " " + filter );
+            filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " (" + filter + ")" );
          else
             filterString = filter;
       }
       
+      intent.putExtra( Lists.LIST_NAME, list.getName() );
       intent.putExtra( AbstractTasksListActivity.FILTER,
                        new RtmSmartFilter( filterString ) );
       
@@ -251,6 +265,28 @@ public final class Intents
    
 
 
+   public final static Intent createSqlSelectionFilterIntent( Context context,
+                                                              SqlSelectionFilter filter,
+                                                              String title,
+                                                              int iconId )
+   {
+      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
+      
+      intent.putExtra( AbstractTasksListActivity.TITLE,
+                       context.getString( R.string.taskslist_titlebar,
+                                          ( title != null )
+                                                           ? title
+                                                           : context.getString( R.string.app_name ) ) );
+      if ( iconId != -1 )
+         intent.putExtra( AbstractTasksListActivity.TITLE_ICON, iconId );
+      
+      intent.putExtra( AbstractTasksListActivity.FILTER, filter );
+      
+      return intent;
+   }
+   
+
+
    public final static Intent createOpenTaskIntent( Context context,
                                                     String taskId )
    {
@@ -282,13 +318,22 @@ public final class Intents
 
 
    public final static Intent createSelectMultipleTasksIntent( Context context,
-                                                               RtmSmartFilter filter,
+                                                               IFilter filter,
                                                                int sortOrder )
    {
-      final Intent intent = createSmartFilterIntent( context,
-                                                     filter,
-                                                     context.getString( R.string.select_multiple_tasks_titlebar ),
-                                                     -1 );
+      final Intent intent;
+      
+      if ( filter instanceof SqlSelectionFilter )
+         intent = createSqlSelectionFilterIntent( context,
+                                                  (SqlSelectionFilter) filter,
+                                                  context.getString( R.string.select_multiple_tasks_titlebar ),
+                                                  -1 );
+      else
+         intent = createSmartFilterIntent( context,
+                                           (RtmSmartFilter) filter,
+                                           context.getString( R.string.select_multiple_tasks_titlebar ),
+                                           -1 );
+      
       intent.setAction( Intent.ACTION_PICK );
       
       if ( sortOrder != -1 )

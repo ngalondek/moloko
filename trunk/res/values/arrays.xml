@@ -133,6 +133,7 @@
       <item>@string/phr_none_f</item>
       <item>@string/moloko_prefs_notification_permanent_today</item>
       <item>@string/moloko_prefs_notification_permanent_tomorrow</item>
+      <item>@string/moloko_prefs_notification_permanent_today_and_tomorrow</item>
    </string-array>
 
    <string-array
@@ -140,6 +141,7 @@
       <item>0</item>
       <item>1</item>
       <item>2</item>
+      <item>3</item>
    </string-array>
 
 </resources>

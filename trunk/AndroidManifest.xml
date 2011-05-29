@@ -12,13 +12,13 @@
 
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
-   package="dev.drsoran.moloko"
-   android:versionName="0.14.0b"
-   android:versionCode="81920">
+   package="dev.drsoran.moloko"   
+   android:versionName="0.15.0b"
+   android:versionCode="86016">
 
    <uses-sdk
       android:minSdkVersion="5"
-      android:targetSdkVersion="7" />
+      android:targetSdkVersion="8" />
 
    <application
       android:name=".MolokoApp"
@@ -382,7 +382,7 @@
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
       </receiver>
-
+    
       <receiver
          android:name=".receivers.BootReceiver">
          <intent-filter>

@@ -30,6 +30,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.Notes;
 import dev.drsoran.provider.Rtm.TaskSeries;
@@ -333,6 +334,16 @@ public class Modification implements Comparable< Modification >
       return newNonPersistentModification( Notes.CONTENT_URI,
                                            noteId,
                                            Notes.NOTE_MODIFIED_DATE,
+                                           System.currentTimeMillis() );
+   }
+   
+
+
+   public final static Modification newListModified( String listId )
+   {
+      return newNonPersistentModification( Lists.CONTENT_URI,
+                                           listId,
+                                           Lists.MODIFIED_DATE,
                                            System.currentTimeMillis() );
    }
    

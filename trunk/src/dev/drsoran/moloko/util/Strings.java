@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.util;
 
+import android.text.Editable;
 import android.text.TextUtils;
 
 
@@ -34,6 +35,13 @@ public final class Strings
    private Strings()
    {
       throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
+   public final static String getTrimmed( Editable editable )
+   {
+      return editable.toString().trim();
    }
    
 

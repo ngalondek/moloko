@@ -26,6 +26,7 @@ import android.accounts.Account;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 
 
@@ -44,11 +45,12 @@ public class SyncAlarmReceiver extends BroadcastReceiver
       
       if ( account != null )
       {
-         SyncUtils.requestSync( context.getApplicationContext(), account, false );
+         SyncUtils.requestScheduledSync( context.getApplicationContext(),
+                                         account );
       }
       else
       {
-         SyncUtils.stopSyncAlarm( context.getApplicationContext() );
+         MolokoApp.stopPeriodicSync();
       }
    }
    

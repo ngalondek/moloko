@@ -51,6 +51,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
+import dev.drsoran.moloko.dialogs.AddRenameListDialog;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -58,6 +59,7 @@ import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.RtmSmartAddAdapter;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
@@ -74,6 +76,16 @@ public class TitleBarLayout extends LinearLayout implements
 {
    private final static String TAG = "Moloko."
       + TitleBarLayout.class.getSimpleName();
+   
+   public final static int BUTTON_NONE = 0;
+   
+   public final static int BUTTON_SEARCH = 1 << 0;
+   
+   public final static int BUTTON_HOME = 1 << 1;
+   
+   public final static int BUTTON_ADD_TASK = 1 << 2;
+   
+   public final static int BUTTON_ADD_LIST = 1 << 3;
    
    
    private final class AddTaskSection implements View.OnClickListener
@@ -269,7 +281,7 @@ public class TitleBarLayout extends LinearLayout implements
       @SuppressWarnings( "unchecked" )
       private final void addNewTask()
       {
-         final CharSequence input = addTaskEdit.getText();
+         final CharSequence input = UIUtils.getTrimmedSequence( addTaskEdit );
          
          Log.i( TAG, "Creating tokens for '" + input + "'" );
          
@@ -416,11 +428,13 @@ public class TitleBarLayout extends LinearLayout implements
       }
    }
    
-   private final ToggleImageButton addTaskBtn;
+   private ToggleImageButton addTaskBtn;
    
    private AddTaskSection addTaskSection;
    
    private RtmSmartFilter addTaskFilter;
+   
+   private RtmSmartFilter addSmartListFilter;
    
    
 
@@ -443,33 +457,7 @@ public class TitleBarLayout extends LinearLayout implements
          ( (TextView) findViewById( R.id.app_titlebar_text ) ).setText( titleText );
       
       final int showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
-      
-      // Show search button
-      if ( ( showButtons & 1 ) != 0 )
-      {
-         setVisible( R.id.app_titlebar_sep_search );
-         setBtnVisible( R.id.app_titlebar_btn_search );
-      }
-      
-      // Show home button
-      if ( ( showButtons & 2 ) != 0 )
-      {
-         setVisible( R.id.app_titlebar_sep_home );
-         setBtnVisible( R.id.app_titlebar_btn_home );
-      }
-      
-      // Show add task button
-      if ( ( showButtons & 4 ) != 0
-         && !AccountUtils.isReadOnlyAccess( getContext() ) )
-      {
-         setVisible( R.id.app_titlebar_sep_add_task );
-         addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task );
-         addTaskBtn.setOnCheckedChangeListener( this );
-      }
-      else
-      {
-         addTaskBtn = null;
-      }
+      setButtonsVisible( showButtons );
       
       array.recycle();
    }
@@ -509,6 +497,53 @@ public class TitleBarLayout extends LinearLayout implements
    
 
 
+   public void setAddSmartListFilter( RtmSmartFilter filter )
+   {
+      addSmartListFilter = filter;
+   }
+   
+
+
+   public void setButtonsVisible( int buttonMask )
+   {
+      // Show search button
+      {
+         setVisible( R.id.app_titlebar_sep_search,
+                     ( buttonMask & BUTTON_SEARCH ) == BUTTON_SEARCH );
+         setBtnVisible( R.id.app_titlebar_btn_search,
+                        ( buttonMask & BUTTON_SEARCH ) == BUTTON_SEARCH );
+      }
+      
+      // Show home button
+      {
+         setVisible( R.id.app_titlebar_sep_home,
+                     ( buttonMask & BUTTON_HOME ) == BUTTON_HOME );
+         setBtnVisible( R.id.app_titlebar_btn_home,
+                        ( buttonMask & BUTTON_HOME ) == BUTTON_HOME );
+      }
+      
+      final boolean hasWriteAccess = !AccountUtils.isReadOnlyAccess( getContext() );
+      
+      // Show add task button
+      {
+         setVisible( R.id.app_titlebar_sep_add_task,
+                     ( hasWriteAccess && ( ( buttonMask & BUTTON_ADD_TASK ) == BUTTON_ADD_TASK ) ) );
+         addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task,
+                                                         ( hasWriteAccess && ( ( buttonMask & BUTTON_ADD_TASK ) == BUTTON_ADD_TASK ) ) );
+         addTaskBtn.setOnCheckedChangeListener( this );
+      }
+      
+      // Show add list button
+      {
+         setVisible( R.id.app_titlebar_sep_add_list,
+                     ( hasWriteAccess && ( buttonMask & BUTTON_ADD_LIST ) == BUTTON_ADD_LIST ) );
+         setBtnVisible( R.id.app_titlebar_btn_add_list,
+                        ( hasWriteAccess && ( buttonMask & BUTTON_ADD_LIST ) == BUTTON_ADD_LIST ) );
+      }
+   }
+   
+
+
    public void onCheckedChanged( ToggleImageButton button, boolean checked )
    {
       hideOrShowAddTaskLayout();
@@ -516,18 +551,18 @@ public class TitleBarLayout extends LinearLayout implements
    
 
 
-   private void setVisible( int id )
+   private void setVisible( int id, boolean visible )
    {
-      findViewById( id ).setVisibility( VISIBLE );
+      findViewById( id ).setVisibility( visible ? VISIBLE : GONE );
    }
    
 
 
-   private View setBtnVisible( int id )
+   private View setBtnVisible( int id, boolean visible )
    {
       final View btn = findViewById( id );
       btn.setOnClickListener( this );
-      btn.setVisibility( View.VISIBLE );
+      btn.setVisibility( visible ? View.VISIBLE : GONE );
       
       return btn;
    }
@@ -551,6 +586,13 @@ public class TitleBarLayout extends LinearLayout implements
             intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
             
             getContext().startActivity( intent );
+            break;
+         
+         case R.id.app_titlebar_btn_add_list:
+            showAddTaskInput( false );
+            AddRenameListDialog.newDialogWithFilter( getContext(),
+                                                     addSmartListFilter )
+                               .show();
             break;
          
          default :

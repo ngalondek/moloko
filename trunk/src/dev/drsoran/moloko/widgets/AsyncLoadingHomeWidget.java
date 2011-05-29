@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.widgets;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.View;
@@ -35,7 +34,7 @@ import dev.drsoran.moloko.R;
 abstract class AsyncLoadingHomeWidget extends LinearLayout implements
          IMolokoHomeWidget
 {
-   private AsyncTask< Void, Void, Cursor > query;
+   private AsyncTask< Void, Void, Integer > query;
    
    
 
@@ -67,10 +66,10 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
       final View contentView = findViewById( R.id.content );
       contentView.setVisibility( View.GONE );
       
-      query = new AsyncTask< Void, Void, Cursor >()
+      query = new AsyncTask< Void, Void, Integer >()
       {
          @Override
-         protected Cursor doInBackground( Void... params )
+         protected Integer doInBackground( Void... params )
          {
             return doBackgroundQuery();
          }
@@ -78,12 +77,9 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
 
 
          @Override
-         protected void onPostExecute( Cursor result )
+         protected void onPostExecute( Integer result )
          {
             handleAsyncResult( contentView, result );
-            
-            if ( result != null )
-               result.close();
             
             loadingView.setVisibility( View.GONE );
             contentView.setVisibility( View.VISIBLE );
@@ -95,14 +91,47 @@ abstract class AsyncLoadingHomeWidget extends LinearLayout implements
    
 
 
-   protected abstract Cursor doBackgroundQuery();
+   protected void asyncReloadWithoutSpinner()
+   {
+      if ( query != null )
+         query.cancel( true );
+      
+      final View loadingView = findViewById( R.id.loading );
+      loadingView.setVisibility( View.GONE );
+      
+      final View contentView = findViewById( R.id.content );
+      contentView.setVisibility( View.VISIBLE );
+      
+      query = new AsyncTask< Void, Void, Integer >()
+      {
+         @Override
+         protected Integer doInBackground( Void... params )
+         {
+            return doBackgroundQuery();
+         }
+         
+
+
+         @Override
+         protected void onPostExecute( Integer result )
+         {
+            handleAsyncResult( contentView, result );
+            
+            query = null;
+         }
+      }.execute();
+   }
    
 
 
-   protected void handleAsyncResult( View v, Cursor c )
+   protected abstract Integer doBackgroundQuery();
+   
+
+
+   protected void handleAsyncResult( View v, Integer c )
    {
       if ( c != null )
-         ( (TextView) v ).setText( String.valueOf( c.getCount() ) );
+         ( (TextView) v ).setText( String.valueOf( c ) );
       else
          ( (TextView) v ).setText( "?" );
    }

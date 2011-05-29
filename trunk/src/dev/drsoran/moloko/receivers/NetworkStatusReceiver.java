@@ -22,16 +22,14 @@
 
 package dev.drsoran.moloko.receivers;
 
-import android.accounts.Account;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.Connection;
-import dev.drsoran.provider.Rtm;
+import android.os.Message;
+import dev.drsoran.moloko.IOnNetworkStatusChangedListener;
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.util.ListenerList;
 
 
 public class NetworkStatusReceiver extends BroadcastReceiver
@@ -40,8 +38,6 @@ public class NetworkStatusReceiver extends BroadcastReceiver
    @Override
    public void onReceive( Context context, Intent intent )
    {
-      boolean stop = false;
-      
       // Check if we musn't use background data any more
       if ( intent.getAction()
                  .equals( ConnectivityManager.ACTION_BACKGROUND_DATA_SETTING_CHANGED ) )
@@ -50,53 +46,30 @@ public class NetworkStatusReceiver extends BroadcastReceiver
          
          if ( cm != null )
          {
-            // Background data allowed
-            if ( cm.getBackgroundDataSetting()
-               && Connection.isConnected( context.getApplicationContext() ) )
-            {
-               // This respects the SYNC_INTERVAL_MANUAL setting
-               SyncUtils.scheduleSyncAlarm( context.getApplicationContext() );
-            }
+            final Message msg = new Message();
+            msg.what = Integer.valueOf( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS );
             
-            // Disconnected or background data forbidden
-            else
-            {
-               stop = true;
-            }
+            msg.obj = new ListenerList.MessgageObject< IOnNetworkStatusChangedListener >( IOnNetworkStatusChangedListener.class,
+                                                                                          Boolean.valueOf( cm.getBackgroundDataSetting() ) );
+            
+            MolokoApp.get( context.getApplicationContext() )
+                     .getHandler()
+                     .sendMessage( msg );
          }
       }
       else if ( intent.getAction()
                       .equals( ConnectivityManager.CONNECTIVITY_ACTION ) )
       {
-         // If we've lost connection
-         if ( intent.getBooleanExtra( ConnectivityManager.EXTRA_NO_CONNECTIVITY,
-                                      false ) )
-         {
-            // Stop sync alarm
-            stop = true;
-         }
+         final Message msg = new Message();
+         msg.what = Integer.valueOf( IOnNetworkStatusChangedListener.BACKGROUND_DATA_STATUS );
          
-         // If we have connection again. This respects the SYNC_INTERVAL_MANUAL setting.
-         else
-         {
-            SyncUtils.scheduleSyncAlarm( context.getApplicationContext() );
-         }
-      }
-      
-      if ( stop )
-      {
-         final Account account = AccountUtils.getRtmAccount( context.getApplicationContext() );
+         msg.obj = new ListenerList.MessgageObject< IOnNetworkStatusChangedListener >( IOnNetworkStatusChangedListener.class,
+                                                                                       Boolean.valueOf( intent.getBooleanExtra( ConnectivityManager.EXTRA_NO_CONNECTIVITY,
+                                                                                                                                false ) ) );
          
-         if ( account != null )
-         {
-            if ( ContentResolver.isSyncActive( account, Rtm.AUTHORITY )
-               || ContentResolver.isSyncPending( account, Rtm.AUTHORITY ) )
-            {
-               ContentResolver.cancelSync( account, Rtm.AUTHORITY );
-            }
-         }
-         
-         SyncUtils.stopSyncAlarm( context.getApplicationContext() );
+         MolokoApp.get( context.getApplicationContext() )
+                  .getHandler()
+                  .sendMessage( msg );
       }
    }
 }

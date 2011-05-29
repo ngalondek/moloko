@@ -67,7 +67,6 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.provider.Rtm.Modifications;
 import dev.drsoran.provider.Rtm.Sync;
@@ -333,7 +332,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          
          // Sync RtmList
          ok = ok
-            && RtmListsSync.computeSync( service, provider, lastSyncOut, batch );
+            && RtmListsSync.computeSync( service,
+                                         provider,
+                                         timeLineFactory,
+                                         lastSyncOut,
+                                         batch );
          
          ok = ok && logSyncStep( "RtmLists", ok );
          
@@ -505,12 +508,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
 
    private final boolean shouldProcessRequest( Bundle bundle )
    {
-      if ( !Connection.isConnected( getContext() ) )
-      {
-         Log.i( TAG, "No active connection found" );
-         return false;
-      }
-      
       return ( bundle != null && ( bundle.containsKey( ContentResolver.SYNC_EXTRAS_INITIALIZE )
          || bundle.containsKey( ContentResolver.SYNC_EXTRAS_MANUAL ) || bundle.containsKey( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_SCHEDULED ) ) );
    }

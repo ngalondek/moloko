@@ -26,9 +26,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.accounts.Account;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -43,11 +45,12 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
@@ -76,6 +79,20 @@ public final class UIUtils
    private UIUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
+   }
+   
+
+
+   public final static String getTrimmedText( TextView textView )
+   {
+      return textView.getText().toString().trim();
+   }
+   
+
+
+   public final static CharSequence getTrimmedSequence( TextView textView )
+   {
+      return textView.getText().toString().trim();
    }
    
 
@@ -455,23 +472,14 @@ public final class UIUtils
                                              R.string.phr_do_sync )
                                        .setIcon( R.drawable.ic_menu_refresh );
          
-         final Account account = SyncUtils.isReadyToSync( context );
-         
-         if ( account != null )
+         menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
          {
-            menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+            public boolean onMenuItemClick( MenuItem item )
             {
-               public boolean onMenuItemClick( MenuItem item )
-               {
-                  SyncUtils.requestSync( context, account, true );
-                  return true;
-               }
-            } );
-         }
-         else
-         {
-            menuItem.setEnabled( false );
-         }
+               SyncUtils.requestManualSync( context );
+               return true;
+            }
+         } );
       }
    }
    
@@ -549,5 +557,98 @@ public final class UIUtils
       if ( views != null )
          for ( View view : views )
             container.removeView( view );
+   }
+   
+
+
+   public final static Dialog newCancelWithChangesDialog( Context context,
+                                                          Runnable yesAction,
+                                                          Runnable noAction )
+   {
+      return newDialogWithActions( context,
+                                   context.getString( R.string.phr_edit_dlg_cancel ),
+                                   android.R.string.yes,
+                                   android.R.string.no,
+                                   yesAction,
+                                   noAction );
+   }
+   
+
+
+   public final static Dialog newApplyChangesDialog( Context context,
+                                                     Runnable yesAction,
+                                                     Runnable noAction )
+   {
+      return newDialogWithActions( context,
+                                   context.getString( R.string.phr_edit_dlg_done ),
+                                   android.R.string.yes,
+                                   android.R.string.no,
+                                   yesAction,
+                                   noAction );
+   }
+   
+
+
+   public final static Dialog newDeleteElementDialog( Context context,
+                                                      String elementName,
+                                                      Runnable yesAction,
+                                                      Runnable noAction )
+   {
+      return newDialogWithActions( context,
+                                   context.getString( R.string.phr_delete_with_name,
+                                                      elementName )
+                                      + "?",
+                                   R.string.btn_delete,
+                                   R.string.btn_cancel,
+                                   yesAction,
+                                   noAction );
+   }
+   
+
+
+   public final static Dialog newDialogWithActions( final Context context,
+                                                    String message,
+                                                    int positiveId,
+                                                    int negativeId,
+                                                    final Runnable yesAction,
+                                                    final Runnable noAction )
+   {
+      return new AlertDialog.Builder( context ).setMessage( message )
+                                               .setPositiveButton( positiveId,
+                                                                   yesAction != null
+                                                                                    ? new DialogInterface.OnClickListener()
+                                                                                    {
+                                                                                       public void onClick( DialogInterface dialog,
+                                                                                                            int which )
+                                                                                       {
+                                                                                          yesAction.run();
+                                                                                       }
+                                                                                    }
+                                                                                    : null )
+                                               .setNegativeButton( negativeId,
+                                                                   noAction != null
+                                                                                   ? new DialogInterface.OnClickListener()
+                                                                                   {
+                                                                                      public void onClick( DialogInterface dialog,
+                                                                                                           int which )
+                                                                                      {
+                                                                                         noAction.run();
+                                                                                      }
+                                                                                   }
+                                                                                   : null )
+                                               .create();
+   };
+   
+
+
+   public final static boolean reportStatus( Context context,
+                                             int resIdOk,
+                                             int resIdFailed,
+                                             boolean ok )
+   {
+      Toast.makeText( context, ok ? resIdOk : resIdFailed, Toast.LENGTH_LONG )
+           .show();
+      
+      return ok;
    }
 }

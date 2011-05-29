@@ -31,7 +31,6 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.AsyncTask;
@@ -40,17 +39,18 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
@@ -84,14 +84,14 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       public final List< ListTask > tasks;
       
-      public final RtmSmartFilter filter;
+      public final IFilter filter;
       
       public final Bundle configuration;
       
       
 
-      public AsyncFillListResult( List< ListTask > tasks,
-         RtmSmartFilter filter, Bundle configuration )
+      public AsyncFillListResult( List< ListTask > tasks, IFilter filter,
+         Bundle configuration )
       {
          this.tasks = tasks;
          this.filter = filter;
@@ -136,8 +136,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       @Override
       protected void onPostExecute( AsyncFillListResult result )
       {
-         updateTitleBarSmartFilter( result.filter );
-         setTasksResult( result );
+         if ( result != null )
+         {
+            final TitleBarLayout titleBarLayout = (TitleBarLayout) findViewById( R.id.app_title_bar );
+            updateTitleBarSmartFilter( result.filter, titleBarLayout );
+            updateTitleBar( titleBarLayout );
+            setTasksResult( result );
+         }
+         else
+         {
+            showError( AbstractTasksListActivity.this.getString( R.string.abstaskslist_query_error ) );
+         }
          
          AbstractTasksListActivity.this.asyncFillList = null;
       }
@@ -382,7 +391,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                               OptionsMenu.MENU_ORDER,
                               R.drawable.ic_menu_edit_multiple_tasks,
                               Intents.createSelectMultipleTasksIntent( this,
-                                                                       (RtmSmartFilter) getIntent().getParcelableExtra( FILTER ),
+                                                                       (IFilter) getIntent().getParcelableExtra( FILTER ),
                                                                        getTaskSort() ),
                               !AccountUtils.isReadOnlyAccess( this )
                                  && getListAdapter().getCount() > 1 );
@@ -722,21 +731,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    {
       final ListTask task = getTask( pos );
       
-      new AlertDialog.Builder( this ).setMessage( getString( R.string.abstaskslist_dlg_delete,
-                                                             task.getName() ) )
-                                     .setPositiveButton( R.string.btn_delete,
-                                                         new OnClickListener()
-                                                         {
-                                                            public void onClick( DialogInterface dialog,
-                                                                                 int which )
-                                                            {
-                                                               TaskEditUtils.deleteTask( AbstractTasksListActivity.this,
-                                                                                         task );
-                                                            }
-                                                         } )
-                                     .setNegativeButton( R.string.btn_cancel,
-                                                         null )
-                                     .show();
+      UIUtils.newDeleteElementDialog( this, task.getName(), new Runnable()
+      {
+         public void run()
+         {
+            TaskEditUtils.deleteTask( AbstractTasksListActivity.this, task );
+         }
+      }, null ).show();
    }
    
 
@@ -948,10 +949,18 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    
 
 
-   private void updateTitleBarSmartFilter( RtmSmartFilter filter )
+   protected void updateTitleBar( TitleBarLayout titleBar )
    {
-      TitleBarLayout titleBar = (TitleBarLayout) findViewById( R.id.app_title_bar );
-      titleBar.setAddTaskFilter( filter );
+      
+   }
+   
+
+
+   private static void updateTitleBarSmartFilter( IFilter filter,
+                                                  TitleBarLayout titleBar )
+   {
+      if ( filter instanceof RtmSmartFilter )
+         titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
    }
    
 
@@ -1062,5 +1071,17 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          
          getListView().setEmptyView( newEmptyView );
       }
+   }
+   
+
+
+   protected void showError( CharSequence text )
+   {
+      final View errorView = findViewById( R.id.taskslist_activity_error );
+      final TextView textView = (TextView) errorView.findViewById( R.id.title_with_text_text );
+      
+      textView.setText( text );
+      
+      clearList( errorView );
    }
 }

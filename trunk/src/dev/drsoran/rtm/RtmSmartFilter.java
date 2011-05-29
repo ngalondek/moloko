@@ -32,6 +32,7 @@ import android.os.Parcelable;
 
 import com.mdt.rtm.data.RtmData;
 
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
@@ -40,7 +41,7 @@ import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing.RtmSmartFilterRetur
 import dev.drsoran.provider.Rtm.RawTasks;
 
 
-public class RtmSmartFilter extends RtmData
+public class RtmSmartFilter extends RtmData implements IFilter
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -73,7 +74,7 @@ public class RtmSmartFilter extends RtmData
 
    public RtmSmartFilter( String filter )
    {
-      this.filter = filter;
+      this.filter = transformFilter( filter );
       this.evalFilter = null;
       this.tokens = null;
    }
@@ -85,7 +86,7 @@ public class RtmSmartFilter extends RtmData
       if ( elt.getChildNodes().getLength() > 0 )
       {
          final Text innerText = (Text) elt.getChildNodes().item( 0 );
-         filter = innerText.getData();
+         filter = transformFilter( innerText.getData() );
       }
       else
       {
@@ -153,7 +154,7 @@ public class RtmSmartFilter extends RtmData
 
    public static final String evaluate( String filter, boolean excludeCompleted )
    {
-      return evaluate( filter, null, excludeCompleted );
+      return evaluate( transformFilter( filter ), null, excludeCompleted );
    }
    
 
@@ -180,9 +181,6 @@ public class RtmSmartFilter extends RtmData
          // same meaning as operator name:
          else
          {
-            if ( !filter.contains( ":" ) )
-               filter = RtmSmartFilterLexer.OP_NAME_LIT + "\"" + filter + "\"";
-            
             final RtmSmartFilterReturn parserRes = RtmSmartFilterParsing.evaluateRtmSmartFilter( filter,
                                                                                                  tokens );
             
@@ -220,6 +218,13 @@ public class RtmSmartFilter extends RtmData
    
 
 
+   public String getSqlSelection()
+   {
+      return getEvaluatedFilterString( true );
+   }
+   
+
+
    @Override
    public String toString()
    {
@@ -248,4 +253,14 @@ public class RtmSmartFilter extends RtmData
       dest.writeTypedList( tokens );
    }
    
+
+
+   private final static String transformFilter( String filter )
+   {
+      if ( filter.length() > 0 && !filter.contains( ":" ) )
+         filter = RtmSmartFilterLexer.OP_NAME_LIT
+            + RtmSmartFilterLexer.quotify( filter );
+      
+      return filter;
+   }
 }

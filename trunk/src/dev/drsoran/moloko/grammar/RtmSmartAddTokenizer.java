@@ -26,6 +26,7 @@ import java.util.List;
 
 import android.text.TextUtils;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 public class RtmSmartAddTokenizer implements Tokenizer
@@ -227,7 +228,26 @@ public class RtmSmartAddTokenizer implements Tokenizer
       {
          final char charI = chars.charAt( i );
          if ( isOperator( charI, ownOp ) )
+         {
+            // SPECIAL CASE @: In case of a due date, the @ is also
+            // used as date and time separator. So we have to check
+            // if this is not a time and also belongs to the data.
+            if ( charI == '@' )
+            {
+               // Find the next operator start
+               final int nextOpPos = getNextOperatorPos( chars, i + 1, ownOp );
+               
+               // try to parse as time
+               if ( RtmDateTimeParsing.parseTimeOrTimeSpec( TextUtils.substring( chars,
+                                                                                 i,
+                                                                                 nextOpPos ) ) != null )
+               {
+                  i = nextOpPos;
+               }
+            }
+            
             return i;
+         }
       }
       
       return chars.length();

@@ -98,7 +98,8 @@ public class PressCompoundDrawable
                }
             };
          
-         textView.getHandler().post( unsetPressed );
+         if ( textView.getHandler() != null )
+            textView.getHandler().post( unsetPressed );
          
          return UIUtils.CHECKED_STATE_SET;
       }

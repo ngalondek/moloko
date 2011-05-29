@@ -28,12 +28,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -128,16 +125,14 @@ public class AddNoteActivity extends Activity
                                                          createdDate,
                                                          createdDate,
                                                          null,
-                                                         Strings.nullIfEmpty( title.getText()
-                                                                                   .toString() ),
-                                                         Strings.nullIfEmpty( text.getText()
-                                                                                  .toString() ) );
+                                                         Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
+                                                         Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
             newNoteUri = new AsyncInsertEntity< RtmTaskNote >( this )
             {
                @Override
                protected int getProgressMessageId()
                {
-                  return R.string.dlg_insert_note;
+                  return R.string.toast_insert_note;
                }
                
 
@@ -214,20 +209,14 @@ public class AddNoteActivity extends Activity
    {
       if ( hasChanged() )
       {
-         new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_cancel )
-                                        .setPositiveButton( android.R.string.yes,
-                                                            new OnClickListener()
-                                                            {
-                                                               public void onClick( DialogInterface dialog,
-                                                                                    int which )
-                                                               {
-                                                                  setResult( RESULT_CANCELED );
-                                                                  finish();
-                                                               }
-                                                            } )
-                                        .setNegativeButton( android.R.string.no,
-                                                            null )
-                                        .show();
+         UIUtils.newCancelWithChangesDialog( this, new Runnable()
+         {
+            public void run()
+            {
+               setResult( RESULT_CANCELED );
+               finish();
+            }
+         }, null ).show();
       }
       else
       {
@@ -248,7 +237,7 @@ public class AddNoteActivity extends Activity
 
    private boolean hasChanged()
    {
-      return !TextUtils.isEmpty( title.getText() )
-         || !TextUtils.isEmpty( text.getText() );
+      return !TextUtils.isEmpty( UIUtils.getTrimmedText( title ) )
+         || !TextUtils.isEmpty( UIUtils.getTrimmedText( text ) );
    }
 }

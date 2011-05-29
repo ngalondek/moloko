@@ -86,7 +86,6 @@
    <string name="phr_open_with_name">Öffne \'%1$s\'</string>
    <string name="phr_edit_with_name">Bearbeite \'%1$s\'</string>
    <string name="phr_delete_with_name">Lösche \'%1$s\'</string>
-   <string name="phr_delete_note">Notiz löschen?</string>
    <string name="phr_close">Schliessen</string>
    <string name="phr_settings">Einstellungen</string>
    <string name="phr_none_f">keine</string>
@@ -132,17 +131,55 @@
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>
    
-   <!-- Global Dialogs -->
-   <string name="dlg_save_task">Speichere Änderungen an der Aufgabe...</string>
-   <string name="dlg_insert_task">Füge neue Aufgabe hinzu...</string>
-   <string name="dlg_insert_note">Füge neue Notiz hinzu...</string>
-   <string name="dlg_save_note">Speichere Änderungen an der Notiz...</string>
+   <!-- Global Dialogs -->   
    <string name="dlg_estimate_picker_title">Wie lange dauert es?</string>
    <string name="dlg_due_picker_title">Fälligkeit</string>
    <string name="dlg_recurr_picker_title">Wiederholung</string>
-   <string name="dlg_recurr_picker_every">Alle</string>   
+   <string name="dlg_recurr_picker_every">Alle</string>
    <string name="dlg_recurr_picker_after">Nach</string>
    
+   <!-- Global Toasts -->
+      <!-- Task -->   
+      <string name="toast_insert_task">Füge neue Aufgabe hinzu...</string>
+      <string name="toast_insert_task_ok">Neue Aufgabe hinzugefügt</string>
+      <string name="toast_insert_task_fail">Neue Aufgabe konnte nicht hinzugefügt werden</string>
+      <string name="toast_save_task">Speiche Änderungen an der Aufgabe...</string>
+      <string name="toast_save_task_ok">Änderungen an der Aufgabe gespeichert</string>
+      <string name="toast_save_task_failed">Änderungen an der Aufgabe konnten nicht gespeichert werden</string>
+      <string name="toast_delete_task">Lösche Aufgabe...</string>
+      <string name="toast_delete_task_ok">Aufgabe gelöscht</string>
+      <string name="toast_delete_task_failed">Aufgabe konnte nicht gelöscht werden</string>
+      <!-- Note -->
+      <string name="toast_insert_note">Füge neue Notiz hinzu...</string>
+      <string name="toast_insert_note_ok">Neue Notiz hinzugefügt</string>
+      <string name="toast_insert_note_fail">Neue Notiz konnte nicht hinzugefügt werden</string>
+      <string name="toast_save_note">Speiche Änderungen an der Notiz...</string>
+      <string name="toast_save_note_ok">Änderungen an der Notiz gespeichert</string>
+      <string name="toast_save_note_failed">Änderungen an der Notiz konnten nicht gespeichert werden</string>
+      <string name="toast_delete_note">Lösche Notiz...</string>
+      <string name="toast_delete_note_ok">Notiz gelöscht</string>
+      <string name="toast_delete_note_failed">Notiz konnte nicht gelöscht werden</string>
+      <!-- List -->
+      <string name="toast_insert_list">Füge neue Liste hinzu...</string>
+      <string name="toast_insert_list_ok">Neue Liste hinzugefügt</string>
+      <string name="toast_insert_list_fail">Neue Liste konnte nicht hinzugefügt werden</string>
+      <string name="toast_save_list">Speiche Änderungen an der Liste...</string>
+      <string name="toast_save_list_ok">Änderungen an der Liste gespeichert</string>
+      <string name="toast_save_list_failed">Änderungen an der Liste konnten nicht gespeichert werden</string>
+      <string name="toast_delete_list">Lösche Liste...</string>
+      <string name="toast_delete_list_ok">Liste gelöscht</string>
+      <string name="toast_delete_list_failed">Liste konnte nicht gelöscht werden</string>
+      <string name="toast_delete_locked_list">Die Liste \'%1$s\' ist gesperrt and kann nicht gelöscht werden</string>
+      
+   <!-- Add/Rename list dialog -->
+   <string name="dlg_add_list_title">Neue Liste</string>
+   <string name="dlg_rename_list_title">Liste umbenennen</string>
+   <string name="dlg_add_rename_list_list_name_hint">Name der Liste</string>
+      <!-- Toasts -->
+      <string name="dlg_add_rename_list_toast_empty_list_name">Der Name der Liste darf nicht leer sein</string>
+      <string name="dlg_add_rename_list_toast_invalid_list_name">Der Name der Liste darf nicht \'Inbox\' oder \'Sent\' sein</string>
+      <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' ist kein gültiger Smart Filter</string>
+         
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>
 	
@@ -168,9 +205,7 @@
       <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Öffne Ort mit...</string>         
       <!-- Toasts -->
-     <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>
-     <string name="task_save_ok">Die Änderungen an der Aufgabe wurden gespeichert.</string>   
-     <string name="task_save_error">Die Änderungen an der Aufgabe konnten nicht gespeichert werden.</string>
+     <string name="task_toast_no_google_maps">Der Ort kann Aufgrund des Fehlens der Google Maps App nicht angezeigt werden.</string>     
         
    <!-- Task Edit activity -->
    <string name="task_edit_desc_hint">Name der Aufgabe</string>
@@ -194,10 +229,7 @@
    <!-- EditMultipleTasks activity -->
    <string name="edit_multiple_tasks_multiple_values">Verschiedene Werte</string>
    <string name="edit_multiple_tasks_multiple_tags">Verschiedene Tags</string>
-   
-   <!-- AddTask activity -->
-   <string name="add_task_edit_dlg_cancel">Neue Aufgabe verwerfen?</string>
-   
+      
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Durch Komma getrennte Tags</string>
    <string name="change_tags_empty">Diese Aufgabe hat keine Tags</string>
@@ -209,8 +241,9 @@
    <string name="tasklists_child_overdue">%1$s überfällig</string>
    <string name="tasklists_child_completed">%1$s erledigt</string>
      <!-- Menus -->
-     <string name="tasklists_menu_ctx_expand">Erweitere %1$s</string>
-     <string name="tasklists_menu_ctx_collapse">Reduziere %1$s</string>
+     <string name="tasklists_menu_ctx_expand">Erweitere \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_collapse">Reduziere \'%1$s\'</string>
+     <string name="tasklists_menu_ctx_rename_list">Benenne \'%1$s\' um</string>     
      <string name="tasklists_menu_ctx_make_def_list">Setze als Standardliste</string>
      <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
      
@@ -218,9 +251,11 @@
    <string name="notification_permanent">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
    <string name="notification_due_ticker">%1$s fällig %2$s</string>
    <string name="notification_due">fällig um %1$s</string>
+   <string name="notification_due_today_and_tomorrow_title">Aufgaben für %1$s, %2$s</string>
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
+   <string name="abstaskslist_query_error">Es ist ein Fehler bei der Abfrage der Aufgaben aufgetreten. Bitte senden Sie das Moloko-Log, unter Einstellungen, an die Entwickler.</string>
 	  <!-- Menus -->
 	  <string name="abstaskslist_menu_opt_sort">Sortieren</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Mehrere bearb.</string>
@@ -234,7 +269,10 @@
      <string name="abstaskslist_dlg_show_tags_and">und</string>
      <string name="abstaskslist_dlg_show_tags_or">oder</string>
      <string name="abstaskslist_dlg_sort_title">Sortieren nach...</string>
-     <string name="abstaskslist_dlg_delete">\'%1$s\' löschen?</string>     
+     
+   <!-- TasksList activity -->
+     <!-- Menus -->
+     <string name="taskslist_menu_opt_delete_list">Liste löschen</string>
 	
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar_error">Falsche Syntax</string>
@@ -260,12 +298,7 @@
       <string name="select_multiple_tasks_dlg_uncomplete">%1$d %2$s unerledigt?</string>
       <string name="select_multiple_tasks_dlg_postpone">%1$d %2$s aufschieben?</string>
       <string name="select_multiple_tasks_dlg_delete">%1$d %2$s löschen?</string>
-   
-   <!-- Note activity -->      
-      <!-- Toasts -->
-      <string name="note_save_ok">Die Änderungen an der Aufgabe wurden gespeichert.</string>
-      <string name="note_save_error">Die Änderungen an der Aufgabe konnten nicht gespeichert werden.</string>
-   
+  
    <!-- NoteEdit activity -->
    <string name="note_edit_title_hint">Titel der Notiz</string>
    <string name="note_edit_text_hint">Notiz hier eingeben</string>
@@ -287,6 +320,8 @@
    <string name="auth_perm_delete">Lesen, Schreiben und Löschen</string>
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene \'%1$s\'</string>
+      <!-- Toasts -->
+      <string name="auth_toast_err_weblogin">Beim Aufrufen der RTM-Authentifizierungsseite ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
       <!-- Errors -->
       <string name="auth_err_with_cause">Fehler beim Erstellen des Kontos. Grund: %1$s</string>
       <string name="auth_err_cause_inv_auth_token">Ungüliges Auth-Token empfangen</string>
@@ -338,6 +373,7 @@
    <string name="moloko_prefs_notification_permanent_cat_title">Permanente Benachrichtigungen</string>
    <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
+   <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Heutige und morgige Aufgaben</string>
    <string name="moloko_prefs_cat_help_dev_title">Helfen Sie bei der Entwicklung</string>
    <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
    <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>
@@ -358,10 +394,10 @@
    <string name="acra_crash_notif_title">Moloko ist oder war in einem fehlerhaften Zustand</string>
    <string name="acra_crash_notif_text">Dies tut uns leid. Bitte senden Sie einen Fehlerbericht um die Entwicklung zu unterstützen.</string>
    <string name="acra_crash_dialog_title">Moloko Fehlerbericht</string>
-   <string name="acra_crash_dialog_text">Wir entschuldigen uns für jegliche Unannehmlichkeiten. Durch das Senden eines Fehlerberichts unterstützen Sie die Berichtung dieses Fehlers in zukünftigen Versionen.</string>
+   <string name="acra_crash_dialog_text">Wir entschuldigen uns für jegliche Unannehmlichkeiten. Durch das Senden eines Fehlerberichts unterstützen Sie die Beseitigung dieses Fehlers in zukünftigen Versionen.</string>
    <string name="acra_crash_comment_prompt">Möglicherweise möchten Sie ein Kommentar hinterlassen:</string>
    <string name="acra_crash_dialog_ok_toast">Ihr Fehlerbericht wurde gesendet. Vielen Dank!</string>
-   <string name="send_log_dialog_text">Es wird die Log-Datei für Moloko erstellt. Die gesammelten Informationen werden mit einer Application Ihrer Wahl versendet. Sie erhalten die Möglichkeit diese vor dem Senden zu sehen und zu bearbeiten.</string>
+   <string name="send_log_dialog_text">Es wird die Log-Datei für Moloko erstellt. Die gesammelten Informationen werden mit einer Applikation Ihrer Wahl versendet. Sie erhalten die Möglichkeit das Log vor dem Senden zu sehen und zu bearbeiten.</string>
    <string name="send_log_aquiring_text">Sammle Moloko relevante Log-Informationen...</string>
    <string name="send_log_chooser_title">Bitte wählen Sie eine Anwendung zum Senden der Log-Informationen</string>
    <string name="send_log_failed">Das Sammeln der Log-Informationen für Moloko schlug fehl</string>

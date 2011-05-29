@@ -12,7 +12,7 @@
 
 <manifest
    xmlns:android="http://schemas.android.com/apk/res/android"
-   package="dev.drsoran.moloko"
+   package="dev.drsoran.moloko"   
    android:versionName="0.15.0b"
    android:versionCode="86016">
 
@@ -382,7 +382,7 @@
                android:name="android.intent.category.DEFAULT" />
          </intent-filter>
       </receiver>
-
+    
       <receiver
          android:name=".receivers.BootReceiver">
          <intent-filter>

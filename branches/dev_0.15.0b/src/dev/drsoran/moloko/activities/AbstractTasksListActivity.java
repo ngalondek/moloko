@@ -39,14 +39,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -391,7 +391,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                               OptionsMenu.MENU_ORDER,
                               R.drawable.ic_menu_edit_multiple_tasks,
                               Intents.createSelectMultipleTasksIntent( this,
-                                                                       (RtmSmartFilter) getIntent().getParcelableExtra( FILTER ),
+                                                                       (IFilter) getIntent().getParcelableExtra( FILTER ),
                                                                        getTaskSort() ),
                               !AccountUtils.isReadOnlyAccess( this )
                                  && getListAdapter().getCount() > 1 );

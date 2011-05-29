@@ -49,6 +49,7 @@ import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Connection;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -91,28 +92,42 @@ public final class SyncUtils
    
 
 
-   public final static void requestSync( Context context, boolean manual )
+   public final static void requestManualSync( Context context )
    {
-      final Account account = SyncUtils.isReadyToSync( context );
-      
-      if ( account != null )
-         SyncUtils.requestSync( context, account, manual );
+      SyncUtils.requestManualSync( context, SyncUtils.isReadyToSync( context ) );
    }
    
 
 
-   public final static void requestSync( Context context,
-                                         Account account,
-                                         boolean manual )
+   public final static void requestManualSync( Context context, Account account )
    {
-      final Bundle bundle = new Bundle();
-      
-      if ( manual )
+      if ( account != null )
+      {
+         final Bundle bundle = new Bundle();
+         
          bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
+         
+         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+      }
       else
+      {
+         context.startActivity( Intents.createNewAccountIntent( context ) );
+      }
+   }
+   
+
+
+   public final static void requestScheduledSync( Context context,
+                                                  Account account )
+   {
+      if ( account != null )
+      {
+         final Bundle bundle = new Bundle();
+         
          bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
-      
-      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+         
+         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+      }
    }
    
 

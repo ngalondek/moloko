@@ -104,6 +104,13 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
    
 
 
+   public void onBootCompleted()
+   {
+      SyncUtils.schedulePeriodicSync( context );
+   }
+   
+
+
    public void onStatusChanged( int which )
    {
       if ( which == Constants.SYNC_OBSERVER_TYPE_SETTINGS )

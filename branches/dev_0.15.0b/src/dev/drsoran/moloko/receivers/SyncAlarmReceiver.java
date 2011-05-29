@@ -45,7 +45,8 @@ public class SyncAlarmReceiver extends BroadcastReceiver
       
       if ( account != null )
       {
-         SyncUtils.requestSync( context.getApplicationContext(), account, false );
+         SyncUtils.requestScheduledSync( context.getApplicationContext(),
+                                         account );
       }
       else
       {

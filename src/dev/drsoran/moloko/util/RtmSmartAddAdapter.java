@@ -84,7 +84,6 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
 
    public RtmSmartAddAdapter( Context context )
    {
-      super();
       this.context = context;
       this.infalter = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
    }
@@ -266,7 +265,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                         final RtmLists lists = RtmListsProviderPart.getAllLists( context.getContentResolver()
                                                                                         .acquireContentProviderClient( Lists.CONTENT_URI ),
                                                                                  Lists.IS_SMART_LIST
-                                                                                    + "=0" );
+                                                                                    + "=0 AND "
+                                                                                    + RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
                         if ( lists != null )
                         {
                            lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();

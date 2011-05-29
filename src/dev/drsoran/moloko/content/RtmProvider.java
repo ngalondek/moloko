@@ -70,14 +70,7 @@ public class RtmProvider extends ContentProvider
          
          for ( int i = 0; i < size; i++ )
          {
-            try
-            {
-               mutableParts.get( i ).create( db );
-            }
-            catch ( SQLException e )
-            {
-               // TODO: handle exception
-            }
+            mutableParts.get( i ).create( db );
          }
       }
       
@@ -90,14 +83,7 @@ public class RtmProvider extends ContentProvider
          
          for ( int i = 0; i < size; i++ )
          {
-            try
-            {
-               mutableParts.get( i ).upgrade( db, oldVersion, newVersion );
-            }
-            catch ( SQLException e )
-            {
-               // TODO: handle exception
-            }
+            mutableParts.get( i ).upgrade( db, oldVersion, newVersion );
          }
       }
    }
@@ -188,7 +174,6 @@ public class RtmProvider extends ContentProvider
             break;
          
          default :
-            // TODO: Throw and handle exception
             break;
       }
       
@@ -250,11 +235,6 @@ public class RtmProvider extends ContentProvider
       if ( resUri != null )
       {
          getContext().getContentResolver().notifyChange( resUri, null );
-      }
-      else
-      {
-         // TODO: Throw and handle exception.
-         Log.e( TAG, "Failed to insert row into " + uri );
       }
       
       return resUri;

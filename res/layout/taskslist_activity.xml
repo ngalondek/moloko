@@ -50,7 +50,7 @@
          android:visibility="gone" />
 
       <dev.drsoran.moloko.layouts.TitleWithTextLayout
-         android:id="@+id/tasksearchresult_wrong_syntax"
+         android:id="@+id/taskslist_activity_error"
          style="@style/Error"
          android:visibility="gone" />
 

@@ -28,20 +28,18 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.accounts.Account;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
 
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceInternalException;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmProvider;
@@ -52,7 +50,6 @@ import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Connection;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.Sync;
 
@@ -95,28 +92,42 @@ public final class SyncUtils
    
 
 
-   public final static void requestSync( Context context, boolean manual )
+   public final static void requestManualSync( Context context )
    {
-      final Account account = SyncUtils.isReadyToSync( context );
-      
-      if ( account != null )
-         SyncUtils.requestSync( context, account, manual );
+      SyncUtils.requestManualSync( context, SyncUtils.isReadyToSync( context ) );
    }
    
 
 
-   public final static void requestSync( Context context,
-                                         Account account,
-                                         boolean manual )
+   public final static void requestManualSync( Context context, Account account )
    {
-      final Bundle bundle = new Bundle();
-      
-      if ( manual )
+      if ( account != null )
+      {
+         final Bundle bundle = new Bundle();
+         
          bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
+         
+         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+      }
       else
+      {
+         context.startActivity( Intents.createNewAccountIntent( context ) );
+      }
+   }
+   
+
+
+   public final static void requestScheduledSync( Context context,
+                                                  Account account )
+   {
+      if ( account != null )
+      {
+         final Bundle bundle = new Bundle();
+         
          bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
-      
-      ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+         
+         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+      }
    }
    
 
@@ -167,12 +178,12 @@ public final class SyncUtils
    /**
     * Loads the start time from the Sync database table and the interval from the settings.
     */
-   public final static void scheduleSyncAlarm( Context context )
+   public final static void schedulePeriodicSync( Context context )
    {
       final long interval = SyncIntervalPreference.getSyncInterval( context );
       
       if ( interval != Constants.SYNC_INTERVAL_MANUAL )
-         SyncUtils.scheduleSyncAlarm( context, interval );
+         SyncUtils.schedulePeriodicSync( context, interval );
    }
    
 
@@ -180,7 +191,7 @@ public final class SyncUtils
    /**
     * Loads the start time from the Sync database table.
     */
-   public final static void scheduleSyncAlarm( Context context, long interval )
+   public final static void schedulePeriodicSync( Context context, long interval )
    {
       long startUtc = System.currentTimeMillis();
       
@@ -209,49 +220,7 @@ public final class SyncUtils
          }
       }
       
-      scheduleSyncAlarm( context, startUtc, interval );
-   }
-   
-
-
-   public final static void scheduleSyncAlarm( Context context,
-                                               long startUtc,
-                                               long interval )
-   {
-      AlarmManager alarmManager = (AlarmManager) context.getSystemService( Context.ALARM_SERVICE );
-      
-      if ( alarmManager != null )
-      {
-         final long nowUtc = System.currentTimeMillis();
-         
-         if ( startUtc < nowUtc )
-            startUtc = nowUtc;
-         
-         final PendingIntent syncIntent = Intents.createSyncAlarmIntent( context );
-         
-         alarmManager.setRepeating( AlarmManager.RTC_WAKEUP,
-                                    startUtc,
-                                    interval,
-                                    syncIntent );
-         
-         Log.i( TAG, "Scheduled new sync alarm to go off @"
-            + MolokoDateUtils.newTime().format2445() + ", repeating every "
-            + DateUtils.formatElapsedTime( interval / 1000 ) );
-      }
-   }
-   
-
-
-   public final static void stopSyncAlarm( Context context )
-   {
-      AlarmManager alarmManager = (AlarmManager) context.getSystemService( Context.ALARM_SERVICE );
-      
-      if ( alarmManager != null )
-      {
-         alarmManager.cancel( Intents.createSyncAlarmIntent( context ) );
-         
-         Log.i( TAG, "Stopped sync alarm" );
-      }
+      MolokoApp.schedulePeriodicSync( startUtc, interval );
    }
    
 
@@ -302,7 +271,8 @@ public final class SyncUtils
                //
                // In case of equal dates we take the server value cause this
                // value we have transferred already.
-               if ( properties.serverModDate.getTime() >= properties.localModDate.getTime() )
+               if ( properties.serverModDate != null
+                  && ( properties.serverModDate.getTime() >= properties.localModDate.getTime() ) )
                   // LOCAL UPDATE: The server element was modified after the local value.
                   syncDir = SyncResultDirection.LOCAL;
                else

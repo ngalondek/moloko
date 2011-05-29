@@ -22,9 +22,6 @@
 
 package dev.drsoran.moloko.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -86,28 +83,24 @@ public class NoteEditActivity extends AbstractNoteActivity
    {
       if ( hasChanged() )
       {
-         new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_done )
-                                        .setPositiveButton( android.R.string.yes,
-                                                            new OnClickListener()
-                                                            {
-                                                               public void onClick( DialogInterface dialog,
-                                                                                    int which )
-                                                               {
-                                                                  final boolean ok = NoteEditUtils.setNoteTitleAndText( NoteEditActivity.this,
-                                                                                                                        getNote().getId(),
-                                                                                                                        Strings.nullIfEmpty( title.getText() )
-                                                                                                                               .toString(),
-                                                                                                                        Strings.nullIfEmpty( text.getText() )
-                                                                                                                               .toString() );
-                                                                  setResult( ok
-                                                                               ? RESULT_EDIT_NOTE_CHANGED
-                                                                               : RESULT_EDIT_NOTE_FAILED );
-                                                                  finish();
-                                                               }
-                                                            } )
-                                        .setNegativeButton( android.R.string.no,
-                                                            null )
-                                        .show();
+         UIUtils.newApplyChangesDialog( this, new Runnable()
+         {
+            public void run()
+            {
+               final boolean ok = NoteEditUtils.setNoteTitleAndText( NoteEditActivity.this,
+                                                                     getNote().getId(),
+                                                                     Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) )
+                                                                            .toString(),
+                                                                     Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) )
+                                                                            .toString() );
+               setResult( ok ? RESULT_EDIT_NOTE_CHANGED
+                            : RESULT_EDIT_NOTE_FAILED );
+               finish();
+               
+            }
+         },
+                                        null )
+                .show();
       }
       else
       {
@@ -122,20 +115,14 @@ public class NoteEditActivity extends AbstractNoteActivity
    {
       if ( hasChanged() )
       {
-         new AlertDialog.Builder( this ).setMessage( R.string.phr_edit_dlg_cancel )
-                                        .setPositiveButton( android.R.string.yes,
-                                                            new OnClickListener()
-                                                            {
-                                                               public void onClick( DialogInterface dialog,
-                                                                                    int which )
-                                                               {
-                                                                  setResult( RESULT_CANCELED );
-                                                                  finish();
-                                                               }
-                                                            } )
-                                        .setNegativeButton( android.R.string.no,
-                                                            null )
-                                        .show();
+         UIUtils.newCancelWithChangesDialog( this, new Runnable()
+         {
+            public void run()
+            {
+               setResult( RESULT_CANCELED );
+               finish();
+            }
+         }, null ).show();
       }
       else
       {
@@ -169,7 +156,8 @@ public class NoteEditActivity extends AbstractNoteActivity
    {
       final RtmTaskNote note = getNote();
       
-      return SyncUtils.hasChanged( note.getTitle(), title.getText().toString() )
-         || SyncUtils.hasChanged( note.getText(), text.getText().toString() );
+      return SyncUtils.hasChanged( note.getTitle(),
+                                   UIUtils.getTrimmedText( title ) )
+         || SyncUtils.hasChanged( note.getText(), UIUtils.getTrimmedText( text ) );
    }
 }

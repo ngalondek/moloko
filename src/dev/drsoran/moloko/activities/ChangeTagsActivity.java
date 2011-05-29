@@ -236,7 +236,7 @@ public class ChangeTagsActivity extends ListActivity
       else
       {
          // Cut the removed tag including any trailing ,
-         String content = editView.getText().toString();
+         String content = UIUtils.getTrimmedText( editView );
          content = content.replaceAll( tag.tag + "\\,*\\s*",
                                        Strings.EMPTY_STRING );
          
@@ -252,7 +252,7 @@ public class ChangeTagsActivity extends ListActivity
    {
       chosenTags.clear();
       
-      String content = editView.getText().toString();
+      String content = UIUtils.getTrimmedText( editView );
       
       // Remove , at the end of line
       content = content.replaceFirst( "\\,\\s*$", Strings.EMPTY_STRING );

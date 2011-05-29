@@ -158,7 +158,7 @@ public class SyncDiffer
                // SERVER DELETE: The local element is marked as deleted and the server element is not modified
                // after the local delete.
                if ( localElementDeleted != null
-                  && localElementDeleted.after( serverElementModified ) )
+                  && ( serverElementModified == null || localElementDeleted.after( serverElementModified ) ) )
                {
                   operations.add( localElement.computeServerDeleteOperation( timeLine ) );
                }
@@ -175,19 +175,29 @@ public class SyncDiffer
       }
       
       // Get all local elements which have not been touched during the diff.
-      for ( int i = 0; i < localTouchedElements.length; i++ )
+      for ( int i = 0; i < localTouchedElements.length; ++i )
       {
          if ( !localTouchedElements[ i ] )
          {
             final T localElement = sortedLocalList.get( i );
             final Date localElementDeleted = localElement.getDeletedDate();
             
-            // SERVER DELETE: The local element is marked as deleted and the
-            // server element was not seen.
             if ( localElementDeleted != null )
             {
-               localTouchedElements[ i ] = true;
-               operations.add( localElement.computeServerDeleteOperation( timeLine ) );
+               final Date localElementCreated = localElement.getCreatedDate();
+               
+               // SERVER DELETE: The local element is marked as deleted and the
+               // server element was not seen.
+               //
+               // If the local element was created after the last sync and is now
+               // deleted, then we can skip it cause the server has never seen
+               // this element. It was created and deleted only locally.
+               if ( localElementCreated != null
+                  && !localElementCreated.after( lastSync ) )
+               {
+                  localTouchedElements[ i ] = true;
+                  operations.add( localElement.computeServerDeleteOperation( timeLine ) );
+               }
             }
             else
             {

@@ -38,9 +38,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
@@ -74,7 +76,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
 
    public TasksListAdapter( Context context, int resourceId,
-      List< ListTask > tasks, RtmSmartFilter filter )
+      List< ListTask > tasks, IFilter filter )
    {
       this( context, resourceId, tasks, filter, 0 );
    }
@@ -82,7 +84,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
 
 
    public TasksListAdapter( Context context, int resourceId,
-      List< ListTask > tasks, RtmSmartFilter filter, int flags )
+      List< ListTask > tasks, IFilter filter, int flags )
    {
       super( context, 0, tasks );
       
@@ -90,11 +92,13 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       this.flags = flags;
       this.resourceId = resourceId;
       this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-      this.filter = filter;
+      this.filter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
+                                                                           ? filter
+                                                                           : new RtmSmartFilter( Strings.EMPTY_STRING ) );
       
       if ( ( flags & FLAG_NO_FILTER ) != FLAG_NO_FILTER )
       {
-         final ArrayList< RtmSmartFilterToken > tokens = filter.getTokens();
+         final ArrayList< RtmSmartFilterToken > tokens = this.filter.getTokens();
          final List< String > tagsToRemove = new ArrayList< String >();
          
          for ( RtmSmartFilterToken token : tokens )

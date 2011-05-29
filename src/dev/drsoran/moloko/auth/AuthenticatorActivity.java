@@ -28,6 +28,7 @@ import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mdt.rtm.ApplicationInfo;
 import com.mdt.rtm.ServiceImpl;
@@ -46,8 +48,8 @@ import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Connection;
+import dev.drsoran.provider.Rtm;
 
 
 /**
@@ -268,10 +270,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
                                                          null );
                
                if ( ok )
-               {
-                  // Set RTM sync for this account.
-                  SyncUtils.scheduleSyncAlarm( getApplicationContext() );
-               }
+                  ContentResolver.setSyncAutomatically( account,
+                                                        Rtm.AUTHORITY,
+                                                        true );
             }
             
             if ( ok )
@@ -330,7 +331,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
       else
       {
-         // TODO: Set error message here.
+         Toast.makeText( this,
+                         R.string.auth_toast_err_weblogin,
+                         Toast.LENGTH_LONG ).show();
          removeDialog( 0 );
       }
    }

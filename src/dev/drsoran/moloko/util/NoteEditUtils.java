@@ -26,7 +26,6 @@ import java.util.ArrayList;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
@@ -66,10 +65,12 @@ public final class NoteEditUtils
                                                        text ) );
       modifications.add( Modification.newNoteModified( noteId ) );
       
-      return reportStatus( context,
-                           Queries.applyModifications( context,
-                                                       modifications,
-                                                       R.string.dlg_save_note ) );
+      return UIUtils.reportStatus( context,
+                                   R.string.toast_save_note_ok,
+                                   R.string.toast_save_note_failed,
+                                   Queries.applyModifications( context,
+                                                               modifications,
+                                                               R.string.toast_save_note ) );
    }
    
 
@@ -88,23 +89,14 @@ public final class NoteEditUtils
       removeCreatedOperations.add( CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
                                                                                                    noteId ) ) );
       
-      return reportStatus( context,
-                           Queries.applyModifications( context,
-                                                       modifications,
-                                                       R.string.dlg_save_note )
-                              && Queries.transactionalApplyOperations( context,
-                                                                       removeCreatedOperations,
-                                                                       R.string.dlg_save_note ) );
-   }
-   
-
-
-   private final static boolean reportStatus( Context context, boolean ok )
-   {
-      Toast.makeText( context,
-                      ok ? R.string.note_save_ok : R.string.note_save_error,
-                      Toast.LENGTH_SHORT ).show();
-      
-      return ok;
+      return UIUtils.reportStatus( context,
+                                   R.string.toast_delete_note_ok,
+                                   R.string.toast_delete_note_failed,
+                                   Queries.applyModifications( context,
+                                                               modifications,
+                                                               R.string.toast_delete_note )
+                                      && Queries.transactionalApplyOperations( context,
+                                                                               removeCreatedOperations,
+                                                                               R.string.toast_delete_note ) );
    }
 }

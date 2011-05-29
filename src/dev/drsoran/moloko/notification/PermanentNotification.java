@@ -71,7 +71,7 @@ public class PermanentNotification
       notification.contentIntent = Intents.createNotificationIntent( context,
                                                                      onClickIntent );
       
-      getNotificationManager().notify( this.id, notification );
+      getNotificationManager().notify( id, notification );
    }
    
 

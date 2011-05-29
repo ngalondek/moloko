@@ -35,16 +35,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
+public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
 {
    private final ViewGroup widgetContainer;
    
@@ -95,17 +97,12 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
    
 
 
+   @Override
    public void start()
    {
-      asyncReload();
+      super.start();
       
       TasksProviderPart.registerContentObserver( getContext(), dbObserver );
-   }
-   
-
-
-   public void refresh()
-   {
    }
    
 
@@ -132,13 +129,12 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
 
    public Intent getIntent()
    {
-      final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-         + DateParser.tokenNames[ DateParser.TODAY ] );
+      final SqlSelectionFilter filter = new SqlSelectionFilter( getSelection() );
       
-      return Intents.createSmartFilterIntent( getContext(),
-                                              filter,
-                                              label.getText().toString(),
-                                              -1 );
+      return Intents.createSqlSelectionFilterIntent( getContext(),
+                                                     filter,
+                                                     label.getText().toString(),
+                                                     -1 );
    }
    
 
@@ -151,17 +147,53 @@ public class OverDueTasksHomeWidget extends AsyncLoadingHomeWidget
 
 
    @Override
-   protected Cursor doBackgroundQuery()
+   protected Integer doBackgroundQuery()
    {
-      final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
-                                                           + DateParser.tokenNames[ DateParser.TODAY ],
-                                                        true );
+      final Cursor c = getContext().getContentResolver()
+                                   .query( RawTasks.CONTENT_URI, new String[]
+                                   { RawTasks._ID }, getSelection(), null, null );
       
-      return getContext().getContentResolver().query( RawTasks.CONTENT_URI,
-                                                      new String[]
-                                                      { RawTasks._ID },
-                                                      selection,
-                                                      null,
-                                                      null );
+      if ( c != null )
+      {
+         c.close();
+         return Integer.valueOf( c.getCount() );
+      }
+      
+      return null;
+   }
+   
+
+
+   @Override
+   protected void onMinuteTick()
+   {
+      asyncReloadWithoutSpinner();
+   }
+   
+
+
+   @Override
+   protected void onSystemTimeChanged()
+   {
+      asyncReloadWithoutSpinner();
+   }
+   
+
+
+   private final String getSelection()
+   {
+      final String tasksDueBeforeToday = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
+                                                                     + DateParser.tokenNames[ DateParser.TODAY ],
+                                                                  true );
+      final String tasksDueBeforeNow = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
+                                                                   + DateParser.tokenNames[ DateParser.NOW ],
+                                                                true );
+      
+      return new StringBuilder( tasksDueBeforeToday ).append( " OR ( " )
+                                                     .append( tasksDueBeforeNow )
+                                                     .append( " AND " )
+                                                     .append( Tasks.HAS_DUE_TIME )
+                                                     .append( " != 0 )" )
+                                                     .toString();
    }
 }

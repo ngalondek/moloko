@@ -40,6 +40,38 @@
          android:drawablePadding="5dip" />
 
       <ImageView
+         android:id="@+id/app_titlebar_sep_add_list"
+         style="@style/App_TitleBar_Separator"
+         android:layout_width="1dip"
+         android:layout_height="fill_parent"
+         android:visibility="gone" />
+
+      <ImageButton
+         android:id="@+id/app_titlebar_btn_add_list"
+         style="@style/App_TitleBar_Btn"
+         android:layout_height="fill_parent"
+         android:layout_width="@dimen/app_titlebar_btn_width"
+         android:src="@drawable/ic_button_title_add_list"
+         android:scaleType="centerInside"
+         android:visibility="gone" />
+
+      <ImageView
+         android:id="@+id/app_titlebar_sep_save_search"
+         style="@style/App_TitleBar_Separator"
+         android:layout_width="1dip"
+         android:layout_height="fill_parent"
+         android:visibility="gone" />
+
+      <ImageButton
+         android:id="@+id/app_titlebar_btn_save_search"
+         style="@style/App_TitleBar_Btn"
+         android:layout_height="fill_parent"
+         android:layout_width="@dimen/app_titlebar_btn_width"
+         android:src="@drawable/ic_button_title_disc"
+         android:scaleType="centerInside"
+         android:visibility="gone" />
+
+      <ImageView
          android:id="@+id/app_titlebar_sep_add_task"
          style="@style/App_TitleBar_Separator"
          android:layout_width="1dip"
@@ -89,7 +121,7 @@
    </LinearLayout>
 
    <include
-      layout="@layout/app_titlebar_quick_add_task"      
+      layout="@layout/app_titlebar_quick_add_task"
       android:id="@+id/app_titlebar_quick_add_task_layout"
       android:layout_height="wrap_content"
       android:layout_width="fill_parent"

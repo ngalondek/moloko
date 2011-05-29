@@ -321,16 +321,29 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmList lists_add( String timelineId, String listName ) throws ServiceException
+   public TimeLineResult< RtmList > lists_add( String timelineId,
+                                               String listName,
+                                               String smartFilter ) throws ServiceException
    {
-      Element response = invoker.invoke( new Param( "method", "rtm.lists.add" ),
-                                         new Param( "auth_token",
-                                                    currentAuthToken ),
-                                         new Param( "api_key",
-                                                    applicationInfo.getApiKey() ),
-                                         new Param( "name", listName ),
-                                         new Param( "timeline", timelineId ) );
-      return new RtmList( response );
+      final Element elt;
+      
+      if ( TextUtils.isEmpty( smartFilter ) )
+         elt = invoker.invoke( new Param( "method", "rtm.lists.add" ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "name", listName ) );
+      else
+         elt = invoker.invoke( new Param( "method", "rtm.lists.add" ),
+                               new Param( "auth_token", currentAuthToken ),
+                               new Param( "api_key",
+                                          applicationInfo.getApiKey() ),
+                               new Param( "timeline", timelineId ),
+                               new Param( "name", listName ),
+                               new Param( "filter", smartFilter ) );
+      
+      return newListResult( timelineId, elt );
    }
    
 
@@ -342,13 +355,18 @@ public class ServiceImpl implements Service
    
 
 
-   public void lists_delete( String timelineId, String listId ) throws ServiceException
+   public TimeLineResult< RtmList > lists_delete( String timelineId,
+                                                  String listId ) throws ServiceException
    {
-      invoker.invoke( new Param( "method", "rtm.lists.delete" ),
-                      new Param( "auth_token", currentAuthToken ),
-                      new Param( "api_key", applicationInfo.getApiKey() ),
-                      new Param( "timeline", timelineId ),
-                      new Param( "list_id", listId ) );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.lists.delete" ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ) );
+      return newListResult( timelineId, elt );
    }
    
 
@@ -388,20 +406,20 @@ public class ServiceImpl implements Service
    
 
 
-   public RtmList lists_setName( String timelineId,
-                                 String listId,
-                                 String newName ) throws ServiceException
+   public TimeLineResult< RtmList > lists_setName( String timelineId,
+                                                   String listId,
+                                                   String newName ) throws ServiceException
    {
-      Element response = invoker.invoke( new Param( "method",
-                                                    "rtm.lists.setName" ),
-                                         new Param( "timeline", timelineId ),
-                                         new Param( "list_id", listId ),
-                                         new Param( "name", newName ),
-                                         new Param( "auth_token",
-                                                    currentAuthToken ),
-                                         new Param( "api_key",
-                                                    applicationInfo.getApiKey() ) );
-      return new RtmList( response );
+      final Element elt = invoker.invoke( new Param( "method",
+                                                     "rtm.lists.setName" ),
+                                          new Param( "timeline", timelineId ),
+                                          new Param( "list_id", listId ),
+                                          new Param( "name", newName ),
+                                          new Param( "auth_token",
+                                                     currentAuthToken ),
+                                          new Param( "api_key",
+                                                     applicationInfo.getApiKey() ) );
+      return newListResult( timelineId, elt );
    }
    
 
@@ -1135,6 +1153,45 @@ public class ServiceImpl implements Service
                                                               new Date(),
                                                               null,
                                                               null ) );
+         }
+      }
+      else
+      {
+         throw new ServiceInternalException( "Expected <transaction> node in response" );
+      }
+   }
+   
+
+
+   private final static TimeLineResult< RtmList > newListResult( String timelineId,
+                                                                 Element elt ) throws ServiceException
+   {
+      // TODO: Check for Android > 2.1
+      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
+      final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
+      
+      if ( nodes.getLength() < 1 )
+         throw new ServiceInternalException( "Expected at least 1 node in response" );
+      
+      final Node transactionNode = nodes.item( 0 );
+      
+      if ( transactionNode != null
+         && transactionNode.getNodeName().equalsIgnoreCase( "transaction" )
+         && transactionNode.getNodeType() == Node.ELEMENT_NODE )
+      {
+         final Node listNode = nodes.item( 1 );
+         
+         if ( listNode != null
+            && listNode.getNodeName().equalsIgnoreCase( "list" )
+            && listNode.getNodeType() == Node.ELEMENT_NODE )
+         {
+            final RtmList list = new RtmList( (Element) listNode );
+            
+            return TimeLineResult.newResult( elt, timelineId, list );
+         }
+         else
+         {
+            throw new ServiceInternalException( "Expected <list> node in response" );
          }
       }
       else

@@ -44,9 +44,13 @@ public final class Connection
       
       final NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
       
-      for ( int i = 0; i < networkInfos.length && !connected; i++ )
+      if ( networkInfos != null )
       {
-         connected = networkInfos[ i ].isConnectedOrConnecting();
+         for ( int i = 0; i < networkInfos.length && !connected; i++ )
+         {
+            connected = networkInfos[ i ] != null
+               && networkInfos[ i ].isConnectedOrConnecting();
+         }
       }
       
       return connected;

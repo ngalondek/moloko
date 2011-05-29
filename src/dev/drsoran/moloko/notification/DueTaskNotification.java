@@ -114,6 +114,18 @@ public class DueTaskNotification
    
 
 
+   public void onTimeFormatChanged()
+   {
+      if ( notification != null )
+      {
+         setDueTimeText();
+         
+         getNotificationManager().notify( taskId.hashCode(), notification );
+      }
+   }
+   
+
+
    public String getTaskId()
    {
       return taskId;
@@ -156,9 +168,7 @@ public class DueTaskNotification
                                                        R.layout.notification_due_task );
       this.notification.contentView.setTextViewText( R.id.notification_due_task_title,
                                                      taskName );
-      this.notification.contentView.setTextViewText( R.id.notification_due_task_text,
-                                                     context.getString( R.string.notification_due,
-                                                                        MolokoDateUtils.formatTime( dueTimeMillis ) ) );
+      setDueTimeText();
       this.notification.contentIntent = Intents.createNotificationIntent( context,
                                                                           Intents.createOpenTaskIntent( context,
                                                                                                         taskId ) );
@@ -178,6 +188,15 @@ public class DueTaskNotification
       this.notification.sound = sound;
       
       getNotificationManager().notify( taskId.hashCode(), notification );
+   }
+   
+
+
+   private void setDueTimeText()
+   {
+      this.notification.contentView.setTextViewText( R.id.notification_due_task_text,
+                                                     context.getString( R.string.notification_due,
+                                                                        MolokoDateUtils.formatTime( dueTimeMillis ) ) );
    }
    
 

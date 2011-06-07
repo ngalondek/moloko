@@ -37,12 +37,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mdt.rtm.ApplicationInfo;
-import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 
@@ -78,6 +77,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
    private TextView messageText;
    
+   private Button continueBtn;
+   
    private boolean newAccount;
    
    
@@ -98,6 +99,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       permDropDown = (Spinner) findViewById( R.id.auth_spin_permission );
       
       messageText = (TextView) findViewById( R.id.auth_text_message );
+      
+      continueBtn = (Button) findViewById( R.id.auth_btn_continue );
+      
+      createOrReuseAuthenticator();
       
       initializeGui();
       
@@ -140,28 +145,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    
 
 
+   @Override
+   public Object onRetainNonConfigurationInstance()
+   {
+      final Object o = authenticator;
+      authenticator = null;
+      return o;
+   }
+   
+
+
    public void onAuthenticate( View view )
    {
       messageText.setText( null );
       
       if ( Connection.isConnected( this ) )
       {
-         final ApplicationInfo applicationInfo = new ApplicationInfo( MolokoApp.getRtmApiKey( this ),
-                                                                      MolokoApp.getRtmSharedSecret( this ),
-                                                                      getString( R.string.app_name ),
-                                                                      null );
-         
-         try
-         {
-            final ServiceImpl serviceImpl = ServiceImpl.getInstance( this,
-                                                                     applicationInfo );
-            authenticator = new AsyncRtmAuthenticator( this, serviceImpl );
-            authenticator.beginAuthentication( getSelectedPermission() );
-         }
-         catch ( ServiceInternalException e )
-         {
-            messageText.setText( getErrorMessage( e ) );
-         }
+         authenticator.beginAuthentication( this, getSelectedPermission() );
       }
       else
       {
@@ -233,7 +233,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       else
       {
          // We want to get the complete RtmAuth instance
-         authenticator.checkAuthToken( authToken );
+         authenticator.checkAuthToken( this, authToken );
       }
    }
    
@@ -327,7 +327,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       if ( requestCode == RtmWebLoginActivity.ReqType.OPEN_URL
          && resultCode == RtmWebLoginActivity.ReturnCode.SUCCESS )
       {
-         authenticator.completeAuthentication();
+         authenticator.completeAuthentication( this );
       }
       else
       {
@@ -342,27 +342,37 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
 
    private void initializeGui()
    {
-      // Check the intent parameters
-      final Intent intent = getIntent();
-      
-      // Fill the widgets with all information we have
-      final String permission = intent.getStringExtra( Constants.FEAT_PERMISSION );
-      
-      if ( permission != null )
-         selectPermission( permission );
-      
-      if ( intent.getBooleanExtra( PARAM_MISSINGCREDENTIALS, false ) )
+      if ( authenticator == null )
       {
-         messageText.setText( R.string.auth_missing_credential );
-      }
-      else if ( intent.getBooleanExtra( PARAM_AUTH_TOKEN_EXPIRED, false ) )
-      {
-         messageText.setText( getString( R.string.auth_expired_auth_token,
-                                         getString( R.string.app_name ) ) );
+         messageText.setText( R.string.auth_err_cause_no_service );
+         continueBtn.setEnabled( false );
       }
       else
       {
-         messageText.setText( getString( R.string.auth_info_text ) );
+         continueBtn.setEnabled( true );
+         
+         // Check the intent parameters
+         final Intent intent = getIntent();
+         
+         // Fill the widgets with all information we have
+         final String permission = intent.getStringExtra( Constants.FEAT_PERMISSION );
+         
+         if ( permission != null )
+            selectPermission( permission );
+         
+         if ( intent.getBooleanExtra( PARAM_MISSINGCREDENTIALS, false ) )
+         {
+            messageText.setText( R.string.auth_missing_credential );
+         }
+         else if ( intent.getBooleanExtra( PARAM_AUTH_TOKEN_EXPIRED, false ) )
+         {
+            messageText.setText( getString( R.string.auth_expired_auth_token,
+                                            getString( R.string.app_name ) ) );
+         }
+         else
+         {
+            messageText.setText( getString( R.string.auth_info_text ) );
+         }
       }
    }
    
@@ -448,6 +458,33 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    private String getErrorMessage( int resId )
    {
       return getString( R.string.auth_err_with_cause, getString( resId ) );
+   }
+   
+
+
+   private void createOrReuseAuthenticator()
+   {
+      authenticator = (AsyncRtmAuthenticator) getLastNonConfigurationInstance();
+      
+      if ( authenticator == null )
+      {
+         createAuthenticator();
+      }
+   }
+   
+
+
+   private void createAuthenticator()
+   {
+      try
+      {
+         authenticator = new AsyncRtmAuthenticator( this );
+      }
+      catch ( ServiceInternalException e )
+      {
+         authenticator = null;
+         Log.e( TAG, "Error creating RTM service", e );
+      }
    }
    
 

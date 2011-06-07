@@ -464,12 +464,12 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                    getString( R.string.phr_delete_with_name, task.getName() ) );
       }
       
-      final RtmSmartFilter filter = getIntent().getParcelableExtra( FILTER );
+      final IFilter filter = getIntent().getParcelableExtra( FILTER );
       
       // If the list name was in the filter then we are in one list only. So no need to
       // open it again.
-      if ( filter == null
-         || !RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
+      if ( !(filter instanceof RtmSmartFilter)
+         || !RtmSmartFilterParsing.hasOperatorAndValue( ( (RtmSmartFilter) filter ).getTokens(),
                                                         RtmSmartFilterLexer.OP_LIST,
                                                         task.getListName(),
                                                         false ) )

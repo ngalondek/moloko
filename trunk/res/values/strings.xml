@@ -388,6 +388,7 @@
       <string name="auth_err_cause_inv_auth_token">Invalid Auth-Token was received</string>
       <string name="auth_err_cause_scurity">Security issue</string>
       <string name="auth_err_cause_inv_login_url">Invalid Login-URL was received</string>
+      <string name="auth_err_cause_no_service">An error occurred during the creation of the RTM service connection</string>
       
    <!-- AccountPreferences + activity -->
    <string name="acc_pref_title">General settings</string>

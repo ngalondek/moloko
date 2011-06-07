@@ -198,8 +198,10 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       
       if ( c != null )
       {
+         final Integer cnt = Integer.valueOf( c.getCount() );
          c.close();
-         return Integer.valueOf( c.getCount() );
+         
+         return cnt; 
       }
       
       return null;

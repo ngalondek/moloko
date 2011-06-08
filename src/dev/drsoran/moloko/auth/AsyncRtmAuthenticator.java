@@ -26,18 +26,21 @@ import java.lang.ref.WeakReference;
 
 import android.os.AsyncTask;
 
+import com.mdt.rtm.ApplicationInfo;
+import com.mdt.rtm.Service;
 import com.mdt.rtm.ServiceException;
 import com.mdt.rtm.ServiceImpl;
 import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
+import dev.drsoran.moloko.MolokoApp;
+import dev.drsoran.moloko.R;
+
 
 public class AsyncRtmAuthenticator
 {
-   private final AuthenticatorActivity activity;
-   
-   private final ServiceImpl rtmServiceImpl;
+  private final Service rtmService;
    
    private AsyncTask< ?, Void, ? > runningTask;
    
@@ -47,17 +50,16 @@ public class AsyncRtmAuthenticator
    {
       protected volatile WeakReference< AuthenticatorActivity > activity;
       
-      protected volatile WeakReference< ServiceImpl > service;
+      protected volatile Service service;
       
       protected volatile ServiceException exception;
       
       
 
-      public RtmAsyncAuthTask( AuthenticatorActivity activity,
-         ServiceImpl service )
+      public RtmAsyncAuthTask( AuthenticatorActivity activity, Service service )
       {
          this.activity = new WeakReference< AuthenticatorActivity >( activity );
-         this.service = new WeakReference< ServiceImpl >( service );
+         this.service = service;
       }
       
 
@@ -73,7 +75,7 @@ public class AsyncRtmAuthenticator
 
    private final class BeginAuthTask extends RtmAsyncAuthTask< Perms, String >
    {
-      public BeginAuthTask( AuthenticatorActivity activity, ServiceImpl service )
+      public BeginAuthTask( AuthenticatorActivity activity, Service service )
       {
          super( activity, service );
       }
@@ -94,11 +96,11 @@ public class AsyncRtmAuthenticator
       {
          String result = null;
          
-         if ( service.get() != null && params.length > 0 )
+         if ( params.length > 0 )
          {
             try
             {
-               result = service.get().beginAuthorization( params[ 0 ] );
+               result = service.beginAuthorization( params[ 0 ] );
             }
             catch ( ServiceException e )
             {
@@ -125,8 +127,7 @@ public class AsyncRtmAuthenticator
    private final class CompleteAuthTask extends RtmAsyncAuthTask< Void, String >
    {
       
-      public CompleteAuthTask( AuthenticatorActivity activity,
-         ServiceImpl service )
+      public CompleteAuthTask( AuthenticatorActivity activity, Service service )
       {
          super( activity, service );
       }
@@ -138,16 +139,13 @@ public class AsyncRtmAuthenticator
       {
          String result = null;
          
-         if ( service.get() != null )
+         try
          {
-            try
-            {
-               result = service.get().completeAuthorization();
-            }
-            catch ( ServiceException e )
-            {
-               exception = e;
-            }
+            result = service.completeAuthorization();
+         }
+         catch ( ServiceException e )
+         {
+            exception = e;
          }
          
          return result;
@@ -170,8 +168,7 @@ public class AsyncRtmAuthenticator
             RtmAsyncAuthTask< String, RtmAuth >
    {
       
-      public CheckAuthTokenTask( AuthenticatorActivity activity,
-         ServiceImpl service )
+      public CheckAuthTokenTask( AuthenticatorActivity activity, Service service )
       {
          super( activity, service );
       }
@@ -183,11 +180,11 @@ public class AsyncRtmAuthenticator
       {
          RtmAuth result = null;
          
-         if ( service.get() != null && params.length > 0 )
+         if ( params.length > 0 )
          {
             try
             {
-               result = service.get().auth_checkToken( params[ 0 ] );
+               result = service.auth_checkToken( params[ 0 ] );
             }
             catch ( ServiceException e )
             {
@@ -212,11 +209,10 @@ public class AsyncRtmAuthenticator
    
    
 
-   public AsyncRtmAuthenticator( AuthenticatorActivity activity,
-      ServiceImpl service )
+   public AsyncRtmAuthenticator( AuthenticatorActivity activity )
+      throws ServiceInternalException
    {
-      this.activity = activity;
-      this.rtmServiceImpl = service;
+      this.rtmService = createService( activity );
    }
    
 
@@ -235,38 +231,38 @@ public class AsyncRtmAuthenticator
    
 
 
-   public void beginAuthentication( Perms permission )
+   public void beginAuthentication( AuthenticatorActivity activity, Perms permission )
    {
       if ( runningTask != null && !( runningTask instanceof BeginAuthTask ) )
       {
          cancelExecution();
       }
       
-      runningTask = new BeginAuthTask( activity, rtmServiceImpl ).execute( permission );
+      runningTask = new BeginAuthTask( activity, rtmService ).execute( permission );
    }
    
 
 
-   public void completeAuthentication()
+   public void completeAuthentication( AuthenticatorActivity activity )
    {
       if ( runningTask != null && !( runningTask instanceof CompleteAuthTask ) )
       {
          cancelExecution();
       }
       
-      runningTask = new CompleteAuthTask( activity, rtmServiceImpl ).execute();
+      runningTask = new CompleteAuthTask( activity, rtmService ).execute();
    }
    
 
 
-   public void checkAuthToken( String authToken )
+   public void checkAuthToken( AuthenticatorActivity activity, String authToken )
    {
       if ( runningTask != null && !( runningTask instanceof CheckAuthTokenTask ) )
       {
          cancelExecution();
       }
       
-      runningTask = new CheckAuthTokenTask( activity, rtmServiceImpl ).execute( authToken );
+      runningTask = new CheckAuthTokenTask( activity, rtmService ).execute( authToken );
    }
    
 
@@ -279,5 +275,17 @@ public class AsyncRtmAuthenticator
       }
       else
          return e.getMessage();
+   }
+   
+
+
+   private Service createService( AuthenticatorActivity activity ) throws ServiceInternalException
+   {
+      final ApplicationInfo applicationInfo = new ApplicationInfo( MolokoApp.getRtmApiKey( activity ),
+                                                                   MolokoApp.getRtmSharedSecret( activity ),
+                                                                   activity.getString( R.string.app_name ),
+                                                                   null );
+      
+      return ServiceImpl.getInstance( activity, applicationInfo );
    }
 }

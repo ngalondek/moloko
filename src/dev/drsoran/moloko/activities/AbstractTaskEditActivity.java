@@ -36,6 +36,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -334,6 +335,16 @@ abstract class AbstractTaskEditActivity extends Activity
                                            KeyEvent event )
             {
                return onDueEdit( actionId );
+            }
+         } );
+         
+         recurrEdit.setOnEditorActionListener( new OnEditorActionListener()
+         {
+            public boolean onEditorAction( TextView v,
+                                           int actionId,
+                                           KeyEvent event )
+            {
+               return onRecurrenceEdit( actionId );
             }
          } );
          
@@ -762,8 +773,7 @@ abstract class AbstractTaskEditActivity extends Activity
 
    private boolean onDueEdit( int actionId )
    {
-      if ( actionId == EditorInfo.IME_ACTION_DONE
-         | actionId == EditorInfo.IME_NULL )
+      if ( hasImeClosed( actionId ) )
       {
          final String dueStr = dueEdit.getText().toString();
          
@@ -820,6 +830,42 @@ abstract class AbstractTaskEditActivity extends Activity
    
 
 
+   private boolean onRecurrenceEdit( int actionId )
+   {
+      if ( hasImeClosed( actionId ) )
+      {
+         final String estimateStr = recurrEdit.getText().toString();
+         
+         if ( !TextUtils.isEmpty( estimateStr ) )
+         {
+            final Pair< String, Boolean > res = RecurrenceParsing.parseRecurrence( estimateStr );
+            
+            if ( res != null )
+            {
+               onRecurrenceEdited( res.first, res.second.booleanValue() );
+               refreshRecurrence( recurrEdit );
+            }
+            else
+            {
+               Toast.makeText( this,
+                               getString( R.string.task_edit_validate_due,
+                                          estimateStr ),
+                               Toast.LENGTH_SHORT ).show();
+               return true;
+            }
+         }
+         else
+         {
+            onRecurrenceEdited( null, false );
+            refreshRecurrence( recurrEdit );
+         }
+      }
+      
+      return false;
+   }
+   
+
+
    public void onEstimate( View v )
    {
       pickerDlg = createEstimatePicker();
@@ -848,8 +894,7 @@ abstract class AbstractTaskEditActivity extends Activity
 
    private boolean onEstimateEdit( int actionId )
    {
-      if ( actionId == EditorInfo.IME_ACTION_DONE
-         | actionId == EditorInfo.IME_NULL )
+      if ( hasImeClosed( actionId ) )
       {
          String estStr = estimateEdit.getText().toString();
          
@@ -1386,5 +1431,13 @@ abstract class AbstractTaskEditActivity extends Activity
       }
       
       return modifications;
+   }
+   
+
+
+   private boolean hasImeClosed( int actionId )
+   {
+      return actionId == EditorInfo.IME_ACTION_DONE
+         | actionId == EditorInfo.IME_NULL;
    }
 }

@@ -251,7 +251,7 @@
                   android:inputType="none"
                   android:imeOptions="actionDone"
                   android:selectAllOnFocus="true"
-                  android:enabled="false" />
+                  android:enabled="true" />
 
                <ImageButton
                   android:id="@+id/task_edit_recurrence_btn_picker"

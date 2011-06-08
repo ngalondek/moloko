@@ -1,3 +1,4 @@
+// de
 grammar Recurrence;
 
 @option
@@ -7,7 +8,7 @@ grammar Recurrence;
 
 @header
 {
-   package dev.drsoran.moloko.grammar;
+   package dev.drsoran.moloko.grammar.de;
 
    import java.text.ParseException;
    import java.text.SimpleDateFormat;
@@ -27,7 +28,7 @@ grammar Recurrence;
 
 @lexer::header
 {
-   package dev.drsoran.moloko.grammar;
+   package dev.drsoran.moloko.grammar.de;
 }
 
 
@@ -38,7 +39,7 @@ grammar Recurrence;
       super( null );
    }
 
-   private final static Locale LOCALE = Locale.ENGLISH;
+   private final static Locale LOCALE = Locale.GERMAN;
 
    private final static class CmpWeekday implements Comparator< String >
    {
@@ -72,46 +73,8 @@ grammar Recurrence;
       }
    }
 
-
-
-   private final static class CmpOperators implements Comparator< String >
-   {
-      private final static int operatorToInt( String operator )
-      {
-         if ( operator.startsWith( RecurrencePatternParser.OP_FREQ_LIT ) )
-            return 1;
-         else if ( operator.startsWith( RecurrencePatternParser.OP_INTERVAL_LIT ) )
-            return 2;
-         else if ( operator.startsWith( RecurrencePatternParser.OP_BYDAY_LIT ) )
-            return 3;
-         else if ( operator.startsWith( RecurrencePatternParser.OP_BYMONTHDAY_LIT ) )
-            return 3;
-         else if ( operator.startsWith( RecurrencePatternParser.OP_BYMONTH_LIT ) )
-            return 4;
-         else if ( operator.startsWith( RecurrencePatternParser.OP_UNTIL_LIT ) )
-            return 5;
-         else if ( operator.startsWith( RecurrencePatternParser.OP_COUNT_LIT ) )
-            return 5;
-         else
-            return Integer.MAX_VALUE;
-      }
-
-
-
-      public int compare( String op1, String op2 )
-      {
-         return operatorToInt( op1 ) - operatorToInt( op2 );
-      }
-   }
-
-
-
    private final static CmpWeekday CMP_WEEKDAY  = new CmpWeekday();
-
-   public final static CmpOperators CMP_OPERATORS = new CmpOperators();
-
-
-
+   
    private final static < E > String join( String delim, Iterable< E > values )
    {
       StringBuilder result = new StringBuilder();
@@ -136,7 +99,7 @@ grammar Recurrence;
 parseRecurrence returns[Map< String, Object > res]
    @init
    {
-      res                               = new TreeMap< String, Object >( CMP_OPERATORS );
+      res                               = new TreeMap< String, Object >( RecurrencePatternParser.CMP_OPERATORS );
       Boolean isEvery                   = Boolean.FALSE;
 
       final TreeSet< String >  weekdays = new TreeSet< String >( CMP_WEEKDAY );
@@ -162,46 +125,38 @@ parseRecurrence returns[Map< String, Object > res]
         interval=parse_Number?
         (
             DAYS                                               { freq = RecurrencePatternParser.VAL_DAILY_LIT;  }
-          | (
-                 WEEKS
-               | BIWEEKLY
-                 {
-                    interval = 2;
-                 }
-             )                                                 { freq = RecurrencePatternParser.VAL_WEEKLY_LIT; }
-             (ON? THE? recurr_WD[weekdays, ""]
+          | WEEKS                                              { freq = RecurrencePatternParser.VAL_WEEKLY_LIT; }
+             (ON?  recurr_WD[weekdays, ""]
                    {
                       resolution    = RecurrencePatternParser.OP_BYDAY_LIT;
                       resolutionVal = join( ",", weekdays );
                    }
              )?
           | MONTHS                                             { freq = RecurrencePatternParser.VAL_MONTHLY_LIT;}
-             (ON? THE? r=recurr_Monthly[weekdays, ints]
-                       {
-                          freq          = r.freq;
-                          interval      = r.interval;
-                          resolution    = r.resolution;
-                          resolutionVal = r.resolutionVal;
-                       }
+             (ON?  r=recurr_Monthly[weekdays, ints]
+                   {
+                      freq          = r.freq;
+                      interval      = r.interval;
+                      resolution    = r.resolution;
+                      resolutionVal = r.resolutionVal;
+                   }
              )?
           | YEARS                                              { freq = RecurrencePatternParser.VAL_YEARLY_LIT; }
-             (ON? THE? r=recurr_Monthly[weekdays, ints]
-                       {
-                          freq          = r.freq;
-                          interval      = r.interval;
-                          resolution    = r.resolution;
-                          resolutionVal = r.resolutionVal;
-                       }
-                       { r.hasWD }?=> (
-                                        (IN | OF)?
-                                         m=parse_Month
-                                         {
-                                            freq     = RecurrencePatternParser.VAL_YEARLY_LIT;
-                                            interval = 1;
-                                            res.put( RecurrencePatternParser.OP_BYMONTH_LIT, Integer.toString( m ) );
-                                         }
-                                      )?
-       )?
+             (ON?  r=recurr_Monthly[weekdays, ints]
+                   {
+                      freq          = r.freq;
+                      interval      = r.interval;
+                      resolution    = r.resolution;
+                      resolutionVal = r.resolutionVal;
+                   }
+                   { r.hasWD }?=> ( (ON)? m=parse_Month
+                                          {
+                                             freq     = RecurrencePatternParser.VAL_YEARLY_LIT;
+                                             interval = 1;
+                                             res.put( RecurrencePatternParser.OP_BYMONTH_LIT, Integer.toString( m ) );
+                                          }
+                                   )?
+              )?
    )
    | recurr_Xst[ints]
      {
@@ -313,7 +268,7 @@ recurr_Monthly [Set< String >  weekdays,
    }
 
 parse_Xst returns [int number]
-   : n=INT (DOT|ST_S)?
+   : n=INT (DOT)?
    {
       number = Integer.parseInt( $n.text );
 
@@ -413,94 +368,84 @@ parse_Month returns [int number]
 
 // TOKENS
 
-EVERY         : 'every' | 'each';
+EVERY         : 'jede'('s'|'r')? | 'alle';
 
-AFTER         : 'after';
+AFTER         : 'nach';
 
-BIWEEKLY      : 'fortnight' | 'biweekly';
+YEARS         : 'jahr''e'?;
 
-YEARS         : 'years' | 'year' | 'yrs' | 'yr';
+MONTHS        : 'monat''e'?;
 
-MONTHS        : 'months' | 'month' | 'mons' | 'mon';
+WEEKS         : 'woche''n'?;
 
-WEEKS         : 'weeks' | 'week' | 'wks' | 'wk';
+DAYS          : 'tag''e'?;
 
-DAYS          : 'days' | 'day';
+MONTH         : 'januar'    | 'jan'  | 'februar'  | 'feb'     | 'märz'  | 'april'    | 'apr'   |
+                'mai'       | 'juni' | 'jun'      | 'juli'    | 'jul'   | 'august'   | 'aug'   |
+                'september' | 'sept' | 'sep'      | 'oktober' | 'okt'   | 'november' | 'nov'   |
+                'dezember'  | 'dez';
 
-MONTH         : 'january'   | 'jan'  | 'february' | 'feb'     | 'march' | 'mar'      | 'april' | 'apr' |
-                'may'       | 'june' | 'jun'      | 'july'    | 'jul'   | 'august'   | 'aug'   |
-                'september' | 'sept' | 'sep'      | 'october' | 'oct'   | 'november' | 'nov'   |
-                'december'  | 'dec';
+WEEKDAY_LIT   : 'wochentags';
 
-WEEKDAY_LIT   : 'weekday''s'?;
+WEEKEND       : 'wochenende''n'?;
 
-WEEKEND       : 'weekend''s'?;
+MONDAY        : 'montag''s'?     | 'mo';
 
-MONDAY        : 'monday'    | 'mon';
+TUESDAY       : 'dienstag''s'?   | 'di';
 
-TUESDAY       : 'tuesday'   | 'tue';
+WEDNESDAY     : 'mittwoch''s'?   | 'mi';
 
-WEDNESDAY     : 'wednesday' | 'wed';
+THURSDAY      : 'donnerstag''s'? | 'do';
 
-THURSDAY      : 'thursday'  | 'thu';
+FRIDAY        : 'freitag''s'?    | 'fr';
 
-FRIDAY        : 'friday'    | 'fri';
+SATURDAY      : 'samstag''s'?    | 'sa';
 
-SATURDAY      : 'saturday'  | 'sat';
+SUNDAY        : 'sonntag''s'?    | 'so';
 
-SUNDAY        : 'sunday'    | 'sun';
+FIRST         : 'erst'('e'|'s'|'r');
 
-FIRST         : 'first';
+SECOND        : 'zweit'('e'|'s'|'r');
 
-SECOND        : 'second';
+THIRD         : 'dritt'('e'|'s'|'r');
 
-THIRD         : 'third';
+FOURTH        : 'viert'('e'|'s'|'r');
 
-FOURTH        : 'fourth';
+FIFTH         : 'fünft'('e'|'s'|'r');
 
-FIFTH         : 'fifth';
+LAST          : 'letzt'('e'|'s'|'r');
 
-LAST          : 'last';
+OTHER         : 'ander'('e'|'es'|'er');
 
-OTHER         : 'other';
+NUM_ONE       : 'eins';
 
-ST_S          : 'st' | 'nd' | 'rd' | 'th';
+NUM_TWO       : 'zwei';
 
-NUM_ONE       : 'one';
+NUM_THREE     : 'frei';
 
-NUM_TWO       : 'two';
+NUM_FOUR      : 'vier';
 
-NUM_THREE     : 'three';
+NUM_FIVE      : 'fünf';
 
-NUM_FOUR      : 'four';
+NUM_SIX       : 'sechs';
 
-NUM_FIVE      : 'five';
+NUM_SEVEN     : 'sieben';
 
-NUM_SIX       : 'six';
+NUM_EIGHT     : 'acht';
 
-NUM_SEVEN     : 'seven';
+NUM_NINE      : 'neun';
 
-NUM_EIGHT     : 'eight';
+NUM_TEN       : 'zehn';
 
-NUM_NINE      : 'nine';
+AND           : 'und';
 
-NUM_TEN       : 'ten';
+ON            : 'a'('m'|'n') | 'i'('n'|'m') | 'de'('s'|'r') | 'vo'('n'|'m');
 
-AND           : 'and';
+UNTIL         : 'bis' STRING;
 
-IN            : 'in';
+FOR           : 'für';
 
-ON            : 'on';
-
-OF            : 'of';
-
-THE           : 'the';
-
-UNTIL         : 'until' STRING;
-
-FOR           : 'for';
-
-TIMES         : 'times';
+TIMES         : 'mal';
 
 DOT           : '.';
 

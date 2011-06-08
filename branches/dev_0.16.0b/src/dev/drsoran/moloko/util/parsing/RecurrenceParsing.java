@@ -39,10 +39,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.grammar.RecurrenceLexer;
-import dev.drsoran.moloko.grammar.RecurrenceParser;
 import dev.drsoran.moloko.grammar.RecurrencePatternLexer;
 import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+import dev.drsoran.moloko.grammar.en.RecurrenceLexer;
+import dev.drsoran.moloko.grammar.en.RecurrenceParser;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 
 
@@ -158,7 +158,7 @@ public final class RecurrenceParsing
    public final static String ensureRecurrencePatternOrder( String recurrencePattern )
    {
       final String[] operators = recurrencePattern.split( RecurrencePatternParser.OPERATOR_SEP );
-      Arrays.sort( operators, RecurrenceParser.CMP_OPERATORS );
+      Arrays.sort( operators, RecurrencePatternParser.CMP_OPERATORS );
       
       return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
    }

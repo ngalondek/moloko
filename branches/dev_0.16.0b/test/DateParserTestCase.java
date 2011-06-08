@@ -21,12 +21,12 @@ public class DateParserTestCase
 
 
    public static void parseDate( String string,
-                                  int d,
-                                  int m,
-                                  int y,
-                                  int h,
-                                  int min,
-                                  int s )
+                                 int d,
+                                 int m,
+                                 int y,
+                                 int h,
+                                 int min,
+                                 int s )
    {
       final DateTimeLexer lexer = new DateTimeLexer( new ANTLRNoCaseStringStream( string ) );
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
@@ -107,7 +107,6 @@ public class DateParserTestCase
       if ( error )
          System.err.println( "Parsing failed!" );
       
-      
       System.out.println( string + ": " + cal.getTimeInMillis() );
       System.out.println( string + ": " + cal.getTime() );
       System.out.println( string + " has time: " + cal.hasTime() );
@@ -141,15 +140,15 @@ public class DateParserTestCase
 
 
    public static void parseDateWithin( String string,
-                                        boolean past,
-                                        int sy,
-                                        int sm,
-                                        int sw,
-                                        int sd,
-                                        int ey,
-                                        int em,
-                                        int ew,
-                                        int ed )
+                                       boolean past,
+                                       int sy,
+                                       int sm,
+                                       int sw,
+                                       int sd,
+                                       int ey,
+                                       int em,
+                                       int ew,
+                                       int ed )
    {
       final DateTimeLexer lexer = new DateTimeLexer( new ANTLRNoCaseStringStream( string ) );
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
@@ -168,21 +167,29 @@ public class DateParserTestCase
          
          System.out.println( string + "_start: " + start.getTimeInMillis() );
          System.out.println( string + "_start: " + start.getTime() );
-         System.out.println( string + "_start has time: "
-                             + start.hasTime() );
+         System.out.println( string + "_start has time: " + start.hasTime() );
          
          System.out.println( string + "_end: " + end.getTimeInMillis() );
          System.out.println( string + "_end: " + end.getTime() );
-         System.out.println( string + "_end has time: "
-                             + end.hasTime() );
+         System.out.println( string + "_end has time: " + end.hasTime() );
          
-         Asserts.assertEquals( start.get( Calendar.DAY_OF_YEAR ), sd, "Day is wrong." );
-         Asserts.assertEquals( start.get( Calendar.WEEK_OF_YEAR ), sw, "Week is wrong." );
-         Asserts.assertEquals( start.get( Calendar.MONTH ), sm, "Month is wrong." );
+         Asserts.assertEquals( start.get( Calendar.DAY_OF_YEAR ),
+                               sd,
+                               "Day is wrong." );
+         Asserts.assertEquals( start.get( Calendar.WEEK_OF_YEAR ),
+                               sw,
+                               "Week is wrong." );
+         Asserts.assertEquals( start.get( Calendar.MONTH ),
+                               sm,
+                               "Month is wrong." );
          Asserts.assertEquals( start.get( Calendar.YEAR ), sy, "Year is wrong." );
          
-         Asserts.assertEquals( end.get( Calendar.DAY_OF_YEAR ), ed, "Day is wrong." );
-         Asserts.assertEquals( end.get( Calendar.WEEK_OF_YEAR ), ew, "Week is wrong." );
+         Asserts.assertEquals( end.get( Calendar.DAY_OF_YEAR ),
+                               ed,
+                               "Day is wrong." );
+         Asserts.assertEquals( end.get( Calendar.WEEK_OF_YEAR ),
+                               ew,
+                               "Week is wrong." );
          Asserts.assertEquals( end.get( Calendar.MONTH ), em, "Month is wrong." );
          Asserts.assertEquals( end.get( Calendar.YEAR ), ey, "Year is wrong." );
       }
@@ -192,8 +199,20 @@ public class DateParserTestCase
       }
    }
    
+
+
    public final static void execute()
    {
+      {
+         final Calendar cal = Calendar.getInstance();
+         parseDate( "now",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    cal.get( Calendar.HOUR_OF_DAY ),
+                    cal.get( Calendar.MINUTE ),
+                    cal.get( Calendar.SECOND ) );
+      }
       {
          final MolokoCalendar cal = DateParser.getCalendar();
          parseDate( "today",
@@ -237,7 +256,9 @@ public class DateParserTestCase
          final MolokoCalendar cal = DateParser.getCalendar();
          cal.set( Calendar.DAY_OF_WEEK, Calendar.MONDAY );
          
-         if ( cal.before( DateParser.getCalendar() ) )
+         final MolokoCalendar now = DateParser.getCalendar();
+         
+         if ( cal.get( Calendar.DAY_OF_YEAR ) < now.get( Calendar.DAY_OF_YEAR ) )
             cal.roll( Calendar.WEEK_OF_YEAR, true );
          
          // due to "next" Monday
@@ -479,7 +500,7 @@ public class DateParserTestCase
          final MolokoCalendar end = DateParser.getCalendar();
          end.set( Calendar.YEAR, 2010 );
          end.set( Calendar.MONTH, Calendar.JULY );
-         end.set( Calendar.DAY_OF_MONTH, 3 );         
+         end.set( Calendar.DAY_OF_MONTH, 3 );
          end.add( Calendar.WEEK_OF_YEAR, -2 );
          
          final MolokoCalendar start = DateParser.getCalendar();

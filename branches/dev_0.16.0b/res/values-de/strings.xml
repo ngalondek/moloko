@@ -327,6 +327,7 @@
       <string name="auth_err_cause_inv_auth_token">Ungüliges Auth-Token empfangen</string>
       <string name="auth_err_cause_scurity">Sicherheitsverletzung. </string>
       <string name="auth_err_cause_inv_login_url">Ungültige Login-URL empfangen</string>
+      <string name="auth_err_cause_no_service">Es trat ein Fehler beim Erstellen der RTM-Service Verbindung auf</string>
       
    <!-- AccountPreferences + activity -->
    <string name="acc_pref_title">Allgemeine Einstellungen</string>

@@ -1,9 +1,10 @@
 // en
 grammar Recurrence;
 
-@option
+options
 {
    language=Java;
+   superClass=AbstractRecurrenceParser;
 }
 
 @header
@@ -13,14 +14,11 @@ grammar Recurrence;
    import java.text.ParseException;
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
-   import java.util.Comparator;
    import java.util.Map;
-   import java.util.Iterator;
    import java.util.Locale;
    import java.util.Set;
-   import java.util.TreeSet;
-   import java.util.TreeMap;
 
+   import dev.drsoran.moloko.grammar.AbstractRecurrenceParser;
    import dev.drsoran.moloko.util.MolokoCalendar;
    import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
    import dev.drsoran.moloko.grammar.RecurrencePatternParser;
@@ -40,85 +38,18 @@ grammar Recurrence;
    }
 
    private final static Locale LOCALE = Locale.ENGLISH;
-
-   private final static class CmpWeekday implements Comparator< String >
-   {
-      private final static int weekdayToInt( String wd )
-      {
-         // only take the last 2 chars, the leading chars can be
-         // Xst values.
-         final String weekday = wd.substring( wd.length() - 2 );
-
-         if ( weekday.equals( RecurrencePatternParser.BYDAY_MON ) )
-            return 1;
-         else if ( weekday.equals( RecurrencePatternParser.BYDAY_TUE ) )
-            return 2;
-         else if ( weekday.equals( RecurrencePatternParser.BYDAY_WED ) )
-            return 3;
-         else if ( weekday.equals( RecurrencePatternParser.BYDAY_THU ) )
-            return 4;
-         else if ( weekday.equals( RecurrencePatternParser.BYDAY_FRI ) )
-            return 5;
-         else if ( weekday.equals( RecurrencePatternParser.BYDAY_SAT ) )
-            return 6;
-         else if ( weekday.equals( RecurrencePatternParser.BYDAY_SUN ) )
-            return 7;
-         else
-            return 1;
-      }
-
-      public int compare( String wd1, String wd2 )
-      {
-         return weekdayToInt( wd1 ) - weekdayToInt( wd2 );
-      }
-   }
-
-   private final static CmpWeekday CMP_WEEKDAY  = new CmpWeekday();
-   
-   private final static < E > String join( String delim, Iterable< E > values )
-   {
-      StringBuilder result = new StringBuilder();
-
-      final Iterator< E > i = values.iterator();
-
-      for ( boolean hasNext = i.hasNext(); hasNext; )
-      {
-         result.append( i.next() );
-         hasNext = i.hasNext();
-
-         if ( hasNext )
-            result.append( delim );
-      }
-
-      return result.toString();
-   }
 }
 
 // RULES
 
-parseRecurrence returns[Map< String, Object > res]
+parseRecurrence returns[Map< String, Object > res]   
    @init
    {
-      res                               = new TreeMap< String, Object >( RecurrencePatternParser.CMP_OPERATORS );
-      Boolean isEvery                   = Boolean.FALSE;
-
-      final TreeSet< String >  weekdays = new TreeSet< String >( CMP_WEEKDAY );
-      final TreeSet< Integer > ints     = new TreeSet< Integer >();
-
-      interval                          = 1;
-      String freq                       = null;
-      String resolution                 = null;
-      String resolutionVal              = null;
+   	startParseRecurrence();
    }
    @after
    {
-      res.put( RecurrencePatternParser.OP_FREQ_LIT, freq );
-      res.put( RecurrencePatternParser.OP_INTERVAL_LIT, new Integer( interval ) );
-
-      if ( resolution != null && resolutionVal != null )
-         res.put( resolution, resolutionVal );
-
-      res.put( RecurrencePatternParser.IS_EVERY, isEvery );
+      finishedParseRecurrence();
    }
    : (EVERY { isEvery = Boolean.TRUE; } | AFTER)?
      (

@@ -18,67 +18,117 @@
 		<link>
 			<name>src/Asserts.java</name>
 			<type>1</type>
-			<location>Moloko/test/Asserts.java</location>
+			<locationURI>Moloko/test/Asserts.java</locationURI>
 		</link>
 		<link>
 			<name>src/DateParserTestCase.java</name>
 			<type>1</type>
-			<location>Moloko/test/DateParserTestCase.java</location>
+			<locationURI>Moloko/test/DateParserTestCase.java</locationURI>
 		</link>
 		<link>
 			<name>src/Main.java</name>
 			<type>1</type>
-			<location>Moloko/test/Main.java</location>
+			<locationURI>Moloko/test/Main.java</locationURI>
 		</link>
 		<link>
-			<name>src/RecurrenceTestCase.java</name>
+			<name>src/RecurrencePatternTestCase.java</name>
 			<type>1</type>
-			<location>Moloko/test/RecurrenceTestCase.java</location>
+			<locationURI>Moloko/test/recurrence/RecurrencePatternTestCase.java</locationURI>
+		</link>
+		<link>
+			<name>src/RecurrenceTestCase_de.java</name>
+			<type>1</type>
+			<locationURI>Moloko/test/recurrence/RecurrenceTestCase_de.java</locationURI>
+		</link>
+		<link>
+			<name>src/RecurrenceTestCase_en.java</name>
+			<type>1</type>
+			<locationURI>Moloko/test/recurrence/RecurrenceTestCase_en.java</locationURI>
+		</link>
+		<link>
+			<name>src/RecurrenceTestHelper.java</name>
+			<type>1</type>
+			<locationURI>Moloko/test/recurrence/RecurrenceTestHelper.java</locationURI>
 		</link>
 		<link>
 			<name>src/TimeParserTestCase.java</name>
 			<type>1</type>
-			<location>Moloko/test/TimeParserTestCase.java</location>
+			<locationURI>Moloko/test/TimeParserTestCase.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/AbstractRecurrenceParser.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/AbstractRecurrenceParser.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/DateParser.java</name>
 			<type>1</type>
-			<location>Moloko/src/dev/drsoran/moloko/grammar/DateParser.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/DateParser.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/DateTimeLexer.java</name>
 			<type>1</type>
-			<location>Moloko/src/dev/drsoran/moloko/grammar/DateTimeLexer.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/DateTimeLexer.java</locationURI>
 		</link>
 		<link>
-			<name>src/dev/drsoran/moloko/grammar/en/RecurrenceLexer.java</name>
+			<name>src/dev/drsoran/moloko/grammar/IRecurrenceParser.java</name>
 			<type>1</type>
-			<location>Moloko/src/dev/drsoran/moloko/grammar/en/RecurrenceLexer.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/IRecurrenceParser.java</locationURI>
 		</link>
 		<link>
-			<name>src/dev/drsoran/moloko/grammar/en/RecurrenceParser.java</name>
+			<name>src/dev/drsoran/moloko/grammar/RecurrenceParserFactory.java</name>
 			<type>1</type>
-			<location>Moloko/src/dev/drsoran/moloko/grammar/en/RecurrenceParser.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/RecurrenceParserFactory.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/RecurrencePatternLexer.java</name>
 			<type>1</type>
-			<location>Moloko/src/dev/drsoran/moloko/grammar/RecurrencePatternLexer.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/RecurrencePatternLexer.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/RecurrencePatternParser.java</name>
 			<type>1</type>
-			<location>Moloko/src/dev/drsoran/moloko/grammar/RecurrencePatternParser.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/RecurrencePatternParser.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/TimeParser.java</name>
 			<type>1</type>
-			<location>Moloko/src/dev/drsoran/moloko/grammar/TimeParser.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/TimeParser.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/util/ANTLRNoCaseStringStream.java</name>
 			<type>1</type>
-			<location>Moloko/src/dev/drsoran/moloko/util/ANTLRNoCaseStringStream.java</location>
+			<locationURI>Moloko/src/dev/drsoran/moloko/util/ANTLRNoCaseStringStream.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/de/RecurrenceLexer.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/de/RecurrenceLexer.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/de/RecurrenceParser.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/de/RecurrenceParser.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/de/RecurrenceParserImpl.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/de/RecurrenceParserImpl.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/en/RecurrenceLexer.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/en/RecurrenceLexer.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/en/RecurrenceParser.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/en/RecurrenceParser.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/en/RecurrenceParserImpl.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/en/RecurrenceParserImpl.java</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

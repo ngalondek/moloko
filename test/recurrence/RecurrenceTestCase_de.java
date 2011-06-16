@@ -143,13 +143,13 @@ public class RecurrenceTestCase_de
                        RecurrencePatternParser.OP_BYDAY_LIT,
                        "3TU",
                        true );
-      parseRecurrence( "jeden monat am letzen montag",
+      parseRecurrence( "jeden monat am letzten montag",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
                        "-1MO",
                        true );
-      parseRecurrence( "jeden monat am 2. letzen freitag",
+      parseRecurrence( "jeden monat am 2. letzten freitag",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,

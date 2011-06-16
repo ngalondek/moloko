@@ -15,6 +15,7 @@ public class Main
       try
       {
          RecurrenceTestCase.execute();
+         RecurrencePatternTestCase.execute();
       }
       catch ( ParseException e )
       {

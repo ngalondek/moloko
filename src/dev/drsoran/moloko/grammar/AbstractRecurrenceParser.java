@@ -22,8 +22,12 @@
 
 package dev.drsoran.moloko.grammar;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -31,6 +35,9 @@ import java.util.TreeSet;
 import org.antlr.runtime.Parser;
 import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.TokenStream;
+
+import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 public abstract class AbstractRecurrenceParser extends Parser
@@ -70,12 +77,14 @@ public abstract class AbstractRecurrenceParser extends Parser
    
 
 
-   protected void startParseRecurrence()
+   protected Map< String, Object > startParseRecurrence()
    {
       clearState();
       res = new TreeMap< String, Object >( RecurrencePatternParser.CMP_OPERATORS );
       weekdays = new TreeSet< String >( CMP_WEEKDAY );
       ints = new TreeSet< Integer >();
+      
+      return res;
    }
    
 
@@ -91,9 +100,65 @@ public abstract class AbstractRecurrenceParser extends Parser
       res.put( RecurrencePatternParser.IS_EVERY, isEvery );
       
       final Map< String, Object > result = res;
+      
       clearState();
       
       return result;
+   }
+   
+
+
+   protected void setUntil( String tokenText )
+   {
+      final String dateTimeString = tokenText.toUpperCase()
+                                             .replaceFirst( RecurrencePatternParser.OP_UNTIL_LIT
+                                                               + "\\s*",
+                                                            "" );
+      
+      final MolokoCalendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
+      
+      if ( untilDate != null )
+      {
+         final SimpleDateFormat sdf = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
+         res.put( RecurrencePatternParser.OP_UNTIL_LIT,
+                  sdf.format( untilDate.getTime() ) );
+      }
+   }
+   
+
+
+   protected int limitMonthDay( int rawMonthDay )
+   {
+      if ( rawMonthDay < 1 )
+         return 1;
+      else if ( rawMonthDay > 31 )
+         return 31;
+      else
+         return rawMonthDay;
+   }
+   
+
+
+   protected int textMonthToMonthNumber( String textMonth, Locale locale )
+   {
+      int number;
+      
+      try
+      {
+         final SimpleDateFormat sdf = new SimpleDateFormat( "MMM", locale );
+         sdf.parse( textMonth );
+         
+         number = sdf.getCalendar().get( Calendar.MONTH );
+         
+         if ( number == 0 )
+            ++number;
+      }
+      catch ( ParseException e )
+      {
+         number = 1;
+      }
+      
+      return number;
    }
    
 

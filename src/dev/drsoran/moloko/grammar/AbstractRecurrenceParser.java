@@ -108,13 +108,8 @@ public abstract class AbstractRecurrenceParser extends Parser
    
 
 
-   protected void setUntil( String tokenText )
+   protected void setUntil( String dateTimeString )
    {
-      final String dateTimeString = tokenText.toUpperCase()
-                                             .replaceFirst( RecurrencePatternParser.OP_UNTIL_LIT
-                                                               + "\\s*",
-                                                            "" );
-      
       final MolokoCalendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
       
       if ( untilDate != null )

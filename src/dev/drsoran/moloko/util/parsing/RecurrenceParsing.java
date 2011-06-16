@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,10 +40,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.IRecurrenceParser;
+import dev.drsoran.moloko.grammar.RecurrenceParserFactory;
 import dev.drsoran.moloko.grammar.RecurrencePatternLexer;
 import dev.drsoran.moloko.grammar.RecurrencePatternParser;
-import dev.drsoran.moloko.grammar.en.RecurrenceLexer;
-import dev.drsoran.moloko.grammar.en.RecurrenceParser;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 
 
@@ -58,9 +59,7 @@ public final class RecurrenceParsing
    
    private static RecurrPatternLanguage lang;
    
-   private static RecurrenceLexer recurrenceLexer;
-   
-   private static RecurrenceParser recurrenceParser;
+   private static IRecurrenceParser recurrenceParser;
    
    
 
@@ -169,19 +168,13 @@ public final class RecurrenceParsing
    {
       Pair< String, Boolean > result;
       
-      if ( recurrenceLexer == null )
-         recurrenceLexer = new RecurrenceLexer();
-      
+      // TODO: Recreate when system language changed
       if ( recurrenceParser == null )
-         recurrenceParser = new RecurrenceParser();
-      
-      recurrenceLexer.setCharStream( new ANTLRStringStream( recurrence ) );
-      final CommonTokenStream antlrTokens = new CommonTokenStream( recurrenceLexer );
-      recurrenceParser.setTokenStream( antlrTokens );
+         recurrenceParser = RecurrenceParserFactory.createRecurrenceParserForLocale( Locale.getDefault() );
       
       try
       {
-         final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence();
+         final Map< String, Object > patternObjects = recurrenceParser.parseRecurrence( recurrence );
          final Boolean isEvery = (Boolean) patternObjects.remove( RecurrencePatternParser.IS_EVERY );
          result = Pair.create( joinRecurrencePattern( patternObjects ), isEvery );
       }

@@ -32,7 +32,7 @@ options
       super( null );
    }
 
-   private final static Locale LOCALE = Locale.ENGLISH;
+   private final static Locale LOCALE = Locale.ENGLISH;  
 }
 
 // RULES
@@ -119,7 +119,7 @@ parseRecurrence returns[Map< String, Object > res]
    (
         until=UNTIL
         {
-           setUntil( $until.text );
+           setUntil( $until.text.replaceFirst( "until\\s*", "" ) );
         }
       | FOR count=INT
         {

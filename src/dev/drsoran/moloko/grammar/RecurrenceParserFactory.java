@@ -40,28 +40,30 @@ public final class RecurrenceParserFactory
 
    public final static IRecurrenceParser createRecurrenceParserForLocale( Locale locale )
    {
-      IRecurrenceParser parser;
+      IRecurrenceParser parser = null;
       
-      final String langCodePlusVariant = getLangCodeAndVariant( locale );
+      if ( locale.getVariant() != null && locale.getVariant().length() > 0 )
+      {
+         final String langCodePlusVariant = getLangCodeAndVariant( locale );
+         
+         parser = getParserInstanceForPackage( GRAMMAR_PACKAGE_NAME + "."
+            + langCodePlusVariant );
+      }
       
-      Class packageForLocale = Package.getPackage( GRAMMAR_PACKAGE_NAME + "."
-         + langCodePlusVariant );
-      
-      if ( packageForLocale == null )
-         packageForLocale = Package.getPackage( GRAMMAR_PACKAGE_NAME + "."
+      if ( parser == null )
+         parser = getParserInstanceForPackage( GRAMMAR_PACKAGE_NAME + "."
             + locale.getLanguage() );
       
-      if ( packageForLocale == null )
-         packageForLocale = getBestMatchingPackageForLangCode( locale.getLanguage() );
-      
-      if ( packageForLocale == null )
+      if ( parser == null )
       {
-         parser = new dev.drsoran.moloko.grammar.en.RecurrenceParserImpl();
-      }
-      else
-      {
+         final Package bestMatchPackage = getBestMatchingPackageForLangCode( locale.getLanguage() );
          
+         if ( bestMatchPackage != null )
+            parser = getParserInstanceForPackage( bestMatchPackage.getName() );
       }
+      
+      if ( parser == null )
+         parser = getParserInstanceForPackage( GRAMMAR_PACKAGE_NAME + ".en" );
       
       return parser;
    }
@@ -71,6 +73,29 @@ public final class RecurrenceParserFactory
    private final static String getLangCodeAndVariant( Locale locale )
    {
       return ( locale.getLanguage() + "_" + locale.getVariant() ).toLowerCase();
+   }
+   
+
+
+   private final static IRecurrenceParser getParserInstanceForPackage( String packageName )
+   {
+      IRecurrenceParser instance = null;
+      
+      try
+      {
+         final Class< ? > classForPackage = Class.forName( packageName
+            + ".RecurrenceParserImpl" );
+         
+         final Object o = classForPackage.newInstance();
+         
+         if ( o instanceof IRecurrenceParser )
+            instance = (IRecurrenceParser) o;
+      }
+      catch ( Throwable e )
+      {
+      }
+      
+      return instance;
    }
    
 

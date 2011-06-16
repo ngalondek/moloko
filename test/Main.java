@@ -10,12 +10,13 @@ public class Main
     */
    public static void main( String[] args )
    {
-      DateParserTestCase.execute();
-      TimeParserTestCase.execute();
+      //DateParserTestCase.execute();
+      //TimeParserTestCase.execute();
       try
       {
-         RecurrenceTestCase.execute();
-         RecurrencePatternTestCase.execute();
+         //RecurrenceTestCase_en.execute();
+         RecurrenceTestCase_de.execute();
+         //RecurrencePatternTestCase.execute();
       }
       catch ( ParseException e )
       {

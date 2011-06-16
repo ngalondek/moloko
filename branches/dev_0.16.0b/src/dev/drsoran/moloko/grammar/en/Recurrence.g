@@ -11,16 +11,11 @@ options
 {
    package dev.drsoran.moloko.grammar.en;
 
-   import java.text.ParseException;
-   import java.text.SimpleDateFormat;
-   import java.util.Calendar;
    import java.util.Map;
    import java.util.Locale;
    import java.util.Set;
 
    import dev.drsoran.moloko.grammar.AbstractRecurrenceParser;
-   import dev.drsoran.moloko.util.MolokoCalendar;
-   import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
    import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 }
 
@@ -42,18 +37,18 @@ options
 
 // RULES
 
-parseRecurrence returns[Map< String, Object > res]   
+parseRecurrence returns[Map< String, Object > res]
    @init
    {
-   	startParseRecurrence();
+   	res = startParseRecurrence();
    }
    @after
    {
-      finishedParseRecurrence();
+      res = finishedParseRecurrence();
    }
    : (EVERY { isEvery = Boolean.TRUE; } | AFTER)?
-     (
-        interval=parse_Number?
+     (        
+        parse_Interval_Number_or_Text?
         (
             DAYS                                               { freq = RecurrencePatternParser.VAL_DAILY_LIT;  }
           | (
@@ -124,18 +119,7 @@ parseRecurrence returns[Map< String, Object > res]
    (
         until=UNTIL
         {
-           final String dateTimeString = until.getText()
-                                              .toUpperCase()
-                                              .replaceFirst( RecurrencePatternParser.OP_UNTIL_LIT +  "\\s*",
-                                                             "" );
-
-           final MolokoCalendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
-
-           if ( untilDate != null )
-           {
-              final SimpleDateFormat sdf = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
-              res.put( RecurrencePatternParser.OP_UNTIL_LIT, sdf.format( untilDate.getTime() ) );
-           }
+           setUntil( $until.text );
         }
       | FOR count=INT
         {
@@ -209,12 +193,7 @@ recurr_Monthly [Set< String >  weekdays,
 parse_Xst returns [int number]
    : n=INT (DOT|ST_S)?
    {
-      number = Integer.parseInt( $n.text );
-
-      if ( number < 1 )
-         number = 1;
-      else if ( number > 31 )
-         number = 31;
+      number = limitMonthDay( Integer.parseInt( $n.text ) );
    }
    | FIRST            { number = 1; }
    | (SECOND | OTHER) { number = 2; }
@@ -231,26 +210,26 @@ parse_Xst returns [int number]
       return 1;
    }
 
-parse_Number returns [int number]
-   : n=INT      { number = Integer.parseInt( $n.text ); }
-   | NUM_ONE    { number = 1; }
-   | NUM_TWO    { number = 2; }
-   | NUM_THREE  { number = 3; }
-   | NUM_FOUR   { number = 4; }
-   | NUM_FIVE   { number = 5; }
-   | NUM_SIX    { number = 6; }
-   | NUM_SEVEN  { number = 7; }
-   | NUM_EIGHT  { number = 8; }
-   | NUM_NINE   { number = 9; }
-   | NUM_TEN    { number = 10; }
+parse_Interval_Number_or_Text
+   : n=INT      { interval = Integer.parseInt( $n.text ); }
+   | NUM_ONE    { interval = 1; }
+   | NUM_TWO    { interval = 2; }
+   | NUM_THREE  { interval = 3; }
+   | NUM_FOUR   { interval = 4; }
+   | NUM_FIVE   { interval = 5; }
+   | NUM_SIX    { interval = 6; }
+   | NUM_SEVEN  { interval = 7; }
+   | NUM_EIGHT  { interval = 8; }
+   | NUM_NINE   { interval = 9; }
+   | NUM_TEN    { interval = 10; }
    ;
    catch [ RecognitionException e ]
    {
-      return 1;
+      interval = 1;
    }
    catch [ NumberFormatException nfe ]
    {
-      return 1;
+      interval = 1;
    }
 
 parse_Weekday [Set< String > weekdays, String Xst, boolean strict] returns [String weekday]
@@ -284,20 +263,7 @@ parse_Weekday [Set< String > weekdays, String Xst, boolean strict] returns [Stri
 parse_Month returns [int number]
    : m=MONTH
    {
-      try
-      {
-         final SimpleDateFormat sdf = new SimpleDateFormat( "MMM", LOCALE );
-         sdf.parse( $m.text );
-
-         number = sdf.getCalendar().get( Calendar.MONTH );
-
-         if ( number == 0 )
-            ++number;
-      }
-      catch( ParseException e )
-      {
-         number = 1;
-      }
+      number = textMonthToMonthNumber( $m.text, LOCALE );
    }
    ;
    catch [ RecognitionException e ]

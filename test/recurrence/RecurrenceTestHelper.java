@@ -3,9 +3,9 @@ import java.util.Map;
 
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.grammar.IRecurrenceParser;
-import dev.drsoran.moloko.grammar.RecurrenceParserFactory;
-import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
+import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserFactory;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
 
 public class RecurrenceTestHelper

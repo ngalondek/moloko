@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
 
 public class RecurrenceTestCase_en

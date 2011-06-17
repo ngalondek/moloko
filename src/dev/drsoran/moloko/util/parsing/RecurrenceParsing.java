@@ -40,11 +40,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.grammar.IRecurrenceParser;
-import dev.drsoran.moloko.grammar.RecurrenceParserFactory;
-import dev.drsoran.moloko.grammar.RecurrencePatternLexer;
-import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
+import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
+import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserFactory;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternLexer;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
 
 public final class RecurrenceParsing
@@ -166,11 +166,29 @@ public final class RecurrenceParsing
 
    public synchronized final static Pair< String, Boolean > parseRecurrence( String recurrence )
    {
+      final List< IRecurrenceParser > parsers = RecurrenceParserFactory.getAvailableRecurrenceParsers();
+      Pair< String, Boolean > result = null;
+      
+      for ( IRecurrenceParser iRecurrenceParser : parsers )
+      {
+         result = parseRecurrence( recurrence, iRecurrenceParser.getLocale() );
+         if ( result != null )
+            break;
+      }
+      
+      return result;
+   }
+   
+
+
+   public synchronized final static Pair< String, Boolean > parseRecurrence( String recurrence,
+                                                                             Locale locale )
+   {
       Pair< String, Boolean > result;
       
-      // TODO: Recreate when system language changed
-      if ( recurrenceParser == null )
-         recurrenceParser = RecurrenceParserFactory.createRecurrenceParserForLocale( Locale.getDefault() );
+      if ( recurrenceParser == null
+         || recurrenceParser.getLocale().hashCode() != locale.hashCode() )
+         recurrenceParser = RecurrenceParserFactory.createRecurrenceParserForLocale( locale );
       
       try
       {

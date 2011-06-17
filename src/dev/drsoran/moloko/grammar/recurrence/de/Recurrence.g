@@ -31,7 +31,7 @@ options
       super( null );
    }
 
-   private final static Locale LOCALE = Locale.GERMAN;
+   public final static Locale LOCALE = Locale.GERMAN;
    
    protected String getUntilLiteral()
    {

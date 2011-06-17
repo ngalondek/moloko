@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.grammar;
+package dev.drsoran.moloko.grammar.recurrence;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

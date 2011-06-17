@@ -6,9 +6,9 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.grammar.RecurrencePatternLexer;
-import dev.drsoran.moloko.grammar.RecurrencePatternParser;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternLexer;
+import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
 
 /* 

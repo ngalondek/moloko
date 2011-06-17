@@ -1,6 +1,6 @@
 // $ANTLR 3.3 Nov 30, 2010 12:45:30 F:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\RecurrencePattern.g 2011-05-15 09:06:27
 
-package dev.drsoran.moloko.grammar;
+package dev.drsoran.moloko.grammar.recurrence;
 
 import org.antlr.runtime.BaseRecognizer;
 import org.antlr.runtime.CharStream;

@@ -20,32 +20,19 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.grammar.de;
+package dev.drsoran.moloko.grammar.recurrence;
 
+import java.util.Locale;
 import java.util.Map;
 
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.grammar.IRecurrenceParser;
-import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
-
-public class RecurrenceParserImpl implements IRecurrenceParser
+public interface IRecurrenceParser
 {
-   private final RecurrenceParser parser = new RecurrenceParser();
-   
-   private final RecurrenceLexer lexer = new RecurrenceLexer();
-   
+   Map< String, Object > parseRecurrence( String recurrence ) throws RecognitionException;
    
 
-   public Map< String, Object > parseRecurrence( String recurrence ) throws RecognitionException
-   {
-      lexer.setCharStream( new ANTLRNoCaseStringStream( recurrence ) );
-      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      parser.setTokenStream( antlrTokens );
-      
-      return parser.parseRecurrence();
-   }
-   
+
+   Locale getLocale();
 }

@@ -20,14 +20,15 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.grammar.en;
+package dev.drsoran.moloko.grammar.recurrence.de;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.grammar.IRecurrenceParser;
+import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 
 
@@ -48,4 +49,10 @@ public class RecurrenceParserImpl implements IRecurrenceParser
       return parser.parseRecurrence();
    }
    
+
+
+   public Locale getLocale()
+   {
+      return RecurrenceParser.LOCALE;
+   }
 }

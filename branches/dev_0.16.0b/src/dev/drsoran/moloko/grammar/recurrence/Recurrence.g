@@ -32,7 +32,7 @@ options
       super( null );
    }
 
-   private final static Locale LOCALE = Locale.ENGLISH;  
+   public final static Locale LOCALE = Locale.ENGLISH;  
 }
 
 // RULES

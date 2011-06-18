@@ -402,5 +402,17 @@
    <string name="send_log_aquiring_text">Sammle Moloko relevante Log-Informationen...</string>
    <string name="send_log_chooser_title">Bitte wählen Sie eine Anwendung zum Senden der Log-Informationen</string>
    <string name="send_log_failed">Das Sammeln der Log-Informationen für Moloko schlug fehl</string>
+   
+   <!-- Suggestions -->
+   <string name="app_quick_add_task_recurr_sugg_every_day">jeden tag</string>
+   <string name="app_quick_add_task_recurr_sugg_every_week">jede woche</string>
+   <string name="app_quick_add_task_recurr_sugg_every_2_weeks">alle 2 wochen</string>
+   <string name="app_quick_add_task_recurr_sugg_every_month">jeden monat</string>
+   <string name="app_quick_add_task_recurr_sugg_every_year">jedes jahr</string>   
+   <string name="app_quick_add_task_recurr_sugg_after_1_day">nach 1 tag</string>
+   <string name="app_quick_add_task_recurr_sugg_after_1_week">nach 1 woche</string>
+   <string name="app_quick_add_task_recurr_sugg_after_2_weeks">nach 2 wochen</string>
+   <string name="app_quick_add_task_recurr_sugg_every_1_month">nach 1 monat</string>
+   <string name="app_quick_add_task_recurr_sugg_after_1_year">nach 1 jahr</string>
 
 </resources>

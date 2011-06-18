@@ -143,5 +143,23 @@
       <item>2</item>
       <item>3</item>
    </string-array>
+   
+   <string-array
+      name="app_quick_add_task_recurr_sugg_every">
+      <item>@string/app_quick_add_task_recurr_sugg_every_day</item>
+      <item>@string/app_quick_add_task_recurr_sugg_every_week</item>
+      <item>@string/app_quick_add_task_recurr_sugg_every_2_weeks</item>
+      <item>@string/app_quick_add_task_recurr_sugg_every_month</item>
+      <item>@string/app_quick_add_task_recurr_sugg_every_year</item>      
+   </string-array>
+   
+   <string-array
+      name="app_quick_add_task_recurr_sugg_after">
+      <item>@string/app_quick_add_task_recurr_sugg_after_1_day</item>
+      <item>@string/app_quick_add_task_recurr_sugg_after_1_week</item>
+      <item>@string/app_quick_add_task_recurr_sugg_after_2_weeks</item>
+      <item>@string/app_quick_add_task_recurr_sugg_every_1_month</item>
+      <item>@string/app_quick_add_task_recurr_sugg_after_1_year</item>
+   </string-array>
 
 </resources>

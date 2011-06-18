@@ -330,19 +330,17 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                   {
                      repeats = new LinkedList< Pair< String, Pair< String, Boolean >> >();
                      
-                     // every
-                     addRecurrence( "every day", true );
-                     addRecurrence( "every week", true );
-                     addRecurrence( "every 2 weeks", true );
-                     addRecurrence( "every month", true );
-                     addRecurrence( "every year", true );
+                     for ( String suggestion : context.getResources()
+                                                      .getStringArray( R.array.app_quick_add_task_recurr_sugg_every ) )
+                     {
+                        addRecurrence( suggestion, true );
+                     }
                      
-                     // after
-                     addRecurrence( "after 1 day", false );
-                     addRecurrence( "after 1 week", false );
-                     addRecurrence( "after 2 weeks", false );
-                     addRecurrence( "after 1 month", false );
-                     addRecurrence( "after 1 year", false );
+                     for ( String suggestion : context.getResources()
+                                                      .getStringArray( R.array.app_quick_add_task_recurr_sugg_after ) )
+                     {
+                        addRecurrence( suggestion, false );
+                     }
                   }
                   
                   if ( repeats != null )

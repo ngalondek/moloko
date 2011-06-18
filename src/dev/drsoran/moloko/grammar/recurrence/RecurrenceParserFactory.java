@@ -57,7 +57,7 @@ public final class RecurrenceParserFactory
 
    public final static IRecurrenceParser createRecurrenceParserForLocale( Locale locale )
    {
-      for ( Class< ? > parserClass : availableParserClasses )
+      for ( Class< ? extends IRecurrenceParser > parserClass : availableParserClasses )
       {
          try
          {
@@ -90,7 +90,7 @@ public final class RecurrenceParserFactory
    {
       final List< IRecurrenceParser > availableParsers = new ArrayList< IRecurrenceParser >( availableParserClasses.size() );
       
-      for ( Class< ? > parserClass : availableParserClasses )
+      for ( Class< ? extends IRecurrenceParser > parserClass : availableParserClasses )
       {
          final IRecurrenceParser parserInstance = createParser( parserClass );
          if ( parserInstance != null )
@@ -102,11 +102,11 @@ public final class RecurrenceParserFactory
    
 
 
-   private final static IRecurrenceParser createParser( Class< ? > parserClass )
+   private final static IRecurrenceParser createParser( Class< ? extends IRecurrenceParser > parserClass )
    {
       try
       {
-         return (IRecurrenceParser) parserClass.newInstance();
+         return parserClass.newInstance();
       }
       catch ( Throwable e )
       {

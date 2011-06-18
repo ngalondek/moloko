@@ -166,14 +166,30 @@ public final class RecurrenceParsing
 
    public synchronized final static Pair< String, Boolean > parseRecurrence( String recurrence )
    {
-      final List< IRecurrenceParser > parsers = RecurrenceParserFactory.getAvailableRecurrenceParsers();
       Pair< String, Boolean > result = null;
       
-      for ( IRecurrenceParser iRecurrenceParser : parsers )
+      // If we have a parser, try the current parser first
+      if ( recurrenceParser != null )
+         result = parseRecurrence( recurrence, recurrenceParser.getLocale() );
+      
+      if ( result == null )
       {
-         result = parseRecurrence( recurrence, iRecurrenceParser.getLocale() );
-         if ( result != null )
-            break;
+         Locale currentParserLocale = null;
+         if ( recurrenceParser != null )
+            currentParserLocale = recurrenceParser.getLocale();
+         
+         final List< IRecurrenceParser > parsers = RecurrenceParserFactory.getAvailableRecurrenceParsers();
+         
+         for ( IRecurrenceParser iRecurrenceParser : parsers )
+         {
+            // Parsing with the current parser failed, so we can spare trying the parser again.
+            if ( currentParserLocale == null
+               || iRecurrenceParser.getLocale().hashCode() != currentParserLocale.hashCode() )
+               result = parseRecurrence( recurrence,
+                                         iRecurrenceParser.getLocale() );
+            if ( result != null )
+               break;
+         }
       }
       
       return result;

@@ -38,6 +38,8 @@ public class RecurrenceParserImpl implements IRecurrenceParser
    
    private final RecurrenceLexer lexer = new RecurrenceLexer();
    
+   public final static Locale LOCALE = RecurrenceParser.LOCALE;
+   
    
 
    public Map< String, Object > parseRecurrence( String recurrence ) throws RecognitionException
@@ -53,6 +55,6 @@ public class RecurrenceParserImpl implements IRecurrenceParser
 
    public Locale getLocale()
    {
-      return RecurrenceParser.LOCALE;
+      return LOCALE;
    }
 }

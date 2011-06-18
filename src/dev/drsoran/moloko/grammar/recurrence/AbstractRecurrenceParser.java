@@ -60,6 +60,8 @@ public abstract class AbstractRecurrenceParser extends Parser
    
    protected String resolutionVal;
    
+   private boolean parsingFailed;
+   
    
 
    protected AbstractRecurrenceParser( TokenStream input )
@@ -73,6 +75,13 @@ public abstract class AbstractRecurrenceParser extends Parser
       RecognizerSharedState state )
    {
       super( input, state );
+   }
+   
+
+
+   protected void signalParsingFailed()
+   {
+      parsingFailed = true;
    }
    
 
@@ -91,13 +100,21 @@ public abstract class AbstractRecurrenceParser extends Parser
 
    protected Map< String, Object > finishedParseRecurrence()
    {
-      res.put( RecurrencePatternParser.OP_FREQ_LIT, freq );
-      res.put( RecurrencePatternParser.OP_INTERVAL_LIT, new Integer( interval ) );
-      
-      if ( resolution != null && resolutionVal != null )
-         res.put( resolution, resolutionVal );
-      
-      res.put( RecurrencePatternParser.IS_EVERY, isEvery );
+      if ( !parsingFailed )
+      {
+         res.put( RecurrencePatternParser.OP_FREQ_LIT, freq );
+         res.put( RecurrencePatternParser.OP_INTERVAL_LIT,
+                  new Integer( interval ) );
+         
+         if ( resolution != null && resolutionVal != null )
+            res.put( resolution, resolutionVal );
+         
+         res.put( RecurrencePatternParser.IS_EVERY, isEvery );
+      }
+      else
+      {
+         res = null;
+      }
       
       final Map< String, Object > result = res;
       

@@ -495,5 +495,17 @@ User: %s\n
 
 	<!-- Log messages -->
 	<string name="log_e_resource_not_found">Resource not found</string>
+   
+   <!-- Suggestions -->
+   <string name="app_quick_add_task_recurr_sugg_every_day">every day</string>
+   <string name="app_quick_add_task_recurr_sugg_every_week">every week</string>
+   <string name="app_quick_add_task_recurr_sugg_every_2_weeks">biweekly</string>
+   <string name="app_quick_add_task_recurr_sugg_every_month">every month</string>
+   <string name="app_quick_add_task_recurr_sugg_every_year">every year</string>   
+   <string name="app_quick_add_task_recurr_sugg_after_1_day">after 1 day</string>
+   <string name="app_quick_add_task_recurr_sugg_after_1_week">after 1 week</string>
+   <string name="app_quick_add_task_recurr_sugg_after_2_weeks">after 2 weeks</string>
+   <string name="app_quick_add_task_recurr_sugg_every_1_month">after 1 month</string>
+   <string name="app_quick_add_task_recurr_sugg_after_1_year">after 1 year</string>
 
 </resources>

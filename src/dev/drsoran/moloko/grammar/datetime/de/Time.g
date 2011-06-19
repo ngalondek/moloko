@@ -1,20 +1,29 @@
-parser grammar TimeParser;
+// de
+
+grammar Time;
 
 options
 {
    language=Java;
-   tokenVocab=DateTimeLexer;
+   superClass=AbstractTimeParser;
 }
 
 @header
 {
-   package dev.drsoran.moloko.grammar;
+   package dev.drsoran.moloko.grammar.datetime.de;
 
-   import java.text.ParseException;
-   import java.text.SimpleDateFormat;
    import java.util.Calendar;
    
    import dev.drsoran.moloko.util.MolokoCalendar;
+   import dev.drsoran.moloko.grammar.datetime.AbstractTimeParser;
+   import dev.drsoran.moloko.grammar.LexerException;
+}
+
+@lexer::header
+{
+   package dev.drsoran.moloko.grammar.datetime.de;
+   
+   import dev.drsoran.moloko.grammar.LexerException;
 }
 
 @members
@@ -23,50 +32,17 @@ options
    {
       super( null );
    }
+}
 
-
-   public final static MolokoCalendar getCalendar()
-   {      
-      return MolokoCalendar.getInstance();
-   }
-
-
-
-   private final static void setCalendarTime( MolokoCalendar cal,
-                                              String         pit ) throws RecognitionException
+@lexer::members
+{
+   @Override
+   public void reportError( RecognitionException e )
    {
-      final int len = pit.length();
-
-      SimpleDateFormat sdf = null;
-
-      try
-      {
-         if ( len < 3 )
-         {
-            sdf = new SimpleDateFormat( "HH" );
-         }
-         else if ( len > 3 )
-         {
-            sdf = new SimpleDateFormat( "HHmm" );
-         }
-         else
-         {
-            sdf = new SimpleDateFormat( "Hmm" );
-         }
-
-         sdf.parse( pit );
-
-         final Calendar sdfCal = sdf.getCalendar();
-         cal.set( Calendar.HOUR_OF_DAY, sdfCal.get( Calendar.HOUR_OF_DAY ) );
-         cal.set( Calendar.MINUTE,      sdfCal.get( Calendar.MINUTE ) );
-         cal.set( Calendar.SECOND,      0 );
-      }
-      catch( ParseException e )
-      {
-         throw new RecognitionException();
-      }
+      throw new LexerException( e );
    }
 }
+
 
 /** RULES **/
 
@@ -83,8 +59,12 @@ options
 // with a date yet. E.g. today@12.
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
-parseTime [MolokoCalendar cal, boolean adjustDay] returns [boolean eof]
-   : (AT | COMMA)? time_point_in_time[$cal]
+parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result]
+   @after
+   {
+      result = finishedParsing();
+   }
+   : (AT | COMMA)? time_point_in_time[$cal]   
    {
       if ( adjustDay && getCalendar().after( cal ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );
@@ -92,13 +72,14 @@ parseTime [MolokoCalendar cal, boolean adjustDay] returns [boolean eof]
       cal.setHasTime( true );
    }
    | EOF
-   {
-      eof = true;
-   }
-   ;
+   ;   
    catch[ RecognitionException e ]
    {
       throw e;
+   }
+   catch[ LexerException e ]
+   {
+      throw new RecognitionException();
    }
 
 time_point_in_time [MolokoCalendar cal]
@@ -113,7 +94,7 @@ time_point_in_time [MolokoCalendar cal]
       cal.set( Calendar.MINUTE, 59 );
       cal.set( Calendar.SECOND, 59 );
    }
-   | (MIDDAY | NOON)
+   | MIDDAY
    {
       cal.set( Calendar.HOUR_OF_DAY, 12 );
       cal.set( Calendar.MINUTE, 00 );
@@ -131,19 +112,7 @@ time_point_in_time [MolokoCalendar cal]
           cal.set( Calendar.SECOND, 0 );
        }
      )
-     am_pm[$cal]?)
-   ;
-   catch[ RecognitionException e ]
-   {
-      throw e;
-   }
-
-am_pm [MolokoCalendar cal]
-   : AM
-   | PM
-   {
-      cal.add( Calendar.HOUR_OF_DAY, 12 );
-   }
+   )
    ;
    catch[ RecognitionException e ]
    {
@@ -162,7 +131,7 @@ am_pm [MolokoCalendar cal]
 // with a date yet. E.g. today@12.
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
-parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [boolean eof]
+parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result]
    @init
    {
       cal.set( Calendar.HOUR_OF_DAY, 0 );
@@ -170,8 +139,12 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [boolean eof]
       cal.set( Calendar.SECOND,      0 );
       cal.set( Calendar.MILLISECOND, 0 );
    }
-   : (AT | COMMA)? (   time_separatorspec [$cal]
-                     | ( time_naturalspec [$cal]
+   @after
+   {
+      result = finishedParsing();
+   }
+   : (AT | COMMA)? (   time_separatorspec[$cal]
+                     | ( time_naturalspec[$cal]
                        ( time_naturalspec[$cal]
                          time_naturalspec[$cal]?)?)
                    )
@@ -182,13 +155,14 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [boolean eof]
       cal.setHasTime( true );
    }
    | EOF
-   {
-      eof = true;
-   }
    ;
    catch[ RecognitionException e ]
    {
       throw e;
+   }
+   catch[ LexerException e ]
+   {
+      throw new RecognitionException();
    }
 
 time_separatorspec [MolokoCalendar cal]
@@ -312,6 +286,10 @@ parseTimeEstimate returns [long span]
    {
       throw e;
    }
+   catch[ LexerException e ]
+   {
+      throw new RecognitionException();
+   }
 
 time_component returns [int value]
    : c = INT
@@ -328,3 +306,37 @@ time_component returns [int value]
    {
       throw new RecognitionException();
    }
+   
+// TOKENS
+
+AT        : '@' | 'um' | 'am' | 'an';
+
+AND       : 'und';
+
+NEVER     : 'nie';
+
+MIDNIGHT  : 'mitternacht''s'?;
+
+MIDDAY    : 'mittag''s'?;
+
+DAYS      : 'tage' | 'tag' | 'd';
+
+HOURS     : 'stunden'  | 'stunde'  | 'std'         | 'h';
+
+MINUTES   : 'minuten'  | 'minute'  | 'min'         | 'm';
+
+SECONDS   : 'sekunden' | 'sekunde' | 'se'('c'|'k') | 's';
+
+COMMA     : ',';
+
+DOT       : '.';
+
+COLON     : ':';
+
+INT       : '0'..'9'+;
+
+WS        : ( ' '
+          |   '\t'
+          |   '\r'
+          |   '\n' ) { $channel=HIDDEN; }
+          ;

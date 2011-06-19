@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.grammar.recurrence;
+package dev.drsoran.moloko.grammar.datetime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,33 +29,33 @@ import java.util.Locale;
 import dev.drsoran.moloko.grammar.AbstractParserFactory;
 
 
-public final class RecurrenceParserFactory extends AbstractParserFactory
+public final class TimeParserFactory extends AbstractParserFactory
 {
-   private final static List< Class< ? extends IRecurrenceParser > > availableParserClasses = new ArrayList< Class< ? extends IRecurrenceParser >>();
+   private final static List< Class< ? extends ITimeParser > > availableParserClasses = new ArrayList< Class< ? extends ITimeParser >>();
    
    static
    {
-      availableParserClasses.add( dev.drsoran.moloko.grammar.recurrence.RecurrenceParserImpl.class );
-      availableParserClasses.add( dev.drsoran.moloko.grammar.recurrence.de.RecurrenceParserImpl.class );
+      availableParserClasses.add( dev.drsoran.moloko.grammar.datetime.TimeParserImpl.class );
+      availableParserClasses.add( dev.drsoran.moloko.grammar.datetime.de.TimeParserImpl.class );
    }
    
    
 
-   public final static IRecurrenceParser createRecurrenceParserForLocale( Locale locale )
+   public final static ITimeParser createTimeParserForLocale( Locale locale )
    {
       return createParserForLocale( locale, availableParserClasses );
    }
    
 
 
-   public static IRecurrenceParser createDefaultRecurrenceParser()
+   public static ITimeParser createDefaultTimeParser()
    {
       return createDefaultParser( availableParserClasses );
    }
    
 
 
-   public final static List< IRecurrenceParser > getAvailableRecurrenceParsers()
+   public final static List< ITimeParser > getAvailableTimeParsers()
    {
       return getAvailableParsers( availableParserClasses );
    }

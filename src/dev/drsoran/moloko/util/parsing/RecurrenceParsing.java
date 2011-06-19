@@ -192,6 +192,11 @@ public final class RecurrenceParsing
          }
       }
       
+      if ( result == null )
+      {
+         Log.e( TAG, "Failed to parse recurrence " + recurrence );
+      }
+      
       return result;
    }
    
@@ -214,7 +219,6 @@ public final class RecurrenceParsing
       }
       catch ( RecognitionException e )
       {
-         Log.e( TAG, "Failed to parse recurrence " + recurrence, e );
          result = null;
       }
       

@@ -1,202 +1,52 @@
 import java.util.Calendar;
 
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-
 import dev.drsoran.moloko.grammar.DateParser;
-import dev.drsoran.moloko.grammar.DateTimeLexer;
-import dev.drsoran.moloko.grammar.TimeParser;
-import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
-import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
 public class DateParserTestCase
 {
-   public static void parseDate( String string, int d, int m, int y )
+   private static void parseDate( String string, int d, int m, int y )
    {
       parseDate( string, d, m, y, -1, -1, -1 );
    }
    
 
 
-   public static void parseDate( String string,
-                                 int d,
-                                 int m,
-                                 int y,
-                                 int h,
-                                 int min,
-                                 int s )
+   private static void parseDate( String string,
+                                  int d,
+                                  int m,
+                                  int y,
+                                  int h,
+                                  int min,
+                                  int s )
    {
-      final DateTimeLexer lexer = new DateTimeLexer( new ANTLRNoCaseStringStream( string ) );
-      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      final TimeParser timeParser = new TimeParser( antlrTokens );
-      
-      System.out.println( ">input: " + string );
-      
-      final MolokoCalendar cal = TimeParser.getCalendar();
-      
-      boolean eof = false;
-      boolean hasTime = false;
-      boolean hasDate = false;
-      boolean error = false;
-      
-      // first try to parse time spec
-      try
-      {
-         // The parser can adjust the day of week
-         // for times in the past.
-         eof = timeParser.parseTimeSpec( cal, !hasDate );
-         hasTime = true;
-      }
-      catch ( RecognitionException e )
-      {
-      }
-      
-      if ( !eof )
-      {
-         if ( !hasTime )
-            antlrTokens.reset();
-         
-         final DateParser dateParser = new DateParser( antlrTokens );
-         dateParser.setNumberLookUp( new NumberLookupLanguage() );
-         
-         try
-         {
-            eof = dateParser.parseDate( cal, !hasTime );
-            hasDate = true;
-         }
-         catch ( RecognitionException e )
-         {
-            error = true;
-         }
-      }
-      
-      // Check if there is a time trailing.
-      // The parser can not adjust the day of week
-      // for times in the past.
-      if ( !error && !eof && hasDate && !hasTime )
-      {
-         final int streamPos = antlrTokens.mark();
-         
-         try
-         {
-            eof = timeParser.parseTime( cal, !hasDate );
-            hasTime = true;
-         }
-         catch ( RecognitionException re2 )
-         {
-         }
-         
-         if ( !hasTime )
-         {
-            antlrTokens.rewind( streamPos );
-            
-            try
-            {
-               eof = timeParser.parseTimeSpec( cal, !hasDate );
-               hasTime = true;
-            }
-            catch ( RecognitionException re3 )
-            {
-               error = true;
-            }
-         }
-      }
-      
-      if ( error )
-         System.err.println( "Parsing failed!" );
-      
-      System.out.println( string + ": " + cal.getTimeInMillis() );
-      System.out.println( string + ": " + cal.getTime() );
-      System.out.println( string + " has time: " + cal.hasTime() );
-      
-      Asserts.assertEquals( cal.get( Calendar.DAY_OF_MONTH ),
-                            d,
-                            "Day is wrong." );
-      Asserts.assertEquals( cal.get( Calendar.MONTH ), m, "Month is wrong." );
-      Asserts.assertEquals( cal.get( Calendar.YEAR ), y, "Year is wrong." );
-      
-      if ( h != -1 )
-      {
-         Asserts.assertEquals( cal.get( Calendar.HOUR_OF_DAY ),
-                               h,
-                               "Hour is wrong." );
-         Asserts.assertTrue( cal.hasTime(), "Calendar has no time." );
-      }
-      else
-         Asserts.assertTrue( !cal.hasTime(), "Calendar has time." );
-      
-      if ( min != -1 )
-         Asserts.assertEquals( cal.get( Calendar.MINUTE ),
-                               min,
-                               "Minute is wrong." );
-      if ( s != -1 )
-         Asserts.assertEquals( cal.get( Calendar.SECOND ),
-                               s,
-                               "Second is wrong." );
+      DateTimeTestHelper.parseDate( string, d, m, y, h, min, s );
    }
    
 
 
-   public static void parseDateWithin( String string,
-                                       boolean past,
-                                       int sy,
-                                       int sm,
-                                       int sw,
-                                       int sd,
-                                       int ey,
-                                       int em,
-                                       int ew,
-                                       int ed )
+   private static void parseDateWithin( String string,
+                                        boolean past,
+                                        int sy,
+                                        int sm,
+                                        int sw,
+                                        int sd,
+                                        int ey,
+                                        int em,
+                                        int ew,
+                                        int ed )
    {
-      final DateTimeLexer lexer = new DateTimeLexer( new ANTLRNoCaseStringStream( string ) );
-      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
-      final DateParser parser = new DateParser( antlrTokens );
-      
-      parser.setNumberLookUp( new NumberLookupLanguage() );
-      
-      System.out.println( ">input: " + string + ", past: " + past );
-      
-      try
-      {
-         final DateParser.parseDateWithin_return ret = parser.parseDateWithin( past );
-         
-         final MolokoCalendar start = ret.epochStart;
-         final MolokoCalendar end = ret.epochEnd;
-         
-         System.out.println( string + "_start: " + start.getTimeInMillis() );
-         System.out.println( string + "_start: " + start.getTime() );
-         System.out.println( string + "_start has time: " + start.hasTime() );
-         
-         System.out.println( string + "_end: " + end.getTimeInMillis() );
-         System.out.println( string + "_end: " + end.getTime() );
-         System.out.println( string + "_end has time: " + end.hasTime() );
-         
-         Asserts.assertEquals( start.get( Calendar.DAY_OF_YEAR ),
-                               sd,
-                               "Day is wrong." );
-         Asserts.assertEquals( start.get( Calendar.WEEK_OF_YEAR ),
-                               sw,
-                               "Week is wrong." );
-         Asserts.assertEquals( start.get( Calendar.MONTH ),
-                               sm,
-                               "Month is wrong." );
-         Asserts.assertEquals( start.get( Calendar.YEAR ), sy, "Year is wrong." );
-         
-         Asserts.assertEquals( end.get( Calendar.DAY_OF_YEAR ),
-                               ed,
-                               "Day is wrong." );
-         Asserts.assertEquals( end.get( Calendar.WEEK_OF_YEAR ),
-                               ew,
-                               "Week is wrong." );
-         Asserts.assertEquals( end.get( Calendar.MONTH ), em, "Month is wrong." );
-         Asserts.assertEquals( end.get( Calendar.YEAR ), ey, "Year is wrong." );
-      }
-      catch ( RecognitionException e )
-      {
-         System.err.println( "Parsing failed!" );
-      }
+      DateTimeTestHelper.parseDateWithin( string,
+                                          past,
+                                          sy,
+                                          sm,
+                                          sw,
+                                          sd,
+                                          ey,
+                                          em,
+                                          ew,
+                                          ed );
    }
    
 

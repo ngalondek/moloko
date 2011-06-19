@@ -23,16 +23,22 @@
 package dev.drsoran.moloko.util.parsing;
 
 import java.text.ParseException;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Callable;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.Token;
 
 import android.content.res.Resources;
 import android.util.Log;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.DateTimeLexer;
-import dev.drsoran.moloko.grammar.TimeParser;
+import dev.drsoran.moloko.grammar.datetime.ITimeParser;
+import dev.drsoran.moloko.grammar.datetime.TimeParserFactory;
+import dev.drsoran.moloko.grammar.datetime.AbstractTimeParser.ParseTimeReturn;
 import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.util.MolokoCalendar;
@@ -45,18 +51,14 @@ public final class RtmDateTimeParsing
    
    private final static DateTimeLexer dateTimeLexer = new DateTimeLexer();
    
-   private final static TimeParser timeParser = new TimeParser();
-   
    private final static DateParser dateParser = new DateParser();
+   
+   private static ITimeParser timeParser;
    
    private static NumberLookupLanguage numberLookUp;
    
    
 
-   // private static TimeAutoCompl timeAutoCompl;
-   
-   // private static AutoComplLanguage timeAutoComplLang;
-   
    public final static void initLookupLanguage( Resources resources )
    {
       try
@@ -92,27 +94,19 @@ public final class RtmDateTimeParsing
 
    public synchronized final static MolokoCalendar parseTimeOrTimeSpec( String spec )
    {
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( spec );
-      dateTimeLexer.setCharStream( stream );
-      
-      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-      final MolokoCalendar cal = TimeParser.getCalendar();
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
       
       boolean error = false;
       
-      timeParser.setTokenStream( antlrTokens );
-      
       try
       {
-         timeParser.parseTimeSpec( cal, false );
+         parseTimeSpec( spec, cal, false );
       }
       catch ( RecognitionException e )
       {
-         antlrTokens.reset();
-         
          try
          {
-            timeParser.parseTime( cal, false );
+            parseTime( spec, cal, false );
          }
          catch ( RecognitionException e1 )
          {
@@ -127,25 +121,19 @@ public final class RtmDateTimeParsing
 
    public synchronized final static MolokoCalendar parseDateTimeSpec( String spec )
    {
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( spec );
-      dateTimeLexer.setCharStream( stream );
-      
-      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-      final MolokoCalendar cal = TimeParser.getCalendar();
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
       
       boolean eof = false;
       boolean hasTime = false;
       boolean hasDate = false;
       boolean error = false;
       
-      timeParser.setTokenStream( antlrTokens );
-      
       // first try to parse time spec
       try
       {
          // The parser can adjust the day of week
          // for times in the past.
-         eof = timeParser.parseTimeSpec( cal, !hasDate );
+         eof = parseTimeSpec( spec, cal, !hasDate ).isEof;
          hasTime = !eof;
       }
       catch ( RecognitionException e )
@@ -154,8 +142,10 @@ public final class RtmDateTimeParsing
       
       if ( !eof )
       {
-         if ( !hasTime )
-            antlrTokens.reset();
+         final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( spec );
+         dateTimeLexer.setCharStream( stream );
+         
+         final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
          
          dateParser.setNumberLookUp( numberLookUp );
          dateParser.setTokenStream( antlrTokens );
@@ -164,41 +154,42 @@ public final class RtmDateTimeParsing
          {
             eof = dateParser.parseDate( cal, !hasTime );
             hasDate = !eof;
+            eof = antlrTokens.LA( 1 ) == Token.EOF;
          }
          catch ( RecognitionException e )
          {
             error = true;
          }
-      }
-      
-      // Check if there is a time trailing.
-      // The parser can NOT adjust the day of week
-      // for times in the past.
-      if ( !error && !eof && hasDate && !hasTime )
-      {
-         final int streamPos = antlrTokens.mark();
          
-         try
+         // Check if there is a time trailing.
+         // The parser can NOT adjust the day of week
+         // for times in the past.
+         if ( !error && !eof && hasDate && !hasTime )
          {
-            eof = timeParser.parseTime( cal, !hasDate );
-            hasTime = !eof;
-         }
-         catch ( RecognitionException re2 )
-         {
-         }
-         
-         if ( !eof && !hasTime )
-         {
-            antlrTokens.rewind( streamPos );
+            final int streamPos = antlrTokens.mark();
             
+            final String potentialTimePart = spec.substring( streamPos,
+                                                             spec.length() );
             try
             {
-               eof = timeParser.parseTimeSpec( cal, !hasDate );
+               eof = parseTime( potentialTimePart, cal, !hasDate ).isEof;
                hasTime = !eof;
             }
-            catch ( RecognitionException re3 )
+            catch ( RecognitionException re2 )
             {
-               error = true;
+            }
+            
+            if ( !eof && !hasTime )
+            {
+               try
+               {
+                  eof = parseTimeSpec( potentialTimePart, cal, !hasDate ).isEof;
+                  hasTime = !eof;
+               }
+               catch ( RecognitionException re3 )
+               {
+                  error = true;
+               }
             }
          }
       }
@@ -210,26 +201,14 @@ public final class RtmDateTimeParsing
 
    public synchronized final static long parseEstimated( String estimated )
    {
-      long estimatedLong = -1;
-      
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( estimated );
-      dateTimeLexer.setCharStream( stream );
-      
-      final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-      boolean error = false;
-      
-      timeParser.setTokenStream( antlrTokens );
-      
       try
       {
-         estimatedLong = timeParser.parseTimeEstimate();
+         return parseTimeEstimate( estimated );
       }
       catch ( RecognitionException e )
       {
-         error = true;
+         return -1;
       }
-      
-      return ( !error ) ? estimatedLong : -1;
    }
    
 
@@ -255,58 +234,90 @@ public final class RtmDateTimeParsing
       }
    }
    
-   // public synchronized final static List< String > getTimeSuggestions( Context context,
-   // String text )
-   // {
-   // return getTimeSuggestionsImpl( context, text, false );
-   // }
-   //   
-   //
-   //
-   // public synchronized final static List< String > getEstimatedSuggestions( Context context,
-   // String text )
-   // {
-   // return getTimeSuggestionsImpl( context, text, true );
-   // }
-   //   
-   //
-   //
-   // private static final List< String > getTimeSuggestionsImpl( Context context,
-   // String text,
-   // boolean estimate )
-   // {
-   // if ( timeAutoComplLang == null )
-   // try
-   // {
-   // timeAutoComplLang = new AutoComplLanguage( context.getResources(),
-   // R.xml.auto_compl_time );
-   // }
-   // catch ( ParseException e )
-   // {
-   // Log.e( TAG, "Error initialize AutoComplLanguage", e );
-   // return Collections.emptyList();
-   // }
-   //      
-   // if ( timeAutoCompl == null )
-   // {
-   // timeAutoCompl = new TimeAutoCompl();
-   // timeAutoCompl.setLanguage( timeAutoComplLang );
-   // }
-   //      
-   // final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( text );
-   // dateTimeLexer.setCharStream( stream );
-   //      
-   // final CommonTokenStream antlrTokens = new CommonTokenStream( dateTimeLexer );
-   // timeAutoCompl.setTokenStream( antlrTokens );
-   //      
-   // try
-   // {
-   // return estimate ? timeAutoCompl.suggTimeEstimate()
-   // : timeAutoCompl.suggestTime();
-   // }
-   // catch ( RecognitionException e )
-   // {
-   // return Collections.emptyList();
-   // }
-   // }
+
+
+   private synchronized final static ParseTimeReturn parseTime( final String time,
+                                                                final MolokoCalendar cal,
+                                                                final boolean adjustDay ) throws RecognitionException
+   {
+      return detectLanguageAndParse( time, new Callable< ParseTimeReturn >()
+      {
+         public ParseTimeReturn call() throws RecognitionException
+         {
+            return timeParser.parseTime( time, cal, adjustDay );
+         }
+      } );
+   }
+   
+
+
+   private synchronized final static ParseTimeReturn parseTimeSpec( final String timeSpec,
+                                                                    final MolokoCalendar cal,
+                                                                    final boolean adjustDay ) throws RecognitionException
+   {
+      return detectLanguageAndParse( timeSpec,
+                                     new Callable< ParseTimeReturn >()
+                                     {
+                                        public ParseTimeReturn call() throws RecognitionException
+                                        {
+                                           return timeParser.parseTimeSpec( timeSpec,
+                                                                            cal,
+                                                                            adjustDay );
+                                        }
+                                     } );
+   }
+   
+
+
+   private synchronized final static long parseTimeEstimate( final String timeEstimate ) throws RecognitionException
+   {
+      return detectLanguageAndParse( timeEstimate, new Callable< Long >()
+      {
+         public Long call() throws RecognitionException
+         {
+            return timeParser.parseTimeEstimate( timeEstimate );
+         }
+      } );
+   }
+   
+
+
+   private synchronized final static < T > T detectLanguageAndParse( String time,
+                                                                     Callable< T > parserFunc ) throws RecognitionException
+   {
+      T result = null;
+      
+      try
+      {
+         // If we have a parser, try the current parser first
+         if ( timeParser != null )
+            result = parserFunc.call();
+         
+         if ( result == null )
+         {
+            Locale currentParserLocale = null;
+            if ( timeParser != null )
+               currentParserLocale = timeParser.getLocale();
+            
+            final List< ITimeParser > parsers = TimeParserFactory.getAvailableTimeParsers();
+            
+            for ( ITimeParser parser : parsers )
+            {
+               // Parsing with the current parser failed, so we can spare trying the parser again.
+               if ( currentParserLocale == null
+                  || parser.getLocale().hashCode() != currentParserLocale.hashCode() )
+                  result = parserFunc.call();
+               
+               if ( result != null )
+                  break;
+            }
+         }
+      }
+      catch ( Exception e )
+      {
+         throw new RecognitionException();
+      }
+      
+      return result;
+   }
 }

@@ -228,7 +228,7 @@ public class RecurrPickerDialog extends AbstractPickerDialog
                                                                   {
                                                                    res.getString( R.string.dlg_recurr_picker_every ),
                                                                    res.getString( R.string.dlg_recurr_picker_after ) } ) );
-      
+      evAftWheel.setCurrentItem( isEvery ? 0 : 1 );
    }
    
 

@@ -9,19 +9,22 @@ options
 
 @header
 {
-   package dev.drsoran.moloko.grammar.de;
+   package dev.drsoran.moloko.grammar.recurrence.de;
 
    import java.util.Map;
    import java.util.Locale;
    import java.util.Set;
 
-   import dev.drsoran.moloko.grammar.AbstractRecurrenceParser;
-   import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+   import dev.drsoran.moloko.grammar.LexerException;
+   import dev.drsoran.moloko.grammar.recurrence.AbstractRecurrenceParser;
+   import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 }
 
 @lexer::header
 {
-   package dev.drsoran.moloko.grammar.de;
+   package dev.drsoran.moloko.grammar.recurrence.de;
+   
+   import dev.drsoran.moloko.grammar.LexerException;
 }
 
 @members
@@ -36,6 +39,15 @@ options
    protected String getUntilLiteral()
    {
       return "bis";
+   }
+}
+
+@lexer::members
+{
+   @Override
+   public void reportError( RecognitionException e )
+   {
+      throw new LexerException( e );
    }
 }
 
@@ -122,13 +134,16 @@ parseRecurrence returns[Map< String, Object > res]
            res.put( RecurrencePatternParser.OP_COUNT_LIT, Integer.parseInt( $count.text ) );
         }
    )?
-   | EOF
    ;
    catch [ RecognitionException e ]
    {
       throw e;
    }
    catch [ NumberFormatException nfe ]
+   {
+      throw new RecognitionException();
+   }
+   catch [ LexerException nfe ]
    {
       throw new RecognitionException();
    }

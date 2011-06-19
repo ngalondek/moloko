@@ -46,21 +46,19 @@ public abstract class AbstractRecurrenceParser extends Parser
    
    protected Map< String, Object > res;
    
-   protected Boolean isEvery;
+   protected Boolean isEvery = Boolean.FALSE;
    
    protected TreeSet< String > weekdays;
    
    protected TreeSet< Integer > ints;
    
-   protected int interval;
+   protected int interval = 1;
    
    protected String freq;
    
    protected String resolution;
    
    protected String resolutionVal;
-   
-   private boolean parsingFailed;
    
    
 
@@ -79,16 +77,8 @@ public abstract class AbstractRecurrenceParser extends Parser
    
 
 
-   protected void signalParsingFailed()
-   {
-      parsingFailed = true;
-   }
-   
-
-
    protected Map< String, Object > startParseRecurrence()
    {
-      clearState();
       res = new TreeMap< String, Object >( RecurrencePatternParser.CMP_OPERATORS );
       weekdays = new TreeSet< String >( CMP_WEEKDAY );
       ints = new TreeSet< Integer >();
@@ -100,27 +90,16 @@ public abstract class AbstractRecurrenceParser extends Parser
 
    protected Map< String, Object > finishedParseRecurrence()
    {
-      if ( !parsingFailed )
-      {
-         res.put( RecurrencePatternParser.OP_FREQ_LIT, freq );
-         res.put( RecurrencePatternParser.OP_INTERVAL_LIT,
-                  new Integer( interval ) );
-         
-         if ( resolution != null && resolutionVal != null )
-            res.put( resolution, resolutionVal );
-         
-         res.put( RecurrencePatternParser.IS_EVERY, isEvery );
-      }
-      else
-      {
-         res = null;
-      }
+      res.put( RecurrencePatternParser.OP_FREQ_LIT, freq );
+      res.put( RecurrencePatternParser.OP_INTERVAL_LIT,
+               Integer.valueOf( interval ) );
       
-      final Map< String, Object > result = res;
+      if ( resolution != null && resolutionVal != null )
+         res.put( resolution, resolutionVal );
       
-      clearState();
+      res.put( RecurrencePatternParser.IS_EVERY, isEvery );
       
-      return result;
+      return res;
    }
    
 
@@ -175,7 +154,7 @@ public abstract class AbstractRecurrenceParser extends Parser
    
 
 
-   private void clearState()
+   public void clearState()
    {
       res = null;
       isEvery = Boolean.FALSE;

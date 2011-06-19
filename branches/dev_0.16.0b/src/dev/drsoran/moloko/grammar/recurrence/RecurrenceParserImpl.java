@@ -47,7 +47,14 @@ public class RecurrenceParserImpl implements IRecurrenceParser
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       parser.setTokenStream( antlrTokens );
       
-      return parser.parseRecurrence();
+      try
+      {
+         return parser.parseRecurrence();
+      }
+      finally
+      {
+         parser.clearState();
+      }
    }
    
 

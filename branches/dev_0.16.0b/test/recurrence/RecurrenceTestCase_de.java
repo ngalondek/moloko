@@ -60,7 +60,7 @@ public class RecurrenceTestCase_de
                                         int forVal,
                                         boolean isEvery )
    {
-      RecurrenceTestHelper.parseRecurrence( Locale.US,
+      RecurrenceTestHelper.parseRecurrence( Locale.GERMAN,
                                             string,
                                             freq,
                                             interval,

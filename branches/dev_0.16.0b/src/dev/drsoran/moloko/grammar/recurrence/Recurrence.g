@@ -9,19 +9,22 @@ options
 
 @header
 {
-   package dev.drsoran.moloko.grammar.en;
+   package dev.drsoran.moloko.grammar.recurrence;
 
    import java.util.Map;
    import java.util.Locale;
    import java.util.Set;
 
-   import dev.drsoran.moloko.grammar.AbstractRecurrenceParser;
-   import dev.drsoran.moloko.grammar.RecurrencePatternParser;
+   import dev.drsoran.moloko.grammar.LexerException;
+   import dev.drsoran.moloko.grammar.recurrence.AbstractRecurrenceParser;
+   import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 }
 
 @lexer::header
 {
-   package dev.drsoran.moloko.grammar.en;
+   package dev.drsoran.moloko.grammar.recurrence;
+   
+   import dev.drsoran.moloko.grammar.LexerException;
 }
 
 
@@ -33,6 +36,15 @@ options
    }
 
    public final static Locale LOCALE = Locale.US;  
+}
+
+@lexer::members
+{
+   @Override
+   public void reportError( RecognitionException e )
+   {
+      throw new LexerException( e );
+   }
 }
 
 // RULES
@@ -126,13 +138,16 @@ parseRecurrence returns[Map< String, Object > res]
            res.put( RecurrencePatternParser.OP_COUNT_LIT, Integer.parseInt( $count.text ) );
         }
    )?
-   | EOF
    ;
    catch [ RecognitionException e ]
    {
       throw e;
    }
    catch [ NumberFormatException nfe ]
+   {
+      throw new RecognitionException();
+   }
+   catch [ LexerException e ]
    {
       throw new RecognitionException();
    }

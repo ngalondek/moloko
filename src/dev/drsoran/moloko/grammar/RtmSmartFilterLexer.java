@@ -17,6 +17,7 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.Token;
 
+import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
@@ -354,8 +355,8 @@ public class RtmSmartFilterLexer extends Lexer
 
    private void inTimeParamRange( String column, String param, boolean past )
    {
-      final RtmDateTimeParsing.DateWithinReturn range = RtmDateTimeParsing.parseDateWithin( unquotify( param ),
-                                                                                            past );
+      final ParseDateWithinReturn range = RtmDateTimeParsing.parseDateWithin( unquotify( param ),
+                                                                              past );
       
       if ( range != null )
       {

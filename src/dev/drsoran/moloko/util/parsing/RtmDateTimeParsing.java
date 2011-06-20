@@ -38,7 +38,8 @@ import dev.drsoran.moloko.grammar.DateParser;
 import dev.drsoran.moloko.grammar.DateTimeLexer;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
 import dev.drsoran.moloko.grammar.datetime.TimeParserFactory;
-import dev.drsoran.moloko.grammar.datetime.AbstractTimeParser.ParseTimeReturn;
+import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
+import dev.drsoran.moloko.grammar.datetime.ITimeParser.ParseTimeReturn;
 import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.util.MolokoCalendar;
@@ -73,24 +74,7 @@ public final class RtmDateTimeParsing
       }
    }
    
-   
-   public final static class DateWithinReturn
-   {
-      public final MolokoCalendar startEpoch;
-      
-      public final MolokoCalendar endEpoch;
-      
-      
 
-      public DateWithinReturn( MolokoCalendar startEpoch,
-         MolokoCalendar endEpoch )
-      {
-         this.startEpoch = startEpoch;
-         this.endEpoch = endEpoch;
-      }
-   }
-   
-   
 
    public synchronized final static MolokoCalendar parseTimeOrTimeSpec( String spec )
    {
@@ -213,8 +197,8 @@ public final class RtmDateTimeParsing
    
 
 
-   public synchronized final static DateWithinReturn parseDateWithin( String range,
-                                                                      boolean past )
+   public synchronized final static ParseDateWithinReturn parseDateWithin( String range,
+                                                                           boolean past )
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( range );
       dateTimeLexer.setCharStream( stream );
@@ -226,7 +210,7 @@ public final class RtmDateTimeParsing
       {
          final DateParser.parseDateWithin_return res = dateParser.parseDateWithin( past );
          
-         return new DateWithinReturn( res.epochStart, res.epochEnd );
+         return new ParseDateWithinReturn( res.epochStart, res.epochEnd );
       }
       catch ( RecognitionException e )
       {
@@ -275,7 +259,8 @@ public final class RtmDateTimeParsing
       {
          public Long call() throws RecognitionException
          {
-            return timeParser.parseTimeEstimate( timeEstimate );
+            final Long res = timeParser.parseTimeEstimate( timeEstimate );
+            return res != null ? res.longValue() : -1;
          }
       } );
    }

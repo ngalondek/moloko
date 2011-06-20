@@ -16,6 +16,7 @@ options
    
    import dev.drsoran.moloko.util.MolokoCalendar;
    import dev.drsoran.moloko.grammar.LexerException;
+   import dev.drsoran.moloko.grammar.datetime.ITimeParser.ParseTimeReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractTimeParser;
 }
 

@@ -26,12 +26,28 @@ import java.util.Locale;
 
 import org.antlr.runtime.RecognitionException;
 
-import dev.drsoran.moloko.grammar.datetime.AbstractTimeParser.ParseTimeReturn;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
 public interface ITimeParser
 {
+   public final static class ParseTimeReturn
+   {
+      public final int lastParsedCharPos;
+      
+      public final boolean isEof;
+      
+      
+
+      public ParseTimeReturn( int lastParsedCharPos, boolean isEof )
+      {
+         this.lastParsedCharPos = lastParsedCharPos;
+         this.isEof = isEof;
+      }
+   }
+   
+   
+
    ParseTimeReturn parseTime( String time, MolokoCalendar cal, boolean adjustDay ) throws RecognitionException;
    
 

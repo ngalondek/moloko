@@ -20,7 +20,6 @@ options
    import java.text.SimpleDateFormat;
    import java.util.Calendar;
    
-   import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
    import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
    import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractDateParser;
@@ -40,6 +39,91 @@ options
    public DateParser()
    {
       super( null );
+   }
+   
+   
+   protected int numberStringToNumber( String string )
+   {
+      switch( string.charAt( 0 ) )
+      {
+         case 'o' : return 1;
+         case 't' :
+         {
+            switch( string.charAt( 1 ) )
+            {
+               case 'w' : return 2;
+               case 'h' : return 3;
+            }
+         }
+         case 'f' :
+         {
+            switch( string.charAt( 1 ) )
+            {
+               case 'o' : return 4;
+               case 'i' : return 5;
+            }
+         }
+         case 's' :
+         {
+            switch( string.charAt( 1 ) )
+            {
+               case 'i' : return 6;
+               case 'e' : return 7;
+            }
+         }         
+         case 'e' : return 8;
+         case 'n' : return 9;
+         default  : return 10;
+      }      
+   }
+   
+   protected int weekdayStringToNumber( String string )
+   {
+      switch( string.charAt( 0 ) )
+      {
+         case 'm': return Calendar.MONDAY;
+         case 't':
+           switch( string.charAt( 1 ) )
+            {
+               case 'u' : return Calendar.TUESDAY;
+               case 'h' : return Calendar.THURSDAY;
+            }
+         case 'w': return Calendar.WEDNESDAY;
+         case 's':
+            switch( string.charAt( 1 ) )
+            {
+               case 'a' : return Calendar.SATURDAY;
+               case 'u' : return Calendar.SUNDAY;
+            }
+         default : return Calendar.FRIDAY;
+      }
+   }
+   
+   protected int monthStringToNumber( String string )
+   {
+      /*
+      'january'   | 'jan'  | 'february' | 'feb'     | 'march' | 'mar'      | 'april' | 'apr' |
+            'may'       | 'june' | 'jun'      | 'july'    | 'jul'   | 'august'   | 'aug'   |
+            'september' | 'sept' | 'sep'      | 'october' | 'oct'   | 'november' | 'nov'   |
+            'december'  | 'dec'
+      */
+      switch( string.charAt( 0 ) )
+      {
+         case 'j': return Calendar.MONDAY;
+         case 'f':
+           switch( string.charAt( 1 ) )
+            {
+               case 'u' : return Calendar.TUESDAY;
+               case 'h' : return Calendar.THURSDAY;
+            }
+         case 'm': return Calendar.WEDNESDAY;
+         case 'a':
+         case 'j':
+         case 's':
+         case 'o':
+         case 'n': return Calendar.NOVEMBER;
+         default : return Calendar.DECEMBER;
+      }
    }
 }
 
@@ -103,7 +187,7 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
         }
       | n=NUM_STR
         {
-           amount = strToNumber( $n.text );
+           amount = numberStringToNumber( $n.text );
         }
       | A)
       (  DAYS
@@ -230,11 +314,7 @@ date_on_M_Xst [MolokoCalendar cal]
           hasYear = true;
        })?
    {
-      // if we have a year we have a full qualified date.
-      // so we change nothing.
-      if ( !hasYear && getCalendar().after( cal ) )
-         // If the date is before now we roll the year
-         cal.add( Calendar.YEAR, 1 );
+      handleDateOnXstOfMonth( cal, hasYear, true /*hasMonth*/ );
    }
    ;
    catch [NumberFormatException e]
@@ -276,7 +356,7 @@ date_in_X_YMWD_distance [MolokoCalendar cal]
       int amount   = -1;
       int calField = Calendar.YEAR;
    }
-   : (   a=NUM_STR { amount = strToNumber( $a.text );      }
+   : (   a=NUM_STR { amount = numberStringToNumber( $a.text );}
        | a=INT     { amount = Integer.parseInt( $a.text ); })
      (     YEARS
        |   MONTHS  { calField = Calendar.MONTH;             }
@@ -390,7 +470,7 @@ WEEKDAY   : 'monday'   | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' |
             'thursday' | 'thu' | 'friday'  | 'fri' | 'saturday'  | 'sat' |
             'sunday'   | 'sun';
 
-NUM_STR   : 'one' | 'two' | 'three' | 'four' | 'six' | 'seven' | 'eight' | 'nine' | 'ten';
+NUM_STR   : 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten';
 
 DATE_SEP  : '/' | '\u5E74' | '\u6708' | '\u65E5';
 

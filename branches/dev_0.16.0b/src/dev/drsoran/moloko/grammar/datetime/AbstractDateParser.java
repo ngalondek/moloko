@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Parser;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
@@ -33,17 +34,12 @@ import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 
 import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
-import dev.drsoran.moloko.grammar.lang.NumberLookupLanguage;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
 public abstract class AbstractDateParser extends Parser
 {
    
-   protected NumberLookupLanguage numberLookUp;
-   
-   
-
    protected AbstractDateParser( TokenStream input )
    {
       super( input );
@@ -133,13 +129,6 @@ public abstract class AbstractDateParser extends Parser
    
 
 
-   public void setNumberLookUp( NumberLookupLanguage numberLookUp )
-   {
-      this.numberLookUp = numberLookUp;
-   }
-   
-
-
    public MolokoCalendar getCalendar()
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -151,24 +140,18 @@ public abstract class AbstractDateParser extends Parser
    
 
 
-   protected int strToNumber( String string )
-   {
-      int res = -1;
-      
-      final Integer val = numberLookUp.get( string );
-      
-      if ( val != null )
-         res = val;
-      
-      return res;
-   }
+   protected abstract int numberStringToNumber( String string );
+   
+   protected abstract int weekdayStringToNumber( String string );
+   
+   protected abstract int monthStringToNumber( String string );
    
 
 
    protected int getMonthNumber( String month )
    {
       // Only take the 1st three chars of the month as key.
-      return strToNumber( month.substring( 0, 3 ) );
+      return monthStringToNumber( month.substring( 0, 3 ) );
    }
    
 
@@ -176,7 +159,7 @@ public abstract class AbstractDateParser extends Parser
    protected int getWeekdayNumber( String weekday )
    {
       // Only take the 1st two chars of the weekday as key.
-      return strToNumber( weekday.substring( 0, 2 ) );
+      return weekdayStringToNumber( weekday.substring( 0, 2 ) );
    }
    
 
@@ -308,6 +291,7 @@ public abstract class AbstractDateParser extends Parser
 
    protected ParseDateReturn finishedDateParsing()
    {
-      return new ParseDateReturn( input.index(), input.LA( 1 ) == Token.EOF );
+      final CommonToken lastToken = (CommonToken)input.LT( -1 );
+      return new ParseDateReturn( lastToken != null ? lastToken.getStopIndex() + 1 : 0, input.LA( 1 ) == Token.EOF );
    }
 }

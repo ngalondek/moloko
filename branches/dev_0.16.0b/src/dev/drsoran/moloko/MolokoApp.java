@@ -45,7 +45,6 @@ import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 @ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ",
@@ -155,7 +154,6 @@ public class MolokoApp extends Application
    private void initParserLanguages()
    {
       RecurrenceParsing.initPatternLanguage( getResources() );
-      RtmDateTimeParsing.initLookupLanguage( getResources() );
    }
    
 

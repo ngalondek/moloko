@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.Parser;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.RecognizerSharedState;
@@ -98,6 +99,7 @@ public abstract class AbstractTimeParser extends Parser
 
    protected ParseTimeReturn finishedParsing()
    {
-      return new ParseTimeReturn( input.index(), input.LA( 1 ) == Token.EOF );
+      final CommonToken lastToken = (CommonToken)input.LT( -1 );
+      return new ParseTimeReturn( lastToken != null ? lastToken.getStopIndex() + 1 : 0, input.LA( 1 ) == Token.EOF );      
    }
 }

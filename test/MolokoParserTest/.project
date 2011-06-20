@@ -21,9 +21,9 @@
 			<locationURI>Moloko/test/Asserts.java</locationURI>
 		</link>
 		<link>
-			<name>src/DateParserTestCase.java</name>
+			<name>src/DateParserTestCase_en.java</name>
 			<type>1</type>
-			<locationURI>Moloko/test/DateParserTestCase.java</locationURI>
+			<locationURI>Moloko/test/datetime/DateParserTestCase_en.java</locationURI>
 		</link>
 		<link>
 			<name>src/DateTimeTestHelper.java</name>
@@ -71,16 +71,6 @@
 			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/AbstractParserFactory.java</locationURI>
 		</link>
 		<link>
-			<name>src/dev/drsoran/moloko/grammar/DateParser.java</name>
-			<type>1</type>
-			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/DateParser.java</locationURI>
-		</link>
-		<link>
-			<name>src/dev/drsoran/moloko/grammar/DateTimeLexer.java</name>
-			<type>1</type>
-			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/DateTimeLexer.java</locationURI>
-		</link>
-		<link>
 			<name>src/dev/drsoran/moloko/grammar/LexerException.java</name>
 			<type>1</type>
 			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/LexerException.java</locationURI>
@@ -91,9 +81,39 @@
 			<locationURI>Moloko/src/dev/drsoran/moloko/util/ANTLRNoCaseStringStream.java</locationURI>
 		</link>
 		<link>
+			<name>src/dev/drsoran/moloko/grammar/datetime/AbstractDateParser.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/datetime/AbstractDateParser.java</locationURI>
+		</link>
+		<link>
 			<name>src/dev/drsoran/moloko/grammar/datetime/AbstractTimeParser.java</name>
 			<type>1</type>
 			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/datetime/AbstractTimeParser.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/datetime/DateLexer.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/datetime/DateLexer.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/datetime/DateParser.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/datetime/DateParser.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/datetime/DateParserFactory.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/datetime/DateParserFactory.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/datetime/DateParserImpl.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/datetime/DateParserImpl.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/grammar/datetime/IDateParser.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/datetime/IDateParser.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/datetime/ITimeParser.java</name>
@@ -159,6 +179,11 @@
 			<name>src/dev/drsoran/moloko/grammar/recurrence/RecurrencePatternParser.java</name>
 			<type>1</type>
 			<locationURI>Moloko/src/dev/drsoran/moloko/grammar/recurrence/RecurrencePatternParser.java</locationURI>
+		</link>
+		<link>
+			<name>src/dev/drsoran/moloko/util/parsing/RtmDateTimeParsing.java</name>
+			<type>1</type>
+			<locationURI>Moloko/src/dev/drsoran/moloko/util/parsing/RtmDateTimeParsing.java</locationURI>
 		</link>
 		<link>
 			<name>src/dev/drsoran/moloko/grammar/datetime/de/TimeLexer.java</name>

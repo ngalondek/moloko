@@ -35,27 +35,27 @@ public final class DateParserFactory extends AbstractParserFactory
    
    static
    {
-      // availableParserClasses.add( dev.drsoran.moloko.grammar.datetime.TimeParserImpl.class );
+      availableParserClasses.add( dev.drsoran.moloko.grammar.datetime.DateParserImpl.class );
       // availableParserClasses.add( dev.drsoran.moloko.grammar.datetime.de.TimeParserImpl.class );
    }
    
    
 
-   public final static IDateParser createTimeParserForLocale( Locale locale )
+   public final static IDateParser createDateParserForLocale( Locale locale )
    {
       return createParserForLocale( locale, availableParserClasses );
    }
    
 
 
-   public static IDateParser createDefaultTimeParser()
+   public static IDateParser createDefaultDateParser()
    {
       return createDefaultParser( availableParserClasses );
    }
    
 
 
-   public final static List< IDateParser > getAvailableTimeParsers()
+   public final static List< IDateParser > getAvailableDateParsers()
    {
       return getAvailableParsers( availableParserClasses );
    }

@@ -4,15 +4,24 @@ import java.util.TimeZone;
 
 import org.antlr.runtime.RecognitionException;
 
+import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
 import dev.drsoran.moloko.grammar.datetime.TimeParserFactory;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
-import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing.DateWithinReturn;
 
 
 public class DateTimeTestHelper
 {
+   public final static MolokoCalendar getDateParserCalendar()
+   {
+      MolokoCalendar cal = MolokoCalendar.getInstance();
+      cal.setHasTime( false );
+      return cal;
+   }
+   
+
+
    public static void parseTime( Locale locale,
                                  String string,
                                  int h,
@@ -179,8 +188,8 @@ public class DateTimeTestHelper
    {
       System.out.println( ">input: " + string + ", past: " + past );
       
-      final DateWithinReturn result = RtmDateTimeParsing.parseDateWithin( string,
-                                                                          past );
+      final ParseDateWithinReturn result = RtmDateTimeParsing.parseDateWithin( string,
+                                                                               past );
       
       if ( result != null )
       {
@@ -218,5 +227,4 @@ public class DateTimeTestHelper
       else
          System.err.println( "Parsing failed!" );
    }
-   
 }

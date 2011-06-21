@@ -19,29 +19,15 @@ options
    import dev.drsoran.moloko.grammar.LexerException;
 }
 
-@members
-{
-   public DateLexer()
-   {
-      super( null );
-   }
-}
-
 // TOKENS
 
 A         : 'a';
 
 OF        : 'of';
 
-ON        : 'on';
-
-IN        : 'in';
-
 AND       : 'and';
 
 END       : 'end';
-
-THE       : 'the';
 
 NOW       : 'now';
 
@@ -65,18 +51,12 @@ WEEKS     : 'week' | 'wk';
 
 DAYS      : 'day' | 'd';
 
-MONTH     : 'january'   | 'jan'  | 'february' | 'feb'     | 'march' | 'mar'      | 'april' | 'apr' |
-            'may'       | 'june' | 'jun'      | 'july'    | 'jul'   | 'august'   | 'aug'   |
-            'september' | 'sept' | 'sep'      | 'october' | 'oct'   | 'november' | 'nov'   |
-            'december'  | 'dec';
+MONTH     : 'jan' | 'feb' | 'mar' | 'apr' | 'may' | 'jun' | 'jul' | 'aug' |
+            'sep' | 'oct' | 'nov' | 'dec';
 
-WEEKDAY   : 'monday'   | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' |
-            'thursday' | 'thu' | 'friday'  | 'fri' | 'saturday'  | 'sat' |
-            'sunday'   | 'sun';
+WEEKDAY   : 'mo' | 'tu' | 'we' | 'th' | 'fri' | 'sa' | 'su';
 
 NUM_STR   : 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten';
-
-DATE_SEP  : ~('0'..'9')+;
 
 INT       : '0'..'9'+;
 

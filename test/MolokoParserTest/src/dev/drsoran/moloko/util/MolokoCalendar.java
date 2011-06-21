@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 
-
 public final class MolokoCalendar
 {
    private final Calendar impl = Calendar.getInstance();
@@ -359,6 +358,17 @@ public final class MolokoCalendar
    public final static MolokoCalendar getInstance()
    {
       return new MolokoCalendar( TimeZone.getTimeZone( "Europe/Berlin" ) );
+   }
+   
+
+
+   public final static MolokoCalendar getDatelessAndTimelessInstance()
+   {
+      final MolokoCalendar cal = getInstance();
+      cal.setHasDate( false );
+      cal.setHasTime( false );
+      
+      return cal;
    }
    
 

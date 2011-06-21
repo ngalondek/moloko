@@ -293,6 +293,14 @@ public abstract class AbstractDateParser extends Parser
    
 
 
+   protected boolean isInDayRange( MolokoCalendar cal, int dayNumber )
+   {
+      return dayNumber >= cal.getActualMinimum( Calendar.DAY_OF_MONTH )
+         && dayNumber <= cal.getActualMaximum( Calendar.DAY_OF_MONTH );
+   }
+   
+
+
    protected ParseDateReturn finishedDateParsing()
    {
       final CommonToken lastToken = (CommonToken) input.LT( -1 );

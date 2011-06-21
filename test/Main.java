@@ -1,4 +1,3 @@
-import java.text.ParseException;
 
 
 public class Main
@@ -9,21 +8,22 @@ public class Main
     */
    public static void main( String[] args )
    {
-      DateParserTestCase_en.execute();
-      
-      TimeParserTestCase_en.execute();
-      TimeParserTestCase_de.execute();
-      
-      try
-      {
-         RecurrenceTestCase_en.execute();
-         RecurrenceTestCase_de.execute();
-                  
-         RecurrencePatternTestCase.execute();
-      }
-      catch ( ParseException e )
-      {
-         e.printStackTrace();
-      }
+      DateParserOnlyTestCase_en.execute();
+      // DateParserTestCase_en.execute();
+      //
+      // TimeParserTestCase_en.execute();
+      // TimeParserTestCase_de.execute();
+      //
+      // try
+      // {
+      // RecurrenceTestCase_en.execute();
+      // RecurrenceTestCase_de.execute();
+      //
+      // RecurrencePatternTestCase.execute();
+      // }
+      // catch ( ParseException e )
+      // {
+      // e.printStackTrace();
+      // }
    }
 }

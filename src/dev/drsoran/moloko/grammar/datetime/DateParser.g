@@ -205,7 +205,7 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
             unit = Calendar.YEAR;
          }
       )?
-      (parseDate[retval.epochStart, false])?
+      (OF parseDate[retval.epochStart, false])?
    ;
    catch [NumberFormatException e]
    {
@@ -227,11 +227,11 @@ date_full [MolokoCalendar cal]
       String pt2Str = null;
       String pt3Str = null;
    }
-   : pt1=INT DATE_SEP
+   : pt1=INT
      {
         pt1Str = $pt1.getText();
      }
-     pt2=INT DATE_SEP
+     pt2=INT
      {
         pt2Str = $pt2.getText();
      }
@@ -298,15 +298,26 @@ date_on_M_Xst [MolokoCalendar cal]
        {
          parseTextMonth( cal, $m.text );
        }
-    (d=INT
-       {
-         cal.set( Calendar.DAY_OF_MONTH, Integer.parseInt( $d.text ) );
-       })?
-    (y=INT
-       {
+    ( d=INT y=INT
+        {
+          cal.set( Calendar.DAY_OF_MONTH, Integer.parseInt( $d.text ) );
           parseYear( cal, $y.text );
           hasYear = true;
-       })?
+        }
+     |v=INT
+        {
+           final int value = Integer.parseInt( $v.text );
+           if ( isInDayRange( cal, value ) )
+           {
+              cal.set( Calendar.DAY_OF_MONTH, value );
+           }
+           else
+           {
+              parseYear( cal, $v.text );
+              hasYear = true;
+           }
+        }
+    )?
    {
       handleDateOnXstOfMonth( cal, hasYear, true /*hasMonth*/ );
    }
@@ -376,7 +387,7 @@ date_in_X_YMWD_distance [MolokoCalendar cal]
    }
 
 date_end_of_the_MW [MolokoCalendar cal]
-   : END
+   : END OF?
      (   WEEKS
          {
             rollToEndOf( Calendar.DAY_OF_WEEK, cal );

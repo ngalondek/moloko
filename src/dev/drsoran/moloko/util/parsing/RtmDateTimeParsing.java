@@ -30,11 +30,11 @@ import org.antlr.runtime.RecognitionException;
 
 import dev.drsoran.moloko.grammar.datetime.DateParserFactory;
 import dev.drsoran.moloko.grammar.datetime.IDateParser;
+import dev.drsoran.moloko.grammar.datetime.ITimeParser;
+import dev.drsoran.moloko.grammar.datetime.TimeParserFactory;
 import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
 import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
-import dev.drsoran.moloko.grammar.datetime.ITimeParser;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser.ParseTimeReturn;
-import dev.drsoran.moloko.grammar.datetime.TimeParserFactory;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
@@ -79,19 +79,23 @@ public final class RtmDateTimeParsing
 
    public synchronized final static MolokoCalendar parseDateTimeSpec( String spec )
    {
-      final MolokoCalendar cal = MolokoCalendar.getInstance();
+      final MolokoCalendar cal = MolokoCalendar.getDatelessAndTimelessInstance();
       
       boolean eof = false;
       boolean hasTime = false;
       boolean hasDate = false;
       boolean error = false;
       
+      int startOfDatePos = 0;
+      
       // first try to parse time spec
       try
       {
          // The parser can adjust the day of week
          // for times in the past.
-         eof = parseTimeSpec( spec, cal, !hasDate ).isEof;
+         final ParseTimeReturn ret = parseTimeSpec( spec, cal, !hasDate );
+         eof = ret.isEof;
+         startOfDatePos = ret.lastParsedCharPos;
          hasTime = cal.hasTime();
       }
       catch ( RecognitionException e )
@@ -104,7 +108,10 @@ public final class RtmDateTimeParsing
          
          try
          {
-            final ParseDateReturn ret = parseDate( spec, cal, !hasTime );
+            final String datePart = spec.substring( startOfDatePos,
+                                                    spec.length() );
+            
+            final ParseDateReturn ret = parseDate( datePart, cal, !hasTime );
             eof = ret.isEof;
             endOfDatePos = ret.lastParsedCharPos;
             hasDate = cal.hasDate();

@@ -142,8 +142,12 @@ public abstract class AbstractDateParser extends Parser
 
    protected abstract int numberStringToNumber( String string );
    
+
+
    protected abstract int weekdayStringToNumber( String string );
    
+
+
    protected abstract int monthStringToNumber( String string );
    
 
@@ -291,7 +295,10 @@ public abstract class AbstractDateParser extends Parser
 
    protected ParseDateReturn finishedDateParsing()
    {
-      final CommonToken lastToken = (CommonToken)input.LT( -1 );
-      return new ParseDateReturn( lastToken != null ? lastToken.getStopIndex() + 1 : 0, input.LA( 1 ) == Token.EOF );
+      final CommonToken lastToken = (CommonToken) input.LT( -1 );
+      return new ParseDateReturn( lastToken != null
+                                                   ? lastToken.getStopIndex() + 1
+                                                   : 0,
+                                  input.LA( 1 ) == Token.EOF );
    }
 }

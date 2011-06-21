@@ -107,7 +107,8 @@ public class DateParserTestCase_en
          
          final MolokoCalendar now = DateTimeTestHelper.getDateParserCalendar();
          
-         if ( cal.get( Calendar.DAY_OF_YEAR ) < now.get( Calendar.DAY_OF_YEAR ) )
+         if ( cal.get( Calendar.DAY_OF_YEAR ) <= now.get( Calendar.DAY_OF_YEAR )
+            || now.get( Calendar.DAY_OF_WEEK ) == Calendar.SUNDAY )
             cal.roll( Calendar.WEEK_OF_YEAR, true );
          
          // due to "next" Monday

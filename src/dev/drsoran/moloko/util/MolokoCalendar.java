@@ -364,6 +364,17 @@ public final class MolokoCalendar
    
 
 
+   public final static MolokoCalendar getDatelessAndTimelessInstance()
+   {
+      final MolokoCalendar cal = getInstance();
+      cal.setHasDate( false );
+      cal.setHasTime( false );
+      
+      return cal;
+   }
+   
+
+
    public Calendar toCalendar()
    {
       return impl;

@@ -1,4 +1,4 @@
-// en
+// de
 
 grammar Date;
 
@@ -14,10 +14,8 @@ options
 
 @header
 {
-   package dev.drsoran.moloko.grammar.datetime;
+   package dev.drsoran.moloko.grammar.datetime.de;
 
-   import java.text.ParseException;
-   import java.text.SimpleDateFormat;
    import java.util.Calendar;
    
    import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
@@ -29,7 +27,7 @@ options
 
 @lexer::header
 {
-   package dev.drsoran.moloko.grammar.datetime;
+   package dev.drsoran.moloko.grammar.datetime.de;
 
    import dev.drsoran.moloko.grammar.LexerException;
 }
@@ -46,34 +44,28 @@ options
    {
       switch( string.charAt( 0 ) )
       {
-         case 'o' : return 1;
-         case 't' :
+         case 'e' : return 1;
+         case 'z' :
          {
             switch( string.charAt( 1 ) )
             {
                case 'w' : return 2;
-               case 'h' : return 3;
+               case 'e' : return 10;
             }
          }
-         case 'f' :
-         {
-            switch( string.charAt( 1 ) )
-            {
-               case 'o' : return 4;
-               case 'i' : return 5;
-            }
-         }
+         case 'd' : return 3;         
+         case 'v' : return 4;
+         case 'f' : return 5;
          case 's' :
          {
             switch( string.charAt( 1 ) )
             {
-               case 'i' : return 6;
-               case 'e' : return 7;
+               case 'e' : return 6;
+               case 'i' : return 7;
             }
-         }         
-         case 'e' : return 8;
-         case 'n' : return 9;
-         default  : return 10;
+         }
+         case 'a' : return 8;        
+         default  : return 9;
       }      
    }
    
@@ -81,19 +73,23 @@ options
    {
       switch( string.charAt( 0 ) )
       {
-         case 'm': return Calendar.MONDAY;
-         case 't':
+         case 'm':
+            switch( string.charAt( 1 ) )
+            {
+               case 'o' : return Calendar.MONDAY;
+               case 'i' : return Calendar.WEDNESDAY;
+            }
+         case 'd':
            switch( string.charAt( 1 ) )
             {
-               case 'u' : return Calendar.TUESDAY;
-               case 'h' : return Calendar.THURSDAY;
+               case 'i' : return Calendar.TUESDAY;
+               case 'o' : return Calendar.THURSDAY;
             }
-         case 'w': return Calendar.WEDNESDAY;
          case 's':
             switch( string.charAt( 1 ) )
             {
                case 'a' : return Calendar.SATURDAY;
-               case 'u' : return Calendar.SUNDAY;
+               case 'o' : return Calendar.SUNDAY;
             }
          default : return Calendar.FRIDAY;
       }
@@ -106,9 +102,10 @@ options
          case 'f': return Calendar.FEBRUARY;           
          case 'm':
          	switch( string.charAt( 2 ) )
-            {
+            {               
+               case 'e' :
                case 'r' : return Calendar.MARCH;
-               case 'y' : return Calendar.MAY;
+               case 'i' : return Calendar.MAY;
             }
          case 'j':
             switch( string.charAt( 1 ) )
@@ -121,7 +118,7 @@ options
                      case 'l' : return Calendar.JULY;
                   }
             }      
-         case 'a': 
+         case 'a':
             switch( string.charAt( 2 ) )
             {
                case 'p' : return Calendar.APRIL;
@@ -257,8 +254,7 @@ date_full [MolokoCalendar cal]
      ;
 
 date_on [MolokoCalendar cal]
-   : ON? (   date_on_Xst_of_M[$cal]
-           | date_on_M_Xst   [$cal]
+   : ON? (   date_on_Xst_of_M[$cal]           
            | date_on_weekday [$cal])
    ;
    catch [RecognitionException e]
@@ -272,11 +268,11 @@ date_on_Xst_of_M [MolokoCalendar cal]
       boolean hasMonth = false;
       boolean hasYear  = false;
    }
-   : d=INT STs?
+   : d=INT DOT?
        {
           cal.set( Calendar.DAY_OF_MONTH, Integer.parseInt( $d.text ) );
        }
-     ((OF | MINUS_A | MINUS | COMMA | DOT)?
+     ((OF | MINUS | COMMA | DOT)?
        m=MONTH
          {
             parseTextMonth( cal, $m.text );
@@ -290,39 +286,6 @@ date_on_Xst_of_M [MolokoCalendar cal]
          })?)?
    {
       handleDateOnXstOfMonth( cal, hasYear, hasMonth );
-   }
-   ;
-   catch [NumberFormatException e]
-   {
-      throw new RecognitionException();
-   }
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
-
-date_on_M_Xst [MolokoCalendar cal]
-   @init
-   {
-      boolean hasYear = false;
-   }
-   : m=MONTH
-       {
-         parseTextMonth( cal, $m.text );
-       }
-    (MINUS | COMMA | DOT)?
-    (d=INT
-       {
-         cal.set( Calendar.DAY_OF_MONTH, Integer.parseInt( $d.text ) );
-       }
-       (STs | MINUS_A | MINUS | COMMA | DOT)+)?
-    (y=INT
-       {
-          parseYear( cal, $y.text );
-          hasYear = true;
-       })?
-   {
-      handleDateOnXstOfMonth( cal, hasYear, true /*hasMonth*/ );
    }
    ;
    catch [NumberFormatException e]
@@ -350,8 +313,8 @@ date_on_weekday [MolokoCalendar cal]
    }
 
 date_in_X_YMWD [MolokoCalendar cal]
-   :  IN?             date_in_X_YMWD_distance[$cal]
-      (( AND| COMMA ) date_in_X_YMWD_distance[$cal])*
+   :  IN?          date_in_X_YMWD_distance[$cal]
+      ((AND|COMMA) date_in_X_YMWD_distance[$cal])*
    ;
    catch [RecognitionException e]
    {
@@ -391,7 +354,7 @@ date_in_X_YMWD_distance [MolokoCalendar cal]
    }
 
 date_end_of_the_MW [MolokoCalendar cal]
-   : END OF? THE?
+   : END OF_THE?
      (   WEEKS
          {
             rollToEndOf( Calendar.DAY_OF_WEEK, cal );
@@ -407,7 +370,7 @@ date_end_of_the_MW [MolokoCalendar cal]
    }
 
 date_natural [MolokoCalendar cal]
-   : (TODAY | TONIGHT)
+   : TODAY
      {
      }
    | NEVER
@@ -431,54 +394,48 @@ date_natural [MolokoCalendar cal]
 
 // TOKENS
 
-A         : 'a';
+A         : 'ein'('e'|'er'|'es'|'em'|'en')?;
 
-OF        : 'of';
+ON        :	'am' | 'an';
 
-ON        : 'on';
+OF        : 'von' | 'vom' | 'ab' | 'des';	
+
+OF_THE    : 'der' | 'die' | 'das' | 'dem' | 'den';
 
 IN        : 'in';
 
-AND       : 'and';
+AND       : 'und';
 
-END       : 'end';
+END       : 'ende';
 
-THE       : 'the';
+NOW       : 'jetzt';
 
-NOW       : 'now';
+NEVER     : 'nie';
 
-TONIGHT   : 'tonight' | 'ton';
+TODAY     : 'heute';
 
-NEVER     : 'never';
+TOMORROW  : 'morgen' | 'mrg';
 
-TODAY     : 'today' | 'tod';
+YESTERDAY : 'gestern';
 
-TOMORROW  : 'tomorrow' | 'tom' | 'tmr';
+NEXT      : 'n'('a'|'ae'|'ä' )'chst'('e'|'er'|'es');
 
-YESTERDAY : 'yesterday';
+YEARS     : 'jahr''e'? | 'jhr';
 
-NEXT      : 'next';
+MONTHS    : 'monat''e'?;
 
-STs       : 'st' | 'th' | 'rd' | 'nd';
+WEEKS     : 'woche''n'?;
 
-YEARS     : 'years' | 'year' | 'yrs' | 'yr';
+DAYS      : 'tag''e'?;
 
-MONTHS    : 'months' | 'month' | 'mons' | 'mon';
+MONTH     : 'jan' | 'feb' | 'm'('a'|'ä'|'ae')'r' | 'apr' |
+            'mai' | 'jun' | 'jul'                | 'aug' |
+            'sep' | 'okt' | 'nov'                | 'dez';
 
-WEEKS     : 'weeks' | 'week' | 'wks' | 'wk';
+WEEKDAY   : 'mo' | 'di' | 'mi' | 'do' | 'fr' | 'sa' | 'so';
 
-DAYS      : 'days' | 'day' | 'd';
-
-MONTH     : 'january'   | 'jan'  | 'february' | 'feb'     | 'march' | 'mar'      | 'april' | 'apr' |
-            'may'       | 'june' | 'jun'      | 'july'    | 'jul'   | 'august'   | 'aug'   |
-            'september' | 'sept' | 'sep'      | 'october' | 'oct'   | 'november' | 'nov'   |
-            'december'  | 'dec';
-
-WEEKDAY   : 'monday'   | 'mon' | 'tuesday' | 'tue' | 'wednesday' | 'wed' |
-            'thursday' | 'thu' | 'friday'  | 'fri' | 'saturday'  | 'sat' |
-            'sunday'   | 'sun';
-
-NUM_STR   : 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten';
+NUM_STR   : 'eins'  | 'zwei'   | 'drei' | 'vier' | 'f'('u'|'ü'|'ue')'nf' |
+            'sechs' | 'sieben' | 'acht' | 'neun' | 'zehn';
 
 DATE_SEP  : '/' | '\u5E74' | '\u6708' | '\u65E5';
 
@@ -487,8 +444,6 @@ DOT       : '.';
 COLON     : ':';
 
 MINUS     : '-';
-
-MINUS_A   : '-a';
 
 COMMA     : ',';
 

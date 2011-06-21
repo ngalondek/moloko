@@ -1,6 +1,6 @@
 // en
 
-grammar Date;
+lexer grammar DateLexer;
 
 /*
    TODO:

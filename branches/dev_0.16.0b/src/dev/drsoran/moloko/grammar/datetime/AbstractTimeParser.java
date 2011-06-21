@@ -99,7 +99,10 @@ public abstract class AbstractTimeParser extends Parser
 
    protected ParseTimeReturn finishedParsing()
    {
-      final CommonToken lastToken = (CommonToken)input.LT( -1 );
-      return new ParseTimeReturn( lastToken != null ? lastToken.getStopIndex() + 1 : 0, input.LA( 1 ) == Token.EOF );      
+      final CommonToken lastToken = (CommonToken) input.LT( -1 );
+      return new ParseTimeReturn( lastToken != null
+                                                   ? lastToken.getStopIndex() + 1
+                                                   : 0,
+                                  input.LA( 1 ) == Token.EOF );
    }
 }

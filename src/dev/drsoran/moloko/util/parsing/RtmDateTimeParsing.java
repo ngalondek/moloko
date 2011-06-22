@@ -79,7 +79,7 @@ public final class RtmDateTimeParsing
 
    public synchronized final static MolokoCalendar parseDateTimeSpec( String spec )
    {
-      final MolokoCalendar cal = MolokoCalendar.getDatelessAndTimelessInstance();
+      final MolokoCalendar cal = MolokoCalendar.getInstance();
       
       boolean eof = false;
       boolean hasTime = false;

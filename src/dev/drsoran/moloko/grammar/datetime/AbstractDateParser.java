@@ -39,7 +39,10 @@ import dev.drsoran.moloko.util.MolokoCalendar;
 
 public abstract class AbstractDateParser extends Parser
 {
+   private boolean success;
    
+   
+
    protected AbstractDateParser( TokenStream input )
    {
       super( input );
@@ -301,12 +304,28 @@ public abstract class AbstractDateParser extends Parser
    
 
 
-   protected ParseDateReturn finishedDateParsing()
+   protected void startDateParsing( MolokoCalendar cal )
    {
+      success = true;
+   }
+   
+
+
+   protected ParseDateReturn finishedDateParsing( MolokoCalendar cal )
+   {
+      cal.setHasDate( success );
+      
       final CommonToken lastToken = (CommonToken) input.LT( -1 );
       return new ParseDateReturn( lastToken != null
                                                    ? lastToken.getStopIndex() + 1
                                                    : 0,
                                   input.LA( 1 ) == Token.EOF );
+   }
+   
+
+
+   protected void notifyParsingDateFailed()
+   {
+      success = false;
    }
 }

@@ -16,22 +16,16 @@ options
 {
    package dev.drsoran.moloko.grammar.datetime;
 
-   import java.text.ParseException;
-   import java.text.SimpleDateFormat;
    import java.util.Calendar;
    
    import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
-   import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractDateParser;
-   import dev.drsoran.moloko.grammar.LexerException;
    import dev.drsoran.moloko.util.MolokoCalendar;
 }
 
 @lexer::header
 {
    package dev.drsoran.moloko.grammar.datetime;
-
-   import dev.drsoran.moloko.grammar.LexerException;
 }
 
 @members
@@ -135,13 +129,28 @@ options
    }
 }
 
+@lexer::members
+{
+   @Override
+   public void reportError( RecognitionException e )
+   {
+      // Do not process Lexer Exceptions cause we may
+      // parse a string that contains date and time 
+      // parts.      
+   }
+}
+
 /** RULES **/
 
 
 parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn result]
+   @init
+   {
+      startDateParsing( cal );
+   }
    @after
    {
-      result = finishedDateParsing();
+      result = finishedDateParsing( cal );
    }
    : (   date_full         [$cal]
        | date_on           [$cal]
@@ -152,8 +161,6 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn resul
    // at last step cause the Calendar methods
    // will set them again.
    {
-      cal.setHasDate( true );
-      
       if ( clearTime )
          cal.setHasTime( false );      
    }
@@ -162,18 +169,13 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn resul
       // In case of NOW we do not respect the clearTime Parameter
       // cause NOW has always a time.
       cal.setTimeInMillis( System.currentTimeMillis() );
-      cal.setHasDate( true );
       cal.setHasTime( true );
    }
-   | EOF
    ;
    catch [RecognitionException e]
    {
+      notifyParsingDateFailed();
       throw e;
-   }
-   catch[ LexerException e ]
-   {
-      throw new RecognitionException();
    }
 
 parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar epochEnd]
@@ -224,10 +226,6 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
    catch [RecognitionException e]
    {
       throw e;
-   }
-   catch[ LexerException e ]
-   {
-      throw new RecognitionException();
    }
 
 date_full [MolokoCalendar cal]

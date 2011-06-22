@@ -61,9 +61,13 @@ options
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
 parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result]
+   @init
+   {
+      startParsingTime( cal );
+   }   
    @after
    {
-      result = finishedParsing();
+      result = finishedParsingTime( cal );
    }
    : (AT | COMMA)? time_point_in_time[$cal]   
    {
@@ -76,10 +80,12 @@ parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn resul
    ;   
    catch[ RecognitionException e ]
    {
+      notifyParsingTimeFailed();
       throw e;
    }
    catch[ LexerException e ]
    {
+      notifyParsingTimeFailed();   
       throw new RecognitionException();
    }
 
@@ -135,6 +141,8 @@ time_point_in_time [MolokoCalendar cal]
 parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result]
    @init
    {
+      startParsingTime( cal );
+      
       cal.set( Calendar.HOUR_OF_DAY, 0 );
       cal.set( Calendar.MINUTE,      0 );
       cal.set( Calendar.SECOND,      0 );
@@ -142,7 +150,7 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn r
    }
    @after
    {
-      result = finishedParsing();
+      result = finishedParsingTime( cal );
    }
    : (AT | COMMA)? (   time_separatorspec[$cal]
                      | ( time_naturalspec[$cal]
@@ -159,10 +167,12 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn r
    ;
    catch[ RecognitionException e ]
    {
+      notifyParsingTimeFailed();   
       throw e;
    }
    catch[ LexerException e ]
    {
+      notifyParsingTimeFailed();   
       throw new RecognitionException();
    }
 

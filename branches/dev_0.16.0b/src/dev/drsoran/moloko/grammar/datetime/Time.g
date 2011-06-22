@@ -61,25 +61,29 @@ options
 // In case of true the parser can adjust the day
 // of week for times in the past. E.g. @12.
 parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result]
+   @init
+   {
+      startParsingTime( cal );
+   }
    @after
    {
-      result = finishedParsing();
+      result = finishedParsingTime( cal );
    }
    : (AT | COMMA)? time_point_in_time[$cal]   
    {
       if ( adjustDay && getCalendar().after( cal ) )
-         cal.roll( Calendar.DAY_OF_WEEK, true );
-      
-      cal.setHasTime( true );
+         cal.roll( Calendar.DAY_OF_WEEK, true );      
    }
    | EOF
    ;
    catch[ RecognitionException e ]
    {
+      notifyParsingTimeFailed();
       throw e;
    }
    catch[ LexerException e ]
    {
+      notifyParsingTimeFailed();
       throw new RecognitionException();
    }
    
@@ -147,6 +151,8 @@ am_pm [MolokoCalendar cal]
 parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result]
    @init
    {
+      startParsingTime( cal );
+      
       cal.set( Calendar.HOUR_OF_DAY, 0 );
       cal.set( Calendar.MINUTE,      0 );
       cal.set( Calendar.SECOND,      0 );
@@ -154,7 +160,7 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn r
    }
    @after
    {
-      result = finishedParsing();
+      result = finishedParsingTime( cal );
    }
    : (AT | COMMA)? (   time_separatorspec[$cal]
                      | ( time_naturalspec[$cal]
@@ -163,18 +169,18 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn r
                    )
    {
       if ( adjustDay && getCalendar().after( cal ) )
-         cal.roll( Calendar.DAY_OF_WEEK, true );
-      
-      cal.setHasTime( true );
+         cal.roll( Calendar.DAY_OF_WEEK, true );      
    }
    | EOF
    ;
    catch[ RecognitionException e ]
    {
+      notifyParsingTimeFailed();
       throw e;
    }
    catch[ LexerException e ]
    {
+      notifyParsingTimeFailed();
       throw new RecognitionException();
    }
 

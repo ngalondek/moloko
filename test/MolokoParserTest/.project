@@ -21,6 +21,11 @@
 			<locationURI>Moloko/test/Asserts.java</locationURI>
 		</link>
 		<link>
+			<name>src/DateParserTestCase_de.java</name>
+			<type>1</type>
+			<locationURI>Moloko/test/datetime/DateParserTestCase_de.java</locationURI>
+		</link>
+		<link>
 			<name>src/DateParserTestCase_en.java</name>
 			<type>1</type>
 			<locationURI>Moloko/test/datetime/DateParserTestCase_en.java</locationURI>

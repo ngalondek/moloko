@@ -48,15 +48,15 @@ public class TimeLexer extends Lexer
    public static final int HOURS = 12;
    
    
-
+   
    @Override
    public void reportError( RecognitionException e )
    {
       throw new LexerException( e );
    }
    
-
-
+   
+   
    // delegates
    // delegators
    
@@ -65,30 +65,30 @@ public class TimeLexer extends Lexer
       ;
    }
    
-
-
+   
+   
    public TimeLexer( CharStream input )
    {
       this( input, new RecognizerSharedState() );
    }
    
-
-
+   
+   
    public TimeLexer( CharStream input, RecognizerSharedState state )
    {
       super( input, state );
       
    }
    
-
-
+   
+   
    public String getGrammarFileName()
    {
       return "D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g";
    }
    
-
-
+   
+   
    // $ANTLR start "AT"
    public final void mAT() throws RecognitionException
    {
@@ -146,38 +146,38 @@ public class TimeLexer extends Lexer
          switch ( alt1 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:323:13:
-               // '@'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:323:13:
+            // '@'
             {
                match( '@' );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:323:19:
-               // 'um'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:323:19:
+            // 'um'
             {
                match( "um" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:323:26:
-               // 'am'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:323:26:
+            // 'am'
             {
                match( "am" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:323:33:
-               // 'an'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:323:33:
+            // 'an'
             {
                match( "an" );
                
             }
                break;
-            
+         
          }
          state.type = _type;
          state.channel = _channel;
@@ -187,8 +187,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "AT"
    
    // $ANTLR start "AND"
@@ -215,8 +215,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "AND"
    
    // $ANTLR start "NEVER"
@@ -243,8 +243,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "NEVER"
    
    // $ANTLR start "MIDNIGHT"
@@ -273,14 +273,14 @@ public class TimeLexer extends Lexer
             switch ( alt2 )
             {
                case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:329:26:
-                  // 's'
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:329:26:
+               // 's'
                {
                   match( 's' );
                   
                }
                   break;
-               
+            
             }
             
          }
@@ -293,8 +293,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "MIDNIGHT"
    
    // $ANTLR start "MIDDAY"
@@ -323,14 +323,14 @@ public class TimeLexer extends Lexer
             switch ( alt3 )
             {
                case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:331:21:
-                  // 's'
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:331:21:
+               // 's'
                {
                   match( 's' );
                   
                }
                   break;
-               
+            
             }
             
          }
@@ -343,8 +343,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "MIDDAY"
    
    // $ANTLR start "DAYS"
@@ -416,30 +416,30 @@ public class TimeLexer extends Lexer
          switch ( alt4 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:333:13:
-               // 'tage'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:333:13:
+            // 'tage'
             {
                match( "tage" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:333:22:
-               // 'tag'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:333:22:
+            // 'tag'
             {
                match( "tag" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:333:30:
-               // 'd'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:333:30:
+            // 'd'
             {
                match( 'd' );
                
             }
                break;
-            
+         
          }
          state.type = _type;
          state.channel = _channel;
@@ -449,8 +449,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "DAYS"
    
    // $ANTLR start "HOURS"
@@ -467,38 +467,38 @@ public class TimeLexer extends Lexer
          switch ( alt5 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:335:13:
-               // 'stunden'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:335:13:
+            // 'stunden'
             {
                match( "stunden" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:335:26:
-               // 'stunde'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:335:26:
+            // 'stunde'
             {
                match( "stunde" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:335:38:
-               // 'std'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:335:38:
+            // 'std'
             {
                match( "std" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:335:54:
-               // 'h'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:335:54:
+            // 'h'
             {
                match( 'h' );
                
             }
                break;
-            
+         
          }
          state.type = _type;
          state.channel = _channel;
@@ -508,8 +508,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "HOURS"
    
    // $ANTLR start "MINUTES"
@@ -526,38 +526,38 @@ public class TimeLexer extends Lexer
          switch ( alt6 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:13:
-               // 'minuten'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:13:
+            // 'minuten'
             {
                match( "minuten" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:26:
-               // 'minute'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:26:
+            // 'minute'
             {
                match( "minute" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:38:
-               // 'min'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:38:
+            // 'min'
             {
                match( "min" );
                
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:54:
-               // 'm'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:54:
+            // 'm'
             {
                match( 'm' );
                
             }
                break;
-            
+         
          }
          state.type = _type;
          state.channel = _channel;
@@ -567,8 +567,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "MINUTES"
    
    // $ANTLR start "SECONDS"
@@ -585,24 +585,24 @@ public class TimeLexer extends Lexer
          switch ( alt7 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:13:
-               // 'sekunden'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:13:
+            // 'sekunden'
             {
                match( "sekunden" );
                
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:26:
-               // 'sekunde'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:26:
+            // 'sekunde'
             {
                match( "sekunde" );
                
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:38:
-               // 'se' ( 'c' | 'k' )
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:38:
+            // 'se' ( 'c' | 'k' )
             {
                match( "se" );
                
@@ -622,14 +622,14 @@ public class TimeLexer extends Lexer
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:54:
-               // 's'
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:54:
+            // 's'
             {
                match( 's' );
                
             }
                break;
-            
+         
          }
          state.type = _type;
          state.channel = _channel;
@@ -639,8 +639,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "SECONDS"
    
    // $ANTLR start "COMMA"
@@ -667,8 +667,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "COMMA"
    
    // $ANTLR start "DOT"
@@ -695,8 +695,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "DOT"
    
    // $ANTLR start "COLON"
@@ -723,8 +723,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "COLON"
    
    // $ANTLR start "INT"
@@ -755,8 +755,8 @@ public class TimeLexer extends Lexer
                switch ( alt8 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:347:13:
-                     // '0' .. '9'
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:347:13:
+                  // '0' .. '9'
                   {
                      matchRange( '0', '9' );
                      
@@ -783,8 +783,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "INT"
    
    // $ANTLR start "WS"
@@ -825,8 +825,8 @@ public class TimeLexer extends Lexer
       }
    }
    
-
-
+   
+   
    // $ANTLR end "WS"
    
    public void mTokens() throws RecognitionException
@@ -838,118 +838,118 @@ public class TimeLexer extends Lexer
       switch ( alt9 )
       {
          case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:10:
-            // AT
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:10:
+         // AT
          {
             mAT();
             
          }
             break;
          case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:13:
-            // AND
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:13:
+         // AND
          {
             mAND();
             
          }
             break;
          case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:17:
-            // NEVER
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:17:
+         // NEVER
          {
             mNEVER();
             
          }
             break;
          case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:23:
-            // MIDNIGHT
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:23:
+         // MIDNIGHT
          {
             mMIDNIGHT();
             
          }
             break;
          case 5:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:32:
-            // MIDDAY
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:32:
+         // MIDDAY
          {
             mMIDDAY();
             
          }
             break;
          case 6:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:39:
-            // DAYS
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:39:
+         // DAYS
          {
             mDAYS();
             
          }
             break;
          case 7:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:44:
-            // HOURS
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:44:
+         // HOURS
          {
             mHOURS();
             
          }
             break;
          case 8:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:50:
-            // MINUTES
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:50:
+         // MINUTES
          {
             mMINUTES();
             
          }
             break;
          case 9:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:58:
-            // SECONDS
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:58:
+         // SECONDS
          {
             mSECONDS();
             
          }
             break;
          case 10:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:66:
-            // COMMA
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:66:
+         // COMMA
          {
             mCOMMA();
             
          }
             break;
          case 11:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:72:
-            // DOT
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:72:
+         // DOT
          {
             mDOT();
             
          }
             break;
          case 12:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:76:
-            // COLON
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:76:
+         // COLON
          {
             mCOLON();
             
          }
             break;
          case 13:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:82:
-            // INT
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:82:
+         // INT
          {
             mINT();
             
          }
             break;
          case 14:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:86:
-            // WS
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:1:86:
+         // WS
          {
             mWS();
             
          }
             break;
-         
+      
       }
       
    }
@@ -1019,8 +1019,8 @@ public class TimeLexer extends Lexer
          this.transition = DFA5_transition;
       }
       
-
-
+      
+      
       public String getDescription()
       {
          return "335:1: HOURS : ( 'stunden' | 'stunde' | 'std' | 'h' );";
@@ -1083,8 +1083,8 @@ public class TimeLexer extends Lexer
          this.transition = DFA6_transition;
       }
       
-
-
+      
+      
       public String getDescription()
       {
          return "337:1: MINUTES : ( 'minuten' | 'minute' | 'min' | 'm' );";
@@ -1150,8 +1150,8 @@ public class TimeLexer extends Lexer
          this.transition = DFA7_transition;
       }
       
-
-
+      
+      
       public String getDescription()
       {
          return "339:1: SECONDS : ( 'sekunden' | 'sekunde' | 'se' ( 'c' | 'k' ) | 's' );";
@@ -1222,8 +1222,8 @@ public class TimeLexer extends Lexer
          this.transition = DFA9_transition;
       }
       
-
-
+      
+      
       public String getDescription()
       {
          return "1:1: Tokens : ( AT | AND | NEVER | MIDNIGHT | MIDDAY | DAYS | HOURS | MINUTES | SECONDS | COMMA | DOT | COLON | INT | WS );";

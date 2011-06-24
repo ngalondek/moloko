@@ -277,21 +277,21 @@ public class DateParserTestCase_en
                     10,
                     0 );
       }
-      {
-         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
-         cal.set( Calendar.DAY_OF_MONTH, 21 );
-         
-         if ( cal.before( DateTimeTestHelper.getDateParserCalendar() ) )
-            cal.roll( Calendar.MONTH, true );
-         
-         parseDate( "on 21st 2000",
-                    cal.get( Calendar.DAY_OF_MONTH ),
-                    cal.get( Calendar.MONTH ),
-                    cal.get( Calendar.YEAR ),
-                    20,
-                    00,
-                    00 );
-      }
+//      {
+//         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+//         cal.set( Calendar.DAY_OF_MONTH, 21 );
+//         
+//         if ( cal.before( DateTimeTestHelper.getDateParserCalendar() ) )
+//            cal.roll( Calendar.MONTH, true );
+//         
+//         parseDate( "on 21st 2000",
+//                    cal.get( Calendar.DAY_OF_MONTH ),
+//                    cal.get( Calendar.MONTH ),
+//                    cal.get( Calendar.YEAR ),
+//                    20,
+//                    00,
+//                    00 );
+//      }
       
       {
          final MolokoCalendar end = DateTimeTestHelper.getDateParserCalendar();

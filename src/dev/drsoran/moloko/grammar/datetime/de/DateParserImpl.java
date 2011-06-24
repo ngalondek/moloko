@@ -24,51 +24,44 @@ package dev.drsoran.moloko.grammar.datetime.de;
 
 import java.util.Locale;
 
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.TokenStream;
 
-import dev.drsoran.moloko.grammar.datetime.ITimeParser;
+import dev.drsoran.moloko.grammar.datetime.IDateParser;
+import dev.drsoran.moloko.util.ANTLRIncrementalTokenStream;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
-public class TimeParserImpl implements ITimeParser
+public class DateParserImpl implements IDateParser
 {
-   private final TimeParser parser = new TimeParser();
+   private final DateParser parser = new DateParser();
    
-   private final TimeLexer lexer = new TimeLexer();
+   private final DateLexer lexer = new DateLexer();
    
    public final static Locale LOCALE = Locale.GERMAN;
    
    
    
-   public ParseTimeReturn parseTime( String time,
+   public ParseDateReturn parseDate( String date,
                                      MolokoCalendar cal,
-                                     boolean adjustDay ) throws RecognitionException
+                                     boolean clearTime ) throws RecognitionException
    {
-      prepareLexerAndParser( time );
+      prepareLexerAndParser( date );
       
-      return parser.parseTime( cal, adjustDay );
+      return parser.parseDate( cal, clearTime );
    }
    
    
    
-   public ParseTimeReturn parseTimeSpec( String timeSpec,
-                                         MolokoCalendar cal,
-                                         boolean adjustDay ) throws RecognitionException
+   public ParseDateWithinReturn parseDateWithin( String dateWithin, boolean past ) throws RecognitionException
    {
-      prepareLexerAndParser( timeSpec );
+      prepareLexerAndParser( dateWithin );
       
-      return parser.parseTimeSpec( cal, adjustDay );
-   }
-   
-   
-   
-   public long parseTimeEstimate( String timeEstimate ) throws RecognitionException
-   {
-      prepareLexerAndParser( timeEstimate );
+      final DateParser.parseDateWithin_return res = parser.parseDateWithin( past );
       
-      return parser.parseTimeEstimate();
+      return res != null ? new ParseDateWithinReturn( res.epochStart,
+                                                      res.epochEnd ) : null;
    }
    
    
@@ -87,12 +80,12 @@ public class TimeParserImpl implements ITimeParser
    
    
    
-   private void prepareLexerAndParser( String time )
+   private void prepareLexerAndParser( String date )
    {
-      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( time );
+      final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( date );
       lexer.setCharStream( stream );
       
-      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
+      final TokenStream antlrTokens = new ANTLRIncrementalTokenStream( lexer );
       parser.setTokenStream( antlrTokens );
    }
    

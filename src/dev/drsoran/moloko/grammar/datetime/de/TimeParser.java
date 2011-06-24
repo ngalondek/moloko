@@ -57,7 +57,7 @@ public class TimeParser extends AbstractTimeParser
    public static final int HOURS = 12;
    
    
-
+   
    // delegates
    // delegators
    
@@ -66,37 +66,37 @@ public class TimeParser extends AbstractTimeParser
       this( input, new RecognizerSharedState() );
    }
    
-
-
+   
+   
    public TimeParser( TokenStream input, RecognizerSharedState state )
    {
       super( input, state );
       
    }
    
-
-
+   
+   
    public String[] getTokenNames()
    {
       return TimeParser.tokenNames;
    }
    
-
-
+   
+   
    public String getGrammarFileName()
    {
       return "D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g";
    }
    
-
-
+   
+   
    public TimeParser()
    {
       super( null );
    }
    
-
-
+   
+   
    // $ANTLR start "parseTime"
    // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:48:1:
    // parseTime[MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn result] : ( ( AT | COMMA )?
@@ -134,8 +134,8 @@ public class TimeParser extends AbstractTimeParser
          switch ( alt2 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:72:6:
-               // ( AT | COMMA )? time_point_in_time[$cal]
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:72:6:
+            // ( AT | COMMA )? time_point_in_time[$cal]
             {
                // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:72:6:
                // ( AT | COMMA )?
@@ -149,7 +149,7 @@ public class TimeParser extends AbstractTimeParser
                switch ( alt1 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:
                   {
                      if ( ( input.LA( 1 ) >= AT && input.LA( 1 ) <= COMMA ) )
                      {
@@ -165,7 +165,7 @@ public class TimeParser extends AbstractTimeParser
                      
                   }
                      break;
-                  
+               
                }
                
                pushFollow( FOLLOW_time_point_in_time_in_parseTime117 );
@@ -181,14 +181,14 @@ public class TimeParser extends AbstractTimeParser
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:79:6:
-               // EOF
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:79:6:
+            // EOF
             {
                match( input, EOF, FOLLOW_EOF_in_parseTime133 );
                
             }
                break;
-            
+         
          }
          
          result = finishedParsingTime( cal );
@@ -214,8 +214,8 @@ public class TimeParser extends AbstractTimeParser
       return result;
    }
    
-
-
+   
+   
    // $ANTLR end "parseTime"
    
    // $ANTLR start "time_point_in_time"
@@ -268,8 +268,8 @@ public class TimeParser extends AbstractTimeParser
          switch ( alt4 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:93:6:
-               // NEVER
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:93:6:
+            // NEVER
             {
                match( input, NEVER, FOLLOW_NEVER_in_time_point_in_time175 );
                
@@ -279,8 +279,8 @@ public class TimeParser extends AbstractTimeParser
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:98:6:
-               // MIDNIGHT
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:98:6:
+            // MIDNIGHT
             {
                match( input, MIDNIGHT, FOLLOW_MIDNIGHT_in_time_point_in_time187 );
                
@@ -291,8 +291,8 @@ public class TimeParser extends AbstractTimeParser
             }
                break;
             case 3:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:104:6:
-               // MIDDAY
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:104:6:
+            // MIDDAY
             {
                match( input, MIDDAY, FOLLOW_MIDDAY_in_time_point_in_time199 );
                
@@ -303,8 +303,8 @@ public class TimeParser extends AbstractTimeParser
             }
                break;
             case 4:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:111:4:
-               // ( (v= INT | h= time_component ( COLON | DOT ) m= time_component ) )
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:111:4:
+            // ( (v= INT | h= time_component ( COLON | DOT ) m= time_component ) )
             {
                // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:111:4:
                // ( (v= INT | h= time_component ( COLON | DOT ) m= time_component ) )
@@ -350,8 +350,8 @@ public class TimeParser extends AbstractTimeParser
                   switch ( alt3 )
                   {
                      case 1:
-                        // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:111:8:
-                        // v= INT
+                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:111:8:
+                     // v= INT
                      {
                         v = (Token) match( input,
                                            INT,
@@ -362,8 +362,8 @@ public class TimeParser extends AbstractTimeParser
                      }
                         break;
                      case 2:
-                        // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:115:8:
-                        // h= time_component ( COLON | DOT ) m= time_component
+                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:115:8:
+                     // h= time_component ( COLON | DOT ) m= time_component
                      {
                         pushFollow( FOLLOW_time_component_in_time_point_in_time240 );
                         h = time_component();
@@ -393,14 +393,14 @@ public class TimeParser extends AbstractTimeParser
                         
                      }
                         break;
-                     
+                  
                   }
                   
                }
                
             }
                break;
-            
+         
          }
       }
       catch ( RecognitionException e )
@@ -415,8 +415,8 @@ public class TimeParser extends AbstractTimeParser
       return;
    }
    
-
-
+   
+   
    // $ANTLR end "time_point_in_time"
    
    // $ANTLR start "parseTimeSpec"
@@ -464,9 +464,9 @@ public class TimeParser extends AbstractTimeParser
          switch ( alt9 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:155:6:
-               // ( AT | COMMA )? ( time_separatorspec[$cal] | ( time_naturalspec[$cal] ( time_naturalspec[$cal] (
-               // time_naturalspec[$cal] )? )? ) )
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:155:6:
+            // ( AT | COMMA )? ( time_separatorspec[$cal] | ( time_naturalspec[$cal] ( time_naturalspec[$cal] (
+            // time_naturalspec[$cal] )? )? ) )
             {
                // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:155:6:
                // ( AT | COMMA )?
@@ -480,7 +480,7 @@ public class TimeParser extends AbstractTimeParser
                switch ( alt5 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:
                   {
                      if ( ( input.LA( 1 ) >= AT && input.LA( 1 ) <= COMMA ) )
                      {
@@ -496,7 +496,7 @@ public class TimeParser extends AbstractTimeParser
                      
                   }
                      break;
-                  
+               
                }
                
                // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:155:20:
@@ -539,8 +539,8 @@ public class TimeParser extends AbstractTimeParser
                switch ( alt8 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:155:24:
-                     // time_separatorspec[$cal]
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:155:24:
+                  // time_separatorspec[$cal]
                   {
                      pushFollow( FOLLOW_time_separatorspec_in_parseTimeSpec345 );
                      time_separatorspec( cal );
@@ -550,8 +550,8 @@ public class TimeParser extends AbstractTimeParser
                   }
                      break;
                   case 2:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:156:24:
-                     // ( time_naturalspec[$cal] ( time_naturalspec[$cal] ( time_naturalspec[$cal] )? )? )
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:156:24:
+                  // ( time_naturalspec[$cal] ( time_naturalspec[$cal] ( time_naturalspec[$cal] )? )? )
                   {
                      // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:156:24:
                      // ( time_naturalspec[$cal] ( time_naturalspec[$cal] ( time_naturalspec[$cal] )? )? )
@@ -575,8 +575,8 @@ public class TimeParser extends AbstractTimeParser
                         switch ( alt7 )
                         {
                            case 1:
-                              // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:157:26:
-                              // time_naturalspec[$cal] ( time_naturalspec[$cal] )?
+                           // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:157:26:
+                           // time_naturalspec[$cal] ( time_naturalspec[$cal] )?
                            {
                               pushFollow( FOLLOW_time_naturalspec_in_parseTimeSpec401 );
                               time_naturalspec( cal );
@@ -595,8 +595,8 @@ public class TimeParser extends AbstractTimeParser
                               switch ( alt6 )
                               {
                                  case 1:
-                                    // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:158:26:
-                                    // time_naturalspec[$cal]
+                                 // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:158:26:
+                                 // time_naturalspec[$cal]
                                  {
                                     pushFollow( FOLLOW_time_naturalspec_in_parseTimeSpec429 );
                                     time_naturalspec( cal );
@@ -605,19 +605,19 @@ public class TimeParser extends AbstractTimeParser
                                     
                                  }
                                     break;
-                                 
+                              
                               }
                               
                            }
                               break;
-                           
+                        
                         }
                         
                      }
                      
                   }
                      break;
-                  
+               
                }
                
                if ( adjustDay && getCalendar().after( cal ) )
@@ -628,14 +628,14 @@ public class TimeParser extends AbstractTimeParser
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:166:6:
-               // EOF
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:166:6:
+            // EOF
             {
                match( input, EOF, FOLLOW_EOF_in_parseTimeSpec467 );
                
             }
                break;
-            
+         
          }
          
          result = finishedParsingTime( cal );
@@ -661,8 +661,8 @@ public class TimeParser extends AbstractTimeParser
       return result;
    }
    
-
-
+   
+   
    // $ANTLR end "parseTimeSpec"
    
    // $ANTLR start "time_separatorspec"
@@ -708,8 +708,8 @@ public class TimeParser extends AbstractTimeParser
                switch ( alt11 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:184:8:
-                     // COLON m= time_component ( COLON s= time_component )?
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:184:8:
+                  // COLON m= time_component ( COLON s= time_component )?
                   {
                      match( input, COLON, FOLLOW_COLON_in_time_separatorspec526 );
                      pushFollow( FOLLOW_time_component_in_time_separatorspec530 );
@@ -731,8 +731,8 @@ public class TimeParser extends AbstractTimeParser
                      switch ( alt10 )
                      {
                         case 1:
-                           // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:188:9:
-                           // COLON s= time_component
+                        // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:188:9:
+                        // COLON s= time_component
                         {
                            match( input,
                                   COLON,
@@ -746,12 +746,12 @@ public class TimeParser extends AbstractTimeParser
                            
                         }
                            break;
-                        
+                     
                      }
                      
                   }
                      break;
-                  
+               
                }
                
             }
@@ -771,8 +771,8 @@ public class TimeParser extends AbstractTimeParser
       return;
    }
    
-
-
+   
+   
    // $ANTLR end "time_separatorspec"
    
    // $ANTLR start "time_naturalspec"
@@ -829,8 +829,8 @@ public class TimeParser extends AbstractTimeParser
          switch ( alt13 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:209:8:
-               // fs= hour_floatspec
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:209:8:
+            // fs= hour_floatspec
             {
                pushFollow( FOLLOW_hour_floatspec_in_time_naturalspec633 );
                fs = hour_floatspec();
@@ -842,8 +842,8 @@ public class TimeParser extends AbstractTimeParser
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:213:8:
-               // v= INT ( HOURS | MINUTES | SECONDS )
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:213:8:
+            // v= INT ( HOURS | MINUTES | SECONDS )
             {
                v = (Token) match( input, INT, FOLLOW_INT_in_time_naturalspec653 );
                // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:213:14:
@@ -878,8 +878,8 @@ public class TimeParser extends AbstractTimeParser
                switch ( alt12 )
                {
                   case 1:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:213:16:
-                     // HOURS
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:213:16:
+                  // HOURS
                   {
                      match( input, HOURS, FOLLOW_HOURS_in_time_naturalspec657 );
                      
@@ -888,8 +888,8 @@ public class TimeParser extends AbstractTimeParser
                   }
                      break;
                   case 2:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:217:18:
-                     // MINUTES
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:217:18:
+                  // MINUTES
                   {
                      match( input,
                             MINUTES,
@@ -900,8 +900,8 @@ public class TimeParser extends AbstractTimeParser
                   }
                      break;
                   case 3:
-                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:221:18:
-                     // SECONDS
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:221:18:
+                  // SECONDS
                   {
                      match( input,
                             SECONDS,
@@ -911,7 +911,7 @@ public class TimeParser extends AbstractTimeParser
                      
                   }
                      break;
-                  
+               
                }
                
                int val = Integer.parseInt( ( v != null ? v.getText() : null ) );
@@ -933,7 +933,7 @@ public class TimeParser extends AbstractTimeParser
                
             }
                break;
-            
+         
          }
          
          if ( cal != null )
@@ -958,8 +958,8 @@ public class TimeParser extends AbstractTimeParser
       return seconds;
    }
    
-
-
+   
+   
    // $ANTLR end "time_naturalspec"
    
    // $ANTLR start "hour_floatspec"
@@ -1012,8 +1012,8 @@ public class TimeParser extends AbstractTimeParser
       return seconds;
    }
    
-
-
+   
+   
    // $ANTLR end "hour_floatspec"
    
    // $ANTLR start "parseTimeEstimate"
@@ -1054,8 +1054,8 @@ public class TimeParser extends AbstractTimeParser
          switch ( alt17 )
          {
             case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:281:6:
-               // (d= INT DAYS | ( COMMA | AND )? ts= time_naturalspec[null] )+ ( COMMA | AND )*
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:281:6:
+            // (d= INT DAYS | ( COMMA | AND )? ts= time_naturalspec[null] )+ ( COMMA | AND )*
             {
                // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:281:6:
                // (d= INT DAYS | ( COMMA | AND )? ts= time_naturalspec[null] )+
@@ -1093,8 +1093,8 @@ public class TimeParser extends AbstractTimeParser
                   switch ( alt15 )
                   {
                      case 1:
-                        // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:281:10:
-                        // d= INT DAYS
+                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:281:10:
+                     // d= INT DAYS
                      {
                         d = (Token) match( input,
                                            INT,
@@ -1107,8 +1107,8 @@ public class TimeParser extends AbstractTimeParser
                      }
                         break;
                      case 2:
-                        // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:285:10:
-                        // ( COMMA | AND )? ts= time_naturalspec[null]
+                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:285:10:
+                     // ( COMMA | AND )? ts= time_naturalspec[null]
                      {
                         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:285:10:
                         // ( COMMA | AND )?
@@ -1122,7 +1122,7 @@ public class TimeParser extends AbstractTimeParser
                         switch ( alt14 )
                         {
                            case 1:
-                              // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:
+                           // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:
                            {
                               if ( input.LA( 1 ) == COMMA
                                  || input.LA( 1 ) == AND )
@@ -1139,7 +1139,7 @@ public class TimeParser extends AbstractTimeParser
                               
                            }
                               break;
-                           
+                        
                         }
                         
                         pushFollow( FOLLOW_time_naturalspec_in_parseTimeEstimate921 );
@@ -1178,7 +1178,7 @@ public class TimeParser extends AbstractTimeParser
                   switch ( alt16 )
                   {
                      case 1:
-                        // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:
+                     // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:
                      {
                         if ( input.LA( 1 ) == COMMA || input.LA( 1 ) == AND )
                         {
@@ -1204,14 +1204,14 @@ public class TimeParser extends AbstractTimeParser
             }
                break;
             case 2:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:290:6:
-               // EOF
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:290:6:
+            // EOF
             {
                match( input, EOF, FOLLOW_EOF_in_parseTimeEstimate955 );
                
             }
                break;
-            
+         
          }
          
          span *= 1000;
@@ -1241,8 +1241,8 @@ public class TimeParser extends AbstractTimeParser
       return span;
    }
    
-
-
+   
+   
    // $ANTLR end "parseTimeEstimate"
    
    // $ANTLR start "time_component"

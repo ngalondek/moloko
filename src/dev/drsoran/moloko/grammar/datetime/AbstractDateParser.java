@@ -34,6 +34,7 @@ import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 
 import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
+import dev.drsoran.moloko.util.ANTLRIncrementalTokenStream;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
@@ -42,21 +43,21 @@ public abstract class AbstractDateParser extends Parser
    private boolean success;
    
    
-
+   
    protected AbstractDateParser( TokenStream input )
    {
       super( input );
    }
    
-
-
+   
+   
    protected AbstractDateParser( TokenStream input, RecognizerSharedState state )
    {
       super( input, state );
    }
    
-
-
+   
+   
    protected void handleFullDate( MolokoCalendar cal,
                                   String part1,
                                   String part2,
@@ -82,8 +83,8 @@ public abstract class AbstractDateParser extends Parser
       }
    }
    
-
-
+   
+   
    protected void handleDateOnXstOfMonth( MolokoCalendar cal,
                                           boolean hasYear,
                                           boolean hasMonth )
@@ -103,8 +104,8 @@ public abstract class AbstractDateParser extends Parser
       }
    }
    
-
-
+   
+   
    protected void handleDateOnWeekday( MolokoCalendar cal,
                                        String weekday,
                                        boolean nextWeek ) throws RecognitionException
@@ -130,8 +131,8 @@ public abstract class AbstractDateParser extends Parser
          cal.add( Calendar.WEEK_OF_YEAR, 1 );
    }
    
-
-
+   
+   
    public MolokoCalendar getCalendar()
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -141,36 +142,36 @@ public abstract class AbstractDateParser extends Parser
       return cal;
    }
    
-
-
+   
+   
    protected abstract int numberStringToNumber( String string );
    
-
-
+   
+   
    protected abstract int weekdayStringToNumber( String string );
    
-
-
+   
+   
    protected abstract int monthStringToNumber( String string );
    
-
-
+   
+   
    protected int getMonthNumber( String month )
    {
       // Only take the 1st three chars of the month as key.
       return monthStringToNumber( month.substring( 0, 3 ) );
    }
    
-
-
+   
+   
    protected int getWeekdayNumber( String weekday )
    {
       // Only take the 1st two chars of the weekday as key.
       return weekdayStringToNumber( weekday.substring( 0, 2 ) );
    }
    
-
-
+   
+   
    protected void parseFullDate( MolokoCalendar cal,
                                  String day,
                                  String month,
@@ -221,8 +222,8 @@ public abstract class AbstractDateParser extends Parser
       }
    }
    
-
-
+   
+   
    protected void parseTextMonth( MolokoCalendar cal, String month ) throws RecognitionException
    {
       final int monthNum = getMonthNumber( month );
@@ -233,8 +234,8 @@ public abstract class AbstractDateParser extends Parser
       cal.set( Calendar.MONTH, monthNum );
    }
    
-
-
+   
+   
    protected void parseYear( MolokoCalendar cal, String yearStr ) throws RecognitionException
    {
       final int len = yearStr.length();
@@ -276,8 +277,8 @@ public abstract class AbstractDateParser extends Parser
       }
    }
    
-
-
+   
+   
    protected void rollToEndOf( int field, MolokoCalendar cal )
    {
       final int ref = cal.get( field );
@@ -294,36 +295,57 @@ public abstract class AbstractDateParser extends Parser
       }
    }
    
-
-
+   
+   
    protected boolean isInDayRange( MolokoCalendar cal, int dayNumber )
    {
       return dayNumber >= cal.getActualMinimum( Calendar.DAY_OF_MONTH )
          && dayNumber <= cal.getActualMaximum( Calendar.DAY_OF_MONTH );
    }
    
-
-
+   
+   
    protected void startDateParsing( MolokoCalendar cal )
    {
       success = true;
    }
    
-
-
+   
+   
    protected ParseDateReturn finishedDateParsing( MolokoCalendar cal )
    {
       cal.setHasDate( success );
       
-      final CommonToken lastToken = (CommonToken) input.LT( -1 );
-      return new ParseDateReturn( lastToken != null
-                                                   ? lastToken.getStopIndex() + 1
-                                                   : 0,
-                                  input.LA( 1 ) == Token.EOF );
+      if ( input instanceof ANTLRIncrementalTokenStream )
+      {
+         final ANTLRIncrementalTokenStream incStream = (ANTLRIncrementalTokenStream) input;
+         
+         CommonToken lastNonEofToken = null;
+         for ( int i = 0, cnt = incStream.size(); i < cnt
+            && lastNonEofToken == null; i++ )
+         {
+            lastNonEofToken = (CommonToken) incStream.reverseGetConsumedToken( i );
+            if ( lastNonEofToken.getType() == Token.EOF )
+               lastNonEofToken = null;
+         }
+         
+         return new ParseDateReturn( lastNonEofToken != null
+                                                            ? lastNonEofToken.getStopIndex() + 1
+                                                            : 0,
+                                     incStream.isEof() );
+      }
+      else
+      {
+         final CommonToken lastToken = (CommonToken) input.LT( -1 );
+         return new ParseDateReturn( lastToken != null
+                                                      ? lastToken.getStopIndex() + 1
+                                                      : 0,
+                                     input.LA( 1 ) == Token.EOF );
+      }
    }
    
-
-
+   
+   
    protected void notifyParsingDateFailed()
    {
       success = false;

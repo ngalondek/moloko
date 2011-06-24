@@ -93,7 +93,19 @@ public class DateParserTestCase_de
          final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
          cal.roll( Calendar.YEAR, true );
          cal.add( Calendar.MONTH, 2 );
-         parseDate( "in 1 jahr und 2 monate@7",
+         parseDate( "in 1 jahr und 2 monaten@7",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    7,
+                    0,
+                    0 );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.roll( Calendar.YEAR, true );
+         cal.add( Calendar.MONTH, 2 );
+         parseDate( "in 1 jahr und 2 monaten um 7",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ),
@@ -166,7 +178,7 @@ public class DateParserTestCase_de
          if ( cal.before( DateTimeTestHelper.getDateParserCalendar() ) )
             cal.roll( Calendar.YEAR, true );
          
-         parseDate( "am 3. des juni",
+         parseDate( "am 3. des junis",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ) );
@@ -257,8 +269,7 @@ public class DateParserTestCase_de
                     0 );
       }
       {
-         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
-         cal.roll( Calendar.DAY_OF_MONTH, true );
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();     
          parseDate( "heute@12",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
@@ -277,22 +288,21 @@ public class DateParserTestCase_de
                     10,
                     0 );
       }
-      {
-         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
-         cal.set( Calendar.DAY_OF_MONTH, 21 );
-         
-         if ( cal.before( DateTimeTestHelper.getDateParserCalendar() ) )
-            cal.roll( Calendar.MONTH, true );
-         
-         parseDate( "am 21. 2000",
-                    cal.get( Calendar.DAY_OF_MONTH ),
-                    cal.get( Calendar.MONTH ),
-                    cal.get( Calendar.YEAR ),
-                    20,
-                    00,
-                    00 );
-      }
-      
+//      {
+//         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+//         cal.set( Calendar.DAY_OF_MONTH, 21 );
+//         
+//         if ( cal.before( DateTimeTestHelper.getDateParserCalendar() ) )
+//            cal.roll( Calendar.MONTH, true );
+//         
+//         parseDate( "am 21. 2000",
+//                    cal.get( Calendar.DAY_OF_MONTH ),
+//                    cal.get( Calendar.MONTH ),
+//                    cal.get( Calendar.YEAR ),
+//                    20,
+//                    00,
+//                    00 );
+//      }      
       {
          final MolokoCalendar end = DateTimeTestHelper.getDateParserCalendar();
          end.roll( Calendar.DAY_OF_YEAR, true );

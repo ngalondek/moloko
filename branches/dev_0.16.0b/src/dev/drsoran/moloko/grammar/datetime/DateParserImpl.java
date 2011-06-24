@@ -24,9 +24,10 @@ package dev.drsoran.moloko.grammar.datetime;
 
 import java.util.Locale;
 
-import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.TokenStream;
 
+import dev.drsoran.moloko.util.ANTLRIncrementalTokenStream;
 import dev.drsoran.moloko.util.ANTLRNoCaseStringStream;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
@@ -40,7 +41,7 @@ public class DateParserImpl implements IDateParser
    public final static Locale LOCALE = Locale.US;
    
    
-
+   
    public ParseDateReturn parseDate( String date,
                                      MolokoCalendar cal,
                                      boolean clearTime ) throws RecognitionException
@@ -50,8 +51,8 @@ public class DateParserImpl implements IDateParser
       return parser.parseDate( cal, clearTime );
    }
    
-
-
+   
+   
    public ParseDateWithinReturn parseDateWithin( String dateWithin, boolean past ) throws RecognitionException
    {
       prepareLexerAndParser( dateWithin );
@@ -62,28 +63,28 @@ public class DateParserImpl implements IDateParser
                                                       res.epochEnd ) : null;
    }
    
-
-
+   
+   
    public Locale getLocale()
    {
       return LOCALE;
    }
    
-
-
+   
+   
    public MolokoCalendar getCalendar()
    {
       return MolokoCalendar.getInstance();
    }
    
-
-
+   
+   
    private void prepareLexerAndParser( String date )
    {
       final ANTLRNoCaseStringStream stream = new ANTLRNoCaseStringStream( date );
       lexer.setCharStream( stream );
       
-      final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
+      final TokenStream antlrTokens = new ANTLRIncrementalTokenStream( lexer );
       parser.setTokenStream( antlrTokens );
    }
    

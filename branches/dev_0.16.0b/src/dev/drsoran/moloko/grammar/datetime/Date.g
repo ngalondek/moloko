@@ -20,12 +20,15 @@ options
    
    import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractDateParser;
+   import dev.drsoran.moloko.grammar.LexerException;
    import dev.drsoran.moloko.util.MolokoCalendar;
 }
 
 @lexer::header
 {
    package dev.drsoran.moloko.grammar.datetime;
+   
+   import dev.drsoran.moloko.grammar.LexerException;
 }
 
 @members
@@ -131,12 +134,23 @@ options
 
 @lexer::members
 {
-   @Override
-   public void reportError( RecognitionException e )
+    @Override
+    public void reportError( RecognitionException e )
+    {
+       throw new LexerException( e );
+    }
+}
+
+@rulecatch
+{
+   catch( RecognitionException re )
    {
-      // Do not process Lexer Exceptions cause we may
-      // parse a string that contains date and time 
-      // parts.      
+      notifyParsingDateFailed();
+      throw re;
+   }
+   catch( LexerException le )
+   {
+      throw new RecognitionException();
    }
 }
 
@@ -152,31 +166,28 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn resul
    {
       result = finishedDateParsing( cal );
    }
-   : (   date_full         [$cal]
-       | date_on           [$cal]
-       | date_in_X_YMWD    [$cal]
-       | date_end_of_the_MW[$cal]
-       | date_natural      [$cal])
-   // It's important to clear the time fields
-   // at last step cause the Calendar methods
-   // will set them again.
-   {
-      if ( clearTime )
-         cal.setHasTime( false );      
-   }
-   | NOW
-   {
-      // In case of NOW we do not respect the clearTime Parameter
-      // cause NOW has always a time.
-      cal.setTimeInMillis( System.currentTimeMillis() );
-      cal.setHasTime( true );
-   }
+   : (
+       (   date_full         [$cal]
+         | date_on           [$cal]
+         | date_in_X_YMWD    [$cal]
+         | date_end_of_the_MW[$cal]
+         | date_natural      [$cal])
+         // It's important to clear the time fields
+         // at last step cause the Calendar methods
+         // will set them again.
+         {
+            if ( clearTime )
+               cal.setHasTime( false );      
+         }
+      | NOW
+      {
+         // In case of NOW we do not respect the clearTime Parameter
+         // cause NOW has always a time.
+         cal.setTimeInMillis( System.currentTimeMillis() );
+         cal.setHasTime( true );
+      }
+   )
    ;
-   catch [RecognitionException e]
-   {
-      notifyParsingDateFailed();
-      throw e;
-   }
 
 parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar epochEnd]
    @init
@@ -223,10 +234,6 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
    {
       throw new RecognitionException();
    }
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_full [MolokoCalendar cal]
    @init
@@ -259,10 +266,6 @@ date_on [MolokoCalendar cal]
            | date_on_M_Xst   [$cal]
            | date_on_weekday [$cal])
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_on_Xst_of_M [MolokoCalendar cal]
    @init
@@ -294,10 +297,6 @@ date_on_Xst_of_M [MolokoCalendar cal]
    {
       throw new RecognitionException();
    }
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_on_M_Xst [MolokoCalendar cal]
    @init
@@ -327,10 +326,6 @@ date_on_M_Xst [MolokoCalendar cal]
    {
       throw new RecognitionException();
    }
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_on_weekday [MolokoCalendar cal]
    @init
@@ -342,19 +337,11 @@ date_on_weekday [MolokoCalendar cal]
       handleDateOnWeekday( cal, $wd.text, nextWeek );
    }
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_in_X_YMWD [MolokoCalendar cal]
    :  IN?             date_in_X_YMWD_distance[$cal]
       (( AND| COMMA ) date_in_X_YMWD_distance[$cal])*
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_in_X_YMWD_distance [MolokoCalendar cal]
    @init
@@ -383,10 +370,6 @@ date_in_X_YMWD_distance [MolokoCalendar cal]
    {
       throw new RecognitionException();
    }
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_end_of_the_MW [MolokoCalendar cal]
    : END OF? THE?
@@ -399,10 +382,6 @@ date_end_of_the_MW [MolokoCalendar cal]
             rollToEndOf( Calendar.DAY_OF_MONTH, cal );
          })
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_natural [MolokoCalendar cal]
    : (TODAY | TONIGHT)
@@ -422,10 +401,6 @@ date_natural [MolokoCalendar cal]
         cal.roll( Calendar.DAY_OF_YEAR, false );
      }
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 // TOKENS
 
@@ -489,6 +464,8 @@ MINUS     : '-';
 MINUS_A   : '-a';
 
 COMMA     : ',';
+
+DATE_TIME_SEPARATOR : '@' | 'at' | COMMA;
 
 INT       : '0'..'9'+;
 

@@ -20,12 +20,15 @@ options
    
    import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractDateParser;
+   import dev.drsoran.moloko.grammar.LexerException;   
    import dev.drsoran.moloko.util.MolokoCalendar;
 }
 
 @lexer::header
 {
    package dev.drsoran.moloko.grammar.datetime.de;
+   
+   import dev.drsoran.moloko.grammar.LexerException;   
 }
 
 @members
@@ -130,12 +133,23 @@ options
 
 @lexer::members
 {
-   @Override
-   public void reportError( RecognitionException e )
+    @Override
+    public void reportError( RecognitionException e )
+    {
+       throw new LexerException( e );
+    }
+}
+
+@rulecatch
+{
+   catch( RecognitionException re )
    {
-      // Do not process Lexer Exceptions cause we may
-      // parse a string that contains date and time 
-      // parts.      
+      notifyParsingDateFailed();
+      throw re;
+   }
+   catch( LexerException le )
+   {
+      throw new RecognitionException();
    }
 }
 
@@ -151,31 +165,28 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn resul
    {
       result = finishedDateParsing( cal );
    }
-   : (   date_full         [$cal]
-       | date_on           [$cal]
-       | date_in_X_YMWD    [$cal]
-       | date_end_of_the_MW[$cal]
-       | date_natural      [$cal])
-   // It's important to clear the time fields
-   // at last step cause the Calendar methods
-   // will set them again.
-   {
-      if ( clearTime )
-         cal.setHasTime( false );      
-   }
-   | NOW
-   {
-      // In case of NOW we do not respect the clearTime Parameter
-      // cause NOW has always a time.
-      cal.setTimeInMillis( System.currentTimeMillis() );
-      cal.setHasTime( true );
-   }
+   :(
+       (   date_full         [$cal]
+         | date_on           [$cal]
+         | date_in_X_YMWD    [$cal]
+         | date_end_of_the_MW[$cal]
+         | date_natural      [$cal])
+         // It's important to clear the time fields
+         // at last step cause the Calendar methods
+         // will set them again.
+         {
+            if ( clearTime )
+               cal.setHasTime( false );      
+         }
+      | NOW
+      {
+         // In case of NOW we do not respect the clearTime Parameter
+         // cause NOW has always a time.
+         cal.setTimeInMillis( System.currentTimeMillis() );
+         cal.setHasTime( true );
+      }
+   )
    ;
-   catch [RecognitionException e]
-   {
-      notifyParsingDateFailed();
-      throw e;
-   }
 
 parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar epochEnd]
    @init
@@ -222,10 +233,6 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
    {
       throw new RecognitionException();
    }
-   catch [RecognitionException e]
-   {
-      throw e;
-   }   
 
 date_full [MolokoCalendar cal]
    @init
@@ -272,7 +279,7 @@ date_on_Xst_of_M [MolokoCalendar cal]
        {
           cal.set( Calendar.DAY_OF_MONTH, Integer.parseInt( $d.text ) );
        }
-      (OF? m=MONTH
+      (OF_THE? m=MONTH
              {
                 parseTextMonth( cal, $m.text );
                 hasMonth = true;
@@ -290,10 +297,6 @@ date_on_Xst_of_M [MolokoCalendar cal]
    {
       throw new RecognitionException();
    }
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_on_weekday [MolokoCalendar cal]
    @init
@@ -305,19 +308,11 @@ date_on_weekday [MolokoCalendar cal]
       handleDateOnWeekday( cal, $wd.text, nextWeek );
    }
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_in_X_YMWD [MolokoCalendar cal]
    :  IN?          date_in_X_YMWD_distance[$cal]
       ((AND|COMMA) date_in_X_YMWD_distance[$cal])*
    ;
-   catch [RecognitionException e]
-   {
-      throw e;
-   }
 
 date_in_X_YMWD_distance [MolokoCalendar cal]
    @init
@@ -345,10 +340,6 @@ date_in_X_YMWD_distance [MolokoCalendar cal]
    catch[ NumberFormatException nfe ]
    {
       throw new RecognitionException();
-   }
-   catch [RecognitionException e]
-   {
-      throw e;
    }
 
 date_end_of_the_MW [MolokoCalendar cal]
@@ -396,7 +387,7 @@ A         : 'ein'('e'|'er'|'es'|'em'|'en')?;
 
 ON        :	'am' | 'an';
 
-OF        : 'von' | 'vom' | 'ab' | 'des' | 'seit';	
+OF        : 'von' | 'vom' | 'ab' | 'seit';	
 
 OF_THE    : 'der' | 'die' | 'das' | 'dem' | 'den' | 'des';
 
@@ -416,21 +407,35 @@ TOMORROW  : 'morgen' | 'mrg';
 
 YESTERDAY : 'gestern';
 
-NEXT      : 'n'('a'|'ae'|'ä' )'chst'('e'|'er'|'es');
+NEXT      : 'n'('a'|'ae'|'ä' )'chst'('e'|'er'|'es'|'en'|'em');
 
-YEARS     : 'jahr''e'? | 'jhr';
+YEARS     : 'jahr'SUFF_MALE?;
 
-MONTHS    : 'monat''e'?;
+MONTHS    : 'monat'SUFF_MALE?;
 
-WEEKS     : 'woche''n'?;
+WEEKS     : 'woche'SUFF_FMALE?;
 
-DAYS      : 'tag''e'?;
+DAYS      : 'tag'SUFF_MALE?;
 
-MONTH     : 'jan' | 'feb' | 'm'('a'|'ä'|'ae')'r' | 'apr' |
-            'mai' | 'jun' | 'jul'                | 'aug' |
-            'sep' | 'okt' | 'nov'                | 'dez';
+MONTH     :   'jan'                | 'januar'SUFF_MALE?              
+            | 'feb'                | 'februar'SUFF_MALE?
+            | 'm'('a'|'ä'|'ae')'r' | 'm'('a'|'ä'|'ae')'rz'SUFF_MALE?
+            | 'mai'SUFF_FMALE?     
+            | 'jun'                | 'juni'SUFF_MALE?
+            | 'jul'                | 'juli'SUFF_MALE?               
+            | 'aug'                | 'august'SUFF_MALE?
+            | 'sep'                | 'september'SUFF_MALE?
+            | 'okt'                | 'oktober'SUFF_MALE?
+            | 'nov'                | 'november'SUFF_MALE?
+            | 'dez'                | 'dezember'SUFF_MALE?;
 
-WEEKDAY   : 'mo' | 'di' | 'mi' | 'do' | 'fr' | 'sa' | 'so';
+WEEKDAY   :    'mo' | 'montag'SUFF_MALE?
+             | 'di' | 'dienstag'SUFF_MALE?
+             | 'mi' | 'mittwoch'SUFF_MALE?
+             | 'do' | 'donnestag'SUFF_MALE?
+             | 'fr' | 'freitag'SUFF_MALE?
+             | 'sa' | 'samstag'SUFF_MALE?
+             | 'so' | 'sonntag'SUFF_MALE?;
 
 NUM_STR   : 'eins'  | 'zwei'   | 'drei' | 'vier' | 'f'('u'|'ü'|'ue')'nf' |
             'sechs' | 'sieben' | 'acht' | 'neun' | 'zehn';
@@ -444,6 +449,13 @@ COLON     : ':';
 MINUS     : '-';
 
 COMMA     : ',';
+
+DATE_TIME_SEPARATOR : '@' | 'um' | COMMA;
+
+fragment
+SUFF_MALE : 'e'|'s'|'es'|'en';
+
+SUFF_FMALE : 'n';
 
 INT       : '0'..'9'+;
 

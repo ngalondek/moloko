@@ -42,28 +42,28 @@ public abstract class AbstractTimeParser extends Parser
    private boolean success = true;
    
    
-
+   
    protected AbstractTimeParser( TokenStream input )
    {
       super( input );
    }
    
-
-
+   
+   
    protected AbstractTimeParser( TokenStream input, RecognizerSharedState state )
    {
       super( input, state );
    }
    
-
-
+   
+   
    protected MolokoCalendar getCalendar()
    {
       return MolokoCalendar.getInstance();
    }
    
-
-
+   
+   
    protected void setCalendarTime( MolokoCalendar cal, String pointInTime ) throws RecognitionException
    {
       final int len = pointInTime.length();
@@ -98,15 +98,15 @@ public abstract class AbstractTimeParser extends Parser
       }
    }
    
-
-
+   
+   
    protected void startParsingTime( MolokoCalendar cal )
    {
       success = true;
    }
    
-
-
+   
+   
    protected ParseTimeReturn finishedParsingTime( MolokoCalendar cal )
    {
       cal.setHasTime( success );
@@ -118,8 +118,8 @@ public abstract class AbstractTimeParser extends Parser
                                   input.LA( 1 ) == Token.EOF );
    }
    
-
-
+   
+   
    protected void notifyParsingTimeFailed()
    {
       success = false;

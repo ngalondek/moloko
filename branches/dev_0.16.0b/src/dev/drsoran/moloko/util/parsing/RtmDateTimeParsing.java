@@ -49,7 +49,7 @@ public final class RtmDateTimeParsing
    private static ITimeParser timeParser;
    
    
-
+   
    public synchronized final static MolokoCalendar parseTimeOrTimeSpec( String spec )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -75,8 +75,8 @@ public final class RtmDateTimeParsing
       return ( !error ) ? cal : null;
    }
    
-
-
+   
+   
    public synchronized final static MolokoCalendar parseDateTimeSpec( String spec )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -128,25 +128,30 @@ public final class RtmDateTimeParsing
          {
             final String potentialTimePart = spec.substring( endOfDatePos,
                                                              spec.length() );
-            try
-            {
-               eof = parseTime( potentialTimePart, cal, !hasDate ).isEof;
-               hasTime = cal.hasTime();
-            }
-            catch ( RecognitionException re2 )
-            {
-            }
             
-            if ( !eof && !hasTime )
+            eof = potentialTimePart.length() == 0;
+            if ( !eof )
             {
                try
                {
-                  eof = parseTimeSpec( potentialTimePart, cal, !hasDate ).isEof;
+                  eof = parseTime( potentialTimePart, cal, !hasDate ).isEof;
                   hasTime = cal.hasTime();
                }
-               catch ( RecognitionException re3 )
+               catch ( RecognitionException re2 )
                {
-                  error = true;
+               }
+               
+               if ( !eof && !hasTime )
+               {
+                  try
+                  {
+                     eof = parseTimeSpec( potentialTimePart, cal, !hasDate ).isEof;
+                     hasTime = cal.hasTime();
+                  }
+                  catch ( RecognitionException re3 )
+                  {
+                     error = true;
+                  }
                }
             }
          }
@@ -155,8 +160,8 @@ public final class RtmDateTimeParsing
       return ( !error ) ? cal : null;
    }
    
-
-
+   
+   
    public synchronized final static long parseEstimated( String estimated )
    {
       try
@@ -169,8 +174,8 @@ public final class RtmDateTimeParsing
       }
    }
    
-
-
+   
+   
    public synchronized final static ParseDateWithinReturn parseDateWithin( String range,
                                                                            boolean past )
    {
@@ -184,8 +189,8 @@ public final class RtmDateTimeParsing
       }
    }
    
-
-
+   
+   
    private synchronized final static ParseTimeReturn parseTime( final String time,
                                                                 final MolokoCalendar cal,
                                                                 final boolean adjustDay ) throws RecognitionException
@@ -202,8 +207,8 @@ public final class RtmDateTimeParsing
                                          } );
    }
    
-
-
+   
+   
    private synchronized final static ParseTimeReturn parseTimeSpec( final String timeSpec,
                                                                     final MolokoCalendar cal,
                                                                     final boolean adjustDay ) throws RecognitionException
@@ -220,8 +225,8 @@ public final class RtmDateTimeParsing
                                          } );
    }
    
-
-
+   
+   
    private synchronized final static long parseTimeEstimate( final String timeEstimate ) throws RecognitionException
    {
       return detectLanguageAndParseTime( timeEstimate, new Callable< Long >()
@@ -234,8 +239,8 @@ public final class RtmDateTimeParsing
       } );
    }
    
-
-
+   
+   
    private synchronized final static ParseDateReturn parseDate( final String date,
                                                                 final MolokoCalendar cal,
                                                                 final boolean clearTime ) throws RecognitionException
@@ -252,8 +257,8 @@ public final class RtmDateTimeParsing
                                          } );
    }
    
-
-
+   
+   
    private synchronized final static ParseDateWithinReturn parseDateWithinImpl( final String range,
                                                                                 final boolean past ) throws RecognitionException
    {
@@ -268,8 +273,8 @@ public final class RtmDateTimeParsing
                                          } );
    }
    
-
-
+   
+   
    private synchronized final static < T > T detectLanguageAndParseTime( String time,
                                                                          Callable< T > parserFunc ) throws RecognitionException
    {
@@ -280,33 +285,40 @@ public final class RtmDateTimeParsing
          // If we have a parser, try the current parser first
          if ( timeParser != null )
             result = parserFunc.call();
+      }
+      catch ( Exception e )
+      {
+      }
+      
+      if ( result == null )
+      {
+         Locale currentParserLocale = null;
+         if ( timeParser != null )
+            currentParserLocale = timeParser.getLocale();
          
-         if ( result == null )
+         final List< ITimeParser > parsers = TimeParserFactory.getAvailableTimeParsers();
+         
+         for ( ITimeParser parser : parsers )
          {
-            Locale currentParserLocale = null;
-            if ( timeParser != null )
-               currentParserLocale = timeParser.getLocale();
-            
-            final List< ITimeParser > parsers = TimeParserFactory.getAvailableTimeParsers();
-            
-            for ( ITimeParser parser : parsers )
+            // Parsing with the current parser failed, so we can spare trying the parser again.
+            if ( currentParserLocale == null
+               || parser.getLocale().hashCode() != currentParserLocale.hashCode() )
             {
-               // Parsing with the current parser failed, so we can spare trying the parser again.
-               if ( currentParserLocale == null
-                  || parser.getLocale().hashCode() != currentParserLocale.hashCode() )
+               try
                {
                   timeParser = parser;
                   result = parserFunc.call();
-               }
-               
-               if ( result != null )
                   break;
-               else
+               }
+               catch ( Exception e1 )
+               {
                   timeParser = null;
+               }
             }
          }
       }
-      catch ( Exception e )
+      
+      if ( result == null )
       {
          throw new RecognitionException();
       }
@@ -314,8 +326,8 @@ public final class RtmDateTimeParsing
       return result;
    }
    
-
-
+   
+   
    private synchronized final static < T > T detectLanguageAndParseDate( String date,
                                                                          Callable< T > parserFunc ) throws RecognitionException
    {
@@ -326,33 +338,40 @@ public final class RtmDateTimeParsing
          // If we have a parser, try the current parser first
          if ( dateParser != null )
             result = parserFunc.call();
+      }
+      catch ( Exception e )
+      {
+      }
+      
+      if ( result == null )
+      {
+         Locale currentParserLocale = null;
+         if ( dateParser != null )
+            currentParserLocale = dateParser.getLocale();
          
-         if ( result == null )
+         final List< IDateParser > parsers = DateParserFactory.getAvailableDateParsers();
+         
+         for ( IDateParser parser : parsers )
          {
-            Locale currentParserLocale = null;
-            if ( dateParser != null )
-               currentParserLocale = dateParser.getLocale();
-            
-            final List< IDateParser > parsers = DateParserFactory.getAvailableDateParsers();
-            
-            for ( IDateParser parser : parsers )
+            // Parsing with the current parser failed, so we can spare trying the parser again.
+            if ( currentParserLocale == null
+               || parser.getLocale().hashCode() != currentParserLocale.hashCode() )
             {
-               // Parsing with the current parser failed, so we can spare trying the parser again.
-               if ( currentParserLocale == null
-                  || parser.getLocale().hashCode() != currentParserLocale.hashCode() )
+               try
                {
                   dateParser = parser;
                   result = parserFunc.call();
-               }
-               
-               if ( result != null )
                   break;
-               else
+               }
+               catch ( Exception e1 )
+               {
                   dateParser = null;
+               }
             }
          }
       }
-      catch ( Exception e )
+      
+      if ( result == null )
       {
          throw new RecognitionException();
       }

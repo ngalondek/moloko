@@ -38,7 +38,7 @@ public interface ITimeParser
       public final boolean isEof;
       
       
-
+      
       public ParseTimeReturn( int lastParsedCharPos, boolean isEof )
       {
          this.lastParsedCharPos = lastParsedCharPos;
@@ -47,24 +47,24 @@ public interface ITimeParser
    }
    
    
-
+   
    ParseTimeReturn parseTime( String time, MolokoCalendar cal, boolean adjustDay ) throws RecognitionException;
    
-
-
+   
+   
    ParseTimeReturn parseTimeSpec( String timeSpec,
                                   MolokoCalendar cal,
                                   boolean adjustDay ) throws RecognitionException;
    
-
-
+   
+   
    long parseTimeEstimate( String timeEstimate ) throws RecognitionException;
    
-
-
+   
+   
    Locale getLocale();
    
-
-
+   
+   
    MolokoCalendar getCalendar();
 }

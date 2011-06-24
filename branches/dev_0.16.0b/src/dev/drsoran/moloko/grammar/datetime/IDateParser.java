@@ -38,7 +38,7 @@ public interface IDateParser
       public final boolean isEof;
       
       
-
+      
       public ParseDateReturn( int lastParsedCharPos, boolean isEof )
       {
          this.lastParsedCharPos = lastParsedCharPos;
@@ -46,7 +46,7 @@ public interface IDateParser
       }
    }
    
-
+   
    public final static class ParseDateWithinReturn
    {
       public final MolokoCalendar startEpoch;
@@ -54,7 +54,7 @@ public interface IDateParser
       public final MolokoCalendar endEpoch;
       
       
-
+      
       public ParseDateWithinReturn( MolokoCalendar startEpoch,
          MolokoCalendar endEpoch )
       {
@@ -64,18 +64,18 @@ public interface IDateParser
    }
    
    
-
+   
    ParseDateReturn parseDate( String date, MolokoCalendar cal, boolean clearTime ) throws RecognitionException;
    
-
-
+   
+   
    ParseDateWithinReturn parseDateWithin( String dateWithin, boolean past ) throws RecognitionException;
    
-
-
+   
+   
    Locale getLocale();
    
-
-
+   
+   
    MolokoCalendar getCalendar();
 }

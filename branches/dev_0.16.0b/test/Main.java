@@ -10,7 +10,7 @@ public class Main
     */
    public static void main( String[] args )
    {      
-      //DateParserTestCase_en.execute();
+      DateParserTestCase_en.execute();
       DateParserTestCase_de.execute();
       
       TimeParserTestCase_en.execute();

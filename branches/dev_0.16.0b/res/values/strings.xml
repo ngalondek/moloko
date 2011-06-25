@@ -277,7 +277,8 @@
    <string name="task_edit_location_no">Nowhere</string>
    <string name="task_edit_validate_empty_name">The task name must not be empty</string>
    <string name="task_edit_validate_estimate">\'%1$s\' is not a valid estimation</string>
-   <string name="task_edit_validate_due">\'%1$s\' is not a valid due</string>
+   <string name="task_edit_validate_due">\'%1$s\' is not a valid due date</string>
+   <string name="task_edit_validate_recurrence">\'%1$s\' is not a valid recurrence</string>
    
     <!-- EditMultipleTasks activity -->
    <string name="edit_multiple_tasks_titlebar">@string/app_task_edit_multiple</string>
@@ -371,16 +372,21 @@
    <!-- Authenticator activity -->
    <string name="auth_api_key_label">API key</string>
    <string name="auth_api_shared_secret_label">Shared secret</string>
-   <string name="auth_permission_label">Permission</string>
-   <string name="auth_info_text">After continue you will be redirected to the Remember The Milk website. There you can confirm the access permission by entering your RTM access credentials.\n\nYour username and password will not be stored locally.</string>
+   <string name="auth_permission_label">Permission</string>   
+   <string name="auth_info_text">After continue you will be redirected to the Remember The Milk website. There you can confirm the access permission by entering your RTM credentials.\n\nYour username and password will not be stored locally.</string>
    <string name="auth_missing_credential">Important account information is missing. Please complete.</string>
    <string name="auth_expired_auth_token">The access permission is from Remember The Milk for %1$s not confirmed. Please apply again.</string>
    <string name="auth_perm_no">None</string>
-   <string name="auth_perm_read">Read</string>
-   <string name="auth_perm_write">Read and Write</string>
+   <string name="auth_perm_read">Read</string>   
    <string name="auth_perm_delete">Read, Write and Delete</string>
       <!-- Dialogs -->
       <string name="auth_dlg_get_auth_token">Request Auth-Token for access level \'%1$s\'</string>
+      <string name="auth_dlg_permisson_info">By choosing the permission, you can restrict the access to your RTM account for Moloko.\n\n
+                                             If you select \'Read\', then you will not be able to add, edit or delete tasks, lists or notes in Moloko. \'Read\' gives you a read-only
+                                             view to your RTM data. By selecting \'Read, Write and Delete\', you can do almost the same in Moloko as you can do on the RTM website,
+                                             including adding, editing and deleting tasks, lists or notes.\n\nBackground synchronization will take place in both
+                                             access levels. However, in \'Read\' permission mode, data will only be received from RTM server.\n\nYou can change the access
+                                             level any time be removing your RTM account from your device and create a new account, selecting the desired, new access level.</string>
       <!-- Toasts -->
       <string name="auth_toast_err_weblogin">An error happened while opening the RTM authenticator page. Please try again.</string>
       <!-- Errors -->

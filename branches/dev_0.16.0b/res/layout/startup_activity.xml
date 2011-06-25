@@ -22,7 +22,7 @@
 
    <dev.drsoran.moloko.layouts.TitleBarLayout
       android:id="@+id/title_bar"
-      style="@style/App_TitleBar"      
+      style="@style/App_TitleBar"
       moloko:titleText="@string/app_name"
       moloko:showButton="none" />
 
@@ -41,35 +41,14 @@
       </LinearLayout>
    </ScrollView>
 
-   <RelativeLayout
+   <dev.drsoran.moloko.layouts.BottomButtonBarLayout
       android:id="@+id/btn_bar"
-      style="@style/App_ButtonBar_Bgnd"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:paddingTop="5dip"
-      android:visibility="gone">
-
-      <Button
-         android:id="@+id/btn_left"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignParentLeft="true"
-         android:visibility="gone" />
-
-      <Button
-         android:id="@+id/btn_center"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_centerHorizontal="true"
-         android:visibility="gone" />
-
-      <Button
-         android:id="@+id/btn_right"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignParentRight="true"
-         android:visibility="gone" />
-   </RelativeLayout>
+      android:visibility="visible"
+      moloko:button1Text="center_button"
+      moloko:stretchSingleButton="false" />
 
 </RelativeLayout>

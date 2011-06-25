@@ -140,7 +140,7 @@ public class StartUpActivity extends Activity implements
                                  widgetContainer,
                                  true );
          
-         final Button btnCenter = getButton( R.id.btn_center );
+         final Button btnCenter = getButton( android.R.id.button1 );
          btnCenter.setVisibility( View.VISIBLE );
          btnCenter.setText( R.string.btn_new_account );
          btnCenter.setOnClickListener( new OnClickListener()
@@ -193,7 +193,7 @@ public class StartUpActivity extends Activity implements
                                           widgetContainer,
                                           true );
                   
-                  final Button btnCenter = getButton( R.id.btn_center );
+                  final Button btnCenter = getButton( android.R.id.button1 );
                   btnCenter.setVisibility( View.VISIBLE );
                   btnCenter.setText( R.string.btn_continue );
                   btnCenter.setOnClickListener( new OnClickListener()

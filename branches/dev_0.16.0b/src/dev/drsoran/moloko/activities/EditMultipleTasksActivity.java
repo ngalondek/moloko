@@ -80,7 +80,7 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
    private List< Task > tasks;
    
    
-
+   
    @Override
    public InitialValues onCreateImpl( Intent intent )
    {
@@ -198,8 +198,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          return null;
    }
    
-
-
+   
+   
    @Override
    protected void initViews()
    {
@@ -233,8 +233,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       }
    }
    
-
-
+   
+   
    @Override
    protected void initializeListSpinner( TitleWithSpinnerLayout spinner,
                                          String[] names,
@@ -269,8 +269,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       }
    }
    
-
-
+   
+   
    @Override
    protected void initializePrioritySpinner( TitleWithSpinnerLayout spinner,
                                              String[] names,
@@ -305,8 +305,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       }
    }
    
-
-
+   
+   
    @Override
    protected void initializeLocationSpinner( TitleWithSpinnerLayout spinner,
                                              String[] names,
@@ -341,8 +341,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       }
    }
    
-
-
+   
+   
    @Override
    protected void refreshHeadSection( TextView addedDate,
                                       TextView completedDate,
@@ -394,8 +394,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       }
    }
    
-
-
+   
+   
    @Override
    public void onChangeTags( View v )
    {
@@ -414,8 +414,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
    }
    
-
-
+   
+   
    @Override
    protected void refreshTags( WrappingLayout tagsLayout )
    {
@@ -434,32 +434,32 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       // super.refreshTags( tagsLayout );
    }
    
-
-
+   
+   
    @Override
-   protected void refreshDue( EditText dueEdit )
+   protected void refreshDue( EditText dueEdit, boolean showWeekday )
    {
       dueContainer.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    @Override
    protected void refreshEstimate( EditText estimateEdit )
    {
       estimateContainer.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    @Override
    protected void refreshRecurrence( EditText recurrEdit )
    {
       recurrContainer.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    @Override
    protected ModificationSet getModifications()
    {
@@ -469,8 +469,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          return new ModificationSet();
    }
    
-
-
+   
+   
    @Override
    protected boolean validateName( TextView name )
    {
@@ -480,15 +480,15 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          return super.validateName( name );
    }
    
-
-
+   
+   
    private final String addAttribCnt( String key, Object value, String entry )
    {
       return entry + " (" + getAttribValueCnt( key, value ) + ")";
    }
    
-
-
+   
+   
    private final static void inc( Map< Object, Integer > map, Object value )
    {
       final Integer cnt = map.get( value );
@@ -499,8 +499,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          map.put( value, Integer.valueOf( 1 ) );
    }
    
-
-
+   
+   
    private final < V > V getInitialValue( String key,
                                           V multiVal,
                                           Class< V > type )
@@ -513,15 +513,15 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
          return multiVal;
    }
    
-
-
+   
+   
    private final boolean isCommonAttrib( String key )
    {
       return attributeCount.get( key ).size() == 1;
    }
    
-
-
+   
+   
    private final int getAttribValueCnt( String key, Object value )
    {
       final Integer cnt = attributeCount.get( key ).get( value );
@@ -529,8 +529,8 @@ public class EditMultipleTasksActivity extends AbstractTaskEditActivity
       return cnt == null ? 0 : cnt.intValue();
    }
    
-
-
+   
+   
    private final boolean isMultiTask()
    {
       return tasks.size() > 1;

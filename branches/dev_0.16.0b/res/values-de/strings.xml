@@ -225,6 +225,7 @@
    <string name="task_edit_validate_empty_name">Der Name der Aufgabe darf nicht leer sein</string>   
    <string name="task_edit_validate_estimate">\'%1$s\' ist keine gültige Zeitschätzung</string>
    <string name="task_edit_validate_due">\'%1$s\' ist keine gültige Fälligkeit</string>
+    <string name="task_edit_validate_recurrence">\'%1$s\' ist keine gültige Wiederholung</string>
    
    <!-- EditMultipleTasks activity -->
    <string name="edit_multiple_tasks_multiple_values">Verschiedene Werte</string>
@@ -315,11 +316,17 @@
    <string name="auth_missing_credential">Wichtige Kontoangaben fehlen. Bitte ergänzen.</string>
    <string name="auth_expired_auth_token">Die Zugriffsberechtigung wurde von Remember The Milk für %1$s nicht bestätigt. Bitte neu beantragen.</string>
    <string name="auth_perm_no">Keine</string>
-   <string name="auth_perm_read">Lesen</string>
-   <string name="auth_perm_write">Lesen und Schreiben</string>
+   <string name="auth_perm_read">Lesen</string>  
    <string name="auth_perm_delete">Lesen, Schreiben und Löschen</string>
       <!-- Dialogs -->
-      <string name="auth_dlg_get_auth_token">Beantrage Auth-Token für Zugriffsebene \'%1$s\'</string>
+      <string name="auth_dlg_get_auth_token">Beantrage Auth-Token für Berechtigung \'%1$s\'</string>
+      <string name="auth_dlg_permisson_info">Durch die Auswahl der Berechtigung, können Sie den Zugriff für Moloko auf Ihr RTM Konto beschränken.\n\n
+                                             Wählen Sie \'Lesen\', können Sie keine Aufgaben, Listen oder Notizen in Moloko editieren, hinzufügen oder löschen. \'Lesen\' gibt Ihnen
+                                             eine nur lesende Sicht auf Ihre RTM Daten. Durch die Auswahl von \'Lesen, Schreiben und Löschen\', können Sie aus Moloko heraus annähernd das
+                                             gleiche machen wie über die RTM website. Dies beinhaltet auch das Ändern, Hinzufügen und Löschen von Aufgaben, Listen oder Notizen.\n\n
+                                             Die Hintergrund-Synchronisation findet bei allen Zugriffsarten statt. Wenngleich im Modus \'Lesen\' Daten nur vom RTM-Server geholt
+                                             werden.\n\nSie können den Zugriff jederzeit ändern, indem Sie das RTM-Konto auf diesem Gerät löschen und ein neues Konto mit der
+                                             neuen Zugriffsebene anlegen.</string>
       <!-- Toasts -->
       <string name="auth_toast_err_weblogin">Beim Aufrufen der RTM-Authentifizierungsseite ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
       <!-- Errors -->

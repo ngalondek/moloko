@@ -113,7 +113,7 @@ public class TitleBarLayout extends LinearLayout implements
       private RtmSmartFilter filter;
       
       
-
+      
       public AddTaskSection( View titleBar )
       {
          container = titleBar.findViewById( R.id.app_titlebar_quick_add_task_layout );
@@ -140,8 +140,8 @@ public class TitleBarLayout extends LinearLayout implements
          btnEstimate.setOnClickListener( this );
       }
       
-
-
+      
+      
       public void show( boolean show, RtmSmartFilter filter )
       {
          container.setVisibility( show ? View.VISIBLE : View.GONE );
@@ -175,8 +175,8 @@ public class TitleBarLayout extends LinearLayout implements
          }
       }
       
-
-
+      
+      
       public void onClick( View view )
       {
          final int pos = Selection.getSelectionStart( addTaskEdit.getText() );
@@ -216,8 +216,8 @@ public class TitleBarLayout extends LinearLayout implements
          }
       }
       
-
-
+      
+      
       private final int preselectByFilter( RtmSmartFilter filter )
       {
          int numPreselected = 0;
@@ -240,8 +240,8 @@ public class TitleBarLayout extends LinearLayout implements
          return numPreselected;
       }
       
-
-
+      
+      
       private final Editable insertOperator( char operator, int pos )
       {
          final Editable text = addTaskEdit.getEditableText();
@@ -257,8 +257,8 @@ public class TitleBarLayout extends LinearLayout implements
          return text;
       }
       
-
-
+      
+      
       private final Editable insertOperatorAndValue( char operator,
                                                      String value,
                                                      int pos )
@@ -276,8 +276,8 @@ public class TitleBarLayout extends LinearLayout implements
          return text;
       }
       
-
-
+      
+      
       @SuppressWarnings( "unchecked" )
       private final void addNewTask()
       {
@@ -437,7 +437,7 @@ public class TitleBarLayout extends LinearLayout implements
    private RtmSmartFilter addSmartListFilter;
    
    
-
+   
    public TitleBarLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -462,8 +462,8 @@ public class TitleBarLayout extends LinearLayout implements
       array.recycle();
    }
    
-
-
+   
+   
    @Override
    public boolean dispatchKeyEvent( KeyEvent event )
    {
@@ -477,8 +477,8 @@ public class TitleBarLayout extends LinearLayout implements
          return super.dispatchKeyEvent( event );
    }
    
-
-
+   
+   
    public void showAddTaskInput( boolean visible )
    {
       if ( addTaskBtn != null )
@@ -488,22 +488,22 @@ public class TitleBarLayout extends LinearLayout implements
       }
    }
    
-
-
+   
+   
    public void setAddTaskFilter( RtmSmartFilter filter )
    {
       addTaskFilter = filter;
    }
    
-
-
+   
+   
    public void setAddSmartListFilter( RtmSmartFilter filter )
    {
       addSmartListFilter = filter;
    }
    
-
-
+   
+   
    public void setButtonsVisible( int buttonMask )
    {
       // Show search button
@@ -522,7 +522,11 @@ public class TitleBarLayout extends LinearLayout implements
                         ( buttonMask & BUTTON_HOME ) == BUTTON_HOME );
       }
       
-      final boolean hasWriteAccess = !AccountUtils.isReadOnlyAccess( getContext() );
+      final boolean hasWriteAccess;
+      if ( isInEditMode() )
+         hasWriteAccess = true;
+      else
+         hasWriteAccess = !AccountUtils.isReadOnlyAccess( getContext() );
       
       // Show add task button
       {
@@ -542,22 +546,22 @@ public class TitleBarLayout extends LinearLayout implements
       }
    }
    
-
-
+   
+   
    public void onCheckedChanged( ToggleImageButton button, boolean checked )
    {
       hideOrShowAddTaskLayout();
    }
    
-
-
+   
+   
    private void setVisible( int id, boolean visible )
    {
       findViewById( id ).setVisibility( visible ? VISIBLE : GONE );
    }
    
-
-
+   
+   
    private View setBtnVisible( int id, boolean visible )
    {
       final View btn = findViewById( id );
@@ -567,8 +571,8 @@ public class TitleBarLayout extends LinearLayout implements
       return btn;
    }
    
-
-
+   
+   
    public void onClick( View v )
    {
       switch ( v.getId() )
@@ -600,8 +604,8 @@ public class TitleBarLayout extends LinearLayout implements
       }
    }
    
-
-
+   
+   
    private final void hideOrShowAddTaskLayout()
    {
       if ( addTaskBtn.isChecked() )
@@ -628,22 +632,22 @@ public class TitleBarLayout extends LinearLayout implements
       Parcelable addTaskState;
       
       
-
+      
       SavedState( Parcelable superState )
       {
          super( superState );
       }
       
-
-
+      
+      
       private SavedState( Parcel in )
       {
          super( in );
          addTaskState = in.readParcelable( null );
       }
       
-
-
+      
+      
       @Override
       public void writeToParcel( Parcel out, int flags )
       {
@@ -658,8 +662,8 @@ public class TitleBarLayout extends LinearLayout implements
             return new SavedState( in );
          }
          
-
-
+         
+         
          public SavedState[] newArray( int size )
          {
             return new SavedState[ size ];

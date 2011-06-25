@@ -207,16 +207,12 @@
          name="android:textSize">18sp</item>
       <item
          name="android:textStyle">bold</item>
-      <item
-         name="android:textColor">@color/notification_permanent_title</item>
    </style>
 
    <style
       name="Notification_Permanent_Text">
       <item
          name="android:textSize">14sp</item>
-      <item
-         name="android:textColor">@color/notification_permanent_text</item>
    </style>
 
    <!-- ********* -->

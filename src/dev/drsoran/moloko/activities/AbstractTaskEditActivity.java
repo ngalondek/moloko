@@ -39,16 +39,16 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -56,11 +56,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
@@ -116,7 +116,7 @@ abstract class AbstractTaskEditActivity extends Activity
       public final String url;
       
       
-      
+
       public InitialValues( String name, String listId, String priority,
          String tags, long dueMillis, boolean hasDueTime, String recurrPattern,
          boolean isEveryRecurrence, String estimate, long estimateMillis,
@@ -136,8 +136,8 @@ abstract class AbstractTaskEditActivity extends Activity
          this.url = url;
       }
       
-      
-      
+
+
       public final Map< String, Object > toMap()
       {
          final Map< String, Object > values = new HashMap< String, Object >();
@@ -158,13 +158,13 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
+
    private static abstract class SmallTextWatcher implements TextWatcher
    {
       abstract public void afterTextChanged( Editable s );
       
-      
-      
+
+
       public void beforeTextChanged( CharSequence s,
                                      int start,
                                      int count,
@@ -172,8 +172,8 @@ abstract class AbstractTaskEditActivity extends Activity
       {
       }
       
-      
-      
+
+
       public void onTextChanged( CharSequence s,
                                  int start,
                                  int before,
@@ -240,7 +240,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected Map< String, String > locationNames_2_locationIds;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -309,8 +309,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    @Override
    protected void onResume()
    {
@@ -369,19 +369,19 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    protected boolean shouldHandleIntentAction( String action )
    {
       return action.equals( Intent.ACTION_EDIT );
    }
    
-   
-   
+
+
    abstract protected InitialValues onCreateImpl( Intent intent );
    
-   
-   
+
+
    protected void initViews()
    {
       priority.setOnItemSelectedListener( new OnItemSelectedListener()
@@ -396,8 +396,8 @@ abstract class AbstractTaskEditActivity extends Activity
                        String.class );
          }
          
-         
-         
+
+
          public void onNothingSelected( AdapterView< ? > arg0 )
          {
          }
@@ -426,15 +426,15 @@ abstract class AbstractTaskEditActivity extends Activity
       } );
    }
    
-   
-   
+
+
    protected boolean onResumeImpl()
    {
       return true;
    }
    
-   
-   
+
+
    public void onChangeTags( View v )
    {
       final String tags[] = TextUtils.split( getCurrentValue( TaskSeries.TAGS,
@@ -450,8 +450,8 @@ abstract class AbstractTaskEditActivity extends Activity
       startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
    }
    
-   
-   
+
+
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -471,8 +471,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    public void onDone( View v )
    {
       if ( changes.size() > 0 )
@@ -529,16 +529,16 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    @Override
    public void onBackPressed()
    {
       onCancel( null );
    }
    
-   
-   
+
+
    public void onCancel( View v )
    {
       if ( changes.size() > 0 )
@@ -559,8 +559,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    protected boolean validateInput()
    {
       // Task name
@@ -578,12 +578,12 @@ abstract class AbstractTaskEditActivity extends Activity
       return ok;
    }
    
-   
-   
+
+
    protected boolean validateName( TextView name )
    {
-      final boolean ok = TextUtils.isEmpty( getCurrentValue( TaskSeries.TASKSERIES_NAME,
-                                                             String.class ) );
+      final boolean ok = !TextUtils.isEmpty( getCurrentValue( TaskSeries.TASKSERIES_NAME,
+                                                              String.class ) );
       if ( !ok )
       {
          Toast.makeText( this,
@@ -595,8 +595,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return ok;
    }
    
-   
-   
+
+
    protected MolokoCalendar validateDue( TextView dueEdit )
    {
       MolokoCalendar cal = null;
@@ -620,8 +620,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return cal;
    }
    
-   
-   
+
+
    protected Pair< String, Boolean > validateRecurrence( TextView recurrenceEdit )
    {
       Pair< String, Boolean > res = new Pair< String, Boolean >( Strings.EMPTY_STRING,
@@ -645,8 +645,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return res;
    }
    
-   
-   
+
+
    protected long validateEstimate( TextView estimateEdit )
    {
       long millis = 0;
@@ -670,8 +670,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return millis;
    }
    
-   
-   
+
+
    private void queryLists()
    {
       try
@@ -710,8 +710,8 @@ abstract class AbstractTaskEditActivity extends Activity
                                 String.class );
                   }
                   
-                  
-                  
+
+
                   public void onNothingSelected( AdapterView< ? > arg0 )
                   {
                   }
@@ -727,8 +727,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    private void queryPriorities()
    {
       initializePrioritySpinner( priority,
@@ -736,8 +736,8 @@ abstract class AbstractTaskEditActivity extends Activity
                                  getResources().getStringArray( R.array.rtm_priority_values ) );
    }
    
-   
-   
+
+
    private void queryLocations()
    {
       Cursor c = null;
@@ -788,8 +788,8 @@ abstract class AbstractTaskEditActivity extends Activity
                                 String.class );
                   }
                   
-                  
-                  
+
+
                   public void onNothingSelected( AdapterView< ? > arg0 )
                   {
                   }
@@ -810,8 +810,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    public void onDue( View v )
    {
       pickerDlg = createDuePicker();
@@ -833,15 +833,15 @@ abstract class AbstractTaskEditActivity extends Activity
       pickerDlg.show();
    }
    
-   
-   
+
+
    private void onDueFocused( boolean hasFocus )
    {
       refreshDue( dueEdit, !hasFocus );
    }
    
-   
-   
+
+
    private boolean onDueEditByInput( int actionId )
    {
       if ( hasInputCommitted( actionId ) )
@@ -871,8 +871,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return false;
    }
    
-   
-   
+
+
    public void onRecurrence( View v )
    {
       pickerDlg = createRecurrencePicker();
@@ -894,8 +894,8 @@ abstract class AbstractTaskEditActivity extends Activity
       pickerDlg.show();
    }
    
-   
-   
+
+
    private boolean onRecurrenceEditByInput( int actionId )
    {
       if ( hasInputCommitted( actionId ) )
@@ -926,8 +926,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return false;
    }
    
-   
-   
+
+
    public void onEstimate( View v )
    {
       pickerDlg = createEstimatePicker();
@@ -952,8 +952,8 @@ abstract class AbstractTaskEditActivity extends Activity
       pickerDlg.show();
    }
    
-   
-   
+
+
    private boolean onEstimateEditByInput( int actionId )
    {
       if ( hasInputCommitted( actionId ) )
@@ -986,8 +986,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return false;
    }
    
-   
-   
+
+
    protected void initializeListSpinner( TitleWithSpinnerLayout spinner,
                                          String[] names,
                                          String[] values )
@@ -1001,8 +1001,8 @@ abstract class AbstractTaskEditActivity extends Activity
       spinner.setValues( values );
    }
    
-   
-   
+
+
    protected void initializePrioritySpinner( TitleWithSpinnerLayout spinner,
                                              String[] names,
                                              String[] values )
@@ -1016,8 +1016,8 @@ abstract class AbstractTaskEditActivity extends Activity
       spinner.setValues( values );
    }
    
-   
-   
+
+
    protected void initializeLocationSpinner( TitleWithSpinnerLayout spinner,
                                              String[] names,
                                              String[] values )
@@ -1031,43 +1031,42 @@ abstract class AbstractTaskEditActivity extends Activity
       spinner.setValues( values );
    }
    
-   
-   
+
+
    abstract protected ModificationSet getModifications();
    
-   
-   
+
+
    abstract protected void refreshHeadSection( TextView addedDate,
                                                TextView completedDate,
                                                TextView postponed,
                                                TextView source );
    
-   
-   
+
+
    protected void refreshName( EditText nameEdit )
    {
       nameEdit.setText( getCurrentValue( Tasks.TASKSERIES_NAME, String.class ) );
    }
    
-   
-   
+
+
    protected void refreshListSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID, String.class ),
                                    0 );
    }
    
-   
-   
+
+
    protected void refreshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
-   
-   
+
+
    protected void refreshTags( WrappingLayout tagsLayout )
    {
       UIUtils.inflateTags( this,
@@ -1079,8 +1078,8 @@ abstract class AbstractTaskEditActivity extends Activity
                            null );
    }
    
-   
-   
+
+
    protected void refreshDue( EditText dueEdit, boolean showWeekday )
    {
       final long due = getCurrentValue( Tasks.DUE_DATE, Long.class );
@@ -1107,8 +1106,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    protected void refreshRecurrence( EditText recurrEdit )
    {
       final String recurrence = getCurrentValue( Tasks.RECURRENCE, String.class );
@@ -1129,8 +1128,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    protected void refreshEstimate( EditText estimateEdit )
    {
       final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
@@ -1147,24 +1146,23 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
-   
-   
+
+
    protected void refreshUrl( TitleWithEditTextLayout urlEdit )
    {
       urlEdit.setText( getCurrentValue( Tasks.URL, String.class ) );
    }
    
-   
-   
+
+
    protected AbstractPickerDialog createDuePicker()
    {
       return new DuePickerDialog( this,
@@ -1173,16 +1171,16 @@ abstract class AbstractTaskEditActivity extends Activity
                                                    Boolean.class ) );
    }
    
-   
-   
+
+
    protected void onDueEdited( long millis, boolean hasTime )
    {
       putChange( Tasks.DUE_DATE, millis, Long.class );
       putChange( Tasks.HAS_DUE_TIME, hasTime, Boolean.class );
    }
    
-   
-   
+
+
    protected AbstractPickerDialog createRecurrencePicker()
    {
       return new RecurrPickerDialog( this,
@@ -1192,16 +1190,16 @@ abstract class AbstractTaskEditActivity extends Activity
                                                       Boolean.class ) );
    }
    
-   
-   
+
+
    protected void onRecurrenceEdited( String pattern, boolean isEvery )
    {
       putChange( Tasks.RECURRENCE, pattern, String.class );
       putChange( Tasks.RECURRENCE_EVERY, isEvery, Boolean.class );
    }
    
-   
-   
+
+
    protected AbstractPickerDialog createEstimatePicker()
    {
       return new EstimatePickerDialog( this,
@@ -1209,16 +1207,16 @@ abstract class AbstractTaskEditActivity extends Activity
                                                         Long.class ) );
    }
    
-   
-   
+
+
    protected void onEstimateEdited( String estimate, long millis )
    {
       putChange( Tasks.ESTIMATE, estimate, String.class );
       putChange( Tasks.ESTIMATE_MILLIS, Long.valueOf( millis ), Long.class );
    }
    
-   
-   
+
+
    protected final < V > V getCurrentValue( String key, Class< V > type )
    {
       V res = getChange( key, type );
@@ -1237,8 +1235,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return res;
    }
    
-   
-   
+
+
    protected final boolean hasChange( String key )
    {
       if ( changes == null )
@@ -1247,8 +1245,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return changes.containsKey( key );
    }
    
-   
-   
+
+
    protected final < V > V getChange( String key, Class< V > type )
    {
       if ( changes == null )
@@ -1266,8 +1264,8 @@ abstract class AbstractTaskEditActivity extends Activity
             + " for " + key );
    }
    
-   
-   
+
+
    private final < V > void putChange( String key, V value, Class< V > type )
    {
       if ( changes == null )
@@ -1286,8 +1284,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-   
-   
+
+
    protected ModificationSet createModificationSet( List< Task > tasks )
    {
       final ModificationSet modifications = new ModificationSet();
@@ -1489,8 +1487,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return modifications;
    }
    
-   
-   
+
+
    private boolean hasInputCommitted( int actionId )
    {
       return actionId == EditorInfo.IME_ACTION_DONE

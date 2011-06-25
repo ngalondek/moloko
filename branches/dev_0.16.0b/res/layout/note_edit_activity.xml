@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko 
-   is free software: you can redistribute it and/or modify it under the terms 
-   of the GNU General Public License as published by the Free Software Foundation, 
-   either version 3 of the License, or (at your option) any later version. Moloko 
-   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-   PURPOSE. See the GNU General Public License for more details. You should 
-   have received a copy of the GNU General Public License along with Moloko. 
-   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation -->
+<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko is free 
+   software: you can redistribute it and/or modify it under the terms of the GNU General 
+   Public License as published by the Free Software Foundation, either version 3 of 
+   the License, or (at your option) any later version. Moloko is distributed in the 
+   hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public 
+   License for more details. You should have received a copy of the GNU General Public 
+   License along with Moloko. If not, see <http://www.gnu.org/licenses/>. Contributors: 
+   Ronny Röhricht - implementation -->
 
 <RelativeLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    style="@style/Note"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent"
@@ -66,32 +66,17 @@
          android:scaleType="fitXY"
          android:onClick="onPrevNote" />
 
-      <LinearLayout
-         android:layout_height="wrap_content"
+      <dev.drsoran.moloko.layouts.BottomButtonBarLayout
          android:layout_width="fill_parent"
-         android:layout_toRightOf="@id/note_btn_prev"
+         android:layout_height="fill_parent"
+         android:layout_toRightOf="@+id/note_btn_prev"
          android:layout_toLeftOf="@+id/note_btn_next"
          android:layout_alignParentTop="true"
          android:layout_alignParentBottom="true"
-         android:orientation="horizontal">
-
-         <Button
-            android:id="@+id/note_btn_done"
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.5"
-            android:text="@string/btn_done"
-            android:onClick="onDone" />
-
-         <Button
-            android:id="@+id/note_btn_cancel"
-            android:layout_width="0dip"
-            android:layout_height="fill_parent"
-            android:layout_weight="0.5"
-            android:text="@string/btn_cancel"
-            android:singleLine="true"
-            android:onClick="onCancel" />
-      </LinearLayout>
+         moloko:button1Text="@string/btn_done"
+         moloko:button1OnClick="onDone"
+         moloko:button2Text="@string/btn_cancel"
+         moloko:button2OnClick="onCancel" />
 
       <ImageButton
          android:id="@+id/note_btn_next"

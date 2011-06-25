@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is
-      free software: you can redistribute it and/or modify it under the terms of
-      the GNU General Public License as published by the Free Software
-      Foundation, either version 3 of the License, or (at your option) any later
-      version. Moloko is distributed in the hope that it will be useful, but
-      WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-      or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-      for more details. You should have received a copy of the GNU General
-      Public License along with Moloko. If not, see
-      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
-   -->
+<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is free 
+   software: you can redistribute it and/or modify it under the terms of the GNU General 
+   Public License as published by the Free Software Foundation, either version 3 of 
+   the License, or (at your option) any later version. Moloko is distributed in the 
+   hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public 
+   License for more details. You should have received a copy of the GNU General Public 
+   License along with Moloko. If not, see <http://www.gnu.org/licenses/>. Contributors: 
+   Ronny Röhricht - implementation -->
 
 <merge
    xmlns:android="http://schemas.android.com/apk/res/android"
@@ -95,7 +91,7 @@
             android:text="Task_Desc"
             android:hint="@string/task_edit_desc_hint"
             android:inputType="text|textAutoCorrect|textCapSentences"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:selectAllOnFocus="true" />
 
          <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
@@ -201,10 +197,10 @@
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:hint="@string/task_edit_due_never"
-                  android:inputType="none"
-                  android:imeOptions="actionDone"
-                  android:selectAllOnFocus="true"
-                  android:enabled="false" />
+                  android:singleLine="true"
+                  android:inputType="text"
+                  android:imeOptions="actionNext"
+                  android:selectAllOnFocus="true" />
 
                <ImageButton
                   android:id="@+id/task_edit_due_btn_picker"
@@ -248,10 +244,10 @@
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:hint="@string/task_edit_recurrence_no"
-                  android:inputType="none"
-                  android:imeOptions="actionDone"
-                  android:selectAllOnFocus="true"
-                  android:enabled="true" />
+                  android:inputType="text"
+                  android:singleLine="false"
+                  android:imeOptions="actionNext"
+                  android:selectAllOnFocus="true" />
 
                <ImageButton
                   android:id="@+id/task_edit_recurrence_btn_picker"
@@ -294,11 +290,11 @@
                   android:layout_width="0dip"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
+                  android:singleLine="true"
                   android:hint="@string/task_edit_estimate_nothing"
-                  android:inputType="none"
-                  android:imeOptions="actionDone"
-                  android:selectAllOnFocus="true"
-                  android:enabled="false" />
+                  android:inputType="text"
+                  android:imeOptions="actionNext"
+                  android:selectAllOnFocus="true" />
 
                <ImageButton
                   android:id="@+id/task_edit_estim_btn_picker"
@@ -331,39 +327,19 @@
             android:layout_alignLeft="@id/task_edit_desc"
             android:layout_marginTop="10dip"
             android:inputType="text|textUri"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:selectAllOnFocus="true"
             moloko:titlePaddingTop="8dip"
             moloko:title="@string/task_url" />
       </RelativeLayout>
    </ScrollView>
 
-   <LinearLayout
+   <dev.drsoran.moloko.layouts.BottomButtonBarLayout
       android:layout_width="fill_parent"
       android:layout_height="70dip"
-      android:background="@color/app_btnbar_bgnd_fill"
-      android:layout_gravity="bottom">
-
-      <Button
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_marginLeft="5dip"
-         android:layout_marginTop="5dip"
-         android:layout_marginBottom="5dip"
-         android:layout_gravity="center_vertical|left"
-         android:layout_weight="0.5"
-         android:text="@string/btn_done"
-         android:onClick="onDone" />
-
-      <Button
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_marginRight="5dip"
-         android:layout_marginTop="5dip"
-         android:layout_marginBottom="5dip"
-         android:layout_gravity="center_vertical|right"
-         android:layout_weight="0.5"
-         android:text="@string/btn_cancel"
-         android:onClick="onCancel" />
-   </LinearLayout>
+      android:layout_gravity="bottom"
+      moloko:button1Text="@string/btn_done"
+      moloko:button1OnClick="onDone"
+      moloko:button2Text="@string/btn_cancel"
+      moloko:button2OnClick="onCancel" />
 </merge>

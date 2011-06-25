@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko 
-   is free software: you can redistribute it and/or modify it under the terms 
-   of the GNU General Public License as published by the Free Software Foundation, 
-   either version 3 of the License, or (at your option) any later version. Moloko 
-   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-   PURPOSE. See the GNU General Public License for more details. You should 
-   have received a copy of the GNU General Public License along with Moloko. 
-   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation -->
+<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is free 
+   software: you can redistribute it and/or modify it under the terms of the GNU General 
+   Public License as published by the Free Software Foundation, either version 3 of 
+   the License, or (at your option) any later version. Moloko is distributed in the 
+   hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public 
+   License for more details. You should have received a copy of the GNU General Public 
+   License along with Moloko. If not, see <http://www.gnu.org/licenses/>. Contributors: 
+   Ronny Röhricht - implementation -->
 
 <merge
    xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    style="@style/Note"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
@@ -60,7 +60,6 @@
             android:scaleType="fitXY"
             android:onClick="onEditNote" />
 
-         <!-- TODO: New icon for add note; remove align top + bottom -->
          <ImageButton
             android:id="@+id/note_buttons_add"
             android:layout_width="wrap_content"
@@ -99,15 +98,16 @@
             android:scaleType="fitXY"
             android:onClick="onPrevNote" />
 
-         <Button
+         <dev.drsoran.moloko.layouts.BottomButtonBarLayout
             android:id="@+id/note_btn_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@+id/note_btn_prev"
+            android:layout_toLeftOf="@+id/note_btn_next"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
-            android:text="@string/phr_close"
-            android:onClick="onClose" />
+            moloko:button1Text="@string/phr_close"
+            moloko:button1OnClick="onClose" />
 
          <ImageButton
             android:id="@+id/note_btn_next"

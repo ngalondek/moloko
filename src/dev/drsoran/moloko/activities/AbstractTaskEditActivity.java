@@ -39,6 +39,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -115,7 +116,7 @@ abstract class AbstractTaskEditActivity extends Activity
       public final String url;
       
       
-
+      
       public InitialValues( String name, String listId, String priority,
          String tags, long dueMillis, boolean hasDueTime, String recurrPattern,
          boolean isEveryRecurrence, String estimate, long estimateMillis,
@@ -135,8 +136,8 @@ abstract class AbstractTaskEditActivity extends Activity
          this.url = url;
       }
       
-
-
+      
+      
       public final Map< String, Object > toMap()
       {
          final Map< String, Object > values = new HashMap< String, Object >();
@@ -157,13 +158,13 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
+   
    private static abstract class SmallTextWatcher implements TextWatcher
    {
       abstract public void afterTextChanged( Editable s );
       
-
-
+      
+      
       public void beforeTextChanged( CharSequence s,
                                      int start,
                                      int count,
@@ -171,8 +172,8 @@ abstract class AbstractTaskEditActivity extends Activity
       {
       }
       
-
-
+      
+      
       public void onTextChanged( CharSequence s,
                                  int start,
                                  int before,
@@ -239,7 +240,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected Map< String, String > locationNames_2_locationIds;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -308,8 +309,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    @Override
    protected void onResume()
    {
@@ -322,7 +323,7 @@ abstract class AbstractTaskEditActivity extends Activity
          refreshListSpinner( list );
          refreshPrioritySpinner( priority );
          refreshTags( tagsLayout );
-         refreshDue( dueEdit );
+         refreshDue( dueEdit, true );
          refreshRecurrence( recurrEdit );
          refreshEstimate( estimateEdit );
          refreshLocationSpinner( location );
@@ -334,7 +335,15 @@ abstract class AbstractTaskEditActivity extends Activity
                                            int actionId,
                                            KeyEvent event )
             {
-               return onDueEdit( actionId );
+               return onDueEditByInput( actionId );
+            }
+         } );
+         
+         dueEdit.setOnFocusChangeListener( new OnFocusChangeListener()
+         {
+            public void onFocusChange( View v, boolean hasFocus )
+            {
+               onDueFocused( hasFocus );
             }
          } );
          
@@ -344,7 +353,7 @@ abstract class AbstractTaskEditActivity extends Activity
                                            int actionId,
                                            KeyEvent event )
             {
-               return onRecurrenceEdit( actionId );
+               return onRecurrenceEditByInput( actionId );
             }
          } );
          
@@ -354,25 +363,25 @@ abstract class AbstractTaskEditActivity extends Activity
                                            int actionId,
                                            KeyEvent event )
             {
-               return onEstimateEdit( actionId );
+               return onEstimateEditByInput( actionId );
             }
          } );
       }
    }
    
-
-
+   
+   
    protected boolean shouldHandleIntentAction( String action )
    {
       return action.equals( Intent.ACTION_EDIT );
    }
    
-
-
+   
+   
    abstract protected InitialValues onCreateImpl( Intent intent );
    
-
-
+   
+   
    protected void initViews()
    {
       priority.setOnItemSelectedListener( new OnItemSelectedListener()
@@ -387,8 +396,8 @@ abstract class AbstractTaskEditActivity extends Activity
                        String.class );
          }
          
-
-
+         
+         
          public void onNothingSelected( AdapterView< ? > arg0 )
          {
          }
@@ -417,15 +426,15 @@ abstract class AbstractTaskEditActivity extends Activity
       } );
    }
    
-
-
+   
+   
    protected boolean onResumeImpl()
    {
       return true;
    }
    
-
-
+   
+   
    public void onChangeTags( View v )
    {
       final String tags[] = TextUtils.split( getCurrentValue( TaskSeries.TAGS,
@@ -441,8 +450,8 @@ abstract class AbstractTaskEditActivity extends Activity
       startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
    }
    
-
-
+   
+   
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -462,8 +471,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    public void onDone( View v )
    {
       if ( changes.size() > 0 )
@@ -520,16 +529,16 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    @Override
    public void onBackPressed()
    {
       onCancel( null );
    }
    
-
-
+   
+   
    public void onCancel( View v )
    {
       if ( changes.size() > 0 )
@@ -550,64 +559,119 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    protected boolean validateInput()
    {
       // Task name
-      if ( !validateName( nameEdit ) )
+      boolean ok = validateName( nameEdit );
+      
+      // Due
+      ok = ok && validateDue( dueEdit ) != null;
+      
+      // Recurrence
+      ok = ok && validateRecurrence( recurrEdit ) != null;
+      
+      // Estimate
+      ok = ok && validateEstimate( estimateEdit ) != -1;
+      
+      return ok;
+   }
+   
+   
+   
+   protected boolean validateName( TextView name )
+   {
+      final boolean ok = TextUtils.isEmpty( getCurrentValue( TaskSeries.TASKSERIES_NAME,
+                                                             String.class ) );
+      if ( !ok )
       {
          Toast.makeText( this,
                          R.string.task_edit_validate_empty_name,
-                         Toast.LENGTH_SHORT ).show();
+                         Toast.LENGTH_LONG ).show();
          nameEdit.requestFocus();
-         return false;
       }
       
-      // // Due
-      // if ( !TextUtils.isEmpty( dueEdit.getText() ) )
-      // {
-      // if ( RtmDateTimeParsing.parseDateTimeSpec( dueEdit.getText()
-      // .toString() ) == null )
-      // {
-      // Toast.makeText( this,
-      // getString( R.string.task_edit_validate_due,
-      // dueEdit.getText() ),
-      // Toast.LENGTH_SHORT ).show();
-      // dueEdit.requestFocus();
-      // return false;
-      // }
-      // }
-      //
-      // // Estimate
-      // if ( !TextUtils.isEmpty( estimateEdit.getText() ) )
-      // {
-      // final long millis = RtmDateTimeParsing.parseEstimated( estimateEdit.getText()
-      // .toString() );
-      // if ( millis == -1 )
-      // {
-      // Toast.makeText( this,
-      // getString( R.string.task_edit_validate_estimate,
-      // estimateEdit.getText() ),
-      // Toast.LENGTH_SHORT ).show();
-      // estimateEdit.requestFocus();
-      // return false;
-      // }
-      // }
-      
-      return true;
+      return ok;
    }
    
-
-
-   protected boolean validateName( TextView name )
+   
+   
+   protected MolokoCalendar validateDue( TextView dueEdit )
    {
-      return !TextUtils.isEmpty( getCurrentValue( TaskSeries.TASKSERIES_NAME,
-                                                  String.class ) );
+      MolokoCalendar cal = null;
+      
+      final String dueStr = dueEdit.getText().toString();
+      
+      if ( !TextUtils.isEmpty( dueStr ) )
+      {
+         cal = RtmDateTimeParsing.parseDateTimeSpec( dueStr );
+         
+         if ( cal == null )
+         {
+            Toast.makeText( this,
+                            getString( R.string.task_edit_validate_due, dueStr ),
+                            Toast.LENGTH_LONG )
+                 .show();
+            dueEdit.requestFocus();
+         }
+      }
+      
+      return cal;
    }
    
-
-
+   
+   
+   protected Pair< String, Boolean > validateRecurrence( TextView recurrenceEdit )
+   {
+      Pair< String, Boolean > res = new Pair< String, Boolean >( Strings.EMPTY_STRING,
+                                                                 Boolean.FALSE );
+      final String recurrStr = recurrEdit.getText().toString();
+      
+      if ( !TextUtils.isEmpty( recurrStr ) )
+      {
+         res = RecurrenceParsing.parseRecurrence( recurrStr );
+         
+         if ( res == null )
+         {
+            Toast.makeText( this,
+                            getString( R.string.task_edit_validate_recurrence,
+                                       recurrStr ),
+                            Toast.LENGTH_LONG ).show();
+            recurrenceEdit.requestFocus();
+         }
+      }
+      
+      return res;
+   }
+   
+   
+   
+   protected long validateEstimate( TextView estimateEdit )
+   {
+      long millis = 0;
+      
+      String estStr = estimateEdit.getText().toString();
+      
+      if ( !TextUtils.isEmpty( estStr ) )
+      {
+         millis = RtmDateTimeParsing.parseEstimated( estStr );
+         
+         if ( millis == -1 )
+         {
+            Toast.makeText( this,
+                            getString( R.string.task_edit_validate_estimate,
+                                       estStr ),
+                            Toast.LENGTH_LONG ).show();
+            estimateEdit.requestFocus();
+         }
+      }
+      
+      return millis;
+   }
+   
+   
+   
    private void queryLists()
    {
       try
@@ -646,8 +710,8 @@ abstract class AbstractTaskEditActivity extends Activity
                                 String.class );
                   }
                   
-
-
+                  
+                  
                   public void onNothingSelected( AdapterView< ? > arg0 )
                   {
                   }
@@ -663,8 +727,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    private void queryPriorities()
    {
       initializePrioritySpinner( priority,
@@ -672,8 +736,8 @@ abstract class AbstractTaskEditActivity extends Activity
                                  getResources().getStringArray( R.array.rtm_priority_values ) );
    }
    
-
-
+   
+   
    private void queryLocations()
    {
       Cursor c = null;
@@ -724,8 +788,8 @@ abstract class AbstractTaskEditActivity extends Activity
                                 String.class );
                   }
                   
-
-
+                  
+                  
                   public void onNothingSelected( AdapterView< ? > arg0 )
                   {
                   }
@@ -746,8 +810,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    public void onDue( View v )
    {
       pickerDlg = createDuePicker();
@@ -762,51 +826,53 @@ abstract class AbstractTaskEditActivity extends Activity
             if ( reason == CloseReason.OK )
             {
                onDueEdited( (Long) value, (Boolean) extras[ 0 ] );
-               refreshDue( dueEdit );
+               refreshDue( dueEdit, true );
             }
          }
       } );
       pickerDlg.show();
    }
    
-
-
-   private boolean onDueEdit( int actionId )
+   
+   
+   private void onDueFocused( boolean hasFocus )
    {
-      if ( hasImeClosed( actionId ) )
+      refreshDue( dueEdit, !hasFocus );
+   }
+   
+   
+   
+   private boolean onDueEditByInput( int actionId )
+   {
+      if ( hasInputCommitted( actionId ) )
       {
          final String dueStr = dueEdit.getText().toString();
          
          if ( !TextUtils.isEmpty( dueStr ) )
          {
-            final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( dueStr );
-            
+            final MolokoCalendar cal = validateDue( dueEdit );
             if ( cal != null )
             {
                onDueEdited( cal.getTimeInMillis(), cal.hasTime() );
-               refreshDue( dueEdit );
+               refreshDue( dueEdit, true );
             }
             else
             {
-               Toast.makeText( this,
-                               getString( R.string.task_edit_validate_due,
-                                          dueStr ),
-                               Toast.LENGTH_SHORT ).show();
                return true;
             }
          }
          else
          {
             onDueEdited( -1, false );
-            refreshDue( dueEdit );
+            refreshDue( dueEdit, true );
          }
       }
       
       return false;
    }
    
-
-
+   
+   
    public void onRecurrence( View v )
    {
       pickerDlg = createRecurrencePicker();
@@ -828,17 +894,17 @@ abstract class AbstractTaskEditActivity extends Activity
       pickerDlg.show();
    }
    
-
-
-   private boolean onRecurrenceEdit( int actionId )
+   
+   
+   private boolean onRecurrenceEditByInput( int actionId )
    {
-      if ( hasImeClosed( actionId ) )
+      if ( hasInputCommitted( actionId ) )
       {
          final String estimateStr = recurrEdit.getText().toString();
          
          if ( !TextUtils.isEmpty( estimateStr ) )
          {
-            final Pair< String, Boolean > res = RecurrenceParsing.parseRecurrence( estimateStr );
+            final Pair< String, Boolean > res = validateRecurrence( recurrEdit );
             
             if ( res != null )
             {
@@ -847,10 +913,6 @@ abstract class AbstractTaskEditActivity extends Activity
             }
             else
             {
-               Toast.makeText( this,
-                               getString( R.string.task_edit_validate_due,
-                                          estimateStr ),
-                               Toast.LENGTH_SHORT ).show();
                return true;
             }
          }
@@ -864,8 +926,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return false;
    }
    
-
-
+   
+   
    public void onEstimate( View v )
    {
       pickerDlg = createEstimatePicker();
@@ -890,17 +952,17 @@ abstract class AbstractTaskEditActivity extends Activity
       pickerDlg.show();
    }
    
-
-
-   private boolean onEstimateEdit( int actionId )
+   
+   
+   private boolean onEstimateEditByInput( int actionId )
    {
-      if ( hasImeClosed( actionId ) )
+      if ( hasInputCommitted( actionId ) )
       {
          String estStr = estimateEdit.getText().toString();
          
          if ( !TextUtils.isEmpty( estStr ) )
          {
-            final long millis = RtmDateTimeParsing.parseEstimated( estStr );
+            final long millis = validateEstimate( estimateEdit );
             
             if ( millis != -1 )
             {
@@ -911,10 +973,6 @@ abstract class AbstractTaskEditActivity extends Activity
             }
             else
             {
-               Toast.makeText( this,
-                               getString( R.string.task_edit_validate_estimate,
-                                          estStr ),
-                               Toast.LENGTH_SHORT ).show();
                return true;
             }
          }
@@ -928,8 +986,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return false;
    }
    
-
-
+   
+   
    protected void initializeListSpinner( TitleWithSpinnerLayout spinner,
                                          String[] names,
                                          String[] values )
@@ -943,8 +1001,8 @@ abstract class AbstractTaskEditActivity extends Activity
       spinner.setValues( values );
    }
    
-
-
+   
+   
    protected void initializePrioritySpinner( TitleWithSpinnerLayout spinner,
                                              String[] names,
                                              String[] values )
@@ -958,8 +1016,8 @@ abstract class AbstractTaskEditActivity extends Activity
       spinner.setValues( values );
    }
    
-
-
+   
+   
    protected void initializeLocationSpinner( TitleWithSpinnerLayout spinner,
                                              String[] names,
                                              String[] values )
@@ -973,34 +1031,34 @@ abstract class AbstractTaskEditActivity extends Activity
       spinner.setValues( values );
    }
    
-
-
+   
+   
    abstract protected ModificationSet getModifications();
    
-
-
+   
+   
    abstract protected void refreshHeadSection( TextView addedDate,
                                                TextView completedDate,
                                                TextView postponed,
                                                TextView source );
    
-
-
+   
+   
    protected void refreshName( EditText nameEdit )
    {
       nameEdit.setText( getCurrentValue( Tasks.TASKSERIES_NAME, String.class ) );
    }
    
-
-
+   
+   
    protected void refreshListSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID, String.class ),
                                    0 );
    }
    
-
-
+   
+   
    protected void refreshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
@@ -1008,8 +1066,8 @@ abstract class AbstractTaskEditActivity extends Activity
                                    0 );
    }
    
-
-
+   
+   
    protected void refreshTags( WrappingLayout tagsLayout )
    {
       UIUtils.inflateTags( this,
@@ -1021,13 +1079,19 @@ abstract class AbstractTaskEditActivity extends Activity
                            null );
    }
    
-
-
-   protected void refreshDue( EditText dueEdit )
+   
+   
+   protected void refreshDue( EditText dueEdit, boolean showWeekday )
    {
       final long due = getCurrentValue( Tasks.DUE_DATE, Long.class );
       final boolean hasDueTime = getCurrentValue( Tasks.HAS_DUE_TIME,
                                                   Boolean.class );
+      
+      int format = MolokoDateUtils.FORMAT_NUMERIC
+         | MolokoDateUtils.FORMAT_WITH_YEAR | MolokoDateUtils.FORMAT_ABR_ALL;
+      
+      if ( showWeekday )
+         format |= MolokoDateUtils.FORMAT_SHOW_WEEKDAY;
       
       if ( due == -1 )
       {
@@ -1035,24 +1099,16 @@ abstract class AbstractTaskEditActivity extends Activity
       }
       else if ( hasDueTime )
       {
-         dueEdit.setText( MolokoDateUtils.formatDateTime( due,
-                                                          MolokoDateUtils.FORMAT_NUMERIC
-                                                             | MolokoDateUtils.FORMAT_WITH_YEAR
-                                                             | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
-                                                             | MolokoDateUtils.FORMAT_ABR_ALL ) );
+         dueEdit.setText( MolokoDateUtils.formatDateTime( due, format ) );
       }
       else
       {
-         dueEdit.setText( MolokoDateUtils.formatDate( due,
-                                                      MolokoDateUtils.FORMAT_NUMERIC
-                                                         | MolokoDateUtils.FORMAT_WITH_YEAR
-                                                         | MolokoDateUtils.FORMAT_SHOW_WEEKDAY
-                                                         | MolokoDateUtils.FORMAT_ABR_ALL ) );
+         dueEdit.setText( MolokoDateUtils.formatDate( due, format ) );
       }
    }
    
-
-
+   
+   
    protected void refreshRecurrence( EditText recurrEdit )
    {
       final String recurrence = getCurrentValue( Tasks.RECURRENCE, String.class );
@@ -1073,8 +1129,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    protected void refreshEstimate( EditText estimateEdit )
    {
       final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
@@ -1091,8 +1147,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
@@ -1100,15 +1156,15 @@ abstract class AbstractTaskEditActivity extends Activity
                                    0 );
    }
    
-
-
+   
+   
    protected void refreshUrl( TitleWithEditTextLayout urlEdit )
    {
       urlEdit.setText( getCurrentValue( Tasks.URL, String.class ) );
    }
    
-
-
+   
+   
    protected AbstractPickerDialog createDuePicker()
    {
       return new DuePickerDialog( this,
@@ -1117,16 +1173,16 @@ abstract class AbstractTaskEditActivity extends Activity
                                                    Boolean.class ) );
    }
    
-
-
+   
+   
    protected void onDueEdited( long millis, boolean hasTime )
    {
       putChange( Tasks.DUE_DATE, millis, Long.class );
       putChange( Tasks.HAS_DUE_TIME, hasTime, Boolean.class );
    }
    
-
-
+   
+   
    protected AbstractPickerDialog createRecurrencePicker()
    {
       return new RecurrPickerDialog( this,
@@ -1136,16 +1192,16 @@ abstract class AbstractTaskEditActivity extends Activity
                                                       Boolean.class ) );
    }
    
-
-
+   
+   
    protected void onRecurrenceEdited( String pattern, boolean isEvery )
    {
       putChange( Tasks.RECURRENCE, pattern, String.class );
       putChange( Tasks.RECURRENCE_EVERY, isEvery, Boolean.class );
    }
    
-
-
+   
+   
    protected AbstractPickerDialog createEstimatePicker()
    {
       return new EstimatePickerDialog( this,
@@ -1153,16 +1209,16 @@ abstract class AbstractTaskEditActivity extends Activity
                                                         Long.class ) );
    }
    
-
-
+   
+   
    protected void onEstimateEdited( String estimate, long millis )
    {
       putChange( Tasks.ESTIMATE, estimate, String.class );
       putChange( Tasks.ESTIMATE_MILLIS, Long.valueOf( millis ), Long.class );
    }
    
-
-
+   
+   
    protected final < V > V getCurrentValue( String key, Class< V > type )
    {
       V res = getChange( key, type );
@@ -1181,8 +1237,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return res;
    }
    
-
-
+   
+   
    protected final boolean hasChange( String key )
    {
       if ( changes == null )
@@ -1191,8 +1247,8 @@ abstract class AbstractTaskEditActivity extends Activity
       return changes.containsKey( key );
    }
    
-
-
+   
+   
    protected final < V > V getChange( String key, Class< V > type )
    {
       if ( changes == null )
@@ -1210,8 +1266,8 @@ abstract class AbstractTaskEditActivity extends Activity
             + " for " + key );
    }
    
-
-
+   
+   
    private final < V > void putChange( String key, V value, Class< V > type )
    {
       if ( changes == null )
@@ -1230,8 +1286,8 @@ abstract class AbstractTaskEditActivity extends Activity
       }
    }
    
-
-
+   
+   
    protected ModificationSet createModificationSet( List< Task > tasks )
    {
       final ModificationSet modifications = new ModificationSet();
@@ -1433,11 +1489,12 @@ abstract class AbstractTaskEditActivity extends Activity
       return modifications;
    }
    
-
-
-   private boolean hasImeClosed( int actionId )
+   
+   
+   private boolean hasInputCommitted( int actionId )
    {
       return actionId == EditorInfo.IME_ACTION_DONE
+         | actionId == EditorInfo.IME_ACTION_NEXT
          | actionId == EditorInfo.IME_NULL;
    }
 }

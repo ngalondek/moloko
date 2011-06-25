@@ -57,7 +57,7 @@ abstract class AbstractNoteActivity extends Activity
    protected int notePos = -1;
    
    
-
+   
    @Override
    protected void onResume()
    {
@@ -115,8 +115,8 @@ abstract class AbstractNoteActivity extends Activity
       }
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle savedInstanceState )
    {
@@ -126,8 +126,8 @@ abstract class AbstractNoteActivity extends Activity
          notePos = savedInstanceState.getInt( NOTE_POS, -1 );
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -137,38 +137,38 @@ abstract class AbstractNoteActivity extends Activity
          outState.putInt( NOTE_POS, notePos );
    }
    
-
-
+   
+   
    public void onNextNote( View view )
    {
       displayNote( getNext() );
       updateUi();
    }
    
-
-
+   
+   
    public void onPrevNote( View view )
    {
       displayNote( getPrev() );
       updateUi();
    }
    
-
-
+   
+   
    public void onClose( View view )
    {
       finish();
    }
    
-
-
+   
+   
    public RtmTaskNote getNote()
    {
       return notes.get( notePos );
    }
    
-
-
+   
+   
    protected void insertNewNote( RtmTaskNote note )
    {
       if ( notePos != -1 )
@@ -183,16 +183,20 @@ abstract class AbstractNoteActivity extends Activity
       updateUi();
    }
    
-
-
+   
+   
    protected void removeCurrentNode()
    {
       final int tmpPos = notePos;
       
-      if ( !hasNext() && hasPrev() )
-         --notePos;
-      else
-         notePos = -1;
+      final boolean hasNext = hasNext();
+      final boolean hasPrev = hasPrev();
+      
+      if ( !hasNext )
+         if ( hasPrev )
+            --notePos;
+         else
+            notePos = -1;
       
       notes.remove( tmpPos );
       
@@ -205,8 +209,8 @@ abstract class AbstractNoteActivity extends Activity
          finish();
    }
    
-
-
+   
+   
    protected void displayNote( RtmTaskNote note )
    {
       final TextView createdDate = (TextView) findViewById( R.id.note_created_date );
@@ -215,20 +219,31 @@ abstract class AbstractNoteActivity extends Activity
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
    }
    
-
-
+   
+   
    private void evaluateNavButtons()
    {
-      findViewById( R.id.note_btn_next ).setVisibility( ( hasNext() )
-                                                                     ? View.VISIBLE
-                                                                     : View.INVISIBLE );
-      findViewById( R.id.note_btn_prev ).setVisibility( ( hasPrev() )
-                                                                     ? View.VISIBLE
-                                                                     : View.INVISIBLE );
+      final boolean hasNext = hasNext();
+      final boolean hasPrev = hasPrev();
+      
+      if ( !hasNext && !hasPrev )
+      {
+         findViewById( R.id.note_btn_next ).setVisibility( View.GONE );
+         findViewById( R.id.note_btn_prev ).setVisibility( View.GONE );
+      }
+      else
+      {
+         findViewById( R.id.note_btn_next ).setVisibility( hasNext
+                                                                  ? View.VISIBLE
+                                                                  : View.INVISIBLE );
+         findViewById( R.id.note_btn_prev ).setVisibility( hasPrev
+                                                                  ? View.VISIBLE
+                                                                  : View.INVISIBLE );
+      }
    }
    
-
-
+   
+   
    private void updateUi()
    {
       evaluateNavButtons();
@@ -243,10 +258,12 @@ abstract class AbstractNoteActivity extends Activity
       {
          setTitle( R.string.app_note );
       }
+      
+      onContentChanged();
    }
    
-
-
+   
+   
    private boolean getSingleNote( ContentProviderClient client, String noteId )
    {
       boolean found = false;
@@ -271,8 +288,8 @@ abstract class AbstractNoteActivity extends Activity
       return found;
    }
    
-
-
+   
+   
    private boolean getAllNotesOfTask( ContentProviderClient client,
                                       String taskId,
                                       String startNoteId )
@@ -331,45 +348,45 @@ abstract class AbstractNoteActivity extends Activity
       return found;
    }
    
-
-
+   
+   
    private void initializeNotesList( List< RtmTaskNote > notes )
    {
       this.notes = new ArrayList< RtmTaskNote >( notes );
       this.notePos = 0;
    }
    
-
-
+   
+   
    private void initializeNotesList( List< RtmTaskNote > notes, int notePos )
    {
       this.notes = new ArrayList< RtmTaskNote >( notes );
       this.notePos = notePos;
    }
    
-
-
+   
+   
    private boolean hasNext()
    {
       return notePos != -1 && notePos < notes.size() - 1;
    }
    
-
-
+   
+   
    private RtmTaskNote getNext()
    {
       return notes.get( ++notePos );
    }
    
-
-
+   
+   
    private boolean hasPrev()
    {
       return notePos > 0;
    }
    
-
-
+   
+   
    private RtmTaskNote getPrev()
    {
       return notes.get( --notePos );

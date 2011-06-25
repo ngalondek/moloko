@@ -73,4 +73,15 @@
 		<attr name="horizontal_spacing" format="reference|dimension" />
 		<attr name="vertical_spacing" format="reference|dimension" />
 	</declare-styleable>
+   
+   <declare-styleable name="BottomButtonBarLayout">
+      <attr name="stretchSingleButton" format="boolean" />
+      <attr name="button1Text" format="reference|string" />
+      <attr name="button2Text" format="reference|string" />
+      <attr name="button1Drawable" format="reference" />
+      <attr name="button2Drawable" format="reference" />
+      <attr name="button1OnClick" format="reference|string" />
+      <attr name="button2OnClick" format="reference|string" />
+      <attr name="backgroundColor" format="reference|color" />
+   </declare-styleable>
 </resources>

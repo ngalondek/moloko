@@ -33,6 +33,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
@@ -46,7 +47,7 @@ public class NoteActivity extends AbstractNoteActivity
       + NoteActivity.class.getSimpleName();
    
    
-
+   
    @Override
    protected void onCreate( Bundle savedInstanceState )
    {
@@ -64,8 +65,18 @@ public class NoteActivity extends AbstractNoteActivity
       }
    }
    
-
-
+   
+   
+   @Override
+   protected void onResume()
+   {
+      super.onResume();
+      
+      restrictUIToRtmAccessLevel();
+   }
+   
+   
+   
    public void onEditNote( View v )
    {
       startActivity( Intents.createEditNoteIntent( this,
@@ -73,8 +84,8 @@ public class NoteActivity extends AbstractNoteActivity
                                                    false ) );
    }
    
-
-
+   
+   
    public void onAddNote( View v )
    {
       startActivityForResult( Intents.createAddNoteIntent( this,
@@ -82,8 +93,8 @@ public class NoteActivity extends AbstractNoteActivity
                               AddNoteActivity.REQ_INSERT_NOTE );
    }
    
-
-
+   
+   
    public void onDeleteNote( View v )
    {
       UIUtils.newDeleteElementDialog( this,
@@ -101,8 +112,8 @@ public class NoteActivity extends AbstractNoteActivity
              .show();
    }
    
-
-
+   
+   
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -151,8 +162,8 @@ public class NoteActivity extends AbstractNoteActivity
          super.onActivityResult( requestCode, resultCode, data );
    }
    
-
-
+   
+   
    @Override
    protected void displayNote( RtmTaskNote note )
    {
@@ -162,5 +173,14 @@ public class NoteActivity extends AbstractNoteActivity
                                                    note.getTitle(),
                                                    note.getText() ) )
          throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+   }
+   
+   
+   
+   private void restrictUIToRtmAccessLevel()
+   {
+      findViewById( R.id.note_buttons ).setVisibility( AccountUtils.isReadOnlyAccess( this )
+                                                                                            ? View.GONE
+                                                                                            : View.VISIBLE );
    }
 }

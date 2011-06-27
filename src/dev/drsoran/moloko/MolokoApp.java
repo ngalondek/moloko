@@ -42,22 +42,12 @@ import dev.drsoran.moloko.receivers.TimeTickReceiver;
 import dev.drsoran.moloko.sync.periodic.IPeriodicSyncHandler;
 import dev.drsoran.moloko.sync.periodic.PeriodicSyncHandlerFactory;
 import dev.drsoran.moloko.util.ListenerList;
-import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 
 
-@ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ",
-                 mode = ReportingInteractionMode.NOTIFICATION,
-                 resNotifTickerText = R.string.acra_crash_notif_ticker_text,
-                 resNotifTitle = R.string.acra_crash_notif_title,
-                 resNotifText = R.string.acra_crash_notif_text,
-                 resNotifIcon = android.R.drawable.stat_notify_error,
-                 resDialogText = R.string.acra_crash_dialog_text,
-                 resDialogIcon = android.R.drawable.ic_dialog_info,
-                 resDialogTitle = R.string.acra_crash_dialog_title,
-                 resDialogCommentPrompt = R.string.acra_crash_comment_prompt,
-                 resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
+@ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ", mode = ReportingInteractionMode.NOTIFICATION, resNotifTickerText = R.string.acra_crash_notif_ticker_text, resNotifTitle = R.string.acra_crash_notif_title, resNotifText = R.string.acra_crash_notif_text, resNotifIcon = android.R.drawable.stat_notify_error, resDialogText = R.string.acra_crash_dialog_text, resDialogIcon = android.R.drawable.ic_dialog_info, resDialogTitle = R.string.acra_crash_dialog_title, resDialogCommentPrompt = R.string.acra_crash_comment_prompt, resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
 public class MolokoApp extends Application
 {
    private final static String TAG = "Moloko."
@@ -296,6 +286,13 @@ public class MolokoApp extends Application
    public final static void schedulePeriodicSync( long startUtc, long intervalMs )
    {
       PERIODIC_SNYC_HANDLER.setPeriodicSync( startUtc, intervalMs );
+   }
+   
+
+
+   public final static IPeriodicSyncHandler getPeriodicSyncHander()
+   {
+      return PERIODIC_SNYC_HANDLER;
    }
    
 

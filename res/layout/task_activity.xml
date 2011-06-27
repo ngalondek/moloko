@@ -255,7 +255,7 @@
       android:layout_width="fill_parent"
       android:layout_height="70dip"
       android:layout_gravity="bottom"
-      moloko:button1Text="@string/btn_cancel"
-      moloko:button1OnClick="onCancel" />
+      moloko:button1Text="@string/phr_close"
+      moloko:button1OnClick="onBack" />
 
 </FrameLayout>

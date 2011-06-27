@@ -128,7 +128,6 @@ public class BottomButtonBarLayout extends FrameLayout
       
       if ( numButtonsVisible == 1 )
       {
-         ( (FrameLayout.LayoutParams) content.getLayoutParams() ).width = FrameLayout.LayoutParams.WRAP_CONTENT;
          final LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) visibleButton.getLayoutParams();
          
          params.setMargins( 5, 5, 5, 5 );
@@ -136,6 +135,8 @@ public class BottomButtonBarLayout extends FrameLayout
          if ( !array.getBoolean( R.styleable.BottomButtonBarLayout_stretchSingleButton,
                                  true ) )
          {
+            ( (FrameLayout.LayoutParams) content.getLayoutParams() ).width = FrameLayout.LayoutParams.WRAP_CONTENT;
+            
             params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
             params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
             params.weight = 0;

@@ -27,6 +27,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SyncResult;
 import android.content.SyncStatusObserver;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -85,6 +86,12 @@ class AlarmManagerPeriodicSyncHandler extends AbstractPeriodicSyncHandler
                    + DateUtils.formatElapsedTime( intervalMs / 1000 ) );
       }
       
+   }
+   
+
+
+   public void delayNextSync( SyncResult syncResult, long seconds )
+   {
    }
    
 

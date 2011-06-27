@@ -44,6 +44,7 @@ import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
 
@@ -55,6 +56,7 @@ import com.mdt.rtm.ServiceInternalException;
 import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
 import dev.drsoran.moloko.content.Modification;
@@ -244,8 +246,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             }
             catch ( IOException e )
             {
-               Log.e( TAG, "IOException", e );
                syncResult.stats.numIoExceptions++;
+               Log.e( TAG, "IOException", e );
             }
             catch ( ParseException e )
             {
@@ -271,14 +273,19 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
             }
             catch ( OperationApplicationException e )
             {
-               syncResult.stats.numIoExceptions++;
                syncResult.databaseError = true;
                Log.e( TAG, "OperationApplicationException", e );
+            }
+            finally
+            {
+               if ( syncResult.stats.numIoExceptions > 0 )
+                  MolokoApp.getPeriodicSyncHander()
+                           .delayNextSync( syncResult,
+                                           ( 5 * DateUtils.MINUTE_IN_MILLIS ) / 1000 );
             }
          }
          else
          {
-            syncResult.stats.numIoExceptions++;
             Log.e( TAG, "No AccountManager" );
          }
       }

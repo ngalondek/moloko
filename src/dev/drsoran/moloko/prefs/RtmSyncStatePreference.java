@@ -47,6 +47,7 @@ import android.widget.Toast;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm;
@@ -200,12 +201,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
             
             if ( syncStatusHandle != null )
             {
-               final Bundle bundle = new Bundle();
-               bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
-               bundle.putBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
-                                  true );
-               
-               ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+               SyncUtils.requestSettingsOnlySync( getContext(), account );
                
                showDialog();
             }

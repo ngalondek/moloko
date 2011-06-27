@@ -47,8 +47,8 @@
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:paddingTop="5dip"
-      android:visibility="visible"
       moloko:button1Text="center_button"
-      moloko:stretchSingleButton="false" />
+      moloko:stretchSingleButton="false"
+      android:visibility="gone"/>
 
 </RelativeLayout>

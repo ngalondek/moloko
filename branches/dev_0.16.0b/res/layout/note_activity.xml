@@ -106,6 +106,7 @@
             android:layout_toLeftOf="@+id/note_btn_next"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
+            moloko:backgroundColor="@color/app_buttonbar_bgnd"
             moloko:button1Text="@string/phr_close"
             moloko:button1OnClick="onClose" />
 

@@ -25,6 +25,7 @@ package dev.drsoran.moloko.sync.periodic;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SyncResult;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -64,6 +65,13 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
    
 
 
+   public void delayNextSync( SyncResult syncResult, long seconds )
+   {
+      syncResult.delayUntil = seconds;
+   }
+   
+
+
    public void resetPeriodicSync()
    {
       final Account account = AccountUtils.getRtmAccount( context );
@@ -86,6 +94,7 @@ class NativePeriodicSyncHandler extends AbstractPeriodicSyncHandler
       final Bundle bundle = new Bundle();
       
       bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, Boolean.TRUE );
+      bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, Boolean.TRUE );
       
       return bundle;
    }

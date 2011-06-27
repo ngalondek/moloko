@@ -106,6 +106,29 @@ public final class SyncUtils
          final Bundle bundle = new Bundle();
          
          bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
+         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
+         
+         ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
+      }
+      else
+      {
+         context.startActivity( Intents.createNewAccountIntent( context ) );
+      }
+   }
+   
+
+
+   public final static void requestSettingsOnlySync( Context context,
+                                                     Account account )
+   {
+      if ( account != null )
+      {
+         final Bundle bundle = new Bundle();
+         
+         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_MANUAL, true );
+         bundle.putBoolean( dev.drsoran.moloko.sync.Constants.SYNC_EXTRAS_ONLY_SETTINGS,
+                            true );
+         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, false );
          
          ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
       }
@@ -125,6 +148,7 @@ public final class SyncUtils
          final Bundle bundle = new Bundle();
          
          bundle.putBoolean( Constants.SYNC_EXTRAS_SCHEDULED, true );
+         bundle.putBoolean( ContentResolver.SYNC_EXTRAS_UPLOAD, true );
          
          ContentResolver.requestSync( account, Rtm.AUTHORITY, bundle );
       }

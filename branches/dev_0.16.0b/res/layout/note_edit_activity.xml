@@ -66,13 +66,14 @@
          android:scaleType="fitXY"
          android:onClick="onPrevNote" />
 
-      <dev.drsoran.moloko.layouts.BottomButtonBarLayout
+      <dev.drsoran.moloko.layouts.BottomButtonBarLayout         
          android:layout_width="fill_parent"
-         android:layout_height="fill_parent"
+         android:layout_height="fill_parent"         
          android:layout_toRightOf="@+id/note_btn_prev"
          android:layout_toLeftOf="@+id/note_btn_next"
          android:layout_alignParentTop="true"
          android:layout_alignParentBottom="true"
+         moloko:backgroundColor="@color/app_buttonbar_bgnd"
          moloko:button1Text="@string/btn_done"
          moloko:button1OnClick="onDone"
          moloko:button2Text="@string/btn_cancel"

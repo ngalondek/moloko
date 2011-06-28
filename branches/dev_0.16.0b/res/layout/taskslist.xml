@@ -41,16 +41,8 @@
          android:layout_width="fill_parent"
          android:layout_height="fill_parent" />
 
-      <TextView
-         android:id="@+id/taskslist_activity_no_elements"
-         style="@style/App_No_List_Elements_Text"
-         android:layout_width="fill_parent"
-         android:layout_height="fill_parent"
-         android:text="@string/abstaskslist_no_tasks"
-         android:visibility="gone" />
-
       <dev.drsoran.moloko.layouts.TitleWithTextLayout
-         android:id="@+id/taskslist_activity_error"
+         android:id="@+id/taskslist_error"
          style="@style/Error"
          android:visibility="gone" />
 

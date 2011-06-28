@@ -140,9 +140,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       }
       else
       {
-         UIUtils.setTitle( this,
-                           getString( R.string.taskslist_titlebar,
-                                      getString( R.string.app_name ) ) );
+         UIUtils.setTitle( this, getString( R.string.taskslist_titlebar,
+                                            getString( R.string.app_name ) ) );
       }
    }
    
@@ -213,7 +212,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    protected ListAdapter createListAdapter( AsyncFillListResult result )
    {
       return new TasksListAdapter( this,
-                                   R.layout.taskslist_activity_listitem,
+                                   R.layout.taskslist_listitem,
                                    result != null
                                                  ? result.tasks
                                                  : Collections.< ListTask > emptyList(),

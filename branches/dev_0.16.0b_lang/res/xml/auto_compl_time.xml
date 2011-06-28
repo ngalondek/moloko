@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TimeAutoCompl>
+   <!-- suggestTime -->
+   <entry
+      key="0"
+      value="at,midday,midnight,never,noon" />
+
+   <!-- time_in_words -->
+   <entry
+      key="1"
+      value="midday,midnight,never,noon" />
+
+   <!-- time_in_units -->
+   <entryPl
+      key="2"
+      units_1="hour,minute,second"
+      units_n="hours,minutes,seconds" />
+
+   <!-- time_float -->
+   <entryPl
+      key="3"
+      units_1="hour"
+      units_n="hours" />
+
+   <!-- suggTimeEstimate -->
+   <entryPl
+      key="10"
+      units_1="day,hour,minute"
+      units_n="days,hours,minutes" />
+
+   <entryPl
+      key="11"
+      units_1="hour,minute"
+      units_n="hours,minutes" />
+
+   <entry
+      key="12"
+      value="and" />
+
+</TimeAutoCompl>

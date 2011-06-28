@@ -260,9 +260,9 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      setContentView( R.layout.taskslist_activity );
+      setContentView( R.layout.taskslist );
       
-      emptyListView = findViewById( R.id.taskslist_activity_no_elements );
+      emptyListView = findViewById( R.id.taskslist_no_elements );
       
       registerForContextMenu( getListView() );
       
@@ -468,7 +468,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       // If the list name was in the filter then we are in one list only. So no need to
       // open it again.
-      if ( !(filter instanceof RtmSmartFilter)
+      if ( !( filter instanceof RtmSmartFilter )
          || !RtmSmartFilterParsing.hasOperatorAndValue( ( (RtmSmartFilter) filter ).getTokens(),
                                                         RtmSmartFilterLexer.OP_LIST,
                                                         task.getListName(),
@@ -857,12 +857,11 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
             if ( getTaskSort() == (Integer) oldVlaues.get( Integer.valueOf( which ) ) )
             {
                setTaskSort( MolokoApp.getSettings().getTaskSort(), true );
-            }
-            else
-            {
-               break;
+               onContentChanged();
             }
             
+            break;
+         
          default :
             onContentChanged();
       }
@@ -1077,7 +1076,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
 
    protected void showError( CharSequence text )
    {
-      final View errorView = findViewById( R.id.taskslist_activity_error );
+      final View errorView = findViewById( R.id.taskslist_error );
       final TextView textView = (TextView) errorView.findViewById( R.id.title_with_text_text );
       
       textView.setText( text );

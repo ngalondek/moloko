@@ -22,35 +22,44 @@
 
 package dev.drsoran.moloko.fragments;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.TextUtils;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
+import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
+import dev.drsoran.moloko.fragments.listeners.ITaskListListener;
+import dev.drsoran.moloko.fragments.listeners.NullTaskListListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.rtm.ListTask;
@@ -58,8 +67,7 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 
 abstract class AbstractTaskListFragment extends ListFragment implements
-         DialogInterface.OnClickListener, View.OnClickListener,
-         IOnSettingsChangedListener
+         View.OnClickListener, IOnSettingsChangedListener
 {
    private final static String TAG = "Moloko."
       + AbstractTaskListFragment.class.getSimpleName();
@@ -107,16 +115,49 @@ abstract class AbstractTaskListFragment extends ListFragment implements
       
       public final static int OPEN_LIST = 6;
       
-      public final static int TAGS = 7;
+      public final static int TAG = 7;
       
-      public final static int TASKS_AT_LOCATION = 8;
+      public final static int TAGS = 8;
       
-      public final static int NOTES = 9;
+      public final static int TASKS_AT_LOCATION = 9;
+      
+      public final static int NOTES = 10;
    }
+   
+   private ITaskListListener listener;
    
    private Bundle configuration;
    
    
+
+   protected AbstractTaskListFragment( Bundle configuration )
+   {
+      this.configuration = new Bundle( configuration );
+   }
+   
+
+
+   @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof ITaskListListener )
+         listener = (ITaskListListener) activity;
+      else
+         listener = new NullTaskListListener();
+   }
+   
+
+
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      listener = null;
+   }
+   
+
 
    @Override
    public void onCreate( Bundle savedInstanceState )
@@ -232,19 +273,26 @@ abstract class AbstractTaskListFragment extends ListFragment implements
       switch ( item.getItemId() )
       {
          case OptionsMenu.SORT:
-            final Context context = getActivity();
-            new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_sort )
-                                              .setTitle( R.string.abstaskslist_dlg_sort_title )
-                                              .setSingleChoiceItems( R.array.app_sort_options,
-                                                                     getTaskSortIndex( getTaskSort() ),
-                                                                     this )
-                                              .setNegativeButton( R.string.btn_cancel,
-                                                                  this )
-                                              .show();
+            showChooseTaskSortDialog();
             return true;
          default :
             return super.onOptionsItemSelected( item );
       }
+   }
+   
+
+
+   protected void showChooseTaskSortDialog()
+   {
+      final Context context = getActivity();
+      new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_sort )
+                                        .setTitle( R.string.abstaskslist_dlg_sort_title )
+                                        .setSingleChoiceItems( R.array.app_sort_options,
+                                                               getTaskSortIndex( getTaskSort() ),
+                                                               chooseTaskSortDialogListener )
+                                        .setNegativeButton( R.string.btn_cancel,
+                                                            chooseTaskSortDialogListener )
+                                        .show();
    }
    
 
@@ -369,7 +417,7 @@ abstract class AbstractTaskListFragment extends ListFragment implements
          
          if ( tagsContainer.getVisibility() == View.VISIBLE )
             menu.add( Menu.NONE,
-                      CtxtMenu.TAGS,
+                      tagsCount == 1 ? CtxtMenu.TAG : CtxtMenu.TAGS,
                       Menu.NONE,
                       getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
                                                         tagsCount,
@@ -410,44 +458,48 @@ abstract class AbstractTaskListFragment extends ListFragment implements
       switch ( item.getItemId() )
       {
          case CtxtMenu.OPEN_TASK:
-            onTaskClicked( info.position );
+            listener.onOpenTask( info.position );
             return true;
             
          case CtxtMenu.EDIT_TASK:
-            onTaskEdit( info.position );
+            listener.onEditTask( info.position );
             return true;
             
          case CtxtMenu.COMPLETE_TASK:
-            onTaskComplete( info.position );
+            onCompleteTask( info.position );
             return true;
             
          case CtxtMenu.POSTPONE_TASK:
-            onTaskPostpone( info.position );
+            onPostponeTask( info.position );
             return true;
             
          case CtxtMenu.DELETE_TASK:
-            onTaskDelete( info.position );
+            onDeleteTask( info.position );
             return true;
             
          case CtxtMenu.OPEN_LIST:
-            onListNameClicked( info.targetView.findViewById( R.id.taskslist_listitem_btn_list_name ) );
+            listener.onOpenList( info.position,
+                                 getTask( info.position ).getListId() );
+            return true;
+            
+         case CtxtMenu.TAG:
+            listener.onConfigurationChanged( Intents.createOpenTagsIntentConfig( getActivity(),
+                                                                                 getTask( info.position ).getTags(),
+                                                                                 RtmSmartFilterLexer.AND_LIT ) );
             return true;
             
          case CtxtMenu.TAGS:
-            final List< String > tags = getTask( info.position ).getTags();
-            
-            if ( tags.size() == 1 )
-               onTagClicked( tags.get( 0 ) );
-            else
-               openMultipleTags( tags );
+            showChooseTagsDialog( getTask( info.position ).getTags() );
             return true;
             
          case CtxtMenu.TASKS_AT_LOCATION:
-            onLocationClicked( info.position );
+            listener.onOpenLocation( info.position,
+                                     getTask( info.position ).getLocationId() );
             return true;
             
          case CtxtMenu.NOTES:
-            openNotes( info.position, null );
+            listener.onOpenNotes( info.position,
+                                  getTask( info.position ).getNotes( getActivity() ) );
             return true;
             
          default :
@@ -457,18 +509,29 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   @Override
-   public void onListItemClick( ListView l, View v, int position, long id )
+   protected void showChooseTagsDialog( List< String > tags )
    {
-      onTaskClicked( position );
+      final List< CharSequence > tmp = new ArrayList< CharSequence >( tags.size() );
+      
+      for ( String tag : tags )
+         tmp.add( tag );
+      
+      new MultiChoiceDialog( getActivity(),
+                             tmp,
+                             chooseMultipleTagsDialogListener ).setTitle( getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
+                                                                                                            tags.size() ) )
+                                                               .setIcon( R.drawable.ic_dialog_tag )
+                                                               .setButtonText( getString( R.string.abstaskslist_dlg_show_tags_and ) )
+                                                               .setButton2Text( getString( R.string.abstaskslist_dlg_show_tags_or ) )
+                                                               .show();
    }
    
 
 
-   public void onClick( DialogInterface dialog, int which )
+   @Override
+   public void onListItemClick( ListView l, View v, int position, long id )
    {
-      // TODO Auto-generated method stub
-      
+      listener.onOpenTask( position );
    }
    
 
@@ -594,4 +657,85 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    {
       return TaskSortPreference.getIndexOfValue( value );
    }
+   
+
+
+   private void onCompleteTask( int pos )
+   {
+      final ListTask task = getTask( pos );
+      TaskEditUtils.setTaskCompletion( getActivity(),
+                                       task,
+                                       task.getCompleted() == null );
+   }
+   
+
+
+   private void onPostponeTask( int pos )
+   {
+      TaskEditUtils.postponeTask( getActivity(), getTask( pos ) );
+   }
+   
+
+
+   private void onDeleteTask( int pos )
+   {
+      final ListTask task = getTask( pos );
+      final Activity activity = getActivity();
+      
+      UIUtils.newDeleteElementDialog( activity, task.getName(), new Runnable()
+      {
+         public void run()
+         {
+            TaskEditUtils.deleteTask( activity, task );
+         }
+      }, null ).show();
+   }
+   
+   private final DialogInterface.OnClickListener chooseTaskSortDialogListener = new OnClickListener()
+   {
+      public void onClick( DialogInterface dialog, int which )
+      {
+         switch ( which )
+         {
+            case Dialog.BUTTON_NEGATIVE:
+               break;
+            
+            default :
+               final int newTaskSort = getTaskSortValue( which );
+               
+               if ( newTaskSort != -1 && !isTaskSortSet( newTaskSort ) )
+                  sortTasks( newTaskSort );
+               
+               dialog.dismiss();
+               break;
+         }
+      }
+   };
+   
+   private final DialogInterface.OnClickListener chooseMultipleTagsDialogListener = new OnClickListener()
+   {
+      public void onClick( DialogInterface dialog, int which )
+      {
+         final boolean andLink = ( which == DialogInterface.BUTTON1 );
+         final List< String > chosenTags = new LinkedList< String >();
+         
+         {
+            final MultiChoiceDialog tagsChoice = (MultiChoiceDialog) dialog;
+            final CharSequence[] tags = tagsChoice.getItems();
+            final boolean[] states = tagsChoice.getStates();
+            
+            // filter out the chosen tags
+            for ( int i = 0; i < states.length; i++ )
+               if ( states[ i ] )
+                  chosenTags.add( tags[ i ].toString() );
+         }
+         
+         listener.onConfigurationChanged( Intents.createOpenTagsIntentConfig( getActivity(),
+                                                                              chosenTags,
+                                                                              andLink
+                                                                                     ? RtmSmartFilterLexer.AND_LIT
+                                                                                     : RtmSmartFilterLexer.OR_LIT ) );
+      }
+   };
+   
 }

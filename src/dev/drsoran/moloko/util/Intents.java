@@ -23,12 +23,14 @@
 package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
@@ -188,19 +190,50 @@ public final class Intents
    
 
 
-   public final static Intent createOpenTagIntent( Context context,
-                                                   String tagText )
+   public final static Intent createOpenTagsIntent( Context context,
+                                                    List< String > tags,
+                                                    String logicalOperator )
    {
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      intent.putExtra( AbstractTasksListActivity.FILTER,
-                       new RtmSmartFilter( RtmSmartFilterLexer.OP_TAG_LIT
-                          + RtmSmartFilterLexer.quotify( tagText ) ) );
-      intent.putExtra( AbstractTasksListActivity.TITLE,
-                       context.getString( R.string.taskslist_titlebar, tagText ) );
-      intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                       R.drawable.ic_title_tag );
+      
+      intent.putExtras( createOpenTagsIntentConfig( context,
+                                                    tags,
+                                                    logicalOperator ) );
       
       return intent;
+   }
+   
+
+
+   public final static Bundle createOpenTagsIntentConfig( Context context,
+                                                          List< String > tags,
+                                                          String logicalOperator )
+   {
+      final Bundle config = new Bundle();
+      
+      config.putInt( AbstractTasksListActivity.TITLE_ICON,
+                     R.drawable.ic_title_tag );
+      
+      final StringBuilder filterString = new StringBuilder();
+      
+      for ( int i = 0, cnt = tags.size(); i < cnt; ++i )
+      {
+         final String tag = tags.get( i );
+         
+         filterString.append( RtmSmartFilterLexer.OP_TAG_LIT ).append( tag );
+         
+         // not last element
+         if ( i < cnt - 1 )
+            filterString.append( " " ).append( logicalOperator ).append( " " );
+      }
+      
+      config.putParcelable( AbstractTasksListActivity.FILTER,
+                            new RtmSmartFilter( filterString.toString() ) );
+      config.putString( AbstractTasksListActivity.TITLE,
+                        context.getString( R.string.taskslist_titlebar,
+                                           TextUtils.join( ", ", tags ) ) );
+      
+      return config;
    }
    
 

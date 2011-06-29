@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -593,15 +594,13 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          final CharSequence[] tags = tagsChoice.getItems();
          final boolean[] states = tagsChoice.getStates();
          
-         final ArrayList< String > chosenTags = new ArrayList< String >();
+         final List< String > chosenTags = new LinkedList< String >();
          
          // filter out the chosen tags
          for ( int i = 0; i < states.length; i++ )
          {
             if ( states[ i ] )
-            {
                chosenTags.add( tags[ i ].toString() );
-            }
          }
          
          final int chosenTagsSize = chosenTags.size();
@@ -629,14 +628,10 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                // not last element
                if ( i < chosenTagsSize - 1 )
                {
-                  if ( andLink )
-                     filter.append( " " )
-                           .append( RtmSmartFilterLexer.AND_LIT )
-                           .append( " " );
-                  else
-                     filter.append( " " )
-                           .append( RtmSmartFilterLexer.OR_LIT )
-                           .append( " " );
+                  filter.append( " " )
+                        .append( andLink ? RtmSmartFilterLexer.AND_LIT
+                                        : RtmSmartFilterLexer.OR_LIT )
+                        .append( " " );
                }
             }
             

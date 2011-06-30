@@ -29,7 +29,6 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +36,7 @@ import android.database.ContentObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -59,6 +59,7 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
+import dev.drsoran.moloko.fragments.listeners.ITaskListListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
@@ -73,9 +74,8 @@ import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public abstract class AbstractTasksListActivity extends ListActivity implements
-         DialogInterface.OnClickListener, View.OnClickListener,
-         IOnSettingsChangedListener
+public abstract class AbstractTasksListActivity extends FragmentActivity
+         implements ITaskListListener
 {
    private final static String TAG = "Moloko."
       + AbstractTasksListActivity.class.getSimpleName();

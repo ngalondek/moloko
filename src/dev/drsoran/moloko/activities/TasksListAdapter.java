@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.activities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
@@ -33,8 +34,8 @@ import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,11 +64,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
    private final int resourceId;
    
-   private final LayoutInflater inflater;
-   
    private final RtmSmartFilter filter;
-   
-   private final Time now = MolokoDateUtils.newTime();
    
    private final String[] tagsToRemove;
    
@@ -75,10 +72,9 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
    
 
-   public TasksListAdapter( Context context, int resourceId,
-      List< ListTask > tasks, IFilter filter )
+   public TasksListAdapter( Context context, int resourceId )
    {
-      this( context, resourceId, tasks, filter, 0 );
+      this( context, resourceId, Collections.< ListTask > emptyList(), null, 0 );
    }
    
 
@@ -91,14 +87,13 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       this.context = context;
       this.flags = flags;
       this.resourceId = resourceId;
-      this.inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
       this.filter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
                                                                            ? filter
                                                                            : new RtmSmartFilter( Strings.EMPTY_STRING ) );
       
       if ( ( flags & FLAG_NO_FILTER ) != FLAG_NO_FILTER )
       {
-         final ArrayList< RtmSmartFilterToken > tokens = this.filter.getTokens();
+         final List< RtmSmartFilterToken > tokens = this.filter.getTokens();
          final List< String > tagsToRemove = new ArrayList< String >();
          
          for ( RtmSmartFilterToken token : tokens )
@@ -121,13 +116,6 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
 
 
-   public LayoutInflater getInflater()
-   {
-      return inflater;
-   }
-   
-
-
    public int getLayoutRessource()
    {
       return resourceId;
@@ -139,8 +127,9 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    public View getView( int position, View convertView, ViewGroup parent )
    {
       if ( convertView == null )
-         convertView = inflater.inflate( resourceId, parent, false );
-      
+         convertView = ( (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE ) ).inflate( resourceId,
+                                                                                                                 parent,
+                                                                                                                 false );
       final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
       
       ImageView completed;
@@ -173,7 +162,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       
       final ListTask task = getItem( position );
       
-      UIUtils.setTaskDescription( description, task, now );
+      UIUtils.setTaskDescription( description, task, MolokoDateUtils.newTime() );
       
       if ( task.getRecurrence() != null )
          recurrent.setVisibility( View.VISIBLE );
@@ -252,6 +241,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
          }
          else
          {
+            final Time now = MolokoDateUtils.newTime();
             final Time dueTime = MolokoDateUtils.newTime( dueMillis );
             
             // If it is the same year

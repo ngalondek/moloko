@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.PendingIntent;
@@ -205,10 +206,23 @@ public final class Intents
    
 
 
+   public final static Bundle createOpenTagIntentConfig( Context context,
+                                                         String tag )
+   {
+      return createOpenTagsIntentConfig( context,
+                                         Collections.singletonList( tag ),
+                                         null );
+   }
+   
+
+
    public final static Bundle createOpenTagsIntentConfig( Context context,
                                                           List< String > tags,
                                                           String logicalOperator )
    {
+      if ( tags.size() > 1 && logicalOperator == null )
+         throw new IllegalArgumentException( "logicalOperator must not be null with multiple tags" );
+      
       final Bundle config = new Bundle();
       
       config.putInt( AbstractTasksListActivity.TITLE_ICON,

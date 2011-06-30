@@ -31,7 +31,7 @@ import com.mdt.rtm.data.RtmTaskNote;
 
 public interface ITaskListListener
 {
-   void onConfigurationChanged( Bundle newConfiguration );
+   void onRequestReload( Bundle configuration );
    
 
 

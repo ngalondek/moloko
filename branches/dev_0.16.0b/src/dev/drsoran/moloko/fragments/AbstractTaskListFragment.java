@@ -35,7 +35,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Handler.Callback;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -46,12 +50,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
+import dev.drsoran.moloko.activities.TasksListAdapter;
 import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
 import dev.drsoran.moloko.fragments.listeners.ITaskListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskListListener;
@@ -67,8 +73,10 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 
 abstract class AbstractTaskListFragment extends ListFragment implements
-         View.OnClickListener, IOnSettingsChangedListener
+         View.OnClickListener, IOnSettingsChangedListener,
+         LoaderCallbacks< List< ListTask > >
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + AbstractTaskListFragment.class.getSimpleName();
    
@@ -124,6 +132,8 @@ abstract class AbstractTaskListFragment extends ListFragment implements
       public final static int NOTES = 10;
    }
    
+   private final static int TASKS_LOADER_ID = 1;
+   
    private ITaskListListener listener;
    
    private Bundle configuration;
@@ -160,11 +170,12 @@ abstract class AbstractTaskListFragment extends ListFragment implements
 
 
    @Override
-   public void onCreate( Bundle savedInstanceState )
+   public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
       setEmptyText( getString( R.string.abstaskslist_no_tasks ) );
+      setHasOptionsMenu( true );
       
       registerForContextMenu( getListView() );
       
@@ -175,11 +186,23 @@ abstract class AbstractTaskListFragment extends ListFragment implements
                                                       | IOnSettingsChangedListener.TASK_SORT,
                                                    this );
       
-      // TasksProviderPart.registerContentObserver( this, dbObserver );
+      createInitialConfiguration( savedInstanceState );
       
+      setListAdapter( new TasksListAdapter( getActivity(),
+                                            R.layout.taskslist_listitem ) );
+      
+      getLoaderManager().initLoader( TASKS_LOADER_ID, configuration, this );
+   }
+   
+
+
+   private void createInitialConfiguration( Bundle savedInstanceState )
+   {
       configuration = new Bundle( savedInstanceState );
       
-      configureTaskSort();
+      final int taskSort = configuration.getInt( TASK_SORT_ORDER,
+                                                 getDefaultTaskSort() );
+      configureTaskSort( taskSort );
    }
    
 
@@ -220,8 +243,6 @@ abstract class AbstractTaskListFragment extends ListFragment implements
       unregisterForContextMenu( getListView() );
       
       MolokoApp.get( getActivity() ).unregisterOnSettingsChangedListener( this );
-      
-      // TasksProviderPart.unregisterContentObserver( this, dbObserver );
    }
    
 
@@ -483,9 +504,9 @@ abstract class AbstractTaskListFragment extends ListFragment implements
             return true;
             
          case CtxtMenu.TAG:
-            listener.onConfigurationChanged( Intents.createOpenTagsIntentConfig( getActivity(),
-                                                                                 getTask( info.position ).getTags(),
-                                                                                 RtmSmartFilterLexer.AND_LIT ) );
+            requestReloadWithConfig( Intents.createOpenTagIntentConfig( getActivity(),
+                                                                        getTask( info.position ).getTags()
+                                                                                                .get( 0 ) ) );
             return true;
             
          case CtxtMenu.TAGS:
@@ -538,8 +559,12 @@ abstract class AbstractTaskListFragment extends ListFragment implements
 
    public void onClick( View v )
    {
-      // TODO Auto-generated method stub
-      
+      if ( v.getId() == R.id.tags_layout_btn_tag )
+      {
+         final String tag = ( (TextView) v ).getText().toString();
+         requestReloadWithConfig( Intents.createOpenTagIntentConfig( getActivity(),
+                                                                     tag ) );
+      }
    }
    
 
@@ -555,7 +580,7 @@ abstract class AbstractTaskListFragment extends ListFragment implements
             final Integer oldTaskSort = (Integer) oldValues.get( IOnSettingsChangedListener.TASK_SORT );
             if ( oldTaskSort != null && isTaskSortSet( oldTaskSort.intValue() ) )
             {
-               sortTasks( MolokoApp.getSettings().getTaskSort() );
+               configureTaskSort( MolokoApp.getSettings().getTaskSort() );
             }
             break;
          
@@ -563,7 +588,7 @@ abstract class AbstractTaskListFragment extends ListFragment implements
             break;
       }
       
-      onContentChanged();
+      requestReloadWithConfig( configuration );
    }
    
 
@@ -613,17 +638,27 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   protected void configureTaskSort()
+   public void reload( Bundle config )
    {
-      if ( !configuration.containsKey( TASK_SORT_ORDER ) )
-         configuration.putInt( TASK_SORT_ORDER, getDefaultTaskSort() );
+      if ( config != null )
+      {
+         getLoaderManager().restartLoader( TASKS_LOADER_ID, config, this );
+      }
+   }
+   
+
+
+   protected void configureTaskSort( int taskSort )
+   {
+      configuration.putInt( TASK_SORT_ORDER, taskSort );
    }
    
 
 
    public void sortTasks( int taskSort )
    {
-      configuration.putInt( TASK_SORT_ORDER, taskSort );
+      configureTaskSort( taskSort );
+      requestReloadWithConfig( configuration );
    }
    
 
@@ -691,6 +726,13 @@ abstract class AbstractTaskListFragment extends ListFragment implements
       }, null ).show();
    }
    
+
+
+   private void requestReloadWithConfig( Bundle newConfig )
+   {
+      handler.obtainMessage( MSG_REQUEST_RELOAD ).setData( configuration );
+   }
+   
    private final DialogInterface.OnClickListener chooseTaskSortDialogListener = new OnClickListener()
    {
       public void onClick( DialogInterface dialog, int which )
@@ -703,10 +745,11 @@ abstract class AbstractTaskListFragment extends ListFragment implements
             default :
                final int newTaskSort = getTaskSortValue( which );
                
+               dialog.dismiss();
+               
                if ( newTaskSort != -1 && !isTaskSortSet( newTaskSort ) )
                   sortTasks( newTaskSort );
                
-               dialog.dismiss();
                break;
          }
       }
@@ -730,12 +773,28 @@ abstract class AbstractTaskListFragment extends ListFragment implements
                   chosenTags.add( tags[ i ].toString() );
          }
          
-         listener.onConfigurationChanged( Intents.createOpenTagsIntentConfig( getActivity(),
-                                                                              chosenTags,
-                                                                              andLink
-                                                                                     ? RtmSmartFilterLexer.AND_LIT
-                                                                                     : RtmSmartFilterLexer.OR_LIT ) );
+         requestReloadWithConfig( Intents.createOpenTagsIntentConfig( getActivity(),
+                                                                      chosenTags,
+                                                                      andLink
+                                                                             ? RtmSmartFilterLexer.AND_LIT
+                                                                             : RtmSmartFilterLexer.OR_LIT ) );
       }
    };
    
+   private final static int MSG_REQUEST_RELOAD = 1;
+   
+   private final Handler handler = new Handler( new Callback()
+   {
+      public boolean handleMessage( Message msg )
+      {
+         switch ( msg.what )
+         {
+            case MSG_REQUEST_RELOAD:
+               listener.onRequestReload( msg.getData() );
+               return true;
+         }
+         
+         return false;
+      }
+   } );
 }

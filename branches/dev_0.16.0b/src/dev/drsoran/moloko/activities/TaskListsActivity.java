@@ -35,10 +35,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
 import android.widget.ExpandableListView.OnGroupClickListener;
@@ -456,7 +456,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
          }
          
          intent.putExtra( Lists.LIST_NAME, rtmList.getName() );
-         intent.putExtra( AbstractTasksListActivity.FILTER, filter );
+         intent.putExtra( TaskListsActivity.FILTER, filter );
          
          startActivity( intent );
       }

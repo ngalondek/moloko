@@ -28,6 +28,7 @@
 
    <fragment
       android:id="@id/frag_taskslist"
+      android:name="dev.drsoran.moloko.fragments.FullDetailedTasksListFragment"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent">
       <!-- Preview: layout=@layout/taskslist_fragment -->

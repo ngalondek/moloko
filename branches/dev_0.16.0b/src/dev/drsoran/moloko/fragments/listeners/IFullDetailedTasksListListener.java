@@ -22,7 +22,33 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-public class NullTasksListListener implements IFullDetailedTasksListListener
+import java.util.Collection;
+import java.util.List;
+
+import com.mdt.rtm.data.RtmTaskNote;
+
+
+public interface IFullDetailedTasksListListener extends ITasksListListener
 {
+   void onEditTask( int pos );
    
+
+
+   void onOpenList( int pos, String listId );
+   
+
+
+   void onOpenLocation( int pos, String locationId );
+   
+
+
+   void onOpenNotes( int pos, Collection< RtmTaskNote > notes );
+   
+
+
+   void onShowTasksWithTag( String tag );
+   
+
+
+   void onShowTasksWithTags( List< String > tags, String logicalOperator );
 }

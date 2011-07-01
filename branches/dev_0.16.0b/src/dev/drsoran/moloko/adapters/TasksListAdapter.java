@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.activities;
+package dev.drsoran.moloko.adapters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    private final static String TAG = "Moloko."
       + TasksListAdapter.class.getName();
    
-   public final static int FLAG_NO_FILTER = 1 << 0;
+   public final static int FLAG_SHOW_ALL = 1 << 0;
    
    public final static int FLAG_NO_CLICKABLES = 1 << 1;
    
@@ -91,7 +91,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
                                                                            ? filter
                                                                            : new RtmSmartFilter( Strings.EMPTY_STRING ) );
       
-      if ( ( flags & FLAG_NO_FILTER ) != FLAG_NO_FILTER )
+      if ( ( flags & FLAG_SHOW_ALL ) != FLAG_SHOW_ALL )
       {
          final List< RtmSmartFilterToken > tokens = this.filter.getTokens();
          final List< String > tagsToRemove = new ArrayList< String >();
@@ -199,7 +199,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
 
    private final void setListName( TextView view, ListTask task )
    {
-      if ( ( flags & FLAG_NO_FILTER ) == FLAG_NO_FILTER
+      if ( ( flags & FLAG_SHOW_ALL ) == FLAG_SHOW_ALL
          || !RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
                                                         RtmSmartFilterLexer.OP_LIST,
                                                         task.getListName(),
@@ -291,7 +291,7 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    private void setLocation( TextView view, ListTask task )
    {
       // If the task has no location
-      if ( ( flags & FLAG_NO_FILTER ) != FLAG_NO_FILTER
+      if ( ( flags & FLAG_SHOW_ALL ) != FLAG_SHOW_ALL
          && ( TextUtils.isEmpty( task.getLocationName() ) || RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
                                                                                                         RtmSmartFilterLexer.OP_LOCATION,
                                                                                                         task.getLocationName(),

@@ -40,7 +40,6 @@ import android.text.format.DateFormat;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSettings;
 
 
@@ -212,23 +211,6 @@ public class Settings implements OnSharedPreferenceChangeListener
    public int getTaskSort()
    {
       return taskSort;
-   }
-   
-
-
-   public final static String resolveTaskSortToSqlite( int sortValue )
-   {
-      switch ( sortValue )
-      {
-         case TASK_SORT_PRIORITY:
-            return Tasks.SORT_PRIORITY;
-         case TASK_SORT_DUE_DATE:
-            return Tasks.SORT_DUE_DATE;
-         case TASK_SORT_NAME:
-            return Tasks.SORT_TASK_NAME;
-         default :
-            return null;
-      }
    }
    
 

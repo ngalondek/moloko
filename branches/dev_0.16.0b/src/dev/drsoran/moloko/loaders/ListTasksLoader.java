@@ -22,12 +22,16 @@
 
 package dev.drsoran.moloko.loaders;
 
+import java.util.Collections;
 import java.util.List;
 
+import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.support.v4.content.AsyncTaskLoader;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.Task;
 
@@ -36,13 +40,32 @@ public class ListTasksLoader extends AsyncTaskLoader< List< ListTask > >
 {
    private final ForceLoadContentObserver observer = new ForceLoadContentObserver();
    
+   private final String selection;
+   
+   private final String order;
+   
+   private final String taskId;
+   
    private volatile List< ListTask > tasks;
    
    
 
-   public ListTasksLoader( Context context )
+   public ListTasksLoader( Context context, String taskId )
    {
       super( context );
+      this.selection = null;
+      this.order = null;
+      this.taskId = taskId;
+   }
+   
+
+
+   public ListTasksLoader( Context context, String selection, String order )
+   {
+      super( context );
+      this.selection = selection;
+      this.order = order;
+      this.taskId = null;
    }
    
 
@@ -50,16 +73,48 @@ public class ListTasksLoader extends AsyncTaskLoader< List< ListTask > >
    @Override
    public List< ListTask > loadInBackground()
    {
-      final List< Task > tasks = TasksProviderPart.getTasks( client,
-                                                             selection,
-                                                             order );
+      List< ListTask > result = null;
       
-      return ListTask.fromTaskList( tasks );
+      final ContentProviderClient client = getContext().getContentResolver()
+                                                       .acquireContentProviderClient( Tasks.CONTENT_URI );
+      
+      if ( client != null )
+      {
+         final List< Task > tasks;
+         
+         if ( taskId != null )
+         {
+            tasks = Collections.singletonList( TasksProviderPart.getTask( client,
+                                                                          taskId ) );
+         }
+         else
+         {
+            tasks = TasksProviderPart.getTasks( client, selection, order );
+         }
+         
+         client.release();
+         
+         if ( tasks != null )
+         {
+            registerContentObserver( observer );
+            result = ListTask.fromTaskList( tasks );
+         }
+      }
+      else
+      {
+         LogUtils.logDBError( getContext(),
+                              LogUtils.toTag( ListTasksLoader.class ),
+                              "Tasks" );
+      }
+      
+      return result;
    }
    
 
 
-   /* Runs on the UI thread */
+   /**
+    * Runs on the UI thread
+    */
    @Override
    public void deliverResult( List< ListTask > tasks )
    {
@@ -85,7 +140,6 @@ public class ListTasksLoader extends AsyncTaskLoader< List< ListTask > >
 
 
    /**
-    * 
     * Must be called from the UI thread
     */
    @Override
@@ -143,12 +197,5 @@ public class ListTasksLoader extends AsyncTaskLoader< List< ListTask > >
    private void registerContentObserver( ContentObserver observer )
    {
       TasksProviderPart.registerContentObserver( getContext(), observer );
-   }
-   
-
-
-   private void unregisterContentObserver( ContentObserver observer )
-   {
-      TasksProviderPart.unregisterContentObserver( getContext(), observer );
    }
 }

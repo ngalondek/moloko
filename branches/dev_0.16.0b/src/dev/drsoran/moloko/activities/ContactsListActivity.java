@@ -46,6 +46,7 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.ContactsListAdapter;
 import dev.drsoran.moloko.content.ContactOverviewsProviderPart;
 import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.content.RtmContactsProviderPart;

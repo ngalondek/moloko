@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.activities;
+package dev.drsoran.moloko.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +28,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.ContactsListActivity;
+import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
+import dev.drsoran.moloko.activities.TagCloudActivity;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;

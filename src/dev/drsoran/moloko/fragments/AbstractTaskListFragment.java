@@ -30,8 +30,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -59,7 +59,7 @@ import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-abstract class AbstractTaskListFragment extends ListFragment implements
+public abstract class AbstractTaskListFragment extends ListFragment implements
          IOnSettingsChangedListener, LoaderCallbacks< List< ListTask > >
 {
    @SuppressWarnings( "unused" )
@@ -142,7 +142,6 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    {
       super.onCreate( savedInstanceState );
       
-      setEmptyText( getString( R.string.abstaskslist_no_tasks ) );
       setHasOptionsMenu( true );
       
       MolokoApp.get( getActivity() )
@@ -154,6 +153,13 @@ abstract class AbstractTaskListFragment extends ListFragment implements
       setListAdapter( createEmptyListAdapter() );
       
       getLoaderManager().initLoader( TASKS_LOADER_ID, configuration, this );
+   }
+   
+
+
+   protected CharSequence getEmptyListText()
+   {
+      return getString( R.string.abstaskslist_no_tasks );
    }
    
 
@@ -390,7 +396,7 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   protected final ListTask getTask( int pos )
+   public ListTask getTask( int pos )
    {
       return (ListTask) getListAdapter().getItem( pos );
    }
@@ -439,16 +445,24 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   protected int getTaskSortValue( int idx )
+   public int getTaskSortValue( int idx )
    {
       return TaskSortPreference.getValueOfIndex( idx );
    }
    
 
 
-   protected int getTaskSortIndex( int value )
+   public int getTaskSortIndex( int value )
    {
       return TaskSortPreference.getIndexOfValue( value );
+   }
+   
+
+
+   public void showError( CharSequence text )
+   {
+      setEmptyText( text );
+      getLoaderManager().destroyLoader( TASKS_LOADER_ID );
    }
    
 

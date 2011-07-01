@@ -32,15 +32,15 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -166,7 +166,7 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
                              ViewGroup container,
                              Bundle savedInstanceState )
    {
-      return inflater.inflate( R.layout.taskslist, container, false );
+      return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
 

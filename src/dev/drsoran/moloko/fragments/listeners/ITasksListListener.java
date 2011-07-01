@@ -22,34 +22,13 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-import java.util.Collection;
-
-import android.os.Bundle;
-
-import com.mdt.rtm.data.RtmTaskNote;
-
-
-public interface ITaskListListener
+public interface ITasksListListener
 {
-   void onRequestReload( Bundle configuration );
+   // void onRequestReload( Bundle configuration );
    
-
-
    void onOpenTask( int pos );
    
 
 
-   void onEditTask( int pos );
-   
-
-
-   void onOpenList( int pos, String listId );
-   
-
-
-   void onOpenLocation( int pos, String locationId );
-   
-
-
-   void onOpenNotes( int pos, Collection< RtmTaskNote > notes );
+   void onTaskSortChanged( int newTaskSort );
 }

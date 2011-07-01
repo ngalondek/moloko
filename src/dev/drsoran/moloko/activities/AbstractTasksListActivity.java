@@ -59,7 +59,7 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
-import dev.drsoran.moloko.fragments.listeners.ITaskListListener;
+import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
@@ -75,7 +75,7 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 
 abstract class AbstractTasksListActivity extends FragmentActivity implements
-         ITaskListListener
+         ITasksListListener
 {
    private final static String TAG = "Moloko."
       + AbstractTasksListActivity.class.getSimpleName();

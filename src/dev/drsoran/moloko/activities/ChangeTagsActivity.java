@@ -41,6 +41,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;

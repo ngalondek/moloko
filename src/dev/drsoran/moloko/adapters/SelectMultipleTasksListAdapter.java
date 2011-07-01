@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.activities;
+package dev.drsoran.moloko.adapters;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -80,7 +80,7 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
              tasks,
              filter,
              TasksListAdapter.FLAG_NO_CLICKABLES
-                | TasksListAdapter.FLAG_NO_FILTER );
+                | TasksListAdapter.FLAG_SHOW_ALL );
    }
    
 

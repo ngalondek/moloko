@@ -40,6 +40,7 @@ import android.os.Message;
 import android.os.Handler.Callback;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -57,14 +58,16 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
-import dev.drsoran.moloko.activities.TasksListAdapter;
+import dev.drsoran.moloko.adapters.TasksListAdapter;
 import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
 import dev.drsoran.moloko.fragments.listeners.ITaskListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskListListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.loaders.ListTasksLoader;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
@@ -79,10 +82,6 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + AbstractTaskListFragment.class.getSimpleName();
-   
-   public static final String TITLE = "title";
-   
-   public static final String TITLE_ICON = "title_icon";
    
    public static final String FILTER = "filter";
    
@@ -222,15 +221,6 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    {
       super.onSaveInstanceState( outState );
       outState.putAll( configuration );
-   }
-   
-
-
-   @Override
-   public void onStop()
-   {
-      super.onStop();
-      // TODO: Close TitleBar?
    }
    
 
@@ -681,6 +671,13 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
+   protected String resolveTaskSortToSqlite( int taskSort )
+   {
+      return Queries.resolveTaskSortToSqlite( taskSort );
+   }
+   
+
+
    protected int getTaskSortValue( int idx )
    {
       return TaskSortPreference.getValueOfIndex( idx );
@@ -731,6 +728,37 @@ abstract class AbstractTaskListFragment extends ListFragment implements
    private void requestReloadWithConfig( Bundle newConfig )
    {
       handler.obtainMessage( MSG_REQUEST_RELOAD ).setData( configuration );
+   }
+   
+
+
+   public Loader< List< ListTask >> onCreateLoader( int id, Bundle config )
+   {
+      final IFilter filter = config.getParcelable( FILTER );
+      final String selection = filter != null ? filter.getSqlSelection() : null;
+      final String order = resolveTaskSortToSqlite( config.getInt( TASK_SORT_ORDER ) );
+      
+      return new ListTasksLoader( getActivity(), selection, order );
+   }
+   
+
+
+   public void onLoadFinished( Loader< List< ListTask >> loader,
+                               List< ListTask > data )
+   {
+      setListAdapter( new TasksListAdapter( getActivity(),
+                                            R.id.taskslist_listitem,
+                                            data,
+                                            getFilter(),
+                                            0 ) );
+   }
+   
+
+
+   public void onLoaderReset( Loader< List< ListTask >> loader )
+   {
+      setListAdapter( new TasksListAdapter( getActivity(),
+                                            R.id.taskslist_listitem ) );
    }
    
    private final DialogInterface.OnClickListener chooseTaskSortDialogListener = new OnClickListener()

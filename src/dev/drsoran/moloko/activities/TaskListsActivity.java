@@ -46,6 +46,7 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.adapters.TaskListsAdapter;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.dialogs.AddRenameListDialog;

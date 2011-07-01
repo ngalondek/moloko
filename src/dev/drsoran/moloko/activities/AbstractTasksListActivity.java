@@ -74,33 +74,13 @@ import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public abstract class AbstractTasksListActivity extends FragmentActivity
-         implements ITaskListListener
+abstract class AbstractTasksListActivity extends FragmentActivity implements
+         ITaskListListener
 {
    private final static String TAG = "Moloko."
       + AbstractTasksListActivity.class.getSimpleName();
    
    
-   protected final static class AsyncFillListResult
-   {
-      public final List< ListTask > tasks;
-      
-      public final IFilter filter;
-      
-      public final Bundle configuration;
-      
-      
-
-      public AsyncFillListResult( List< ListTask > tasks, IFilter filter,
-         Bundle configuration )
-      {
-         this.tasks = tasks;
-         this.filter = filter;
-         this.configuration = configuration;
-      }
-   }
-   
-
    protected class AsyncFillList extends
             AsyncTask< ContentResolver, Void, AsyncFillListResult >
    {
@@ -176,10 +156,6 @@ public abstract class AbstractTasksListActivity extends FragmentActivity
    public static final String TITLE = "title";
    
    public static final String TITLE_ICON = "title_icon";
-   
-   public static final String FILTER = "filter";
-   
-   public static final String TASK_SORT_ORDER = "task_sort_order";
    
    
    protected static class OptionsMenu

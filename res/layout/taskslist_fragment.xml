@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
    <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
+      Copyright (c) 2011 Ronny Röhricht This file is part of Moloko.
+
       Moloko is free software: you can redistribute it and/or modify it
       under the terms of the GNU General Public License as published by
       the Free Software Foundation, either version 3 of the License, or
@@ -14,27 +15,16 @@
       implementation
    -->
 
-<resources>
-   <item
-      type="id"
-      name="app_title_bar" />
-   <item
-      type="id"
-      name="title_with_text_text" />
-   <item
-      type="id"
-      name="title_with_edit_text" />
-   <item
-      type="id"
-      name="title_with_wrapping_layout" />
-   <item
-      type="id"
-      name="title_with_spinner_layout" />
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:orientation="vertical"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
 
-   <!-- Fragment IDs -->
+   <ListView
+      android:id="@+id/android:list"
+      style="@style/TasksList_TaskList"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" />
 
-   <item
-      type="id"
-      name="frag_taskslist" />
-
-</resources>
+</LinearLayout>

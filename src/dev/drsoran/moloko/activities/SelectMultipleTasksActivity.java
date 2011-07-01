@@ -39,6 +39,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.SelectMultipleTasksListAdapter;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Strings;

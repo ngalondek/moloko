@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.activities;
+package dev.drsoran.moloko.adapters;
 
 import java.util.List;
 
@@ -33,6 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.activities.ChangeTagsActivity.ChangeTag;
 
 

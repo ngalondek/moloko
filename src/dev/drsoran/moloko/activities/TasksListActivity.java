@@ -37,6 +37,7 @@ import android.widget.ListAdapter;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.adapters.TasksListAdapter;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.LogUtils;

@@ -31,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.UIUtils;
 
 

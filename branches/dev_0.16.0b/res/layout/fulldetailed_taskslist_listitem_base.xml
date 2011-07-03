@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko 
-   is free software: you can redistribute it and/or modify it under the terms 
-   of the GNU General Public License as published by the Free Software Foundation, 
-   either version 3 of the License, or (at your option) any later version. Moloko 
-   is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-   without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-   PURPOSE. See the GNU General Public License for more details. You should 
-   have received a copy of the GNU General Public License along with Moloko. 
-   If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-   - implementation -->
+<!-- Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko is free 
+   software: you can redistribute it and/or modify it under the terms of the GNU General 
+   Public License as published by the Free Software Foundation, either version 3 of 
+   the License, or (at your option) any later version. Moloko is distributed in the 
+   hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public 
+   License for more details. You should have received a copy of the GNU General Public 
+   License along with Moloko. If not, see <http://www.gnu.org/licenses/>. Contributors: 
+   Ronny Röhricht - implementation -->
 
 <RelativeLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
@@ -61,8 +60,7 @@
          android:layout_height="wrap_content"
          android:text="list_name"
          android:focusable="false"
-         android:clickable="true"
-         android:onClick="onListNameClicked" />
+         android:clickable="true" />
 
       <TextView
          android:id="@+id/taskslist_listitem_location"
@@ -72,8 +70,7 @@
          android:layout_width="wrap_content"
          android:text="location_name"
          android:focusable="false"
-         android:clickable="true"
-         android:onClick="onLocationClicked" />
+         android:clickable="true" />
    </dev.drsoran.moloko.layouts.WrappingLayout>
 
    <LinearLayout
@@ -83,7 +80,7 @@
       android:layout_marginRight="?android:attr/scrollbarSize"
       android:layout_alignParentBottom="true"
       android:layout_alignParentRight="true">
-      
+
       <ImageView
          android:id="@+id/taskslist_listitem_has_notes"
          android:layout_width="20dip"

@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <!--
-      Copyright (c) 2010 Ronny Röhricht This file is part of Moloko.
-      Moloko is free software: you can redistribute it and/or modify it
-      under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License, or
-      (at your option) any later version. Moloko is distributed in the
-      hope that it will be useful, but WITHOUT ANY WARRANTY; without
-      even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-      PARTICULAR PURPOSE. See the GNU General Public License for more
-      details. You should have received a copy of the GNU General Public
-      License along with Moloko. If not, see
-      <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht -
-      implementation
-   -->
+<!-- Copyright (c) 2010 Ronny Röhricht This file is part of Moloko. Moloko is free 
+   software: you can redistribute it and/or modify it under the terms of the GNU General 
+   Public License as published by the Free Software Foundation, either version 3 of 
+   the License, or (at your option) any later version. Moloko is distributed in the 
+   hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+   of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public 
+   License for more details. You should have received a copy of the GNU General Public 
+   License along with Moloko. If not, see <http://www.gnu.org/licenses/>. Contributors: 
+   Ronny Röhricht - implementation -->
 
 <resources>
    <item
@@ -36,5 +31,88 @@
    <item
       type="id"
       name="frag_taskslist" />
+
+   <!-- MenuItem IDs -->
+   <item
+      type="id"
+      name="menu_sort" />
+   <item
+      type="id"
+      name="menu_settings" />
+   <item
+      type="id"
+      name="menu_sync" />
+   <item
+      type="id"
+      name="menu_show_lists" />
+   <item
+      type="id"
+      name="menu_delete_list" />
+   <item
+      type="id"
+      name="menu_edit_multiple_tasks" />
+   <item
+      type="id"
+      name="menu_select_all" />
+   <item
+      type="id"
+      name="menu_deselect_all" />
+   <item
+      type="id"
+      name="menu_invert_selection" />
+   <item
+      type="id"
+      name="menu_edit_selected_tasks" />
+   <item
+      type="id"
+      name="menu_complete_selected_tasks" />
+   <item
+      type="id"
+      name="menu_uncomplete_selected_tasks" />
+   <item
+      type="id"
+      name="menu_postpone_selected_tasks" />
+   <item
+      type="id"
+      name="menu_delete_selected_tasks" />
+   <item
+      type="id"
+      name="menu_clear_search_history" />
+
+
+   <!-- ContextMenuItem IDs -->
+   <item
+      type="id"
+      name="ctx_menu_open_task" />
+   <item
+      type="id"
+      name="ctx_menu_edit_task" />
+   <item
+      type="id"
+      name="ctx_menu_complete_task" />
+   <item
+      type="id"
+      name="ctx_menu_postpone_task" />
+   <item
+      type="id"
+      name="ctx_menu_delete_task" />
+   <item
+      type="id"
+      name="ctx_menu_open_list" />
+   <item
+      type="id"
+      name="ctx_menu_open_tag" />
+   <item
+      type="id"
+      name="ctx_menu_open_tags" />
+   <item
+      type="id"
+      name="ctx_menu_open_tasks_at_loc" />
+   <item
+      type="id"
+      name="ctx_menu_open_notes" />
+   <item
+      type="id"
+      name="ctx_menu_toggle_selection" />
 
 </resources>

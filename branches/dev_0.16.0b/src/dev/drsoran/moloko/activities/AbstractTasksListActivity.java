@@ -24,11 +24,14 @@ package dev.drsoran.moloko.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
+import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.fragments.AbstractTaskListFragment;
+import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.util.UIUtils;
@@ -36,38 +39,44 @@ import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-abstract class AbstractTasksListActivity< T extends AbstractTaskListFragment >
-         extends FragmentActivity implements ITasksListListener
+abstract class AbstractTasksListActivity extends FragmentActivity implements
+         ITasksListListener, IConfigurable
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + AbstractTasksListActivity.class.getSimpleName();
    
-   public static final String TITLE = "title";
    
-   public static final String TITLE_ICON = "title_icon";
+   public static class Config extends AbstractTaskListFragment.Config
+   {
+      public final static String TITLE = "title";
+      
+      public final static String TITLE_ICON = "title_icon";
+   }
    
-   protected T tasksListFragment;
+   private Bundle configuration;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       setContentView( R.layout.taskslist_activity );
       
-      {
-         @SuppressWarnings( "unchecked" )
-         final T findFragmentById = (T) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
-         tasksListFragment = findFragmentById;
-      }
+      final Bundle intentConfig = new Bundle( getIntent().getExtras() );
+      if ( savedInstanceState != null )
+         intentConfig.putAll( savedInstanceState );
       
-      onNewIntent( getIntent() );
+      configure( intentConfig );
+      
+      // First-time init; create fragment to embed in activity.
+      if ( savedInstanceState == null )
+         initTasksListWithConfiguration( getIntent(), intentConfig );
    }
    
-
-
+   
+   
    @Override
    protected void onStop()
    {
@@ -76,16 +85,8 @@ abstract class AbstractTasksListActivity< T extends AbstractTaskListFragment >
       UIUtils.showTitleBarAddTask( this, false );
    }
    
-
-
-   @Override
-   protected void onDestroy()
-   {
-      super.onDestroy();
-   }
    
-
-
+   
    @Override
    protected void onNewIntent( Intent intent )
    {
@@ -94,43 +95,86 @@ abstract class AbstractTasksListActivity< T extends AbstractTaskListFragment >
       setIntent( intent );
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
-      outState.putAll( getIntent().getExtras() );
+      outState.putAll( getConfiguration() );
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
       super.onRestoreInstanceState( state );
+      configure( state );
+   }
+   
+   
+   
+   public Bundle getConfiguration()
+   {
+      return new Bundle( configuration );
+   }
+   
+   
+   
+   public void configure( Bundle config )
+   {
+      if ( configuration == null )
+         configuration = createDefaultConfiguration();
       
-      if ( state != null )
+      if ( config != null )
       {
-         getIntent().putExtras( state );
+         if ( config.containsKey( Config.TITLE ) )
+            configuration.putString( Config.TITLE,
+                                     config.getString( Config.TITLE ) );
+         if ( config.containsKey( Config.TITLE_ICON ) )
+            configuration.putInt( Config.TITLE_ICON,
+                                  config.getInt( Config.TITLE_ICON ) );
       }
    }
    
-
-
-   public void onTaskSortChanged( int newTaskSort )
+   
+   
+   public Bundle createDefaultConfiguration()
    {
+      final Bundle bundle = new Bundle();
+      
+      bundle.putString( Config.TITLE, getString( R.string.app_name ) );
+      
+      return bundle;
    }
    
-
-
+   
+   
+   private Bundle getCurrentTasksListFragmentConfiguration()
+   {
+      return new Bundle( getTasksListFragment().getConfiguration() );
+   }
+   
+   
+   
+   public void onTaskSortChanged( int newTaskSort )
+   {
+      final Bundle config = getCurrentTasksListFragmentConfiguration();
+      config.putInt( Config.TASK_SORT_ORDER, newTaskSort );
+      
+      newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
+   }
+   
+   
+   
    protected void updateTitleBar( TitleBarLayout titleBar )
    {
       
    }
    
-
-
+   
+   
    private static void updateTitleBarSmartFilter( IFilter filter,
                                                   TitleBarLayout titleBar )
    {
@@ -138,49 +182,107 @@ abstract class AbstractTasksListActivity< T extends AbstractTaskListFragment >
          titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
    }
    
-
-
+   
+   
    protected final ListTask getTask( int pos )
    {
-      return tasksListFragment.getTask( pos );
+      return getTasksListFragment().getTask( pos );
    }
    
-
-
+   
+   
    protected int getTaskSortValue( int idx )
    {
-      return tasksListFragment.getTaskSortValue( idx );
+      return getTasksListFragment().getTaskSortValue( idx );
    }
    
-
-
+   
+   
    protected int getTaskSortIndex( int value )
    {
-      return tasksListFragment.getTaskSortIndex( value );
+      return getTasksListFragment().getTaskSortIndex( value );
    }
    
-
-
+   
+   
    protected int getTaskSort()
    {
-      return getIntent().getIntExtra( TASK_SORT_ORDER,
-                                      Settings.TASK_SORT_DEFAULT );
+      return getTasksListFragment().getTaskSortConfiguration();
    }
    
-
-
-   protected void setTaskSort( int taskSort, boolean refillList )
-   {
-      getIntent().putExtra( TASK_SORT_ORDER, taskSort );
-      
-      if ( refillList )
-         fillListAsync();
-   }
    
-
-
+   
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
-      return getTaskSort() == sortOrder;
+      return getTasksListFragment().isTaskSortConfigured( sortOrder );
+   }
+   
+   
+   
+   protected IFilter getFilter()
+   {
+      return getTasksListFragment().getFilter();
+   }
+   
+   
+   
+   private AbstractTaskListFragment getTasksListFragment()
+   {
+      return (AbstractTaskListFragment) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
+   }
+   
+   
+   
+   private void initTasksListWithConfiguration( Intent intent, Bundle config )
+   {
+      final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
+      
+      if ( newTasksListFragment != null )
+      {
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         transaction.add( R.id.frag_taskslist, newTasksListFragment );
+         
+         transaction.commit();
+      }
+   }
+   
+   
+   
+   protected void reloadTasksListWithConfiguration( Bundle config )
+   {
+      newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
+   }
+   
+   
+   
+   protected void newTasksListFragmentbyIntent( Intent intent )
+   {
+      final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
+      
+      if ( newTasksListFragment != null )
+      {
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         transaction.replace( R.id.frag_taskslist, newTasksListFragment );
+         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE );
+         
+         transaction.commit();
+      }
+   }
+   
+   
+   
+   protected Fragment getNewTasksListFragmentInstance( Intent intent )
+   {
+      return TasksListFragmentFactory.newFragment( this, intent );
+   }
+   
+   
+   
+   private Intent getNewConfiguredIntent( Bundle config )
+   {
+      final Intent newIntent = getTasksListFragment().newDefaultIntent();
+      newIntent.putExtras( config );
+      
+      return newIntent;
    }
 }

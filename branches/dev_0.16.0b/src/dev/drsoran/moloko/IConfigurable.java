@@ -20,34 +20,20 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.listeners;
+package dev.drsoran.moloko;
 
-import java.util.List;
-
-import com.mdt.rtm.data.RtmTaskNote;
+import android.os.Bundle;
 
 
-public interface IFullDetailedTasksListListener extends ITasksListListener
+public interface IConfigurable
 {
-   void onEditTask( int pos );
+   Bundle getConfiguration();
    
    
    
-   void onOpenList( int pos, String listId );
+   void configure( Bundle config );
    
    
    
-   void onOpenLocation( int pos, String locationId );
-   
-   
-   
-   void onOpenNotes( int pos, List< RtmTaskNote > notes );
-   
-   
-   
-   void onShowTasksWithTag( String tag );
-   
-   
-   
-   void onShowTasksWithTags( List< String > tags, String logicalOperator );
+   Bundle createDefaultConfiguration();
 }

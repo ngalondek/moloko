@@ -37,7 +37,8 @@ import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.SelectableListTask;
 
 
-public class SelectMultipleTasksListAdapter extends TasksListAdapter
+public class SelectMultipleTasksListAdapter extends
+         FullDetailedTasksListFragmentAdapter
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -71,7 +72,7 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
    public final static int SEL_MODE_INVERT = 3;
    
    
-
+   
    public SelectMultipleTasksListAdapter( Context context, int resourceId,
       List< ListTask > tasks, IFilter filter )
    {
@@ -79,12 +80,13 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
              resourceId,
              tasks,
              filter,
-             TasksListAdapter.FLAG_NO_CLICKABLES
-                | TasksListAdapter.FLAG_SHOW_ALL );
+             FullDetailedTasksListFragmentAdapter.FLAG_NO_CLICKABLES
+                | FullDetailedTasksListFragmentAdapter.FLAG_SHOW_ALL,
+             null /* TODO: Repair */);
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
@@ -95,16 +97,16 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
       return v;
    }
    
-
-
+   
+   
    public void sortBySelection()
    {
       sort( new CmpSelection() );
       notifyDataSetChanged();
    }
    
-
-
+   
+   
    public void changeSelection( int mode )
    {
       switch ( mode )
@@ -131,23 +133,23 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
       notifyDataSetChanged();
    }
    
-
-
+   
+   
    public void setSelection( int pos, boolean select )
    {
       getItem( pos ).setSelected( select );
       notifyDataSetChanged();
    }
    
-
-
+   
+   
    public void toggleSelection( int pos )
    {
       setSelection( pos, !getItem( pos ).isSelected() );
    }
    
-
-
+   
+   
    public boolean areAllSelected()
    {
       for ( int i = 0, cnt = getCount(); i < cnt; ++i )
@@ -157,8 +159,8 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
       return true;
    }
    
-
-
+   
+   
    public boolean areSomeSelected()
    {
       for ( int i = 0, cnt = getCount(); i < cnt; ++i )
@@ -168,8 +170,8 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
       return false;
    }
    
-
-
+   
+   
    public int getSelectedCount()
    {
       int sc = 0;
@@ -181,8 +183,8 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
       return sc;
    }
    
-
-
+   
+   
    public ArrayList< String > getSelectedTaskIds()
    {
       final ArrayList< String > selected = new ArrayList< String >();
@@ -194,8 +196,8 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
       return selected;
    }
    
-
-
+   
+   
    public List< SelectableListTask > getSelectedTasks()
    {
       final List< SelectableListTask > selected = new LinkedList< SelectableListTask >();
@@ -207,8 +209,8 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
       return selected;
    }
    
-
-
+   
+   
    public void setSelectedTaskIds( List< String > taskIds )
    {
       for ( int i = 0, cnt = getCount(); i < cnt; ++i )
@@ -222,8 +224,8 @@ public class SelectMultipleTasksListAdapter extends TasksListAdapter
       notifyDataSetChanged();
    }
    
-
-
+   
+   
    @Override
    public SelectableListTask getItem( int position )
    {

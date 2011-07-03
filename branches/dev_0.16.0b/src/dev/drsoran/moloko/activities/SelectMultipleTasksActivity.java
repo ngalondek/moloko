@@ -22,33 +22,30 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.Checkable;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.Checkable;
+import android.widget.ListView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.SelectMultipleTasksListAdapter;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.ListTask;
-import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.SelectableListTask;
 
 
+// TODO: Repair
 public class SelectMultipleTasksActivity extends TasksListActivity
 {
    private final static String TAG = "Moloko."
@@ -57,33 +54,29 @@ public class SelectMultipleTasksActivity extends TasksListActivity
    
    private static class OptionsMenu
    {
-      protected final static int START_IDX = 0;
+      public final static int SELECT_ALL = R.id.menu_select_all;
       
-      public final static int MENU_ORDER = 0;
+      public final static int DESELECT_ALL = R.id.menu_deselect_all;
       
-      public final static int SELECT_ALL = START_IDX + 0;
+      public final static int INVERT_SELECTION = R.id.menu_invert_selection;
       
-      public final static int DESELECT_ALL = START_IDX + 1;
+      public final static int SORT = R.id.menu_sort;
       
-      public final static int INVERT_SELECTION = START_IDX + 2;
+      public final static int DO_EDIT = R.id.menu_edit_selected_tasks;
       
-      public final static int SORT = START_IDX + 3;
+      public final static int COMPLETE = R.id.menu_complete_selected_tasks;
       
-      public final static int DO_EDIT = START_IDX + 4;
+      public final static int UNCOMPLETE = R.id.menu_uncomplete_selected_tasks;
       
-      public final static int COMPLETE = START_IDX + 5;
+      public final static int POSTPONE = R.id.menu_postpone_selected_tasks;
       
-      public final static int UNCOMPLETE = START_IDX + 6;
-      
-      public final static int POSTPONE = START_IDX + 7;
-      
-      public final static int DELETE = START_IDX + 8;
+      public final static int DELETE = R.id.menu_delete_selected_tasks;
    }
    
-
+   
    private static class CtxtMenu
    {
-      public final static int TOGGLE_SELECTION = 0;
+      public final static int TOGGLE_SELECTION = R.id.ctx_menu_toggle_selection;
    }
    
    private final static String CHECK_STATE = "check_state";
@@ -93,33 +86,33 @@ public class SelectMultipleTasksActivity extends TasksListActivity
    private final static int SORT_SELECTION_VALUE = TAG.hashCode();
    
    
-
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
       menu.add( Menu.NONE,
                 OptionsMenu.SELECT_ALL,
-                OptionsMenu.MENU_ORDER,
+                Menu.CATEGORY_CONTAINER,
                 R.string.select_multiple_tasks_menu_opt_select_all )
           .setIcon( R.drawable.ic_menu_select_all_tasks );
       
       menu.add( Menu.NONE,
                 OptionsMenu.DESELECT_ALL,
-                OptionsMenu.MENU_ORDER,
+                Menu.CATEGORY_CONTAINER,
                 R.string.select_multiple_tasks_menu_opt_unselect_all )
           .setIcon( R.drawable.ic_menu_select_no_tasks );
       
       menu.add( Menu.NONE,
                 OptionsMenu.INVERT_SELECTION,
-                OptionsMenu.MENU_ORDER,
+                Menu.CATEGORY_CONTAINER,
                 R.string.select_multiple_tasks_menu_opt_inv_selection )
           .setIcon( R.drawable.ic_menu_select_invert_tasks );
       
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onPrepareOptionsMenu( Menu menu )
    {
@@ -132,20 +125,20 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          final List< SelectableListTask > tasks = adapter.getSelectedTasks();
          final int selCnt = tasks.size();
          
-         addOptionalMenuItem( menu,
-                              OptionsMenu.SORT,
-                              getString( R.string.abstaskslist_menu_opt_sort ),
-                              OptionsMenu.MENU_ORDER + 1,
-                              R.drawable.ic_menu_sort,
-                              adapter.getCount() > 1 );
+         UIUtils.addOptionalMenuItem( menu,
+                                      OptionsMenu.SORT,
+                                      getString( R.string.abstaskslist_menu_opt_sort ),
+                                      Menu.CATEGORY_CONTAINER,
+                                      R.drawable.ic_menu_sort,
+                                      adapter.getCount() > 1 );
          
-         addOptionalMenuItem( menu,
-                              OptionsMenu.DO_EDIT,
-                              getString( R.string.select_multiple_tasks_menu_opt_do_edit,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 2,
-                              R.drawable.ic_menu_edit,
-                              someSelected );
+         UIUtils.addOptionalMenuItem( menu,
+                                      OptionsMenu.DO_EDIT,
+                                      getString( R.string.select_multiple_tasks_menu_opt_do_edit,
+                                                 selCnt ),
+                                      Menu.CATEGORY_SECONDARY,
+                                      R.drawable.ic_menu_edit,
+                                      someSelected );
          
          int selCompl = 0, selUncompl = 0;
          
@@ -158,38 +151,38 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          }
          
          // The complete task menu is only shown if all selected tasks are uncompleted
-         addOptionalMenuItem( menu,
-                              OptionsMenu.COMPLETE,
-                              getString( R.string.select_multiple_tasks_menu_opt_complete,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_complete,
-                              someSelected && selUncompl == selCnt );
+         UIUtils.addOptionalMenuItem( menu,
+                                      OptionsMenu.COMPLETE,
+                                      getString( R.string.select_multiple_tasks_menu_opt_complete,
+                                                 selCnt ),
+                                      Menu.CATEGORY_SECONDARY,
+                                      R.drawable.ic_menu_complete,
+                                      someSelected && selUncompl == selCnt );
          
          // The uncomplete task menu is only shown if all selected tasks are completed
-         addOptionalMenuItem( menu,
-                              OptionsMenu.UNCOMPLETE,
-                              getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_incomplete,
-                              someSelected && selCompl == selCnt );
+         UIUtils.addOptionalMenuItem( menu,
+                                      OptionsMenu.UNCOMPLETE,
+                                      getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
+                                                 selCnt ),
+                                      Menu.CATEGORY_SECONDARY,
+                                      R.drawable.ic_menu_incomplete,
+                                      someSelected && selCompl == selCnt );
          
-         addOptionalMenuItem( menu,
-                              OptionsMenu.POSTPONE,
-                              getString( R.string.select_multiple_tasks_menu_opt_postpone,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_postponed,
-                              someSelected );
+         UIUtils.addOptionalMenuItem( menu,
+                                      OptionsMenu.POSTPONE,
+                                      getString( R.string.select_multiple_tasks_menu_opt_postpone,
+                                                 selCnt ),
+                                      Menu.CATEGORY_SECONDARY,
+                                      R.drawable.ic_menu_postponed,
+                                      someSelected );
          
-         addOptionalMenuItem( menu,
-                              OptionsMenu.DELETE,
-                              getString( R.string.select_multiple_tasks_menu_opt_delete,
-                                         selCnt ),
-                              OptionsMenu.MENU_ORDER + 3,
-                              R.drawable.ic_menu_trash,
-                              someSelected );
+         UIUtils.addOptionalMenuItem( menu,
+                                      OptionsMenu.DELETE,
+                                      getString( R.string.select_multiple_tasks_menu_opt_delete,
+                                                 selCnt ),
+                                      Menu.CATEGORY_SECONDARY,
+                                      R.drawable.ic_menu_trash,
+                                      someSelected );
          
          final MenuItem selAllItem = menu.findItem( OptionsMenu.SELECT_ALL );
          selAllItem.setEnabled( !allSelected );
@@ -206,8 +199,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       return false;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -231,16 +224,16 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                return true;
                
             case OptionsMenu.SORT:
-               new AlertDialog.Builder( this ).setIcon( R.drawable.ic_dialog_sort )
-                                              .setTitle( R.string.abstaskslist_dlg_sort_title )
-                                              .setSingleChoiceItems( adapter.getSelectedCount() > 0
-                                                                                                   ? R.array.selectmultipletasks_sort_options
-                                                                                                   : R.array.app_sort_options,
-                                                                     getTaskSortIndex( getTaskSort() ),
-                                                                     this )
-                                              .setNegativeButton( R.string.btn_cancel,
-                                                                  null )
-                                              .show();
+               // new AlertDialog.Builder( this ).setIcon( R.drawable.ic_dialog_sort )
+               // .setTitle( R.string.abstaskslist_dlg_sort_title )
+               // .setSingleChoiceItems( adapter.getSelectedCount() > 0
+               // ? R.array.selectmultipletasks_sort_options
+               // : R.array.app_sort_options,
+               // getTaskSortIndex( getTaskSort() ),
+               // this )
+               // .setNegativeButton( R.string.btn_cancel,
+               // null )
+               // .show();
                
                return true;
                
@@ -330,8 +323,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       return super.onOptionsItemSelected( item );
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -355,8 +348,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                               task.getName() ) );
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
@@ -372,66 +365,64 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       }
    }
    
-
-
-   @Override
+   
+   
    public SelectMultipleTasksListAdapter getListAdapter()
    {
-      return (SelectMultipleTasksListAdapter) super.getListAdapter();
+      // return (SelectMultipleTasksListAdapter) super.getListAdapter();
+      return null;
    }
    
-
-
-   @Override
+   
+   
    protected void onListItemClick( ListView l, View v, int position, long id )
    {
       ( (Checkable) v.findViewById( R.id.taskslist_listitem_priority ) ).toggle();
       toggleSelection( position );
    }
    
-
-
-   @Override
-   protected ListAdapter createListAdapter( AsyncFillListResult result )
-   {
-      final List< ListTask > selTasks = result != null
-                                                      ? SelectableListTask.asListTaskList( result.tasks )
-                                                      : Collections.< ListTask > emptyList();
-      
-      return new SelectMultipleTasksListAdapter( this,
-                                                 R.layout.selectmultipletasks_activity_listitem,
-                                                 selTasks,
-                                                 result != null
-                                                               ? result.filter
-                                                               : new RtmSmartFilter( Strings.EMPTY_STRING ) );
-   }
    
-
-
-   @Override
-   protected void beforeQueryTasksAsync( Bundle configuration )
-   {
-      super.beforeQueryTasksAsync( configuration );
-      
-      final SelectMultipleTasksListAdapter adapter = getListAdapter();
-      if ( adapter != null )
-         configuration.putStringArrayList( CHECK_STATE,
-                                           adapter.getSelectedTaskIds() );
-   }
    
-
-
-   @Override
-   protected void setTasksResult( AsyncFillListResult result )
-   {
-      super.setTasksResult( result );
-      
-      if ( result.configuration.containsKey( CHECK_STATE ) )
-         getListAdapter().setSelectedTaskIds( result.configuration.getStringArrayList( CHECK_STATE ) );
-   }
+   // @Override
+   // protected ListAdapter createListAdapter( AsyncFillListResult result )
+   // {
+   // final List< ListTask > selTasks = result != null
+   // ? SelectableListTask.asListTaskList( result.tasks )
+   // : Collections.< ListTask > emptyList();
+   //
+   // return new SelectMultipleTasksListAdapter( this,
+   // R.layout.selectmultipletasks_activity_listitem,
+   // selTasks,
+   // result != null
+   // ? result.filter
+   // : new RtmSmartFilter( Strings.EMPTY_STRING ) );
+   // }
+   //
+   //
+   //
+   // @Override
+   // protected void beforeQueryTasksAsync( Bundle configuration )
+   // {
+   // super.beforeQueryTasksAsync( configuration );
+   //
+   // final SelectMultipleTasksListAdapter adapter = getListAdapter();
+   // if ( adapter != null )
+   // configuration.putStringArrayList( CHECK_STATE,
+   // adapter.getSelectedTaskIds() );
+   // }
+   //
+   //
+   //
+   // @Override
+   // protected void setTasksResult( AsyncFillListResult result )
+   // {
+   // super.setTasksResult( result );
+   //
+   // if ( result.configuration.containsKey( CHECK_STATE ) )
+   // getListAdapter().setSelectedTaskIds( result.configuration.getStringArrayList( CHECK_STATE ) );
+   // }
+   //
    
-
-
    @Override
    protected int getTaskSortIndex( int value )
    {
@@ -441,8 +432,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          return super.getTaskSortIndex( value );
    }
    
-
-
+   
+   
    @Override
    protected int getTaskSortValue( int idx )
    {
@@ -452,22 +443,21 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          return super.getTaskSortValue( idx );
    }
    
-
-
-   @Override
+   
+   
    protected void setTaskSort( int taskSort, boolean refillList )
    {
-      if ( taskSort == SORT_SELECTION_VALUE )
-      {
-         getListAdapter().sortBySelection();
-         super.setTaskSort( taskSort, false );
-      }
-      else
-         super.setTaskSort( taskSort, refillList );
+      // if ( taskSort == SORT_SELECTION_VALUE )
+      // {
+      // getListAdapter().sortBySelection();
+      // super.setTaskSort( taskSort, false );
+      // }
+      // else
+      // super.setTaskSort( taskSort, refillList );
    }
    
-
-
+   
+   
    @Override
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
@@ -479,16 +469,16 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          return super.isSameTaskSortLikeCurrent( sortOrder );
    }
    
-
-
+   
+   
    private void toggleSelection( int pos )
    {
       final SelectMultipleTasksListAdapter adapter = getListAdapter();
       adapter.toggleSelection( pos );
    }
    
-
-
+   
+   
    private void onEditSelectedTasks()
    {
       final int selCnt = getListAdapter().getSelectedCount();
@@ -504,8 +494,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                     TaskEditActivity.REQ_EDIT_TASK );
    }
    
-
-
+   
+   
    private void onSelectedTasksCompletion( boolean complete )
    {
       TaskEditUtils.setTasksCompletion( this,
@@ -513,15 +503,15 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                         complete );
    }
    
-
-
+   
+   
    private void onSelectedTasksPostpone()
    {
       TaskEditUtils.postponeTasks( this, getListAdapter().getSelectedTasks() );
    }
    
-
-
+   
+   
    private void onSelectedTasksDelete()
    {
       TaskEditUtils.deleteTasks( this, getListAdapter().getSelectedTasks() );

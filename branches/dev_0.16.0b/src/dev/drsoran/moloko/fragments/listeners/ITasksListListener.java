@@ -24,11 +24,13 @@ package dev.drsoran.moloko.fragments.listeners;
 
 public interface ITasksListListener
 {
-   // void onRequestReload( Bundle configuration );
-   
    void onOpenTask( int pos );
    
-
-
+   
+   
+   void onSelectTasks();
+   
+   
+   
    void onTaskSortChanged( int newTaskSort );
 }

@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.TasksListActivity;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.util.Intents;
@@ -73,7 +74,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    private final ArrayList< RtmListWithTaskCount > lists;
    
    
-
+   
    public TaskListsAdapter( Context context, int groupId, int childId,
       List< RtmListWithTaskCount > lists )
    {
@@ -89,8 +90,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       this.lists = new ArrayList< RtmListWithTaskCount >( lists );
    }
    
-
-
+   
+   
    public Object getChild( int groupPosition, int childPosition )
    {
       switch ( childPosition + 1 )
@@ -116,8 +117,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       }
    }
    
-
-
+   
+   
    public Intent getChildIntent( int groupPosition, int childPosition )
    {
       final RtmListWithTaskCount list = lists.get( groupPosition );
@@ -132,8 +133,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
-            intent.removeExtra( AbstractTasksListActivity.TITLE );
-            intent.putExtra( AbstractTasksListActivity.TITLE,
+            intent.removeExtra( TasksListActivity.Config.TITLE );
+            intent.putExtra( TasksListActivity.Config.TITLE,
                              context.getString( R.string.tasklists_child_due_today,
                                                 title ) );
             break;
@@ -143,8 +144,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TOMORROW ] );
-            intent.removeExtra( AbstractTasksListActivity.TITLE );
-            intent.putExtra( AbstractTasksListActivity.TITLE,
+            intent.removeExtra( TasksListActivity.Config.TITLE );
+            intent.putExtra( TasksListActivity.Config.TITLE,
                              context.getString( R.string.tasklists_child_due_tomorrow,
                                                 title ) );
             break;
@@ -154,8 +155,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
-            intent.removeExtra( AbstractTasksListActivity.TITLE );
-            intent.putExtra( AbstractTasksListActivity.TITLE,
+            intent.removeExtra( TasksListActivity.Config.TITLE );
+            intent.putExtra( TasksListActivity.Config.TITLE,
                              context.getString( R.string.tasklists_child_overdue,
                                                 title ) );
             break;
@@ -165,8 +166,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_STATUS_LIT
                                                       + RtmSmartFilterLexer.COMPLETED_LIT );
-            intent.removeExtra( AbstractTasksListActivity.TITLE );
-            intent.putExtra( AbstractTasksListActivity.TITLE,
+            intent.removeExtra( TasksListActivity.Config.TITLE );
+            intent.putExtra( TasksListActivity.Config.TITLE,
                              context.getString( R.string.tasklists_child_completed,
                                                 title ) );
             break;
@@ -178,15 +179,15 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return intent;
    }
    
-
-
+   
+   
    public long getChildId( int groupPosition, int childPosition )
    {
       return childPosition + 1;
    }
    
-
-
+   
+   
    public View getChildView( int groupPosition,
                              int childPosition,
                              boolean isLastChild,
@@ -249,36 +250,36 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return view;
    }
    
-
-
+   
+   
    public int getChildrenCount( int groupPosition )
    {
       return SUM_ESTIMATE;
    }
    
-
-
+   
+   
    public Object getGroup( int groupPosition )
    {
       return lists.get( groupPosition );
    }
    
-
-
+   
+   
    public int getGroupCount()
    {
       return lists.size();
    }
    
-
-
+   
+   
    public long getGroupId( int groupPosition )
    {
       return Long.valueOf( lists.get( groupPosition ).getId() );
    }
    
-
-
+   
+   
    public View getGroupView( int groupPosition,
                              boolean isExpanded,
                              View convertView,
@@ -369,22 +370,22 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return view;
    }
    
-
-
+   
+   
    public boolean hasStableIds()
    {
       return true;
    }
    
-
-
+   
+   
    public boolean isChildSelectable( int groupPosition, int childPosition )
    {
       return childPosition != SUM_ESTIMATE;
    }
    
-
-
+   
+   
    private void addConditionalIcon( ViewGroup container,
                                     int resId,
                                     int iconId,

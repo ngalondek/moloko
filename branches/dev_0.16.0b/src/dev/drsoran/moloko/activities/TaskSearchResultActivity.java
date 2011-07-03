@@ -25,7 +25,6 @@ package dev.drsoran.moloko.activities;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.provider.SearchRecentSuggestions;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import dev.drsoran.moloko.R;
@@ -43,52 +42,35 @@ public class TaskSearchResultActivity extends TasksListActivity
       + TaskSearchResultActivity.class.getSimpleName();
    
    
-   protected static class OptionsMenu
+   private final static class OptionsMenu
    {
-      protected final static int START_IDX = TasksListActivity.OptionsMenu.START_IDX + 1000;
-      
-      public final static int MENU_ORDER = TasksListActivity.OptionsMenu.MENU_ORDER;
-      
-      public final static int NEW_SEARCH = START_IDX + 0;
-      
-      public final static int CLEAR_HISTORY = START_IDX + 1;
+      public final static int CLEAR_HISTORY = R.id.menu_clear_search_history;
    }
    
    
-
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
       super.onCreateOptionsMenu( menu );
       
-      menu.removeItem( TasksListActivity.OptionsMenu.SHOW_LISTS );
-      
-      menu.add( Menu.NONE,
-                OptionsMenu.NEW_SEARCH,
-                OptionsMenu.MENU_ORDER,
-                R.string.menu_opt_search_task_title )
-          .setIcon( R.drawable.ic_menu_search );
-      
       menu.add( Menu.NONE,
                 OptionsMenu.CLEAR_HISTORY,
-                OptionsMenu.MENU_ORDER,
+                Menu.CATEGORY_ALTERNATIVE,
                 R.string.tasksearchresult_menu_opt_clear_history_title )
           .setIcon( R.drawable.ic_menu_delete );
       
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
       // Handle item selection
       switch ( item.getItemId() )
       {
-         case OptionsMenu.NEW_SEARCH:
-            onSearchRequested();
-            return true;
          case OptionsMenu.CLEAR_HISTORY:
             getRecentSuggestions().clearHistory();
             return true;
@@ -97,11 +79,11 @@ public class TaskSearchResultActivity extends TasksListActivity
       }
    }
    
-
-
-   @Override
+   
+   
    protected void handleIntent( Intent intent )
    {
+      // TODO: Repair
       if ( Intent.ACTION_SEARCH.equals( intent.getAction() ) )
       {
          final RtmSmartFilter filter = new RtmSmartFilter( intent.getStringExtra( SearchManager.QUERY ) );
@@ -124,7 +106,7 @@ public class TaskSearchResultActivity extends TasksListActivity
                                                                                  filter.getFilterString() ),
                                                                       -1 );
             setIntent( newIntent );
-            super.handleIntent( newIntent );
+            // super.handleIntent( newIntent );
          }
          else
          {
@@ -135,14 +117,14 @@ public class TaskSearchResultActivity extends TasksListActivity
             configureTitleBar( TitleBarLayout.BUTTON_HOME
                | TitleBarLayout.BUTTON_SEARCH, null );
             
-            showError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
-                                                     filter.getFilterString() ) ) );
+            // showError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
+            // filter.getFilterString() ) ) );
          }
       }
    }
    
-
-
+   
+   
    private final SearchRecentSuggestions getRecentSuggestions()
    {
       return new SearchRecentSuggestions( this,
@@ -150,8 +132,8 @@ public class TaskSearchResultActivity extends TasksListActivity
                                           TasksSearchRecentSuggestionsProvider.MODE );
    }
    
-
-
+   
+   
    private final void configureTitleBar( int buttonMask,
                                          RtmSmartFilter addSmartListFilter )
    {

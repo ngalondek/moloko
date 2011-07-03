@@ -31,6 +31,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -481,6 +482,75 @@ public final class UIUtils
             }
          } );
       }
+   }
+   
+   
+   
+   public final static void addOptionalMenuItem( Menu menu,
+                                                 int id,
+                                                 String title,
+                                                 int order,
+                                                 int iconId,
+                                                 boolean show )
+   {
+      addOptionalMenuItem( menu, id, title, order, iconId, null, show );
+   }
+   
+   
+   
+   public final static void addOptionalMenuItem( Menu menu,
+                                                 int id,
+                                                 String title,
+                                                 int order,
+                                                 int iconId,
+                                                 Intent intent,
+                                                 boolean show )
+   {
+      if ( show )
+      {
+         MenuItem item = menu.findItem( id );
+         
+         if ( item == null )
+         {
+            item = menu.add( Menu.NONE, id, order, title );
+            
+            if ( iconId != -1 )
+               item.setIcon( iconId );
+         }
+         
+         item.setTitle( title );
+         
+         if ( intent != null )
+            item.setIntent( intent );
+      }
+      else
+      {
+         menu.removeItem( id );
+      }
+   }
+   
+   
+   
+   public final static void addOptionsMenuIntent( Context context,
+                                                  Menu menu,
+                                                  int id,
+                                                  Class< ? > activityClass )
+   {
+      addOptionsMenuIntent( context, menu, id, new Intent( context,
+                                                           activityClass ) );
+   }
+   
+   
+   
+   public final static void addOptionsMenuIntent( Context context,
+                                                  Menu menu,
+                                                  int id,
+                                                  Intent intent )
+   {
+      final MenuItem item = menu.findItem( id );
+      
+      if ( item != null )
+         item.setIntent( intent );
    }
    
    

@@ -23,29 +23,33 @@
 package dev.drsoran.moloko.fragments;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.adapters.TasksListAdapter;
+import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
 import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
@@ -53,64 +57,88 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
+import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class FullDetailedTasksListFragment extends AbstractTaskListFragment
-         implements View.OnClickListener
+         implements View.OnClickListener, IOnSettingsChangedListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + FullDetailedTasksListFragment.class.getSimpleName();
    
+   private final static IntentFilter INTENT_FILTER;
    
-   protected static class OptionsMenu
+   static
    {
-      protected final static int START_IDX = AbstractTaskListFragment.OptionsMenu.START_IDX + 1000;
-      
-      public final static int MENU_ORDER = AbstractTaskListFragment.OptionsMenu.MENU_ORDER - 1000;
-      
-      public final static int SHOW_LISTS = START_IDX + 0;
-      
-      public final static int DELETE_LIST = START_IDX + 1;
+      try
+      {
+         INTENT_FILTER = new IntentFilter( Intent.ACTION_VIEW,
+                                           "vnd.android.cursor.dir/vnd.rtm.task" );
+         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
+      }
+      catch ( MalformedMimeTypeException e )
+      {
+         throw new RuntimeException( e );
+      }
    }
    
-
-   protected static class CtxtMenu
+   
+   private final static class CtxtMenu
    {
-      public final static int OPEN_TASK = 1;
+      public final static int OPEN_TASK = R.id.ctx_menu_open_task;
       
-      public final static int EDIT_TASK = 2;
+      public final static int EDIT_TASK = R.id.ctx_menu_edit_task;
       
-      public final static int COMPLETE_TASK = 3;
+      public final static int COMPLETE_TASK = R.id.ctx_menu_complete_task;
       
-      public final static int POSTPONE_TASK = 4;
+      public final static int POSTPONE_TASK = R.id.ctx_menu_postpone_task;
       
-      public final static int DELETE_TASK = 5;
+      public final static int DELETE_TASK = R.id.ctx_menu_delete_task;
       
-      public final static int OPEN_LIST = 6;
+      public final static int OPEN_LIST = R.id.ctx_menu_open_list;
       
-      public final static int TAG = 7;
+      public final static int TAG = R.id.ctx_menu_open_tag;
       
-      public final static int TAGS = 8;
+      public final static int TAGS = R.id.ctx_menu_open_tags;
       
-      public final static int TASKS_AT_LOCATION = 9;
+      public final static int TASKS_AT_LOCATION = R.id.ctx_menu_open_tasks_at_loc;
       
-      public final static int NOTES = 10;
+      public final static int NOTES = R.id.ctx_menu_open_notes;
    }
    
    private IFullDetailedTasksListListener listener;
    
    
-
-   protected FullDetailedTasksListFragment( Bundle configuration )
+   
+   public static FullDetailedTasksListFragment newInstance( Bundle configuration )
    {
-      super( configuration );
+      final FullDetailedTasksListFragment fragment = new FullDetailedTasksListFragment();
+      
+      fragment.setArguments( configuration );
+      
+      return fragment;
    }
    
-
-
+   
+   
+   public static IntentFilter getIntentFilter()
+   {
+      return INTENT_FILTER;
+   }
+   
+   
+   
+   @Override
+   public Intent newDefaultIntent()
+   {
+      return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
+   }
+   
+   
+   
    @Override
    public void onAttach( Activity activity )
    {
@@ -122,8 +150,8 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
          listener = new NullTasksListListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -131,12 +159,12 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
-      super.onCreate( savedInstanceState );
+      super.onActivityCreated( savedInstanceState );
       
       registerForContextMenu( getListView() );
       
@@ -147,20 +175,18 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
                                                    this );
    }
    
-
-
+   
+   
    @Override
    public void onDestroy()
    {
       super.onDestroy();
       
-      unregisterForContextMenu( getListView() );
-      
       MolokoApp.get( getActivity() ).unregisterOnSettingsChangedListener( this );
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -169,8 +195,8 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -266,8 +292,8 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
                                                      notesCount ) );
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
@@ -323,26 +349,54 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
       }
    }
    
-
-
-   public void onClick( View v )
+   
+   
+   public void onClick( View view )
    {
-      if ( v.getId() == R.id.tags_layout_btn_tag )
+      switch ( view.getId() )
       {
-         final String tag = ( (TextView) v ).getText().toString();
-         showTasksWithTag( tag );
+         case R.id.tags_layout_btn_tag:
+            final String tag = ( (TextView) view ).getText().toString();
+            showTasksWithTag( tag );
+            break;
+         
+         case R.id.taskslist_listitem_btn_list_name:
+            listener.onOpenList( getTaskPos( view ),
+                                 getTask( view ).getListId() );
+            break;
+         
+         case R.id.taskslist_listitem_location:
+            listener.onOpenLocation( getTaskPos( view ),
+                                     getTask( view ).getLocationId() );
+            break;
+         
+         default :
+            break;
       }
    }
    
-
-
+   
+   
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
+   {
+      if ( which == IOnSettingsChangedListener.RTM_DATEFORMAT
+         || which == IOnSettingsChangedListener.RTM_TIMEZONE
+         || which == IOnSettingsChangedListener.RTM_TIMEFORMAT )
+      {
+         ( (FullDetailedTasksListFragmentAdapter) getListAdapter() ).notifyDataSetChanged();
+      }
+   }
+   
+   
+   
    private void showTasksWithTag( String tag )
    {
       listener.onShowTasksWithTag( tag );
    }
    
-
-
+   
+   
    protected void showChooseTagsDialog( List< String > tags )
    {
       final List< CharSequence > tmp = new ArrayList< CharSequence >( tags.size() );
@@ -360,16 +414,16 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
                                                                .show();
    }
    
-
-
+   
+   
    @Override
    protected int getDefaultTaskSort()
    {
       return MolokoApp.getSettings().getTaskSort();
    }
    
-
-
+   
+   
    private void onCompleteTask( int pos )
    {
       final ListTask task = getTask( pos );
@@ -378,15 +432,15 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
                                        task.getCompleted() == null );
    }
    
-
-
+   
+   
    private void onPostponeTask( int pos )
    {
       TaskEditUtils.postponeTask( getActivity(), getTask( pos ) );
    }
    
-
-
+   
+   
    private void onDeleteTask( int pos )
    {
       final ListTask task = getTask( pos );
@@ -401,26 +455,28 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
       }, null ).show();
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
-      return new TasksListAdapter( getActivity(), R.id.taskslist_listitem );
+      return new FullDetailedTasksListFragmentAdapter( getActivity(),
+                                                       R.layout.fulldetailed_taskslist_listitem );
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createListAdapterForResult( List< ListTask > result,
                                                      IFilter filter )
    {
       final int flags = 0;
-      return new TasksListAdapter( getActivity(),
-                                   R.id.taskslist_listitem,
-                                   result,
-                                   filter,
-                                   flags );
+      return new FullDetailedTasksListFragmentAdapter( getActivity(),
+                                                       R.layout.fulldetailed_taskslist_listitem,
+                                                       result,
+                                                       filter,
+                                                       flags,
+                                                       this );
    }
    
    private final DialogInterface.OnClickListener chooseMultipleTagsDialogListener = new OnClickListener()
@@ -446,5 +502,4 @@ public class FullDetailedTasksListFragment extends AbstractTaskListFragment
                                               : RtmSmartFilterLexer.OR_LIT );
       }
    };
-   
 }

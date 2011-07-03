@@ -27,7 +27,7 @@
 
    <include
       android:id="@+id/selectmultipletasks_listitem_content"
-      layout="@layout/fulldetailed_taskslist_listitem_base"
+      layout="@layout/mindetailed_taskslist_listitem"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent" />
       

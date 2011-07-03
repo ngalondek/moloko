@@ -150,8 +150,8 @@ public class TagCloudActivity extends Activity
          return cloudEntries;
       }
       
-
-
+      
+      
       @Override
       protected void onPostExecute( List< CloudEntry > result )
       {
@@ -243,9 +243,10 @@ public class TagCloudActivity extends Activity
    {
       public void onClick( View v )
       {
-         startActivity( Intents.createOpenTagIntent( TagCloudActivity.this,
-                                                     ( (TextView) v ).getText()
-                                                                     .toString() ) );
+         // TODO: Repair
+         // startActivity( Intents.createOpenTagsIntent( TagCloudActivity.this,
+         // Collection( (TextView) v ).getText()
+         // .toString() ) );
       }
    };
    
@@ -297,7 +298,7 @@ public class TagCloudActivity extends Activity
       public final int count;
       
       
-
+      
       public CloudEntry( int type, String name, int count )
       {
          this.type = type;
@@ -305,15 +306,15 @@ public class TagCloudActivity extends Activity
          this.count = count;
       }
       
-
-
+      
+      
       public int compareTo( CloudEntry another )
       {
          return name.compareToIgnoreCase( another.name );
       }
       
-
-
+      
+      
       @Override
       public String toString()
       {
@@ -340,7 +341,7 @@ public class TagCloudActivity extends Activity
    private AsyncFillCloud asyncFillCloud;
    
    
-
+   
    @Override
    protected void onCreate( Bundle savedInstanceState )
    {
@@ -356,8 +357,8 @@ public class TagCloudActivity extends Activity
       asyncFillCloud.execute( getContentResolver() );
    }
    
-
-
+   
+   
    @Override
    protected void onStop()
    {
@@ -371,8 +372,8 @@ public class TagCloudActivity extends Activity
       UIUtils.showTitleBarAddTask( this, false );
    }
    
-
-
+   
+   
    private final static void addButtons( List< Button > buttons,
                                          ViewGroup container )
    {
@@ -401,8 +402,8 @@ public class TagCloudActivity extends Activity
       }
    }
    
-
-
+   
+   
    private final static float getMagnifyFactor( int count )
    {
       Float result = MAGNIFY_LOOKUP.get( count );
@@ -430,8 +431,8 @@ public class TagCloudActivity extends Activity
       return result;
    }
    
-
-
+   
+   
    private List< TagWithTaskCount > getTagsWithTaskCount()
    {
       List< TagWithTaskCount > result = null;

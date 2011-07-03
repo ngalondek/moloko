@@ -26,12 +26,11 @@
       moloko:titleText="@string/app_name"
       moloko:showButton="add_task|home|search" />
 
-   <fragment
-      android:id="@id/frag_taskslist"
-      android:name="dev.drsoran.moloko.fragments.FullDetailedTasksListFragment"
+   <FrameLayout
+      android:id="@id/frag_taskslist"      
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent">
-      <!-- Preview: layout=@layout/taskslist_fragment -->
-   </fragment>
+      android:layout_height="0dip"
+      android:layout_weight="1">      
+   </FrameLayout>
 
 </LinearLayout>

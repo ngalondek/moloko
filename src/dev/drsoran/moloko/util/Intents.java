@@ -35,10 +35,10 @@ import android.text.TextUtils;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
-import dev.drsoran.moloko.activities.AbstractTasksListActivity;
 import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
 import dev.drsoran.moloko.activities.NoteEditActivity;
 import dev.drsoran.moloko.activities.StartUpActivity;
+import dev.drsoran.moloko.activities.TasksListActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
@@ -57,8 +57,227 @@ public final class Intents
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
+   
+   public final static class Action
+   {
+      public final static String TASKS_LISTS_MIN_DETAILED = "dev.drsoran.moloko.util.Intents.Action.TASKS_LISTS_MIN_DETAILED";
+   }
+   
+   
+   public final static class Extras
+   {
+      
+      public final static Bundle createOpenListExtrasById( Context context,
+                                                           String id,
+                                                           String filter )
+      {
+         Bundle extras = null;
+         
+         final ContentProviderClient client = context.getContentResolver()
+                                                     .acquireContentProviderClient( ListOverviews.CONTENT_URI );
+         
+         if ( client != null )
+         {
+            final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
+                                                                                         ListOverviews._ID
+                                                                                            + "="
+                                                                                            + id );
+            
+            if ( list != null )
+               extras = createOpenListExtras( context, list, filter );
+            
+            client.release();
+         }
+         
+         return extras;
+      }
+      
+      
+      
+      public final static Bundle createOpenListExtrasByName( Context context,
+                                                             String name,
+                                                             String filter )
+      {
+         Bundle extras = null;
+         
+         final ContentProviderClient client = context.getContentResolver()
+                                                     .acquireContentProviderClient( ListOverviews.CONTENT_URI );
+         
+         if ( client != null )
+         {
+            final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
+                                                                                         ListOverviews.LIST_NAME
+                                                                                            + "='"
+                                                                                            + name
+                                                                                            + "'" );
+            
+            if ( list != null )
+               extras = createOpenListExtras( context, list, filter );
+            
+            client.release();
+         }
+         
+         return extras;
+      }
+      
+      
+      
+      public final static Bundle createOpenListExtras( Context context,
+                                                       RtmListWithTaskCount list,
+                                                       String filter )
+      {
+         String filterString = Strings.EMPTY_STRING;
+         
+         // If we open a non-smart list
+         if ( !list.hasSmartFilter() )
+         {
+            filterString = RtmSmartFilterLexer.OP_LIST_LIT
+               + RtmSmartFilterLexer.quotify( list.getName() );
+         }
+         
+         // if we open a smart list
+         else
+         {
+            filterString = list.getSmartFilter().getFilterString();
+         }
+         
+         if ( filter != null )
+         {
+            if ( filterString.length() > 0 )
+               filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " ("
+                  + filter + ")" );
+            else
+               filterString = filter;
+         }
+         
+         final Bundle extras = createSmartFilterExtras( context,
+                                                        new RtmSmartFilter( filterString ),
+                                                        context.getString( R.string.taskslist_titlebar,
+                                                                           list.getName() ),
+                                                        R.drawable.ic_title_list );
+         extras.putString( Lists.LIST_NAME, list.getName() );
+         return extras;
+      }
+      
+      
+      
+      public final static Bundle createOpenLocationExtras( Context context,
+                                                           String name )
+      {
+         return createSmartFilterExtras( context,
+                                         new RtmSmartFilter( RtmSmartFilterLexer.OP_LOCATION_LIT
+                                            + RtmSmartFilterLexer.quotify( name ) ),
+                                         context.getString( R.string.taskslist_titlebar,
+                                                            name ),
+                                         R.drawable.ic_title_location );
+      }
+      
+      
+      
+      public final static Bundle createOpenContactExtras( Context context,
+                                                          String fullname,
+                                                          String username )
+      {
+         // Here we take the username cause the fullname can be ambiguous.
+         return createSmartFilterExtras( context,
+                                         new RtmSmartFilter( RtmSmartFilterLexer.OP_SHARED_WITH_LIT
+                                            + RtmSmartFilterLexer.quotify( username ) ),
+                                         context.getString( R.string.taskslist_titlebar,
+                                                            fullname ),
+                                         R.drawable.ic_title_user );
+      }
+      
+      
+      
+      public final static Bundle createOpenTagExtras( Context context,
+                                                      String tag )
+      {
+         return createOpenTagsExtras( context,
+                                      Collections.singletonList( tag ),
+                                      null );
+      }
+      
+      
+      
+      public final static Bundle createOpenTagsExtras( Context context,
+                                                       List< String > tags,
+                                                       String logicalOperator )
+      {
+         if ( tags.size() > 1 && logicalOperator == null )
+            throw new IllegalArgumentException( "logicalOperator must not be null with multiple tags" );
+         
+         final StringBuilder filterString = new StringBuilder();
+         
+         for ( int i = 0, cnt = tags.size(); i < cnt; ++i )
+         {
+            final String tag = tags.get( i );
+            
+            filterString.append( RtmSmartFilterLexer.OP_TAG_LIT ).append( tag );
+            
+            // not last element
+            if ( i < cnt - 1 )
+               filterString.append( " " )
+                           .append( logicalOperator )
+                           .append( " " );
+         }
+         
+         return createSmartFilterExtras( context,
+                                         new RtmSmartFilter( filterString.toString() ),
+                                         context.getString( R.string.taskslist_titlebar,
+                                                            TextUtils.join( ", ",
+                                                                            tags ) ),
+                                         R.drawable.ic_title_tag );
+      }
+      
+      
+      
+      public final static Bundle createSqlSelectionFilterExtras( Context context,
+                                                                 SqlSelectionFilter filter,
+                                                                 String title,
+                                                                 int iconId )
+      {
+         final Bundle extras = new Bundle();
+         
+         extras.putString( TasksListActivity.Config.TITLE,
+                           context.getString( R.string.taskslist_titlebar,
+                                              ( title != null )
+                                                               ? title
+                                                               : context.getString( R.string.app_name ) ) );
+         if ( iconId != -1 )
+            extras.putInt( TasksListActivity.Config.TITLE_ICON, iconId );
+         
+         extras.putParcelable( TasksListActivity.Config.FILTER, filter );
+         
+         return extras;
+      }
+      
+      
+      
+      public final static Bundle createSmartFilterExtras( Context context,
+                                                          RtmSmartFilter filter,
+                                                          String title,
+                                                          int iconId )
+      {
+         final Bundle extras = new Bundle();
+         
+         extras.putString( TasksListActivity.Config.TITLE,
+                           context.getString( R.string.taskslist_titlebar,
+                                              ( title != null )
+                                                               ? title
+                                                               : filter.getFilterString() ) );
+         if ( iconId != -1 )
+            extras.putInt( TasksListActivity.Config.TITLE_ICON, iconId );
+         
+         extras.putParcelable( TasksListActivity.Config.FILTER, filter );
+         
+         return extras;
+      }
+   }
+   
+   
+   
+   /** INTENTS **/
+   
    public final static PendingIntent createSyncAlarmIntent( Context context )
    {
       final Intent intent = new Intent( context, SyncAlarmReceiver.class );
@@ -68,8 +287,8 @@ public final class Intents
                                          PendingIntent.FLAG_UPDATE_CURRENT );
    }
    
-
-
+   
+   
    public final static PendingIntent createNotificationIntent( Context context,
                                                                Intent onClickIntent )
    {
@@ -81,20 +300,19 @@ public final class Intents
                                         PendingIntent.FLAG_UPDATE_CURRENT );
    }
    
-
-
+   
+   
    public final static Intent createNewAccountIntent( Context context )
    {
-      final Intent intent = new Intent( context, StartUpActivity.class );
-      intent.putExtra( StartUpActivity.ONLY_CHECK_ACCOUNT, Boolean.TRUE );
-      return intent;
+      return new Intent( context, StartUpActivity.class ).putExtra( StartUpActivity.ONLY_CHECK_ACCOUNT,
+                                                                    Boolean.TRUE );
    }
    
-
-
-   public final static Intent createOpenListIntent( Context context,
-                                                    String id,
-                                                    String filter )
+   
+   
+   public final static Intent createOpenListIntentById( Context context,
+                                                        String id,
+                                                        String filter )
    {
       Intent intent = null;
       
@@ -105,7 +323,7 @@ public final class Intents
       {
          final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
                                                                                       ListOverviews._ID
-                                                                                         + " = "
+                                                                                         + "="
                                                                                          + id );
          
          if ( list != null )
@@ -117,8 +335,8 @@ public final class Intents
       return intent;
    }
    
-
-
+   
+   
    public final static Intent createOpenListIntentByName( Context context,
                                                           String name,
                                                           String filter )
@@ -132,7 +350,7 @@ public final class Intents
       {
          final RtmListWithTaskCount list = ListOverviewsProviderPart.getListOverview( client,
                                                                                       ListOverviews.LIST_NAME
-                                                                                         + " = '"
+                                                                                         + "='"
                                                                                          + name
                                                                                          + "'" );
          
@@ -145,195 +363,63 @@ public final class Intents
       return intent;
    }
    
-
-
+   
+   
    public final static Intent createOpenListIntent( Context context,
                                                     RtmListWithTaskCount list,
                                                     String filter )
    {
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      
-      intent.putExtra( AbstractTasksListActivity.TITLE,
-                       context.getString( R.string.taskslist_titlebar,
-                                          list.getName() ) );
-      intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                       R.drawable.ic_title_list );
-      
-      String filterString = Strings.EMPTY_STRING;
-      
-      // If we open a non-smart list
-      if ( !list.hasSmartFilter() )
-      {
-         filterString = RtmSmartFilterLexer.OP_LIST_LIT
-            + RtmSmartFilterLexer.quotify( list.getName() );
-      }
-      
-      // if we open a smart list
-      else
-      {
-         filterString = list.getSmartFilter().getFilterString();
-      }
-      
-      if ( filter != null )
-      {
-         if ( filterString.length() > 0 )
-            filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " (" + filter + ")" );
-         else
-            filterString = filter;
-      }
-      
-      intent.putExtra( Lists.LIST_NAME, list.getName() );
-      intent.putExtra( AbstractTasksListActivity.FILTER,
-                       new RtmSmartFilter( filterString ) );
-      
-      return intent;
+      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenListExtras( context,
+                                                                                                         list,
+                                                                                                         filter ) );
    }
    
-
-
+   
+   
    public final static Intent createOpenTagsIntent( Context context,
                                                     List< String > tags,
                                                     String logicalOperator )
    {
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      
-      intent.putExtras( createOpenTagsIntentConfig( context,
-                                                    tags,
-                                                    logicalOperator ) );
-      
-      return intent;
+      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenTagsExtras( context,
+                                                                                                         tags,
+                                                                                                         logicalOperator ) );
    }
    
-
-
-   public final static Bundle createOpenTagIntentConfig( Context context,
-                                                         String tag )
-   {
-      return createOpenTagsIntentConfig( context,
-                                         Collections.singletonList( tag ),
-                                         null );
-   }
    
-
-
-   public final static Bundle createOpenTagsIntentConfig( Context context,
-                                                          List< String > tags,
-                                                          String logicalOperator )
-   {
-      if ( tags.size() > 1 && logicalOperator == null )
-         throw new IllegalArgumentException( "logicalOperator must not be null with multiple tags" );
-      
-      final Bundle config = new Bundle();
-      
-      config.putInt( AbstractTasksListActivity.TITLE_ICON,
-                     R.drawable.ic_title_tag );
-      
-      final StringBuilder filterString = new StringBuilder();
-      
-      for ( int i = 0, cnt = tags.size(); i < cnt; ++i )
-      {
-         final String tag = tags.get( i );
-         
-         filterString.append( RtmSmartFilterLexer.OP_TAG_LIT ).append( tag );
-         
-         // not last element
-         if ( i < cnt - 1 )
-            filterString.append( " " ).append( logicalOperator ).append( " " );
-      }
-      
-      config.putParcelable( AbstractTasksListActivity.FILTER,
-                            new RtmSmartFilter( filterString.toString() ) );
-      config.putString( AbstractTasksListActivity.TITLE,
-                        context.getString( R.string.taskslist_titlebar,
-                                           TextUtils.join( ", ", tags ) ) );
-      
-      return config;
-   }
    
-
-
    public final static Intent createOpenLocationIntentByName( Context context,
                                                               String name )
    {
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      
-      intent.putExtra( AbstractTasksListActivity.FILTER,
-                       new RtmSmartFilter( RtmSmartFilterLexer.OP_LOCATION_LIT
-                          + RtmSmartFilterLexer.quotify( name ) ) );
-      intent.putExtra( AbstractTasksListActivity.TITLE,
-                       context.getString( R.string.taskslist_titlebar, name ) );
-      intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                       R.drawable.ic_title_location );
-      
-      return intent;
+      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenLocationExtras( context,
+                                                                                                             name ) );
    }
    
-
-
+   
+   
    public final static Intent createOpenContactIntent( Context context,
                                                        String fullname,
                                                        String username )
    {
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      
-      // Here we take the username cause the fullname can be ambiguous.
-      intent.putExtra( AbstractTasksListActivity.FILTER,
-                       new RtmSmartFilter( RtmSmartFilterLexer.OP_SHARED_WITH_LIT
-                          + RtmSmartFilterLexer.quotify( username ) ) );
-      intent.putExtra( AbstractTasksListActivity.TITLE,
-                       context.getString( R.string.taskslist_titlebar, fullname ) );
-      intent.putExtra( AbstractTasksListActivity.TITLE_ICON,
-                       R.drawable.ic_title_user );
-      
-      return intent;
+      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenContactExtras( context,
+                                                                                                            fullname,
+                                                                                                            username ) );
    }
    
-
-
-   public final static Intent createSmartFilterIntent( Context context,
-                                                       RtmSmartFilter filter,
-                                                       String title,
-                                                       int iconId )
-   {
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      
-      intent.putExtra( AbstractTasksListActivity.TITLE,
-                       context.getString( R.string.taskslist_titlebar,
-                                          ( title != null )
-                                                           ? title
-                                                           : filter.getFilterString() ) );
-      if ( iconId != -1 )
-         intent.putExtra( AbstractTasksListActivity.TITLE_ICON, iconId );
-      
-      intent.putExtra( AbstractTasksListActivity.FILTER, filter );
-      
-      return intent;
-   }
    
-
-
+   
    public final static Intent createSqlSelectionFilterIntent( Context context,
                                                               SqlSelectionFilter filter,
                                                               String title,
                                                               int iconId )
    {
-      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
-      
-      intent.putExtra( AbstractTasksListActivity.TITLE,
-                       context.getString( R.string.taskslist_titlebar,
-                                          ( title != null )
-                                                           ? title
-                                                           : context.getString( R.string.app_name ) ) );
-      if ( iconId != -1 )
-         intent.putExtra( AbstractTasksListActivity.TITLE_ICON, iconId );
-      
-      intent.putExtra( AbstractTasksListActivity.FILTER, filter );
-      
-      return intent;
+      return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createSqlSelectionFilterExtras( context,
+                                                                                                                   filter,
+                                                                                                                   title,
+                                                                                                                   iconId ) );
    }
    
-
-
+   
+   
    public final static Intent createOpenTaskIntent( Context context,
                                                     String taskId )
    {
@@ -341,8 +427,8 @@ public final class Intents
                          Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
    }
    
-
-
+   
+   
    public final static Intent createEditTaskIntent( Context context,
                                                     String taskId )
    {
@@ -350,8 +436,8 @@ public final class Intents
                          Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
    }
    
-
-
+   
+   
    public final static Intent createEditMultipleTasksIntent( Context context,
                                                              ArrayList< String > taskIds )
    {
@@ -362,8 +448,8 @@ public final class Intents
       return intent;
    }
    
-
-
+   
+   
    public final static Intent createSelectMultipleTasksIntent( Context context,
                                                                IFilter filter,
                                                                int sortOrder )
@@ -384,13 +470,13 @@ public final class Intents
       intent.setAction( Intent.ACTION_PICK );
       
       if ( sortOrder != -1 )
-         intent.putExtra( AbstractTasksListActivity.TASK_SORT_ORDER, sortOrder );
+         intent.putExtra( TasksListActivity.Config.TASK_SORT_ORDER, sortOrder );
       
       return intent;
    }
    
-
-
+   
+   
    public final static Intent createAddTaskIntent( Context context,
                                                    Bundle initialValues )
    {
@@ -402,8 +488,8 @@ public final class Intents
       return intent;
    }
    
-
-
+   
+   
    public final static Intent createOpenNotesIntent( Context context,
                                                      String taskSeriesId,
                                                      String startNoteId )
@@ -434,8 +520,8 @@ public final class Intents
          return null;
    }
    
-
-
+   
+   
    public final static Intent createEditNoteIntent( Context context,
                                                     String noteId,
                                                     boolean showOtherNotes )
@@ -451,14 +537,31 @@ public final class Intents
       return intent;
    }
    
-
-
+   
+   
    public final static Intent createAddNoteIntent( Context context,
                                                    String taskSeriesId )
    {
       final Intent intent = new Intent( Intent.ACTION_INSERT, Notes.CONTENT_URI );
       
       intent.putExtra( Notes.TASKSERIES_ID, taskSeriesId );
+      
+      return intent;
+   }
+   
+   
+   
+   public final static Intent createSmartFilterIntent( Context context,
+                                                       RtmSmartFilter filter,
+                                                       String title,
+                                                       int iconId )
+   {
+      final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
+      
+      intent.putExtras( Extras.createSmartFilterExtras( context,
+                                                        filter,
+                                                        title,
+                                                        iconId ) );
       
       return intent;
    }

@@ -11,28 +11,26 @@
 
 <LinearLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
-   android:orientation="vertical"
+   android:id="@+id/taskslist_listitem"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
-   <ListView
-      android:id="@android:id/list"
-      style="@style/TasksList_TaskList"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent" />
-
-   <TextView
-      android:id="@android:id/empty"
-      style="@style/App_No_List_Elements_Text"
-      android:layout_width="fill_parent"
+   <Button
+      android:id="@+id/taskslist_listitem_priority"
+      android:background="@android:color/transparent"
+      android:layout_width="wrap_content"
       android:layout_height="fill_parent"
-      android:text="@string/abstaskslist_no_tasks" />
+      android:layout_marginTop="1dip"
+      android:layout_marginBottom="1dip"
+      android:minWidth="5dip"
+      android:maxWidth="5dip"
+      android:enabled="false"
+      android:focusable="false" />
 
    <include
-      android:id="@+id/loading_spinner"
+      android:id="@+id/taskslist_listitem_base"
+      layout="@layout/mindetailed_taskslist_listitem_base"
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      layout="@layout/app_loading_spinner"
-      android:visibility="gone" />
-
+      android:layout_height="fill_parent" />
 </LinearLayout>
+

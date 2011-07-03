@@ -29,20 +29,15 @@ import java.util.List;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
-import android.text.format.Time;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
-import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
@@ -51,18 +46,15 @@ import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class TasksListAdapter extends ArrayAdapter< ListTask >
+public class FullDetailedTasksListFragmentAdapter extends
+         MinDetailedTasksListFragmentAdapter
 {
    private final static String TAG = "Moloko."
-      + TasksListAdapter.class.getName();
+      + FullDetailedTasksListFragmentAdapter.class.getName();
    
    public final static int FLAG_SHOW_ALL = 1 << 0;
    
    public final static int FLAG_NO_CLICKABLES = 1 << 1;
-   
-   private final Context context;
-   
-   private final int resourceId;
    
    private final RtmSmartFilter filter;
    
@@ -70,23 +62,29 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
    
    private final int flags;
    
+   private final OnClickListener onClickListener;
    
-
-   public TasksListAdapter( Context context, int resourceId )
+   
+   
+   public FullDetailedTasksListFragmentAdapter( Context context, int resourceId )
    {
-      this( context, resourceId, Collections.< ListTask > emptyList(), null, 0 );
+      this( context,
+            resourceId,
+            Collections.< ListTask > emptyList(),
+            null,
+            0,
+            null );
    }
    
-
-
-   public TasksListAdapter( Context context, int resourceId,
-      List< ListTask > tasks, IFilter filter, int flags )
+   
+   
+   public FullDetailedTasksListFragmentAdapter( Context context,
+      int resourceId, List< ListTask > tasks, IFilter filter, int flags,
+      OnClickListener onClickListener )
    {
-      super( context, 0, tasks );
+      super( context, resourceId, tasks );
       
-      this.context = context;
       this.flags = flags;
-      this.resourceId = resourceId;
       this.filter = (RtmSmartFilter) ( ( filter instanceof RtmSmartFilter )
                                                                            ? filter
                                                                            : new RtmSmartFilter( Strings.EMPTY_STRING ) );
@@ -112,47 +110,32 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       {
          this.tagsToRemove = null;
       }
+      
+      this.onClickListener = onClickListener;
    }
    
-
-
-   public int getLayoutRessource()
-   {
-      return resourceId;
-   }
    
-
-
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      if ( convertView == null )
-         convertView = ( (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE ) ).inflate( resourceId,
-                                                                                                                 parent,
-                                                                                                                 false );
-      final View priority = convertView.findViewById( R.id.taskslist_listitem_priority );
+      convertView = super.getView( position, convertView, parent );
       
-      ImageView completed;
-      TextView description;
       ViewGroup additionalsLayout;
       TextView listName;
       TextView location;
       ImageView recurrent;
       ImageView hasNotes;
       ImageView postponed;
-      TextView dueDate;
       
       try
       {
-         completed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_check );
-         description = (TextView) convertView.findViewById( R.id.taskslist_listitem_desc );
          additionalsLayout = (ViewGroup) convertView.findViewById( R.id.taskslist_listitem_additionals_container );
          listName = (TextView) convertView.findViewById( R.id.taskslist_listitem_btn_list_name );
          location = (TextView) convertView.findViewById( R.id.taskslist_listitem_location );
          recurrent = (ImageView) convertView.findViewById( R.id.taskslist_listitem_recurrent );
          hasNotes = (ImageView) convertView.findViewById( R.id.taskslist_listitem_has_notes );
          postponed = (ImageView) convertView.findViewById( R.id.taskslist_listitem_postponed );
-         dueDate = (TextView) convertView.findViewById( R.id.taskslist_listitem_due_date );
       }
       catch ( ClassCastException e )
       {
@@ -161,8 +144,6 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       }
       
       final ListTask task = getItem( position );
-      
-      UIUtils.setTaskDescription( description, task, MolokoDateUtils.newTime() );
       
       if ( task.getRecurrence() != null )
          recurrent.setVisibility( View.VISIBLE );
@@ -181,22 +162,15 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       
       setListName( listName, task );
       
-      setDueDate( dueDate, task );
-      
-      UIUtils.setPriorityColor( priority, task );
-      
       setTags( additionalsLayout, task );
       
       setLocation( location, task );
       
-      // Completed
-      setCompleted( completed, task );
-      
       return convertView;
    }
    
-
-
+   
+   
    private final void setListName( TextView view, ListTask task )
    {
       if ( ( flags & FLAG_SHOW_ALL ) == FLAG_SHOW_ALL
@@ -210,84 +184,15 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
          
          if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
             view.setClickable( false );
-      }
-      else
-         view.setVisibility( View.GONE );
-   }
-   
-
-
-   private final void setDueDate( TextView view, ListTask task )
-   {
-      // if has a due date
-      if ( task.getDue() != null )
-      {
-         view.setVisibility( View.VISIBLE );
-         
-         String dueText = null;
-         
-         final long dueMillis = task.getDue().getTime();
-         final boolean hasDueTime = task.hasDueTime();
-         
-         // Today
-         if ( MolokoDateUtils.isToday( dueMillis ) )
-         {
-            // If it has a time, we show the time
-            if ( hasDueTime )
-               dueText = MolokoDateUtils.formatTime( dueMillis );
-            else
-               // We only show the 'Today' phrase
-               dueText = context.getString( R.string.phr_today );
-         }
          else
-         {
-            final Time now = MolokoDateUtils.newTime();
-            final Time dueTime = MolokoDateUtils.newTime( dueMillis );
-            
-            // If it is the same year
-            if ( dueTime.year == now.year )
-            {
-               // If the same week and in the future
-               if ( now.getWeekNumber() == dueTime.getWeekNumber()
-                  && dueTime.after( now ) )
-               {
-                  // we only show the week day
-                  dueText = DateUtils.getRelativeTimeSpanString( dueMillis,
-                                                                 System.currentTimeMillis(),
-                                                                 DateUtils.WEEK_IN_MILLIS,
-                                                                 DateUtils.FORMAT_SHOW_WEEKDAY )
-                                     .toString();
-               }
-               
-               // Not the same week or same week but in the past
-               else
-               {
-                  // we show the date but w/o year
-                  dueText = MolokoDateUtils.formatDate( dueMillis,
-                                                        MolokoDateUtils.FORMAT_ABR_MONTH );
-               }
-            }
-            
-            // Not the same year
-            else
-            {
-               // we show the full date with year
-               dueText = MolokoDateUtils.formatDate( dueMillis,
-                                                     MolokoDateUtils.FORMAT_ABR_MONTH
-                                                        | MolokoDateUtils.FORMAT_WITH_YEAR );
-            }
-         }
-         
-         view.setText( dueText );
+            view.setOnClickListener( onClickListener );
       }
-      
-      // has no due date
       else
          view.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    private void setLocation( TextView view, ListTask task )
    {
       // If the task has no location
@@ -306,11 +211,13 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
          
          if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
             view.setClickable( false );
+         else
+            view.setOnClickListener( onClickListener );
       }
    }
    
-
-
+   
+   
    private void setTags( ViewGroup tagsLayout, ListTask task )
    {
       final Bundle tagsConfig = new Bundle();
@@ -321,17 +228,10 @@ public class TasksListAdapter extends ArrayAdapter< ListTask >
       if ( ( flags & FLAG_NO_CLICKABLES ) == FLAG_NO_CLICKABLES )
          tagsConfig.putBoolean( UIUtils.DISABLE_ALL_TAGS, Boolean.TRUE );
       
-      UIUtils.inflateTags( context,
+      UIUtils.inflateTags( getContext(),
                            tagsLayout,
                            task.getTags(),
                            tagsConfig,
-                           (OnClickListener) context );
-   }
-   
-
-
-   private void setCompleted( ImageView view, ListTask task )
-   {
-      view.setEnabled( task.getCompleted() != null );
+                           onClickListener );
    }
 }

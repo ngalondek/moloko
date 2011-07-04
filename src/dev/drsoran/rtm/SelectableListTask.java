@@ -128,12 +128,12 @@ public class SelectableListTask extends ListTask
    
 
 
-   public final static List< ListTask > asListTaskList( List< ListTask > list )
+   public final static List< ListTask > asListTaskList( List< SelectableListTask > list )
    {
       final List< ListTask > listTaskList = new ArrayList< ListTask >( list.size() );
       
-      for ( ListTask task : list )
-         listTaskList.add( fromListTask( task ) );
+      for ( SelectableListTask task : list )
+         listTaskList.add( task );
       
       return listTaskList;
    }

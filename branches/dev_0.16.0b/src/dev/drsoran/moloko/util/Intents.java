@@ -63,7 +63,7 @@ public final class Intents
       public final static String TASKS_LISTS_MIN_DETAILED = "dev.drsoran.moloko.util.Intents.Action.TASKS_LISTS_MIN_DETAILED";
    }
    
-   
+
    public final static class Extras
    {
       
@@ -92,8 +92,8 @@ public final class Intents
          return extras;
       }
       
-      
-      
+
+
       public final static Bundle createOpenListExtrasByName( Context context,
                                                              String name,
                                                              String filter )
@@ -120,8 +120,8 @@ public final class Intents
          return extras;
       }
       
-      
-      
+
+
       public final static Bundle createOpenListExtras( Context context,
                                                        RtmListWithTaskCount list,
                                                        String filter )
@@ -159,8 +159,8 @@ public final class Intents
          return extras;
       }
       
-      
-      
+
+
       public final static Bundle createOpenLocationExtras( Context context,
                                                            String name )
       {
@@ -172,8 +172,8 @@ public final class Intents
                                          R.drawable.ic_title_location );
       }
       
-      
-      
+
+
       public final static Bundle createOpenContactExtras( Context context,
                                                           String fullname,
                                                           String username )
@@ -187,8 +187,8 @@ public final class Intents
                                          R.drawable.ic_title_user );
       }
       
-      
-      
+
+
       public final static Bundle createOpenTagExtras( Context context,
                                                       String tag )
       {
@@ -197,8 +197,8 @@ public final class Intents
                                       null );
       }
       
-      
-      
+
+
       public final static Bundle createOpenTagsExtras( Context context,
                                                        List< String > tags,
                                                        String logicalOperator )
@@ -229,8 +229,8 @@ public final class Intents
                                          R.drawable.ic_title_tag );
       }
       
-      
-      
+
+
       public final static Bundle createSqlSelectionFilterExtras( Context context,
                                                                  SqlSelectionFilter filter,
                                                                  String title,
@@ -251,8 +251,8 @@ public final class Intents
          return extras;
       }
       
-      
-      
+
+
       public final static Bundle createSmartFilterExtras( Context context,
                                                           RtmSmartFilter filter,
                                                           String title,
@@ -275,7 +275,7 @@ public final class Intents
    }
    
    
-   
+
    /** INTENTS **/
    
    public final static PendingIntent createSyncAlarmIntent( Context context )
@@ -287,8 +287,8 @@ public final class Intents
                                          PendingIntent.FLAG_UPDATE_CURRENT );
    }
    
-   
-   
+
+
    public final static PendingIntent createNotificationIntent( Context context,
                                                                Intent onClickIntent )
    {
@@ -300,16 +300,16 @@ public final class Intents
                                         PendingIntent.FLAG_UPDATE_CURRENT );
    }
    
-   
-   
+
+
    public final static Intent createNewAccountIntent( Context context )
    {
       return new Intent( context, StartUpActivity.class ).putExtra( StartUpActivity.ONLY_CHECK_ACCOUNT,
                                                                     Boolean.TRUE );
    }
    
-   
-   
+
+
    public final static Intent createOpenListIntentById( Context context,
                                                         String id,
                                                         String filter )
@@ -335,8 +335,8 @@ public final class Intents
       return intent;
    }
    
-   
-   
+
+
    public final static Intent createOpenListIntentByName( Context context,
                                                           String name,
                                                           String filter )
@@ -363,8 +363,8 @@ public final class Intents
       return intent;
    }
    
-   
-   
+
+
    public final static Intent createOpenListIntent( Context context,
                                                     RtmListWithTaskCount list,
                                                     String filter )
@@ -374,8 +374,8 @@ public final class Intents
                                                                                                          filter ) );
    }
    
-   
-   
+
+
    public final static Intent createOpenTagsIntent( Context context,
                                                     List< String > tags,
                                                     String logicalOperator )
@@ -385,8 +385,8 @@ public final class Intents
                                                                                                          logicalOperator ) );
    }
    
-   
-   
+
+
    public final static Intent createOpenLocationIntentByName( Context context,
                                                               String name )
    {
@@ -394,8 +394,8 @@ public final class Intents
                                                                                                              name ) );
    }
    
-   
-   
+
+
    public final static Intent createOpenContactIntent( Context context,
                                                        String fullname,
                                                        String username )
@@ -405,8 +405,8 @@ public final class Intents
                                                                                                             username ) );
    }
    
-   
-   
+
+
    public final static Intent createSqlSelectionFilterIntent( Context context,
                                                               SqlSelectionFilter filter,
                                                               String title,
@@ -418,8 +418,8 @@ public final class Intents
                                                                                                                    iconId ) );
    }
    
-   
-   
+
+
    public final static Intent createOpenTaskIntent( Context context,
                                                     String taskId )
    {
@@ -427,8 +427,8 @@ public final class Intents
                          Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
    }
    
-   
-   
+
+
    public final static Intent createEditTaskIntent( Context context,
                                                     String taskId )
    {
@@ -436,20 +436,20 @@ public final class Intents
                          Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
    }
    
-   
-   
+
+
    public final static Intent createEditMultipleTasksIntent( Context context,
-                                                             ArrayList< String > taskIds )
+                                                             List< String > taskIds )
    {
       final Intent intent = new Intent( Intent.ACTION_EDIT, Tasks.CONTENT_URI );
       intent.putStringArrayListExtra( EditMultipleTasksActivity.TASK_IDS,
-                                      taskIds );
+                                      new ArrayList< String >( taskIds ) );
       
       return intent;
    }
    
-   
-   
+
+
    public final static Intent createSelectMultipleTasksIntent( Context context,
                                                                IFilter filter,
                                                                int sortOrder )
@@ -475,8 +475,8 @@ public final class Intents
       return intent;
    }
    
-   
-   
+
+
    public final static Intent createAddTaskIntent( Context context,
                                                    Bundle initialValues )
    {
@@ -488,8 +488,8 @@ public final class Intents
       return intent;
    }
    
-   
-   
+
+
    public final static Intent createOpenNotesIntent( Context context,
                                                      String taskSeriesId,
                                                      String startNoteId )
@@ -520,8 +520,8 @@ public final class Intents
          return null;
    }
    
-   
-   
+
+
    public final static Intent createEditNoteIntent( Context context,
                                                     String noteId,
                                                     boolean showOtherNotes )
@@ -537,8 +537,8 @@ public final class Intents
       return intent;
    }
    
-   
-   
+
+
    public final static Intent createAddNoteIntent( Context context,
                                                    String taskSeriesId )
    {
@@ -549,8 +549,8 @@ public final class Intents
       return intent;
    }
    
-   
-   
+
+
    public final static Intent createSmartFilterIntent( Context context,
                                                        RtmSmartFilter filter,
                                                        String title,

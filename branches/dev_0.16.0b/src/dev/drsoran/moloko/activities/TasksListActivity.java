@@ -56,7 +56,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    }
    
    
-   
+
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -90,8 +90,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       return ok;
    }
    
-   
-   
+
+
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -115,15 +115,15 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       }
    }
    
-   
-   
+
+
    public void onOpenTask( int pos )
    {
       startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-   
-   
+
+
    public void onSelectTasks()
    {
       startActivity( Intents.createSelectMultipleTasksIntent( this,
@@ -131,15 +131,15 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                               getTaskSort() ) );
    }
    
-   
-   
+
+
    public void onEditTask( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-   
-   
+
+
    public void onOpenList( int pos, String listId )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenListExtrasById( this,
@@ -147,16 +147,16 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                                  null ) );
    }
    
-   
-   
+
+
    public void onOpenLocation( int pos, String locationId )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenLocationExtras( this,
                                                                                  getTask( pos ).getLocationName() ) );
    }
    
-   
-   
+
+
    public void onOpenNotes( int pos, List< RtmTaskNote > notes )
    {
       if ( notes.size() > 0 )
@@ -174,16 +174,16 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       }
    }
    
-   
-   
+
+
    public void onShowTasksWithTag( String tag )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenTagExtras( this,
                                                                             tag ) );
    }
    
-   
-   
+
+
    public void onShowTasksWithTags( List< String > tags, String logicalOperator )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenTagsExtras( this,

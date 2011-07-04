@@ -31,23 +31,27 @@ public interface IFullDetailedTasksListListener extends ITasksListListener
 {
    void onEditTask( int pos );
    
+
+
+   void onSelectTasks();
    
-   
+
+
    void onOpenList( int pos, String listId );
    
-   
-   
+
+
    void onOpenLocation( int pos, String locationId );
    
-   
-   
+
+
    void onOpenNotes( int pos, List< RtmTaskNote > notes );
    
-   
-   
+
+
    void onShowTasksWithTag( String tag );
    
-   
-   
+
+
    void onShowTasksWithTags( List< String > tags, String logicalOperator );
 }

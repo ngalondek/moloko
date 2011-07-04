@@ -93,7 +93,9 @@ public class SelectableTasksListFragmentAdapter extends
    {
       final View v = super.getView( position, convertView, parent );
       
-      ( (Checkable) v.findViewById( R.id.taskslist_listitem_priority ) ).setChecked( getItem( position ).isSelected() );
+      final boolean isSelected = getItem( position ).isSelected();
+      
+      ( (Checkable) v.findViewById( R.id.selectmultipletasks_listitem_selected ) ).setChecked( isSelected );
       
       return v;
    }
@@ -221,7 +223,13 @@ public class SelectableTasksListFragmentAdapter extends
          for ( int i = 0, cnt = getCount(); i < cnt; ++i )
             if ( getItem( i ).getId().equals( s ) )
                getItem( i ).setSelected( true );
-      
+   }
+   
+
+
+   public void setSelectedTaskIdsAndNotifyDataChanged( List< String > taskIds )
+   {
+      setSelectedTaskIds( taskIds );
       notifyDataSetChanged();
    }
    

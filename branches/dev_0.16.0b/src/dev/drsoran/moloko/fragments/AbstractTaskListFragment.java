@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.fragments;
 
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -44,22 +45,24 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IFilter;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
-import dev.drsoran.moloko.loaders.ListTasksLoader;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.rtm.Task;
 
 
-public abstract class AbstractTaskListFragment extends ListFragment implements
-         LoaderCallbacks< List< ListTask > >, IConfigurable
+public abstract class AbstractTaskListFragment< T extends Task > extends
+         ListFragment implements LoaderCallbacks< List< T > >, IConfigurable,
+         IOnSettingsChangedListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -74,24 +77,22 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
    }
    
 
-   private final static class OptionsMenu
+   protected static class OptionsMenu
    {
       public final static int SORT = R.id.menu_sort;
       
       public final static int SETTINGS = R.id.menu_settings;
       
       public final static int SYNC = R.id.menu_sync;
-      
-      public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
    }
    
-   private final static long LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
+   protected final static long DEFAULT_LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
    
    private final static int TASKS_LOADER_ID = 1;
    
    private ITasksListListener listener;
    
-   private Bundle configuration;
+   protected Bundle configuration;
    
    
 
@@ -108,6 +109,12 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
          listener = (ITasksListListener) activity;
       else
          listener = new NullTasksListListener();
+      
+      MolokoApp.get( activity )
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_TIMEZONE
+                                                      | IOnSettingsChangedListener.RTM_DATEFORMAT
+                                                      | IOnSettingsChangedListener.RTM_TIMEFORMAT,
+                                                   this );
    }
    
 
@@ -117,6 +124,8 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
    {
       super.onDetach();
       listener = null;
+      
+      MolokoApp.get( getActivity() ).unregisterOnSettingsChangedListener( this );
    }
    
 
@@ -204,6 +213,19 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
+   {
+      if ( which == IOnSettingsChangedListener.RTM_DATEFORMAT
+         || which == IOnSettingsChangedListener.RTM_TIMEZONE
+         || which == IOnSettingsChangedListener.RTM_TIMEFORMAT )
+      {
+         notifyDataSetChanged();
+      }
+   }
+   
+
+
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -234,13 +256,6 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
                                    Menu.CATEGORY_CONTAINER,
                                    R.drawable.ic_menu_sort,
                                    hasMultipleTasks() );
-      
-      UIUtils.addOptionalMenuItem( menu,
-                                   OptionsMenu.EDIT_MULTIPLE_TASKS,
-                                   getString( R.string.abstaskslist_menu_opt_edit_multiple ),
-                                   Menu.CATEGORY_CONTAINER,
-                                   R.drawable.ic_menu_edit_multiple_tasks,
-                                   hasMultipleTasks() && hasRtmWriteAccess() );
    }
    
 
@@ -252,10 +267,6 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
       {
          case OptionsMenu.SORT:
             showChooseTaskSortDialog();
-            return true;
-            
-         case OptionsMenu.EDIT_MULTIPLE_TASKS:
-            listener.onSelectTasks();
             return true;
             
          default :
@@ -272,9 +283,9 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
                                         .setTitle( R.string.abstaskslist_dlg_sort_title )
                                         .setSingleChoiceItems( R.array.app_sort_options,
                                                                getTaskSortIndex( getTaskSortConfiguration() ),
-                                                               chooseTaskSortDialogListener )
+                                                               defaultChooseTaskSortDialogListener )
                                         .setNegativeButton( R.string.btn_cancel,
-                                                            chooseTaskSortDialogListener )
+                                                            defaultChooseTaskSortDialogListener )
                                         .show();
    }
    
@@ -319,9 +330,10 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   public ListTask getTask( int pos )
+   @SuppressWarnings( "unchecked" )
+   public T getTask( int pos )
    {
-      return (ListTask) getListAdapter().getItem( pos );
+      return (T) getListAdapter().getItem( pos );
    }
    
 
@@ -333,7 +345,7 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   public ListTask getTask( View view )
+   public T getTask( View view )
    {
       return getTask( getTaskPos( view ) );
    }
@@ -363,9 +375,9 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   public boolean isTaskSortConfigured( int taskSort )
+   public boolean shouldResortTasks( int taskSort )
    {
-      return getTaskSortConfiguration() == taskSort;
+      return getTaskSortConfiguration() != taskSort;
    }
    
 
@@ -407,31 +419,16 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   protected abstract ListAdapter createListAdapterForResult( List< ListTask > result,
+   protected abstract ListAdapter createListAdapterForResult( List< T > result,
                                                               IFilter filter );
    
 
 
-   public Loader< List< ListTask >> onCreateLoader( int id, Bundle config )
-   {
-      showLoadingSpinner( true );
-      
-      final IFilter filter = config.getParcelable( Config.FILTER );
-      final String selection = filter != null ? filter.getSqlSelection() : null;
-      final String order = resolveTaskSortToSqlite( config.getInt( Config.TASK_SORT_ORDER ) );
-      
-      final ListTasksLoader loader = new ListTasksLoader( getActivity(),
-                                                          selection,
-                                                          order );
-      loader.setUpdateThrottle( LOADER_THROTTLE_MS );
-      
-      return loader;
-   }
+   protected abstract void notifyDataSetChanged();
    
 
 
-   public void onLoadFinished( Loader< List< ListTask >> loader,
-                               List< ListTask > data )
+   public void onLoadFinished( Loader< List< T >> loader, List< T > data )
    {
       showLoadingSpinner( false );
       setListAdapter( createListAdapterForResult( data, getFilter() ) );
@@ -449,12 +446,12 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
    
 
 
-   public void onLoaderReset( Loader< List< ListTask >> loader )
+   public void onLoaderReset( Loader< List< T >> loader )
    {
       setListAdapter( createEmptyListAdapter() );
    }
    
-   private final DialogInterface.OnClickListener chooseTaskSortDialogListener = new OnClickListener()
+   protected final DialogInterface.OnClickListener defaultChooseTaskSortDialogListener = new OnClickListener()
    {
       public void onClick( DialogInterface dialog, int which )
       {
@@ -468,7 +465,7 @@ public abstract class AbstractTaskListFragment extends ListFragment implements
                
                dialog.dismiss();
                
-               if ( newTaskSort != -1 && !isTaskSortConfigured( newTaskSort ) )
+               if ( newTaskSort != -1 && shouldResortTasks( newTaskSort ) )
                   listener.onTaskSortChanged( newTaskSort );
                
                break;

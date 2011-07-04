@@ -16,7 +16,7 @@
    android:layout_height="wrap_content">
 
    <CheckBox
-      android:id="@+id/taskslist_listitem_priority"
+      android:id="@+id/selectmultipletasks_listitem_selected"
       style="?android:attr/radioButtonStyle"
       android:layout_width="wrap_content"
       android:layout_height="fill_parent"

@@ -52,14 +52,14 @@ public class MinDetailedTasksListFragmentAdapter extends
    private final int resourceId;
    
    
-   
+
    public MinDetailedTasksListFragmentAdapter( Context context, int resourceId )
    {
       this( context, resourceId, Collections.< ListTask > emptyList() );
    }
    
-   
-   
+
+
    public MinDetailedTasksListFragmentAdapter( Context context, int resourceId,
       List< ListTask > tasks )
    {
@@ -69,15 +69,15 @@ public class MinDetailedTasksListFragmentAdapter extends
       this.resourceId = resourceId;
    }
    
-   
-   
+
+
    public int getLayoutRessource()
    {
       return resourceId;
    }
    
-   
-   
+
+
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
@@ -116,8 +116,8 @@ public class MinDetailedTasksListFragmentAdapter extends
       return convertView;
    }
    
-   
-   
+
+
    private final void setDueDate( TextView view, ListTask task )
    {
       // if has a due date
@@ -187,8 +187,8 @@ public class MinDetailedTasksListFragmentAdapter extends
          view.setVisibility( View.GONE );
    }
    
-   
-   
+
+
    private void setCompleted( ImageView view, ListTask task )
    {
       view.setEnabled( task.getCompleted() != null );

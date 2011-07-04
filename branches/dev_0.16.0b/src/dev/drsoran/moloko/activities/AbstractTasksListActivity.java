@@ -35,8 +35,8 @@ import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractTasksListActivity extends FragmentActivity implements
@@ -57,7 +57,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    private Bundle configuration;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -75,8 +75,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
          initTasksListWithConfiguration( getIntent(), intentConfig );
    }
    
-   
-   
+
+
    @Override
    protected void onStop()
    {
@@ -85,8 +85,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       UIUtils.showTitleBarAddTask( this, false );
    }
    
-   
-   
+
+
    @Override
    protected void onNewIntent( Intent intent )
    {
@@ -95,8 +95,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       setIntent( intent );
    }
    
-   
-   
+
+
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -104,8 +104,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       outState.putAll( getConfiguration() );
    }
    
-   
-   
+
+
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
@@ -113,15 +113,15 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       configure( state );
    }
    
-   
-   
+
+
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-   
-   
+
+
    public void configure( Bundle config )
    {
       if ( configuration == null )
@@ -138,8 +138,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       }
    }
    
-   
-   
+
+
    public Bundle createDefaultConfiguration()
    {
       final Bundle bundle = new Bundle();
@@ -149,15 +149,15 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       return bundle;
    }
    
-   
-   
+
+
    private Bundle getCurrentTasksListFragmentConfiguration()
    {
       return new Bundle( getTasksListFragment().getConfiguration() );
    }
    
-   
-   
+
+
    public void onTaskSortChanged( int newTaskSort )
    {
       final Bundle config = getCurrentTasksListFragmentConfiguration();
@@ -166,15 +166,15 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
    }
    
-   
-   
+
+
    protected void updateTitleBar( TitleBarLayout titleBar )
    {
       
    }
    
-   
-   
+
+
    private static void updateTitleBarSmartFilter( IFilter filter,
                                                   TitleBarLayout titleBar )
    {
@@ -182,57 +182,58 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
          titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
    }
    
-   
-   
-   protected final ListTask getTask( int pos )
+
+
+   protected final Task getTask( int pos )
    {
       return getTasksListFragment().getTask( pos );
    }
    
-   
-   
+
+
    protected int getTaskSortValue( int idx )
    {
       return getTasksListFragment().getTaskSortValue( idx );
    }
    
-   
-   
+
+
    protected int getTaskSortIndex( int value )
    {
       return getTasksListFragment().getTaskSortIndex( value );
    }
    
-   
-   
+
+
    protected int getTaskSort()
    {
       return getTasksListFragment().getTaskSortConfiguration();
    }
    
-   
-   
+
+
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
-      return getTasksListFragment().isTaskSortConfigured( sortOrder );
+      return getTasksListFragment().getTaskSortConfiguration() == sortOrder;
    }
    
-   
-   
+
+
    protected IFilter getFilter()
    {
       return getTasksListFragment().getFilter();
    }
    
-   
-   
-   private AbstractTaskListFragment getTasksListFragment()
+
+
+   @SuppressWarnings( "unchecked" )
+   protected AbstractTaskListFragment< ? extends Task > getTasksListFragment()
    {
-      return (AbstractTaskListFragment) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
+      return (AbstractTaskListFragment< ? extends Task >) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
    }
    
-   
-   
+
+
    private void initTasksListWithConfiguration( Intent intent, Bundle config )
    {
       final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
@@ -246,15 +247,15 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       }
    }
    
-   
-   
+
+
    protected void reloadTasksListWithConfiguration( Bundle config )
    {
       newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
    }
    
-   
-   
+
+
    protected void newTasksListFragmentbyIntent( Intent intent )
    {
       final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
@@ -269,15 +270,15 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       }
    }
    
-   
-   
+
+
    protected Fragment getNewTasksListFragmentInstance( Intent intent )
    {
       return TasksListFragmentFactory.newFragment( this, intent );
    }
    
-   
-   
+
+
    private Intent getNewConfiguredIntent( Bundle config )
    {
       final Intent newIntent = getTasksListFragment().newDefaultIntent();

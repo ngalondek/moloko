@@ -26,59 +26,92 @@ import java.util.List;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
+import dev.drsoran.rtm.Task;
 
-public class NullTasksListListener implements IFullDetailedTasksListListener
+
+public class NullTasksListListener implements IFullDetailedTasksListListener,
+         IMinDetailedTasksListListener, ISelectableTasksListListener
 {
    
    public void onOpenTask( int pos )
    {
    }
    
-   
-   
+
+
    public void onSelectTasks()
    {
    }
    
-   
-   
+
+
    public void onTaskSortChanged( int newTaskSort )
    {
    }
    
-   
-   
+
+
    public void onEditTask( int pos )
    {
    }
    
-   
-   
+
+
    public void onOpenList( int pos, String listId )
    {
    }
    
-   
-   
+
+
    public void onOpenLocation( int pos, String locationId )
    {
    }
    
-   
-   
+
+
    public void onOpenNotes( int pos, List< RtmTaskNote > notes )
    {
    }
    
-   
-   
+
+
    public void onShowTasksWithTag( String tag )
    {
    }
    
-   
-   
+
+
    public void onShowTasksWithTags( List< String > tags, String logicalOperator )
+   {
+   }
+   
+
+
+   public void onEditSelectedTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+
+
+   public void onCompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+
+
+   public void onUncompleteSelectedTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+
+
+   public void onPostponeSelectedTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+
+
+   public void onDeleteSelectedTasks( List< ? extends Task > tasks )
    {
    }
 }

@@ -22,40 +22,49 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
+import android.support.v4.content.Loader;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
 import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter;
+import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListListener;
+import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
+import dev.drsoran.moloko.loaders.SelectableListTasksLoader;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.SelectableListTask;
 
 
-public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
+public class SelectableTasksListsFragment extends
+         AbstractTaskListFragment< SelectableListTask > implements
+         IOnSettingsChangedListener
 {
-   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + SelectableTasksListsFragment.class.getSimpleName();
    
@@ -76,15 +85,14 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
    }
    
    
-   private static class OptionsMenu
+   protected static class OptionsMenu extends
+            AbstractTaskListFragment.OptionsMenu
    {
       public final static int SELECT_ALL = R.id.menu_select_all;
       
       public final static int DESELECT_ALL = R.id.menu_deselect_all;
       
       public final static int INVERT_SELECTION = R.id.menu_invert_selection;
-      
-      public final static int SORT = R.id.menu_sort;
       
       public final static int DO_EDIT = R.id.menu_edit_selected_tasks;
       
@@ -103,11 +111,15 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
       public final static int TOGGLE_SELECTION = R.id.ctx_menu_toggle_selection;
    }
    
-   private final static String CHECK_STATE = "check_state";
+
+   public static class Config extends MinDetailedTasksListFragment.Config
+   {
+      private final static String SELECT_STATE = "check_state";
+   }
    
    private final static int SORT_SELECTION_IDX = TaskSortPreference.SORT_ORDER_VALUES.length;
    
-   private final static int SORT_SELECTION_VALUE = TAG.hashCode();
+   public final static int SORT_SELECTION_VALUE = TAG.hashCode();
    
    
 
@@ -120,7 +132,9 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
       return fragment;
    }
    
-
+   private ISelectableTasksListListener listener;
+   
+   
 
    public static IntentFilter getIntentFilter()
    {
@@ -138,6 +152,28 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
 
 
    @Override
+   public void onAttach( Activity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof ISelectableTasksListListener )
+         listener = (ISelectableTasksListListener) activity;
+      else
+         listener = new NullTasksListListener();
+   }
+   
+
+
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      listener = null;
+   }
+   
+
+
+   @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
@@ -148,8 +184,68 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
 
 
    @Override
+   public View onCreateView( LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState )
+   {
+      return inflater.inflate( R.layout.taskslist_fragment, container, false );
+   }
+   
+
+
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      super.onSaveInstanceState( outState );
+      
+      putCurrentSelectionStateToConfig( configuration );
+      outState.putAll( configuration );
+   }
+   
+
+
+   @Override
+   public void configure( Bundle config )
+   {
+      super.configure( config );
+      
+      if ( config != null )
+      {
+         if ( config.containsKey( Config.SELECT_STATE ) )
+            configuration.putStringArrayList( Config.SELECT_STATE,
+                                              config.getStringArrayList( Config.SELECT_STATE ) );
+      }
+   }
+   
+
+
+   @Override
+   public Bundle createDefaultConfiguration()
+   {
+      final Bundle bundle = super.createDefaultConfiguration();
+      
+      bundle.putStringArrayList( Config.SELECT_STATE,
+                                 new ArrayList< String >( 0 ) );
+      
+      return bundle;
+   }
+   
+
+
+   private final void putCurrentSelectionStateToConfig( Bundle config )
+   {
+      if ( getListAdapter() != null )
+         config.putStringArrayList( Config.SELECT_STATE,
+                                    getListAdapter().getSelectedTaskIds() );
+   }
+   
+
+
+   @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
+      super.onCreateOptionsMenu( menu, inflater );
+      
       menu.add( Menu.NONE,
                 OptionsMenu.SELECT_ALL,
                 Menu.CATEGORY_CONTAINER,
@@ -174,6 +270,8 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
    @Override
    public void onPrepareOptionsMenu( Menu menu )
    {
+      super.onPrepareOptionsMenu( menu );
+      
       final SelectableTasksListFragmentAdapter adapter = getListAdapter();
       
       if ( adapter != null )
@@ -182,13 +280,6 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
          final boolean someSelected = adapter.areSomeSelected();
          final List< SelectableListTask > tasks = adapter.getSelectedTasks();
          final int selCnt = tasks.size();
-         
-         UIUtils.addOptionalMenuItem( menu,
-                                      OptionsMenu.SORT,
-                                      getString( R.string.abstaskslist_menu_opt_sort ),
-                                      Menu.CATEGORY_CONTAINER,
-                                      R.drawable.ic_menu_sort,
-                                      adapter.getCount() > 1 );
          
          UIUtils.addOptionalMenuItem( menu,
                                       OptionsMenu.DO_EDIT,
@@ -277,22 +368,8 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
                adapter.changeSelection( SelectableTasksListFragmentAdapter.SEL_MODE_INVERT );
                return true;
                
-            case OptionsMenu.SORT:
-               new AlertDialog.Builder( getActivity() ).setIcon( R.drawable.ic_dialog_sort )
-                                                       .setTitle( R.string.abstaskslist_dlg_sort_title )
-                                                       .setSingleChoiceItems( adapter.getSelectedCount() > 0
-                                                                                                            ? R.array.selectmultipletasks_sort_options
-                                                                                                            : R.array.app_sort_options,
-                                                                              getTaskSortIndex( getTaskSort() ),
-                                                                              this )
-                                                       .setNegativeButton( R.string.btn_cancel,
-                                                                           null )
-                                                       .show();
-               
-               return true;
-               
             case OptionsMenu.DO_EDIT:
-               onEditSelectedTasks();
+               listener.onEditSelectedTasks( getListAdapter().getSelectedTasks() );
                return true;
                
             case OptionsMenu.COMPLETE:
@@ -306,7 +383,7 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
-                                                                                 onCompleteSelectedTasks( true );
+                                                                                 listener.onCompleteSelectedTasks( getListAdapter().getSelectedTasks() );
                                                                               }
                                                                            } )
                                                        .setNegativeButton( R.string.btn_cancel,
@@ -325,7 +402,7 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
-                                                                                 onCompleteSelectedTasks( false );
+                                                                                 listener.onUncompleteSelectedTasks( getListAdapter().getSelectedTasks() );
                                                                               }
                                                                            } )
                                                        .setNegativeButton( R.string.btn_cancel,
@@ -344,7 +421,7 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
-                                                                                 onPostponeSelectedTasks();
+                                                                                 listener.onPostponeSelectedTasks( getListAdapter().getSelectedTasks() );
                                                                               }
                                                                            } )
                                                        .setNegativeButton( R.string.btn_cancel,
@@ -361,7 +438,7 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
-                                                                                 onDeleteSelectedTasks();
+                                                                                 listener.onDeleteSelectedTasks( getListAdapter().getSelectedTasks() );
                                                                               }
                                                                            } )
                                                        .setNegativeButton( R.string.btn_cancel,
@@ -370,7 +447,7 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
                return true;
                
             default :
-               break;
+               return super.onOptionsItemSelected( item );
          }
       }
       
@@ -412,7 +489,7 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
       switch ( item.getItemId() )
       {
          case CtxtMenu.TOGGLE_SELECTION:
-            ( (Checkable) info.targetView.findViewById( R.id.taskslist_listitem_priority ) ).toggle();
+            toggle( info.position );
             return true;
          default :
             return super.onContextItemSelected( item );
@@ -421,10 +498,103 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
    
 
 
-   @Override
-   public SelectableTasksListFragmentAdapter getListAdapter()
+   public void toggle( int pos )
    {
-      return (SelectableTasksListFragmentAdapter) super.getListAdapter();
+      getListAdapter().toggleSelection( pos );
+      putCurrentSelectionStateToConfig( configuration );
+   }
+   
+
+
+   @Override
+   protected int getDefaultTaskSort()
+   {
+      return MolokoApp.getSettings().getTaskSort();
+   }
+   
+
+
+   @Override
+   public int getTaskSortIndex( int value )
+   {
+      if ( value == SORT_SELECTION_VALUE )
+         return SORT_SELECTION_IDX;
+      else
+         return super.getTaskSortIndex( value );
+   }
+   
+
+
+   @Override
+   public int getTaskSortValue( int idx )
+   {
+      if ( idx == SORT_SELECTION_IDX )
+         return SORT_SELECTION_VALUE;
+      else
+         return super.getTaskSortValue( idx );
+   }
+   
+
+
+   @Override
+   protected void showChooseTaskSortDialog()
+   {
+      new AlertDialog.Builder( getActivity() ).setIcon( R.drawable.ic_dialog_sort )
+                                              .setTitle( R.string.abstaskslist_dlg_sort_title )
+                                              .setSingleChoiceItems( getListAdapter().getSelectedCount() > 0
+                                                                                                            ? R.array.selectmultipletasks_sort_options
+                                                                                                            : R.array.app_sort_options,
+                                                                     getTaskSortIndex( getTaskSortConfiguration() ),
+                                                                     defaultChooseTaskSortDialogListener )
+                                              .setNegativeButton( R.string.btn_cancel,
+                                                                  null )
+                                              .show();
+   }
+   
+
+
+   @Override
+   protected String resolveTaskSortToSqlite( int taskSort )
+   {
+      if ( taskSort == SORT_SELECTION_VALUE )
+         // Here we take the default task sort cause we re-sort the tasks later by their selection
+         return Queries.resolveTaskSortToSqlite( getDefaultTaskSort() );
+      else
+         return super.resolveTaskSortToSqlite( taskSort );
+   }
+   
+
+
+   @Override
+   public boolean shouldResortTasks( int taskSort )
+   {
+      // we always want to sort cause the selection may changed
+      // TODO: Enhancement: Think about a "dirty" flag to spare sorting.
+      if ( taskSort == SORT_SELECTION_VALUE )
+         return true;
+      else
+         return super.shouldResortTasks( taskSort );
+   }
+   
+
+
+   public Loader< List< SelectableListTask >> onCreateLoader( int id,
+                                                              Bundle config )
+   {
+      showLoadingSpinner( true );
+      
+      final IFilter filter = config.getParcelable( Config.FILTER );
+      final String selection = filter != null ? filter.getSqlSelection() : null;
+      final String order = resolveTaskSortToSqlite( config.getInt( Config.TASK_SORT_ORDER ) );
+      
+      final SelectableListTasksLoader loader = new SelectableListTasksLoader( getActivity(),
+                                                                              selection,
+                                                                              order,
+                                                                              config.getStringArrayList( Config.SELECT_STATE ) );
+      
+      loader.setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
+      
+      return loader;
    }
    
 
@@ -439,38 +609,32 @@ public class SelectableTasksListsFragment extends MinDetailedTasksListFragment
 
 
    @Override
-   protected ListAdapter createListAdapterForResult( List< ListTask > result,
+   protected ListAdapter createListAdapterForResult( List< SelectableListTask > result,
                                                      IFilter filter )
    {
-      final List< SelectableListTask > selTasks = result != null
-                                                      ? SelectableListTask.fromListTaskList(  result )
-                                                      : Collections.< SelectableListTask > emptyList();
+      final SelectableTasksListFragmentAdapter adapter = new SelectableTasksListFragmentAdapter( getActivity(),
+                                                                                                 R.layout.selectmultipletasks_activity_listitem,
+                                                                                                 result );
+      if ( getTaskSortConfiguration() == SORT_SELECTION_VALUE )
+         adapter.sortBySelection();
       
-      final int flags = 0;
-      return new SelectableTasksListFragmentAdapter( getActivity(),
-                                                     R.layout.selectmultipletasks_activity_listitem,
-                                                     selTasks );
+      return adapter;
    }
    
-   private final DialogInterface.OnClickListener chooseTaskSortDialogListener = new OnClickListener()
+
+
+   @Override
+   public SelectableTasksListFragmentAdapter getListAdapter()
    {
-      public void onClick( DialogInterface dialog, int which )
-      {
-         switch ( which )
-         {
-            case Dialog.BUTTON_NEGATIVE:
-               break;
-            
-            default :
-               final int newTaskSort = getTaskSortValue( which );
-               
-               dialog.dismiss();
-               
-               if ( newTaskSort != -1 && !isTaskSortConfigured( newTaskSort ) )
-                  listener.onTaskSortChanged( newTaskSort );
-               
-               break;
-         }
-      }
-   };
+      return (SelectableTasksListFragmentAdapter) super.getListAdapter();
+   }
+   
+
+
+   @Override
+   protected void notifyDataSetChanged()
+   {
+      if ( getListAdapter() != null )
+         getListAdapter().notifyDataSetChanged();
+   }
 }

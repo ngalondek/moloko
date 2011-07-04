@@ -116,7 +116,28 @@ public class SelectableListTask extends ListTask
    
 
 
-   public final static List< SelectableListTask > fromListTaskList( List< ListTask > list )
+   public final static int selectTasksById( List< ? extends SelectableListTask > tasks,
+                                            List< String > taskIdsToSelect )
+   {
+      int numSelected = 0;
+      
+      for ( int i = 0, cnt = tasks.size(); i < cnt; ++i )
+         tasks.get( i ).setSelected( false );
+      
+      for ( String s : taskIdsToSelect )
+         for ( int i = 0, cnt = tasks.size(); i < cnt; ++i )
+            if ( tasks.get( i ).getId().equals( s ) )
+            {
+               tasks.get( i ).setSelected( true );
+               ++numSelected;
+            }
+      
+      return numSelected;
+   }
+   
+
+
+   public final static List< SelectableListTask > fromListTaskList( List< ? extends ListTask > list )
    {
       final List< SelectableListTask > listTaskList = new ArrayList< SelectableListTask >( list.size() );
       
@@ -128,7 +149,7 @@ public class SelectableListTask extends ListTask
    
 
 
-   public final static List< ListTask > asListTaskList( List< SelectableListTask > list )
+   public final static List< ListTask > asListTaskList( List< ? extends SelectableListTask > list )
    {
       final List< ListTask > listTaskList = new ArrayList< ListTask >( list.size() );
       

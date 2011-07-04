@@ -22,185 +22,99 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.Checkable;
-import android.widget.ListView;
-import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter;
-import dev.drsoran.moloko.prefs.TaskSortPreference;
+import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
+import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListListener;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.TaskEditUtils;
-import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.rtm.ListTask;
-import dev.drsoran.rtm.SelectableListTask;
+import dev.drsoran.rtm.Task;
 
 
-// TODO: Repair
 public class SelectMultipleTasksActivity extends AbstractTasksListActivity
+         implements ISelectableTasksListListener
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + SelectMultipleTasksActivity.class.getSimpleName();
    
    
 
-   public SelectableTasksListFragmentAdapter getListAdapter()
+   public void onOpenTask( int pos )
    {
-      // return (SelectMultipleTasksListAdapter) super.getListAdapter();
-      return null;
+      if ( getTasksListFragment() != null )
+         getTasksListFragment().toggle( pos );
    }
    
 
 
-   protected void onListItemClick( ListView l, View v, int position, long id )
+   public void onEditSelectedTasks( List< ? extends Task > tasks )
    {
-      ( (Checkable) v.findViewById( R.id.taskslist_listitem_priority ) ).toggle();
-      toggleSelection( position );
-   }
-   
-
-
-   @Override
-   protected ListAdapter createListAdapter( AsyncFillListResult result )
-   {
-      final List< ListTask > selTasks = result != null
-                                                      ? SelectableListTask.asListTaskList( result.tasks )
-                                                      : Collections.< ListTask > emptyList();
-      
-      return new SelectMultipleTasksListAdapter( this,
-                                                 R.layout.selectmultipletasks_activity_listitem,
-                                                 selTasks,
-                                                 result != null
-                                                               ? result.filter
-                                                               : new RtmSmartFilter( Strings.EMPTY_STRING ) );
-   }
-   
-
-
-   @Override
-   protected void beforeQueryTasksAsync( Bundle configuration )
-   {
-      super.beforeQueryTasksAsync( configuration );
-      
-      final SelectMultipleTasksListAdapter adapter = getListAdapter();
-      if ( adapter != null )
-         configuration.putStringArrayList( CHECK_STATE,
-                                           adapter.getSelectedTaskIds() );
-   }
-   
-
-
-   @Override
-   protected void setTasksResult( AsyncFillListResult result )
-   {
-      super.setTasksResult( result );
-      
-      if ( result.configuration.containsKey( CHECK_STATE ) )
-         getListAdapter().setSelectedTaskIds( result.configuration.getStringArrayList( CHECK_STATE ) );
-   }
-   
-
-
-   @Override
-   protected int getTaskSortIndex( int value )
-   {
-      if ( value == SORT_SELECTION_VALUE )
-         return SORT_SELECTION_IDX;
-      else
-         return super.getTaskSortIndex( value );
-   }
-   
-
-
-   @Override
-   protected int getTaskSortValue( int idx )
-   {
-      if ( idx == SORT_SELECTION_IDX )
-         return SORT_SELECTION_VALUE;
-      else
-         return super.getTaskSortValue( idx );
-   }
-   
-
-
-   protected void setTaskSort( int taskSort, boolean refillList )
-   {
-      // if ( taskSort == SORT_SELECTION_VALUE )
-      // {
-      // getListAdapter().sortBySelection();
-      // super.setTaskSort( taskSort, false );
-      // }
-      // else
-      // super.setTaskSort( taskSort, refillList );
-   }
-   
-
-
-   @Override
-   protected boolean isSameTaskSortLikeCurrent( int sortOrder )
-   {
-      // we always want to sort cause the selection may changed
-      // TODO: Enhancement: Think about a "dirty" flag to spare sorting.
-      if ( sortOrder == SORT_SELECTION_VALUE )
-         return false;
-      else
-         return super.isSameTaskSortLikeCurrent( sortOrder );
-   }
-   
-
-
-   private void toggleSelection( int pos )
-   {
-      final SelectableTasksListFragmentAdapter adapter = getListAdapter();
-      adapter.toggleSelection( pos );
-   }
-   
-
-
-   private void onEditSelectedTasks()
-   {
-      final int selCnt = getListAdapter().getSelectedCount();
+      final int selCnt = tasks.size();
       if ( selCnt > 0 )
          if ( selCnt > 1 )
             startActivityForResult( Intents.createEditMultipleTasksIntent( this,
-                                                                           getListAdapter().getSelectedTaskIds() ),
+                                                                           getTaskIds( tasks ) ),
                                     EditMultipleTasksActivity.REQ_EDIT_TASK );
          else
             startActivityForResult( Intents.createEditTaskIntent( this,
-                                                                  getListAdapter().getSelectedTaskIds()
-                                                                                  .get( 0 ) ),
+                                                                  tasks.get( 0 )
+                                                                       .getId() ),
                                     TaskEditActivity.REQ_EDIT_TASK );
+      
    }
    
 
 
-   private void onSelectedTasksCompletion( boolean complete )
+   public void onCompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      TaskEditUtils.setTasksCompletion( this,
-                                        getListAdapter().getSelectedTasks(),
-                                        complete );
+      TaskEditUtils.setTasksCompletion( this, tasks, true );
    }
    
 
 
-   private void onSelectedTasksPostpone()
+   public void onUncompleteSelectedTasks( List< ? extends Task > tasks )
    {
-      TaskEditUtils.postponeTasks( this, getListAdapter().getSelectedTasks() );
+      TaskEditUtils.setTasksCompletion( this, tasks, false );
    }
    
 
 
-   private void onSelectedTasksDelete()
+   public void onPostponeSelectedTasks( List< ? extends Task > tasks )
    {
-      TaskEditUtils.deleteTasks( this, getListAdapter().getSelectedTasks() );
+      TaskEditUtils.postponeTasks( this, tasks );
+      
    }
+   
+
+
+   public void onDeleteSelectedTasks( List< ? extends Task > tasks )
+   {
+      TaskEditUtils.deleteTasks( this, tasks );
+   }
+   
+
+
+   private List< String > getTaskIds( List< ? extends Task > tasks )
+   {
+      final List< String > taskIds = new ArrayList< String >( tasks.size() );
+      for ( Task task : tasks )
+      {
+         taskIds.add( task.getId() );
+      }
+      return taskIds;
+   }
+   
+
+
+   @Override
+   protected SelectableTasksListsFragment getTasksListFragment()
+   {
+      if ( super.getTasksListFragment() instanceof SelectableTasksListsFragment )
+         return (SelectableTasksListsFragment) super.getTasksListFragment();
+      else
+         return null;
+   }
+   
 }

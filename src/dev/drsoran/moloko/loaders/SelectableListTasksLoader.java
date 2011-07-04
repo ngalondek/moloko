@@ -22,57 +22,49 @@
 
 package dev.drsoran.moloko.loaders;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.rtm.ListTask;
+import dev.drsoran.rtm.SelectableListTask;
 import dev.drsoran.rtm.Task;
 
 
-public class ListTasksLoader extends AbstractTasksListLoader< ListTask >
+public class SelectableListTasksLoader extends
+         AbstractTasksListLoader< SelectableListTask >
 {
    private final String selection;
    
    private final String order;
    
-   private final String taskId;
+   private final List< String > selectedTaskIds;
    
    
 
-   public ListTasksLoader( Context context, String taskId )
-   {
-      super( context );
-      this.selection = null;
-      this.order = null;
-      this.taskId = taskId;
-   }
-   
-
-
-   public ListTasksLoader( Context context, String selection, String order )
+   public SelectableListTasksLoader( Context context, String selection,
+      String order, List< String > selectedTaskIds )
    {
       super( context );
       this.selection = selection;
       this.order = order;
-      this.taskId = null;
+      this.selectedTaskIds = selectedTaskIds;
    }
    
 
 
    @Override
-   protected List< ListTask > queryResultInBackground( ContentProviderClient client )
+   protected List< SelectableListTask > queryResultInBackground( ContentProviderClient client )
    {
-      final List< Task > tasks;
+      final List< Task > tasks = TasksProviderPart.getTasks( client,
+                                                             selection,
+                                                             order );
+      final List< SelectableListTask > selectableTasks = SelectableListTask.fromListTaskList( ListTask.fromTaskList( tasks ) );
       
-      if ( taskId != null )
-         tasks = Collections.singletonList( TasksProviderPart.getTask( client,
-                                                                       taskId ) );
-      else
-         tasks = TasksProviderPart.getTasks( client, selection, order );
+      if ( selectableTasks != null )
+         SelectableListTask.selectTasksById( selectableTasks, selectedTaskIds );
       
-      return ListTask.fromTaskList( tasks );
+      return selectableTasks;
    }
 }

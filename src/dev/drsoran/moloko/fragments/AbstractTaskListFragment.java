@@ -25,19 +25,19 @@ package dev.drsoran.moloko.fragments;
 import java.util.HashMap;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.view.Menu;
 import android.text.format.DateUtils;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,7 +101,7 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
 
 
    @Override
-   public void onAttach( Activity activity )
+   public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       
@@ -229,6 +229,8 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
+      super.onCreateOptionsMenu( menu, inflater );
+      
       menu.add( Menu.NONE,
                 OptionsMenu.SETTINGS,
                 Menu.CATEGORY_SECONDARY,
@@ -245,6 +247,8 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    @Override
    public void onPrepareOptionsMenu( Menu menu )
    {
+      super.onPrepareOptionsMenu( menu );
+      
       UIUtils.addSyncMenuItem( getActivity(),
                                menu,
                                OptionsMenu.SYNC,

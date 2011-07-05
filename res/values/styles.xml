@@ -17,11 +17,11 @@
 
    <style
       name="Theme"
-      parent="android:Theme"></style>
+      parent="Theme.Sherlock"></style>
 
    <style
       name="Theme.Moloko"
-      parent="android:style/Theme.Light">
+      parent="Theme.Sherlock.Light">
       <item
          name="android:windowNoTitle">true</item>
       <item
@@ -43,7 +43,7 @@
 
    <style
       name="Theme.Moloko.Preferences"
-      parent="Theme">
+      parent="Theme.Sherlock">
       <item
          name="android:windowTitleBackgroundStyle">@style/App_Default_Title_Bgnd</item>
    </style>

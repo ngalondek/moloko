@@ -106,7 +106,7 @@ public abstract class TitleWithViewLayout extends LinearLayout
       
       // Title
       setAttr( context, text, array, new int[]
-      { R.styleable.TitleWithView_title, R.styleable.TitleWithView_titleColor,
+      { R.styleable.TitleWithView_titleText, R.styleable.TitleWithView_titleColor,
        R.styleable.TitleWithView_titleSize,
        R.styleable.TitleWithView_titleStyle,
        R.styleable.TitleWithView_titlePaddingTop } );

@@ -25,26 +25,26 @@ package dev.drsoran.moloko.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
+import android.support.v4.view.Menu;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -152,7 +152,7 @@ public class SelectableTasksListsFragment extends
 
 
    @Override
-   public void onAttach( Activity activity )
+   public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       

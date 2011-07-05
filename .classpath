@@ -6,6 +6,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="lib/antlr-runtime-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/acra-3.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/android-support-v4.jar" sourcepath="C:/Programme/Android/android-sdk/extras/android/compatibility/v4/src/java"/>
+	<classpathentry kind="src" path="ActionBarSherlock_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

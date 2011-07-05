@@ -150,7 +150,7 @@
                   android:layout_alignLeft="@id/task_overview_list_name"
                   android:layout_alignWithParentIfMissing="true"
                   moloko:titlePaddingTop="10dip"
-                  moloko:title="dateTime_title"
+                  moloko:titleText="dateTime_title"
                   moloko:text="dateTime_text" />
 
                <dev.drsoran.moloko.layouts.TitleWithTextLayout
@@ -164,7 +164,7 @@
                   android:layout_alignLeft="@id/task_overview_list_name"
                   android:layout_alignWithParentIfMissing="true"
                   moloko:titlePaddingTop="10dip"
-                  moloko:title="@string/task_location"
+                  moloko:titleText="@string/task_location"
                   moloko:text="Somewhere" />
 
                <dev.drsoran.moloko.layouts.TitleWithWrappingLayout
@@ -178,7 +178,7 @@
                   android:layout_alignLeft="@id/task_overview_list_name"
                   android:layout_alignWithParentIfMissing="true"
                   moloko:titlePaddingTop="10dip"
-                  moloko:title="@string/task_participants" />
+                  moloko:titleText="@string/task_participants" />
 
                <dev.drsoran.moloko.layouts.TitleWithTextLayout
                   android:id="@+id/task_url"
@@ -191,7 +191,7 @@
                   android:layout_alignLeft="@id/task_overview_list_name"
                   android:layout_alignWithParentIfMissing="true"
                   moloko:titlePaddingTop="10dip"
-                  moloko:title="@string/task_url"
+                  moloko:titleText="@string/task_url"
                   moloko:text="http://code.google.com/p/moloko/" />
             </RelativeLayout>
 

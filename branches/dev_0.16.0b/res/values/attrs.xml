@@ -19,7 +19,7 @@
 		<attr name="topLineColor" format="reference|color" />
 		<attr name="topLineHeight" format="reference|dimension" />
 		<attr name="imageSrc" format="reference" />
-		<attr name="title" format="reference|string" />
+		<attr name="titleText" format="reference|string" />
 		<attr name="titleColor" format="reference|color" />
 		<attr name="titleSize" format="reference|dimension" />
 		<attr name="titleStyle">
@@ -50,7 +50,7 @@
    </declare-styleable>
 
 	<declare-styleable name="TitleBar">
-		<attr name="titleText" format="reference|string" />
+		<attr name="titleBarText" format="reference|string" />
 		<attr name="showButton">
 			<flag name="none" value="0" />
 			<flag name="search" value="1" />

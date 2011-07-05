@@ -23,7 +23,7 @@
    <dev.drsoran.moloko.layouts.TitleBarLayout
       android:id="@+id/title_bar"
       style="@style/App_TitleBar"
-      moloko:titleText="@string/app_home"
+      moloko:titleBarText="@string/app_home"
       moloko:showButton="search" />
 
    <GridView

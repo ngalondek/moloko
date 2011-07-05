@@ -452,7 +452,7 @@ public class TitleBarLayout extends LinearLayout implements
                                                                0,
                                                                0 );
       
-      final String titleText = array.getString( R.styleable.TitleBar_titleText );
+      final String titleText = array.getString( R.styleable.TitleBar_titleBarText );
       if ( titleText != null )
          ( (TextView) findViewById( R.id.app_titlebar_text ) ).setText( titleText );
       

@@ -23,7 +23,7 @@
    <dev.drsoran.moloko.layouts.TitleBarLayout
       xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
       style="@style/App_TitleBar"
-      moloko:titleText="@string/app_name"
+      moloko:titleBarText="@string/app_name"
       moloko:showButton="add_task|home|search" />
 
    <FrameLayout

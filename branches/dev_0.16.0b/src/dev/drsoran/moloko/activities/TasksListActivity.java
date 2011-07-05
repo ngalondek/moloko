@@ -25,8 +25,8 @@ package dev.drsoran.moloko.activities;
 import java.util.List;
 
 import android.content.Intent;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 
 import com.mdt.rtm.data.RtmTaskNote;
 

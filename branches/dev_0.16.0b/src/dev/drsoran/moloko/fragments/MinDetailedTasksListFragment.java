@@ -24,14 +24,14 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
+import android.support.v4.view.Menu;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,7 +112,7 @@ public class MinDetailedTasksListFragment extends
 
 
    @Override
-   public void onAttach( Activity activity )
+   public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       

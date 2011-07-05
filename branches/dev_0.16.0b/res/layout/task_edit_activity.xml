@@ -103,7 +103,7 @@
             android:layout_below="@id/task_edit_desc"
             android:layout_alignLeft="@id/task_edit_desc"
             moloko:titlePaddingTop="8dip"
-            moloko:title="@string/task_edit_list" />
+            moloko:titleText="@string/task_edit_list" />
 
          <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
             android:id="@+id/task_edit_priority"
@@ -113,7 +113,7 @@
             android:layout_marginTop="3dip"
             android:layout_below="@id/task_edit_list"
             android:layout_alignLeft="@id/task_edit_desc"
-            moloko:title="@string/task_edit_priority" />
+            moloko:titleText="@string/task_edit_priority" />
 
          <!-- Tags -->
          <LinearLayout
@@ -316,7 +316,7 @@
             android:layout_below="@id/task_edit_estimate_layout"
             android:layout_alignLeft="@id/task_edit_desc"
             moloko:titlePaddingTop="8dip"
-            moloko:title="@string/task_location" />
+            moloko:titleText="@string/task_location" />
 
          <dev.drsoran.moloko.layouts.TitleWithEditTextLayout
             android:id="@+id/task_edit_url"
@@ -330,7 +330,7 @@
             android:imeOptions="actionNext"
             android:selectAllOnFocus="true"
             moloko:titlePaddingTop="8dip"
-            moloko:title="@string/task_url" />
+            moloko:titleText="@string/task_url" />
       </RelativeLayout>
    </ScrollView>
 

@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
@@ -34,6 +35,7 @@ import dev.drsoran.moloko.fragments.AbstractTaskListFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
@@ -57,6 +59,21 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    private Bundle configuration;
    
    
+
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case android.R.id.home:
+            startActivity( Intents.createOpenHomeIntent( this ) );
+            return true;
+      }
+      
+      return super.onOptionsItemSelected( item );
+   }
+   
+
 
    @Override
    public void onCreate( Bundle savedInstanceState )
@@ -115,6 +132,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
 
 
+   @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
@@ -122,6 +140,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
 
 
+   @Override
    public void configure( Bundle config )
    {
       if ( configuration == null )
@@ -140,6 +159,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
 
 
+   @Override
    public Bundle createDefaultConfiguration()
    {
       final Bundle bundle = new Bundle();
@@ -158,6 +178,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
 
 
+   @Override
    public void onTaskSortChanged( int newTaskSort )
    {
       final Bundle config = getCurrentTasksListFragmentConfiguration();

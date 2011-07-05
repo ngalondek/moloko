@@ -29,9 +29,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -89,6 +90,8 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    protected final static long DEFAULT_LOADER_THROTTLE_MS = 1 * DateUtils.SECOND_IN_MILLIS;
    
    private final static int TASKS_LOADER_ID = 1;
+   
+   private final Handler handler = new Handler();
    
    private ITasksListListener listener;
    
@@ -176,6 +179,7 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
+   @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
@@ -183,6 +187,7 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
+   @Override
    public void configure( Bundle config )
    {
       if ( configuration == null )
@@ -201,6 +206,7 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
+   @Override
    public Bundle createDefaultConfiguration()
    {
       final Bundle bundle = new Bundle();
@@ -213,6 +219,7 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
+   @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
@@ -229,8 +236,6 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      super.onCreateOptionsMenu( menu, inflater );
-      
       menu.add( Menu.NONE,
                 OptionsMenu.SETTINGS,
                 Menu.CATEGORY_SECONDARY,
@@ -240,14 +245,6 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
                                     menu,
                                     OptionsMenu.SETTINGS,
                                     MolokoPreferencesActivity.class );
-   }
-   
-
-
-   @Override
-   public void onPrepareOptionsMenu( Menu menu )
-   {
-      super.onPrepareOptionsMenu( menu );
       
       UIUtils.addSyncMenuItem( getActivity(),
                                menu,
@@ -260,6 +257,31 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
                                    Menu.CATEGORY_CONTAINER,
                                    R.drawable.ic_menu_sort,
                                    hasMultipleTasks() );
+   }
+   
+
+
+   @Override
+   public final void onPrepareOptionsMenu( Menu menu )
+   {
+      // Use getActivity().invalidateOptionsMenu()
+   }
+   
+
+
+   protected void notifyOptionsMenuChanged()
+   {
+      if ( !getActivity().isFinishing() )
+      {
+         handler.post( new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               getActivity().invalidateOptionsMenu();
+            }
+         } );
+      }
    }
    
 
@@ -432,6 +454,7 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
+   @Override
    public void onLoadFinished( Loader< List< T >> loader, List< T > data )
    {
       showLoadingSpinner( false );
@@ -450,6 +473,7 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
+   @Override
    public void onLoaderReset( Loader< List< T >> loader )
    {
       setListAdapter( createEmptyListAdapter() );
@@ -457,6 +481,7 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
    protected final DialogInterface.OnClickListener defaultChooseTaskSortDialogListener = new OnClickListener()
    {
+      @Override
       public void onClick( DialogInterface dialog, int which )
       {
          switch ( which )

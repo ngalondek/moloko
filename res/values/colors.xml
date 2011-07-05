@@ -16,11 +16,11 @@
 <resources>
 	<color name="app_default_bgnd">@android:color/white</color>
 	<color name="app_default_title_bgnd">@color/priority_2</color>
-	<color name="app_titlebar_bgnd_start">@color/priority_3</color>
-	<color name="app_titlebar_bgnd_end">#FF0078F0</color>
+	<color name="app_actionbar_bgnd_start">@color/priority_3</color>
+	<color name="app_actionbar_bgnd_end">#FF0078F0</color>
+	<color name="app_actionbar_text_color">@android:color/white</color>
    <color name="app_titlebar_expanded_bgnd_start">@color/app_titlebar_toggle_btn_bgnd_checked_end</color>
-   <color name="app_titlebar_expanded_bgnd_end">#FFE04F00</color>
-	<color name="app_titlebar_text">@android:color/white</color>
+   <color name="app_titlebar_expanded_bgnd_end">#FFE04F00</color>	
 	<color name="app_titlebar_separator">#FF87C3FF</color>
 	<color name="app_titlebar_btn_bgnd_normal">@android:color/transparent</color>
 	<color name="app_titlebar_btn_bgnd_pressed">@color/priority_2</color>

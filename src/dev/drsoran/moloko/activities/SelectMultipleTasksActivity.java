@@ -41,6 +41,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
    
 
+   @Override
    public void onOpenTask( int pos )
    {
       if ( getTasksListFragment() != null )
@@ -49,6 +50,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
 
 
+   @Override
    public void onEditSelectedTasks( List< ? extends Task > tasks )
    {
       final int selCnt = tasks.size();
@@ -67,6 +69,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
 
 
+   @Override
    public void onCompleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.setTasksCompletion( this, tasks, true );
@@ -74,6 +77,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
 
 
+   @Override
    public void onUncompleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.setTasksCompletion( this, tasks, false );
@@ -81,6 +85,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
 
 
+   @Override
    public void onPostponeSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.postponeTasks( this, tasks );
@@ -89,6 +94,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
 
 
+   @Override
    public void onDeleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.deleteTasks( this, tasks );

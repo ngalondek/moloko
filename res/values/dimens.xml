@@ -15,11 +15,11 @@
 
 <resources>
    <dimen
-      name="app_titlebar_height">40dip</dimen>
+      name="app_actionbar_height">40dip</dimen>
    <dimen
-      name="app_titlebar_text_size">14sp</dimen>
+      name="app_actionbar_text_size">14sp</dimen>
    <dimen
-      name="app_titlebar_btn_width">@dimen/app_titlebar_height</dimen>
+      name="app_titlebar_btn_width">@dimen/app_actionbar_height</dimen>
    <dimen
       name="app_title_with_text_textSize">14sp</dimen>
    <dimen

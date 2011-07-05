@@ -27,29 +27,30 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter;
+import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter.ISelectionChangedListener;
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
 import dev.drsoran.moloko.loaders.SelectableListTasksLoader;
@@ -63,7 +64,7 @@ import dev.drsoran.rtm.SelectableListTask;
 
 public class SelectableTasksListsFragment extends
          AbstractTaskListFragment< SelectableListTask > implements
-         IOnSettingsChangedListener
+         IOnSettingsChangedListener, ISelectionChangedListener
 {
    private final static String TAG = "Moloko."
       + SelectableTasksListsFragment.class.getSimpleName();
@@ -263,14 +264,6 @@ public class SelectableTasksListsFragment extends
                 Menu.CATEGORY_CONTAINER,
                 R.string.select_multiple_tasks_menu_opt_inv_selection )
           .setIcon( R.drawable.ic_menu_select_invert_tasks );
-   }
-   
-
-
-   @Override
-   public void onPrepareOptionsMenu( Menu menu )
-   {
-      super.onPrepareOptionsMenu( menu );
       
       final SelectableTasksListFragmentAdapter adapter = getListAdapter();
       
@@ -380,6 +373,7 @@ public class SelectableTasksListsFragment extends
                                                        .setPositiveButton( R.string.btn_complete,
                                                                            new OnClickListener()
                                                                            {
+                                                                              @Override
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
@@ -399,6 +393,7 @@ public class SelectableTasksListsFragment extends
                                                        .setPositiveButton( R.string.btn_uncomplete,
                                                                            new OnClickListener()
                                                                            {
+                                                                              @Override
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
@@ -418,6 +413,7 @@ public class SelectableTasksListsFragment extends
                                                        .setPositiveButton( R.string.btn_postpone,
                                                                            new OnClickListener()
                                                                            {
+                                                                              @Override
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
@@ -435,6 +431,7 @@ public class SelectableTasksListsFragment extends
                                                        .setPositiveButton( R.string.btn_delete,
                                                                            new OnClickListener()
                                                                            {
+                                                                              @Override
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
@@ -578,6 +575,7 @@ public class SelectableTasksListsFragment extends
    
 
 
+   @Override
    public Loader< List< SelectableListTask >> onCreateLoader( int id,
                                                               Bundle config )
    {
@@ -602,6 +600,8 @@ public class SelectableTasksListsFragment extends
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
+      notifyOptionsMenuChanged();
+      
       return new SelectableTasksListFragmentAdapter( getActivity(),
                                                      R.layout.selectmultipletasks_activity_listitem );
    }
@@ -615,8 +615,13 @@ public class SelectableTasksListsFragment extends
       final SelectableTasksListFragmentAdapter adapter = new SelectableTasksListFragmentAdapter( getActivity(),
                                                                                                  R.layout.selectmultipletasks_activity_listitem,
                                                                                                  result );
+      
+      adapter.setSelectionChangedListener( this );
+      
       if ( getTaskSortConfiguration() == SORT_SELECTION_VALUE )
          adapter.sortBySelection();
+      
+      notifyOptionsMenuChanged();
       
       return adapter;
    }
@@ -636,5 +641,13 @@ public class SelectableTasksListsFragment extends
    {
       if ( getListAdapter() != null )
          getListAdapter().notifyDataSetChanged();
+   }
+   
+
+
+   @Override
+   public void onSelectionChanged()
+   {
+      notifyOptionsMenuChanged();
    }
 }

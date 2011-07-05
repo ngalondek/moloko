@@ -27,8 +27,8 @@
 	
 	<gradient
 	   android:type="linear"
-		android:startColor="@color/app_titlebar_bgnd_start"
-		android:endColor="@color/app_titlebar_bgnd_end"
+		android:startColor="@color/app_actionbar_bgnd_start"
+		android:endColor="@color/app_actionbar_bgnd_end"
 		android:angle="-90" />
 
 </shape>

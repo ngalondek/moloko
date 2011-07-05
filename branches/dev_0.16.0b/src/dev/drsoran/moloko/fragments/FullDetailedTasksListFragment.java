@@ -28,9 +28,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -38,14 +38,15 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.text.TextUtils;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -192,9 +193,9 @@ public class FullDetailedTasksListFragment extends
 
 
    @Override
-   public void onPrepareOptionsMenu( Menu menu )
+   public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      super.onPrepareOptionsMenu( menu );
+      super.onCreateOptionsMenu( menu, inflater );
       
       UIUtils.addOptionalMenuItem( menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
@@ -376,6 +377,7 @@ public class FullDetailedTasksListFragment extends
    
 
 
+   @Override
    public void onClick( View view )
    {
       switch ( view.getId() )
@@ -460,6 +462,7 @@ public class FullDetailedTasksListFragment extends
       
       UIUtils.newDeleteElementDialog( activity, task.getName(), new Runnable()
       {
+         @Override
          public void run()
          {
             TaskEditUtils.deleteTask( activity, task );
@@ -469,6 +472,7 @@ public class FullDetailedTasksListFragment extends
    
 
 
+   @Override
    public Loader< List< ListTask >> onCreateLoader( int id, Bundle config )
    {
       showLoadingSpinner( true );
@@ -490,6 +494,8 @@ public class FullDetailedTasksListFragment extends
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
+      notifyOptionsMenuChanged();
+      
       return new FullDetailedTasksListFragmentAdapter( getActivity(),
                                                        R.layout.fulldetailed_taskslist_listitem );
    }
@@ -500,6 +506,8 @@ public class FullDetailedTasksListFragment extends
    protected ListAdapter createListAdapterForResult( List< ListTask > result,
                                                      IFilter filter )
    {
+      notifyOptionsMenuChanged();
+      
       final int flags = 0;
       return new FullDetailedTasksListFragmentAdapter( getActivity(),
                                                        R.layout.fulldetailed_taskslist_listitem,
@@ -528,6 +536,7 @@ public class FullDetailedTasksListFragment extends
    
    private final DialogInterface.OnClickListener chooseMultipleTagsDialogListener = new OnClickListener()
    {
+      @Override
       public void onClick( DialogInterface dialog, int which )
       {
          final boolean andLink = ( which == DialogInterface.BUTTON1 );

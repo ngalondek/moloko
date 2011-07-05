@@ -45,8 +45,15 @@ public class SelectableTasksListFragmentAdapter extends
       + SelectableTasksListFragmentAdapter.class.getName();
    
    
+   public static interface ISelectionChangedListener
+   {
+      void onSelectionChanged();
+   }
+   
+
    private final static class CmpSelection implements Comparator< ListTask >
    {
+      @Override
       public int compare( ListTask object1, ListTask object2 )
       {
          if ( object1 == object2 )
@@ -71,6 +78,8 @@ public class SelectableTasksListFragmentAdapter extends
    
    public final static int SEL_MODE_INVERT = 3;
    
+   private ISelectionChangedListener listener;
+   
    
 
    public SelectableTasksListFragmentAdapter( Context context, int resourceId )
@@ -84,6 +93,13 @@ public class SelectableTasksListFragmentAdapter extends
       List< SelectableListTask > tasks )
    {
       super( context, resourceId, SelectableListTask.asListTaskList( tasks ) );
+   }
+   
+
+
+   public void setSelectionChangedListener( ISelectionChangedListener listener )
+   {
+      this.listener = listener;
    }
    
 
@@ -132,16 +148,21 @@ public class SelectableTasksListFragmentAdapter extends
          default :
             break;
       }
-      
-      notifyDataSetChanged();
    }
    
 
 
    public void setSelection( int pos, boolean select )
    {
+      setSelectionWithoutNotify( pos, select );
+      notifyChanged();
+   }
+   
+
+
+   private void setSelectionWithoutNotify( int pos, boolean select )
+   {
       getItem( pos ).setSelected( select );
-      notifyDataSetChanged();
    }
    
 
@@ -217,12 +238,12 @@ public class SelectableTasksListFragmentAdapter extends
    public void setSelectedTaskIds( List< String > taskIds )
    {
       for ( int i = 0, cnt = getCount(); i < cnt; ++i )
-         getItem( i ).setSelected( false );
+         setSelectionWithoutNotify( i, false );
       
       for ( String s : taskIds )
          for ( int i = 0, cnt = getCount(); i < cnt; ++i )
             if ( getItem( i ).getId().equals( s ) )
-               getItem( i ).setSelected( true );
+               setSelectionWithoutNotify( i, true );
    }
    
 
@@ -230,7 +251,7 @@ public class SelectableTasksListFragmentAdapter extends
    public void setSelectedTaskIdsAndNotifyDataChanged( List< String > taskIds )
    {
       setSelectedTaskIds( taskIds );
-      notifyDataSetChanged();
+      notifyChanged();
    }
    
 
@@ -239,5 +260,21 @@ public class SelectableTasksListFragmentAdapter extends
    public SelectableListTask getItem( int position )
    {
       return (SelectableListTask) super.getItem( position );
+   }
+   
+
+
+   private void notifySelectionChanged()
+   {
+      if ( listener != null )
+         listener.onSelectionChanged();
+   }
+   
+
+
+   private void notifyChanged()
+   {
+      notifyDataSetChanged();
+      notifySelectionChanged();
    }
 }

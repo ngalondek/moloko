@@ -76,31 +76,31 @@ public final class UIUtils
    { android.R.attr.state_checked };
    
    
-   
+
    private UIUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-   
-   
+
+
    public final static String getTrimmedText( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-   
-   
+
+
    public final static CharSequence getTrimmedSequence( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-   
-   
+
+
    public final static void setTitle( Activity activity, String text )
    {
-      final View titleBarText = activity.findViewById( R.id.app_titlebar_text );
+      final View titleBarText = activity.findViewById( R.id.app_actionbar_text_color );
       
       if ( titleBarText instanceof TextView )
       {
@@ -112,20 +112,20 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static void setTitle( Activity activity, int resId )
    {
       setTitle( activity, activity.getResources().getString( resId ) );
    }
    
-   
-   
+
+
    public final static void setTitle( Activity activity,
                                       String text,
                                       int iconResId )
    {
-      final View view = activity.findViewById( R.id.app_titlebar_text );
+      final View view = activity.findViewById( R.id.app_actionbar_text_color );
       
       if ( view instanceof TextView )
       {
@@ -141,7 +141,7 @@ public final class UIUtils
                                                  .openRawResource( iconResId ) );
             
             final int iconSize = activity.getResources()
-                                         .getDimensionPixelSize( R.dimen.app_titlebar_text_size );
+                                         .getDimensionPixelSize( R.dimen.app_actionbar_text_size );
             
             bitmap.setBounds( 0, 0, iconSize, iconSize );
          }
@@ -154,8 +154,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static void showTitleBarAddTask( Activity activity, boolean show )
    {
       final TitleBarLayout titleBar = (TitleBarLayout) activity.findViewById( R.id.app_title_bar );
@@ -166,8 +166,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static void setTaskDescription( TextView view,
                                                 Task task,
                                                 Time timeBase )
@@ -216,8 +216,8 @@ public final class UIUtils
          view.setTypeface( Typeface.DEFAULT );
    }
    
-   
-   
+
+
    public final static void inflateTags( Context context,
                                          ViewGroup container,
                                          Collection< String > tags,
@@ -299,8 +299,8 @@ public final class UIUtils
          container.setVisibility( View.GONE );
    }
    
-   
-   
+
+
    public final static void setPriorityColor( View view, Task task )
    {
       switch ( task.getPriority() )
@@ -321,8 +321,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static StringBuilder appendAtNewLine( StringBuilder stringBuilder,
                                                       String string )
    {
@@ -334,8 +334,8 @@ public final class UIUtils
       return stringBuilder;
    }
    
-   
-   
+
+
    public final static boolean initializeTitleWithViewLayout( View layout,
                                                               String title )
    {
@@ -364,8 +364,8 @@ public final class UIUtils
       return ok;
    }
    
-   
-   
+
+
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               String text )
@@ -396,8 +396,8 @@ public final class UIUtils
       return ok;
    }
    
-   
-   
+
+
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               Spannable text )
@@ -420,8 +420,8 @@ public final class UIUtils
       return ok;
    }
    
-   
-   
+
+
    public final static void initializeErrorWithIcon( Activity activity,
                                                      int resId,
                                                      Object... params )
@@ -434,23 +434,28 @@ public final class UIUtils
       Log.e( LogUtils.toTag( Activity.class ), msg );
    }
    
-   
-   
+
+
    public final static void applySpannable( TextView textView, Spannable text )
    {
       textView.setMovementMethod( LinkMovementMethod.getInstance() );
       textView.setText( text, BufferType.SPANNABLE );
    }
    
-   
-   
+
+
    public final static void addSyncMenuItem( final Context context,
                                              Menu menu,
                                              int id,
                                              int menuOrder )
    {
-      if ( menu.findItem( id ) != null )
+      try
+      {
          menu.removeItem( id );
+      }
+      catch ( IndexOutOfBoundsException e )
+      {
+      }
       
       if ( SyncUtils.isSyncing( context ) )
       {
@@ -458,6 +463,7 @@ public final class UIUtils
              .setIcon( R.drawable.ic_menu_cancel )
              .setOnMenuItemClickListener( new OnMenuItemClickListener()
              {
+                @Override
                 public boolean onMenuItemClick( MenuItem item )
                 {
                    SyncUtils.cancelSync( context );
@@ -475,6 +481,7 @@ public final class UIUtils
          
          menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
          {
+            @Override
             public boolean onMenuItemClick( MenuItem item )
             {
                SyncUtils.requestManualSync( context );
@@ -484,8 +491,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static void addOptionalMenuItem( Menu menu,
                                                  int id,
                                                  String title,
@@ -496,8 +503,8 @@ public final class UIUtils
       addOptionalMenuItem( menu, id, title, order, iconId, null, show );
    }
    
-   
-   
+
+
    public final static void addOptionalMenuItem( Menu menu,
                                                  int id,
                                                  String title,
@@ -506,9 +513,18 @@ public final class UIUtils
                                                  Intent intent,
                                                  boolean show )
    {
+      
       if ( show )
       {
-         MenuItem item = menu.findItem( id );
+         MenuItem item;
+         try
+         {
+            item = menu.findItem( id );
+         }
+         catch ( IndexOutOfBoundsException e )
+         {
+            item = null;
+         }
          
          if ( item == null )
          {
@@ -525,12 +541,18 @@ public final class UIUtils
       }
       else
       {
-         menu.removeItem( id );
+         try
+         {
+            menu.removeItem( id );
+         }
+         catch ( IndexOutOfBoundsException e )
+         {
+         }
       }
    }
    
-   
-   
+
+
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -540,8 +562,8 @@ public final class UIUtils
                                                            activityClass ) );
    }
    
-   
-   
+
+
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -553,8 +575,8 @@ public final class UIUtils
          item.setIntent( intent );
    }
    
-   
-   
+
+
    public final static String convertSource( Context context, String source )
    {
       if ( source.equalsIgnoreCase( "js" ) )
@@ -566,8 +588,8 @@ public final class UIUtils
       return source;
    }
    
-   
-   
+
+
    public final static Pair< Integer, Integer > getTaggedViewRange( ViewGroup container,
                                                                     String tag )
    {
@@ -591,8 +613,8 @@ public final class UIUtils
          return Pair.create( 0, 0 );
    }
    
-   
-   
+
+
    public final static int getTaggedViewPos( ViewGroup container, String tag )
    {
       int pos = -1;
@@ -606,8 +628,8 @@ public final class UIUtils
       return pos;
    }
    
-   
-   
+
+
    public final static void removeTaggedViews( ViewGroup container, String tag )
    {
       List< View > views = null;
@@ -629,8 +651,8 @@ public final class UIUtils
             container.removeView( view );
    }
    
-   
-   
+
+
    public final static Dialog newCancelWithChangesDialog( Context context,
                                                           Runnable yesAction,
                                                           Runnable noAction )
@@ -643,8 +665,8 @@ public final class UIUtils
                                    noAction );
    }
    
-   
-   
+
+
    public final static Dialog newApplyChangesDialog( Context context,
                                                      Runnable yesAction,
                                                      Runnable noAction )
@@ -657,8 +679,8 @@ public final class UIUtils
                                    noAction );
    }
    
-   
-   
+
+
    public final static Dialog newDeleteElementDialog( Context context,
                                                       String elementName,
                                                       Runnable yesAction,
@@ -674,8 +696,8 @@ public final class UIUtils
                                    noAction );
    }
    
-   
-   
+
+
    public final static Dialog newDialogWithActions( final Context context,
                                                     String message,
                                                     int positiveId,
@@ -690,6 +712,7 @@ public final class UIUtils
                                     yesAction != null
                                                      ? new DialogInterface.OnClickListener()
                                                      {
+                                                        @Override
                                                         public void onClick( DialogInterface dialog,
                                                                              int which )
                                                         {
@@ -701,6 +724,7 @@ public final class UIUtils
                                     noAction != null
                                                     ? new DialogInterface.OnClickListener()
                                                     {
+                                                       @Override
                                                        public void onClick( DialogInterface dialog,
                                                                             int which )
                                                        {
@@ -710,8 +734,8 @@ public final class UIUtils
       return builder.create();
    };
    
-   
-   
+
+
    public final static boolean reportStatus( Context context,
                                              int resIdOk,
                                              int resIdFailed,

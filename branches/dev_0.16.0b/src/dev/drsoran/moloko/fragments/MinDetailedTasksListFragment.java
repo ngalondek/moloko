@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,9 +145,9 @@ public class MinDetailedTasksListFragment extends
 
 
    @Override
-   public void onPrepareOptionsMenu( Menu menu )
+   public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      super.onPrepareOptionsMenu( menu );
+      super.onCreateOptionsMenu( menu, inflater );
       
       UIUtils.addOptionalMenuItem( menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
@@ -182,6 +183,7 @@ public class MinDetailedTasksListFragment extends
    
 
 
+   @Override
    public Loader< List< ListTask >> onCreateLoader( int id, Bundle config )
    {
       showLoadingSpinner( true );
@@ -203,6 +205,8 @@ public class MinDetailedTasksListFragment extends
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
+      notifyOptionsMenuChanged();
+      
       return new MinDetailedTasksListFragmentAdapter( getActivity(),
                                                       R.layout.mindetailed_taskslist_listitem );
    }
@@ -213,6 +217,8 @@ public class MinDetailedTasksListFragment extends
    protected ListAdapter createListAdapterForResult( List< ListTask > result,
                                                      IFilter filter )
    {
+      notifyOptionsMenuChanged();
+      
       return new MinDetailedTasksListFragmentAdapter( getActivity(),
                                                       R.layout.mindetailed_taskslist_listitem,
                                                       result );

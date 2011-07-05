@@ -36,6 +36,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
+import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.activities.NoteEditActivity;
 import dev.drsoran.moloko.activities.StartUpActivity;
 import dev.drsoran.moloko.activities.TasksListActivity;
@@ -298,6 +299,13 @@ public final class Intents
                                         0,
                                         onClickIntent,
                                         PendingIntent.FLAG_UPDATE_CURRENT );
+   }
+   
+
+
+   public final static Intent createOpenHomeIntent( Context context )
+   {
+      return new Intent( context, HomeActivity.class ).addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
    }
    
 

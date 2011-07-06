@@ -40,7 +40,7 @@
 	<style name="App_ActionBar">
       <item name="android:background">@drawable/app_actionbar_bgnd</item>
       <item name="actionBarSize">@dimen/app_actionbar_height</item>
-      <item name="titleTextStyle">@style/App_ActionBar_TitleTextStyle</item>      
+      <item name="titleTextStyle">@style/App_ActionBar_TitleTextStyle</item>    
    </style>
    
    <style name="App_ActionBar.HomeIcon">      
@@ -50,9 +50,10 @@
    <style name="App_ActionBar_TitleTextStyle">      
       <item name="android:textSize">@dimen/app_actionbar_text_size</item>
       <item name="android:textColor">@color/app_actionbar_text_color</item>
+      <item name="android:textStyle">bold</item>
    </style>
-
-	<style name="App_Default_Title_Bgnd">
+   
+   <style name="App_Default_Title_Bgnd">
 		<item name="android:background">@color/app_default_title_bgnd</item>
 		<item name="android:paddingLeft">5dip</item>
 	</style>
@@ -68,7 +69,7 @@
 		<item name="android:background">@drawable/app_titlebar_expanded_bgnd</item>
 	</style>
 
-	<style name="app_actionbar_text_color" parent="@android:style/TextAppearance.WindowTitle">
+	<style name="App_TitleBar_Text" parent="@android:style/TextAppearance.WindowTitle">
 		<item name="android:textSize">@dimen/app_actionbar_text_size</item>
 		<item name="android:textColor">@color/app_actionbar_text_color</item>
 	</style>

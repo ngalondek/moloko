@@ -19,6 +19,10 @@
    <dimen
       name="app_actionbar_text_size">14sp</dimen>
    <dimen
+      name="app_actionbar_actionItem_width">30dip</dimen>
+   <dimen
+      name="app_actionbar_actionItem_heigth">@dimen/app_actionbar_actionItem_width</dimen>
+   <dimen
       name="app_titlebar_btn_width">@dimen/app_actionbar_height</dimen>
    <dimen
       name="app_title_with_text_textSize">14sp</dimen>

@@ -132,6 +132,7 @@ public class ContactsListActivity extends ListActivity
    
    private final Runnable queryContactsRunnable = new Runnable()
    {
+      @Override
       public void run()
       {
          if ( asyncQueryContacts != null )
@@ -266,10 +267,11 @@ public class ContactsListActivity extends ListActivity
    @Override
    public boolean onPrepareOptionsMenu( Menu menu )
    {
-      UIUtils.addSyncMenuItem( this,
-                               menu,
-                               OptionsMenu.SYNC,
-                               OptionsMenu.MENU_ORDER_STATIC - 1 );
+      // TODO: Repair
+      // UIUtils.addSyncMenuItem( this,
+      // menu,
+      // OptionsMenu.SYNC,
+      // OptionsMenu.MENU_ORDER_STATIC - 1 );
       
       return true;
    }

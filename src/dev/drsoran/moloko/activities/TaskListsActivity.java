@@ -33,11 +33,10 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.Menu;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
@@ -90,8 +89,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
          return null;
       }
       
-      
-      
+
+
       @Override
       protected void onPostExecute( List< RtmListWithTaskCount > result )
       {
@@ -114,6 +113,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
    
    private final Runnable queryListsRunnable = new Runnable()
    {
+      @Override
       public void run()
       {
          if ( asyncQueryLists != null )
@@ -145,7 +145,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
       public final static int SYNC = START_IDX + 2;
    }
    
-   
+
    protected static class CtxtMenu
    {
       public final static int OPEN_LIST = 1 << 0;
@@ -164,7 +164,7 @@ public class TaskListsActivity extends ExpandableListActivity implements
    }
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -200,8 +200,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
       }
    }
    
-   
-   
+
+
    @Override
    protected void onStop()
    {
@@ -213,8 +213,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
       asyncQueryLists = null;
    }
    
-   
-   
+
+
    @Override
    protected void onDestroy()
    {
@@ -227,10 +227,10 @@ public class TaskListsActivity extends ExpandableListActivity implements
       ListOverviewsProviderPart.unregisterContentObserver( this, dbObserver );
    }
    
-   
-   
+
+
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public boolean onCreateOptionsMenu( android.view.Menu menu )
    {
       menu.add( Menu.NONE,
                 OptionsMenu.SETTINGS,
@@ -242,21 +242,22 @@ public class TaskListsActivity extends ExpandableListActivity implements
       return true;
    }
    
-   
-   
+
+
    @Override
-   public boolean onPrepareOptionsMenu( Menu menu )
+   public boolean onPrepareOptionsMenu( android.view.Menu menu )
    {
-      UIUtils.addSyncMenuItem( this,
-                               menu,
-                               OptionsMenu.SYNC,
-                               OptionsMenu.MENU_ORDER_STATIC - 1 );
+      // TODO: Repair
+      // UIUtils.addSyncMenuItem( this,
+      // menu,
+      // OptionsMenu.SYNC,
+      // OptionsMenu.MENU_ORDER_STATIC - 1 );
       
       return true;
    }
    
-   
-   
+
+
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -320,10 +321,10 @@ public class TaskListsActivity extends ExpandableListActivity implements
                    getString( R.string.tasklists_menu_ctx_make_def_list ) );
    }
    
-   
-   
+
+
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onContextItemSelected( android.view.MenuItem item )
    {
       final ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
       
@@ -366,8 +367,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
       }
    }
    
-   
-   
+
+
    @Override
    public boolean onChildClick( ExpandableListView parent,
                                 View v,
@@ -387,8 +388,9 @@ public class TaskListsActivity extends ExpandableListActivity implements
          return super.onChildClick( parent, v, groupPosition, childPosition, id );
    }
    
-   
-   
+
+
+   @Override
    public boolean onGroupClick( ExpandableListView parent,
                                 View v,
                                 int groupPosition,
@@ -398,8 +400,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
       return true;
    }
    
-   
-   
+
+
    public void onGroupIndicatorClicked( View v )
    {
       final ExpandableListView listView = getExpandableListView();
@@ -415,13 +417,15 @@ public class TaskListsActivity extends ExpandableListActivity implements
       }
    }
    
-   
-   
+
+
+   @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
       getExpandableListView().getHandler().post( new Runnable()
       {
+         @Override
          public void run()
          {
             onContentChanged();
@@ -429,8 +433,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
       } );
    }
    
-   
-   
+
+
    private void openList( RtmListWithTaskCount rtmList )
    {
       // Check if the smart filter could be parsed. Otherwise
@@ -462,12 +466,13 @@ public class TaskListsActivity extends ExpandableListActivity implements
       }
    }
    
-   
-   
+
+
    private void deleteList( final RtmListWithTaskCount rtmList )
    {
       UIUtils.newDeleteElementDialog( this, rtmList.getName(), new Runnable()
       {
+         @Override
          public void run()
          {
             RtmListEditUtils.deleteList( TaskListsActivity.this,
@@ -477,8 +482,8 @@ public class TaskListsActivity extends ExpandableListActivity implements
                                       null ).show();
    }
    
-   
-   
+
+
    private final RtmListWithTaskCount getRtmList( int flatPos )
    {
       return (RtmListWithTaskCount) getExpandableListAdapter().getGroup( flatPos );

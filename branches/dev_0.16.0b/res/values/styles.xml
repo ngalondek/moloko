@@ -8,7 +8,7 @@
 	PURPOSE. See the GNU General Public License for more details. You should 
 	have received a copy of the GNU General Public License along with Moloko. 
 	If not, see <http://www.gnu.org/licenses/>. Contributors: Ronny Röhricht 
-	- implementation -->
+	- implementation-->
 
 <resources>
 
@@ -18,7 +18,7 @@
 	<style name="Theme.Moloko" parent="Theme.Sherlock">
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowContentOverlay">@null</item>
-		<item name="actionBarStyle">@style/App_ActionBar</item>
+		<item name="actionBarStyle">@style/App_ActionBar.HomeIcon</item>
 	</style>
 
 	<style name="Theme.Moloko.Task" parent="Theme.Sherlock.Light">
@@ -40,6 +40,14 @@
 	<style name="App_ActionBar">
       <item name="android:background">@drawable/app_actionbar_bgnd</item>
       <item name="actionBarSize">@dimen/app_actionbar_height</item>
+      <item name="titleTextStyle">@style/App_ActionBar_TitleTextStyle</item>      
+   </style>
+   
+   <style name="App_ActionBar.HomeIcon">      
+      <item name="icon">@drawable/ic_title_home</item>
+   </style>
+   
+   <style name="App_ActionBar_TitleTextStyle">      
       <item name="android:textSize">@dimen/app_actionbar_text_size</item>
       <item name="android:textColor">@color/app_actionbar_text_color</item>
    </style>

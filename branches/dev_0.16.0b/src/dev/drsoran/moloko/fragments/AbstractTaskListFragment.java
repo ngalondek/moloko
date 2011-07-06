@@ -40,7 +40,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.text.format.DateUtils;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -49,10 +48,10 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -236,31 +235,16 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      menu.add( Menu.NONE,
-                OptionsMenu.SETTINGS,
-                Menu.CATEGORY_SECONDARY,
-                R.string.phr_settings ).setIcon( R.drawable.ic_menu_settings );
+      inflater.inflate( R.menu.abstract_taskslist_fragment, menu );
       
-      UIUtils.addOptionsMenuIntent( getActivity(),
-                                    menu,
-                                    OptionsMenu.SETTINGS,
-                                    MolokoPreferencesActivity.class );
+      UIUtils.configureMenuItem( menu, R.id.menu_sort, hasMultipleTasks() );
       
-      UIUtils.addSyncMenuItem( getActivity(),
-                               menu,
-                               OptionsMenu.SYNC,
-                               Menu.CATEGORY_SECONDARY );
-      
-      UIUtils.addOptionalMenuItem( menu,
-                                   OptionsMenu.SORT,
-                                   getString( R.string.abstaskslist_menu_opt_sort ),
-                                   Menu.CATEGORY_CONTAINER,
-                                   R.drawable.ic_menu_sort,
-                                   hasMultipleTasks() );
+      UIUtils.configureMenuItem( menu, R.id.menu_sync );
    }
    
 
 
+   @Deprecated
    @Override
    public final void onPrepareOptionsMenu( Menu menu )
    {
@@ -278,7 +262,8 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
             @Override
             public void run()
             {
-               getActivity().invalidateOptionsMenu();
+               if ( getActivity() != null )
+                  getActivity().invalidateOptionsMenu();
             }
          } );
       }
@@ -287,12 +272,16 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
 
 
    @Override
-   public boolean onOptionsItemSelected( MenuItem item )
+   public boolean onOptionsItemSelected( android.view.MenuItem item )
    {
       switch ( item.getItemId() )
       {
          case OptionsMenu.SORT:
             showChooseTaskSortDialog();
+            return true;
+            
+         case OptionsMenu.SYNC:
+            SyncUtils.requestManualSync( getActivity() );
             return true;
             
          default :

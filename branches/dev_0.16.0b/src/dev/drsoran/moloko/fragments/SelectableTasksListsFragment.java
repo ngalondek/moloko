@@ -274,12 +274,14 @@ public class SelectableTasksListsFragment extends
          final List< SelectableListTask > tasks = adapter.getSelectedTasks();
          final int selCnt = tasks.size();
          
-         UIUtils.addOptionalMenuItem( menu,
+         UIUtils.addOptionalMenuItem( getActivity(),
+                                      menu,
                                       OptionsMenu.DO_EDIT,
                                       getString( R.string.select_multiple_tasks_menu_opt_do_edit,
                                                  selCnt ),
                                       Menu.CATEGORY_SECONDARY,
                                       R.drawable.ic_menu_edit,
+                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected );
          
          int selCompl = 0, selUncompl = 0;
@@ -293,37 +295,45 @@ public class SelectableTasksListsFragment extends
          }
          
          // The complete task menu is only shown if all selected tasks are uncompleted
-         UIUtils.addOptionalMenuItem( menu,
+         UIUtils.addOptionalMenuItem( getActivity(),
+                                      menu,
                                       OptionsMenu.COMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_complete,
                                                  selCnt ),
                                       Menu.CATEGORY_SECONDARY,
                                       R.drawable.ic_menu_complete,
+                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected && selUncompl == selCnt );
          
          // The uncomplete task menu is only shown if all selected tasks are completed
-         UIUtils.addOptionalMenuItem( menu,
+         UIUtils.addOptionalMenuItem( getActivity(),
+                                      menu,
                                       OptionsMenu.UNCOMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
                                                  selCnt ),
                                       Menu.CATEGORY_SECONDARY,
                                       R.drawable.ic_menu_incomplete,
+                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected && selCompl == selCnt );
          
-         UIUtils.addOptionalMenuItem( menu,
+         UIUtils.addOptionalMenuItem( getActivity(),
+                                      menu,
                                       OptionsMenu.POSTPONE,
                                       getString( R.string.select_multiple_tasks_menu_opt_postpone,
                                                  selCnt ),
                                       Menu.CATEGORY_SECONDARY,
                                       R.drawable.ic_menu_postponed,
+                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected );
          
-         UIUtils.addOptionalMenuItem( menu,
+         UIUtils.addOptionalMenuItem( getActivity(),
+                                      menu,
                                       OptionsMenu.DELETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_delete,
                                                  selCnt ),
                                       Menu.CATEGORY_SECONDARY,
                                       R.drawable.ic_menu_trash,
+                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected );
          
          final MenuItem selAllItem = menu.findItem( OptionsMenu.SELECT_ALL );
@@ -459,7 +469,7 @@ public class SelectableTasksListsFragment extends
                                     ContextMenuInfo menuInfo )
    {
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-      final Checkable checkableView = ( (Checkable) info.targetView.findViewById( R.id.taskslist_listitem_priority ) );
+      final Checkable checkableView = ( (Checkable) info.targetView.findViewById( R.id.selectmultipletasks_listitem_selected ) );
       final ListTask task = getTask( info.position );
       
       if ( checkableView.isChecked() )

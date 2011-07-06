@@ -35,6 +35,9 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
+import android.support.v4.view.MenuItem.OnMenuItemClickListener;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -44,9 +47,6 @@ import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.InflateException;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -56,6 +56,7 @@ import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
+import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
 import dev.drsoran.rtm.Task;
 
 
@@ -444,82 +445,115 @@ public final class UIUtils
    
 
 
-   public final static void addSyncMenuItem( final Context context,
-                                             Menu menu,
-                                             int id,
-                                             int menuOrder )
+   public final static MenuItem configureMenuItem( Menu menu, int itemId )
    {
+      return configureMenuItem( menu, itemId, true );
+   }
+   
+
+
+   public final static MenuItem configureMenuItem( Menu menu,
+                                                   int itemId,
+                                                   boolean show )
+   {
+      MenuItem item = null;
+      
       try
       {
-         menu.removeItem( id );
+         item = menu.findItem( itemId );
+         item.setVisible( show );
+         item.setEnabled( show );
+         
+         if ( show )
+         {
+            if ( item.getActionView() instanceof ActionBarMenuItemView )
+            {
+               final ActionBarMenuItemView actionBarMenuItemView = (ActionBarMenuItemView) item.getActionView();
+               actionBarMenuItemView.setIcon( item.getIcon() );
+            }
+         }
       }
       catch ( IndexOutOfBoundsException e )
       {
+         item = null;
       }
       
-      if ( SyncUtils.isSyncing( context ) )
+      return item;
+   }
+   
+
+
+   public final static MenuItem addSyncMenuItem( final Context context,
+                                                 Menu menu,
+                                                 int itemId,
+                                                 int menuOrder,
+                                                 int showAsActionFlags )
+   {
+      final MenuItem menuItem = addOptionalMenuItem( context,
+                                                     menu,
+                                                     itemId,
+                                                     context.getString( R.string.phr_do_sync ),
+                                                     menuOrder,
+                                                     R.drawable.ic_menu_refresh,
+                                                     showAsActionFlags,
+                                                     true );
+      
+      menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
       {
-         menu.add( Menu.NONE, id, menuOrder, R.string.phr_cancel_sync )
-             .setIcon( R.drawable.ic_menu_cancel )
-             .setOnMenuItemClickListener( new OnMenuItemClickListener()
-             {
-                @Override
-                public boolean onMenuItemClick( MenuItem item )
-                {
-                   SyncUtils.cancelSync( context );
-                   return true;
-                }
-             } );
-      }
-      else
-      {
-         final MenuItem menuItem = menu.add( Menu.NONE,
-                                             id,
-                                             menuOrder,
-                                             R.string.phr_do_sync )
-                                       .setIcon( R.drawable.ic_menu_refresh );
-         
-         menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+         @Override
+         public boolean onMenuItemClick( MenuItem item )
          {
-            @Override
-            public boolean onMenuItemClick( MenuItem item )
-            {
-               SyncUtils.requestManualSync( context );
-               return true;
-            }
-         } );
-      }
+            SyncUtils.requestManualSync( context );
+            return true;
+         }
+      } );
+      
+      return menuItem;
    }
    
 
 
-   public final static void addOptionalMenuItem( Menu menu,
-                                                 int id,
-                                                 String title,
-                                                 int order,
-                                                 int iconId,
-                                                 boolean show )
+   @Deprecated
+   public final static MenuItem addOptionalMenuItem( Context context,
+                                                     Menu menu,
+                                                     int itemId,
+                                                     String title,
+                                                     int order,
+                                                     int iconId,
+                                                     int showAsActionFlags,
+                                                     boolean show )
    {
-      addOptionalMenuItem( menu, id, title, order, iconId, null, show );
+      return addOptionalMenuItem( context,
+                                  menu,
+                                  itemId,
+                                  title,
+                                  order,
+                                  iconId,
+                                  showAsActionFlags,
+                                  null,
+                                  show );
    }
    
 
 
-   public final static void addOptionalMenuItem( Menu menu,
-                                                 int id,
-                                                 String title,
-                                                 int order,
-                                                 int iconId,
-                                                 Intent intent,
-                                                 boolean show )
+   @Deprecated
+   public final static MenuItem addOptionalMenuItem( Context context,
+                                                     Menu menu,
+                                                     int itemId,
+                                                     String title,
+                                                     int order,
+                                                     int iconId,
+                                                     int showAsActionFlags,
+                                                     Intent intent,
+                                                     boolean show )
    {
+      MenuItem item = null;
       
       if ( show )
       {
-         MenuItem item;
          try
          {
-            item = menu.findItem( id );
+            item = menu.findItem( itemId );
          }
          catch ( IndexOutOfBoundsException e )
          {
@@ -528,7 +562,7 @@ public final class UIUtils
          
          if ( item == null )
          {
-            item = menu.add( Menu.NONE, id, order, title );
+            item = menu.add( Menu.NONE, itemId, order, title );
             
             if ( iconId != -1 )
                item.setIcon( iconId );
@@ -538,17 +572,21 @@ public final class UIUtils
          
          if ( intent != null )
             item.setIntent( intent );
+         
+         item.setShowAsAction( showAsActionFlags );
       }
       else
       {
          try
          {
-            menu.removeItem( id );
+            menu.removeItem( itemId );
          }
          catch ( IndexOutOfBoundsException e )
          {
          }
       }
+      
+      return item;
    }
    
 

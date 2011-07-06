@@ -197,11 +197,13 @@ public class FullDetailedTasksListFragment extends
    {
       super.onCreateOptionsMenu( menu, inflater );
       
-      UIUtils.addOptionalMenuItem( menu,
+      UIUtils.addOptionalMenuItem( getActivity(),
+                                   menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
                                    getString( R.string.abstaskslist_menu_opt_edit_multiple ),
                                    Menu.CATEGORY_CONTAINER,
                                    R.drawable.ic_menu_edit_multiple_tasks,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    hasMultipleTasks() && hasRtmWriteAccess() );
    }
    

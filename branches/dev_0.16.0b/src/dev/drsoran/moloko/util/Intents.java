@@ -37,6 +37,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.EditMultipleTasksActivity;
 import dev.drsoran.moloko.activities.HomeActivity;
+import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.activities.NoteEditActivity;
 import dev.drsoran.moloko.activities.StartUpActivity;
 import dev.drsoran.moloko.activities.TasksListActivity;
@@ -306,6 +307,13 @@ public final class Intents
    public final static Intent createOpenHomeIntent( Context context )
    {
       return new Intent( context, HomeActivity.class ).addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+   }
+   
+
+
+   public final static Intent createOpenPreferencesIntent( Context context )
+   {
+      return new Intent( context, MolokoPreferencesActivity.class );
    }
    
 

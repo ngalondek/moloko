@@ -27,10 +27,14 @@
       name="title_with_spinner_layout" />
 
    <!-- Fragment IDs -->
-
    <item
       type="id"
       name="frag_taskslist" />
+   
+   <!-- Menu group IDs -->
+   <item
+      type="id"
+      name="menu_group_sort" />
 
    <!-- MenuItem IDs -->
    <item

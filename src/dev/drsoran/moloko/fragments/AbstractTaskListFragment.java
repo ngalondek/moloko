@@ -29,8 +29,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -38,6 +38,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import android.text.format.DateUtils;
 import android.view.MenuInflater;
 import android.view.View;
@@ -53,6 +54,7 @@ import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
@@ -235,11 +237,29 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      inflater.inflate( R.menu.abstract_taskslist_fragment, menu );
+      menu.add( Menu.NONE,
+                OptionsMenu.SETTINGS,
+                Menu.CATEGORY_SECONDARY,
+                R.string.phr_settings )
+          .setIcon( R.drawable.ic_menu_settings )
+          .setIntent( Intents.createOpenPreferencesIntent( getActivity() ) )
+          .setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
       
-      UIUtils.configureMenuItem( menu, R.id.menu_sort, hasMultipleTasks() );
+      UIUtils.addSyncMenuItem( getActivity(),
+                               menu,
+                               OptionsMenu.SYNC,
+                               Menu.CATEGORY_SECONDARY,
+                               MenuItem.SHOW_AS_ACTION_ALWAYS );
       
-      UIUtils.configureMenuItem( menu, R.id.menu_sync );
+      UIUtils.addOptionalMenuItem( getActivity(),
+                                   menu,
+                                   OptionsMenu.SORT,
+                                   getString( R.string.abstaskslist_menu_opt_sort ),
+                                   Menu.CATEGORY_CONTAINER,
+                                   R.id.menu_group_sort,
+                                   R.drawable.ic_menu_sort,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   hasMultipleTasks() );
    }
    
 

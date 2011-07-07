@@ -48,11 +48,11 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.InflateException;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
+import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -466,11 +466,7 @@ public final class UIUtils
          
          if ( show )
          {
-            if ( item.getActionView() instanceof ActionBarMenuItemView )
-            {
-               final ActionBarMenuItemView actionBarMenuItemView = (ActionBarMenuItemView) item.getActionView();
-               actionBarMenuItemView.setIcon( item.getIcon() );
-            }
+            
          }
       }
       catch ( IndexOutOfBoundsException e )
@@ -494,6 +490,7 @@ public final class UIUtils
                                                      itemId,
                                                      context.getString( R.string.phr_do_sync ),
                                                      menuOrder,
+                                                     Menu.NONE,
                                                      R.drawable.ic_menu_refresh,
                                                      showAsActionFlags,
                                                      true );
@@ -513,12 +510,12 @@ public final class UIUtils
    
 
 
-   @Deprecated
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
                                                      String title,
                                                      int order,
+                                                     int groupId,
                                                      int iconId,
                                                      int showAsActionFlags,
                                                      boolean show )
@@ -528,6 +525,7 @@ public final class UIUtils
                                   itemId,
                                   title,
                                   order,
+                                  groupId,
                                   iconId,
                                   showAsActionFlags,
                                   null,
@@ -536,12 +534,12 @@ public final class UIUtils
    
 
 
-   @Deprecated
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
                                                      String title,
                                                      int order,
+                                                     int groupId,
                                                      int iconId,
                                                      int showAsActionFlags,
                                                      Intent intent,
@@ -562,7 +560,7 @@ public final class UIUtils
          
          if ( item == null )
          {
-            item = menu.add( Menu.NONE, itemId, order, title );
+            item = menu.add( groupId, itemId, order, title );
             
             if ( iconId != -1 )
                item.setIcon( iconId );
@@ -574,6 +572,14 @@ public final class UIUtils
             item.setIntent( intent );
          
          item.setShowAsAction( showAsActionFlags );
+         
+         if ( showAsActionFlags != MenuItem.SHOW_AS_ACTION_NEVER )
+         {
+            final ActionBarMenuItemView actionBarMenuItemView = new ActionBarMenuItemView( context );
+            actionBarMenuItemView.setIcon( item.getIcon() );
+            
+            item.setActionView( actionBarMenuItemView );
+         }
       }
       else
       {

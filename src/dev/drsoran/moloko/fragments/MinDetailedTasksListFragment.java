@@ -52,7 +52,7 @@ import dev.drsoran.rtm.ListTask;
 
 
 public class MinDetailedTasksListFragment extends
-         AbstractTaskListFragment< ListTask > implements
+         AbstractTasksListFragment< ListTask > implements
          IOnSettingsChangedListener
 {
    @SuppressWarnings( "unused" )
@@ -77,7 +77,7 @@ public class MinDetailedTasksListFragment extends
    
    
    protected static class OptionsMenu extends
-            AbstractTaskListFragment.OptionsMenu
+            AbstractTasksListFragment.OptionsMenu
    {
       public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
    }

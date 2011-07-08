@@ -25,12 +25,7 @@ package dev.drsoran.moloko.fragments;
 import java.util.HashMap;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -53,7 +48,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
-import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
@@ -64,13 +58,13 @@ import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
-public abstract class AbstractTaskListFragment< T extends Task > extends
+public abstract class AbstractTasksListFragment< T extends Task > extends
          ListFragment implements LoaderCallbacks< List< T > >, IConfigurable,
          IOnSettingsChangedListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
-      + AbstractTaskListFragment.class.getSimpleName();
+      + AbstractTasksListFragment.class.getSimpleName();
    
    
    public static class Config
@@ -337,21 +331,6 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
-   protected void showChooseTaskSortDialog()
-   {
-      final Context context = getActivity();
-      new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_sort )
-                                        .setTitle( R.string.abstaskslist_dlg_sort_title )
-                                        .setSingleChoiceItems( R.array.app_sort_options,
-                                                               getTaskSortIndex( getTaskSortConfiguration() ),
-                                                               defaultChooseTaskSortDialogListener )
-                                        .setNegativeButton( R.string.btn_cancel,
-                                                            defaultChooseTaskSortDialogListener )
-                                        .show();
-   }
-   
-
-
    protected SubMenu createTasksSortSubMenu( Menu menu )
    {
       SubMenu subMenu = null;
@@ -363,6 +342,10 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
                                     Menu.CATEGORY_CONTAINER,
                                     R.string.abstaskslist_menu_opt_sort );
          subMenu.setIcon( R.drawable.ic_menu_sort );
+         
+         final android.view.MenuItem item = subMenu.getItem();
+         item.getItemId();
+         
          // subMenu.getItem().setShowAsAction( MenuItem.SHOW_AS_ACTION_IF_ROOM );
          // subMenu.getItem()
          // .setActionView( new ActionBarMenuItemView( getActivity() ).setIcon( getResources().getDrawable(
@@ -397,6 +380,10 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
       // always sets the item.
       switch ( currentTaskSort )
       {
+         case Settings.TASK_SORT_PRIORITY:
+            subMenu.findItem( OptionsMenu.SORT_PRIO ).setChecked( true );
+            break;
+         
          case Settings.TASK_SORT_DUE_DATE:
             subMenu.findItem( OptionsMenu.SORT_DUE ).setChecked( true );
             break;
@@ -406,7 +393,6 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
             break;
          
          default :
-            subMenu.findItem( OptionsMenu.SORT_PRIO ).setChecked( true );
             break;
       }
    }
@@ -523,20 +509,6 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
-   public int getTaskSortValue( int idx )
-   {
-      return TaskSortPreference.getValueOfIndex( idx );
-   }
-   
-
-
-   public int getTaskSortIndex( int value )
-   {
-      return TaskSortPreference.getIndexOfValue( value );
-   }
-   
-
-
    public void showError( CharSequence text )
    {
       setEmptyText( text );
@@ -582,27 +554,4 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    {
       setListAdapter( createEmptyListAdapter() );
    }
-   
-   protected final DialogInterface.OnClickListener defaultChooseTaskSortDialogListener = new OnClickListener()
-   {
-      @Override
-      public void onClick( DialogInterface dialog, int which )
-      {
-         switch ( which )
-         {
-            case Dialog.BUTTON_NEGATIVE:
-               break;
-            
-            default :
-               final int newTaskSort = getTaskSortValue( which );
-               
-               dialog.dismiss();
-               
-               if ( newTaskSort != -1 && shouldResortTasks( newTaskSort ) )
-                  listener.onTaskSortChanged( newTaskSort );
-               
-               break;
-         }
-      }
-   };
 }

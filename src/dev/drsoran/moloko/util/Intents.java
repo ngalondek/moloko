@@ -71,7 +71,7 @@ public final class Intents
       
       public final static Bundle createOpenListExtrasById( Context context,
                                                            String id,
-                                                           String filter )
+                                                           String additionalFilter )
       {
          Bundle extras = null;
          
@@ -86,7 +86,7 @@ public final class Intents
                                                                                             + id );
             
             if ( list != null )
-               extras = createOpenListExtras( context, list, filter );
+               extras = createOpenListExtras( context, list, additionalFilter );
             
             client.release();
          }
@@ -98,7 +98,7 @@ public final class Intents
 
       public final static Bundle createOpenListExtrasByName( Context context,
                                                              String name,
-                                                             String filter )
+                                                             String additionalFilter )
       {
          Bundle extras = null;
          
@@ -114,7 +114,7 @@ public final class Intents
                                                                                             + "'" );
             
             if ( list != null )
-               extras = createOpenListExtras( context, list, filter );
+               extras = createOpenListExtras( context, list, additionalFilter );
             
             client.release();
          }
@@ -126,7 +126,7 @@ public final class Intents
 
       public final static Bundle createOpenListExtras( Context context,
                                                        RtmListWithTaskCount list,
-                                                       String filter )
+                                                       String additionalFilter )
       {
          String filterString = Strings.EMPTY_STRING;
          
@@ -143,13 +143,13 @@ public final class Intents
             filterString = list.getSmartFilter().getFilterString();
          }
          
-         if ( filter != null )
+         if ( additionalFilter != null )
          {
             if ( filterString.length() > 0 )
                filterString += ( " " + RtmSmartFilterLexer.AND_LIT + " ("
-                  + filter + ")" );
+                  + additionalFilter + ")" );
             else
-               filterString = filter;
+               filterString = additionalFilter;
          }
          
          final Bundle extras = createSmartFilterExtras( context,
@@ -314,6 +314,13 @@ public final class Intents
    public final static Intent createOpenPreferencesIntent( Context context )
    {
       return new Intent( context, MolokoPreferencesActivity.class );
+   }
+   
+
+
+   public final static Intent createOpenListOverviewsIntent()
+   {
+      return new Intent( Intent.ACTION_VIEW, ListOverviews.CONTENT_URI );
    }
    
 

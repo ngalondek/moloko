@@ -32,7 +32,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import dev.drsoran.moloko.fragments.AbstractTaskListFragment;
+import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
 import dev.drsoran.moloko.fragments.MinDetailedTasksListFragment;
 import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
@@ -44,7 +44,7 @@ public final class TasksListFragmentFactory
    private final static String TAG = "Moloko."
       + TasksListFragmentFactory.class.getSimpleName();
    
-   private final static List< Class< ? extends AbstractTaskListFragment< ? extends Task > > > FRAGMENT_CLASSES = new ArrayList< Class< ? extends AbstractTaskListFragment< ? extends Task > > >();
+   private final static List< Class< ? extends AbstractTasksListFragment< ? extends Task > > > FRAGMENT_CLASSES = new ArrayList< Class< ? extends AbstractTasksListFragment< ? extends Task > > >();
    
    static
    {
@@ -61,10 +61,10 @@ public final class TasksListFragmentFactory
       
       try
       {
-         for ( Iterator< Class< ? extends AbstractTaskListFragment< ? extends Task> > > i = FRAGMENT_CLASSES.iterator(); i.hasNext()
+         for ( Iterator< Class< ? extends AbstractTasksListFragment< ? extends Task> > > i = FRAGMENT_CLASSES.iterator(); i.hasNext()
             && fragment == null; )
          {
-            final Class< ? extends AbstractTaskListFragment< ? extends Task > > entry = i.next();
+            final Class< ? extends AbstractTasksListFragment< ? extends Task > > entry = i.next();
             
             final IntentFilter filter = (IntentFilter) entry.getMethod( "getIntentFilter" )
                                                             .invoke( null );

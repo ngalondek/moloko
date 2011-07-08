@@ -40,7 +40,8 @@
 	<style name="App_ActionBar">
       <item name="android:background">@drawable/app_actionbar_bgnd</item>
       <item name="actionBarSize">@dimen/app_actionbar_height</item>
-      <item name="titleTextStyle">@style/App_ActionBar_TitleTextStyle</item>    
+      <item name="titleTextStyle">@style/App_ActionBar_TitleTextStyle</item>
+      <item name="actionSpinnerItemStyle">@style/App_ActionBar_TitleTextStyle.Spinner</item>      
    </style>
    
    <style name="App_ActionBar.HomeIcon">      
@@ -52,6 +53,8 @@
       <item name="android:textColor">@color/app_actionbar_text_color</item>
       <item name="android:textStyle">bold</item>
    </style>
+   
+   <style name="App_ActionBar_TitleTextStyle.Spinner" />      
    
    <style name="App_Default_Title_Bgnd">
 		<item name="android:background">@color/app_default_title_bgnd</item>

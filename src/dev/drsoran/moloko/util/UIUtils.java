@@ -48,15 +48,16 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.InflateException;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
+import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
 
@@ -215,6 +216,32 @@ public final class UIUtils
       
       if ( !setTypeFace )
          view.setTypeface( Typeface.DEFAULT );
+   }
+   
+
+
+   public final static void setListTasksCountView( TextView tasksCount,
+                                                   RtmListWithTaskCount list )
+   {
+      final int numTasks = list.getIncompleteTaskCount();
+      tasksCount.setText( String.valueOf( numTasks ) );
+      
+      if ( list.hasSmartFilter() )
+      {
+         if ( list.isSmartFilterValid() )
+         {
+            tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart );
+         }
+         else
+         {
+            tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart_fail );
+            tasksCount.setText( "?" );
+         }
+      }
+      else
+      {
+         tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd );
+      }
    }
    
 

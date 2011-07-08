@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.adapters;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +32,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -50,6 +49,8 @@ import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
 import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
+import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
@@ -60,8 +61,6 @@ import dev.drsoran.rtm.Tag;
 public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
 {
    private final Context context;
-   
-   private final LayoutInflater infalter;
    
    private final Filter filter = new Filter();
    
@@ -85,11 +84,11 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    public RtmSmartAddAdapter( Context context )
    {
       this.context = context;
-      this.infalter = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
    }
    
 
 
+   @Override
    public Object getItem( int position )
    {
       return data.get( position ).second;
@@ -97,6 +96,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
 
 
+   @Override
    public long getItemId( int position )
    {
       return position;
@@ -104,14 +104,15 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
 
 
+   @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
       final View view;
       
       if ( convertView == null )
-         view = infalter.inflate( android.R.layout.simple_dropdown_item_1line,
-                                  parent,
-                                  false );
+         view = View.inflate( context,
+                              android.R.layout.simple_dropdown_item_1line,
+                              parent );
       else
          view = convertView;
       
@@ -129,6 +130,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
 
 
+   @Override
    public Filter getFilter()
    {
       return filter;
@@ -136,6 +138,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    
 
 
+   @Override
    public int getCount()
    {
       return data.size();

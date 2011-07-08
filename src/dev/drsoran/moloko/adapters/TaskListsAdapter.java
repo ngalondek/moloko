@@ -41,6 +41,7 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.grammar.datetime.DateParser;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
@@ -74,7 +75,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    private final ArrayList< RtmListWithTaskCount > lists;
    
    
-   
+
    public TaskListsAdapter( Context context, int groupId, int childId,
       List< RtmListWithTaskCount > lists )
    {
@@ -90,8 +91,9 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       this.lists = new ArrayList< RtmListWithTaskCount >( lists );
    }
    
-   
-   
+
+
+   @Override
    public Object getChild( int groupPosition, int childPosition )
    {
       switch ( childPosition + 1 )
@@ -117,8 +119,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       }
    }
    
-   
-   
+
+
    public Intent getChildIntent( int groupPosition, int childPosition )
    {
       final RtmListWithTaskCount list = lists.get( groupPosition );
@@ -179,15 +181,17 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return intent;
    }
    
-   
-   
+
+
+   @Override
    public long getChildId( int groupPosition, int childPosition )
    {
       return childPosition + 1;
    }
    
-   
-   
+
+
+   @Override
    public View getChildView( int groupPosition,
                              int childPosition,
                              boolean isLastChild,
@@ -250,36 +254,41 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return view;
    }
    
-   
-   
+
+
+   @Override
    public int getChildrenCount( int groupPosition )
    {
       return SUM_ESTIMATE;
    }
    
-   
-   
+
+
+   @Override
    public Object getGroup( int groupPosition )
    {
       return lists.get( groupPosition );
    }
    
-   
-   
+
+
+   @Override
    public int getGroupCount()
    {
       return lists.size();
    }
    
-   
-   
+
+
+   @Override
    public long getGroupId( int groupPosition )
    {
       return Long.valueOf( lists.get( groupPosition ).getId() );
    }
    
-   
-   
+
+
+   @Override
    public View getGroupView( int groupPosition,
                              boolean isExpanded,
                              View convertView,
@@ -328,32 +337,9 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          final RtmListWithTaskCount rtmList = lists.get( groupPosition );
          
          final String listNameStr = rtmList.getName();
-         final int numTasks = rtmList.getIncompleteTaskCount();
-         
          listName.setText( listNameStr );
          
-         tasksCount.setText( String.valueOf( numTasks ) );
-         
-         // If we have a smart filter we check if it could
-         // be evaluated. If so add the filter to show in list
-         // as name. Otherwise mark it explicitly with null
-         // as bad filter
-         if ( rtmList.hasSmartFilter() )
-         {
-            if ( rtmList.isSmartFilterValid() )
-            {
-               tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart );
-            }
-            else
-            {
-               tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd_smart_fail );
-               tasksCount.setText( "?" );
-            }
-         }
-         else
-         {
-            tasksCount.setBackgroundResource( R.drawable.tasklists_group_numtasks_bgnd );
-         }
+         UIUtils.setListTasksCountView( tasksCount, rtmList );
          
          addConditionalIcon( iconsContainer,
                              R.drawable.ic_list_tasklists_flag,
@@ -370,22 +356,24 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return view;
    }
    
-   
-   
+
+
+   @Override
    public boolean hasStableIds()
    {
       return true;
    }
    
-   
-   
+
+
+   @Override
    public boolean isChildSelectable( int groupPosition, int childPosition )
    {
       return childPosition != SUM_ESTIMATE;
    }
    
-   
-   
+
+
    private void addConditionalIcon( ViewGroup container,
                                     int resId,
                                     int iconId,

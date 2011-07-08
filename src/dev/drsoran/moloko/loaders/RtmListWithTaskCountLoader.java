@@ -24,20 +24,34 @@ package dev.drsoran.moloko.loaders;
 
 import java.util.List;
 
+import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
-import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.Task;
+import dev.drsoran.moloko.content.ListOverviewsProviderPart;
+import dev.drsoran.provider.Rtm.ListOverviews;
+import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
-public abstract class AbstractTasksListLoader< T extends Task > extends
-         AbstractLoader< List< T > >
+public class RtmListWithTaskCountLoader extends
+         AbstractLoader< List< RtmListWithTaskCount > >
 {
-   protected AbstractTasksListLoader( Context context )
+   private final String slelection;
+   
+   
+
+   public RtmListWithTaskCountLoader( Context context, String selection )
    {
       super( context );
+      this.slelection = selection;
+   }
+   
+
+
+   @Override
+   protected List< RtmListWithTaskCount > queryResultInBackground( ContentProviderClient client )
+   {
+      return ListOverviewsProviderPart.getListsOverview( client, slelection );
    }
    
 
@@ -45,15 +59,7 @@ public abstract class AbstractTasksListLoader< T extends Task > extends
    @Override
    protected Uri getContentUri()
    {
-      return Tasks.CONTENT_URI;
-   }
-   
-
-
-   @Override
-   protected void clearResult( List< T > result )
-   {
-      result.clear();
+      return ListOverviews.CONTENT_URI;
    }
    
 
@@ -61,6 +67,6 @@ public abstract class AbstractTasksListLoader< T extends Task > extends
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
-      TasksProviderPart.registerContentObserver( getContext(), observer );
+      ListOverviewsProviderPart.registerContentObserver( getContext(), observer );
    }
 }

@@ -66,7 +66,7 @@ import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class FullDetailedTasksListFragment extends
-         AbstractTaskListFragment< ListTask > implements View.OnClickListener,
+         AbstractTasksListFragment< ListTask > implements View.OnClickListener,
          IOnSettingsChangedListener
 {
    @SuppressWarnings( "unused" )
@@ -91,7 +91,7 @@ public class FullDetailedTasksListFragment extends
    
    
    protected static class OptionsMenu extends
-            AbstractTaskListFragment.OptionsMenu
+            AbstractTasksListFragment.OptionsMenu
    {
       public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
    }

@@ -27,25 +27,25 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -55,7 +55,6 @@ import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter.ISelection
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
 import dev.drsoran.moloko.loaders.SelectableListTasksLoader;
-import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -64,9 +63,10 @@ import dev.drsoran.rtm.SelectableListTask;
 
 
 public class SelectableTasksListsFragment extends
-         AbstractTaskListFragment< SelectableListTask > implements
+         AbstractTasksListFragment< SelectableListTask > implements
          IOnSettingsChangedListener, ISelectionChangedListener
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + SelectableTasksListsFragment.class.getSimpleName();
    
@@ -88,7 +88,7 @@ public class SelectableTasksListsFragment extends
    
    
    protected static class OptionsMenu extends
-            AbstractTaskListFragment.OptionsMenu
+            AbstractTasksListFragment.OptionsMenu
    {
       public final static int SORT_SELECTION = R.id.menu_sort_selection;
       
@@ -121,9 +121,7 @@ public class SelectableTasksListsFragment extends
       private final static String SELECT_STATE = "check_state";
    }
    
-   private final static int SORT_SELECTION_IDX = TaskSortPreference.SORT_ORDER_VALUES.length;
-   
-   public final static int SORT_SELECTION_VALUE = TAG.hashCode();
+   public final static int TASK_SORT_SELECTION = 1 << 16;
    
    
 
@@ -362,12 +360,43 @@ public class SelectableTasksListsFragment extends
    {
       final SubMenu subMenu = super.createTasksSortSubMenu( menu );
       
-      if ( subMenu != null )
+      if ( subMenu != null && getListAdapter() != null )
       {
+         final int selCnt = getListAdapter().getSelectedCount();
+         final boolean moreThanOneSelected = selCnt > 1;
+         final boolean allSelected = getListAdapter().areAllSelected();
          
+         if ( !allSelected && moreThanOneSelected )
+         {
+            subMenu.add( OptionsMenuGroup.SORT,
+                         OptionsMenu.SORT_SELECTION,
+                         Menu.NONE,
+                         R.string.select_multiple_tasks_sort_selection );
+         }
       }
       
       return subMenu;
+   }
+   
+
+
+   @Override
+   protected void initializeTasksSortSubMenu( SubMenu subMenu,
+                                              int currentTaskSort )
+   {
+      // INFO: These items are exclusive checkable. Setting one will reset the other.
+      // The setChecked() call parameter gets ignored. Only the call matters and
+      // always sets the item.
+      switch ( currentTaskSort )
+      {
+         case TASK_SORT_SELECTION:
+            subMenu.findItem( OptionsMenu.SORT_SELECTION ).setChecked( true );
+            break;
+         
+         default :
+            super.initializeTasksSortSubMenu( subMenu, currentTaskSort );
+            break;
+      }
    }
    
 
@@ -382,6 +411,11 @@ public class SelectableTasksListsFragment extends
          // Handle item selection
          switch ( item.getItemId() )
          {
+            case OptionsMenu.SORT_SELECTION:
+               resortTasks( TASK_SORT_SELECTION );
+               item.setChecked( true );
+               return true;
+               
             case OptionsMenu.SELECT_ALL:
                adapter.changeSelection( SelectableTasksListFragmentAdapter.SEL_MODE_ALL );
                return true;
@@ -545,48 +579,9 @@ public class SelectableTasksListsFragment extends
 
 
    @Override
-   public int getTaskSortIndex( int value )
-   {
-      if ( value == SORT_SELECTION_VALUE )
-         return SORT_SELECTION_IDX;
-      else
-         return super.getTaskSortIndex( value );
-   }
-   
-
-
-   @Override
-   public int getTaskSortValue( int idx )
-   {
-      if ( idx == SORT_SELECTION_IDX )
-         return SORT_SELECTION_VALUE;
-      else
-         return super.getTaskSortValue( idx );
-   }
-   
-
-
-   @Override
-   protected void showChooseTaskSortDialog()
-   {
-      new AlertDialog.Builder( getActivity() ).setIcon( R.drawable.ic_dialog_sort )
-                                              .setTitle( R.string.abstaskslist_dlg_sort_title )
-                                              .setSingleChoiceItems( getListAdapter().getSelectedCount() > 0
-                                                                                                            ? R.array.selectmultipletasks_sort_options
-                                                                                                            : R.array.app_sort_options,
-                                                                     getTaskSortIndex( getTaskSortConfiguration() ),
-                                                                     defaultChooseTaskSortDialogListener )
-                                              .setNegativeButton( R.string.btn_cancel,
-                                                                  null )
-                                              .show();
-   }
-   
-
-
-   @Override
    protected String resolveTaskSortToSqlite( int taskSort )
    {
-      if ( taskSort == SORT_SELECTION_VALUE )
+      if ( taskSort == TASK_SORT_SELECTION )
          // Here we take the default task sort cause we re-sort the tasks later by their selection
          return Queries.resolveTaskSortToSqlite( getDefaultTaskSort() );
       else
@@ -600,7 +595,7 @@ public class SelectableTasksListsFragment extends
    {
       // we always want to sort cause the selection may changed
       // TODO: Enhancement: Think about a "dirty" flag to spare sorting.
-      if ( taskSort == SORT_SELECTION_VALUE )
+      if ( taskSort == TASK_SORT_SELECTION )
          return true;
       else
          return super.shouldResortTasks( taskSort );
@@ -651,7 +646,7 @@ public class SelectableTasksListsFragment extends
       
       adapter.setSelectionChangedListener( this );
       
-      if ( getTaskSortConfiguration() == SORT_SELECTION_VALUE )
+      if ( getTaskSortConfiguration() == TASK_SORT_SELECTION )
          adapter.sortBySelection();
       
       notifyOptionsMenuChanged();

@@ -29,11 +29,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -51,6 +50,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
@@ -265,30 +265,25 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
                                Menu.CATEGORY_SECONDARY,
                                MenuItem.SHOW_AS_ACTION_ALWAYS );
       
-      createTasksSortSubMenu( menu );
-      
-      // {
-      // final MenuItem itemSort = UIUtils.addOptionalMenuItem( getActivity(),
-      // menu,
-      // OptionsMenu.SORT,
-      // getString( R.string.abstaskslist_menu_opt_sort ),
-      // Menu.CATEGORY_CONTAINER,
-      // OptionsMenuGroup.SORT,
-      // R.drawable.ic_menu_sort,
-      // MenuItem.SHOW_AS_ACTION_IF_ROOM,
-      // hasMultipleTasks() );
-      // if ( itemSort != null )
-      //
-      // }
+      {
+         final SubMenu subMenu = createTasksSortSubMenu( menu );
+         if ( subMenu != null )
+            subMenu.setGroupCheckable( OptionsMenuGroup.SORT, true, true );
+      }
    }
    
 
 
-   @Deprecated
    @Override
    public final void onPrepareOptionsMenu( Menu menu )
    {
-      // Use getActivity().invalidateOptionsMenu()
+      final MenuItem sortMenuItem = menu.findItem( OptionsMenuGroup.SORT );
+      
+      if ( sortMenuItem != null )
+      {
+         final int currentTaskSort = getTaskSortConfiguration();
+         initializeTasksSortSubMenu( sortMenuItem.getSubMenu(), currentTaskSort );
+      }
    }
    
 
@@ -316,10 +311,21 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    {
       switch ( item.getItemId() )
       {
-         // case OptionsMenu.SORT:
-         // showChooseTaskSortDialog();
-         // return true;
-         
+         case OptionsMenu.SORT_PRIO:
+            resortTasks( Settings.TASK_SORT_PRIORITY );
+            item.setChecked( true );
+            return true;
+            
+         case OptionsMenu.SORT_DUE:
+            resortTasks( Settings.TASK_SORT_DUE_DATE );
+            item.setChecked( true );
+            return true;
+            
+         case OptionsMenu.SORT_NAME:
+            resortTasks( Settings.TASK_SORT_NAME );
+            item.setChecked( true );
+            return true;
+            
          case OptionsMenu.SYNC:
             SyncUtils.requestManualSync( getActivity() );
             return true;
@@ -357,19 +363,25 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
                                     Menu.CATEGORY_CONTAINER,
                                     R.string.abstaskslist_menu_opt_sort );
          subMenu.setIcon( R.drawable.ic_menu_sort );
-         subMenu.setGroupCheckable( OptionsMenuGroup.SORT, true, true );
+         // subMenu.getItem().setShowAsAction( MenuItem.SHOW_AS_ACTION_IF_ROOM );
+         // subMenu.getItem()
+         // .setActionView( new ActionBarMenuItemView( getActivity() ).setIcon( getResources().getDrawable(
+         // R.drawable.ic_menu_sort ) ) );
+         
          subMenu.add( OptionsMenuGroup.SORT,
                       OptionsMenu.SORT_PRIO,
                       Menu.NONE,
-                      R.string.app_sort_prio ).setCheckable( true );
+                      R.string.app_sort_prio );
+         
          subMenu.add( OptionsMenuGroup.SORT,
                       OptionsMenu.SORT_DUE,
                       Menu.NONE,
-                      R.string.app_sort_due_date ).setCheckable( true );
+                      R.string.app_sort_due_date );
+         
          subMenu.add( OptionsMenuGroup.SORT,
                       OptionsMenu.SORT_NAME,
                       Menu.NONE,
-                      R.string.app_sort_alpha ).setCheckable( true );
+                      R.string.app_sort_alpha );
       }
       
       return subMenu;
@@ -377,9 +389,26 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    
 
 
-   protected void createTasksSortActionBarDropDown( ActionBar actionBar )
+   protected void initializeTasksSortSubMenu( SubMenu subMenu,
+                                              int currentTaskSort )
    {
-      
+      // INFO: These items are exclusive checkable. Setting one will reset the other.
+      // The setChecked() call parameter gets ignored. Only the call matters and
+      // always sets the item.
+      switch ( currentTaskSort )
+      {
+         case Settings.TASK_SORT_DUE_DATE:
+            subMenu.findItem( OptionsMenu.SORT_DUE ).setChecked( true );
+            break;
+         
+         case Settings.TASK_SORT_NAME:
+            subMenu.findItem( OptionsMenu.SORT_NAME ).setChecked( true );
+            break;
+         
+         default :
+            subMenu.findItem( OptionsMenu.SORT_PRIO ).setChecked( true );
+            break;
+      }
    }
    
 
@@ -388,6 +417,14 @@ public abstract class AbstractTaskListFragment< T extends Task > extends
    public void onListItemClick( ListView l, View v, int position, long id )
    {
       listener.onOpenTask( position );
+   }
+   
+
+
+   protected void resortTasks( int newTaskSort )
+   {
+      if ( shouldResortTasks( newTaskSort ) )
+         listener.onTaskSortChanged( newTaskSort );
    }
    
 

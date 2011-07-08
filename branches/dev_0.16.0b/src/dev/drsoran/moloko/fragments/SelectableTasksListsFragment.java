@@ -39,6 +39,7 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -89,6 +90,8 @@ public class SelectableTasksListsFragment extends
    protected static class OptionsMenu extends
             AbstractTaskListFragment.OptionsMenu
    {
+      public final static int SORT_SELECTION = R.id.menu_sort_selection;
+      
       public final static int SELECT_ALL = R.id.menu_select_all;
       
       public final static int DESELECT_ALL = R.id.menu_deselect_all;
@@ -350,6 +353,21 @@ public class SelectableTasksListsFragment extends
          final MenuItem invSelItem = menu.findItem( OptionsMenu.INVERT_SELECTION );
          invSelItem.setEnabled( !allSelected && someSelected );
       }
+   }
+   
+
+
+   @Override
+   protected SubMenu createTasksSortSubMenu( Menu menu )
+   {
+      final SubMenu subMenu = super.createTasksSortSubMenu( menu );
+      
+      if ( subMenu != null )
+      {
+         
+      }
+      
+      return subMenu;
    }
    
 

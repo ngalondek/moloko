@@ -57,12 +57,14 @@ public class ActionBarMenuItemView extends ImageView
    
 
 
-   public void setIcon( Drawable icon )
+   public ActionBarMenuItemView setIcon( Drawable icon )
    {
       setImageDrawable( icon );
       setColorFilter( new LightingColorFilter( 1,
                                                getContext().getResources()
                                                            .getColor( R.color.app_actionbar_action_button_tint ) ) );
+      
+      return this;
    }
    
 

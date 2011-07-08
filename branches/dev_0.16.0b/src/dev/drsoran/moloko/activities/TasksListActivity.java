@@ -24,7 +24,6 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
-import android.content.Intent;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 
@@ -36,7 +35,6 @@ import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 
 
@@ -48,7 +46,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       + TasksListActivity.class.getSimpleName();
    
    
-   private final static class OptionsMenu
+   protected static class OptionsMenu extends
+            AbstractTasksListActivity.OptionsMenu
    {
       public final static int SHOW_LISTS = R.id.menu_show_lists;
       
@@ -60,34 +59,31 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      boolean ok = super.onCreateOptionsMenu( menu );
+      super.onCreateOptionsMenu( menu );
       
-      if ( ok )
-      {
-         menu.add( Menu.NONE,
-                   OptionsMenu.SHOW_LISTS,
-                   Menu.CATEGORY_ALTERNATIVE,
-                   R.string.taskslist_menu_opt_lists )
-             .setIcon( R.drawable.ic_menu_list );
-         
-         if ( getIntent().hasExtra( Lists.LIST_NAME )
-            && !AccountUtils.isReadOnlyAccess( this ) )
-         {
-            menu.add( Menu.NONE,
-                      OptionsMenu.DELETE_LIST,
-                      Menu.CATEGORY_SECONDARY,
-                      R.string.taskslist_menu_opt_delete_list )
-                .setIcon( R.drawable.ic_menu_trash );
-         }
-         
-         UIUtils.addOptionsMenuIntent( this,
-                                       menu,
-                                       OptionsMenu.SHOW_LISTS,
-                                       new Intent( Intent.ACTION_VIEW,
-                                                   ListOverviews.CONTENT_URI ) );
-      }
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.SHOW_LISTS,
+                                   getString( R.string.taskslist_menu_opt_lists ),
+                                   Menu.CATEGORY_ALTERNATIVE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_list,
+                                   MenuItem.SHOW_AS_ACTION_NEVER,
+                                   Intents.createOpenListOverviewsIntent(),
+                                   !isInDropDownNavigationMode() );
       
-      return ok;
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.DELETE_LIST,
+                                   getString( R.string.taskslist_menu_opt_delete_list ),
+                                   Menu.CATEGORY_ALTERNATIVE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_trash,
+                                   MenuItem.SHOW_AS_ACTION_NEVER,
+                                   isConfiguredWithListName()
+                                      && !AccountUtils.isReadOnlyAccess( this ) );
+      
+      return true;
    }
    
 
@@ -101,6 +97,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
             final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
             UIUtils.newDeleteElementDialog( this, listName, new Runnable()
             {
+               @Override
                public void run()
                {
                   RtmListEditUtils.deleteListByName( TasksListActivity.this,
@@ -117,6 +114,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    public void onOpenTask( int pos )
    {
       startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
@@ -124,6 +122,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    public void onSelectTasks()
    {
       startActivity( Intents.createSelectMultipleTasksIntent( this,
@@ -133,6 +132,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    public void onEditTask( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
@@ -140,6 +140,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    public void onOpenList( int pos, String listId )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenListExtrasById( this,
@@ -149,6 +150,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    public void onOpenLocation( int pos, String locationId )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenLocationExtras( this,
@@ -157,6 +159,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    public void onOpenNotes( int pos, List< RtmTaskNote > notes )
    {
       if ( notes.size() > 0 )
@@ -176,6 +179,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    public void onShowTasksWithTag( String tag )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenTagExtras( this,
@@ -184,6 +188,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    
 
 
+   @Override
    public void onShowTasksWithTags( List< String > tags, String logicalOperator )
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenTagsExtras( this,

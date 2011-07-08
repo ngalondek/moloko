@@ -97,6 +97,9 @@
         name="menu_delete_selected_tasks" />
     <item
         type="id"
+        name="menu_search_tasks" />
+    <item
+        type="id"
         name="menu_clear_search_history" />
 
 

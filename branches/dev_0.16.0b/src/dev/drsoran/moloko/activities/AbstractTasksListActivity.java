@@ -22,39 +22,69 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActionBar;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.text.TextUtils;
+import android.widget.SpinnerAdapter;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.AbstractTaskListFragment;
+import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
+import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
+import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.provider.Rtm.Lists;
+import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
 abstract class AbstractTasksListActivity extends FragmentActivity implements
-         ITasksListListener, IConfigurable
+         ITasksListListener, IConfigurable, OnNavigationListener,
+         LoaderCallbacks< List< RtmListWithTaskCount > >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + AbstractTasksListActivity.class.getSimpleName();
    
    
-   public static class Config extends AbstractTaskListFragment.Config
+   public static class Config extends AbstractTasksListFragment.Config
    {
       public final static String TITLE = "title";
       
       public final static String TITLE_ICON = "title_icon";
+      
+      public final static String LIST_NAME = Lists.LIST_NAME;
    }
+   
+
+   protected static class OptionsMenu
+   {
+      public final static int SEARCH = R.id.menu_search_tasks;
+      
+      public final static int DELETE_LIST = R.id.menu_delete_list;
+   }
+   
+   private final static int LISTS_LOADER_ID = 1;
+   
+   private SpinnerAdapter actionBarNavigationAdapter;
    
    private Bundle configuration;
    
@@ -78,14 +108,19 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      super.onCreate( savedInstanceState );
-      setContentView( R.layout.taskslist_activity );
-      
       final Bundle intentConfig = new Bundle( getIntent().getExtras() );
       if ( savedInstanceState != null )
          intentConfig.putAll( savedInstanceState );
       
       configure( intentConfig );
+      
+      // TODO: ActionBarSherlock workaround
+      // https://github.com/JakeWharton/ActionBarSherlock/issues/35
+      super.onCreate( savedInstanceState );
+      
+      setContentView( R.layout.taskslist_activity );
+      
+      determineActionBarNavigationMode();
       
       // First-time init; create fragment to embed in activity.
       if ( savedInstanceState == null )
@@ -133,6 +168,47 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
 
 
    @Override
+   public boolean onCreateOptionsMenu( Menu menu )
+   {
+      super.onCreateOptionsMenu( menu );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.SEARCH,
+                                   getString( R.string.search_hint ),
+                                   Menu.CATEGORY_ALTERNATIVE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_search,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   true );
+      
+      return true;
+   }
+   
+
+
+   protected void determineActionBarNavigationMode()
+   {
+      // If we are opened for a list, then we show the other lists as navigation
+      // alternative
+      if ( isConfiguredWithListName() )
+      {
+         getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
+         getSupportActionBar().setListNavigationCallbacks( createInitialActionBarNavigationAdapter(),
+                                                           this );
+         getSupportLoaderManager().initLoader( LISTS_LOADER_ID,
+                                               Bundle.EMPTY,
+                                               this );
+      }
+      else
+      {
+         getSupportActionBar().setTitle( getConfiguredTitle() );
+      }
+   }
+   
+
+
+   @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
@@ -154,6 +230,9 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
          if ( config.containsKey( Config.TITLE_ICON ) )
             configuration.putInt( Config.TITLE_ICON,
                                   config.getInt( Config.TITLE_ICON ) );
+         if ( config.containsKey( Config.LIST_NAME ) )
+            configuration.putString( Config.LIST_NAME,
+                                     config.getString( Config.LIST_NAME ) );
       }
    }
    
@@ -174,6 +253,16 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    private Bundle getCurrentTasksListFragmentConfiguration()
    {
       return new Bundle( getTasksListFragment().getConfiguration() );
+   }
+   
+
+
+   private Bundle getCurrentActivityAndFragmentsConfiguration()
+   {
+      final Bundle completeConfig = getConfiguration();
+      completeConfig.putAll( getCurrentTasksListFragmentConfiguration() );
+      
+      return completeConfig;
    }
    
 
@@ -212,20 +301,6 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
 
 
-   protected int getTaskSortValue( int idx )
-   {
-      return getTasksListFragment().getTaskSortValue( idx );
-   }
-   
-
-
-   protected int getTaskSortIndex( int value )
-   {
-      return getTasksListFragment().getTaskSortIndex( value );
-   }
-   
-
-
    protected int getTaskSort()
    {
       return getTasksListFragment().getTaskSortConfiguration();
@@ -247,10 +322,124 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
 
 
-   @SuppressWarnings( "unchecked" )
-   protected AbstractTaskListFragment< ? extends Task > getTasksListFragment()
+   protected String getConfiguredListName()
    {
-      return (AbstractTaskListFragment< ? extends Task >) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
+      return configuration.getString( Config.LIST_NAME );
+   }
+   
+
+
+   protected String getConfiguredTitle()
+   {
+      final String title = configuration.getString( Config.TITLE );
+      return !TextUtils.isEmpty( title ) ? title
+                                        : getString( R.string.app_name );
+   }
+   
+
+
+   protected boolean isConfiguredWithListName()
+   {
+      return !TextUtils.isEmpty( getConfiguredListName() );
+   }
+   
+
+
+   protected boolean isInDropDownNavigationMode()
+   {
+      return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
+   }
+   
+
+
+   protected SpinnerAdapter createInitialActionBarNavigationAdapter()
+   {
+      actionBarNavigationAdapter = new ActionBarNavigationAdapter( this,
+                                                                   Collections.singletonList( ActionBarNavigationAdapter.Item.fromString( getConfiguredListName() ) ) );
+      return actionBarNavigationAdapter;
+   }
+   
+
+
+   protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
+   {
+      final List< ActionBarNavigationAdapter.Item > items = new ArrayList< ActionBarNavigationAdapter.Item >( lists.size() );
+      for ( RtmListWithTaskCount rtmListWithTaskCount : lists )
+         items.add( new ActionBarNavigationAdapter.Item( R.drawable.ic_button_task_list,
+                                                         rtmListWithTaskCount.getName() ) );
+      
+      actionBarNavigationAdapter = new ActionBarNavigationAdapter( this, items );
+      return actionBarNavigationAdapter;
+   }
+   
+
+
+   @Override
+   public Loader< List< RtmListWithTaskCount >> onCreateLoader( int id,
+                                                                Bundle args )
+   {
+      return new RtmListWithTaskCountLoader( this, null );
+   }
+   
+
+
+   @Override
+   public void onLoadFinished( Loader< List< RtmListWithTaskCount >> loader,
+                               List< RtmListWithTaskCount > data )
+   {
+      getSupportActionBar().setListNavigationCallbacks( createActionBarNavigationAdapterForResult( data ),
+                                                        this );
+      
+      int pos = -1;
+      for ( int i = 0, cnt = data.size(); i < cnt && pos == -1; i++ )
+      {
+         final RtmListWithTaskCount list = data.get( i );
+         if ( list.getName().equalsIgnoreCase( getConfiguredListName() ) )
+            pos = i;
+      }
+      
+      if ( pos != -1 )
+         getSupportActionBar().setSelectedNavigationItem( pos );
+   }
+   
+
+
+   @Override
+   public void onLoaderReset( Loader< List< RtmListWithTaskCount >> loader )
+   {
+      getSupportActionBar().setListNavigationCallbacks( createInitialActionBarNavigationAdapter(),
+                                                        this );
+   }
+   
+
+
+   @Override
+   public boolean onNavigationItemSelected( int itemPosition, long itemId )
+   {
+      boolean handled = false;
+      
+      final ActionBarNavigationAdapter.Item item = (ActionBarNavigationAdapter.Item) actionBarNavigationAdapter.getItem( itemPosition );
+      
+      if ( !item.itemText.equalsIgnoreCase( getConfiguredListName() ) )
+      {
+         final Bundle newConfig = getCurrentActivityAndFragmentsConfiguration();
+         newConfig.putAll( Intents.Extras.createOpenListExtrasByName( this,
+                                                                      item.itemText,
+                                                                      null ) );
+         
+         reloadTasksListWithConfiguration( newConfig );
+         handled = true;
+      }
+      
+      return handled;
+   }
+   
+
+
+   @SuppressWarnings( "unchecked" )
+   protected AbstractTasksListFragment< ? extends Task > getTasksListFragment()
+   {
+      return (AbstractTasksListFragment< ? extends Task >) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
    }
    
 

@@ -68,10 +68,6 @@
 		<item name="android:minHeight">@dimen/app_actionbar_height</item>
 	</style>
 
-	<style name="App_TitleBar_Expanded">
-		<item name="android:background">@drawable/app_titlebar_expanded_bgnd</item>
-	</style>
-
 	<style name="App_TitleBar_Text" parent="@android:style/TextAppearance.WindowTitle">
 		<item name="android:textSize">@dimen/app_actionbar_text_size</item>
 		<item name="android:textColor">@color/app_actionbar_text_color</item>
@@ -131,8 +127,15 @@
 		<item name="android:textStyle">italic|bold</item>
 	</style>
 
+
+   <!-- ************** -->
+   <!-- Quick add task -->
+   <style name="Quick_Add_Task_Fragment">
+      <item name="android:background">@drawable/app_titlebar_expanded_bgnd</item>
+   </style>
+
 	<!-- ************ -->
-	<!-- Dialogs -->
+	<!-- Dialogs      -->
 
 	<style name="Dlg_DuePicker_Value" parent="@android:style/TextAppearance.Large">
 		<item name="android:textColor">@color/app_dlg_due_picker_value</item>
@@ -144,6 +147,7 @@
 		<item name="android:textColor">@color/app_dlg_due_picker_weekday</item>
 		<item name="android:singleLine">true</item>
 	</style>
+
 
 	<!-- ************ -->
 	<!-- Notification -->

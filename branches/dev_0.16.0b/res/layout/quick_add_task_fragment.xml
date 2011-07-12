@@ -12,82 +12,82 @@
 
 <RelativeLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
-   style="@style/App_TitleBar_Expanded"
+   style="@style/Quick_Add_Task_Fragment"
    android:layout_height="wrap_content"
    android:layout_width="fill_parent">
 
    <dev.drsoran.moloko.widgets.RtmSmartAddTextView
-      android:id="@+id/app_titlebar_quick_add_task_edit"
+      android:id="@+id/quick_add_task_edit"
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"
       android:layout_margin="5dip"
       android:layout_alignParentLeft="true"
-      android:layout_toLeftOf="@+id/app_titlebar_quick_add_task_btn_add"
-      android:hint="@string/app_titlebar_add_task_hint"
+      android:layout_toLeftOf="@+id/quick_add_task_btn_add"
+      android:hint="@string/quick_add_task_hint"
       android:imeOptions="actionDone"
       android:inputType="text|textAutoComplete|textCapSentences"
       android:textColor="@android:color/black" />
 
    <Button
-      android:id="@+id/app_titlebar_quick_add_task_btn_add"
+      android:id="@+id/quick_add_task_btn_add"
       android:layout_height="wrap_content"
       android:layout_width="wrap_content"
       android:layout_marginRight="5dip"
       android:layout_alignParentRight="true"
-      android:layout_alignTop="@id/app_titlebar_quick_add_task_edit"
+      android:layout_alignTop="@id/quick_add_task_edit"
       android:text="@string/btn_add" />
 
    <ImageButton
-      android:id="@+id/app_titlebar_quick_add_task_btn_due_date"
+      android:id="@+id/quick_add_task_btn_due_date"
       android:layout_height="40dip"
       android:layout_width="40dip"
-      android:layout_alignLeft="@id/app_titlebar_quick_add_task_edit"
-      android:layout_below="@id/app_titlebar_quick_add_task_edit"
+      android:layout_alignLeft="@id/quick_add_task_edit"
+      android:layout_below="@id/quick_add_task_edit"
       android:text="^"
       android:src="@drawable/ic_button_task_time" />
 
    <ImageButton
-      android:id="@+id/app_titlebar_quick_add_task_btn_prio"
+      android:id="@+id/quick_add_task_btn_prio"
       android:layout_height="40dip"
       android:layout_width="40dip"
-      android:layout_alignTop="@id/app_titlebar_quick_add_task_btn_due_date"
-      android:layout_toRightOf="@id/app_titlebar_quick_add_task_btn_due_date"
+      android:layout_alignTop="@id/quick_add_task_btn_due_date"
+      android:layout_toRightOf="@id/quick_add_task_btn_due_date"
       android:text="!"
       android:src="@drawable/ic_button_task_priority" />
 
    <ImageButton
-      android:id="@+id/app_titlebar_quick_add_task_btn_list_tags"
+      android:id="@+id/quick_add_task_btn_list_tags"
       android:layout_height="40dip"
       android:layout_width="40dip"
-      android:layout_alignTop="@id/app_titlebar_quick_add_task_btn_due_date"
-      android:layout_toRightOf="@id/app_titlebar_quick_add_task_btn_prio"
+      android:layout_alignTop="@id/quick_add_task_btn_due_date"
+      android:layout_toRightOf="@id/quick_add_task_btn_prio"
       android:text="#"
       android:src="@drawable/ic_button_task_smart_add_list_or_tag" />
 
    <ImageButton
-      android:id="@+id/app_titlebar_quick_add_task_btn_location"
+      android:id="@+id/quick_add_task_btn_location"
       android:layout_height="40dip"
       android:layout_width="40dip"
-      android:layout_alignTop="@id/app_titlebar_quick_add_task_btn_due_date"
-      android:layout_toRightOf="@id/app_titlebar_quick_add_task_btn_list_tags"
+      android:layout_alignTop="@id/quick_add_task_btn_due_date"
+      android:layout_toRightOf="@id/quick_add_task_btn_list_tags"
       android:text=" @"
       android:src="@drawable/ic_button_task_location" />
 
    <ImageButton
-      android:id="@+id/app_titlebar_quick_add_task_btn_repeat"
+      android:id="@+id/quick_add_task_btn_repeat"
       android:layout_height="40dip"
       android:layout_width="40dip"
-      android:layout_alignTop="@id/app_titlebar_quick_add_task_btn_due_date"
-      android:layout_toRightOf="@id/app_titlebar_quick_add_task_btn_location"
+      android:layout_alignTop="@id/quick_add_task_btn_due_date"
+      android:layout_toRightOf="@id/quick_add_task_btn_location"
       android:text="*"
       android:src="@drawable/ic_button_task_recurrent" />
 
    <ImageButton
-      android:id="@+id/app_titlebar_quick_add_task_btn_estimate"
+      android:id="@+id/quick_add_task_btn_estimate"
       android:layout_height="40dip"
       android:layout_width="40dip"
-      android:layout_alignTop="@id/app_titlebar_quick_add_task_btn_due_date"
-      android:layout_toRightOf="@id/app_titlebar_quick_add_task_btn_repeat"
+      android:layout_alignTop="@id/quick_add_task_btn_due_date"
+      android:layout_toRightOf="@id/quick_add_task_btn_repeat"
       android:text="="
       android:src="@drawable/ic_button_task_thumb" />
 </RelativeLayout>

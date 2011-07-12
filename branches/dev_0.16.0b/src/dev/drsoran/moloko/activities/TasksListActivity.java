@@ -68,7 +68,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                    Menu.CATEGORY_ALTERNATIVE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_list,
-                                   MenuItem.SHOW_AS_ACTION_NEVER,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    Intents.createOpenListOverviewsIntent(),
                                    !isInDropDownNavigationMode() );
       
@@ -79,7 +79,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                    Menu.CATEGORY_ALTERNATIVE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_trash,
-                                   MenuItem.SHOW_AS_ACTION_NEVER,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    isConfiguredWithListName()
                                       && !AccountUtils.isReadOnlyAccess( this ) );
       

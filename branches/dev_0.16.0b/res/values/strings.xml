@@ -41,8 +41,7 @@
    <string name="app_contacts">Contacts</string>
 	<string name="app_sort_alpha">Task Name</string>
    <string name="app_sort_prio">Priority</string>
-   <string name="app_sort_due_date">Due Date</string>
-   <string name="app_titlebar_add_task_hint">@string/app_task_add</string>
+   <string name="app_sort_due_date">Due Date</string>   
    
    <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>
    <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>   
@@ -240,8 +239,8 @@
    <string name="startup_no_account">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>
    <string name="startup_no_def_list">It can not be started with the standard list because it does not exist.\n\nIt will be started with the default view.</string>
      <!-- Toasts -->
-     <string name="startup_toast_no_settings">Settings could not be loaded. Starting with default settings.</string>   
-	
+     <string name="startup_toast_no_settings">Settings could not be loaded. Starting with default settings.</string>     
+   
 	<!-- Task activity -->
    <string name="task_source">from %1$s</string>
    <string name="task_postponed">%1$dx,</string>
@@ -367,7 +366,10 @@
       
    <!-- NoteEdit activity -->
    <string name="note_edit_title_hint">Note title</string>
-   <string name="note_edit_text_hint">Enter note here</string>      
+   <string name="note_edit_text_hint">Enter note here</string>
+   
+   <!-- Quick add task fragment -->
+   <string name="quick_add_task_hint">@string/app_task_add</string>      
       
    <!-- Authenticator activity -->
    <string name="auth_api_key_label">API key</string>

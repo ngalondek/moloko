@@ -119,12 +119,4 @@
          android:scaleType="centerInside"
          android:visibility="gone" />
    </LinearLayout>
-
-   <include
-      layout="@layout/app_titlebar_quick_add_task"
-      android:id="@+id/app_titlebar_quick_add_task_layout"
-      android:layout_height="wrap_content"
-      android:layout_width="fill_parent"
-      android:visibility="gone" />
-
 </LinearLayout>

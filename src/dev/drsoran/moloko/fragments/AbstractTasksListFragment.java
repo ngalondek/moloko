@@ -257,7 +257,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
                                menu,
                                OptionsMenu.SYNC,
                                Menu.CATEGORY_SECONDARY,
-                               MenuItem.SHOW_AS_ACTION_ALWAYS );
+                               MenuItem.SHOW_AS_ACTION_IF_ROOM );
       
       {
          final SubMenu subMenu = createTasksSortSubMenu( menu );

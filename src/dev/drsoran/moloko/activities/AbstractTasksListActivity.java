@@ -28,10 +28,10 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
@@ -183,7 +183,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
                                    Menu.NONE,
                                    R.drawable.ic_button_title_add_task,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   true );
+                                   true )
+             .setActionView( R.layout.quick_add_task_action_view );
       UIUtils.addOptionalMenuItem( this,
                                    menu,
                                    OptionsMenu.SEARCH,

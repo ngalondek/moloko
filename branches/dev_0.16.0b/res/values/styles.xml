@@ -18,7 +18,7 @@
 	<style name="Theme.Moloko" parent="Theme.Sherlock">
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowContentOverlay">@null</item>
-		<item name="actionBarStyle">@style/App_ActionBar.HomeIcon</item>
+		<item name="actionBarStyle">@style/App_ActionBar</item>
 	</style>
 
 	<style name="Theme.Moloko.Task" parent="Theme.Sherlock.Light">

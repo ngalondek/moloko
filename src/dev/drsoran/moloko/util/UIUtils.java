@@ -48,11 +48,11 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.InflateException;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
+import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -100,6 +100,7 @@ public final class UIUtils
    
 
 
+   @Deprecated
    public final static void setTitle( Activity activity, String text )
    {
       final View titleBarText = activity.findViewById( R.id.app_actionbar_text_color );
@@ -116,6 +117,7 @@ public final class UIUtils
    
 
 
+   @Deprecated
    public final static void setTitle( Activity activity, int resId )
    {
       setTitle( activity, activity.getResources().getString( resId ) );
@@ -123,6 +125,7 @@ public final class UIUtils
    
 
 
+   @Deprecated
    public final static void setTitle( Activity activity,
                                       String text,
                                       int iconResId )
@@ -158,6 +161,7 @@ public final class UIUtils
    
 
 
+   @Deprecated
    public final static void showTitleBarAddTask( Activity activity, boolean show )
    {
       final TitleBarLayout titleBar = (TitleBarLayout) activity.findViewById( R.id.app_title_bar );

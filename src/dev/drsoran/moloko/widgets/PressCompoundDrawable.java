@@ -20,12 +20,13 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.util;
+package dev.drsoran.moloko.widgets;
 
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.UIUtils;
 
 
 public class PressCompoundDrawable

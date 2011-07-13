@@ -28,10 +28,10 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
@@ -43,6 +43,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
+import dev.drsoran.moloko.fragments.QuickAddTaskFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
@@ -51,7 +52,6 @@ import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmListWithTaskCount;
-import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
 
 
@@ -96,6 +96,10 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    {
       switch ( item.getItemId() )
       {
+         case OptionsMenu.QUICK_ADD_TASK:
+            showQuickAddTaskFragment( !isQuickAddTaskFragmentOpen() );
+            return true;
+            
          case android.R.id.home:
             startActivity( Intents.createOpenHomeIntent( this ) );
             return true;
@@ -133,26 +137,6 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
 
 
    @Override
-   protected void onStop()
-   {
-      super.onStop();
-      
-      UIUtils.showTitleBarAddTask( this, false );
-   }
-   
-
-
-   @Override
-   protected void onNewIntent( Intent intent )
-   {
-      UIUtils.showTitleBarAddTask( this, false );
-      
-      setIntent( intent );
-   }
-   
-
-
-   @Override
    protected void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
@@ -183,8 +167,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
                                    Menu.NONE,
                                    R.drawable.ic_button_title_add_task,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   true )
-             .setActionView( R.layout.quick_add_task_action_view );
+                                   true );
       UIUtils.addOptionalMenuItem( this,
                                    menu,
                                    OptionsMenu.SEARCH,
@@ -294,8 +277,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    private static void updateTitleBarSmartFilter( IFilter filter,
                                                   TitleBarLayout titleBar )
    {
-      if ( filter instanceof RtmSmartFilter )
-         titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
+      // if ( filter instanceof RtmSmartFilter )
+      // titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
    }
    
 
@@ -436,6 +419,35 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       }
       
       return handled;
+   }
+   
+
+
+   protected void showQuickAddTaskFragment( boolean show )
+   {
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      
+      if ( show )
+      {
+         final Fragment quickAddTaskFragment = new QuickAddTaskFragment();
+         
+         transaction.add( R.id.frag_quick_add_task, quickAddTaskFragment );
+         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+      }
+      else
+      {
+         transaction.remove( getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task ) );
+         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+      }
+      
+      transaction.commit();
+   }
+   
+
+
+   protected boolean isQuickAddTaskFragmentOpen()
+   {
+      return getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task ) != null;
    }
    
 

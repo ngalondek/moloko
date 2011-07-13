@@ -28,15 +28,16 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.widget.SpinnerAdapter;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IFilter;
@@ -304,7 +305,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
 
 
-   protected IFilter getFilter()
+   protected IFilter getConfiguredFilter()
    {
       return getTasksListFragment().getFilter();
    }
@@ -343,10 +344,10 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
 
    protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
    {
-      final List< ActionBarNavigationAdapter.Item > items = new ArrayList< ActionBarNavigationAdapter.Item >( lists.size() );
+      final List< Pair< Integer, String > > items = new ArrayList< Pair< Integer, String > >( lists.size() );
       for ( RtmListWithTaskCount rtmListWithTaskCount : lists )
-         items.add( new ActionBarNavigationAdapter.Item( R.drawable.ic_button_task_list,
-                                                         rtmListWithTaskCount.getName() ) );
+         items.add( Pair.create( R.drawable.ic_button_task_list,
+                                 rtmListWithTaskCount.getName() ) );
       
       actionBarNavigationAdapter = new ActionBarNavigationAdapter( this, items );
       return actionBarNavigationAdapter;
@@ -403,13 +404,14 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    {
       boolean handled = false;
       
-      final ActionBarNavigationAdapter.Item item = (ActionBarNavigationAdapter.Item) actionBarNavigationAdapter.getItem( itemPosition );
+      @SuppressWarnings( "unchecked" )
+      final Pair< Integer, String > item = (Pair< Integer, String >) actionBarNavigationAdapter.getItem( itemPosition );
       
-      if ( !item.itemText.equalsIgnoreCase( getConfiguredListName() ) )
+      if ( !item.second.equalsIgnoreCase( getConfiguredListName() ) )
       {
          final Bundle newConfig = getCurrentActivityAndFragmentsConfiguration();
          newConfig.putAll( Intents.Extras.createOpenListExtrasByName( this,
-                                                                      item.itemText,
+                                                                      item.second,
                                                                       null ) );
          
          configure( newConfig );
@@ -430,6 +432,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       if ( show )
       {
          final Fragment quickAddTaskFragment = new QuickAddTaskFragment();
+         quickAddTaskFragment.setArguments( getQuickAddTaskFragmentConfiguration() );
          
          transaction.add( R.id.frag_quick_add_task, quickAddTaskFragment );
          transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
@@ -448,6 +451,15 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    protected boolean isQuickAddTaskFragmentOpen()
    {
       return getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task ) != null;
+   }
+   
+
+
+   protected Bundle getQuickAddTaskFragmentConfiguration()
+   {
+      final Bundle config = new Bundle();
+      config.putParcelable( QuickAddTaskFragment.Config.FILTER, getConfiguredFilter() );
+      return config;
    }
    
 

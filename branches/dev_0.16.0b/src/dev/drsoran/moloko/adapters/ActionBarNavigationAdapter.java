@@ -25,42 +25,21 @@ package dev.drsoran.moloko.adapters;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.UIUtils;
 
 
 public class ActionBarNavigationAdapter extends
-         ArrayAdapter< ActionBarNavigationAdapter.Item >
+         ArrayAdapter< Pair< Integer, String > >
 {
-   public final static class Item
-   {
-      public final int iconResId;
-      
-      public final String itemText;
-      
-      
-
-      public Item( int iconResId, String itemText )
-      {
-         this.iconResId = iconResId;
-         this.itemText = itemText;
-      }
-      
-
-
-      public static Item fromString( String itemText )
-      {
-         return new Item( -1, itemText );
-      }
-   }
    
-   
-
    public ActionBarNavigationAdapter( Context context,
-      List< ActionBarNavigationAdapter.Item > list )
+      List< Pair< Integer, String > > list )
    {
       super( context, 0, list );
    }
@@ -72,25 +51,12 @@ public class ActionBarNavigationAdapter extends
    {
       if ( convertView == null )
          convertView = View.inflate( getContext(),
-                                     android.R.layout.simple_dropdown_item_1line,
+                                     R.layout.dropdown_with_icon_1line,
                                      null );
       
-      final Item item = getItem( position );
+      final Pair< Integer, String > item = getItem( position );
       
-      final TextView itemTextView = (TextView) convertView.findViewById( android.R.id.text1 );
-      itemTextView.setText( item.itemText );
-      
-      if ( item.iconResId != -1 )
-      {
-         itemTextView.setCompoundDrawables( getContext().getResources()
-                                                        .getDrawable( item.iconResId ),
-                                            null,
-                                            null,
-                                            null );
-         itemTextView.setCompoundDrawablePadding( 5 );
-      }
-      
-      return convertView;
+      return UIUtils.setDropDownItemIconAndText( convertView, item );
    }
    
 
@@ -103,9 +69,9 @@ public class ActionBarNavigationAdapter extends
                                      R.layout.simple_spinner_item,
                                      null );
       
-      final Item item = getItem( position );
+      final Pair< Integer, String > item = getItem( position );
       final TextView itemTextView = (TextView) convertView.findViewById( android.R.id.text1 );
-      itemTextView.setText( item.itemText );
+      itemTextView.setText( item.second );
       
       return convertView;
    }

@@ -16,18 +16,19 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.RtmSmartAddAdapter;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
-import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
@@ -38,16 +39,99 @@ import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class QuickAddTaskFragment extends Fragment
+public class QuickAddTaskFragment extends Fragment implements IConfigurable
 {
+   public final static class Config
+   {
+      public final static String FILTER = "filter";
+   }
+   
+   private Bundle configuration;
+   
+   private Impl impl;
+   
+   private View quickAddTaskContainer;
+   
+   
+
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      configure( savedInstanceState );
+   }
+   
+
+
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      super.onSaveInstanceState( outState );
+      outState.putAll( configuration );
+   }
+   
+
+
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState )
    {
-      return inflater.inflate( R.layout.quick_add_task_fragment,
-                               container,
-                               false );
+      quickAddTaskContainer = inflater.inflate( R.layout.quick_add_task_fragment,
+                                                container,
+                                                false );
+      
+      impl = new Impl( getActivity(),
+                       quickAddTaskContainer,
+                       getConfiguredRtmSmartFilter() );
+      
+      return quickAddTaskContainer;
+   }
+   
+
+
+   @Override
+   public Bundle getConfiguration()
+   {
+      return new Bundle( configuration );
+   }
+   
+
+
+   @Override
+   public void configure( Bundle config )
+   {
+      if ( configuration == null )
+         configuration = createDefaultConfiguration();
+      
+      if ( config != null )
+      {
+         if ( config.containsKey( Config.FILTER ) )
+            configuration.putParcelable( Config.FILTER,
+                                         config.getParcelable( Config.FILTER ) );
+      }
+   }
+   
+
+
+   @Override
+   public Bundle createDefaultConfiguration()
+   {
+      final Bundle bundle = new Bundle();
+      bundle.putParcelable( Config.FILTER,
+                            new RtmSmartFilter( Strings.EMPTY_STRING ) );
+      return bundle;
+   }
+   
+
+
+   private RtmSmartFilter getConfiguredRtmSmartFilter()
+   {
+      final IFilter filter = configuration.getParcelable( Config.FILTER );
+      if ( filter instanceof RtmSmartFilter )
+         return (RtmSmartFilter) filter;
+      else
+         return null;
    }
    
    
@@ -55,6 +139,8 @@ public class QuickAddTaskFragment extends Fragment
    {
       private static final String TAG = "Moloko.QuickAddTask"
          + Impl.class.getSimpleName();
+      
+      private final Context context;
       
       private final View container;
       
@@ -76,12 +162,13 @@ public class QuickAddTaskFragment extends Fragment
       
       private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
-      private RtmSmartFilter filter;
-      
       
 
-      public Impl( Context context, View quickAddTaskContainer )
+      public Impl( Context context, View quickAddTaskContainer,
+         RtmSmartFilter filter )
       {
+         this.context = context;
+         
          container = quickAddTaskContainer;
          
          addTaskEdit = (RtmSmartAddTextView) container.findViewById( R.id.quick_add_task_edit );
@@ -104,45 +191,21 @@ public class QuickAddTaskFragment extends Fragment
          btnLocation.setOnClickListener( this );
          btnRepeat.setOnClickListener( this );
          btnEstimate.setOnClickListener( this );
-      }
-      
-
-
-      public void show( boolean show, RtmSmartFilter filter )
-      {
-         container.setVisibility( show ? View.VISIBLE : View.GONE );
          
-         if ( show )
+         // Depending on the used filter, pre-select certain operators
+         // Only do that if the edit field is empty cause this
+         // instance is kept even after closing the quick add field.
+         if ( filter != null && addTaskEdit.getText().length() == 0
+            && preselectByFilter( filter ) > 0 )
          {
-            // If we get a new filter we clear the edit text.
-            if ( this.filter != filter )
-               addTaskEdit.getText().clear();
-            
-            this.filter = filter;
-            
-            addTaskEdit.requestFocus();
-            
-            // Depending on the used filter, pre-select certain operators
-            // Only do that if the edit field is empty cause this
-            // instance is kept even after closing the quick add field.
-            if ( filter != null && addTaskEdit.getText().length() == 0
-               && preselectByFilter( filter ) > 0 )
-            {
-               addTaskEdit.setText( " " + addTaskEdit.getText() );
-               Selection.setSelection( addTaskEdit.getText(), 0 );
-            }
-         }
-         else
-         {
-            // Hide the soft input on close
-            final InputMethodManager imm = (InputMethodManager) TitleBarLayout.this.getContext()
-                                                                                   .getSystemService( Context.INPUT_METHOD_SERVICE );
-            imm.hideSoftInputFromWindow( addTaskEdit.getWindowToken(), 0 );
+            addTaskEdit.setText( " " + addTaskEdit.getText() );
+            Selection.setSelection( addTaskEdit.getText(), 0 );
          }
       }
       
 
 
+      @Override
       public void onClick( View view )
       {
          final int pos = Selection.getSelectionStart( addTaskEdit.getText() );
@@ -366,7 +429,7 @@ public class QuickAddTaskFragment extends Fragment
                               if ( estimated != -1 )
                               {
                                  config.putString( Tasks.ESTIMATE,
-                                                   MolokoDateUtils.formatEstimated( getContext(),
+                                                   MolokoDateUtils.formatEstimated( context,
                                                                                     estimated ) );
                                  config.putLong( Tasks.ESTIMATE_MILLIS,
                                                  Long.valueOf( estimated ) );
@@ -388,9 +451,8 @@ public class QuickAddTaskFragment extends Fragment
             }
          }
          
-         getContext().startActivity( Intents.createAddTaskIntent( getContext(),
-                                                                  config ) );
-         showAddTaskInput( false );
+         context.startActivity( Intents.createAddTaskIntent( context, config ) );
       }
    }
+   
 }

@@ -127,6 +127,10 @@
 		<item name="android:textStyle">italic|bold</item>
 	</style>
 
+   <style name="App_DropDownStyle">
+      <item name="android:textAppearance">?android:attr/textAppearanceLargePopupMenu</item>
+      <item name="android:singleLine">true</item>
+   </style>
 
    <!-- ************** -->
    <!-- Quick add task -->

@@ -48,11 +48,12 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.InflateException;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -170,6 +171,40 @@ public final class UIUtils
       {
          titleBar.showAddTaskInput( show );
       }
+   }
+   
+
+
+   public final static View setDropDownItemIconAndText( View dropDownView,
+                                                        Pair< Integer, String > iconWithText )
+   {
+      return setDropDownItemIconAndText( dropDownView,
+                                         iconWithText.first != null
+                                                                   ? iconWithText.first.intValue()
+                                                                   : -1,
+                                         iconWithText.second );
+      
+   }
+   
+
+
+   public final static View setDropDownItemIconAndText( View dropDownView,
+                                                        int iconId,
+                                                        String text )
+   {
+      final TextView textView = (TextView) dropDownView.findViewById( android.R.id.text1 );
+      textView.setText( text );
+      
+      final ImageView icon = (ImageView) dropDownView.findViewById( android.R.id.icon1 );
+      if ( iconId != -1 )
+      {
+         icon.setVisibility( View.VISIBLE );
+         icon.setImageResource( iconId );
+      }
+      else
+         icon.setVisibility( View.GONE );
+      
+      return dropDownView;
    }
    
 

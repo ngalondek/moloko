@@ -32,11 +32,11 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
-import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -51,6 +51,7 @@ import dev.drsoran.moloko.content.TagsProviderPart;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Locations;
@@ -110,22 +111,16 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       final View view;
       
       if ( convertView == null )
-         view = View.inflate( context,
-                              android.R.layout.simple_dropdown_item_1line,
-                              parent );
+         view = LayoutInflater.from( context )
+                              .inflate( R.layout.dropdown_with_icon_1line,
+                                        parent,
+                                        false );
       else
          view = convertView;
       
       final Pair< Integer, String > item = data.get( position );
       
-      final TextView text = (TextView) view.findViewById( android.R.id.text1 );
-      text.setText( item.second );
-      text.setTextColor( context.getResources()
-                                .getColor( android.R.color.black ) );
-      text.setCompoundDrawablePadding( 5 );
-      text.setCompoundDrawablesWithIntrinsicBounds( item.first, 0, 0, 0 );
-      
-      return view;
+      return UIUtils.setDropDownItemIconAndText( view, item );
    }
    
 

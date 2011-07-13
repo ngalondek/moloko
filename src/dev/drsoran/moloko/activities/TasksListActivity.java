@@ -126,7 +126,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    public void onSelectTasks()
    {
       startActivity( Intents.createSelectMultipleTasksIntent( this,
-                                                              getFilter(),
+                                                              getConfiguredFilter(),
                                                               getTaskSort() ) );
    }
    

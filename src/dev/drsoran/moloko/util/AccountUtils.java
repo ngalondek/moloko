@@ -114,6 +114,12 @@ public final class AccountUtils
                permission = RtmAuth.Perms.valueOf( permStr );
             }
          }
+         else
+         {
+            // If the user has not created an account, he operates only
+            // local but has full access to his local changes.
+            permission = Perms.delete;
+         }
       }
       
       return permission;

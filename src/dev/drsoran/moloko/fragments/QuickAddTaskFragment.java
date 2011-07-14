@@ -55,15 +55,33 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
    
    
 
+   public final static QuickAddTaskFragment newInstance( Bundle config )
+   {
+      final QuickAddTaskFragment fragment = new QuickAddTaskFragment();
+      
+      fragment.setArguments( config );
+      
+      return fragment;
+   }
+   
+
+
+   @Override
+   public void setArguments( Bundle args )
+   {
+      super.setArguments( args );
+      configure( args );
+   }
+   
+
+
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
-      configure( getArguments() );
       
-      impl = new Impl( getActivity(),
-                       quickAddTaskContainer,
-                       getConfiguredRtmSmartFilter() );
+      configure( getArguments() );
+      createNewImpl();
    }
    
 
@@ -91,15 +109,34 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
 
 
    @Override
+   public void onHiddenChanged( boolean hidden )
+   {
+      super.onHiddenChanged( hidden );
+      
+      if ( hidden )
+      {
+         hideSoftInput();
+         if ( impl != null )
+         {
+            impl.clearEditText();
+            impl = null;
+         }
+      }
+      else
+      {
+         createNewImpl();
+      }
+   }
+   
+
+
+   @Override
    public void onDestroyView()
    {
       super.onDestroyView();
       
-      if ( impl != null )
-      {
-         impl.hideSoftInput();
-         impl = null;
-      }
+      hideSoftInput();
+      impl = null;
    }
    
 
@@ -124,6 +161,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
             configuration.putParcelable( Config.FILTER,
                                          config.getParcelable( Config.FILTER ) );
       }
+      
+      getArguments().putAll( configuration );
    }
    
 
@@ -135,6 +174,23 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       bundle.putParcelable( Config.FILTER,
                             new RtmSmartFilter( Strings.EMPTY_STRING ) );
       return bundle;
+   }
+   
+
+
+   private void createNewImpl()
+   {
+      impl = new Impl( getActivity(),
+                       quickAddTaskContainer,
+                       getConfiguredRtmSmartFilter() );
+   }
+   
+
+
+   private void hideSoftInput()
+   {
+      if ( impl != null )
+         impl.hideSoftInput();
    }
    
 
@@ -217,6 +273,13 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
             addTaskEdit.setText( " " + addTaskEdit.getText() );
             Selection.setSelection( addTaskEdit.getText(), 0 );
          }
+      }
+      
+
+
+      public void clearEditText()
+      {
+         addTaskEdit.getEditableText().clear();
       }
       
 

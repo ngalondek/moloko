@@ -135,7 +135,7 @@
    <!-- ************** -->
    <!-- Quick add task -->
    <style name="Quick_Add_Task_Fragment">
-      <item name="android:background">@drawable/app_titlebar_expanded_bgnd</item>
+      <item name="android:background">@drawable/app_actionbar_expanded_bgnd</item>
    </style>
 
 	<!-- ************ -->

@@ -28,10 +28,10 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
@@ -422,19 +422,28 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    protected void showQuickAddTaskFragment( boolean show )
    {
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      transaction.setCustomAnimations( R.anim.slide_in_top,
+                                       R.anim.slide_out_top );
       
       if ( show )
       {
-         final Fragment quickAddTaskFragment = new QuickAddTaskFragment();
-         quickAddTaskFragment.setArguments( createQuickAddTaskFragmentConfiguration() );
+         final Bundle config = createQuickAddTaskFragmentConfiguration();
+         QuickAddTaskFragment quickAddTaskFragment = (QuickAddTaskFragment) getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task );
          
-         transaction.add( R.id.frag_quick_add_task, quickAddTaskFragment );
-         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+         if ( quickAddTaskFragment == null )
+         {
+            quickAddTaskFragment = QuickAddTaskFragment.newInstance( config );
+            transaction.add( R.id.frag_quick_add_task, quickAddTaskFragment );
+         }
+         else
+         {
+            quickAddTaskFragment.configure( config );
+            transaction.show( quickAddTaskFragment );
+         }
       }
       else
       {
-         transaction.remove( getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task ) );
-         transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+         transaction.hide( getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task ) );
       }
       
       transaction.commit();
@@ -444,7 +453,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
 
    protected boolean isQuickAddTaskFragmentOpen()
    {
-      return getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task ) != null;
+      final Fragment quickAddTaskFragment = getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task );
+      return quickAddTaskFragment != null && !quickAddTaskFragment.isHidden();
    }
    
 

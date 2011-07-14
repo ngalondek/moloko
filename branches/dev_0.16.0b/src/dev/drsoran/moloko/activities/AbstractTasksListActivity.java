@@ -28,10 +28,10 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
@@ -47,7 +47,6 @@ import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.QuickAddTaskFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
-import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
@@ -91,25 +90,6 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    private Bundle configuration;
    
    
-
-   @Override
-   public boolean onOptionsItemSelected( MenuItem item )
-   {
-      switch ( item.getItemId() )
-      {
-         case OptionsMenu.QUICK_ADD_TASK:
-            showQuickAddTaskFragment( !isQuickAddTaskFragmentOpen() );
-            return true;
-            
-         case android.R.id.home:
-            startActivity( Intents.createOpenHomeIntent( this ) );
-            return true;
-      }
-      
-      return super.onOptionsItemSelected( item );
-   }
-   
-
 
    @Override
    public void onCreate( Bundle savedInstanceState )
@@ -180,6 +160,36 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
                                    true );
       
       return true;
+   }
+   
+
+
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case OptionsMenu.QUICK_ADD_TASK:
+            showQuickAddTaskFragment( !isQuickAddTaskFragmentOpen() );
+            return true;
+            
+         case android.R.id.home:
+            startActivity( Intents.createOpenHomeIntent( this ) );
+            return true;
+      }
+      
+      return super.onOptionsItemSelected( item );
+   }
+   
+
+
+   @Override
+   public void onBackPressed()
+   {
+      if ( isQuickAddTaskFragmentOpen() )
+         showQuickAddTaskFragment( false );
+      else
+         super.onBackPressed();
    }
    
 
@@ -264,22 +274,6 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       config.putInt( Config.TASK_SORT_ORDER, newTaskSort );
       
       newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
-   }
-   
-
-
-   protected void updateTitleBar( TitleBarLayout titleBar )
-   {
-      
-   }
-   
-
-
-   private static void updateTitleBarSmartFilter( IFilter filter,
-                                                  TitleBarLayout titleBar )
-   {
-      // if ( filter instanceof RtmSmartFilter )
-      // titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
    }
    
 
@@ -432,7 +426,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       if ( show )
       {
          final Fragment quickAddTaskFragment = new QuickAddTaskFragment();
-         quickAddTaskFragment.setArguments( getQuickAddTaskFragmentConfiguration() );
+         quickAddTaskFragment.setArguments( createQuickAddTaskFragmentConfiguration() );
          
          transaction.add( R.id.frag_quick_add_task, quickAddTaskFragment );
          transaction.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
@@ -455,10 +449,12 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
 
 
-   protected Bundle getQuickAddTaskFragmentConfiguration()
+   protected Bundle createQuickAddTaskFragmentConfiguration()
    {
       final Bundle config = new Bundle();
-      config.putParcelable( QuickAddTaskFragment.Config.FILTER, getConfiguredFilter() );
+      
+      config.putParcelable( QuickAddTaskFragment.Config.FILTER,
+                            getConfiguredFilter() );
       return config;
    }
    

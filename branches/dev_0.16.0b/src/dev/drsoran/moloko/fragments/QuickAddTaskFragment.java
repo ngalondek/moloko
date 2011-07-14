@@ -16,6 +16,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -46,19 +47,23 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       public final static String FILTER = "filter";
    }
    
-   private Bundle configuration;
-   
    private Impl impl;
+   
+   private Bundle configuration;
    
    private View quickAddTaskContainer;
    
    
 
    @Override
-   public void onCreate( Bundle savedInstanceState )
+   public void onActivityCreated( Bundle savedInstanceState )
    {
-      super.onCreate( savedInstanceState );
-      configure( savedInstanceState );
+      super.onActivityCreated( savedInstanceState );
+      configure( getArguments() );
+      
+      impl = new Impl( getActivity(),
+                       quickAddTaskContainer,
+                       getConfiguredRtmSmartFilter() );
    }
    
 
@@ -80,12 +85,21 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       quickAddTaskContainer = inflater.inflate( R.layout.quick_add_task_fragment,
                                                 container,
                                                 false );
-      
-      impl = new Impl( getActivity(),
-                       quickAddTaskContainer,
-                       getConfiguredRtmSmartFilter() );
-      
       return quickAddTaskContainer;
+   }
+   
+
+
+   @Override
+   public void onDestroyView()
+   {
+      super.onDestroyView();
+      
+      if ( impl != null )
+      {
+         impl.hideSoftInput();
+         impl = null;
+      }
    }
    
 
@@ -192,6 +206,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
          btnRepeat.setOnClickListener( this );
          btnEstimate.setOnClickListener( this );
          
+         addTaskEdit.requestFocus();
+         
          // Depending on the used filter, pre-select certain operators
          // Only do that if the edit field is empty cause this
          // instance is kept even after closing the quick add field.
@@ -201,6 +217,14 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
             addTaskEdit.setText( " " + addTaskEdit.getText() );
             Selection.setSelection( addTaskEdit.getText(), 0 );
          }
+      }
+      
+
+
+      public void hideSoftInput()
+      {
+         final InputMethodManager imm = (InputMethodManager) context.getSystemService( Context.INPUT_METHOD_SERVICE );
+         imm.hideSoftInputFromWindow( addTaskEdit.getWindowToken(), 0 );
       }
       
 

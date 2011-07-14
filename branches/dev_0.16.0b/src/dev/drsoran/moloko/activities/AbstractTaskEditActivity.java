@@ -39,16 +39,16 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -56,11 +56,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
@@ -161,12 +161,10 @@ abstract class AbstractTaskEditActivity extends Activity
 
    private static abstract class SmallTextWatcher implements TextWatcher
    {
-      @Override
       abstract public void afterTextChanged( Editable s );
       
 
 
-      @Override
       public void beforeTextChanged( CharSequence s,
                                      int start,
                                      int count,
@@ -176,7 +174,6 @@ abstract class AbstractTaskEditActivity extends Activity
       
 
 
-      @Override
       public void onTextChanged( CharSequence s,
                                  int start,
                                  int before,
@@ -334,7 +331,6 @@ abstract class AbstractTaskEditActivity extends Activity
          
          dueEdit.setOnEditorActionListener( new OnEditorActionListener()
          {
-            @Override
             public boolean onEditorAction( TextView v,
                                            int actionId,
                                            KeyEvent event )
@@ -345,7 +341,6 @@ abstract class AbstractTaskEditActivity extends Activity
          
          dueEdit.setOnFocusChangeListener( new OnFocusChangeListener()
          {
-            @Override
             public void onFocusChange( View v, boolean hasFocus )
             {
                onDueFocused( hasFocus );
@@ -354,7 +349,6 @@ abstract class AbstractTaskEditActivity extends Activity
          
          recurrEdit.setOnEditorActionListener( new OnEditorActionListener()
          {
-            @Override
             public boolean onEditorAction( TextView v,
                                            int actionId,
                                            KeyEvent event )
@@ -365,7 +359,6 @@ abstract class AbstractTaskEditActivity extends Activity
          
          estimateEdit.setOnEditorActionListener( new OnEditorActionListener()
          {
-            @Override
             public boolean onEditorAction( TextView v,
                                            int actionId,
                                            KeyEvent event )
@@ -393,7 +386,6 @@ abstract class AbstractTaskEditActivity extends Activity
    {
       priority.setOnItemSelectedListener( new OnItemSelectedListener()
       {
-         @Override
          public void onItemSelected( AdapterView< ? > arg0,
                                      View arg1,
                                      int arg2,
@@ -406,7 +398,6 @@ abstract class AbstractTaskEditActivity extends Activity
          
 
 
-         @Override
          public void onNothingSelected( AdapterView< ? > arg0 )
          {
          }
@@ -490,7 +481,6 @@ abstract class AbstractTaskEditActivity extends Activity
          {
             UIUtils.newApplyChangesDialog( this, new Runnable()
             {
-               @Override
                public void run()
                {
                   final ModificationSet modifications = getModifications();
@@ -555,7 +545,6 @@ abstract class AbstractTaskEditActivity extends Activity
       {
          UIUtils.newCancelWithChangesDialog( this, new Runnable()
          {
-            @Override
             public void run()
             {
                setResult( RESULT_CANCELED );
@@ -711,7 +700,6 @@ abstract class AbstractTaskEditActivity extends Activity
                
                list.setOnItemSelectedListener( new OnItemSelectedListener()
                {
-                  @Override
                   public void onItemSelected( AdapterView< ? > arg0,
                                               View arg1,
                                               int arg2,
@@ -724,7 +712,6 @@ abstract class AbstractTaskEditActivity extends Activity
                   
 
 
-                  @Override
                   public void onNothingSelected( AdapterView< ? > arg0 )
                   {
                   }
@@ -791,7 +778,6 @@ abstract class AbstractTaskEditActivity extends Activity
                
                location.setOnItemSelectedListener( new OnItemSelectedListener()
                {
-                  @Override
                   public void onItemSelected( AdapterView< ? > arg0,
                                               View arg1,
                                               int arg2,
@@ -804,7 +790,6 @@ abstract class AbstractTaskEditActivity extends Activity
                   
 
 
-                  @Override
                   public void onNothingSelected( AdapterView< ? > arg0 )
                   {
                   }
@@ -832,7 +817,6 @@ abstract class AbstractTaskEditActivity extends Activity
       pickerDlg = createDuePicker();
       pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
       {
-         @Override
          public void onDialogClosed( CloseReason reason,
                                      Object value,
                                      Object... extras )
@@ -894,7 +878,6 @@ abstract class AbstractTaskEditActivity extends Activity
       pickerDlg = createRecurrencePicker();
       pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
       {
-         @Override
          public void onDialogClosed( CloseReason reason,
                                      Object value,
                                      Object... extras )
@@ -950,7 +933,6 @@ abstract class AbstractTaskEditActivity extends Activity
       pickerDlg = createEstimatePicker();
       pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
       {
-         @Override
          public void onDialogClosed( CloseReason reason,
                                      Object value,
                                      Object... extras )
@@ -1011,7 +993,7 @@ abstract class AbstractTaskEditActivity extends Activity
                                          String[] values )
    {
       final ArrayAdapter< String > adapter = new ArrayAdapter< String >( this,
-                                                                         R.layout.dropdown_with_icon_1line,
+                                                                         android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          names );
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
@@ -1026,7 +1008,7 @@ abstract class AbstractTaskEditActivity extends Activity
                                              String[] values )
    {
       final ArrayAdapter< String > adapter = new ArrayAdapter< String >( this,
-                                                                         R.layout.dropdown_with_icon_1line,
+                                                                         android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          names );
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
@@ -1041,7 +1023,7 @@ abstract class AbstractTaskEditActivity extends Activity
                                              String[] values )
    {
       final ArrayAdapter< String > adapter = new ArrayAdapter< String >( this,
-                                                                         R.layout.dropdown_with_icon_1line,
+                                                                         android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
                                                                          names );
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
@@ -1080,8 +1062,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshPrioritySpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
 
@@ -1170,8 +1151,7 @@ abstract class AbstractTaskEditActivity extends Activity
    protected void refreshLocationSpinner( TitleWithSpinnerLayout spinner )
    {
       spinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                    String.class ),
-                                   0 );
+                                                    String.class ), 0 );
    }
    
 

@@ -47,7 +47,7 @@ public class ClearableMultiAutoCompleteTextView extends
    public ClearableMultiAutoCompleteTextView( Context context,
       AttributeSet attrs )
    {
-      super( context, attrs, android.R.attr.editTextStyle );
+      super( context, attrs, android.R.attr.autoCompleteTextViewStyle );
       init();
    }
    

@@ -339,7 +339,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       {
          subMenu = menu.addSubMenu( OptionsMenuGroup.SORT,
                                     OptionsMenu.SORT,
-                                    Menu.CATEGORY_CONTAINER,
+                                    Menu.NONE,
                                     R.string.abstaskslist_menu_opt_sort );
          subMenu.setIcon( R.drawable.ic_menu_sort );
          

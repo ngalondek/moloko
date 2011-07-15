@@ -153,7 +153,7 @@ public class MinDetailedTasksListFragment extends
                                    menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
                                    getString( R.string.abstaskslist_menu_opt_edit_multiple ),
-                                   Menu.CATEGORY_CONTAINER,
+                                   Menu.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_edit_multiple_tasks,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,

@@ -24,7 +24,7 @@
       style="@style/App_Note_Created_Date_Text"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:paddingRight="5dip"
+      android:layout_marginRight="?android:attr/scrollbarSize"
       android:gravity="right"
       android:text="Created_Date" />
 
@@ -34,7 +34,8 @@
       android:id="@+id/note"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:paddingTop="5dip"
+      android:layout_marginTop="5dip"
+      android:layout_marginRight="?android:attr/scrollbarSize"
       twt:title="note_title"
       twt:text="note_text" />
 </LinearLayout>

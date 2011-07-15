@@ -28,9 +28,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -38,15 +38,15 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.text.TextUtils;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -201,7 +201,7 @@ public class FullDetailedTasksListFragment extends
                                    menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
                                    getString( R.string.abstaskslist_menu_opt_edit_multiple ),
-                                   Menu.CATEGORY_CONTAINER,
+                                   Menu.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_edit_multiple_tasks,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,

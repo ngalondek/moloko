@@ -11,14 +11,12 @@
 
 <merge
    xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-   style="@style/Note"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"   
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
    <ScrollView
-      android:id="@+id/note_activity_note_container"
-      style="@style/Note"
+      android:id="@+id/note_activity_note_container"      
       android:layout_width="fill_parent"
       android:layout_height="fill_parent">
 
@@ -83,7 +81,7 @@
 
       <RelativeLayout
          android:id="@+id/note_activity_bottom_button_bar"
-         style="@style/App_ButtonBar_Bgnd"
+         style="?attr/bottomButtonBarStyle"
          android:layout_width="fill_parent"
          android:layout_height="70dip"
          android:layout_below="@+id/note_buttons"

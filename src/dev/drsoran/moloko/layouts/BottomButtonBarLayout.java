@@ -47,7 +47,7 @@ public class BottomButtonBarLayout extends FrameLayout
    private Button button2;
    
    
-
+   
    public BottomButtonBarLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -59,8 +59,8 @@ public class BottomButtonBarLayout extends FrameLayout
       initImpl( context, attrs );
    }
    
-
-
+   
+   
    public BottomButtonBarLayout( Context context, AttributeSet attrs,
       ViewGroup root )
    {
@@ -73,8 +73,8 @@ public class BottomButtonBarLayout extends FrameLayout
       initImpl( context, attrs );
    }
    
-
-
+   
+   
    private void initImpl( Context context, AttributeSet attrs )
    {
       content = (ViewGroup) findViewById( android.R.id.content );
@@ -83,7 +83,7 @@ public class BottomButtonBarLayout extends FrameLayout
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.BottomButtonBarLayout,
-                                                               0,
+                                                               R.attr.bottomButtonBarStyle,
                                                                0 );
       
       setBackgroundColor( array );
@@ -107,8 +107,8 @@ public class BottomButtonBarLayout extends FrameLayout
       array.recycle();
    }
    
-
-
+   
+   
    private final void layoutButtons( TypedArray array )
    {
       Button visibleButton = null;
@@ -144,8 +144,8 @@ public class BottomButtonBarLayout extends FrameLayout
       }
    }
    
-
-
+   
+   
    private final void setBackgroundColor( TypedArray array )
    {
       final int color = array.getColor( R.styleable.BottomButtonBarLayout_backgroundColor,
@@ -159,8 +159,8 @@ public class BottomButtonBarLayout extends FrameLayout
       setBackgroundDrawable( content.getBackground() );
    }
    
-
-
+   
+   
    private final int setButtonAttr( Context context,
                                     Button button,
                                     TypedArray array,
@@ -215,14 +215,14 @@ public class BottomButtonBarLayout extends FrameLayout
       private Method handler;
       
       
-
+      
       public ButtonOnClickHandler( String handlerName )
       {
          this.handlerName = handlerName;
       }
       
-
-
+      
+      
       public void onClick( View v )
       {
          if ( handler == null )

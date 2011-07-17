@@ -38,11 +38,10 @@ import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.rtm.ListTask;
+import dev.drsoran.rtm.Task;
 
 
-public class MinDetailedTasksListFragmentAdapter extends
-         ArrayAdapter< ListTask >
+public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
 {
    private final static String TAG = "Moloko."
       + MinDetailedTasksListFragmentAdapter.class.getName();
@@ -52,16 +51,16 @@ public class MinDetailedTasksListFragmentAdapter extends
    private final int resourceId;
    
    
-
+   
    public MinDetailedTasksListFragmentAdapter( Context context, int resourceId )
    {
-      this( context, resourceId, Collections.< ListTask > emptyList() );
+      this( context, resourceId, Collections.< Task > emptyList() );
    }
    
-
-
+   
+   
    public MinDetailedTasksListFragmentAdapter( Context context, int resourceId,
-      List< ListTask > tasks )
+      List< Task > tasks )
    {
       super( context, View.NO_ID, tasks );
       
@@ -69,15 +68,15 @@ public class MinDetailedTasksListFragmentAdapter extends
       this.resourceId = resourceId;
    }
    
-
-
+   
+   
    public int getLayoutRessource()
    {
       return resourceId;
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
@@ -103,7 +102,7 @@ public class MinDetailedTasksListFragmentAdapter extends
          throw e;
       }
       
-      final ListTask task = getItem( position );
+      final Task task = getItem( position );
       
       UIUtils.setTaskDescription( description, task, MolokoDateUtils.newTime() );
       
@@ -116,9 +115,9 @@ public class MinDetailedTasksListFragmentAdapter extends
       return convertView;
    }
    
-
-
-   private final void setDueDate( TextView view, ListTask task )
+   
+   
+   private final void setDueDate( TextView view, Task task )
    {
       // if has a due date
       if ( task.getDue() != null )
@@ -187,9 +186,9 @@ public class MinDetailedTasksListFragmentAdapter extends
          view.setVisibility( View.GONE );
    }
    
-
-
-   private void setCompleted( ImageView view, ListTask task )
+   
+   
+   private void setCompleted( ImageView view, Task task )
    {
       view.setEnabled( task.getCompleted() != null );
    }

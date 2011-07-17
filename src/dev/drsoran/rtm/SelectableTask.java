@@ -29,20 +29,21 @@ import java.util.List;
 import com.mdt.rtm.data.RtmTask.Priority;
 
 
-public class SelectableListTask extends ListTask
+public class SelectableTask extends Task
 {
    private boolean isSelected;
    
    
-
-   public SelectableListTask( String id, String taskSeriesId, String listName,
+   
+   public SelectableTask( String id, String taskSeriesId, String listName,
       boolean isSmartList, Date created, Date modified, String name,
       String source, String url, String recurrence, boolean isEveryRecurrence,
       String locationId, String listId, Date due, boolean hasDueTime,
       Date added, Date completed, Date deleted, Priority priority,
       int posponed, String estimate, long estimateMillis, String locationName,
       float longitude, float latitude, String address, boolean isViewable,
-      int zoom, List< String > tags, ParticipantList participants, int numNotes )
+      int zoom, List< String > tags, ParticipantList participants,
+      List< String > noteIds )
    {
       super( id,
              taskSeriesId,
@@ -74,49 +75,49 @@ public class SelectableListTask extends ListTask
              zoom,
              tags,
              participants,
-             numNotes );
+             noteIds );
    }
    
-
-
-   public final static SelectableListTask fromListTask( ListTask task )
+   
+   
+   public final static SelectableTask fromTask( Task task )
    {
-      return new SelectableListTask( task.getId(),
-                                     task.getTaskSeriesId(),
-                                     task.getListName(),
-                                     task.isSmartList(),
-                                     task.getCreated(),
-                                     task.getModified(),
-                                     task.getName(),
-                                     task.getSource(),
-                                     task.getUrl(),
-                                     task.getRecurrence(),
-                                     task.isEveryRecurrence(),
-                                     task.getLocationId(),
-                                     task.getListId(),
-                                     task.getDue(),
-                                     task.hasDueTime(),
-                                     task.getAdded(),
-                                     task.getCompleted(),
-                                     task.getDeleted(),
-                                     task.getPriority(),
-                                     task.getPosponed(),
-                                     task.getEstimate(),
-                                     task.getEstimateMillis(),
-                                     task.getLocationName(),
-                                     task.getLongitude(),
-                                     task.getLatitude(),
-                                     task.getAddress(),
-                                     task.isViewable(),
-                                     task.getZoom(),
-                                     task.getTags(),
-                                     task.getParticipants(),
-                                     task.getNumberOfNotes() );
+      return new SelectableTask( task.getId(),
+                                 task.getTaskSeriesId(),
+                                 task.getListName(),
+                                 task.isSmartList(),
+                                 task.getCreated(),
+                                 task.getModified(),
+                                 task.getName(),
+                                 task.getSource(),
+                                 task.getUrl(),
+                                 task.getRecurrence(),
+                                 task.isEveryRecurrence(),
+                                 task.getLocationId(),
+                                 task.getListId(),
+                                 task.getDue(),
+                                 task.hasDueTime(),
+                                 task.getAdded(),
+                                 task.getCompleted(),
+                                 task.getDeleted(),
+                                 task.getPriority(),
+                                 task.getPosponed(),
+                                 task.getEstimate(),
+                                 task.getEstimateMillis(),
+                                 task.getLocationName(),
+                                 task.getLongitude(),
+                                 task.getLatitude(),
+                                 task.getLocationAddress(),
+                                 task.isLocationViewable(),
+                                 task.getZoom(),
+                                 task.getTags(),
+                                 task.getParticipants(),
+                                 task.getNoteIds() );
    }
    
-
-
-   public final static int selectTasksById( List< ? extends SelectableListTask > tasks,
+   
+   
+   public final static int selectTasksById( List< ? extends SelectableTask > tasks,
                                             List< String > taskIdsToSelect )
    {
       int numSelected = 0;
@@ -135,39 +136,39 @@ public class SelectableListTask extends ListTask
       return numSelected;
    }
    
-
-
-   public final static List< SelectableListTask > fromListTaskList( List< ? extends ListTask > list )
+   
+   
+   public final static List< SelectableTask > fromTaskList( List< ? extends Task > list )
    {
-      final List< SelectableListTask > listTaskList = new ArrayList< SelectableListTask >( list.size() );
+      final List< SelectableTask > listTaskList = new ArrayList< SelectableTask >( list.size() );
       
-      for ( ListTask task : list )
-         listTaskList.add( fromListTask( task ) );
+      for ( Task task : list )
+         listTaskList.add( fromTask( task ) );
       
       return listTaskList;
    }
    
-
-
-   public final static List< ListTask > asListTaskList( List< ? extends SelectableListTask > list )
+   
+   
+   public final static List< Task > asTaskList( List< ? extends SelectableTask > list )
    {
-      final List< ListTask > listTaskList = new ArrayList< ListTask >( list.size() );
+      final List< Task > listTaskList = new ArrayList< Task >( list.size() );
       
-      for ( SelectableListTask task : list )
+      for ( SelectableTask task : list )
          listTaskList.add( task );
       
       return listTaskList;
    }
    
-
-
+   
+   
    public boolean isSelected()
    {
       return isSelected;
    }
    
-
-
+   
+   
    public void setSelected( boolean isSelected )
    {
       this.isSelected = isSelected;

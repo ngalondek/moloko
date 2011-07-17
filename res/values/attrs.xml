@@ -13,9 +13,10 @@
 		Röhricht - implementation
 	-->
 
-<resources>
+<resources>   
 	<declare-styleable name="TitleWithView">
-		<attr name="showTopLine" format="boolean" />
+      <attr name="titleWithViewStyle" format="reference"/>
+      <attr name="showTopLine" format="boolean" />
 		<attr name="topLineColor" format="reference|color" />
 		<attr name="topLineHeight" format="reference|dimension" />
 		<attr name="imageSrc" format="reference" />
@@ -33,6 +34,7 @@
 	</declare-styleable>
    
    <declare-styleable name="TitleWithText">
+      <attr name="titleWithTextStyle" format="reference"/>
       <attr name="text" format="reference|string" />
       <attr name="textColor" format="reference|color" />
       <attr name="textSize" format="reference|dimension" />
@@ -45,18 +47,22 @@
    </declare-styleable>
    
    <declare-styleable name="TitleWithSpinner">
+      <attr name="titleWithSpinnerStyle" format="reference"/>
       <attr name="spinnerEntries" format="reference" />
       <attr name="spinnerValues" format="reference" />
    </declare-styleable>
-
+   
 	<declare-styleable name="TitleBar">
-		<attr name="titleBarText" format="reference|string" />
+      <attr name="titleBarStyle" format="reference" />
+      <attr name="titleBarTextStyle" format="reference" />
+      <attr name="titleBarSeperatorStyle" format="reference" />
+      <attr name="titleBarButtonStyle" format="reference" />
+      <attr name="titleBarText" format="reference|string" />      
 		<attr name="showButton">
 			<flag name="none" value="0" />
 			<flag name="search" value="1" />
-			<flag name="home" value="2" />
-         <flag name="add_task" value="4" />
-         <flag name="add_list" value="8" />
+			<flag name="home" value="2" />         
+         <flag name="add_list" value="4" />
 		</attr>
 	</declare-styleable>
 
@@ -70,11 +76,13 @@
 	</declare-styleable>
 
 	<declare-styleable name="WrappingLayout">
+      <attr name="wrappingLayoutStyle" format="reference"/>
 		<attr name="horizontal_spacing" format="reference|dimension" />
 		<attr name="vertical_spacing" format="reference|dimension" />
 	</declare-styleable>
    
    <declare-styleable name="BottomButtonBarLayout">
+      <attr name="bottomButtonBarStyle" format="reference" />
       <attr name="stretchSingleButton" format="boolean" />
       <attr name="button1Text" format="reference|string" />
       <attr name="button2Text" format="reference|string" />

@@ -14,23 +14,25 @@
    -->
 
 <LinearLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:android="http://schemas.android.com/apk/res/android"   
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
    android:orientation="vertical">
 
    <TextView
       android:id="@+id/note_created_date"
-      style="@style/App_Note_Created_Date_Text"
+      style="@style/Note_Created_Date_Text"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_marginRight="?android:attr/scrollbarSize"
       android:gravity="right"
       android:text="Created_Date" />
 
+   <!-- Apply the style directly and not via ?attr/titleWithTextStyle
+        since this gets included in several places -->
    <dev.drsoran.moloko.layouts.TitleWithTextLayout
-      xmlns:twt="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-      style="@style/App_Note_TitleWithText"
+      xmlns:twt="http://schemas.android.com/apk/res/dev.drsoran.moloko"      
+      style="@style/Note_TitleWithText"
       android:id="@+id/note"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"

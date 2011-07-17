@@ -28,7 +28,6 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
@@ -96,9 +95,9 @@ public class TaskSearchResultActivity extends TasksListActivity
             getRecentSuggestions().saveRecentQuery( filter.getFilterString(),
                                                     null );
             
-            configureTitleBar( TitleBarLayout.BUTTON_ADD_LIST
-               | TitleBarLayout.BUTTON_ADD_TASK | TitleBarLayout.BUTTON_HOME
-               | TitleBarLayout.BUTTON_SEARCH, filter );
+            // configureTitleBar( TitleBarLayout.BUTTON_ADD_LIST
+            // | TitleBarLayout.BUTTON_ADD_TASK | TitleBarLayout.BUTTON_HOME
+            // | TitleBarLayout.BUTTON_SEARCH, filter );
             
             final Intent newIntent = Intents.createSmartFilterIntent( this,
                                                                       filter,
@@ -114,8 +113,8 @@ public class TaskSearchResultActivity extends TasksListActivity
                               getString( R.string.tasksearchresult_titlebar_error ),
                               R.drawable.ic_title_error );
             
-            configureTitleBar( TitleBarLayout.BUTTON_HOME
-               | TitleBarLayout.BUTTON_SEARCH, null );
+            // configureTitleBar( TitleBarLayout.BUTTON_HOME
+            // | TitleBarLayout.BUTTON_SEARCH, null );
             
             // showError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
             // filter.getFilterString() ) ) );
@@ -137,8 +136,7 @@ public class TaskSearchResultActivity extends TasksListActivity
    private final void configureTitleBar( int buttonMask,
                                          RtmSmartFilter addSmartListFilter )
    {
-      final TitleBarLayout titleBarLayout = (TitleBarLayout) findViewById( R.id.app_title_bar );
-      titleBarLayout.setButtonsVisible( buttonMask );
-      titleBarLayout.setAddSmartListFilter( addSmartListFilter );
+      // final TitleBarLayout titleBarLayout = (TitleBarLayout) findViewById( R.id.app_title_bar );
+      // titleBarLayout.setButtonsVisible( buttonMask );
    }
 }

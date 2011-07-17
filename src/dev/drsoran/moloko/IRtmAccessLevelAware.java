@@ -20,30 +20,12 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.listeners;
+package dev.drsoran.moloko;
 
-import java.util.List;
-
-import dev.drsoran.rtm.Task;
+import com.mdt.rtm.data.RtmAuth;
 
 
-public interface ISelectableTasksListListener extends ITasksListListener
+public interface IRtmAccessLevelAware
 {
-   void onEditSelectedTasks( List< ? extends Task > tasks );
-   
-
-
-   void onCompleteSelectedTasks( List< ? extends Task > tasks );
-   
-
-
-   void onUncompleteSelectedTasks( List< ? extends Task > tasks );
-   
-
-
-   void onPostponeSelectedTasks( List< ? extends Task > tasks );
-   
-
-
-   void onDeleteSelectedTasks( List< ? extends Task > tasks );
+   void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel );
 }

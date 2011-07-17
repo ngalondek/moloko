@@ -28,11 +28,10 @@ import java.util.List;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.Task;
 
 
-public class ListTasksLoader extends AbstractTasksListLoader< ListTask >
+public class TasksLoader extends AbstractTasksListLoader< Task >
 {
    private final String selection;
    
@@ -41,8 +40,8 @@ public class ListTasksLoader extends AbstractTasksListLoader< ListTask >
    private final String taskId;
    
    
-
-   public ListTasksLoader( Context context, String taskId )
+   
+   public TasksLoader( Context context, String taskId )
    {
       super( context );
       this.selection = null;
@@ -50,9 +49,9 @@ public class ListTasksLoader extends AbstractTasksListLoader< ListTask >
       this.taskId = taskId;
    }
    
-
-
-   public ListTasksLoader( Context context, String selection, String order )
+   
+   
+   public TasksLoader( Context context, String selection, String order )
    {
       super( context );
       this.selection = selection;
@@ -60,10 +59,10 @@ public class ListTasksLoader extends AbstractTasksListLoader< ListTask >
       this.taskId = null;
    }
    
-
-
+   
+   
    @Override
-   protected List< ListTask > queryResultInBackground( ContentProviderClient client )
+   protected List< Task > queryResultInBackground( ContentProviderClient client )
    {
       final List< Task > tasks;
       
@@ -73,6 +72,6 @@ public class ListTasksLoader extends AbstractTasksListLoader< ListTask >
       else
          tasks = TasksProviderPart.getTasks( client, selection, order );
       
-      return ListTask.fromTaskList( tasks );
+      return tasks;
    }
 }

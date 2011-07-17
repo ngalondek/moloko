@@ -22,11 +22,7 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-public interface ITasksListListener
+public interface IMinDetailedTasksListFragmentListener extends ITasksListFragmentListener
 {
-   void onOpenTask( int pos );
-   
-
-
-   void onTaskSortChanged( int newTaskSort );
+   void onSelectTasks();
 }

@@ -26,25 +26,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.dialogs.AddRenameListDialog;
 import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.widgets.ToggleImageButton;
-import dev.drsoran.moloko.widgets.ToggleImageButton.OnCheckedChangeListener;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class TitleBarLayout extends LinearLayout implements
-         View.OnClickListener, OnCheckedChangeListener
+public class TitleBarLayout extends RelativeLayout implements
+         View.OnClickListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -60,15 +55,20 @@ public class TitleBarLayout extends LinearLayout implements
    
    public final static int BUTTON_ADD_LIST = 1 << 3;
    
-   private ToggleImageButton addTaskBtn;
-   
    private RtmSmartFilter addSmartListFilter;
    
    
-
+   
    public TitleBarLayout( Context context, AttributeSet attrs )
    {
-      super( context, attrs );
+      super( context, attrs, R.attr.titleBarStyle );
+   }
+   
+   
+   
+   public TitleBarLayout( Context context, AttributeSet attrs, int defStyle )
+   {
+      super( context, attrs, defStyle );
       
       setId( R.id.app_title_bar );
       
@@ -77,12 +77,12 @@ public class TitleBarLayout extends LinearLayout implements
       
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.TitleBar,
-                                                               0,
+                                                               defStyle,
                                                                0 );
       
       final String titleText = array.getString( R.styleable.TitleBar_titleBarText );
       if ( titleText != null )
-         ( (TextView) findViewById( R.id.app_actionbar_text_color ) ).setText( titleText );
+         ( (TextView) findViewById( R.id.app_actionbar_title ) ).setText( titleText );
       
       final int showButtons = array.getInt( R.styleable.TitleBar_showButton, 0 );
       setButtonsVisible( showButtons );
@@ -90,41 +90,8 @@ public class TitleBarLayout extends LinearLayout implements
       array.recycle();
    }
    
-
-
-   @Override
-   public boolean dispatchKeyEvent( KeyEvent event )
-   {
-      if ( event.getKeyCode() == KeyEvent.KEYCODE_BACK && addTaskBtn != null
-         && addTaskBtn.isChecked() )
-      {
-         showAddTaskInput( false );
-         return true;
-      }
-      else
-         return super.dispatchKeyEvent( event );
-   }
    
-
-
-   public void showAddTaskInput( boolean visible )
-   {
-      if ( addTaskBtn != null )
-      {
-         if ( addTaskBtn.isChecked() != visible )
-            addTaskBtn.setChecked( visible );
-      }
-   }
    
-
-
-   public void setAddSmartListFilter( RtmSmartFilter filter )
-   {
-      addSmartListFilter = filter;
-   }
-   
-
-
    public void setButtonsVisible( int buttonMask )
    {
       // Show search button
@@ -149,15 +116,6 @@ public class TitleBarLayout extends LinearLayout implements
       else
          hasWriteAccess = !AccountUtils.isReadOnlyAccess( getContext() );
       
-      // Show add task button
-      {
-         setVisible( R.id.app_titlebar_sep_add_task,
-                     ( hasWriteAccess && ( ( buttonMask & BUTTON_ADD_TASK ) == BUTTON_ADD_TASK ) ) );
-         addTaskBtn = (ToggleImageButton) setBtnVisible( R.id.app_titlebar_btn_add_task,
-                                                         ( hasWriteAccess && ( ( buttonMask & BUTTON_ADD_TASK ) == BUTTON_ADD_TASK ) ) );
-         addTaskBtn.setOnCheckedChangeListener( this );
-      }
-      
       // Show add list button
       {
          setVisible( R.id.app_titlebar_sep_add_list,
@@ -167,23 +125,15 @@ public class TitleBarLayout extends LinearLayout implements
       }
    }
    
-
-
-   @Override
-   public void onCheckedChanged( ToggleImageButton button, boolean checked )
-   {
-      // hideOrShowAddTaskLayout();
-   }
    
-
-
+   
    private void setVisible( int id, boolean visible )
    {
       findViewById( id ).setVisibility( visible ? VISIBLE : GONE );
    }
    
-
-
+   
+   
    private View setBtnVisible( int id, boolean visible )
    {
       final View btn = findViewById( id );
@@ -193,8 +143,8 @@ public class TitleBarLayout extends LinearLayout implements
       return btn;
    }
    
-
-
+   
+   
    @Override
    public void onClick( View v )
    {
@@ -216,7 +166,6 @@ public class TitleBarLayout extends LinearLayout implements
             break;
          
          case R.id.app_titlebar_btn_add_list:
-            showAddTaskInput( false );
             AddRenameListDialog.newDialogWithFilter( getContext(),
                                                      addSmartListFilter )
                                .show();
@@ -225,72 +174,5 @@ public class TitleBarLayout extends LinearLayout implements
          default :
             break;
       }
-   }
-   
-   
-   // private final void hideOrShowAddTaskLayout()
-   // {
-   // if ( addTaskBtn.isChecked() )
-   // {
-   // if ( addTaskSection == null )
-   // {
-   // addTaskSection = new AddTaskSection( this );
-   // }
-   //
-   // addTaskSection.show( true, addTaskFilter );
-   // }
-   // else
-   // {
-   // if ( addTaskSection != null )
-   // addTaskSection.show( false, null );
-   // }
-   //
-   // requestLayout();
-   // }
-   
-   final static class SavedState extends BaseSavedState
-   {
-      Parcelable addTaskState;
-      
-      
-
-      SavedState( Parcelable superState )
-      {
-         super( superState );
-      }
-      
-
-
-      private SavedState( Parcel in )
-      {
-         super( in );
-         addTaskState = in.readParcelable( null );
-      }
-      
-
-
-      @Override
-      public void writeToParcel( Parcel out, int flags )
-      {
-         super.writeToParcel( out, flags );
-         out.writeParcelable( addTaskState, flags );
-      }
-      
-      public static final Parcelable.Creator< SavedState > CREATOR = new Parcelable.Creator< SavedState >()
-      {
-         @Override
-         public SavedState createFromParcel( Parcel in )
-         {
-            return new SavedState( in );
-         }
-         
-
-
-         @Override
-         public SavedState[] newArray( int size )
-         {
-            return new SavedState[ size ];
-         }
-      };
    }
 }

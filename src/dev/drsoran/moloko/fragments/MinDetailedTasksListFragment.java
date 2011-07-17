@@ -42,17 +42,17 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.MinDetailedTasksListFragmentAdapter;
-import dev.drsoran.moloko.fragments.listeners.IMinDetailedTasksListListener;
-import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
-import dev.drsoran.moloko.loaders.ListTasksLoader;
+import dev.drsoran.moloko.fragments.listeners.IMinDetailedTasksListFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
+import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tasks;
-import dev.drsoran.rtm.ListTask;
+import dev.drsoran.rtm.Task;
 
 
 public class MinDetailedTasksListFragment extends
-         AbstractTasksListFragment< ListTask > implements
+         AbstractTasksListFragment< Task > implements
          IOnSettingsChangedListener
 {
    @SuppressWarnings( "unused" )
@@ -82,10 +82,10 @@ public class MinDetailedTasksListFragment extends
       public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
    }
    
-   private IMinDetailedTasksListListener listener;
+   private IMinDetailedTasksListFragmentListener listener;
    
    
-
+   
    public static MinDetailedTasksListFragment newInstance( Bundle configuration )
    {
       final MinDetailedTasksListFragment fragment = new MinDetailedTasksListFragment();
@@ -95,36 +95,36 @@ public class MinDetailedTasksListFragment extends
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       
-      if ( activity instanceof IMinDetailedTasksListListener )
-         listener = (IMinDetailedTasksListListener) activity;
+      if ( activity instanceof IMinDetailedTasksListFragmentListener )
+         listener = (IMinDetailedTasksListFragmentListener) activity;
       else
-         listener = new NullTasksListListener();
+         listener = new NullTasksListFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -132,8 +132,8 @@ public class MinDetailedTasksListFragment extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -142,8 +142,8 @@ public class MinDetailedTasksListFragment extends
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-
-
+   
+   
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -160,8 +160,8 @@ public class MinDetailedTasksListFragment extends
                                    hasMultipleTasks() && hasRtmWriteAccess() );
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -176,18 +176,18 @@ public class MinDetailedTasksListFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected int getDefaultTaskSort()
    {
       return MolokoApp.getSettings().getTaskSort();
    }
    
-
-
+   
+   
    @Override
-   public Loader< List< ListTask >> onCreateLoader( int id, Bundle config )
+   public Loader< List< Task >> onCreateLoader( int id, Bundle config )
    {
       showLoadingSpinner( true );
       
@@ -195,16 +195,16 @@ public class MinDetailedTasksListFragment extends
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Config.TASK_SORT_ORDER ) );
       
-      final ListTasksLoader loader = new ListTasksLoader( getActivity(),
-                                                          selection,
-                                                          order );
+      final TasksLoader loader = new TasksLoader( getActivity(),
+                                                  selection,
+                                                  order );
       loader.setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
       
       return loader;
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
@@ -214,10 +214,10 @@ public class MinDetailedTasksListFragment extends
                                                       R.layout.mindetailed_taskslist_listitem );
    }
    
-
-
+   
+   
    @Override
-   protected ListAdapter createListAdapterForResult( List< ListTask > result,
+   protected ListAdapter createListAdapterForResult( List< Task > result,
                                                      IFilter filter )
    {
       notifyOptionsMenuChanged();
@@ -227,16 +227,16 @@ public class MinDetailedTasksListFragment extends
                                                       result );
    }
    
-
-
+   
+   
    @Override
    public MinDetailedTasksListFragmentAdapter getListAdapter()
    {
       return (MinDetailedTasksListFragmentAdapter) super.getListAdapter();
    }
    
-
-
+   
+   
    @Override
    protected void notifyDataSetChanged()
    {

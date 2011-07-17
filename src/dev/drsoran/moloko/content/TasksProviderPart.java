@@ -73,7 +73,7 @@ public class TasksProviderPart extends AbstractProviderPart
       public String rawTaskId;
       
       
-
+      
       public NewTaskIds( String taskSeriesId, String rawTaskId )
       {
          this.taskSeriesId = taskSeriesId;
@@ -92,7 +92,7 @@ public class TasksProviderPart extends AbstractProviderPart
     Tasks.ESTIMATE, Tasks.ESTIMATE_MILLIS, Tasks.TAGS, Tasks.LOCATION_ID,
     Tasks.LOCATION_NAME, Tasks.LONGITUDE, Tasks.LATITUDE, Tasks.ADDRESS,
     Tasks.VIEWABLE, Tasks.ZOOM, Tasks.TAGS, Tasks.PARTICIPANT_IDS,
-    Tasks.PARTICIPANT_FULLNAMES, Tasks.PARTICIPANT_USERNAMES, Tasks.NUM_NOTES };
+    Tasks.PARTICIPANT_FULLNAMES, Tasks.PARTICIPANT_USERNAMES, Tasks.NOTE_IDS };
    
    public final static HashMap< String, Integer > COL_INDICES = new HashMap< String, Integer >();
    
@@ -100,7 +100,7 @@ public class TasksProviderPart extends AbstractProviderPart
    
    private final static String PARTICIPANTS_SUB_QUERY;
    
-   private final static String NUM_NOTES_SUBQUERY;
+   private final static String NOTE_IDS_SUBQUERY;
    
    static
    {
@@ -230,41 +230,44 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                     Participants.DEFAULT_SORT_ORDER,
                                                                     null );
       
-      NUM_NOTES_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
+      NOTE_IDS_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
       false,
-                                                                
-                                                                // tables
-                                                                Notes.PATH,
-                                                                
-                                                                // columns
-                                                                new String[]
-                                                                { "count("
-                                                                   + Notes.PATH
-                                                                   + "."
-                                                                   + Notes.TASKSERIES_ID
-                                                                   + ")" },
-                                                                
-                                                                // where
-                                                                "subQuery."
-                                                                   + RawTasks.TASKSERIES_ID
-                                                                   + "="
-                                                                   + Notes.PATH
-                                                                   + "."
-                                                                   + Notes.TASKSERIES_ID
-                                                                   // Only non-deleted notes
-                                                                   + " AND "
-                                                                   + Notes.PATH
-                                                                   + "."
-                                                                   + Notes.NOTE_DELETED
-                                                                   + " IS NULL",
-                                                                null,
-                                                                null,
-                                                                null,
-                                                                null );
+                                                               
+                                                               // tables
+                                                               Notes.PATH,
+                                                               
+                                                               // columns
+                                                               new String[]
+                                                               { "group_concat("
+                                                                  + Notes.PATH
+                                                                  + "."
+                                                                  + Notes.TASKSERIES_ID
+                                                                  + ",\""
+                                                                  + Tasks.NOTE_IDS_DELIMITER
+                                                                  + "\") AS "
+                                                                  + Tasks.NOTE_IDS },
+                                                               
+                                                               // where
+                                                               "subQuery."
+                                                                  + RawTasks.TASKSERIES_ID
+                                                                  + "="
+                                                                  + Notes.PATH
+                                                                  + "."
+                                                                  + Notes.TASKSERIES_ID
+                                                                  // Only non-deleted notes
+                                                                  + " AND "
+                                                                  + Notes.PATH
+                                                                  + "."
+                                                                  + Notes.NOTE_DELETED
+                                                                  + " IS NULL",
+                                                               null,
+                                                               null,
+                                                               null,
+                                                               null );
    }
    
    
-
+   
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
@@ -284,16 +287,16 @@ public class TasksProviderPart extends AbstractProviderPart
              .registerContentObserver( Participants.CONTENT_URI, true, observer );
    }
    
-
-
+   
+   
    public final static void unregisterContentObserver( Context context,
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
    }
    
-
-
+   
+   
    public final static Task getTask( ContentProviderClient client, String id )
    {
       Task task = null;
@@ -328,8 +331,8 @@ public class TasksProviderPart extends AbstractProviderPart
       return task;
    }
    
-
-
+   
+   
    public final static List< Task > getTasks( ContentProviderClient client,
                                               String selection,
                                               String order )
@@ -381,8 +384,8 @@ public class TasksProviderPart extends AbstractProviderPart
       return tasks;
    }
    
-
-
+   
+   
    public final static List< ContentProviderOperation > insertLocalCreatedTask( ContentResolver contentResolver,
                                                                                 Task task,
                                                                                 NewTaskIds outNewIds )
@@ -444,15 +447,15 @@ public class TasksProviderPart extends AbstractProviderPart
       return operations;
    }
    
-
-
+   
+   
    public TasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Tasks.PATH );
    }
    
-
-
+   
+   
    @Override
    public Cursor query( String id,
                         String[] projection,
@@ -465,12 +468,12 @@ public class TasksProviderPart extends AbstractProviderPart
       final List< String > projectionList = Arrays.asList( projection );
       
       boolean projectionContainsId = false;
-      boolean replacedNumNotes = false;
+      boolean replacedNoteIds = false;
       
       final StringBuilder projectionSB = new StringBuilder();
       
       for ( int i = 0; i < projection.length
-         && ( !projectionContainsId || !replacedNumNotes ); i++ )
+         && ( !projectionContainsId || !replacedNoteIds ); i++ )
       {
          final String column = projection[ i ];
          
@@ -486,18 +489,18 @@ public class TasksProviderPart extends AbstractProviderPart
             projectionSB.setLength( 0 );
          }
          
-         // We have to replace the num_notes column by the numNotesSubQuery
+         // We have to replace the note_ids column by the NotesIdsSubQuery
          // expression.
-         if ( !replacedNumNotes && column.equals( Tasks.NUM_NOTES ) )
+         if ( !replacedNoteIds && column.equals( Tasks.NOTE_IDS ) )
          {
             projectionSB.append( "(" )
-                        .append( NUM_NOTES_SUBQUERY )
+                        .append( NOTE_IDS_SUBQUERY )
                         .append( ")" )
                         .append( " AS " )
-                        .append( Tasks.NUM_NOTES );
+                        .append( Tasks.NOTE_IDS );
             
             projectionList.set( i, projectionSB.toString() );
-            replacedNumNotes = true;
+            replacedNoteIds = true;
             
             projectionSB.setLength( 0 );
          }
@@ -562,61 +565,61 @@ public class TasksProviderPart extends AbstractProviderPart
       return cursor;
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Tasks.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Tasks.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Tasks.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return Tasks.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
    public String[] getProjection()
    {
       return PROJECTION;
    }
    
-
-
+   
+   
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
    private final static Task createTask( Cursor c )
    {
       final String taskSeriesId = c.getString( COL_INDICES.get( Tasks.TASKSERIES_ID ) );
@@ -666,11 +669,12 @@ public class TasksProviderPart extends AbstractProviderPart
                        Queries.getOptInt( c, COL_INDICES.get( Tasks.ZOOM ), -1 ),
                        Queries.getOptString( c, COL_INDICES.get( Tasks.TAGS ) ),
                        getPartitiansList( taskSeriesId, c ),
-                       c.getInt( COL_INDICES.get( Tasks.NUM_NOTES ) ) );
+                       Queries.getOptString( c,
+                                             COL_INDICES.get( Tasks.NOTE_IDS ) ) );
    }
    
-
-
+   
+   
    private final static ParticipantList getPartitiansList( String taskSeriesId,
                                                            Cursor c )
    {
@@ -722,8 +726,8 @@ public class TasksProviderPart extends AbstractProviderPart
       return participantList;
    }
    
-
-
+   
+   
    private final static NewTaskIds generateIdsForNewTask( ContentProviderClient client )
    {
       String nextTaskSeriesId = Queries.getNextId( client,

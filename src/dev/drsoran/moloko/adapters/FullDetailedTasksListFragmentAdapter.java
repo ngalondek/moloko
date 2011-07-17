@@ -42,8 +42,8 @@ import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterToken;
-import dev.drsoran.rtm.ListTask;
 import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.rtm.Task;
 
 
 public class FullDetailedTasksListFragmentAdapter extends
@@ -70,7 +70,7 @@ public class FullDetailedTasksListFragmentAdapter extends
    {
       this( context,
             resourceId,
-            Collections.< ListTask > emptyList(),
+            Collections.< Task > emptyList(),
             null,
             0,
             null );
@@ -79,7 +79,7 @@ public class FullDetailedTasksListFragmentAdapter extends
    
    
    public FullDetailedTasksListFragmentAdapter( Context context,
-      int resourceId, List< ListTask > tasks, IFilter filter, int flags,
+      int resourceId, List< Task > tasks, IFilter filter, int flags,
       OnClickListener onClickListener )
    {
       super( context, resourceId, tasks );
@@ -143,7 +143,7 @@ public class FullDetailedTasksListFragmentAdapter extends
          throw e;
       }
       
-      final ListTask task = getItem( position );
+      final Task task = getItem( position );
       
       if ( task.getRecurrence() != null )
          recurrent.setVisibility( View.VISIBLE );
@@ -171,7 +171,7 @@ public class FullDetailedTasksListFragmentAdapter extends
    
    
    
-   private final void setListName( TextView view, ListTask task )
+   private final void setListName( TextView view, Task task )
    {
       if ( ( flags & FLAG_SHOW_ALL ) == FLAG_SHOW_ALL
          || !RtmSmartFilterParsing.hasOperatorAndValue( filter.getTokens(),
@@ -193,7 +193,7 @@ public class FullDetailedTasksListFragmentAdapter extends
    
    
    
-   private void setLocation( TextView view, ListTask task )
+   private void setLocation( TextView view, Task task )
    {
       // If the task has no location
       if ( ( flags & FLAG_SHOW_ALL ) != FLAG_SHOW_ALL
@@ -218,7 +218,7 @@ public class FullDetailedTasksListFragmentAdapter extends
    
    
    
-   private void setTags( ViewGroup tagsLayout, ListTask task )
+   private void setTags( ViewGroup tagsLayout, Task task )
    {
       final Bundle tagsConfig = new Bundle();
       

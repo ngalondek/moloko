@@ -29,7 +29,7 @@
 
    <LinearLayout
       android:id="@+id/buttonPanel"
-      style="@style/App_ButtonBar_Bgnd"
+      style="?attr/bottomButtonBarStyle"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_below="@+id/add_rename_list_smart_filter"

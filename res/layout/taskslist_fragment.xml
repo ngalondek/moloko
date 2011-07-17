@@ -16,14 +16,13 @@
    android:layout_height="fill_parent">
 
    <ListView
-      android:id="@android:id/list"
-      style="@style/TasksList_TaskList"
+      android:id="@android:id/list"      
       android:layout_width="fill_parent"
       android:layout_height="fill_parent" />
 
    <TextView
       android:id="@android:id/empty"
-      style="@style/App_No_List_Elements_Text"
+      style="@style/No_List_Elements_Text"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       android:text="@string/abstaskslist_no_tasks" />

@@ -24,34 +24,32 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
-import com.mdt.rtm.data.RtmTaskNote;
 
-
-public interface IFullDetailedTasksListListener extends ITasksListListener
+public interface IFullDetailedTasksListFragmentListener extends ITasksListFragmentListener
 {
    void onEditTask( int pos );
    
-
-
+   
+   
    void onSelectTasks();
    
-
-
+   
+   
    void onOpenList( int pos, String listId );
    
-
-
+   
+   
    void onOpenLocation( int pos, String locationId );
    
-
-
-   void onOpenNotes( int pos, List< RtmTaskNote > notes );
    
-
-
+   
+   void onOpenNotes( int pos, List< String > noteIds );
+   
+   
+   
    void onShowTasksWithTag( String tag );
    
-
-
+   
+   
    void onShowTasksWithTags( List< String > tags, String logicalOperator );
 }

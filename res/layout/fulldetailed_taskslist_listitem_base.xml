@@ -48,9 +48,7 @@
       android:layout_toLeftOf="@+id/taskslist_listitem_due_container"
       android:layout_marginTop="5dip"
       android:layout_marginRight="?android:attr/scrollbarSize"
-      android:layout_marginBottom="3dip"
-      moloko:horizontal_spacing="5dip"
-      moloko:vertical_spacing="5dip">
+      android:layout_marginBottom="3dip">
 
       <Button
          android:id="@+id/taskslist_listitem_btn_list_name"

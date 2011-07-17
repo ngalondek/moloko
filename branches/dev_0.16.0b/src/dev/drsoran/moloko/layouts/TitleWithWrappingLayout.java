@@ -34,15 +34,15 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
    private WrappingLayout wrappingLayout;
    
    
-
+   
    public TitleWithWrappingLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       initView( context, attrs, getViewContainer() );
    }
    
-
-
+   
+   
    public TitleWithWrappingLayout( Context context, AttributeSet attrs,
       ViewGroup root )
    {
@@ -50,8 +50,8 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
       initView( context, attrs, getViewContainer() );
    }
    
-
-
+   
+   
    @Override
    public void setEnabled( boolean enabled )
    {
@@ -59,8 +59,8 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
       wrappingLayout.setEnabled( false );
    }
    
-
-
+   
+   
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )
@@ -71,16 +71,16 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
       container.addView( wrappingLayout );
    }
    
-
-
+   
+   
    @Override
    public void addView( View child )
    {
       wrappingLayout.addView( child );
    }
    
-
-
+   
+   
    @Override
    public void removeAllViews()
    {

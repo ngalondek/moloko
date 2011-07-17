@@ -54,7 +54,6 @@ import dev.drsoran.moloko.util.DelayedRun;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.Queries;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ContactOverviews;
 import dev.drsoran.rtm.Contact;
 import dev.drsoran.rtm.RtmContactWithTaskCount;
@@ -77,8 +76,8 @@ public class ContactsListActivity extends ListActivity
                                   .setEmptyView( ContactsListActivity.this.findViewById( android.R.id.empty ) );
       }
       
-
-
+      
+      
       @Override
       protected List< Contact > doInBackground( ContentResolver... params )
       {
@@ -111,8 +110,8 @@ public class ContactsListActivity extends ListActivity
          return contacts;
       }
       
-
-
+      
+      
       @Override
       protected void onPostExecute( List< Contact > result )
       {
@@ -172,7 +171,7 @@ public class ContactsListActivity extends ListActivity
       public final static int SYNC = START_IDX + 2;
    }
    
-
+   
    protected static class CtxtMenu
    {
       public final static int OPEN_TASKS = 0;
@@ -187,7 +186,7 @@ public class ContactsListActivity extends ListActivity
    private final Handler handler = new Handler();
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -217,8 +216,8 @@ public class ContactsListActivity extends ListActivity
          asyncQueryContacts();
    }
    
-
-
+   
+   
    @Override
    protected void onStop()
    {
@@ -228,12 +227,10 @@ public class ContactsListActivity extends ListActivity
          asyncQueryContacts.cancel( true );
       
       asyncQueryContacts = null;
-      
-      UIUtils.showTitleBarAddTask( this, false );
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -247,8 +244,8 @@ public class ContactsListActivity extends ListActivity
                                                           dbContactsObserver );
    }
    
-
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -262,8 +259,8 @@ public class ContactsListActivity extends ListActivity
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onPrepareOptionsMenu( Menu menu )
    {
@@ -276,8 +273,8 @@ public class ContactsListActivity extends ListActivity
       return true;
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -304,8 +301,8 @@ public class ContactsListActivity extends ListActivity
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
@@ -334,8 +331,8 @@ public class ContactsListActivity extends ListActivity
       return true;
    }
    
-
-
+   
+   
    @Override
    protected void onListItemClick( ListView l, View v, int position, long id )
    {
@@ -346,22 +343,22 @@ public class ContactsListActivity extends ListActivity
                                                       contact.getUsername() ) );
    }
    
-
-
+   
+   
    private void asyncQueryContacts()
    {
       handler.post( queryContactsRunnable );
    }
    
-
-
+   
+   
    private final Contact getContact( int pos )
    {
       return (Contact) getListAdapter().getItem( pos );
    }
    
-
-
+   
+   
    private Contact linkRtmContact( RtmContactWithTaskCount rtmContact )
    {
       Contact contact = new Contact( rtmContact );
@@ -435,8 +432,8 @@ public class ContactsListActivity extends ListActivity
       return contact;
    }
    
-
-
+   
+   
    private void setContactPhoto( String photoId, Contact contact )
    {
       Cursor photoCursor = null;

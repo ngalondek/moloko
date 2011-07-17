@@ -64,7 +64,7 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       else
       {
          LogUtils.logDBError( getContext(),
-                              LogUtils.toTag( ListTasksLoader.class ),
+                              LogUtils.toTag( TasksLoader.class ),
                               LogUtils.GENERIC_DB_ERROR );
       }
       

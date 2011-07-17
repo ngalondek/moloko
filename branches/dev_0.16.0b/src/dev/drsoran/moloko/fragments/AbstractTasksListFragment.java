@@ -27,7 +27,6 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -40,14 +39,19 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import com.mdt.rtm.data.RtmAuth;
+
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
-import dev.drsoran.moloko.fragments.listeners.NullTasksListListener;
+import dev.drsoran.moloko.activities.MolokoFragmentActivity;
+import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
@@ -60,7 +64,7 @@ import dev.drsoran.rtm.Task;
 
 public abstract class AbstractTasksListFragment< T extends Task > extends
          ListFragment implements LoaderCallbacks< List< T > >, IConfigurable,
-         IOnSettingsChangedListener
+         IOnSettingsChangedListener, IRtmAccessLevelAware
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -74,7 +78,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       public final static String TASK_SORT_ORDER = "task_sort_order";
    }
    
-
+   
    protected static class OptionsMenu
    {
       public final static int SORT = R.id.menu_sort;
@@ -90,7 +94,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       public final static int SYNC = R.id.menu_sync;
    }
    
-
+   
    protected static class OptionsMenuGroup
    {
       public final static int SORT = R.id.menu_group_sort;
@@ -100,27 +104,25 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    private final static int TASKS_LOADER_ID = 1;
    
-   private final Handler handler = new Handler();
-   
-   private ITasksListListener listener;
+   private ITasksListFragmentListener listener;
    
    protected Bundle configuration;
    
    
-
+   
    public abstract Intent newDefaultIntent();
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       
-      if ( activity instanceof ITasksListListener )
-         listener = (ITasksListListener) activity;
+      if ( activity instanceof ITasksListFragmentListener )
+         listener = (ITasksListFragmentListener) activity;
       else
-         listener = new NullTasksListListener();
+         listener = new NullTasksListFragmentListener();
       
       MolokoApp.get( activity )
                .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_TIMEZONE
@@ -129,8 +131,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
                                                    this );
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -140,8 +142,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       MolokoApp.get( getActivity() ).unregisterOnSettingsChangedListener( this );
    }
    
-
-
+   
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -149,8 +151,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       configure( getArguments() );
    }
    
-
-
+   
+   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -161,8 +163,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       getLoaderManager().initLoader( TASKS_LOADER_ID, configuration, this );
    }
    
-
-
+   
+   
    @Override
    public void setArguments( Bundle args )
    {
@@ -170,15 +172,15 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       configure( args );
    }
    
-
-
+   
+   
    protected CharSequence getEmptyListText()
    {
       return getString( R.string.abstaskslist_no_tasks );
    }
    
-
-
+   
+   
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -186,16 +188,16 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       outState.putAll( configuration );
    }
    
-
-
+   
+   
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-
-
+   
+   
    @Override
    public void configure( Bundle config )
    {
@@ -213,8 +215,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    @Override
    public Bundle createDefaultConfiguration()
    {
@@ -226,8 +228,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       return bundle;
    }
    
-
-
+   
+   
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -240,8 +242,16 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
+   @Override
+   public void reEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      notifyOptionsMenuChanged();
+   }
+   
+   
+   
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -266,8 +276,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    @Override
    public final void onPrepareOptionsMenu( Menu menu )
    {
@@ -280,26 +290,15 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    protected void notifyOptionsMenuChanged()
    {
-      if ( !getActivity().isFinishing() )
-      {
-         handler.post( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               if ( getActivity() != null )
-                  getActivity().invalidateOptionsMenu();
-            }
-         } );
-      }
+      ( (MolokoFragmentActivity) getActivity() ).notifyOptionsMenuChanged();
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( android.view.MenuItem item )
    {
@@ -329,8 +328,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    protected SubMenu createTasksSortSubMenu( Menu menu )
    {
       SubMenu subMenu = null;
@@ -370,8 +369,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       return subMenu;
    }
    
-
-
+   
+   
    protected void initializeTasksSortSubMenu( SubMenu subMenu,
                                               int currentTaskSort )
    {
@@ -397,31 +396,31 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       }
    }
    
-
-
+   
+   
    @Override
    public void onListItemClick( ListView l, View v, int position, long id )
    {
       listener.onOpenTask( position );
    }
    
-
-
+   
+   
    protected void resortTasks( int newTaskSort )
    {
       if ( shouldResortTasks( newTaskSort ) )
          listener.onTaskSortChanged( newTaskSort );
    }
    
-
-
+   
+   
    public IFilter getFilter()
    {
       return configuration.getParcelable( Config.FILTER );
    }
    
-
-
+   
+   
    public RtmSmartFilter getRtmSmartFilter()
    {
       final IFilter filter = getFilter();
@@ -430,51 +429,51 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
                                                  : null;
    }
    
-
-
+   
+   
    public boolean hasTasks()
    {
       return getListAdapter() != null && getListAdapter().getCount() > 0;
    }
    
-
-
+   
+   
    public boolean hasMultipleTasks()
    {
       return getListAdapter() != null && getListAdapter().getCount() > 1;
    }
    
-
-
+   
+   
    @SuppressWarnings( "unchecked" )
    public T getTask( int pos )
    {
       return (T) getListAdapter().getItem( pos );
    }
    
-
-
+   
+   
    public int getTaskPos( View view )
    {
       return getListView().getPositionForView( view );
    }
    
-
-
+   
+   
    public T getTask( View view )
    {
       return getTask( getTaskPos( view ) );
    }
    
-
-
+   
+   
    public boolean hasRtmWriteAccess()
    {
-      return !AccountUtils.isReadOnlyAccess( getActivity() );
+      return AccountUtils.isWriteableAccess( getActivity() );
    }
    
-
-
+   
+   
    public void reload()
    {
       getLoaderManager().restartLoader( TASKS_LOADER_ID,
@@ -482,54 +481,54 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
                                         this );
    }
    
-
-
+   
+   
    public int getTaskSortConfiguration()
    {
       return configuration.getInt( Config.TASK_SORT_ORDER );
    }
    
-
-
+   
+   
    public boolean shouldResortTasks( int taskSort )
    {
       return getTaskSortConfiguration() != taskSort;
    }
    
-
-
+   
+   
    protected abstract int getDefaultTaskSort();
    
-
-
+   
+   
    protected String resolveTaskSortToSqlite( int taskSort )
    {
       return Queries.resolveTaskSortToSqlite( taskSort );
    }
    
-
-
+   
+   
    public void showError( CharSequence text )
    {
       setEmptyText( text );
       getLoaderManager().destroyLoader( TASKS_LOADER_ID );
    }
    
-
-
+   
+   
    protected abstract ListAdapter createEmptyListAdapter();
    
-
-
+   
+   
    protected abstract ListAdapter createListAdapterForResult( List< T > result,
                                                               IFilter filter );
    
-
-
+   
+   
    protected abstract void notifyDataSetChanged();
    
-
-
+   
+   
    @Override
    public void onLoadFinished( Loader< List< T >> loader, List< T > data )
    {
@@ -537,8 +536,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       setListAdapter( createListAdapterForResult( data, getFilter() ) );
    }
    
-
-
+   
+   
    protected void showLoadingSpinner( boolean show )
    {
       getActivity().findViewById( android.R.id.empty )
@@ -547,8 +546,8 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
                    .setVisibility( show ? View.VISIBLE : View.GONE );
    }
    
-
-
+   
+   
    @Override
    public void onLoaderReset( Loader< List< T >> loader )
    {

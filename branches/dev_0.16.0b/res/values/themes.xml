@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <style
+      name="Theme.Moloko"
+      parent="Theme.Sherlock">
+
+      <!-- Window attributes -->
+      <item name="android:windowNoTitle">true</item>
+      <item name="android:windowContentOverlay">@null</item>
+      <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
+      <item name="android:windowBackground">@color/app_default_bgnd</item>
+      <item name="android:textColorPrimary">@color/app_default_text_color</item>
+      
+      <!-- ActionBar attributes -->
+      <item name="actionBarStyle">@style/ActionBarStyle</item>
+      
+      <!-- TitleBar attributes -->
+      <item name="titleBarStyle">@style/TitleBarStyle</item>
+      <item name="titleBarTextStyle">@style/TitleBarTextStyle</item>
+      <item name="titleBarSeperatorStyle">@style/TitleBarSeparatorStyle</item>
+      <item name="titleBarButtonStyle">@style/TitleBarButtonStyle</item>
+      
+      <!-- Widgets -->
+      <item name="android:listViewStyle">@style/ListViewStyle</item>
+      <item name="android:expandableListViewStyle">@style/ExpandableListViewStyle</item>
+      <item name="android:listPreferredItemHeight">@dimen/app_listPreferredItemHeight</item>
+      <item name="android:gridViewStyle">@style/GridViewStyle</item>  
+      <item name="android:textViewStyle">@style/TextViewStyle</item>
+      <item name="titleWithViewStyle">@style/TitleWithViewStyle</item>
+      <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text</item>
+      <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner</item>
+      <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>      
+            
+      <!-- ButtonBar -->
+      <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>
+      
+   </style>
+
+
+
+   <style name="Theme.Moloko.NoActionBar">
+
+      <!-- Window attributes -->
+      <item name="android:windowNoTitle">false</item>      
+   </style>
+
+
+   
+   <style
+      name="Theme.Moloko.Task"
+      parent="Theme.Moloko.NoActionBar">
+      
+      <!-- Window attributes -->
+      <item name="android:windowBackground">@color/task_bgnd</item>
+      
+      <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
+      <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
+   </style>
+
+
+   
+   <style 
+      name="Theme.Moloko.Note"
+      parent="Theme.Moloko.NoActionBar">
+      
+      <!-- Window attributes -->
+      <item name="android:windowBackground">@color/note_bgnd</item>
+      
+      <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text.NoLine</item>
+   </style>
+</resources>

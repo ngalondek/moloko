@@ -18,7 +18,7 @@
 
    <TextView
       android:id="@+id/change_tags_activity_listitem_tag"
-      style="@style/App_Tag"
+      style="@style/Tag"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginLeft="10dip"

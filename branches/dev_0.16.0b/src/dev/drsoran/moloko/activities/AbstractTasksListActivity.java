@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -39,15 +38,18 @@ import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.widget.SpinnerAdapter;
-import dev.drsoran.moloko.IConfigurable;
+
+import com.mdt.rtm.data.RtmAuth;
+
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.QuickAddTaskFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
-import dev.drsoran.moloko.fragments.listeners.ITasksListListener;
+import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
@@ -55,16 +57,19 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
 
 
-abstract class AbstractTasksListActivity extends FragmentActivity implements
-         ITasksListListener, IConfigurable, OnNavigationListener,
+abstract class AbstractTasksListActivity extends MolokoFragmentActivity
+         implements ITasksListFragmentListener, OnNavigationListener,
          LoaderCallbacks< List< RtmListWithTaskCount > >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + AbstractTasksListActivity.class.getSimpleName();
    
+   private final static int[] FRAGMENT_IDS =
+   { R.id.frag_quick_add_task, R.id.frag_taskslist };
    
-   public static class Config extends AbstractTasksListFragment.Config
+   
+   public static class Config
    {
       public final static String TITLE = "title";
       
@@ -73,7 +78,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       public final static String LIST_NAME = Lists.LIST_NAME;
    }
    
-
+   
    protected static class OptionsMenu
    {
       public final static int QUICK_ADD_TASK = R.id.menu_quick_add_task;
@@ -87,21 +92,11 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
    
    private SpinnerAdapter actionBarNavigationAdapter;
    
-   private Bundle configuration;
    
    
-
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      final Bundle intentConfig = new Bundle( getIntent().getExtras() );
-      if ( savedInstanceState != null )
-         intentConfig.putAll( savedInstanceState );
-      
-      configure( intentConfig );
-      
-      // TODO: ActionBarSherlock workaround
-      // https://github.com/JakeWharton/ActionBarSherlock/issues/35
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.taskslist_activity );
@@ -112,29 +107,11 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       
       // First-time init; create fragment to embed in activity.
       if ( savedInstanceState == null )
-         initTasksListWithConfiguration( getIntent(), intentConfig );
+         initTasksListWithConfiguration( getIntent(), getIntent().getExtras() );
    }
    
-
-
-   @Override
-   protected void onSaveInstanceState( Bundle outState )
-   {
-      super.onSaveInstanceState( outState );
-      outState.putAll( getConfiguration() );
-   }
    
-
-
-   @Override
-   protected void onRestoreInstanceState( Bundle state )
-   {
-      super.onRestoreInstanceState( state );
-      configure( state );
-   }
    
-
-
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -148,7 +125,7 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
                                    Menu.NONE,
                                    R.drawable.ic_button_title_add_task,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   true );
+                                   !AccountUtils.isReadOnlyAccess( this ) );
       UIUtils.addOptionalMenuItem( this,
                                    menu,
                                    OptionsMenu.SEARCH,
@@ -162,8 +139,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -181,8 +158,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       return super.onOptionsItemSelected( item );
    }
    
-
-
+   
+   
    @Override
    public void onBackPressed()
    {
@@ -192,8 +169,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
          super.onBackPressed();
    }
    
-
-
+   
+   
    protected void determineActionBarNavigationMode()
    {
       // If we are opened for a list, then we show the other lists as navigation
@@ -206,113 +183,104 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    @Override
-   public Bundle getConfiguration()
+   protected void takeConfigurationFrom( Bundle config )
    {
-      return new Bundle( configuration );
+      if ( config.containsKey( Config.TITLE ) )
+         configuration.putString( Config.TITLE, config.getString( Config.TITLE ) );
+      if ( config.containsKey( Config.TITLE_ICON ) )
+         configuration.putInt( Config.TITLE_ICON,
+                               config.getInt( Config.TITLE_ICON ) );
+      if ( config.containsKey( Config.LIST_NAME ) )
+         configuration.putString( Config.LIST_NAME,
+                                  config.getString( Config.LIST_NAME ) );
    }
    
-
-
-   @Override
-   public void configure( Bundle config )
-   {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.TITLE ) )
-            configuration.putString( Config.TITLE,
-                                     config.getString( Config.TITLE ) );
-         if ( config.containsKey( Config.TITLE_ICON ) )
-            configuration.putInt( Config.TITLE_ICON,
-                                  config.getInt( Config.TITLE_ICON ) );
-         if ( config.containsKey( Config.LIST_NAME ) )
-            configuration.putString( Config.LIST_NAME,
-                                     config.getString( Config.LIST_NAME ) );
-      }
-   }
    
-
-
+   
    @Override
-   public Bundle createDefaultConfiguration()
+   public void putDefaultConfigurationTo( Bundle bundle )
    {
-      final Bundle bundle = new Bundle();
-      
       bundle.putString( Config.TITLE, getString( R.string.app_name ) );
-      
-      return bundle;
    }
    
-
-
+   
+   
    private Bundle getCurrentTasksListFragmentConfiguration()
    {
-      return new Bundle( getTasksListFragment().getConfiguration() );
+      return getFragmentConfigurations( R.id.frag_taskslist );
    }
    
-
-
+   
+   
    private Bundle getCurrentActivityAndFragmentsConfiguration()
    {
-      final Bundle completeConfig = getConfiguration();
-      completeConfig.putAll( getCurrentTasksListFragmentConfiguration() );
-      
-      return completeConfig;
+      return getActivityAndFragmentsConfiguration( R.id.frag_taskslist );
    }
    
-
-
+   
+   
    @Override
    public void onTaskSortChanged( int newTaskSort )
    {
       final Bundle config = getCurrentTasksListFragmentConfiguration();
-      config.putInt( Config.TASK_SORT_ORDER, newTaskSort );
+      config.putInt( AbstractTasksListFragment.Config.TASK_SORT_ORDER,
+                     newTaskSort );
       
       newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
    }
    
-
-
+   
+   
+   @Override
+   protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      super.onReEvaluateRtmAccessLevel( currentAccessLevel );
+      
+      if ( isQuickAddTaskFragmentOpen()
+         && AccountUtils.isReadOnlyAccess( currentAccessLevel ) )
+         showQuickAddTaskFragment( false );
+   }
+   
+   
+   
    protected final Task getTask( int pos )
    {
       return getTasksListFragment().getTask( pos );
    }
    
-
-
+   
+   
    protected int getTaskSort()
    {
       return getTasksListFragment().getTaskSortConfiguration();
    }
    
-
-
+   
+   
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
       return getTasksListFragment().getTaskSortConfiguration() == sortOrder;
    }
    
-
-
+   
+   
    protected IFilter getConfiguredFilter()
    {
       return getTasksListFragment().getFilter();
    }
    
-
-
+   
+   
    protected String getConfiguredListName()
    {
       return configuration.getString( Config.LIST_NAME );
    }
    
-
-
+   
+   
    protected String getConfiguredTitle()
    {
       final String title = configuration.getString( Config.TITLE );
@@ -320,22 +288,22 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
                                         : getString( R.string.app_name );
    }
    
-
-
+   
+   
    protected boolean isConfiguredWithListName()
    {
       return !TextUtils.isEmpty( getConfiguredListName() );
    }
    
-
-
+   
+   
    protected boolean isInDropDownNavigationMode()
    {
       return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
    }
    
-
-
+   
+   
    protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
    {
       final List< Pair< Integer, String > > items = new ArrayList< Pair< Integer, String > >( lists.size() );
@@ -347,8 +315,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       return actionBarNavigationAdapter;
    }
    
-
-
+   
+   
    @Override
    public Loader< List< RtmListWithTaskCount >> onCreateLoader( int id,
                                                                 Bundle args )
@@ -356,8 +324,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       return new RtmListWithTaskCountLoader( this, null );
    }
    
-
-
+   
+   
    @Override
    public void onLoadFinished( Loader< List< RtmListWithTaskCount >> loader,
                                List< RtmListWithTaskCount > data )
@@ -383,16 +351,16 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    public void onLoaderReset( Loader< List< RtmListWithTaskCount >> loader )
    {
       getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
    }
    
-
-
+   
+   
    @Override
    public boolean onNavigationItemSelected( int itemPosition, long itemId )
    {
@@ -417,8 +385,8 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       return handled;
    }
    
-
-
+   
+   
    protected void showQuickAddTaskFragment( boolean show )
    {
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -449,16 +417,16 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       transaction.commit();
    }
    
-
-
+   
+   
    protected boolean isQuickAddTaskFragmentOpen()
    {
       final Fragment quickAddTaskFragment = getSupportFragmentManager().findFragmentById( R.id.frag_quick_add_task );
       return quickAddTaskFragment != null && !quickAddTaskFragment.isHidden();
    }
    
-
-
+   
+   
    protected Bundle createQuickAddTaskFragmentConfiguration()
    {
       final Bundle config = new Bundle();
@@ -468,16 +436,16 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    @SuppressWarnings( "unchecked" )
    protected AbstractTasksListFragment< ? extends Task > getTasksListFragment()
    {
       return (AbstractTasksListFragment< ? extends Task >) getSupportFragmentManager().findFragmentById( R.id.frag_taskslist );
    }
    
-
-
+   
+   
    private void initTasksListWithConfiguration( Intent intent, Bundle config )
    {
       final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
@@ -491,15 +459,15 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    protected void reloadTasksListWithConfiguration( Bundle config )
    {
       newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
    }
    
-
-
+   
+   
    protected void newTasksListFragmentbyIntent( Intent intent )
    {
       final Fragment newTasksListFragment = getNewTasksListFragmentInstance( intent );
@@ -514,20 +482,28 @@ abstract class AbstractTasksListActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    protected Fragment getNewTasksListFragmentInstance( Intent intent )
    {
       return TasksListFragmentFactory.newFragment( this, intent );
    }
    
-
-
+   
+   
    private Intent getNewConfiguredIntent( Bundle config )
    {
       final Intent newIntent = getTasksListFragment().newDefaultIntent();
       newIntent.putExtras( config );
       
       return newIntent;
+   }
+   
+   
+   
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return FRAGMENT_IDS;
    }
 }

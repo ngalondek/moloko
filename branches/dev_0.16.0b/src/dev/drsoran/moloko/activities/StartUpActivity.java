@@ -92,7 +92,7 @@ public class StartUpActivity extends Activity implements
    {
       super.onCreate( savedInstanceState );
       
-      setContentView( R.layout.startup_activity );
+      // setContentView( R.layout.startup_activity );
       
       widgetContainer = (ViewGroup) findViewById( android.R.id.widget_frame );
       buttonBar = (ViewGroup) findViewById( R.id.btn_bar );

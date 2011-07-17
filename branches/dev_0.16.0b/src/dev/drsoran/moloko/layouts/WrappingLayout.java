@@ -38,7 +38,7 @@ public class WrappingLayout extends ViewGroup
       public final int vertical_spacing;
       
       
-
+      
       /**
        * @param horizontal_spacing
        *           Pixels between items, horizontally
@@ -54,22 +54,22 @@ public class WrappingLayout extends ViewGroup
    }
    
    
-
-   public WrappingLayout( Context context )
-   {
-      super( context );
-   }
    
-
-
    public WrappingLayout( Context context, AttributeSet attrs )
    {
-      super( context, attrs );
+      this( context, attrs, R.attr.wrappingLayoutStyle );
+   }
+   
+   
+   
+   public WrappingLayout( Context context, AttributeSet attrs, int defStyle )
+   {
+      super( context, attrs, defStyle );
       
       // WrappingLayout
       final TypedArray array = context.obtainStyledAttributes( attrs,
                                                                R.styleable.WrappingLayout,
-                                                               0,
+                                                               defStyle,
                                                                0 );
       
       final int hor_spc = array.getDimensionPixelOffset( R.styleable.WrappingLayout_horizontal_spacing,
@@ -82,8 +82,8 @@ public class WrappingLayout extends ViewGroup
       array.recycle();
    }
    
-
-
+   
+   
    @Override
    protected void onFinishInflate()
    {
@@ -97,8 +97,8 @@ public class WrappingLayout extends ViewGroup
       }
    }
    
-
-
+   
+   
    @Override
    protected void onMeasure( int widthMeasureSpec, int heightMeasureSpec )
    {
@@ -167,16 +167,16 @@ public class WrappingLayout extends ViewGroup
       setMeasuredDimension( width, height );
    }
    
-
-
+   
+   
    @Override
    protected ViewGroup.LayoutParams generateDefaultLayoutParams()
    {
       return wrappingLayoutParams;
    }
    
-
-
+   
+   
    @Override
    protected boolean checkLayoutParams( ViewGroup.LayoutParams p )
    {
@@ -185,8 +185,8 @@ public class WrappingLayout extends ViewGroup
       return false;
    }
    
-
-
+   
+   
    @Override
    protected void onLayout( boolean changed, int l, int t, int r, int b )
    {

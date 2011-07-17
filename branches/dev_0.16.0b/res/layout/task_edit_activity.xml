@@ -11,8 +11,7 @@
 
 <merge
    xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-   style="@style/Task"
+   xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"   
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
@@ -96,7 +95,6 @@
 
          <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
             android:id="@+id/task_edit_list"
-            style="@style/Task_Edit.NoLine"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dip"
@@ -107,7 +105,6 @@
 
          <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
             android:id="@+id/task_edit_priority"
-            style="@style/Task_Edit.NoLine"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dip"
@@ -309,7 +306,6 @@
 
          <dev.drsoran.moloko.layouts.TitleWithSpinnerLayout
             android:id="@+id/task_edit_location"
-            style="@style/Task_Edit"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dip"
@@ -320,7 +316,6 @@
 
          <dev.drsoran.moloko.layouts.TitleWithEditTextLayout
             android:id="@+id/task_edit_url"
-            style="@style/Task_Edit"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/task_edit_location"

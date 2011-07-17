@@ -27,13 +27,12 @@ import java.util.List;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import dev.drsoran.moloko.content.TasksProviderPart;
-import dev.drsoran.rtm.ListTask;
-import dev.drsoran.rtm.SelectableListTask;
+import dev.drsoran.rtm.SelectableTask;
 import dev.drsoran.rtm.Task;
 
 
-public class SelectableListTasksLoader extends
-         AbstractTasksListLoader< SelectableListTask >
+public class SelectableTasksLoader extends
+         AbstractTasksListLoader< SelectableTask >
 {
    private final String selection;
    
@@ -42,8 +41,8 @@ public class SelectableListTasksLoader extends
    private final List< String > selectedTaskIds;
    
    
-
-   public SelectableListTasksLoader( Context context, String selection,
+   
+   public SelectableTasksLoader( Context context, String selection,
       String order, List< String > selectedTaskIds )
    {
       super( context );
@@ -52,18 +51,18 @@ public class SelectableListTasksLoader extends
       this.selectedTaskIds = selectedTaskIds;
    }
    
-
-
+   
+   
    @Override
-   protected List< SelectableListTask > queryResultInBackground( ContentProviderClient client )
+   protected List< SelectableTask > queryResultInBackground( ContentProviderClient client )
    {
       final List< Task > tasks = TasksProviderPart.getTasks( client,
                                                              selection,
                                                              order );
-      final List< SelectableListTask > selectableTasks = SelectableListTask.fromListTaskList( ListTask.fromTaskList( tasks ) );
+      final List< SelectableTask > selectableTasks = SelectableTask.fromTaskList( tasks );
       
       if ( selectableTasks != null )
-         SelectableListTask.selectTasksById( selectableTasks, selectedTaskIds );
+         SelectableTask.selectTasksById( selectableTasks, selectedTaskIds );
       
       return selectableTasks;
    }

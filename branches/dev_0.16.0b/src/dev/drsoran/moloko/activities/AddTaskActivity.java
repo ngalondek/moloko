@@ -67,7 +67,7 @@ public class AddTaskActivity extends AbstractTaskEditActivity
    private Date created;
    
    
-
+   
    @Override
    protected InitialValues onCreateImpl( Intent intent )
    {
@@ -126,16 +126,16 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                                 (String) null );
    }
    
-
-
+   
+   
    @Override
    protected boolean shouldHandleIntentAction( String action )
    {
       return action.equals( Intent.ACTION_INSERT );
    }
    
-
-
+   
+   
    @Override
    protected void refreshHeadSection( TextView addedDate,
                                       TextView completedDate,
@@ -151,8 +151,8 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                                  getString( R.string.app_name ) ) );
    }
    
-
-
+   
+   
    @Override
    public void onDone( View v )
    {
@@ -174,8 +174,8 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                   return R.string.toast_insert_task;
                }
                
-
-
+               
+               
                @Override
                protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
                                                                                Task entity )
@@ -196,16 +196,16 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                   return operations;
                }
                
-
-
+               
+               
                @Override
                protected Uri getContentUri()
                {
                   return Tasks.CONTENT_URI;
                }
                
-
-
+               
+               
                @Override
                protected String getPath()
                {
@@ -235,8 +235,8 @@ public class AddTaskActivity extends AbstractTaskEditActivity
       }
    }
    
-
-
+   
+   
    @Override
    public void onCancel( View v )
    {
@@ -250,16 +250,16 @@ public class AddTaskActivity extends AbstractTaskEditActivity
       }, null ).show();
    }
    
-
-
+   
+   
    @Override
    protected ModificationSet getModifications()
    {
       return ModificationSet.EMPTY_MODIFICATION_SET;
    }
    
-
-
+   
+   
    private String getListIdByName( String listName )
    {
       String res = null;
@@ -270,8 +270,8 @@ public class AddTaskActivity extends AbstractTaskEditActivity
       return res;
    }
    
-
-
+   
+   
    private String getLocationIdByName( String locationName )
    {
       String res = null;
@@ -282,8 +282,8 @@ public class AddTaskActivity extends AbstractTaskEditActivity
       return res;
    }
    
-
-
+   
+   
    private final Task newTask()
    {
       final long dueDate = getCurrentValue( Tasks.DUE_DATE, Long.class );
@@ -319,11 +319,11 @@ public class AddTaskActivity extends AbstractTaskEditActivity
                        0,
                        getCurrentValue( Tasks.TAGS, String.class ),
                        (ParticipantList) null,
-                       0 );
+                       Strings.EMPTY_STRING );
    }
    
-
-
+   
+   
    private final static String emptyIfNull( String string )
    {
       return string == null ? Strings.EMPTY_STRING : string;

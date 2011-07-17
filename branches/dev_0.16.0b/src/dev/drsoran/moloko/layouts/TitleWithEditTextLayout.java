@@ -42,15 +42,15 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    private final static int imeTypeDisabled = InputType.TYPE_NULL;
    
    
-
+   
    public TitleWithEditTextLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       initView( context, attrs, getViewContainer() );
    }
    
-
-
+   
+   
    public TitleWithEditTextLayout( Context context, AttributeSet attrs,
       ViewGroup root )
    {
@@ -58,50 +58,50 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
       initView( context, attrs, getViewContainer() );
    }
    
-
-
+   
+   
    public void setText( CharSequence value )
    {
       editText.setText( value );
    }
    
-
-
+   
+   
    public Editable getText()
    {
       return editText.getText();
    }
    
-
-
+   
+   
    public void addTextChangedListener( TextWatcher watcher )
    {
       editText.addTextChangedListener( watcher );
    }
    
-
-
+   
+   
    public void removeTextChangedListener( TextWatcher watcher )
    {
       editText.removeTextChangedListener( watcher );
    }
    
-
-
+   
+   
    public final void setHint( CharSequence hint )
    {
       editText.setHint( hint );
    }
    
-
-
+   
+   
    public final void setHint( int resid )
    {
       editText.setHint( resid );
    }
    
-
-
+   
+   
    @Override
    public void setEnabled( boolean enabled )
    {
@@ -112,8 +112,8 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
       editText.setInputType( enabled ? imeTypeEnabled : imeTypeDisabled );
    }
    
-
-
+   
+   
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )

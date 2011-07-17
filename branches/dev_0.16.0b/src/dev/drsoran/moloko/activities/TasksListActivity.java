@@ -26,11 +26,8 @@ import java.util.List;
 
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
-
-import com.mdt.rtm.data.RtmTaskNote;
-
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListListener;
+import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.RtmListEditUtils;
@@ -39,7 +36,7 @@ import dev.drsoran.provider.Rtm.Lists;
 
 
 public class TasksListActivity extends AbstractTasksListActivity implements
-         IFullDetailedTasksListListener
+         IFullDetailedTasksListFragmentListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -55,7 +52,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    }
    
    
-
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -86,8 +83,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -112,16 +109,16 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    public void onOpenTask( int pos )
    {
       startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-
-
+   
+   
    @Override
    public void onSelectTasks()
    {
@@ -130,16 +127,16 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                               getTaskSort() ) );
    }
    
-
-
+   
+   
    @Override
    public void onEditTask( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-
-
+   
+   
    @Override
    public void onOpenList( int pos, String listId )
    {
@@ -148,8 +145,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                                  null ) );
    }
    
-
-
+   
+   
    @Override
    public void onOpenLocation( int pos, String locationId )
    {
@@ -157,28 +154,26 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                                  getTask( pos ).getLocationName() ) );
    }
    
-
-
+   
+   
    @Override
-   public void onOpenNotes( int pos, List< RtmTaskNote > notes )
+   public void onOpenNotes( int pos, List< String > noteIds )
    {
-      if ( notes.size() > 0 )
+      if ( noteIds.size() > 0 )
       {
-         if ( notes.size() == 1 )
+         if ( noteIds.size() == 1 )
             startActivity( Intents.createOpenNotesIntent( this,
                                                           null,
-                                                          notes.get( 0 )
-                                                               .getId() ) );
+                                                          noteIds.get( 0 ) ) );
          else
             startActivity( Intents.createOpenNotesIntent( this,
-                                                          notes.get( 0 )
-                                                               .getTaskSeriesId(),
+                                                          getTask( pos ).getTaskSeriesId(),
                                                           null ) );
       }
    }
    
-
-
+   
+   
    @Override
    public void onShowTasksWithTag( String tag )
    {
@@ -186,8 +181,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                             tag ) );
    }
    
-
-
+   
+   
    @Override
    public void onShowTasksWithTags( List< String > tags, String logicalOperator )
    {

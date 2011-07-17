@@ -33,7 +33,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
@@ -47,6 +46,7 @@ import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.view.InflateException;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -55,7 +55,6 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.layouts.TitleBarLayout;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -79,102 +78,89 @@ public final class UIUtils
    { android.R.attr.state_checked };
    
    
-
+   
    private UIUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
+   
+   
    public final static String getTrimmedText( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-
-
+   
+   
    public final static CharSequence getTrimmedSequence( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-
-
+   
+   
    @Deprecated
    public final static void setTitle( Activity activity, String text )
    {
-      final View titleBarText = activity.findViewById( R.id.app_actionbar_text_color );
-      
-      if ( titleBarText instanceof TextView )
-      {
-         ( (TextView) titleBarText ).setText( text );
-      }
-      else
-      {
-         activity.setTitle( text );
-      }
+      // final View titleBarText = activity.findViewById( R.id.app_actionbar_title );
+      //
+      // if ( titleBarText instanceof TextView )
+      // {
+      // ( (TextView) titleBarText ).setText( text );
+      // }
+      // else
+      // {
+      // activity.setTitle( text );
+      // }
    }
    
-
-
+   
+   
    @Deprecated
    public final static void setTitle( Activity activity, int resId )
    {
       setTitle( activity, activity.getResources().getString( resId ) );
    }
    
-
-
+   
+   
    @Deprecated
    public final static void setTitle( Activity activity,
                                       String text,
                                       int iconResId )
    {
-      final View view = activity.findViewById( R.id.app_actionbar_text_color );
-      
-      if ( view instanceof TextView )
-      {
-         final TextView titleBarText = (TextView) view;
-         
-         titleBarText.setText( text );
-         
-         BitmapDrawable bitmap = null;
-         
-         if ( iconResId != -1 )
-         {
-            bitmap = new BitmapDrawable( activity.getResources()
-                                                 .openRawResource( iconResId ) );
-            
-            final int iconSize = activity.getResources()
-                                         .getDimensionPixelSize( R.dimen.app_actionbar_text_size );
-            
-            bitmap.setBounds( 0, 0, iconSize, iconSize );
-         }
-         
-         titleBarText.setCompoundDrawables( bitmap, null, null, null );
-      }
-      else
-      {
-         activity.setTitle( text );
-      }
+      // final View view = activity.findViewById( R.id.app_actionbar_title );
+      //
+      // if ( view instanceof TextView )
+      // {
+      // final TextView titleBarText = (TextView) view;
+      //
+      // titleBarText.setText( text );
+      //
+      // BitmapDrawable bitmap = null;
+      //
+      // if ( iconResId != -1 )
+      // {
+      // bitmap = new BitmapDrawable( activity.getResources()
+      // .openRawResource( iconResId ) );
+      //
+      // final int iconSize = activity.getResources()
+      // .getDimensionPixelSize( R.dimen.app_actionbar_text_size );
+      //
+      // bitmap.setBounds( 0, 0, iconSize, iconSize );
+      // }
+      //
+      // titleBarText.setCompoundDrawables( bitmap, null, null, null );
+      // }
+      // else
+      // {
+      // activity.setTitle( text );
+      // }
    }
    
-
-
-   @Deprecated
-   public final static void showTitleBarAddTask( Activity activity, boolean show )
-   {
-      final TitleBarLayout titleBar = (TitleBarLayout) activity.findViewById( R.id.app_title_bar );
-      
-      if ( titleBar != null )
-      {
-         titleBar.showAddTaskInput( show );
-      }
-   }
    
-
-
+   
    public final static View setDropDownItemIconAndText( View dropDownView,
                                                         Pair< Integer, String > iconWithText )
    {
@@ -186,8 +172,8 @@ public final class UIUtils
       
    }
    
-
-
+   
+   
    public final static View setDropDownItemIconAndText( View dropDownView,
                                                         int iconId,
                                                         String text )
@@ -207,8 +193,8 @@ public final class UIUtils
       return dropDownView;
    }
    
-
-
+   
+   
    public final static void setTaskDescription( TextView view,
                                                 Task task,
                                                 Time timeBase )
@@ -257,8 +243,8 @@ public final class UIUtils
          view.setTypeface( Typeface.DEFAULT );
    }
    
-
-
+   
+   
    public final static void setListTasksCountView( TextView tasksCount,
                                                    RtmListWithTaskCount list )
    {
@@ -283,8 +269,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static void inflateTags( Context context,
                                          ViewGroup container,
                                          Collection< String > tags,
@@ -366,8 +352,8 @@ public final class UIUtils
          container.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    public final static void setPriorityColor( View view, Task task )
    {
       switch ( task.getPriority() )
@@ -388,8 +374,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static StringBuilder appendAtNewLine( StringBuilder stringBuilder,
                                                       String string )
    {
@@ -401,8 +387,8 @@ public final class UIUtils
       return stringBuilder;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithViewLayout( View layout,
                                                               String title )
    {
@@ -431,8 +417,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               String text )
@@ -463,8 +449,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               Spannable text )
@@ -487,8 +473,9 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
+   @Deprecated
    public final static void initializeErrorWithIcon( Activity activity,
                                                      int resId,
                                                      Object... params )
@@ -501,23 +488,41 @@ public final class UIUtils
       Log.e( LogUtils.toTag( Activity.class ), msg );
    }
    
-
-
+   
+   
+   public final static void initializeErrorWithIcon( Context context,
+                                                     ViewGroup container,
+                                                     int resId,
+                                                     Object... params )
+   {
+      final View view = LayoutInflater.from( context )
+                                      .inflate( R.layout.error_with_icon,
+                                                container,
+                                                true );
+      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
+      final String msg = context.getResources().getString( resId, params );
+      text.setText( msg );
+      
+      Log.e( LogUtils.toTag( Context.class ), msg );
+   }
+   
+   
+   
    public final static void applySpannable( TextView textView, Spannable text )
    {
       textView.setMovementMethod( LinkMovementMethod.getInstance() );
       textView.setText( text, BufferType.SPANNABLE );
    }
    
-
-
+   
+   
    public final static MenuItem configureMenuItem( Menu menu, int itemId )
    {
       return configureMenuItem( menu, itemId, true );
    }
    
-
-
+   
+   
    public final static MenuItem configureMenuItem( Menu menu,
                                                    int itemId,
                                                    boolean show )
@@ -543,8 +548,8 @@ public final class UIUtils
       return item;
    }
    
-
-
+   
+   
    public final static MenuItem addSyncMenuItem( final Context context,
                                                  Menu menu,
                                                  int itemId,
@@ -574,8 +579,8 @@ public final class UIUtils
       return menuItem;
    }
    
-
-
+   
+   
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
@@ -598,8 +603,8 @@ public final class UIUtils
                                   show );
    }
    
-
-
+   
+   
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
@@ -661,8 +666,8 @@ public final class UIUtils
       return item;
    }
    
-
-
+   
+   
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -672,8 +677,8 @@ public final class UIUtils
                                                            activityClass ) );
    }
    
-
-
+   
+   
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -685,8 +690,8 @@ public final class UIUtils
          item.setIntent( intent );
    }
    
-
-
+   
+   
    public final static String convertSource( Context context, String source )
    {
       if ( source.equalsIgnoreCase( "js" ) )
@@ -698,8 +703,8 @@ public final class UIUtils
       return source;
    }
    
-
-
+   
+   
    public final static Pair< Integer, Integer > getTaggedViewRange( ViewGroup container,
                                                                     String tag )
    {
@@ -723,8 +728,8 @@ public final class UIUtils
          return Pair.create( 0, 0 );
    }
    
-
-
+   
+   
    public final static int getTaggedViewPos( ViewGroup container, String tag )
    {
       int pos = -1;
@@ -738,8 +743,8 @@ public final class UIUtils
       return pos;
    }
    
-
-
+   
+   
    public final static void removeTaggedViews( ViewGroup container, String tag )
    {
       List< View > views = null;
@@ -761,8 +766,8 @@ public final class UIUtils
             container.removeView( view );
    }
    
-
-
+   
+   
    public final static Dialog newCancelWithChangesDialog( Context context,
                                                           Runnable yesAction,
                                                           Runnable noAction )
@@ -775,8 +780,8 @@ public final class UIUtils
                                    noAction );
    }
    
-
-
+   
+   
    public final static Dialog newApplyChangesDialog( Context context,
                                                      Runnable yesAction,
                                                      Runnable noAction )
@@ -789,8 +794,8 @@ public final class UIUtils
                                    noAction );
    }
    
-
-
+   
+   
    public final static Dialog newDeleteElementDialog( Context context,
                                                       String elementName,
                                                       Runnable yesAction,
@@ -806,8 +811,8 @@ public final class UIUtils
                                    noAction );
    }
    
-
-
+   
+   
    public final static Dialog newDialogWithActions( final Context context,
                                                     String message,
                                                     int positiveId,
@@ -844,8 +849,8 @@ public final class UIUtils
       return builder.create();
    };
    
-
-
+   
+   
    public final static boolean reportStatus( Context context,
                                              int resIdOk,
                                              int resIdFailed,

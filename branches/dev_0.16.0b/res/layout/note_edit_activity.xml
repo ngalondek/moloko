@@ -12,14 +12,13 @@
 <RelativeLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-   style="@style/Note"
    android:layout_width="fill_parent"
    android:layout_height="fill_parent"
    android:paddingTop="10dip">
 
    <TextView
       android:id="@+id/note_created_date"
-      style="@style/App_Note_Created_Date_Text"
+      style="@style/Note_Created_Date_Text"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignRight="@+id/note_edit_title"
@@ -51,7 +50,7 @@
 
    <RelativeLayout
       android:id="@+id/note_edit_buttons"
-      style="@style/App_ButtonBar_Bgnd"
+      style="?attr/bottomButtonBarStyle"
       android:layout_width="fill_parent"
       android:layout_height="70dip"
       android:layout_alignParentBottom="true"

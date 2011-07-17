@@ -25,22 +25,36 @@ package dev.drsoran.moloko.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mdt.rtm.data.RtmAuth;
+
 import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
-import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListListener;
+import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.rtm.Task;
 
 
 public class SelectMultipleTasksActivity extends AbstractTasksListActivity
-         implements ISelectableTasksListListener
+         implements ISelectableTasksListFragmentListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + SelectMultipleTasksActivity.class.getSimpleName();
    
    
-
+   
+   @Override
+   protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   {
+      super.onReEvaluateRtmAccessLevel( currentAccessLevel );
+      
+      if ( AccountUtils.isReadOnlyAccess( currentAccessLevel ) )
+         finish();
+   }
+   
+   
+   
    @Override
    public void onOpenTask( int pos )
    {
@@ -48,8 +62,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
          getTasksListFragment().toggle( pos );
    }
    
-
-
+   
+   
    @Override
    public void onEditSelectedTasks( List< ? extends Task > tasks )
    {
@@ -67,24 +81,24 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       
    }
    
-
-
+   
+   
    @Override
    public void onCompleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.setTasksCompletion( this, tasks, true );
    }
    
-
-
+   
+   
    @Override
    public void onUncompleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.setTasksCompletion( this, tasks, false );
    }
    
-
-
+   
+   
    @Override
    public void onPostponeSelectedTasks( List< ? extends Task > tasks )
    {
@@ -92,16 +106,16 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       
    }
    
-
-
+   
+   
    @Override
    public void onDeleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.deleteTasks( this, tasks );
    }
    
-
-
+   
+   
    private List< String > getTaskIds( List< ? extends Task > tasks )
    {
       final List< String > taskIds = new ArrayList< String >( tasks.size() );
@@ -112,8 +126,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       return taskIds;
    }
    
-
-
+   
+   
    @Override
    protected SelectableTasksListsFragment getTasksListFragment()
    {

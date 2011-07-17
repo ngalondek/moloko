@@ -22,7 +22,28 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-public interface IMinDetailedTasksListListener extends ITasksListListener
+import java.util.List;
+
+import dev.drsoran.rtm.Task;
+
+
+public interface ISelectableTasksListFragmentListener extends ITasksListFragmentListener
 {
-   void onSelectTasks();
+   void onEditSelectedTasks( List< ? extends Task > tasks );
+   
+
+
+   void onCompleteSelectedTasks( List< ? extends Task > tasks );
+   
+
+
+   void onUncompleteSelectedTasks( List< ? extends Task > tasks );
+   
+
+
+   void onPostponeSelectedTasks( List< ? extends Task > tasks );
+   
+
+
+   void onDeleteSelectedTasks( List< ? extends Task > tasks );
 }

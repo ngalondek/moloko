@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.activities;
 
-import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,36 +29,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.util.Log;
-import android.view.InflateException;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.mdt.rtm.data.RtmTaskNote;
-import com.mdt.rtm.data.RtmTaskNotes;
-
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.RtmNotesProviderPart;
-import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.fragments.TaskFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.LogUtils;
-import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.provider.Rtm.Notes;
-import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
 public class TaskActivity extends MolokoFragmentActivity implements
          ITaskFragmentListener, LoaderCallbacks< Task >
 {
+   @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + TaskActivity.class.getSimpleName();
    
@@ -67,9 +53,11 @@ public class TaskActivity extends MolokoFragmentActivity implements
    public static class Config
    {
       public final static String TASK = "task";
+      
+      private final static String TASK_ID = "task_id";
    }
    
-   private Task task;
+   private final static int TASK_LOADER_ID = 1;
    
    
 
@@ -84,23 +72,21 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       if ( intent.getAction().equals( Intent.ACTION_VIEW ) )
       {
-         final Uri taskUri = intent.getData();
-         String taskId = null;
-         
-         if ( taskUri != null )
+         if ( getConfiguredTask() != null )
+            showContent();
+         else
          {
-            final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+            final Uri taskUri = intent.getData();
             
-            if ( client != null )
+            if ( taskUri != null )
             {
-               taskId = taskUri.getLastPathSegment();
-               task = TasksProviderPart.getTask( client, taskId );
+               final String taskId = taskUri.getLastPathSegment();
+               final Bundle loaderConfig = new Bundle();
+               loaderConfig.putString( Config.TASK_ID, taskId );
                
-               client.release();
-            }
-            else
-            {
-               LogUtils.logDBError( this, TAG, "Task" );
+               getSupportLoaderManager().initLoader( TASK_LOADER_ID,
+                                                     loaderConfig,
+                                                     this );
             }
          }
       }
@@ -125,12 +111,33 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   public void onEditTask( View v )
+   public Task getConfiguredTask()
    {
-      if ( task != null )
-         startActivityForResult( Intents.createEditTaskIntent( this,
-                                                               task.getId() ),
-                                 TaskEditActivity.REQ_EDIT_TASK );
+      return configuration.getParcelable( Config.TASK );
+   }
+   
+
+
+   public Task getConfiguredTaskAssertNonNull()
+   {
+      final Task task = getConfiguredTask();
+      
+      if ( task == null )
+         throw new IllegalStateException( "task should be not null" );
+      
+      return task;
+   }
+   
+
+
+   @Override
+   protected void updateContent( ViewGroup container )
+   {
+      super.updateContent( container );
+      
+      final Task task = getConfiguredTaskAssertNonNull();
+      
+      initTaskFragmentWithTask( task );
    }
    
 
@@ -140,109 +147,67 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       boolean reloadTask = false;
       
-      if ( task != null )
+      final Task task = getConfiguredTaskAssertNonNull();
+      
+      switch ( requestCode )
       {
-         switch ( requestCode )
-         {
-            case TaskEditActivity.REQ_EDIT_TASK:
-               switch ( resultCode )
-               {
-                  case TaskEditActivity.RESULT_EDIT_TASK_CHANGED:
-                     reloadTask = true;
-                     break;
-                  
-                  default :
-                     break;
-               }
-               break;
-            
-            case NoteEditActivity.REQ_EDIT_NOTE:
-               switch ( resultCode )
-               {
-                  case NoteEditActivity.RESULT_EDIT_NOTE_CHANGED:
-                     reloadTask = true;
-                     break;
-                  
-                  default :
-                     break;
-               }
-               break;
-            
-            case AddNoteActivity.REQ_INSERT_NOTE:
-               switch ( resultCode )
-               {
-                  case AddNoteActivity.RESULT_INSERT_NOTE_OK:
-                     reloadTask = true;
-                     break;
-                  
-                  default :
-                     break;
-               }
-               break;
-            
-            default :
-               break;
-         }
+         case TaskEditActivity.REQ_EDIT_TASK:
+            switch ( resultCode )
+            {
+               case TaskEditActivity.RESULT_EDIT_TASK_CHANGED:
+                  reloadTask = true;
+                  break;
+               
+               default :
+                  break;
+            }
+            break;
+         
+         case NoteEditActivity.REQ_EDIT_NOTE:
+            switch ( resultCode )
+            {
+               case NoteEditActivity.RESULT_EDIT_NOTE_CHANGED:
+                  reloadTask = true;
+                  break;
+               
+               default :
+                  break;
+            }
+            break;
+         
+         case AddNoteActivity.REQ_INSERT_NOTE:
+            switch ( resultCode )
+            {
+               case AddNoteActivity.RESULT_INSERT_NOTE_OK:
+                  reloadTask = true;
+                  break;
+               
+               default :
+                  break;
+            }
+            break;
+         
+         default :
+            break;
       }
       
       if ( reloadTask )
       {
-         final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
-         
-         if ( client != null )
-         {
-            final Task oldTask = task;
-            task = TasksProviderPart.getTask( client, task.getId() );
-            client.release();
-            
-            if ( task == null )
-               task = oldTask;
-         }
-         else
-         {
-            LogUtils.logDBError( this, TAG, "Task" );
-         }
-      }
-   }
-   
-
-
-   public void onCompleteTask( View v )
-   {
-      if ( task != null )
-      {
-         TaskEditUtils.setTaskCompletion( this,
-                                          task,
-                                          task.getCompleted() == null );
-      }
-      
-      finish();
-   }
-   
-
-
-   public void onPostponeTask( View v )
-   {
-      if ( task != null )
-         TaskEditUtils.postponeTask( this, task );
-      
-      finish();
-   }
-   
-
-
-   public void onDeleteTask( View v )
-   {
-      if ( task != null )
-      {
-         UIUtils.newDeleteElementDialog( this, task.getName(), new Runnable()
-         {
-            public void run()
-            {
-               TaskEditUtils.deleteTask( TaskActivity.this, task );
-               finish();
-            }
-         }, null ).show();
+         // final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Tasks.CONTENT_URI );
+         //
+         // if ( client != null )
+         // {
+         // final Task oldTask = task;
+         // task = TasksProviderPart.getTask( client, task.getId() );
+         // client.release();
+         //
+         // if ( task == null )
+         // task = oldTask;
+         // }
+         // else
+         // {
+         // LogUtils.logDBError( this, TAG, "Task" );
+         // }
       }
    }
    
@@ -258,56 +223,39 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   public void onAddNote( View v )
-   {
-      if ( task != null )
-      {
-         startActivityForResult( Intents.createAddNoteIntent( this,
-                                                              task.getTaskSeriesId() ),
-                                 AddNoteActivity.REQ_INSERT_NOTE );
-      }
-   }
+   // public void onDeleteNote( View v )
+   // {
+   // if ( task != null )
+   // {
+   // final String noteId = (String) v.getTag();
+   //
+   // UIUtils.newDeleteElementDialog( this,
+   // getString( R.string.app_note ),
+   // new Runnable()
+   // {
+   // @Override
+   // public void run()
+   // {
+   // NoteEditUtils.deleteNote( TaskActivity.this,
+   // noteId );
+   // loadAndInflateNotes( taskContainer,
+   // task );
+   // }
+   // },
+   // null )
+   // .show();
+   // }
+   // }
    
-
-
-   public void onDeleteNote( View v )
-   {
-      if ( task != null )
-      {
-         final String noteId = (String) v.getTag();
-         
-         UIUtils.newDeleteElementDialog( this,
-                                         getString( R.string.app_note ),
-                                         new Runnable()
-                                         {
-                                            public void run()
-                                            {
-                                               NoteEditUtils.deleteNote( TaskActivity.this,
-                                                                         noteId );
-                                               loadAndInflateNotes( taskContainer,
-                                                                    task );
-                                            }
-                                         },
-                                         null )
-                .show();
-      }
-   }
-   
-
-
-   public void onBack( View v )
-   {
-      finish();
-   }
-   
-
-
    private void initTaskFragmentWithTask( Task task )
    {
-      final Fragment fragment = TaskFragment.newInstance( createDefaultConfiguration() );
+      final Fragment fragment = TaskFragment.newInstance( createTaskFragmentConfiguration( task ) );
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       
-      transaction.add( R.id.frag_task, fragment );
+      if ( getSupportFragmentManager().findFragmentById( R.id.frag_task ) == null )
+         transaction.add( R.id.frag_task, fragment );
+      else
+         transaction.replace( R.id.frag_task, fragment );
       
       transaction.commit();
    }
@@ -325,85 +273,181 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private void loadAndInflateNotes( ViewGroup taskContainer, Task task )
+   public void onBack( View v )
    {
-      final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
-      
-      if ( client != null )
-      {
-         final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getNotes( client,
-                                                                      task.getTaskSeriesId() );
-         client.release();
-         
-         if ( rtmNotes != null )
-            this.rtmNotes = rtmNotes.getNotes();
-         else
-            LogUtils.logDBError( this, TAG, "Notes" );
-         
-         inflateNotes( taskContainer, task );
-      }
+      finish();
    }
    
 
 
-   private void inflateNotes( ViewGroup taskContainer, Task task )
+   @Override
+   public void onEditTask( String taskId )
    {
-      UIUtils.removeTaggedViews( taskContainer, "note" );
-      
-      if ( rtmNotes != null && rtmNotes.size() > 0 )
-      {
-         try
-         {
-            for ( final RtmTaskNote note : rtmNotes )
-            {
-               final ViewGroup noteViewLayout = (ViewGroup) LayoutInflater.from( this )
-                                                                          .inflate( R.layout.task_note,
-                                                                                    taskContainer,
-                                                                                    false );
-               try
-               {
-                  final TextView createdDate = (TextView) noteViewLayout.findViewById( R.id.note_created_date );
-                  createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
-                                                                           .getTime(),
-                                                                       FULL_DATE_FLAGS ) );
-                  
-               }
-               catch ( final ClassCastException e )
-               {
-                  Log.e( TAG, "Invalid layout spec.", e );
-                  throw e;
-               }
-               
-               if ( UIUtils.initializeTitleWithTextLayout( noteViewLayout,
-                                                           note.getTitle(),
-                                                           note.getText() ) )
-               {
-                  final View noteButtons = noteViewLayout.findViewById( R.id.note_buttons );
-                  permission.setVisible( noteButtons );
-                  
-                  noteButtons.findViewById( R.id.note_buttons_edit )
-                             .setTag( note.getId() );
-                  noteButtons.findViewById( R.id.note_buttons_delete )
-                             .setTag( note.getId() );
-                  
-                  taskContainer.addView( noteViewLayout );
-               }
-               else
-               {
-                  throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
-               }
-            }
-         }
-         catch ( final InflateException e )
-         {
-            Log.e( TAG, "Invalid layout spec.", e );
-            throw e;
-         }
-      }
+      startActivityForResult( Intents.createEditTaskIntent( this, taskId ),
+                              TaskEditActivity.REQ_EDIT_TASK );
    }
    
 
 
+   @Override
+   public void onDeleteTask( String taskId )
+   {
+      final Task task = getConfiguredTaskAssertNonNull();
+      
+      UIUtils.newDeleteElementDialog( this, task.getName(), new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            TaskEditUtils.deleteTask( TaskActivity.this, task );
+            finish();
+         }
+      }, null ).show();
+   }
+   
+
+
+   @Override
+   public void onPostponeTask( String taskId )
+   {
+      final Task task = getConfiguredTaskAssertNonNull();
+      
+      TaskEditUtils.postponeTask( this, task );
+   }
+   
+
+
+   @Override
+   public void onCompleteTask( String taskId )
+   {
+      final Task task = getConfiguredTaskAssertNonNull();
+      
+      TaskEditUtils.setTaskCompletion( this, task, true );
+   }
+   
+
+
+   @Override
+   public void onUncompleteTask( String taskId )
+   {
+      final Task task = getConfiguredTaskAssertNonNull();
+      
+      TaskEditUtils.setTaskCompletion( this, task, false );
+   }
+   
+
+
+   @Override
+   public void onAddNote( String taskSeriesId )
+   {
+      startActivityForResult( Intents.createAddNoteIntent( this, taskSeriesId ),
+                              AddNoteActivity.REQ_INSERT_NOTE );
+   }
+   
+
+
+   @Override
+   public void onOpenLocation( String locationId )
+   {
+      final Task task = getConfiguredTaskAssertNonNull();
+      
+      new LocationChooser( this, task ).showChooser();
+   }
+   
+
+
+   @Override
+   public void onOpenContact( String fullname, String username )
+   {
+      final Intent intent = Intents.createOpenContactIntent( this,
+                                                             fullname,
+                                                             username );
+      
+      // It is possible that we came here from the ContactsListActivity
+      // by clicking a contact, clicking a task, clicking the contact again.
+      // So we reorder the former contact's tasks list to front.
+      intent.addFlags( Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
+      
+      startActivity( intent );
+   }
+   
+
+
+   // private void loadAndInflateNotes( ViewGroup taskContainer, Task task )
+   // {
+   // final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
+   //
+   // if ( client != null )
+   // {
+   // final RtmTaskNotes rtmNotes = RtmNotesProviderPart.getNotes( client,
+   // task.getTaskSeriesId() );
+   // client.release();
+   //
+   // if ( rtmNotes != null )
+   // this.rtmNotes = rtmNotes.getNotes();
+   // else
+   // LogUtils.logDBError( this, TAG, "Notes" );
+   //
+   // inflateNotes( taskContainer, task );
+   // }
+   // }
+   
+   // private void inflateNotes( ViewGroup taskContainer, Task task )
+   // {
+   // UIUtils.removeTaggedViews( taskContainer, "note" );
+   //
+   // if ( rtmNotes != null && rtmNotes.size() > 0 )
+   // {
+   // try
+   // {
+   // for ( final RtmTaskNote note : rtmNotes )
+   // {
+   // final ViewGroup noteViewLayout = (ViewGroup) LayoutInflater.from( this )
+   // .inflate( R.layout.task_note,
+   // taskContainer,
+   // false );
+   // try
+   // {
+   // final TextView createdDate = (TextView) noteViewLayout.findViewById( R.id.note_created_date );
+   // createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
+   // .getTime(),
+   // FULL_DATE_FLAGS ) );
+   //
+   // }
+   // catch ( final ClassCastException e )
+   // {
+   // Log.e( TAG, "Invalid layout spec.", e );
+   // throw e;
+   // }
+   //
+   // if ( UIUtils.initializeTitleWithTextLayout( noteViewLayout,
+   // note.getTitle(),
+   // note.getText() ) )
+   // {
+   // final View noteButtons = noteViewLayout.findViewById( R.id.note_buttons );
+   // permission.setVisible( noteButtons );
+   //
+   // noteButtons.findViewById( R.id.note_buttons_edit )
+   // .setTag( note.getId() );
+   // noteButtons.findViewById( R.id.note_buttons_delete )
+   // .setTag( note.getId() );
+   //
+   // taskContainer.addView( noteViewLayout );
+   // }
+   // else
+   // {
+   // throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+   // }
+   // }
+   // }
+   // catch ( final InflateException e )
+   // {
+   // Log.e( TAG, "Invalid layout spec.", e );
+   // throw e;
+   // }
+   // }
+   // }
+   
    @Override
    public Loader< Task > onCreateLoader( int id, Bundle args )
    {
@@ -418,7 +462,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
    public void onLoadFinished( Loader< Task > loader, Task data )
    {
       if ( data == null )
-         showError();
+         showElementNotFoundError( getResources().getQuantityString( R.plurals.g_task,
+                                                                     1 ) );
       else
       {
          final Bundle newConfig = getConfiguration();
@@ -434,5 +479,13 @@ public class TaskActivity extends MolokoFragmentActivity implements
    @Override
    public void onLoaderReset( Loader< Task > loader )
    {
+   }
+   
+
+
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return null;
    }
 }

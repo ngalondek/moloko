@@ -26,31 +26,31 @@ public interface ITaskFragmentListener
 {
    void onEditTask( String taskId );
    
-   
-   
+
+
    void onDeleteTask( String taskId );
    
-   
-   
+
+
    void onPostponeTask( String taskId );
    
+
+
+   void onAddNote( String taskSeriesId );
    
-   
-   void onAddNote( String taskId );
-   
-   
-   
+
+
    void onCompleteTask( String taskId );
    
-   
-   
+
+
    void onUncompleteTask( String taskId );
    
-   
-   
+
+
    void onOpenLocation( String locationId );
    
-   
-   
+
+
    void onOpenContact( String fullname, String username );
 }

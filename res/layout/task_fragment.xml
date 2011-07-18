@@ -206,6 +206,6 @@
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
       layout="@layout/app_loading_spinner"
-      android:visibility="gone" />      
+      android:visibility="gone" />
 </merge>
 

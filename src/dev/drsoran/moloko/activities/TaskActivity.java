@@ -22,11 +22,14 @@
 
 package dev.drsoran.moloko.activities;
 
-import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -40,6 +43,9 @@ import com.mdt.rtm.data.RtmTaskNotes;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.fragments.TaskFragment;
+import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
+import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -51,19 +57,28 @@ import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskActivity extends Activity
+public class TaskActivity extends MolokoFragmentActivity implements
+         ITaskFragmentListener, LoaderCallbacks< Task >
 {
    private final static String TAG = "Moloko."
       + TaskActivity.class.getSimpleName();
    
+   
+   public static class Config
+   {
+      public final static String TASK = "task";
+   }
+   
    private Task task;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
+      
+      setContentView( R.layout.task_activity );
       
       final Intent intent = getIntent();
       
@@ -88,30 +103,28 @@ public class TaskActivity extends Activity
                LogUtils.logDBError( this, TAG, "Task" );
             }
          }
-         
-         if ( task != null )
-         {
-            setContentView( R.layout.task_activity );
-            
-         }
-         else
-         {
-            UIUtils.initializeErrorWithIcon( this,
-                                             R.string.err_entity_not_found,
-                                             getResources().getQuantityString( R.plurals.g_task,
-                                                                               1 ) );
-         }
-      }
-      else
-      {
-         UIUtils.initializeErrorWithIcon( this,
-                                          R.string.err_unsupported_intent_action,
-                                          intent.getAction() );
       }
    }
    
+
+
+   @Override
+   protected void takeConfigurationFrom( Bundle config )
+   {
+      if ( config.containsKey( Config.TASK ) )
+         configuration.putParcelable( Config.TASK,
+                                      config.getParcelable( Config.TASK ) );
+   }
    
+
+
+   @Override
+   public void putDefaultConfigurationTo( Bundle bundle )
+   {
+   }
    
+
+
    public void onEditTask( View v )
    {
       if ( task != null )
@@ -120,8 +133,8 @@ public class TaskActivity extends Activity
                                  TaskEditActivity.REQ_EDIT_TASK );
    }
    
-   
-   
+
+
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -192,8 +205,8 @@ public class TaskActivity extends Activity
       }
    }
    
-   
-   
+
+
    public void onCompleteTask( View v )
    {
       if ( task != null )
@@ -206,8 +219,8 @@ public class TaskActivity extends Activity
       finish();
    }
    
-   
-   
+
+
    public void onPostponeTask( View v )
    {
       if ( task != null )
@@ -216,8 +229,8 @@ public class TaskActivity extends Activity
       finish();
    }
    
-   
-   
+
+
    public void onDeleteTask( View v )
    {
       if ( task != null )
@@ -233,8 +246,8 @@ public class TaskActivity extends Activity
       }
    }
    
-   
-   
+
+
    public void onEditNote( View v )
    {
       startActivityForResult( Intents.createEditNoteIntent( this,
@@ -243,8 +256,8 @@ public class TaskActivity extends Activity
                               NoteEditActivity.REQ_EDIT_NOTE );
    }
    
-   
-   
+
+
    public void onAddNote( View v )
    {
       if ( task != null )
@@ -255,8 +268,8 @@ public class TaskActivity extends Activity
       }
    }
    
-   
-   
+
+
    public void onDeleteNote( View v )
    {
       if ( task != null )
@@ -280,15 +293,38 @@ public class TaskActivity extends Activity
       }
    }
    
-   
-   
+
+
    public void onBack( View v )
    {
       finish();
    }
    
+
+
+   private void initTaskFragmentWithTask( Task task )
+   {
+      final Fragment fragment = TaskFragment.newInstance( createDefaultConfiguration() );
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      
+      transaction.add( R.id.frag_task, fragment );
+      
+      transaction.commit();
+   }
    
+
+
+   private Bundle createTaskFragmentConfiguration( Task task )
+   {
+      final Bundle config = getFragmentConfigurations( R.id.frag_task );
+      
+      config.putParcelable( TaskFragment.Config.TASK, task );
+      
+      return config;
+   }
    
+
+
    private void loadAndInflateNotes( ViewGroup taskContainer, Task task )
    {
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Notes.CONTENT_URI );
@@ -308,8 +344,8 @@ public class TaskActivity extends Activity
       }
    }
    
-   
-   
+
+
    private void inflateNotes( ViewGroup taskContainer, Task task )
    {
       UIUtils.removeTaggedViews( taskContainer, "note" );
@@ -364,5 +400,39 @@ public class TaskActivity extends Activity
             throw e;
          }
       }
+   }
+   
+
+
+   @Override
+   public Loader< Task > onCreateLoader( int id, Bundle args )
+   {
+      showLoadingSpinner();
+      
+      return new TaskLoader( this, args.getString( Config.TASK_ID ) );
+   }
+   
+
+
+   @Override
+   public void onLoadFinished( Loader< Task > loader, Task data )
+   {
+      if ( data == null )
+         showError();
+      else
+      {
+         final Bundle newConfig = getConfiguration();
+         newConfig.putParcelable( Config.TASK, data );
+         configure( newConfig );
+         
+         showContent();
+      }
+   }
+   
+
+
+   @Override
+   public void onLoaderReset( Loader< Task > loader )
+   {
    }
 }

@@ -28,11 +28,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.AccountUtils;
 
 
@@ -44,11 +46,12 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    protected Bundle configuration;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       final Bundle intentConfig = new Bundle( getIntent().getExtras() );
+      
       if ( savedInstanceState != null )
          intentConfig.putAll( savedInstanceState );
       
@@ -61,8 +64,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       AccountUtils.registerAccountListener( this, handler, this );
    }
    
-   
-   
+
+
    @Override
    protected void onDestroy()
    {
@@ -71,8 +74,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       AccountUtils.unregisterAccountListener( this, this );
    }
    
-   
-   
+
+
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -80,8 +83,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       outState.putAll( getConfiguration() );
    }
    
-   
-   
+
+
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
@@ -89,16 +92,16 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       configure( state );
    }
    
-   
-   
+
+
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-   
-   
+
+
    @Override
    public void configure( Bundle config )
    {
@@ -109,8 +112,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          takeConfigurationFrom( config );
    }
    
-   
-   
+
+
    @Override
    public Bundle createDefaultConfiguration()
    {
@@ -121,8 +124,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return bundle;
    }
    
-   
-   
+
+
    public Bundle getActivityAndFragmentsConfiguration( int... fragmentIds )
    {
       final Bundle config = new Bundle();
@@ -133,8 +136,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return config;
    }
    
-   
-   
+
+
    public Bundle getFragmentConfigurations( int... fragmentIds )
    {
       final Bundle config = new Bundle();
@@ -151,8 +154,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return config;
    }
    
-   
-   
+
+
    public void notifyOptionsMenuChanged()
    {
       if ( !isFinishing() )
@@ -168,36 +171,36 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
    }
    
-   
-   
+
+
    protected abstract void takeConfigurationFrom( Bundle config );
    
-   
-   
+
+
    protected abstract void putDefaultConfigurationTo( Bundle bundle );
    
-   
-   
+
+
    protected abstract int[] getFragmentIds();
    
-   
-   
+
+
    @Override
    public void onAccountsUpdated( Account[] accounts )
    {
       onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
    }
    
-   
-   
+
+
    protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {
       notifyOptionsMenuChanged();
       notifyFragmentsAboutRtmAccessLevelChange( currentAccessLevel );
    }
    
-   
-   
+
+
    protected void notifyFragmentsAboutRtmAccessLevelChange( RtmAuth.Perms currentAccessLevel )
    {
       final int[] fragIds = getFragmentIds();
@@ -210,5 +213,32 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          if ( fragment instanceof IRtmAccessLevelAware )
             ( (IRtmAccessLevelAware) fragment ).reEvaluateRtmAccessLevel( currentAccessLevel );
       }
+   }
+   
+
+
+   protected void showLoadingSpinner()
+   {
+      final View content = findViewById( android.R.id.content );
+      if ( content != null )
+         content.setVisibility( View.GONE );
+      
+      final View spinner = findViewById( R.id.loading_spinner );
+      if ( spinner != null )
+         spinner.setVisibility( View.VISIBLE );
+   }
+   
+
+
+   protected void showContent()
+   {
+      final View content = findViewById( android.R.id.content );
+      if ( content != null )
+         content.setVisibility( View.VISIBLE );
+      
+      final View spinner = findViewById( R.id.loading_spinner );
+      if ( spinner != null )
+         spinner.setVisibility( View.GONE );
+      
    }
 }

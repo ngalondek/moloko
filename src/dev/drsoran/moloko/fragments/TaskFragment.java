@@ -34,7 +34,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -113,7 +112,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
    private View loadingSpinner;
    
    
-   
+
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -123,8 +122,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -136,8 +135,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
          listener = new NullTaskFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -145,8 +144,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       listener = null;
    }
    
-   
-   
+
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -157,8 +156,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
          getLoaderManager().initLoader( TASK_LOADER_ID, configuration, this );
    }
    
-   
-   
+
+
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -190,8 +189,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void configure( Bundle config )
    {
@@ -209,46 +208,46 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-   
-   
+
+
    @Override
    public Bundle createDefaultConfiguration()
    {
-      return Bundle.EMPTY;
+      return new Bundle();
    }
    
-   
-   
+
+
    public Task getConfiguredTask()
    {
       return configuration.getParcelable( Config.TASK );
    }
    
-   
-   
+
+
    public String getConfiguredTaskId()
    {
       return configuration.getString( Config.TASK_ID );
    }
    
-   
-   
+
+
    @Override
    public void reEvaluateRtmAccessLevel( Perms currentAccessLevel )
    {
       setRtmAccessLevelAwareElements( currentAccessLevel );
    }
    
-   
-   
+
+
    private void initializeWithTask()
    {
       final Task task = getConfiguredTask();
@@ -329,16 +328,16 @@ public class TaskFragment extends Fragment implements IConfigurable,
       setButtonListener();
    }
    
-   
-   
+
+
    private void showLoadingSpinner()
    {
       taskContainer.setVisibility( View.GONE );
       loadingSpinner.setVisibility( View.VISIBLE );
    }
    
-   
-   
+
+
    private void showError()
    {
       taskContainer.setVisibility( View.VISIBLE );
@@ -352,8 +351,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
                                                                          1 ) );
    }
    
-   
-   
+
+
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -438,8 +437,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -513,8 +512,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -549,15 +548,15 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    private void setRtmAccessLevelAwareElements( RtmAuth.Perms permisson )
    {
       permisson.setVisible( taskButtons );
    }
    
-   
-   
+
+
    private void setButtonListener()
    {
       final Task task = getConfiguredTask();
@@ -565,57 +564,62 @@ public class TaskFragment extends Fragment implements IConfigurable,
       if ( task == null )
          throw new IllegalStateException( "task should be not null" );
       
-      ( (Button) taskButtons.findViewById( R.id.task_buttons_edit ) ).setOnClickListener( new OnClickListener()
-      {
-         @Override
-         public void onClick( View v )
-         {
-            listener.onEditTask( task.getId() );
-         }
-      } );
+      taskButtons.findViewById( R.id.task_buttons_edit )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       listener.onEditTask( task.getId() );
+                    }
+                 } );
       
-      ( (Button) taskButtons.findViewById( R.id.task_buttons_delete ) ).setOnClickListener( new OnClickListener()
-      {
-         @Override
-         public void onClick( View v )
-         {
-            listener.onDeleteTask( task.getId() );
-         }
-      } );
+      taskButtons.findViewById( R.id.task_buttons_delete )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       listener.onDeleteTask( task.getId() );
+                    }
+                 } );
       
-      ( (Button) taskButtons.findViewById( R.id.task_buttons_postpone ) ).setOnClickListener( new OnClickListener()
-      {
-         @Override
-         public void onClick( View v )
-         {
-            listener.onPostponeTask( task.getId() );
-         }
-      } );
+      taskButtons.findViewById( R.id.task_buttons_postpone )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       listener.onPostponeTask( task.getId() );
+                    }
+                 } );
       
-      ( (Button) taskButtons.findViewById( R.id.task_buttons_add_note ) ).setOnClickListener( new OnClickListener()
-      {
-         @Override
-         public void onClick( View v )
-         {
-            listener.onAddNote( task.getId() );
-         }
-      } );
+      taskButtons.findViewById( R.id.task_buttons_add_note )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       listener.onAddNote( task.getTaskSeriesId() );
+                    }
+                 } );
       
-      ( (Button) taskButtons.findViewById( R.id.task_buttons_complete ) ).setOnClickListener( new OnClickListener()
-      {
-         @Override
-         public void onClick( View v )
-         {
-            if ( task.getCompleted() == null )
-               listener.onCompleteTask( task.getId() );
-            else
-               listener.onUncompleteTask( task.getId() );
-         }
-      } );
+      taskButtons.findViewById( R.id.task_buttons_complete )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       if ( task.getCompleted() == null )
+                          listener.onCompleteTask( task.getId() );
+                       else
+                          listener.onUncompleteTask( task.getId() );
+                    }
+                 } );
    }
    
-   
-   
+
+
    @Override
    public Loader< Task > onCreateLoader( int id, Bundle args )
    {
@@ -624,8 +628,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return new TaskLoader( getActivity(), args.getString( Config.TASK_ID ) );
    }
    
-   
-   
+
+
    @Override
    public void onLoadFinished( Loader< Task > loader, Task data )
    {
@@ -641,8 +645,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    @Override
    public void onLoaderReset( Loader< Task > loader )
    {

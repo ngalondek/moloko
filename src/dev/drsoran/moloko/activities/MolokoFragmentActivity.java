@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.mdt.rtm.data.RtmAuth;
 
@@ -36,6 +37,7 @@ import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoFragmentActivity extends FragmentActivity implements
@@ -50,7 +52,13 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
-      final Bundle intentConfig = new Bundle( getIntent().getExtras() );
+      final Bundle intentExtras = getIntent().getExtras();
+      final Bundle intentConfig;
+      
+      if ( intentExtras != null )
+         intentConfig = new Bundle( intentExtras );
+      else
+         intentConfig = new Bundle();
       
       if ( savedInstanceState != null )
          intentConfig.putAll( savedInstanceState );
@@ -205,40 +213,93 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    {
       final int[] fragIds = getFragmentIds();
       
-      for ( int i = 0; i < fragIds.length; i++ )
+      if ( fragIds != null )
       {
-         final int fragId = fragIds[ i ];
-         final Fragment fragment = getSupportFragmentManager().findFragmentById( fragId );
-         
-         if ( fragment instanceof IRtmAccessLevelAware )
-            ( (IRtmAccessLevelAware) fragment ).reEvaluateRtmAccessLevel( currentAccessLevel );
+         for ( int i = 0; i < fragIds.length; i++ )
+         {
+            final int fragId = fragIds[ i ];
+            final Fragment fragment = getSupportFragmentManager().findFragmentById( fragId );
+            
+            if ( fragment instanceof IRtmAccessLevelAware )
+               ( (IRtmAccessLevelAware) fragment ).reEvaluateRtmAccessLevel( currentAccessLevel );
+         }
       }
    }
    
 
 
-   protected void showLoadingSpinner()
+   protected final void showLoadingSpinner()
    {
-      final View content = findViewById( android.R.id.content );
-      if ( content != null )
-         content.setVisibility( View.GONE );
-      
-      final View spinner = findViewById( R.id.loading_spinner );
-      if ( spinner != null )
-         spinner.setVisibility( View.VISIBLE );
+      handler.post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            final View content = findViewById( android.R.id.content );
+            if ( content != null )
+               content.setVisibility( View.GONE );
+            
+            final View spinner = findViewById( R.id.loading_spinner );
+            if ( spinner != null )
+               spinner.setVisibility( View.VISIBLE );
+         }
+      } );
    }
    
 
 
-   protected void showContent()
+   protected final void showContent()
    {
-      final View content = findViewById( android.R.id.content );
-      if ( content != null )
-         content.setVisibility( View.VISIBLE );
-      
-      final View spinner = findViewById( R.id.loading_spinner );
-      if ( spinner != null )
-         spinner.setVisibility( View.GONE );
-      
+      handler.post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            final View content = findViewById( android.R.id.content );
+            if ( content != null )
+            {
+               content.setVisibility( View.VISIBLE );
+               updateContent( (ViewGroup) content );
+            }
+            
+            final View spinner = findViewById( R.id.loading_spinner );
+            if ( spinner != null )
+               spinner.setVisibility( View.GONE );
+         }
+      } );
+   }
+   
+
+
+   protected void updateContent( ViewGroup container )
+   {
+   }
+   
+
+
+   protected final void showElementNotFoundError( final CharSequence elementType )
+   {
+      handler.post( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            final View spinner = findViewById( R.id.loading_spinner );
+            if ( spinner != null )
+               spinner.setVisibility( View.GONE );
+            
+            final ViewGroup content = (ViewGroup) findViewById( android.R.id.content );
+            if ( content != null )
+            {
+               content.setVisibility( View.VISIBLE );
+               content.removeAllViews();
+               
+               UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
+                                                content,
+                                                R.string.err_entity_not_found,
+                                                elementType );
+            }
+         }
+      } );
    }
 }

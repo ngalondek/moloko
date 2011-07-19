@@ -257,7 +257,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       else
          transaction.replace( R.id.frag_task, fragment );
       
-      transaction.commit();
+      transaction.commitAllowingStateLoss();
    }
    
 

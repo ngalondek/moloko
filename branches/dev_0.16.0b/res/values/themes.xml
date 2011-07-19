@@ -53,6 +53,9 @@
       <!-- Window attributes -->
       <item name="android:windowBackground">@color/task_bgnd</item>
       
+      <!-- ActionBar attributes -->
+      <item name="actionBarStyle">@style/ActionBarStyle.AsUp.NoHomeIcon</item>
+            
       <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
       <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
    </style>

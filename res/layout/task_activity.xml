@@ -24,18 +24,23 @@
       android:id="@android:id/content"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:paddingBottom="70dip">
+      android:paddingLeft="10dip"
+      android:paddingTop="8dip">
 
-      <FrameLayout
-         android:id="@id/frag_task"
-         style="@style/Task_Section"
-         android:orientation="vertical"
-         android:layout_height="wrap_content"
+      <LinearLayout
          android:layout_width="fill_parent"
-         android:layout_marginRight="?android:attr/scrollbarSize"
-         android:paddingLeft="10dip"
-         android:paddingTop="8dip"
-         android:paddingBottom="8dip" />
+         android:layout_height="fill_parent"
+         android:orientation="vertical">
+         
+         <FrameLayout
+            android:id="@id/frag_task"
+            style="@style/Task_Section"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_marginRight="?android:attr/scrollbarSize"
+            android:layout_marginBottom="8dip"
+            android:paddingBottom="@dimen/task_overview_stroke_width" />
+      </LinearLayout>
    </ScrollView>
 
    <include
@@ -44,12 +49,5 @@
       android:layout_height="fill_parent"
       layout="@layout/app_loading_spinner"
       android:visibility="gone" />
-
-   <dev.drsoran.moloko.layouts.BottomButtonBarLayout
-      android:layout_width="fill_parent"
-      android:layout_height="70dip"
-      android:layout_gravity="bottom"
-      moloko:button1Text="@string/phr_close"
-      moloko:button1OnClick="onBack" />
 
 </FrameLayout>

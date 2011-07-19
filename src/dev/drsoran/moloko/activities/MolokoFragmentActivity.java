@@ -26,8 +26,10 @@ import android.accounts.Account;
 import android.accounts.OnAccountsUpdateListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -103,6 +105,28 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
 
 
    @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      boolean handled = false;
+      
+      switch ( item.getItemId() )
+      {
+         case android.R.id.home:
+            if ( ( getSupportActionBar().getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP ) == ActionBar.DISPLAY_HOME_AS_UP )
+            {
+               finish();
+               handled = true;
+            }
+         default :
+            handled = false;
+      }
+      
+      return handled || super.onOptionsItemSelected( item );
+   }
+   
+
+
+   @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
@@ -164,19 +188,11 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    
 
 
+   @Deprecated
    public void notifyOptionsMenuChanged()
    {
-      if ( !isFinishing() )
-      {
-         handler.post( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               invalidateOptionsMenu();
-            }
-         } );
-      }
+      // TODO: Remove if ActionBarSherlock 3.1.x
+      invalidateOptionsMenu();
    }
    
 
@@ -220,7 +236,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
             final int fragId = fragIds[ i ];
             final Fragment fragment = getSupportFragmentManager().findFragmentById( fragId );
             
-            if ( fragment instanceof IRtmAccessLevelAware )
+            if ( ( fragment instanceof IRtmAccessLevelAware )
+               && fragment.isAdded() )
                ( (IRtmAccessLevelAware) fragment ).reEvaluateRtmAccessLevel( currentAccessLevel );
          }
       }
@@ -230,43 +247,29 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
 
    protected final void showLoadingSpinner()
    {
-      handler.post( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            final View content = findViewById( android.R.id.content );
-            if ( content != null )
-               content.setVisibility( View.GONE );
-            
-            final View spinner = findViewById( R.id.loading_spinner );
-            if ( spinner != null )
-               spinner.setVisibility( View.VISIBLE );
-         }
-      } );
+      final View content = findViewById( android.R.id.content );
+      if ( content != null )
+         content.setVisibility( View.GONE );
+      
+      final View spinner = findViewById( R.id.loading_spinner );
+      if ( spinner != null )
+         spinner.setVisibility( View.VISIBLE );
    }
    
 
 
    protected final void showContent()
    {
-      handler.post( new Runnable()
+      final View content = findViewById( android.R.id.content );
+      if ( content != null )
       {
-         @Override
-         public void run()
-         {
-            final View content = findViewById( android.R.id.content );
-            if ( content != null )
-            {
-               content.setVisibility( View.VISIBLE );
-               updateContent( (ViewGroup) content );
-            }
-            
-            final View spinner = findViewById( R.id.loading_spinner );
-            if ( spinner != null )
-               spinner.setVisibility( View.GONE );
-         }
-      } );
+         content.setVisibility( View.VISIBLE );
+         updateContent( (ViewGroup) content );
+      }
+      
+      final View spinner = findViewById( R.id.loading_spinner );
+      if ( spinner != null )
+         spinner.setVisibility( View.GONE );
    }
    
 
@@ -279,27 +282,20 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
 
    protected final void showElementNotFoundError( final CharSequence elementType )
    {
-      handler.post( new Runnable()
+      final View spinner = findViewById( R.id.loading_spinner );
+      if ( spinner != null )
+         spinner.setVisibility( View.GONE );
+      
+      final ViewGroup content = (ViewGroup) findViewById( android.R.id.content );
+      if ( content != null )
       {
-         @Override
-         public void run()
-         {
-            final View spinner = findViewById( R.id.loading_spinner );
-            if ( spinner != null )
-               spinner.setVisibility( View.GONE );
-            
-            final ViewGroup content = (ViewGroup) findViewById( android.R.id.content );
-            if ( content != null )
-            {
-               content.setVisibility( View.VISIBLE );
-               content.removeAllViews();
-               
-               UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
-                                                content,
-                                                R.string.err_entity_not_found,
-                                                elementType );
-            }
-         }
-      } );
+         content.setVisibility( View.VISIBLE );
+         content.removeAllViews();
+         
+         UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
+                                          content,
+                                          R.string.err_entity_not_found,
+                                          elementType );
+      }
    }
 }

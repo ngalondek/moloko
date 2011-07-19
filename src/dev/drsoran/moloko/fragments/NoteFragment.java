@@ -38,14 +38,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmAuth;
+import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
+import dev.drsoran.moloko.fragments.listeners.INoteFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.NullNoteFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -56,66 +58,38 @@ import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskFragment extends Fragment implements IConfigurable,
-         IRtmAccessLevelAware, LoaderCallbacks< Task >
+public class NoteFragment extends Fragment implements IConfigurable,
+         IRtmAccessLevelAware, LoaderCallbacks< RtmTaskNote >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
-      + TaskFragment.class.getSimpleName();
+      + NoteFragment.class.getSimpleName();
    
    public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
    
    public static class Config
    {
-      public final static String TASK = "task";
+      public final static String NOTE = "note";
       
-      public final static String TASK_ID = "task_id";
+      public final static String NOTE_ID = "note_id";
    }
    
-   private final static int TASK_LOADER_ID = 1;
+   private final static int NOTE_LOADER_ID = 1;
    
    private Bundle configuration;
    
-   private ITaskFragmentListener listener;
+   private INoteFragmentListener listener;
    
-   private ViewGroup taskContainer;
-   
-   private View priorityBar;
-   
-   private TextView addedDate;
-   
-   private TextView completedDate;
-   
-   private TextView source;
-   
-   private TextView postponed;
-   
-   private TextView description;
-   
-   private TextView listName;
-   
-   private ViewGroup tagsLayout;
-   
-   private View dateTimeSection;
-   
-   private View locationSection;
-   
-   private ViewGroup participantsSection;
-   
-   private View urlSection;
-   
-   private View taskButtons;
-   
-   private ImageButton completeTaskBtn;
+   private ViewGroup content;
    
    private View loadingSpinner;
    
    
 
-   public final static TaskFragment newInstance( Bundle config )
+   public final static NoteFragment newInstance( Bundle config )
    {
-      final TaskFragment fragment = new TaskFragment();
+      final NoteFragment fragment = new NoteFragment();
       
       fragment.setArguments( config );
       
@@ -130,9 +104,9 @@ public class TaskFragment extends Fragment implements IConfigurable,
       super.onAttach( activity );
       
       if ( activity instanceof ITaskFragmentListener )
-         listener = (ITaskFragmentListener) activity;
+         listener = (INoteFragmentListener) activity;
       else
-         listener = new NullTaskFragmentListener();
+         listener = new NullNoteFragmentListener();
    }
    
 
@@ -152,7 +126,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
       super.onCreate( savedInstanceState );
       configure( getArguments() );
       
-      if ( getConfiguredTask() == null )
+      if ( getConfiguredNote() == null )
          getLoaderManager().initLoader( TASK_LOADER_ID, configuration, this );
    }
    
@@ -163,7 +137,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
                              ViewGroup container,
                              Bundle savedInstanceState )
    {
-      final View fragmentView = inflater.inflate( R.layout.task_fragment,
+      final View fragmentView = inflater.inflate( R.layout.note_fragment,
                                                   container,
                                                   false );
       
@@ -184,8 +158,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       completeTaskBtn = (ImageButton) taskContainer.findViewById( R.id.task_buttons_complete );
       loadingSpinner = fragmentView.findViewById( R.id.loading_spinner );
       
-      if ( getConfiguredTask() != null )
-         initializeWithTask();
+      if ( getConfiguredNote() != null )
+         initializeWithNote();
       
       return fragmentView;
    }
@@ -200,12 +174,12 @@ public class TaskFragment extends Fragment implements IConfigurable,
       
       if ( config != null )
       {
-         if ( config.containsKey( Config.TASK ) )
-            configuration.putParcelable( Config.TASK,
-                                         config.getParcelable( Config.TASK ) );
-         if ( config.containsKey( Config.TASK_ID ) )
-            configuration.putString( Config.TASK_ID,
-                                     config.getString( Config.TASK_ID ) );
+         if ( config.containsKey( Config.NOTE ) )
+            configuration.putParcelable( Config.NOTE,
+                                         config.getParcelable( Config.NOTE ) );
+         if ( config.containsKey( Config.NOTE_ID ) )
+            configuration.putString( Config.NOTE_ID,
+                                     config.getString( Config.NOTE_ID ) );
       }
    }
    
@@ -227,16 +201,16 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
 
 
-   public Task getConfiguredTask()
+   public RtmTaskNote getConfiguredNote()
    {
-      return configuration.getParcelable( Config.TASK );
+      return configuration.getParcelable( Config.NOTE );
    }
    
 
 
-   public String getConfiguredTaskId()
+   public String getConfiguredNoteId()
    {
-      return configuration.getString( Config.TASK_ID );
+      return configuration.getString( Config.NOTE_ID );
    }
    
 
@@ -249,26 +223,26 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
 
 
-   private void initializeWithTask()
+   private void initializeWithNote()
    {
-      final Task task = getConfiguredTask();
+      final RtmTaskNote note = getConfiguredNote();
       
-      if ( task == null )
-         throw new IllegalStateException( "task should be not null" );
+      if ( note == null )
+         throw new IllegalStateException( "note should be not null" );
       
       taskContainer.setVisibility( View.VISIBLE );
       loadingSpinner.setVisibility( View.GONE );
       
-      UIUtils.setPriorityColor( priorityBar, task );
+      UIUtils.setPriorityColor( priorityBar, note );
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
+      addedDate.setText( MolokoDateUtils.formatDateTime( note.getAdded()
                                                              .getTime(),
                                                          FULL_DATE_FLAGS ) );
       
-      if ( task.getCompleted() != null )
+      if ( note.getCompleted() != null )
       {
          completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
+         completedDate.setText( MolokoDateUtils.formatDateTime( note.getCompleted()
                                                                     .getTime(),
                                                                 FULL_DATE_FLAGS ) );
          completeTaskBtn.setImageResource( R.drawable.ic_button_task_unchecked_check );
@@ -279,18 +253,18 @@ public class TaskFragment extends Fragment implements IConfigurable,
          completeTaskBtn.setImageResource( R.drawable.ic_button_task_checked_check );
       }
       
-      if ( task.getPosponed() > 0 )
+      if ( note.getPosponed() > 0 )
       {
          postponed.setText( getString( R.string.task_postponed,
-                                       task.getPosponed() ) );
+                                       note.getPosponed() ) );
          postponed.setVisibility( View.VISIBLE );
       }
       else
          postponed.setVisibility( View.GONE );
       
-      if ( !TextUtils.isEmpty( task.getSource() ) )
+      if ( !TextUtils.isEmpty( note.getSource() ) )
       {
-         String sourceStr = task.getSource();
+         String sourceStr = note.getSource();
          if ( sourceStr.equalsIgnoreCase( "js" ) )
             sourceStr = "web";
          
@@ -299,26 +273,26 @@ public class TaskFragment extends Fragment implements IConfigurable,
       else
          source.setText( "?" );
       
-      UIUtils.setTaskDescription( description, task, null );
+      UIUtils.setTaskDescription( description, note, null );
       
-      listName.setText( task.getListName() );
+      listName.setText( note.getListName() );
       
       UIUtils.inflateTags( getActivity(),
                            tagsLayout,
-                           task.getTags(),
+                           note.getTags(),
                            null,
                            null );
       
-      setDateTimeSection( dateTimeSection, task );
+      setDateTimeSection( dateTimeSection, note );
       
-      setLocationSection( locationSection, task );
+      setLocationSection( locationSection, note );
       
-      setParticipantsSection( participantsSection, task );
+      setParticipantsSection( participantsSection, note );
       
-      if ( !TextUtils.isEmpty( task.getUrl() ) )
+      if ( !TextUtils.isEmpty( note.getUrl() ) )
       {
          urlSection.setVisibility( View.VISIBLE );
-         ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
+         ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( note.getUrl() );
       }
       else
       {
@@ -560,7 +534,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
 
    private void setButtonListener()
    {
-      final Task task = getConfiguredTask();
+      final Task task = getConfiguredNote();
       
       if ( task == null )
          throw new IllegalStateException( "task should be not null" );
@@ -642,7 +616,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
          newConfig.putParcelable( Config.TASK, data );
          configure( newConfig );
          
-         initializeWithTask();
+         initializeWithNote();
       }
    }
    

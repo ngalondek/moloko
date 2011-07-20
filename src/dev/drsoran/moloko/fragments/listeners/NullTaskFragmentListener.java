@@ -26,20 +26,6 @@ public class NullTaskFragmentListener implements ITaskFragmentListener
 {
    
    @Override
-   public void onEditTask( String taskId )
-   {
-   }
-   
-
-
-   @Override
-   public void onAddNote( String taskSeriesId )
-   {
-   }
-   
-
-
-   @Override
    public void onOpenLocation( String locationId )
    {
    }
@@ -48,34 +34,6 @@ public class NullTaskFragmentListener implements ITaskFragmentListener
 
    @Override
    public void onOpenContact( String fullname, String username )
-   {
-   }
-   
-
-
-   @Override
-   public void onDeleteTask( String taskId )
-   {
-   }
-   
-
-
-   @Override
-   public void onPostponeTask( String taskId )
-   {
-   }
-   
-
-
-   @Override
-   public void onCompleteTask( String taskId )
-   {
-   }
-   
-
-
-   @Override
-   public void onUncompleteTask( String taskId )
    {
    }
 }

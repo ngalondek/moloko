@@ -19,72 +19,40 @@
    android:layout_width="fill_parent"
    android:layout_height="wrap_content">
 
-   <RelativeLayout
+   <LinearLayout
       android:id="@android:id/content"
       android:layout_width="fill_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="wrap_content"
+      android:padding="10dip"
+      android:orientation="vertical">
 
-      <LinearLayout
-         android:id="@+id/note_details_container"
+      <TextView
+         android:id="@+id/note_created_date"
+         style="@style/Note_Created_Date_Text"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:padding="10dip"
-         android:orientation="vertical">
+         android:gravity="right"
+         android:text="Created_Date" />
 
-         <TextView
-            android:id="@+id/note_created_date"
-            style="@style/Note_Created_Date_Text"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="Created_Date" />
-
-         <!--
-            Apply the style directly and not via
-            ?attr/titleWithTextStyle since this gets included in several
-            places
-         -->
-         <dev.drsoran.moloko.layouts.TitleWithTextLayout
-            xmlns:twt="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-            style="@style/Note_TitleWithText"
-            android:id="@+id/note"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dip"
-            twt:title="note_title"
-            twt:text="note_text" />
-      </LinearLayout>
-      <RelativeLayout
-         android:id="@+id/note_buttons"
-         style="@style/Task_ButtonBar"
+      <!--
+         Apply the style directly and not via ?attr/titleWithTextStyle
+         since this gets included in several places
+      -->
+      <dev.drsoran.moloko.layouts.TitleWithTextLayout
+         xmlns:twt="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+         style="@style/Note_TitleWithText"
+         android:id="@+id/note"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:layout_below="@+id/note_details_container"
-         android:layout_alignParentBottom="true"
-         android:layout_margin="@dimen/task_overview_stroke_width"
-         android:padding="3dip">
-
-         <ImageButton
-            android:id="@+id/note_buttons_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_button_task_edit"
-            android:scaleType="fitXY" />
-         <ImageButton
-            android:id="@+id/note_buttons_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/note_buttons_edit"
-            android:src="@drawable/ic_button_task_trash"
-            android:scaleType="fitXY" />
-      </RelativeLayout>
-   </RelativeLayout>
+         android:layout_marginTop="5dip"
+         twt:title="note_title"
+         twt:text="note_text" />
+   </LinearLayout>
 
    <include
       android:id="@+id/loading_spinner"
       layout="@layout/app_loading_spinner"
       android:layout_width="fill_parent"
-      android:layout_height="fill_parent"      
-      android:visibility="visible" />
+      android:layout_height="fill_parent"
+      android:visibility="gone" />
 </FrameLayout>

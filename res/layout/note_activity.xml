@@ -27,11 +27,13 @@
          android:paddingTop="10dip"
          android:paddingLeft="10dip">
 
+         <!-- TODO: Repair
          <include
             android:id="@+id/note_activity_note"
-            layout="@layout/note"
+            layout="@layout/note_fragment"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
+             -->
       </LinearLayout>
    </ScrollView>
 

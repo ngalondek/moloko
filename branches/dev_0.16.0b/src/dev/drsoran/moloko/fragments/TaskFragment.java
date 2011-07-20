@@ -33,21 +33,13 @@ import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.TextView;
-
-import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmAuth.Perms;
-
 import dev.drsoran.moloko.IConfigurable;
-import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -57,7 +49,7 @@ import dev.drsoran.rtm.Task;
 
 
 public class TaskFragment extends Fragment implements IConfigurable,
-         IRtmAccessLevelAware, LoaderCallbacks< Task >
+         LoaderCallbacks< Task >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -79,7 +71,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
    private ITaskFragmentListener listener;
    
-   private ViewGroup taskContainer;
+   private ViewGroup content;
    
    private View priorityBar;
    
@@ -105,11 +97,9 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
    private View urlSection;
    
-   private View taskButtons;
-   
-   private ImageButton completeTaskBtn;
-   
    private View loadingSpinner;
+   
+   private boolean taskNotFound;
    
    
 
@@ -167,25 +157,30 @@ public class TaskFragment extends Fragment implements IConfigurable,
                                                   container,
                                                   false );
       
-      taskContainer = (ViewGroup) fragmentView.findViewById( R.id.task_overview_container );
-      priorityBar = taskContainer.findViewById( R.id.task_overview_priority_bar );
-      addedDate = (TextView) taskContainer.findViewById( R.id.task_overview_added_date );
-      completedDate = (TextView) taskContainer.findViewById( R.id.task_overview_completed_date );
-      source = (TextView) taskContainer.findViewById( R.id.task_overview_src );
-      postponed = (TextView) taskContainer.findViewById( R.id.task_overview_postponed );
-      description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
-      listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
-      tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
-      dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
-      locationSection = taskContainer.findViewById( R.id.task_location );
-      participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
-      taskButtons = taskContainer.findViewById( R.id.task_buttons );
-      urlSection = taskContainer.findViewById( R.id.task_url );
-      completeTaskBtn = (ImageButton) taskContainer.findViewById( R.id.task_buttons_complete );
+      // The PriorityBar is not part of our layout but may be provided by
+      // the container we layout into.
+      priorityBar = container.findViewById( R.id.task_overview_priority_bar );
+      
+      content = (ViewGroup) fragmentView.findViewById( android.R.id.content );
+      addedDate = (TextView) content.findViewById( R.id.task_overview_added_date );
+      completedDate = (TextView) content.findViewById( R.id.task_overview_completed_date );
+      source = (TextView) content.findViewById( R.id.task_overview_src );
+      postponed = (TextView) content.findViewById( R.id.task_overview_postponed );
+      description = (TextView) content.findViewById( R.id.task_overview_desc );
+      listName = (TextView) content.findViewById( R.id.task_overview_list_name );
+      tagsLayout = (ViewGroup) content.findViewById( R.id.task_overview_tags );
+      dateTimeSection = content.findViewById( R.id.task_dateTime );
+      locationSection = content.findViewById( R.id.task_location );
+      participantsSection = (ViewGroup) content.findViewById( R.id.task_participants );
+      urlSection = content.findViewById( R.id.task_url );
       loadingSpinner = fragmentView.findViewById( R.id.loading_spinner );
       
-      if ( getConfiguredTask() != null )
-         initializeWithTask();
+      if ( taskNotFound )
+         showError();
+      else if ( getConfiguredTask() != null )
+         updateContentWithTask();
+      else
+         showLoadingSpinner();
       
       return fragmentView;
    }
@@ -234,6 +229,18 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
 
 
+   public Task getConfiguredTaskAsertNotNull()
+   {
+      final Task task = getConfiguredTask();
+      
+      if ( task == null )
+         throw new IllegalStateException( "task must not be null" );
+      
+      return task;
+   }
+   
+
+
    public String getConfiguredTaskId()
    {
       return configuration.getString( Config.TASK_ID );
@@ -241,115 +248,116 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
 
 
-   @Override
-   public void reEvaluateRtmAccessLevel( Perms currentAccessLevel )
+   private boolean hasViewCreated()
    {
-      setRtmAccessLevelAwareElements( currentAccessLevel );
+      return content != null;
    }
    
 
 
-   private void initializeWithTask()
+   private void updateContentWithTask()
    {
-      final Task task = getConfiguredTask();
-      
-      if ( task == null )
-         throw new IllegalStateException( "task should be not null" );
-      
-      taskContainer.setVisibility( View.VISIBLE );
-      loadingSpinner.setVisibility( View.GONE );
-      
-      UIUtils.setPriorityColor( priorityBar, task );
-      
-      addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
-                                                             .getTime(),
-                                                         FULL_DATE_FLAGS ) );
-      
-      if ( task.getCompleted() != null )
+      if ( hasViewCreated() )
       {
-         completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
-                                                                    .getTime(),
-                                                                FULL_DATE_FLAGS ) );
-         completeTaskBtn.setImageResource( R.drawable.ic_button_task_unchecked_check );
-      }
-      else
-      {
-         completedDate.setVisibility( View.GONE );
-         completeTaskBtn.setImageResource( R.drawable.ic_button_task_checked_check );
-      }
-      
-      if ( task.getPosponed() > 0 )
-      {
-         postponed.setText( getString( R.string.task_postponed,
-                                       task.getPosponed() ) );
-         postponed.setVisibility( View.VISIBLE );
-      }
-      else
-         postponed.setVisibility( View.GONE );
-      
-      if ( !TextUtils.isEmpty( task.getSource() ) )
-      {
-         String sourceStr = task.getSource();
-         if ( sourceStr.equalsIgnoreCase( "js" ) )
-            sourceStr = "web";
+         final Task task = getConfiguredTaskAsertNotNull();
          
-         source.setText( getString( R.string.task_source, sourceStr ) );
+         content.setVisibility( View.VISIBLE );
+         loadingSpinner.setVisibility( View.GONE );
+         
+         if ( priorityBar != null )
+            UIUtils.setPriorityColor( priorityBar, task );
+         
+         addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
+                                                                .getTime(),
+                                                            FULL_DATE_FLAGS ) );
+         
+         if ( task.getCompleted() != null )
+         {
+            completedDate.setVisibility( View.VISIBLE );
+            completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
+                                                                       .getTime(),
+                                                                   FULL_DATE_FLAGS ) );
+         }
+         else
+         {
+            completedDate.setVisibility( View.GONE );
+         }
+         
+         if ( task.getPosponed() > 0 )
+         {
+            postponed.setText( getString( R.string.task_postponed,
+                                          task.getPosponed() ) );
+            postponed.setVisibility( View.VISIBLE );
+         }
+         else
+            postponed.setVisibility( View.GONE );
+         
+         if ( !TextUtils.isEmpty( task.getSource() ) )
+         {
+            String sourceStr = task.getSource();
+            if ( sourceStr.equalsIgnoreCase( "js" ) )
+               sourceStr = "web";
+            
+            source.setText( getString( R.string.task_source, sourceStr ) );
+         }
+         else
+            source.setText( "?" );
+         
+         UIUtils.setTaskDescription( description, task, null );
+         
+         listName.setText( task.getListName() );
+         
+         UIUtils.inflateTags( getActivity(),
+                              tagsLayout,
+                              task.getTags(),
+                              null,
+                              null );
+         
+         setDateTimeSection( dateTimeSection, task );
+         
+         setLocationSection( locationSection, task );
+         
+         setParticipantsSection( participantsSection, task );
+         
+         if ( !TextUtils.isEmpty( task.getUrl() ) )
+         {
+            urlSection.setVisibility( View.VISIBLE );
+            ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
+         }
+         else
+         {
+            urlSection.setVisibility( View.GONE );
+         }
       }
-      else
-         source.setText( "?" );
-      
-      UIUtils.setTaskDescription( description, task, null );
-      
-      listName.setText( task.getListName() );
-      
-      UIUtils.inflateTags( getActivity(),
-                           tagsLayout,
-                           task.getTags(),
-                           null,
-                           null );
-      
-      setDateTimeSection( dateTimeSection, task );
-      
-      setLocationSection( locationSection, task );
-      
-      setParticipantsSection( participantsSection, task );
-      
-      if ( !TextUtils.isEmpty( task.getUrl() ) )
-      {
-         urlSection.setVisibility( View.VISIBLE );
-         ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
-      }
-      else
-      {
-         urlSection.setVisibility( View.GONE );
-      }
-      
-      setRtmAccessLevelAwareElements( AccountUtils.getAccessLevel( getActivity() ) );
-      setButtonListener();
    }
    
 
 
    private void showLoadingSpinner()
    {
-      taskContainer.setVisibility( View.GONE );
-      loadingSpinner.setVisibility( View.VISIBLE );
+      if ( hasViewCreated() )
+      {
+         content.setVisibility( View.GONE );
+         loadingSpinner.setVisibility( View.VISIBLE );
+      }
    }
    
 
 
    private void showError()
    {
-      taskContainer.setVisibility( View.VISIBLE );
-      loadingSpinner.setVisibility( View.GONE );
-      
-      taskContainer.removeAllViews();
-      UIUtils.initializeErrorWithIcon( getActivity(),
-                                       taskContainer,
-                                       R.string.err_entity_not_found,
-                                       getResources().getQuantityString( R.plurals.g_task,
-                                                                         1 ) );
+      if ( hasViewCreated() )
+      {
+         content.setVisibility( View.VISIBLE );
+         loadingSpinner.setVisibility( View.GONE );
+         
+         content.removeAllViews();
+         UIUtils.initializeErrorWithIcon( getActivity(),
+                                          content,
+                                          R.string.err_entity_not_found,
+                                          getResources().getQuantityString( R.plurals.g_task,
+                                                                            1 ) );
+      }
    }
    
 
@@ -551,76 +559,6 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
 
 
-   private void setRtmAccessLevelAwareElements( RtmAuth.Perms permisson )
-   {
-      permisson.setVisible( taskButtons );
-   }
-   
-
-
-   private void setButtonListener()
-   {
-      final Task task = getConfiguredTask();
-      
-      if ( task == null )
-         throw new IllegalStateException( "task should be not null" );
-      
-      taskButtons.findViewById( R.id.task_buttons_edit )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onEditTask( task.getId() );
-                    }
-                 } );
-      
-      taskButtons.findViewById( R.id.task_buttons_delete )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onDeleteTask( task.getId() );
-                    }
-                 } );
-      
-      taskButtons.findViewById( R.id.task_buttons_postpone )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onPostponeTask( task.getId() );
-                    }
-                 } );
-      
-      taskButtons.findViewById( R.id.task_buttons_add_note )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onAddNote( task.getTaskSeriesId() );
-                    }
-                 } );
-      
-      taskButtons.findViewById( R.id.task_buttons_complete )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       if ( task.getCompleted() == null )
-                          listener.onCompleteTask( task.getId() );
-                       else
-                          listener.onUncompleteTask( task.getId() );
-                    }
-                 } );
-   }
-   
-
-
    @Override
    public Loader< Task > onCreateLoader( int id, Bundle args )
    {
@@ -634,7 +572,9 @@ public class TaskFragment extends Fragment implements IConfigurable,
    @Override
    public void onLoadFinished( Loader< Task > loader, Task data )
    {
-      if ( data == null )
+      taskNotFound = data == null;
+      
+      if ( taskNotFound )
          showError();
       else
       {
@@ -642,7 +582,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
          newConfig.putParcelable( Config.TASK, data );
          configure( newConfig );
          
-         initializeWithTask();
+         updateContentWithTask();
       }
    }
    

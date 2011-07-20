@@ -6,200 +6,136 @@
    android:layout_width="fill_parent">
 
    <RelativeLayout
-      android:id="@+id/task_overview_container"
+      android:id="@android:id/content"
       android:layout_height="wrap_content"
-      android:layout_width="fill_parent">
-
-      <View
-         android:id="@+id/task_overview_priority_bar"
-         android:layout_alignParentTop="true"
-         android:layout_alignParentLeft="true"
+      android:layout_width="fill_parent"
+      android:paddingRight="?android:attr/scrollbarSize"
+      android:paddingLeft="10dip"
+      android:paddingTop="10dip"
+      android:paddingBottom="10dip">
+      
+      <TextView
+         android:id="@+id/task_overview_added_date"
+         style="@style/Task_Date_Text"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
          android:layout_alignParentRight="true"
-         android:layout_height="@dimen/task_overview_corner_radius"
-         android:layout_width="fill_parent"
-         android:background="@drawable/app_simple_line" />
+         android:text="Added_Date" />
+
+      <TextView
+         android:id="@+id/task_overview_completed_date"
+         style="@style/Task_Date_Text"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="3dip"
+         android:layout_alignParentRight="true"
+         android:layout_below="@id/task_overview_added_date"
+         android:drawableLeft="@drawable/ic_small_green_check"
+         android:drawablePadding="2dip"
+         android:text="Completed_Date" />
 
       <RelativeLayout
-         android:id="@+id/task_overview_details"
+         android:id="@+id/task_overview_status_container"
          android:layout_height="wrap_content"
-         android:layout_width="fill_parent"
-         android:paddingRight="?android:attr/scrollbarSize"
-         android:paddingLeft="10dip"
-         android:paddingTop="10dip"
-         android:paddingBottom="10dip">
-         
-         <TextView
-            android:id="@+id/task_overview_added_date"
-            style="@style/Task_Date_Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="Added_Date" />
+         android:layout_width="wrap_content"
+         android:layout_alignParentRight="true"
+         android:layout_below="@id/task_overview_completed_date"
+         android:layout_alignWithParentIfMissing="true"
+         android:layout_marginTop="3dip">
 
          <TextView
-            android:id="@+id/task_overview_completed_date"
-            style="@style/Task_Date_Text"
+            android:id="@+id/task_overview_postponed"
+            style="@style/Task_Source_Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dip"            
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/task_overview_added_date"
-            android:drawableLeft="@drawable/ic_small_green_check"
+            android:layout_toLeftOf="@+id/task_overview_src"
+            android:layout_marginRight="5dip"
+            android:drawableLeft="@drawable/ic_small_black_postponed"
             android:drawablePadding="2dip"
-            android:text="Completed_Date" />
+            android:text="@string/task_postponed" />
 
-         <RelativeLayout
-            android:id="@+id/task_overview_status_container"
-            android:layout_height="wrap_content"
+         <TextView
+            android:id="@+id/task_overview_src"
+            style="@style/Task_Source_Text"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/task_overview_completed_date"
-            android:layout_alignWithParentIfMissing="true"
-            android:layout_marginTop="3dip">
-
-            <TextView
-               android:id="@+id/task_overview_postponed"
-               style="@style/Task_Source_Text"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_toLeftOf="@+id/task_overview_src"
-               android:layout_marginRight="5dip"
-               android:drawableLeft="@drawable/ic_small_black_postponed"
-               android:drawablePadding="2dip"
-               android:text="@string/task_postponed" />
-
-            <TextView
-               android:id="@+id/task_overview_src"
-               style="@style/Task_Source_Text"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_alignParentRight="true"
-               android:text="@string/task_source" />
-         </RelativeLayout>
-
-         <TextView
-            android:id="@+id/task_overview_desc"
-            style="@style/Task_Overview_DescriptionText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/task_overview_status_container"
-            android:layout_alignWithParentIfMissing="true"            
-            android:text="Task_Desc" />
-
-         <TextView
-            android:id="@+id/task_overview_list_name"
-            style="@style/Task_Overview_ListName"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dip"
-            android:layout_below="@id/task_overview_desc"
-            android:layout_alignLeft="@id/task_overview_desc"
-            android:text="List_Name" />
-
-         <dev.drsoran.moloko.layouts.WrappingLayout
-            android:id="@+id/task_overview_tags"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:layout_marginTop="3dip"            
-            android:layout_below="@id/task_overview_list_name"
-            android:layout_alignLeft="@id/task_overview_list_name" />
-
-         <dev.drsoran.moloko.layouts.TitleWithTextLayout
-            android:id="@+id/task_dateTime"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"            
-            android:layout_below="@id/task_overview_tags"
-            android:layout_alignLeft="@id/task_overview_list_name"
-            android:layout_alignWithParentIfMissing="true"
-            moloko:titlePaddingTop="10dip"
-            moloko:titleText="dateTime_title"
-            moloko:text="dateTime_text" />
-
-         <dev.drsoran.moloko.layouts.TitleWithTextLayout
-            android:id="@+id/task_location"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"            
-            android:layout_below="@id/task_dateTime"
-            android:layout_alignLeft="@id/task_overview_list_name"
-            android:layout_alignWithParentIfMissing="true"
-            moloko:titlePaddingTop="10dip"
-            moloko:titleText="@string/task_location"
-            moloko:text="Somewhere" />
-
-         <dev.drsoran.moloko.layouts.TitleWithWrappingLayout
-            android:id="@+id/task_participants"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"
-            android:layout_below="@id/task_location"
-            android:layout_alignLeft="@id/task_overview_list_name"
-            android:layout_alignWithParentIfMissing="true"
-            moloko:titlePaddingTop="10dip"
-            moloko:titleText="@string/task_participants" />
-
-         <dev.drsoran.moloko.layouts.TitleWithTextLayout
-            android:id="@+id/task_url"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dip"            
-            android:layout_below="@id/task_participants"
-            android:layout_alignLeft="@id/task_overview_list_name"
-            android:layout_alignWithParentIfMissing="true"
-            moloko:titlePaddingTop="10dip"
-            moloko:titleText="@string/task_url"
-            moloko:text="http://code.google.com/p/moloko/" />
+            android:text="@string/task_source" />
       </RelativeLayout>
 
-      <RelativeLayout
-         android:id="@+id/task_buttons"
-         style="@style/Task_ButtonBar"
+      <TextView
+         android:id="@+id/task_overview_desc"
+         style="@style/Task_Overview_DescriptionText"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:layout_below="@id/task_overview_details"
-         android:layout_alignParentBottom="true"
-         android:layout_margin="@dimen/task_overview_stroke_width"
-         android:padding="3dip">
+         android:layout_below="@id/task_overview_status_container"
+         android:layout_alignWithParentIfMissing="true"
+         android:text="Task_Desc" />
 
-         <ImageButton
-            android:id="@+id/task_buttons_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_button_task_edit"
-            android:scaleType="fitXY" />
-         <ImageButton
-            android:id="@+id/task_buttons_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/task_buttons_edit"
-            android:src="@drawable/ic_button_task_trash"
-            android:scaleType="fitXY" />
-         <ImageButton
-            android:id="@+id/task_buttons_postpone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/task_buttons_delete"
-            android:src="@drawable/ic_button_task_postponed"
-            android:scaleType="fitXY" />
-         <ImageButton
-            android:id="@+id/task_buttons_add_note"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/task_buttons_postpone"
-            android:layout_alignTop="@id/task_buttons_postpone"
-            android:layout_alignBottom="@id/task_buttons_postpone"
-            android:src="@drawable/ic_button_task_add_note"
-            android:scaleType="fitXY" />
-         <ImageButton
-            android:id="@+id/task_buttons_complete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_button_task_checked_check"
-            android:scaleType="fitXY" />
-      </RelativeLayout>
+      <TextView
+         android:id="@+id/task_overview_list_name"
+         style="@style/Task_Overview_ListName"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="3dip"
+         android:layout_below="@id/task_overview_desc"
+         android:layout_alignLeft="@id/task_overview_desc"
+         android:text="List_Name" />
+
+      <dev.drsoran.moloko.layouts.WrappingLayout
+         android:id="@+id/task_overview_tags"
+         android:layout_height="wrap_content"
+         android:layout_width="fill_parent"
+         android:layout_marginTop="3dip"
+         android:layout_below="@id/task_overview_list_name"
+         android:layout_alignLeft="@id/task_overview_list_name" />
+
+      <dev.drsoran.moloko.layouts.TitleWithTextLayout
+         android:id="@+id/task_dateTime"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="10dip"
+         android:layout_below="@id/task_overview_tags"
+         android:layout_alignLeft="@id/task_overview_list_name"
+         android:layout_alignWithParentIfMissing="true"
+         moloko:titlePaddingTop="10dip"
+         moloko:titleText="dateTime_title"
+         moloko:text="dateTime_text" />
+
+      <dev.drsoran.moloko.layouts.TitleWithTextLayout
+         android:id="@+id/task_location"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="10dip"
+         android:layout_below="@id/task_dateTime"
+         android:layout_alignLeft="@id/task_overview_list_name"
+         android:layout_alignWithParentIfMissing="true"
+         moloko:titlePaddingTop="10dip"
+         moloko:titleText="@string/task_location"
+         moloko:text="Somewhere" />
+
+      <dev.drsoran.moloko.layouts.TitleWithWrappingLayout
+         android:id="@+id/task_participants"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="10dip"
+         android:layout_below="@id/task_location"
+         android:layout_alignLeft="@id/task_overview_list_name"
+         android:layout_alignWithParentIfMissing="true"
+         moloko:titlePaddingTop="10dip"
+         moloko:titleText="@string/task_participants" />
+
+      <dev.drsoran.moloko.layouts.TitleWithTextLayout
+         android:id="@+id/task_url"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="10dip"
+         android:layout_below="@id/task_participants"
+         android:layout_alignLeft="@id/task_overview_list_name"
+         android:layout_alignWithParentIfMissing="true"
+         moloko:titlePaddingTop="10dip"
+         moloko:titleText="@string/task_url"
+         moloko:text="http://code.google.com/p/moloko/" />
    </RelativeLayout>
 
    <include

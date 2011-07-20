@@ -24,30 +24,7 @@ package dev.drsoran.moloko.fragments.listeners;
 
 public interface ITaskFragmentListener
 {
-   void onEditTask( String taskId );
    
-
-
-   void onDeleteTask( String taskId );
-   
-
-
-   void onPostponeTask( String taskId );
-   
-
-
-   void onAddNote( String taskSeriesId );
-   
-
-
-   void onCompleteTask( String taskId );
-   
-
-
-   void onUncompleteTask( String taskId );
-   
-
-
    void onOpenLocation( String locationId );
    
 

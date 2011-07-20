@@ -24,48 +24,28 @@ package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.mdt.rtm.data.RtmAuth;
 import com.mdt.rtm.data.RtmTaskNote;
-import com.mdt.rtm.data.RtmAuth.Perms;
 
 import dev.drsoran.moloko.IConfigurable;
-import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.dialogs.LocationChooser;
-import dev.drsoran.moloko.fragments.listeners.INoteFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullNoteFragmentListener;
-import dev.drsoran.moloko.loaders.TaskLoader;
-import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.loaders.RtmTaskNoteLoader;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
-import dev.drsoran.rtm.Participant;
-import dev.drsoran.rtm.ParticipantList;
-import dev.drsoran.rtm.Task;
 
 
 public class NoteFragment extends Fragment implements IConfigurable,
-         IRtmAccessLevelAware, LoaderCallbacks< RtmTaskNote >
+         LoaderCallbacks< RtmTaskNote >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + NoteFragment.class.getSimpleName();
-   
-   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
    
    public static class Config
@@ -79,11 +59,11 @@ public class NoteFragment extends Fragment implements IConfigurable,
    
    private Bundle configuration;
    
-   private INoteFragmentListener listener;
-   
    private ViewGroup content;
    
    private View loadingSpinner;
+   
+   private boolean noteNotFound;
    
    
 
@@ -99,35 +79,13 @@ public class NoteFragment extends Fragment implements IConfigurable,
 
 
    @Override
-   public void onAttach( FragmentActivity activity )
-   {
-      super.onAttach( activity );
-      
-      if ( activity instanceof ITaskFragmentListener )
-         listener = (INoteFragmentListener) activity;
-      else
-         listener = new NullNoteFragmentListener();
-   }
-   
-
-
-   @Override
-   public void onDetach()
-   {
-      super.onDetach();
-      listener = null;
-   }
-   
-
-
-   @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       configure( getArguments() );
       
       if ( getConfiguredNote() == null )
-         getLoaderManager().initLoader( TASK_LOADER_ID, configuration, this );
+         getLoaderManager().initLoader( NOTE_LOADER_ID, configuration, this );
    }
    
 
@@ -141,25 +99,15 @@ public class NoteFragment extends Fragment implements IConfigurable,
                                                   container,
                                                   false );
       
-      taskContainer = (ViewGroup) fragmentView.findViewById( R.id.task_overview_container );
-      priorityBar = taskContainer.findViewById( R.id.task_overview_priority_bar );
-      addedDate = (TextView) taskContainer.findViewById( R.id.task_overview_added_date );
-      completedDate = (TextView) taskContainer.findViewById( R.id.task_overview_completed_date );
-      source = (TextView) taskContainer.findViewById( R.id.task_overview_src );
-      postponed = (TextView) taskContainer.findViewById( R.id.task_overview_postponed );
-      description = (TextView) taskContainer.findViewById( R.id.task_overview_desc );
-      listName = (TextView) taskContainer.findViewById( R.id.task_overview_list_name );
-      tagsLayout = (ViewGroup) taskContainer.findViewById( R.id.task_overview_tags );
-      dateTimeSection = taskContainer.findViewById( R.id.task_dateTime );
-      locationSection = taskContainer.findViewById( R.id.task_location );
-      participantsSection = (ViewGroup) taskContainer.findViewById( R.id.task_participants );
-      taskButtons = taskContainer.findViewById( R.id.task_buttons );
-      urlSection = taskContainer.findViewById( R.id.task_url );
-      completeTaskBtn = (ImageButton) taskContainer.findViewById( R.id.task_buttons_complete );
+      content = (ViewGroup) fragmentView.findViewById( android.R.id.content );
       loadingSpinner = fragmentView.findViewById( R.id.loading_spinner );
       
-      if ( getConfiguredNote() != null )
-         initializeWithNote();
+      if ( noteNotFound )
+         showError();
+      else if ( getConfiguredNote() != null )
+         updateContentWithNote();
+      else
+         showLoadingSpinner();
       
       return fragmentView;
    }
@@ -208,6 +156,18 @@ public class NoteFragment extends Fragment implements IConfigurable,
    
 
 
+   public RtmTaskNote getConfiguredNoteAssertNotNull()
+   {
+      final RtmTaskNote note = getConfiguredNote();
+      
+      if ( note == null )
+         throw new IllegalStateException( "note must not be null" );
+      
+      return note;
+   }
+   
+
+
    public String getConfiguredNoteId()
    {
       return configuration.getString( Config.NOTE_ID );
@@ -215,415 +175,101 @@ public class NoteFragment extends Fragment implements IConfigurable,
    
 
 
-   @Override
-   public void reEvaluateRtmAccessLevel( Perms currentAccessLevel )
+   private boolean hasViewCreated()
    {
-      setRtmAccessLevelAwareElements( currentAccessLevel );
+      return content != null;
    }
    
 
 
-   private void initializeWithNote()
+   private void updateContentWithNote()
    {
-      final RtmTaskNote note = getConfiguredNote();
-      
-      if ( note == null )
-         throw new IllegalStateException( "note should be not null" );
-      
-      taskContainer.setVisibility( View.VISIBLE );
-      loadingSpinner.setVisibility( View.GONE );
-      
-      UIUtils.setPriorityColor( priorityBar, note );
-      
-      addedDate.setText( MolokoDateUtils.formatDateTime( note.getAdded()
-                                                             .getTime(),
-                                                         FULL_DATE_FLAGS ) );
-      
-      if ( note.getCompleted() != null )
+      if ( hasViewCreated() )
       {
-         completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateUtils.formatDateTime( note.getCompleted()
-                                                                    .getTime(),
-                                                                FULL_DATE_FLAGS ) );
-         completeTaskBtn.setImageResource( R.drawable.ic_button_task_unchecked_check );
-      }
-      else
-      {
-         completedDate.setVisibility( View.GONE );
-         completeTaskBtn.setImageResource( R.drawable.ic_button_task_checked_check );
-      }
-      
-      if ( note.getPosponed() > 0 )
-      {
-         postponed.setText( getString( R.string.task_postponed,
-                                       note.getPosponed() ) );
-         postponed.setVisibility( View.VISIBLE );
-      }
-      else
-         postponed.setVisibility( View.GONE );
-      
-      if ( !TextUtils.isEmpty( note.getSource() ) )
-      {
-         String sourceStr = note.getSource();
-         if ( sourceStr.equalsIgnoreCase( "js" ) )
-            sourceStr = "web";
+         final RtmTaskNote note = getConfiguredNoteAssertNotNull();
          
-         source.setText( getString( R.string.task_source, sourceStr ) );
+         final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
+         createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
+                                                                  .getTime(),
+                                                              MolokoDateUtils.FORMAT_WITH_YEAR ) );
+         
+         if ( !UIUtils.initializeTitleWithTextLayout( content.findViewById( R.id.note ),
+                                                      note.getTitle(),
+                                                      note.getText() ) )
+            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+         
+         showView( content, true );
+         showView( loadingSpinner, false );
       }
-      else
-         source.setText( "?" );
-      
-      UIUtils.setTaskDescription( description, note, null );
-      
-      listName.setText( note.getListName() );
-      
-      UIUtils.inflateTags( getActivity(),
-                           tagsLayout,
-                           note.getTags(),
-                           null,
-                           null );
-      
-      setDateTimeSection( dateTimeSection, note );
-      
-      setLocationSection( locationSection, note );
-      
-      setParticipantsSection( participantsSection, note );
-      
-      if ( !TextUtils.isEmpty( note.getUrl() ) )
-      {
-         urlSection.setVisibility( View.VISIBLE );
-         ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( note.getUrl() );
-      }
-      else
-      {
-         urlSection.setVisibility( View.GONE );
-      }
-      
-      setRtmAccessLevelAwareElements( AccountUtils.getAccessLevel( getActivity() ) );
-      setButtonListener();
    }
    
 
 
    private void showLoadingSpinner()
    {
-      taskContainer.setVisibility( View.GONE );
-      loadingSpinner.setVisibility( View.VISIBLE );
+      showView( content, false );
+      showView( loadingSpinner, true );
    }
    
 
 
    private void showError()
    {
-      taskContainer.setVisibility( View.VISIBLE );
-      loadingSpinner.setVisibility( View.GONE );
-      
-      taskContainer.removeAllViews();
-      UIUtils.initializeErrorWithIcon( getActivity(),
-                                       taskContainer,
-                                       R.string.err_entity_not_found,
-                                       getResources().getQuantityString( R.plurals.g_task,
-                                                                         1 ) );
-   }
-   
-
-
-   private void setDateTimeSection( View view, Task task )
-   {
-      final boolean hasDue = task.getDue() != null;
-      final boolean hasEstimate = !TextUtils.isEmpty( task.getEstimate() );
-      final boolean isRecurrent = !TextUtils.isEmpty( task.getRecurrence() );
-      
-      // Check if we need this section
-      if ( !hasEstimate && !hasDue && !isRecurrent )
+      if ( hasViewCreated() )
       {
-         view.setVisibility( View.GONE );
-      }
-      else
-      {
-         view.setVisibility( View.VISIBLE );
+         showView( content, true );
+         showView( loadingSpinner, false );
          
-         final StringBuilder textBuffer = new StringBuilder();
-         
-         if ( hasDue )
-         {
-            if ( task.hasDueTime() )
-               UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDateTime( task.getDue()
-                                                                            .getTime(),
-                                                                        MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                           | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
-            else
-               UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDate( task.getDue()
-                                                                        .getTime(),
-                                                                    MolokoDateUtils.FORMAT_WITH_YEAR
-                                                                       | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
-            
-         }
-         
-         if ( isRecurrent )
-         {
-            final String sentence = RecurrenceParsing.parseRecurrencePattern( task.getRecurrence(),
-                                                                              task.isEveryRecurrence() );
-            
-            // In this case we add the 'repeat' to the beginning of the pattern, otherwise
-            // the 'repeat' will be the header of the section.
-            if ( hasDue || hasEstimate )
-            {
-               UIUtils.appendAtNewLine( textBuffer,
-                                        getString( R.string.task_datetime_recurr_inline,
-                                                   ( sentence != null
-                                                                     ? sentence
-                                                                     : getString( R.string.task_datetime_err_recurr ) ) ) );
-            }
-            else
-            {
-               UIUtils.appendAtNewLine( textBuffer,
-                                        ( sentence != null
-                                                          ? sentence
-                                                          : getString( R.string.task_datetime_err_recurr ) ) );
-            }
-            
-         }
-         
-         if ( hasEstimate )
-         {
-            UIUtils.appendAtNewLine( textBuffer,
-                                     getString( R.string.task_datetime_estimate_inline,
-                                                MolokoDateUtils.formatEstimated( getActivity(),
-                                                                                 task.getEstimateMillis() ) ) );
-         }
-         
-         // Determine the section title
-         int titleId;
-         
-         if ( hasDue )
-            titleId = R.string.task_datetime_title_due;
-         else if ( hasEstimate )
-            titleId = R.string.task_datetime_title_estimate;
-         else
-            titleId = R.string.task_datetime_title_recurr;
-         
-         if ( !UIUtils.initializeTitleWithTextLayout( view,
-                                                      getString( titleId ),
-                                                      textBuffer.toString() ) )
-            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
+         content.removeAllViews();
+         UIUtils.initializeErrorWithIcon( getActivity(),
+                                          content,
+                                          R.string.err_entity_not_found,
+                                          getString( R.string.app_note ) );
       }
    }
    
 
 
-   private void setLocationSection( View view, final Task task )
+   private void showView( View view, boolean show )
    {
-      String locationName = null;
-      
-      boolean showSection = !TextUtils.isEmpty( task.getLocationId() );
-      
-      if ( showSection )
-      {
-         // Tasks which are received by sharing from someone else may also have
-         // a location ID set. But this ID is from the other ones DB. We identify
-         // these tasks not by looking for the ID in our DB. These tasks do not
-         // have a name and a location of 0.0, 0.0.
-         //
-         // @see: Issue 12: http://code.google.com/p/moloko/issues/detail?id=12
-         locationName = task.getLocationName();
-         
-         showSection = !TextUtils.isEmpty( locationName )
-            || Float.compare( task.getLongitude(), 0.0f ) != 0
-            || Float.compare( task.getLatitude(), 0.0f ) != 0;
-      }
-      
-      if ( !showSection )
-      {
-         view.setVisibility( View.GONE );
-      }
-      else
-      {
-         view.setVisibility( View.VISIBLE );
-         
-         if ( TextUtils.isEmpty( locationName ) )
-         {
-            locationName = "Lon: " + task.getLongitude() + ", Lat: "
-               + task.getLatitude();
-         }
-         
-         boolean locationIsClickable = task.isLocationViewable();
-         
-         if ( locationIsClickable )
-         {
-            // Check if we can click the location
-            if ( LocationChooser.hasIntentHandler( getActivity(),
-                                                   task.getLocationAddress() ) )
-            {
-               final SpannableString clickableLocation = new SpannableString( locationName );
-               clickableLocation.setSpan( new ClickableSpan()
-               {
-                  @Override
-                  public void onClick( View widget )
-                  {
-                     listener.onOpenLocation( task.getLocationId() );
-                  }
-               }, 0, clickableLocation.length(), 0 );
-               
-               UIUtils.initializeTitleWithTextLayout( view,
-                                                      getString( R.string.task_location ),
-                                                      clickableLocation );
-            }
-            else
-            {
-               locationIsClickable = false;
-            }
-         }
-         
-         if ( !locationIsClickable )
-         {
-            if ( !UIUtils.initializeTitleWithTextLayout( view,
-                                                         getString( R.string.task_location ),
-                                                         locationName ) )
-               throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
-         }
-      }
-   }
-   
-
-
-   private void setParticipantsSection( ViewGroup view, Task task )
-   {
-      final ParticipantList participants = task.getParticipants();
-      
-      if ( participants != null && participants.getCount() > 0 )
-      {
-         view.setVisibility( View.VISIBLE );
-         
-         for ( final Participant participant : participants.getParticipants() )
-         {
-            final SpannableString clickableContact = new SpannableString( participant.getFullname() );
-            
-            clickableContact.setSpan( new ClickableSpan()
-            {
-               @Override
-               public void onClick( View widget )
-               {
-                  listener.onOpenContact( participant.getFullname(),
-                                          participant.getUsername() );
-               }
-            }, 0, clickableContact.length(), 0 );
-            
-            final TextView textView = new TextView( getActivity() );
-            UIUtils.applySpannable( textView, clickableContact );
-            
-            view.addView( textView );
-         }
-      }
-      else
-      {
-         view.setVisibility( View.GONE );
-      }
-   }
-   
-
-
-   private void setRtmAccessLevelAwareElements( RtmAuth.Perms permisson )
-   {
-      permisson.setVisible( taskButtons );
-   }
-   
-
-
-   private void setButtonListener()
-   {
-      final Task task = getConfiguredNote();
-      
-      if ( task == null )
-         throw new IllegalStateException( "task should be not null" );
-      
-      taskButtons.findViewById( R.id.task_buttons_edit )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onEditTask( task.getId() );
-                    }
-                 } );
-      
-      taskButtons.findViewById( R.id.task_buttons_delete )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onDeleteTask( task.getId() );
-                    }
-                 } );
-      
-      taskButtons.findViewById( R.id.task_buttons_postpone )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onPostponeTask( task.getId() );
-                    }
-                 } );
-      
-      taskButtons.findViewById( R.id.task_buttons_add_note )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       listener.onAddNote( task.getTaskSeriesId() );
-                    }
-                 } );
-      
-      taskButtons.findViewById( R.id.task_buttons_complete )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       if ( task.getCompleted() == null )
-                          listener.onCompleteTask( task.getId() );
-                       else
-                          listener.onUncompleteTask( task.getId() );
-                    }
-                 } );
+      if ( view != null )
+         view.setVisibility( show ? View.VISIBLE : View.GONE );
    }
    
 
 
    @Override
-   public Loader< Task > onCreateLoader( int id, Bundle args )
+   public Loader< RtmTaskNote > onCreateLoader( int id, Bundle args )
    {
       showLoadingSpinner();
       
-      return new TaskLoader( getActivity(), args.getString( Config.TASK_ID ) );
+      return new RtmTaskNoteLoader( getActivity(),
+                                    args.getString( Config.NOTE_ID ) );
    }
    
 
 
    @Override
-   public void onLoadFinished( Loader< Task > loader, Task data )
+   public void onLoadFinished( Loader< RtmTaskNote > loader, RtmTaskNote data )
    {
-      if ( data == null )
+      noteNotFound = data == null;
+      
+      if ( noteNotFound )
          showError();
       else
       {
          final Bundle newConfig = getConfiguration();
-         newConfig.putParcelable( Config.TASK, data );
+         newConfig.putParcelable( Config.NOTE, data );
          configure( newConfig );
          
-         initializeWithNote();
+         updateContentWithNote();
       }
    }
    
 
 
    @Override
-   public void onLoaderReset( Loader< Task > loader )
+   public void onLoaderReset( Loader< RtmTaskNote > loader )
    {
    }
 }

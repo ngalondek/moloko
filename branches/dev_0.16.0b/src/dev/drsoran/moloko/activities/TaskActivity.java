@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.List;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
+import dev.drsoran.moloko.fragments.NoteFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
@@ -56,6 +59,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       private final static String TASK_ID = "task_id";
    }
+   
+   private final static int NOTE_FRAGMENT_CONTAINER_ID_START = R.id.frag_note;
    
    private final static int TASK_LOADER_ID = 1;
    
@@ -123,7 +128,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final Task task = getConfiguredTask();
       
       if ( task == null )
-         throw new IllegalStateException( "task should be not null" );
+         throw new IllegalStateException( "task must not be null" );
       
       return task;
    }
@@ -138,6 +143,17 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final Task task = getConfiguredTaskAssertNonNull();
       
       initTaskFragmentWithTask( task );
+      createNoteFragmentsFromTask( task );
+      
+      // TODO: Repair
+      // if ( task.getCompleted() != null )
+      // {
+      // completeTaskBtn.setImageResource( R.drawable.ic_button_task_unchecked_check );
+      // }
+      // else
+      // {
+      // completeTaskBtn.setImageResource( R.drawable.ic_button_task_checked_check );
+      // }
    }
    
 
@@ -273,14 +289,83 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   public void onBack( View v )
+   private void createNoteFragmentsFromTask( Task task )
    {
-      finish();
+      if ( task.getNumberOfNotes() > 0 )
+      {
+         final ViewGroup fragmentContainer = (ViewGroup) findViewById( R.id.fragment_container );
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         
+         final List< String > noteIds = task.getNoteIds();
+         
+         for ( int i = 0, cnt = noteIds.size(); i < cnt; ++i )
+         {
+            final String noteId = noteIds.get( i );
+            
+            final ViewGroup noteFragmentContainer = (ViewGroup) fragmentContainer.findViewWithTag( noteId );
+            if ( noteFragmentContainer != null )
+            {
+               updateNoteFragmentWithId( noteFragmentContainer.getId(),
+                                         noteId,
+                                         transaction );
+            }
+            else
+            {
+               createNoteFragmentWithId( fragmentContainer,
+                                         NOTE_FRAGMENT_CONTAINER_ID_START + i,
+                                         noteId,
+                                         transaction );
+            }
+         }
+         
+         transaction.commitAllowingStateLoss();
+      }
    }
    
 
 
-   @Override
+   private void createNoteFragmentWithId( ViewGroup fragmentContainer,
+                                          int fragmentContainerId,
+                                          String noteId,
+                                          FragmentTransaction transaction )
+   {
+      final View taskNote = getLayoutInflater().inflate( R.layout.task_note,
+                                                         fragmentContainer,
+                                                         false );
+      
+      final View noteFragContainer = taskNote.findViewById( R.id.fragment_container );
+      noteFragContainer.setId( fragmentContainerId );
+      noteFragContainer.setTag( noteId );
+      
+      fragmentContainer.addView( taskNote );
+      
+      final Fragment fragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
+      transaction.add( fragmentContainerId, fragment, noteId );
+   }
+   
+
+
+   private void updateNoteFragmentWithId( int fragmentContainerId,
+                                          String noteId,
+                                          FragmentTransaction transaction )
+   {
+      final Fragment fragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
+      transaction.replace( fragmentContainerId, fragment, noteId );
+   }
+   
+
+
+   private Bundle createNoteFragmentConfiguration( String noteId )
+   {
+      final Bundle config = new Bundle();
+      
+      config.putString( NoteFragment.Config.NOTE_ID, noteId );
+      
+      return config;
+   }
+   
+
+
    public void onEditTask( String taskId )
    {
       startActivityForResult( Intents.createEditTaskIntent( this, taskId ),
@@ -289,7 +374,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   @Override
    public void onDeleteTask( String taskId )
    {
       final Task task = getConfiguredTaskAssertNonNull();
@@ -307,7 +391,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   @Override
    public void onPostponeTask( String taskId )
    {
       final Task task = getConfiguredTaskAssertNonNull();
@@ -317,7 +400,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   @Override
    public void onCompleteTask( String taskId )
    {
       final Task task = getConfiguredTaskAssertNonNull();
@@ -327,7 +409,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   @Override
    public void onUncompleteTask( String taskId )
    {
       final Task task = getConfiguredTaskAssertNonNull();
@@ -337,7 +418,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   @Override
    public void onAddNote( String taskSeriesId )
    {
       startActivityForResult( Intents.createAddNoteIntent( this, taskSeriesId ),
@@ -346,7 +426,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   @Override
    public void onOpenLocation( String locationId )
    {
       final Task task = getConfiguredTaskAssertNonNull();
@@ -356,7 +435,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   @Override
    public void onOpenContact( String fullname, String username )
    {
       final Intent intent = Intents.createOpenContactIntent( this,

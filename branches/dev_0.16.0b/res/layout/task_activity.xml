@@ -28,18 +28,81 @@
       android:paddingTop="8dip">
 
       <LinearLayout
+         android:id="@+id/fragment_container"
          android:layout_width="fill_parent"
          android:layout_height="fill_parent"
+         android:layout_marginRight="?android:attr/scrollbarSize"
          android:orientation="vertical">
-         
-         <FrameLayout
-            android:id="@id/frag_task"
+
+         <RelativeLayout
             style="@style/Task_Section"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
-            android:layout_marginRight="?android:attr/scrollbarSize"
             android:layout_marginBottom="8dip"
-            android:paddingBottom="@dimen/task_overview_stroke_width" />
+            android:paddingBottom="@dimen/task_overview_stroke_width">
+
+            <LinearLayout
+               android:id="@id/frag_task"
+               android:layout_height="wrap_content"
+               android:layout_width="fill_parent"
+               android:orientation="vertical">
+
+               <View
+                  android:id="@+id/task_overview_priority_bar"
+                  android:layout_height="@dimen/task_overview_corner_radius"
+                  android:layout_width="fill_parent"
+                  android:background="@drawable/app_simple_line" />
+            </LinearLayout>
+
+            <RelativeLayout
+               android:id="@+id/task_buttons"
+               style="@style/Task_ButtonBar"
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/frag_task"
+               android:layout_alignParentBottom="true"
+               android:layout_margin="@dimen/task_overview_stroke_width"
+               android:padding="3dip">
+
+               <ImageButton
+                  android:id="@+id/task_buttons_edit"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentLeft="true"
+                  android:src="@drawable/ic_button_task_edit"
+                  android:scaleType="fitXY" />
+               <ImageButton
+                  android:id="@+id/task_buttons_delete"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toRightOf="@id/task_buttons_edit"
+                  android:src="@drawable/ic_button_task_trash"
+                  android:scaleType="fitXY" />
+               <ImageButton
+                  android:id="@+id/task_buttons_postpone"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toRightOf="@id/task_buttons_delete"
+                  android:src="@drawable/ic_button_task_postponed"
+                  android:scaleType="fitXY" />
+               <ImageButton
+                  android:id="@+id/task_buttons_add_note"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_toRightOf="@id/task_buttons_postpone"
+                  android:layout_alignTop="@id/task_buttons_postpone"
+                  android:layout_alignBottom="@id/task_buttons_postpone"
+                  android:src="@drawable/ic_button_task_add_note"
+                  android:scaleType="fitXY" />
+               <ImageButton
+                  android:id="@+id/task_buttons_complete"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentRight="true"
+                  android:src="@drawable/ic_button_task_checked_check"
+                  android:scaleType="fitXY" />
+            </RelativeLayout>
+         </RelativeLayout>
       </LinearLayout>
    </ScrollView>
 

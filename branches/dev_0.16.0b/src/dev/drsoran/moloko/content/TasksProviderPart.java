@@ -73,7 +73,7 @@ public class TasksProviderPart extends AbstractProviderPart
       public String rawTaskId;
       
       
-      
+
       public NewTaskIds( String taskSeriesId, String rawTaskId )
       {
          this.taskSeriesId = taskSeriesId;
@@ -109,7 +109,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                     COL_INDICES );
       
       SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
+                                                       false,
                                                        
                                                        // tables
                                                        TaskSeries.PATH + ","
@@ -176,7 +176,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                        null );
       
       PARTICIPANTS_SUB_QUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
+                                                                    false,
                                                                     
                                                                     // tables
                                                                     TaskSeries.PATH
@@ -231,7 +231,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                     null );
       
       NOTE_IDS_SUBQUERY = SQLiteQueryBuilder.buildQueryString( // not distinct
-      false,
+                                                               false,
                                                                
                                                                // tables
                                                                Notes.PATH,
@@ -241,7 +241,7 @@ public class TasksProviderPart extends AbstractProviderPart
                                                                { "group_concat("
                                                                   + Notes.PATH
                                                                   + "."
-                                                                  + Notes.TASKSERIES_ID
+                                                                  + Notes._ID
                                                                   + ",\""
                                                                   + Tasks.NOTE_IDS_DELIMITER
                                                                   + "\") AS "
@@ -267,7 +267,7 @@ public class TasksProviderPart extends AbstractProviderPart
    }
    
    
-   
+
    public final static void registerContentObserver( Context context,
                                                      ContentObserver observer )
    {
@@ -287,16 +287,16 @@ public class TasksProviderPart extends AbstractProviderPart
              .registerContentObserver( Participants.CONTENT_URI, true, observer );
    }
    
-   
-   
+
+
    public final static void unregisterContentObserver( Context context,
                                                        ContentObserver observer )
    {
       context.getContentResolver().unregisterContentObserver( observer );
    }
    
-   
-   
+
+
    public final static Task getTask( ContentProviderClient client, String id )
    {
       Task task = null;
@@ -331,8 +331,8 @@ public class TasksProviderPart extends AbstractProviderPart
       return task;
    }
    
-   
-   
+
+
    public final static List< Task > getTasks( ContentProviderClient client,
                                               String selection,
                                               String order )
@@ -384,8 +384,8 @@ public class TasksProviderPart extends AbstractProviderPart
       return tasks;
    }
    
-   
-   
+
+
    public final static List< ContentProviderOperation > insertLocalCreatedTask( ContentResolver contentResolver,
                                                                                 Task task,
                                                                                 NewTaskIds outNewIds )
@@ -447,15 +447,15 @@ public class TasksProviderPart extends AbstractProviderPart
       return operations;
    }
    
-   
-   
+
+
    public TasksProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Tasks.PATH );
    }
    
-   
-   
+
+
    @Override
    public Cursor query( String id,
                         String[] projection,
@@ -565,61 +565,61 @@ public class TasksProviderPart extends AbstractProviderPart
       return cursor;
    }
    
-   
-   
+
+
    @Override
    protected String getContentItemType()
    {
       return Tasks.CONTENT_ITEM_TYPE;
    }
    
-   
-   
+
+
    @Override
    protected String getContentType()
    {
       return Tasks.CONTENT_TYPE;
    }
    
-   
-   
+
+
    @Override
    public Uri getContentUri()
    {
       return Tasks.CONTENT_URI;
    }
    
-   
-   
+
+
    @Override
    protected String getDefaultSortOrder()
    {
       return Tasks.DEFAULT_SORT_ORDER;
    }
    
-   
-   
+
+
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-   
-   
+
+
    public String[] getProjection()
    {
       return PROJECTION;
    }
    
-   
-   
+
+
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-   
-   
+
+
    private final static Task createTask( Cursor c )
    {
       final String taskSeriesId = c.getString( COL_INDICES.get( Tasks.TASKSERIES_ID ) );
@@ -673,8 +673,8 @@ public class TasksProviderPart extends AbstractProviderPart
                                              COL_INDICES.get( Tasks.NOTE_IDS ) ) );
    }
    
-   
-   
+
+
    private final static ParticipantList getPartitiansList( String taskSeriesId,
                                                            Cursor c )
    {
@@ -726,8 +726,8 @@ public class TasksProviderPart extends AbstractProviderPart
       return participantList;
    }
    
-   
-   
+
+
    private final static NewTaskIds generateIdsForNewTask( ContentProviderClient client )
    {
       String nextTaskSeriesId = Queries.getNextId( client,

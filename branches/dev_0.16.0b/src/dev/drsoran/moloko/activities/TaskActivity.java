@@ -31,6 +31,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
@@ -39,6 +41,7 @@ import dev.drsoran.moloko.fragments.NoteFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
@@ -58,6 +61,20 @@ public class TaskActivity extends MolokoFragmentActivity implements
       public final static String TASK = "task";
       
       private final static String TASK_ID = "task_id";
+   }
+   
+
+   protected static class OptionsMenu
+   {
+      public final static int EDIT_TASK = R.id.menu_edit_selected_tasks;
+      
+      public final static int DELETE_TASK = R.id.menu_delete_selected_tasks;
+      
+      public final static int POSTPONE_TASK = R.id.menu_postpone_selected_tasks;
+      
+      public final static int COMPLETE_TASK = R.id.menu_complete_selected_tasks;
+      
+      public final static int UNCOMPLETE_TASK = R.id.menu_uncomplete_selected_tasks;
    }
    
    private final static int NOTE_FRAGMENT_CONTAINER_ID_START = R.id.frag_note;
@@ -136,6 +153,75 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
 
    @Override
+   public boolean onCreateOptionsMenu( Menu menu )
+   {
+      super.onCreateOptionsMenu( menu );
+      
+      final Task task = getConfiguredTask();
+      
+      if ( task != null && AccountUtils.isWriteableAccess( this ) )
+      {
+         UIUtils.addOptionalMenuItem( this,
+                                      menu,
+                                      OptionsMenu.COMPLETE_TASK,
+                                      getString( R.string.app_task_complete ),
+                                      Menu.NONE,
+                                      Menu.NONE,
+                                      R.drawable.ic_button_task_checked_check,
+                                      MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                      task.getCompleted() == null );
+         UIUtils.addOptionalMenuItem( this,
+                                      menu,
+                                      OptionsMenu.UNCOMPLETE_TASK,
+                                      getString( R.string.app_task_uncomplete ),
+                                      Menu.NONE,
+                                      Menu.NONE,
+                                      R.drawable.ic_button_task_unchecked_check,
+                                      MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                      task.getCompleted() != null );
+         UIUtils.addOptionalMenuItem( this,
+                                      menu,
+                                      OptionsMenu.EDIT_TASK,
+                                      getString( R.string.app_task_edit ),
+                                      Menu.NONE,
+                                      Menu.NONE,
+                                      R.drawable.ic_button_task_edit,
+                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                      true );
+         UIUtils.addOptionalMenuItem( this,
+                                      menu,
+                                      OptionsMenu.POSTPONE_TASK,
+                                      getString( R.string.app_task_postpone ),
+                                      Menu.NONE,
+                                      Menu.NONE,
+                                      R.drawable.ic_button_task_postponed,
+                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                      true );
+         UIUtils.addOptionalMenuItem( this,
+                                      menu,
+                                      OptionsMenu.DELETE_TASK,
+                                      getString( R.string.app_task_delete ),
+                                      Menu.NONE,
+                                      Menu.NONE,
+                                      R.drawable.ic_button_task_trash,
+                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                      true );
+      }
+      
+      return true;
+   }
+   
+
+
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      return super.onOptionsItemSelected( item );
+   }
+   
+
+
+   @Override
    protected void updateContent( ViewGroup container )
    {
       super.updateContent( container );
@@ -144,6 +230,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       initTaskFragmentWithTask( task );
       createNoteFragmentsFromTask( task );
+      
+      invalidateOptionsMenu();
       
       // TODO: Repair
       // if ( task.getCompleted() != null )

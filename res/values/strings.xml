@@ -28,10 +28,14 @@
 	<string name="app_account_preferences">Account Preferences</string>
 	<string name="app_tasklists">Lists</string>
 	<string name="app_task">Task</string>
-   <string name="app_task_edit">Edit Task</string>
+   <string name="app_task_edit">Task Edit</string>
    <string name="app_task_edit_multiple">Edit %1$d %2$s</string>
    <string name="app_task_add">New Task</string>
    <string name="app_task_select_multiple">Select tasks to edit</string>
+   <string name="app_task_complete">Complete</string>
+   <string name="app_task_uncomplete">Incomplete</string>
+   <string name="app_task_delete">Delete Task</string>
+   <string name="app_task_postpone">Postpone Task</string>
    <string name="app_change_tags">Change Tags of %1$s</string>
 	<string name="app_note">Note</string>
    <string name="app_note_multiple">Note (%1$d/%2$d)</string>

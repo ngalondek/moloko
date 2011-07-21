@@ -260,16 +260,16 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
 
    protected final void showContent()
    {
-      final View content = findViewById( android.R.id.content );
-      if ( content != null )
-      {
-         content.setVisibility( View.VISIBLE );
-         updateContent( (ViewGroup) content );
-      }
-      
       final View spinner = findViewById( R.id.loading_spinner );
       if ( spinner != null )
          spinner.setVisibility( View.GONE );
+      
+      final View content = findViewById( android.R.id.content );
+      if ( content != null )
+      {
+         updateContent( (ViewGroup) content );
+         content.setVisibility( View.VISIBLE );
+      }
    }
    
 
@@ -289,13 +289,13 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       final ViewGroup content = (ViewGroup) findViewById( android.R.id.content );
       if ( content != null )
       {
-         content.setVisibility( View.VISIBLE );
          content.removeAllViews();
          
          UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
                                           content,
                                           R.string.err_entity_not_found,
                                           elementType );
+         content.setVisibility( View.VISIBLE );
       }
    }
 }

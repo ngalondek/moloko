@@ -86,13 +86,13 @@ public class StartUpActivity extends Activity implements
    private int stateIndex = 0;
    
    
-   
+
    @Override
    protected void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
-      // setContentView( R.layout.startup_activity );
+      setContentView( R.layout.startup_activity );
       
       widgetContainer = (ViewGroup) findViewById( android.R.id.widget_frame );
       buttonBar = (ViewGroup) findViewById( R.id.btn_bar );
@@ -103,8 +103,8 @@ public class StartUpActivity extends Activity implements
       reEvaluateCurrentState();
    }
    
-   
-   
+
+
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -113,8 +113,8 @@ public class StartUpActivity extends Activity implements
       outState.putInt( STATE_INDEX_KEY, stateIndex );
    }
    
-   
-   
+
+
    @Override
    protected void onRestoreInstanceState( Bundle savedInstanceState )
    {
@@ -125,8 +125,8 @@ public class StartUpActivity extends Activity implements
       reEvaluateCurrentState();
    }
    
-   
-   
+
+
    private boolean checkAccount()
    {
       final Account account = AccountUtils.getRtmAccount( this );
@@ -145,6 +145,7 @@ public class StartUpActivity extends Activity implements
          btnCenter.setText( R.string.btn_new_account );
          btnCenter.setOnClickListener( new OnClickListener()
          {
+            @Override
             public void onClick( View v )
             {
                onAddNewAccount();
@@ -159,16 +160,16 @@ public class StartUpActivity extends Activity implements
       return account != null;
    }
    
-   
-   
+
+
    private void createAccountOrSwitchToNext()
    {
       if ( checkAccount() )
          switchToNextState();
    }
    
-   
-   
+
+
    private void determineStartupView()
    {
       final Settings settings = MolokoApp.getSettings();
@@ -198,6 +199,7 @@ public class StartUpActivity extends Activity implements
                   btnCenter.setText( R.string.btn_continue );
                   btnCenter.setOnClickListener( new OnClickListener()
                   {
+                     @Override
                      public void onClick( View v )
                      {
                         settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
@@ -234,8 +236,8 @@ public class StartUpActivity extends Activity implements
       }
    }
    
-   
-   
+
+
    private void onStartUpCompleted()
    {
       final int startUpView = MolokoApp.getSettings().getStartupView();
@@ -266,8 +268,8 @@ public class StartUpActivity extends Activity implements
       finish();
    }
    
-   
-   
+
+
    private void onAddNewAccount()
    {
       if ( addAccountHandle != null )
@@ -287,8 +289,9 @@ public class StartUpActivity extends Activity implements
                                                     handler );
    }
    
-   
-   
+
+
+   @Override
    public void run( AccountManagerFuture< Bundle > result )
    {
       addAccountHandle = null;
@@ -320,8 +323,8 @@ public class StartUpActivity extends Activity implements
       }
    }
    
-   
-   
+
+
    private void switchToNextState()
    {
       if ( stateIndex + 1 < STATE_SEQUENCE.length )
@@ -335,8 +338,8 @@ public class StartUpActivity extends Activity implements
       }
    }
    
-   
-   
+
+
    private void reEvaluateCurrentState()
    {
       if ( getIntent().hasExtra( ONLY_CHECK_ACCOUNT ) )
@@ -348,15 +351,15 @@ public class StartUpActivity extends Activity implements
          handler.sendEmptyMessage( MSG_STATE_CHANGED );
    }
    
-   
-   
+
+
    private Button getButton( int id )
    {
       return (Button) buttonBar.findViewById( id );
    }
    
-   
-   
+
+
    private void setButtonIcon( Button button, int id )
    {
       final BitmapDrawable icon = new BitmapDrawable( getResources().openRawResource( id ) );
@@ -366,8 +369,8 @@ public class StartUpActivity extends Activity implements
       button.setCompoundDrawables( icon, null, null, null );
    }
    
-   
-   
+
+
    private boolean existsList( String id ) throws RemoteException
    {
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );

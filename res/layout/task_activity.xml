@@ -71,30 +71,7 @@
                   android:layout_height="wrap_content"
                   android:layout_toRightOf="@id/task_buttons_edit"
                   android:src="@drawable/ic_button_task_trash"
-                  android:scaleType="fitXY" />
-               <ImageButton
-                  android:id="@+id/task_buttons_postpone"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_toRightOf="@id/task_buttons_delete"
-                  android:src="@drawable/ic_button_task_postponed"
-                  android:scaleType="fitXY" />
-               <ImageButton
-                  android:id="@+id/task_buttons_add_note"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_toRightOf="@id/task_buttons_postpone"
-                  android:layout_alignTop="@id/task_buttons_postpone"
-                  android:layout_alignBottom="@id/task_buttons_postpone"
-                  android:src="@drawable/ic_button_task_add_note"
-                  android:scaleType="fitXY" />
-               <ImageButton
-                  android:id="@+id/task_buttons_complete"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_alignParentRight="true"
-                  android:src="@drawable/ic_button_task_checked_check"
-                  android:scaleType="fitXY" />
+                  android:scaleType="fitXY" />               
             </RelativeLayout>
          </RelativeLayout>
       </LinearLayout>

@@ -390,17 +390,21 @@ public class TaskActivity extends MolokoFragmentActivity implements
          {
             final String noteId = noteIds.get( i );
             
-            final ViewGroup noteFragmentContainer = (ViewGroup) fragmentContainer.findViewWithTag( noteId );
-            if ( noteFragmentContainer != null )
+            final int noteFragmentContainerId = NOTE_FRAGMENT_CONTAINER_ID_START
+               + i;
+            final Fragment noteFragment = getSupportFragmentManager().findFragmentById( noteFragmentContainerId );
+            
+            if ( noteFragment != null )
             {
-               updateNoteFragmentWithId( noteFragmentContainer.getId(),
+               updateNoteFragmentWithId( fragmentContainer,
+                                         noteFragmentContainerId,
                                          noteId,
                                          transaction );
             }
             else
             {
                createNoteFragmentWithId( fragmentContainer,
-                                         NOTE_FRAGMENT_CONTAINER_ID_START + i,
+                                         noteFragmentContainerId,
                                          noteId,
                                          transaction );
             }
@@ -417,6 +421,36 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                           String noteId,
                                           FragmentTransaction transaction )
    {
+      createAndAddNoteFragmentContainer( fragmentContainer,
+                                         fragmentContainerId,
+                                         noteId );
+      final Fragment fragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
+      transaction.add( fragmentContainerId, fragment, noteId );
+   }
+   
+
+
+   private void updateNoteFragmentWithId( ViewGroup fragmentContainer,
+                                          int fragmentContainerId,
+                                          String noteId,
+                                          FragmentTransaction transaction )
+   {
+      if ( fragmentContainer.findViewById( fragmentContainerId ) == null )
+      {
+         createAndAddNoteFragmentContainer( fragmentContainer,
+                                            fragmentContainerId,
+                                            noteId );
+      }
+      final Fragment fragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
+      transaction.replace( fragmentContainerId, fragment, noteId );
+   }
+   
+
+
+   private View createAndAddNoteFragmentContainer( ViewGroup fragmentContainer,
+                                                   int fragmentContainerId,
+                                                   String noteId )
+   {
       final View taskNote = getLayoutInflater().inflate( R.layout.task_note,
                                                          fragmentContainer,
                                                          false );
@@ -427,18 +461,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       fragmentContainer.addView( taskNote );
       
-      final Fragment fragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
-      transaction.add( fragmentContainerId, fragment, noteId );
-   }
-   
-
-
-   private void updateNoteFragmentWithId( int fragmentContainerId,
-                                          String noteId,
-                                          FragmentTransaction transaction )
-   {
-      final Fragment fragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
-      transaction.replace( fragmentContainerId, fragment, noteId );
+      return noteFragContainer;
    }
    
 

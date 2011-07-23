@@ -44,28 +44,32 @@ public class RtmAuth extends RtmData
       {
          public void setVisible( View view )
          {
-            view.setVisibility( View.GONE );
+            if ( view != null )
+               view.setVisibility( View.GONE );
          }
       },
       read
       {
          public void setVisible( View view )
          {
-            view.setVisibility( View.GONE );
+            if ( view != null )
+               view.setVisibility( View.GONE );
          }
       },
       write
       {
          public void setVisible( View view )
          {
-            view.setVisibility( View.VISIBLE );
+            if ( view != null )
+               view.setVisibility( View.VISIBLE );
          }
       },
       delete
       {
          public void setVisible( View view )
          {
-            view.setVisibility( View.VISIBLE );
+            if ( view != null )
+               view.setVisibility( View.VISIBLE );
          }
       };
    }

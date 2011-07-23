@@ -117,6 +117,9 @@
    <item
       type="id"
       name="menu_quick_add_task" />
+   <item
+      type="id"
+      name="menu_add_note" />
 
 
    <!-- ContextMenuItem IDs -->

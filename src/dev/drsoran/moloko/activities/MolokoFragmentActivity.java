@@ -280,6 +280,13 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    
 
 
+   protected View getContentView()
+   {
+      return findViewById( android.R.id.content );
+   }
+   
+
+
    protected final void showElementNotFoundError( final CharSequence elementType )
    {
       final View spinner = findViewById( R.id.loading_spinner );

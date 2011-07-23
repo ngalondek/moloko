@@ -17,7 +17,7 @@
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
     <view
-    	class="com.actionbarsherlock.internal.widget.ActionBarWatson$HomeItem"
+        class="com.actionbarsherlock.internal.widget.ActionBarView$HomeItem"
         android:id="@+id/actionbarwatson_home"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
@@ -44,66 +44,58 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_centerVertical="true"
         >
-        <com.actionbarsherlock.internal.widget.ScrollingTextView
-            android:id="@+id/actionbarwatson_title"
+        <ProgressBar
+            android:id="@+id/actionbarwatson_iprogress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dip"
+            android:indeterminateOnly="true"
+            android:visibility="gone"
+            style="?abIndeterminateProgressStyle"
+            />
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:gravity="center_vertical"
+            android:layout_toLeftOf="@id/actionbarwatson_iprogress"
+            android:layout_alignWithParentIfMissing="true"
             android:paddingLeft="5dip"
-            android:paddingRight="5dip"
-            android:textSize="16dip"
-            android:textStyle="bold"
-            android:lines="1"
-            android:scrollHorizontally="true"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            />
-        <com.actionbarsherlock.internal.widget.ScrollingTextView
-            android:id="@+id/actionbarwatson_subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/actionbarwatson_title"
             android:gravity="center_vertical"
-            android:paddingLeft="5dip"
-            android:paddingRight="5dip"
-            android:textSize="12dip"
-            android:lines="1"
-            android:scrollHorizontally="true"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:visibility="gone"
-            />
+            >
+            <include layout="@layout/action_bar_title_item" />
+        </FrameLayout>
         <Spinner
-        	android:id="@+id/actionbarwatson_nav_list"
-        	android:layout_width="wrap_content"
-        	android:layout_height="fill_parent"
-        	android:layout_alignParentLeft="true"
-        	android:layout_alignParentRight="true"
-        	style="?attr/actionDropDownStyle"
-        	/>
+            android:id="@+id/actionbarwatson_nav_list"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/actionbarwatson_iprogress"
+            android:layout_alignWithParentIfMissing="true"
+            style="?actionDropDownStyle"
+            />
         <LinearLayout
             android:id="@+id/actionbarwatson_nav_tabs"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/actionbarwatson_iprogress"
+            android:layout_alignWithParentIfMissing="true"
             android:focusable="true"
             android:visibility="visible"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            style="?attr/actionBarTabBarStyle"
+            style="?actionBarTabBarStyle"
             />
         <FrameLayout
             android:id="@+id/actionbarwatson_custom"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/actionbarwatson_iprogress"
+            android:layout_alignWithParentIfMissing="true"
             android:visibility="gone"
             />
     </RelativeLayout>

@@ -20,33 +20,24 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.listeners;
+package dev.drsoran.moloko;
 
-import java.util.List;
+import android.support.v4.app.Fragment;
 
 
-public interface IFullDetailedTasksListFragmentListener extends
-         ITasksListFragmentListener
+public interface IEditFragment< T extends Fragment >
 {
-   void onEditTask( int pos );
+   boolean onFinishEditing();
    
    
    
-   void onSelectTasks();
+   boolean hasChanges();
    
    
    
-   void onOpenList( int pos, String listId );
+   void onCancelEditing();
    
    
    
-   void onOpenLocation( int pos, String locationId );
-   
-   
-   
-   void onShowTasksWithTag( String tag );
-   
-   
-   
-   void onShowTasksWithTags( List< String > tags, String logicalOperator );
+   IEditableFragment< ? extends Fragment > createEditableFragmentInstance();
 }

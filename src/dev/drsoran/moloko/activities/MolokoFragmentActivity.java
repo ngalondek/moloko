@@ -49,11 +49,15 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    
    protected Bundle configuration;
    
+   private boolean ignoreAccountListenerAfterRegister = true;
    
-
+   
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
+      super.onCreate( savedInstanceState );
+      
       final Bundle intentExtras = getIntent().getExtras();
       final Bundle intentConfig;
       
@@ -67,15 +71,11 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       
       configure( intentConfig );
       
-      // TODO: ActionBarSherlock workaround
-      // https://github.com/JakeWharton/ActionBarSherlock/issues/35
-      super.onCreate( savedInstanceState );
-      
       AccountUtils.registerAccountListener( this, handler, this );
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -84,8 +84,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       AccountUtils.unregisterAccountListener( this, this );
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -93,8 +93,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       outState.putAll( getConfiguration() );
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
@@ -102,8 +102,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       configure( state );
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -114,7 +114,9 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          case android.R.id.home:
             if ( ( getSupportActionBar().getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP ) == ActionBar.DISPLAY_HOME_AS_UP )
             {
-               finish();
+               if ( onFinishActivityByHome() )
+                  finish();
+               
                handled = true;
             }
          default :
@@ -124,16 +126,23 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return handled || super.onOptionsItemSelected( item );
    }
    
-
-
+   
+   
+   protected boolean onFinishActivityByHome()
+   {
+      return true;
+   }
+   
+   
+   
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-
-
+   
+   
    @Override
    public void configure( Bundle config )
    {
@@ -144,8 +153,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          takeConfigurationFrom( config );
    }
    
-
-
+   
+   
    @Override
    public Bundle createDefaultConfiguration()
    {
@@ -156,8 +165,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return bundle;
    }
    
-
-
+   
+   
    public Bundle getActivityAndFragmentsConfiguration( int... fragmentIds )
    {
       final Bundle config = new Bundle();
@@ -168,8 +177,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    public Bundle getFragmentConfigurations( int... fragmentIds )
    {
       final Bundle config = new Bundle();
@@ -186,45 +195,41 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return config;
    }
    
-
-
-   @Deprecated
-   public void notifyOptionsMenuChanged()
-   {
-      // TODO: Remove if ActionBarSherlock 3.1.x
-      invalidateOptionsMenu();
-   }
    
-
-
+   
    protected abstract void takeConfigurationFrom( Bundle config );
    
-
-
+   
+   
    protected abstract void putDefaultConfigurationTo( Bundle bundle );
    
-
-
+   
+   
    protected abstract int[] getFragmentIds();
    
-
-
+   
+   
    @Override
    public void onAccountsUpdated( Account[] accounts )
    {
-      onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
+      if ( !ignoreAccountListenerAfterRegister )
+      {
+         onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
+      }
+      else
+         ignoreAccountListenerAfterRegister = false;
    }
    
-
-
+   
+   
    protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {
-      notifyOptionsMenuChanged();
+      invalidateOptionsMenu();
       notifyFragmentsAboutRtmAccessLevelChange( currentAccessLevel );
    }
    
-
-
+   
+   
    protected void notifyFragmentsAboutRtmAccessLevelChange( RtmAuth.Perms currentAccessLevel )
    {
       final int[] fragIds = getFragmentIds();
@@ -243,8 +248,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
    }
    
-
-
+   
+   
    protected final void showLoadingSpinner()
    {
       final View content = findViewById( android.R.id.content );
@@ -256,8 +261,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          spinner.setVisibility( View.VISIBLE );
    }
    
-
-
+   
+   
    protected final void showContent()
    {
       final View spinner = findViewById( R.id.loading_spinner );
@@ -267,26 +272,26 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       final View content = findViewById( android.R.id.content );
       if ( content != null )
       {
-         updateContent( (ViewGroup) content );
+         initContent( (ViewGroup) content );
          content.setVisibility( View.VISIBLE );
       }
    }
    
-
-
-   protected void updateContent( ViewGroup container )
+   
+   
+   protected void initContent( ViewGroup container )
    {
    }
    
-
-
+   
+   
    protected View getContentView()
    {
       return findViewById( android.R.id.content );
    }
    
-
-
+   
+   
    protected final void showElementNotFoundError( final CharSequence elementType )
    {
       final View spinner = findViewById( R.id.loading_spinner );

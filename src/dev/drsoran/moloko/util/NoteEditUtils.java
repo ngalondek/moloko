@@ -24,8 +24,8 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.ContentProviderOperation;
-import android.content.Context;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
@@ -40,15 +40,15 @@ public final class NoteEditUtils
       + NoteEditUtils.class.getSimpleName();
    
    
-
+   
    private NoteEditUtils()
    {
       throw new AssertionError();
    }
    
-
-
-   public final static boolean setNoteTitleAndText( Context context,
+   
+   
+   public final static boolean setNoteTitleAndText( Activity activity,
                                                     String noteId,
                                                     String title,
                                                     String text )
@@ -65,17 +65,17 @@ public final class NoteEditUtils
                                                        text ) );
       modifications.add( Modification.newNoteModified( noteId ) );
       
-      return UIUtils.reportStatus( context,
+      return UIUtils.reportStatus( activity,
                                    R.string.toast_save_note_ok,
                                    R.string.toast_save_note_failed,
-                                   Queries.applyModifications( context,
+                                   Queries.applyModifications( activity,
                                                                modifications,
                                                                R.string.toast_save_note ) );
    }
    
-
-
-   public final static boolean deleteNote( Context context, String noteId )
+   
+   
+   public final static boolean deleteNote( Activity activity, String noteId )
    {
       final ModificationSet modifications = new ModificationSet();
       
@@ -89,13 +89,13 @@ public final class NoteEditUtils
       removeCreatedOperations.add( CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Notes.CONTENT_URI,
                                                                                                    noteId ) ) );
       
-      return UIUtils.reportStatus( context,
+      return UIUtils.reportStatus( activity,
                                    R.string.toast_delete_note_ok,
                                    R.string.toast_delete_note_failed,
-                                   Queries.applyModifications( context,
+                                   Queries.applyModifications( activity,
                                                                modifications,
                                                                R.string.toast_delete_note )
-                                      && Queries.transactionalApplyOperations( context,
+                                      && Queries.transactionalApplyOperations( activity,
                                                                                removeCreatedOperations,
                                                                                R.string.toast_delete_note ) );
    }

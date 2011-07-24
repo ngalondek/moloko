@@ -24,6 +24,7 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Context;
@@ -49,14 +50,14 @@ public final class RtmListEditUtils
       + RtmListEditUtils.class.getSimpleName();
    
    
-
+   
    private RtmListEditUtils()
    {
       throw new AssertionError();
    }
    
-
-
+   
+   
    public final static boolean setListName( Context context,
                                             String listId,
                                             String name )
@@ -77,13 +78,13 @@ public final class RtmListEditUtils
                                                                R.string.toast_save_list ) );
    }
    
-
-
-   public final static boolean deleteListByName( Context context,
+   
+   
+   public final static boolean deleteListByName( Activity activity,
                                                  String listName )
    {
-      final ContentProviderClient client = context.getContentResolver()
-                                                  .acquireContentProviderClient( Lists.CONTENT_URI );
+      final ContentProviderClient client = activity.getContentResolver()
+                                                   .acquireContentProviderClient( Lists.CONTENT_URI );
       
       if ( client != null )
       {
@@ -92,15 +93,15 @@ public final class RtmListEditUtils
          client.release();
          
          if ( list != null )
-            return deleteList( context, list );
+            return deleteList( activity, list );
       }
       
       return false;
    }
    
-
-
-   public final static boolean deleteList( Context context, RtmList list )
+   
+   
+   public final static boolean deleteList( Activity activity, RtmList list )
    {
       boolean ok = true;
       
@@ -120,9 +121,9 @@ public final class RtmListEditUtils
          // Move all contained tasks of the deleted List to the Inbox, this only applies to non-smart lists.
          if ( list.getSmartFilter() == null )
          {
-            final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesProviderPart.moveTaskSeriesToInbox( context.getContentResolver(),
+            final ArrayList< ContentProviderOperation > moveTasksToInboxOps = RtmTaskSeriesProviderPart.moveTaskSeriesToInbox( activity.getContentResolver(),
                                                                                                                                listId,
-                                                                                                                               context.getString( R.string.app_list_name_inbox ) );
+                                                                                                                               activity.getString( R.string.app_list_name_inbox ) );
             ok = moveTasksToInboxOps != null;
             if ( ok )
                dependentOperations.addAll( moveTasksToInboxOps );
@@ -132,13 +133,13 @@ public final class RtmListEditUtils
          {
             dependentOperations.add( CreationsProviderPart.deleteCreation( Queries.contentUriWithId( Lists.CONTENT_URI,
                                                                                                      listId ) ) );
-            ok = UIUtils.reportStatus( context,
+            ok = UIUtils.reportStatus( activity,
                                        R.string.toast_delete_list_ok,
                                        R.string.toast_delete_list_failed,
-                                       Queries.applyModifications( context,
+                                       Queries.applyModifications( activity,
                                                                    modifications,
                                                                    R.string.toast_delete_list )
-                                          && Queries.transactionalApplyOperations( context,
+                                          && Queries.transactionalApplyOperations( activity,
                                                                                    dependentOperations,
                                                                                    R.string.toast_delete_list ) );
          }
@@ -157,9 +158,9 @@ public final class RtmListEditUtils
       }
       else
       {
-         Toast.makeText( context,
-                         context.getString( R.string.toast_delete_locked_list,
-                                            list.getName() ),
+         Toast.makeText( activity,
+                         activity.getString( R.string.toast_delete_locked_list,
+                                             list.getName() ),
                          Toast.LENGTH_LONG ).show();
          ok = false;
       }

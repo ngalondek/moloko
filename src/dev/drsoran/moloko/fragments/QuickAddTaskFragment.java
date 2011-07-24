@@ -16,7 +16,6 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
@@ -54,7 +53,7 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
    private View quickAddTaskContainer;
    
    
-
+   
    public final static QuickAddTaskFragment newInstance( Bundle config )
    {
       final QuickAddTaskFragment fragment = new QuickAddTaskFragment();
@@ -64,8 +63,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public void setArguments( Bundle args )
    {
@@ -73,8 +72,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       configure( args );
    }
    
-
-
+   
+   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -84,8 +83,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       createNewImpl();
    }
    
-
-
+   
+   
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -93,8 +92,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       outState.putAll( configuration );
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -106,8 +105,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       return quickAddTaskContainer;
    }
    
-
-
+   
+   
    @Override
    public void onHiddenChanged( boolean hidden )
    {
@@ -128,8 +127,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       }
    }
    
-
-
+   
+   
    @Override
    public void onDestroyView()
    {
@@ -139,16 +138,16 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       impl = null;
    }
    
-
-
+   
+   
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-
-
+   
+   
    @Override
    public void configure( Bundle config )
    {
@@ -165,8 +164,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       getArguments().putAll( configuration );
    }
    
-
-
+   
+   
    @Override
    public Bundle createDefaultConfiguration()
    {
@@ -176,8 +175,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       return bundle;
    }
    
-
-
+   
+   
    private void createNewImpl()
    {
       impl = new Impl( getActivity(),
@@ -185,16 +184,16 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
                        getConfiguredRtmSmartFilter() );
    }
    
-
-
+   
+   
    private void hideSoftInput()
    {
       if ( impl != null )
-         impl.hideSoftInput();
+         UIUtils.hideSoftInput( impl.addTaskEdit );
    }
    
-
-
+   
+   
    private RtmSmartFilter getConfiguredRtmSmartFilter()
    {
       final IFilter filter = configuration.getParcelable( Config.FILTER );
@@ -233,7 +232,7 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
       private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
       
-
+      
       public Impl( Context context, View quickAddTaskContainer,
          RtmSmartFilter filter )
       {
@@ -275,23 +274,15 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
          }
       }
       
-
-
+      
+      
       public void clearEditText()
       {
          addTaskEdit.getEditableText().clear();
       }
       
-
-
-      public void hideSoftInput()
-      {
-         final InputMethodManager imm = (InputMethodManager) context.getSystemService( Context.INPUT_METHOD_SERVICE );
-         imm.hideSoftInputFromWindow( addTaskEdit.getWindowToken(), 0 );
-      }
       
-
-
+      
       @Override
       public void onClick( View view )
       {
@@ -332,8 +323,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
          }
       }
       
-
-
+      
+      
       private final int preselectByFilter( RtmSmartFilter filter )
       {
          int numPreselected = 0;
@@ -356,8 +347,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
          return numPreselected;
       }
       
-
-
+      
+      
       private final Editable insertOperator( char operator, int pos )
       {
          final Editable text = addTaskEdit.getEditableText();
@@ -373,8 +364,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
          return text;
       }
       
-
-
+      
+      
       private final Editable insertOperatorAndValue( char operator,
                                                      String value,
                                                      int pos )
@@ -392,8 +383,8 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
          return text;
       }
       
-
-
+      
+      
       @SuppressWarnings( "unchecked" )
       private final void addNewTask()
       {

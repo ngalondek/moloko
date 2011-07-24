@@ -24,20 +24,20 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.content.Context;
 import android.os.AsyncTask;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.provider.Rtm;
 
 
-public class ApplyOperationsTask extends
+public class ApplyContentProviderOperationsTask extends
          AsyncTask< ArrayList< ContentProviderOperation >, Void, Boolean >
 {
-   private final Context context;
+   private final Activity activity;
    
    private final int progressTitle;
    
@@ -46,34 +46,35 @@ public class ApplyOperationsTask extends
    private ProgressDialog dialog;
    
    
-
-   public ApplyOperationsTask( Context context, int progressTitle,
-      boolean transactional )
+   
+   public ApplyContentProviderOperationsTask( Activity activity,
+      int progressTitle, boolean transactional )
    {
-      if ( context == null )
-         throw new NullPointerException( "context is null" );
+      if ( activity == null )
+         throw new NullPointerException( "activity is null" );
       
-      this.context = context;
+      this.activity = activity;
       this.progressTitle = progressTitle;
       this.transactional = transactional;
    }
    
-
-
+   
+   
    @Override
    protected void onPreExecute()
    {
-      dialog = new ProgressDialog( context );
+      dialog = new ProgressDialog( activity );
       
       if ( progressTitle != -1 )
-         dialog.setMessage( context.getString( progressTitle ) );
+         dialog.setMessage( activity.getString( progressTitle ) );
       
+      dialog.setOwnerActivity( activity );
       dialog.setCancelable( false );
       dialog.show();
    }
    
-
-
+   
+   
    @Override
    protected Boolean doInBackground( ArrayList< ContentProviderOperation >... params )
    {
@@ -89,8 +90,8 @@ public class ApplyOperationsTask extends
       {
          if ( transactional )
          {
-            final ContentProviderClient client = context.getContentResolver()
-                                                        .acquireContentProviderClient( Rtm.AUTHORITY );
+            final ContentProviderClient client = activity.getContentResolver()
+                                                         .acquireContentProviderClient( Rtm.AUTHORITY );
             if ( client != null )
             {
                if ( !( client.getLocalContentProvider() instanceof RtmProvider ) )
@@ -125,8 +126,8 @@ public class ApplyOperationsTask extends
                ok = false;
          }
          else
-            context.getContentResolver()
-                   .applyBatch( Rtm.AUTHORITY, params[ 0 ] );
+            activity.getContentResolver()
+                    .applyBatch( Rtm.AUTHORITY, params[ 0 ] );
       }
       catch ( Throwable e )
       {
@@ -136,8 +137,8 @@ public class ApplyOperationsTask extends
       return Boolean.valueOf( ok );
    }
    
-
-
+   
+   
    @Override
    protected void onPostExecute( Boolean result )
    {

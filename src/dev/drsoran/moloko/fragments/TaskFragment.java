@@ -22,9 +22,9 @@
 
 package dev.drsoran.moloko.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
@@ -102,7 +102,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
    private boolean taskNotFound;
    
    
-
+   
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -112,10 +112,10 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return fragment;
    }
    
-
-
+   
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -125,8 +125,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
          listener = new NullTaskFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -134,8 +134,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -146,8 +146,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
          getLoaderManager().initLoader( TASK_LOADER_ID, configuration, this );
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -180,13 +180,13 @@ public class TaskFragment extends Fragment implements IConfigurable,
       else if ( getConfiguredTask() != null )
          updateContentWithTask();
       else
-         showLoadingSpinner();
+         showLoadingSpinnerOnly();
       
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void configure( Bundle config )
    {
@@ -204,31 +204,31 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-
-
+   
+   
    @Override
    public Bundle createDefaultConfiguration()
    {
       return new Bundle();
    }
    
-
-
+   
+   
    public Task getConfiguredTask()
    {
       return configuration.getParcelable( Config.TASK );
    }
    
-
-
+   
+   
    public Task getConfiguredTaskAsertNotNull()
    {
       final Task task = getConfiguredTask();
@@ -239,30 +239,30 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return task;
    }
    
-
-
+   
+   
    public String getConfiguredTaskId()
    {
       return configuration.getString( Config.TASK_ID );
    }
    
-
-
+   
+   
    private boolean hasViewCreated()
    {
       return content != null;
    }
    
-
-
+   
+   
    private void updateContentWithTask()
    {
       if ( hasViewCreated() )
       {
          final Task task = getConfiguredTaskAsertNotNull();
          
-         content.setVisibility( View.VISIBLE );
          loadingSpinner.setVisibility( View.GONE );
+         content.setVisibility( View.VISIBLE );
          
          if ( priorityBar != null )
             UIUtils.setPriorityColor( priorityBar, task );
@@ -331,25 +331,25 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
-   private void showLoadingSpinner()
+   
+   
+   private void showLoadingSpinnerOnly()
    {
       if ( hasViewCreated() )
       {
-         content.setVisibility( View.GONE );
          loadingSpinner.setVisibility( View.VISIBLE );
+         content.setVisibility( View.GONE );
       }
    }
    
-
-
+   
+   
    private void showError()
    {
       if ( hasViewCreated() )
       {
-         content.setVisibility( View.VISIBLE );
          loadingSpinner.setVisibility( View.GONE );
+         content.setVisibility( View.VISIBLE );
          
          content.removeAllViews();
          UIUtils.initializeErrorWithIcon( getActivity(),
@@ -360,8 +360,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -446,8 +446,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -521,8 +521,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -557,18 +557,18 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    @Override
    public Loader< Task > onCreateLoader( int id, Bundle args )
    {
-      showLoadingSpinner();
+      showLoadingSpinnerOnly();
       
       return new TaskLoader( getActivity(), args.getString( Config.TASK_ID ) );
    }
    
-
-
+   
+   
    @Override
    public void onLoadFinished( Loader< Task > loader, Task data )
    {
@@ -586,8 +586,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    @Override
    public void onLoaderReset( Loader< Task > loader )
    {

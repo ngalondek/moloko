@@ -50,6 +50,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
@@ -157,6 +158,18 @@ public final class UIUtils
       // {
       // activity.setTitle( text );
       // }
+   }
+   
+   
+   
+   public final static void hideSoftInput( View view )
+   {
+      if ( view != null )
+      {
+         final InputMethodManager imm = (InputMethodManager) view.getContext()
+                                                                 .getSystemService( Context.INPUT_METHOD_SERVICE );
+         imm.hideSoftInputFromWindow( view.getWindowToken(), 0 );
+      }
    }
    
    
@@ -516,40 +529,6 @@ public final class UIUtils
    
    
    
-   public final static MenuItem configureMenuItem( Menu menu, int itemId )
-   {
-      return configureMenuItem( menu, itemId, true );
-   }
-   
-   
-   
-   public final static MenuItem configureMenuItem( Menu menu,
-                                                   int itemId,
-                                                   boolean show )
-   {
-      MenuItem item = null;
-      
-      try
-      {
-         item = menu.findItem( itemId );
-         item.setVisible( show );
-         item.setEnabled( show );
-         
-         if ( show )
-         {
-            
-         }
-      }
-      catch ( IndexOutOfBoundsException e )
-      {
-         item = null;
-      }
-      
-      return item;
-   }
-   
-   
-   
    public final static MenuItem addSyncMenuItem( final Context context,
                                                  Menu menu,
                                                  int itemId,
@@ -620,14 +599,7 @@ public final class UIUtils
       
       if ( show )
       {
-         try
-         {
-            item = menu.findItem( itemId );
-         }
-         catch ( IndexOutOfBoundsException e )
-         {
-            item = null;
-         }
+         item = menu.findItem( itemId );
          
          if ( item == null )
          {
@@ -654,13 +626,7 @@ public final class UIUtils
       }
       else
       {
-         try
-         {
-            menu.removeItem( itemId );
-         }
-         catch ( IndexOutOfBoundsException e )
-         {
-         }
+         menu.removeItem( itemId );
       }
       
       return item;
@@ -768,12 +734,12 @@ public final class UIUtils
    
    
    
-   public final static Dialog newCancelWithChangesDialog( Context context,
+   public final static Dialog newCancelWithChangesDialog( Activity activity,
                                                           Runnable yesAction,
                                                           Runnable noAction )
    {
-      return newDialogWithActions( context,
-                                   context.getString( R.string.phr_edit_dlg_cancel ),
+      return newDialogWithActions( activity,
+                                   activity.getString( R.string.phr_edit_dlg_cancel ),
                                    android.R.string.yes,
                                    android.R.string.no,
                                    yesAction,
@@ -782,12 +748,12 @@ public final class UIUtils
    
    
    
-   public final static Dialog newApplyChangesDialog( Context context,
+   public final static Dialog newApplyChangesDialog( Activity activity,
                                                      Runnable yesAction,
                                                      Runnable noAction )
    {
-      return newDialogWithActions( context,
-                                   context.getString( R.string.phr_edit_dlg_done ),
+      return newDialogWithActions( activity,
+                                   activity.getString( R.string.phr_edit_dlg_done ),
                                    android.R.string.yes,
                                    android.R.string.no,
                                    yesAction,
@@ -796,14 +762,14 @@ public final class UIUtils
    
    
    
-   public final static Dialog newDeleteElementDialog( Context context,
+   public final static Dialog newDeleteElementDialog( Activity activity,
                                                       String elementName,
                                                       Runnable yesAction,
                                                       Runnable noAction )
    {
-      return newDialogWithActions( context,
-                                   context.getString( R.string.phr_delete_with_name,
-                                                      elementName )
+      return newDialogWithActions( activity,
+                                   activity.getString( R.string.phr_delete_with_name,
+                                                       elementName )
                                       + "?",
                                    R.string.btn_delete,
                                    R.string.btn_cancel,
@@ -813,14 +779,14 @@ public final class UIUtils
    
    
    
-   public final static Dialog newDialogWithActions( final Context context,
+   public final static Dialog newDialogWithActions( final Activity activity,
                                                     String message,
                                                     int positiveId,
                                                     int negativeId,
                                                     final Runnable yesAction,
                                                     final Runnable noAction )
    {
-      final AlertDialog.Builder builder = new AlertDialog.Builder( context ).setMessage( message );
+      final AlertDialog.Builder builder = new AlertDialog.Builder( activity ).setMessage( message );
       
       if ( positiveId != -1 )
          builder.setPositiveButton( positiveId,
@@ -846,7 +812,10 @@ public final class UIUtils
                                                           noAction.run();
                                                        }
                                                     } : null );
-      return builder.create();
+      final Dialog dialog = builder.create();
+      dialog.setOwnerActivity( activity );
+      
+      return dialog;
    };
    
    

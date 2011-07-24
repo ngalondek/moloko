@@ -24,8 +24,6 @@ package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,40 +31,30 @@ import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IEditFragment;
+import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.loaders.RtmTaskNoteLoader;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class NoteFragment extends Fragment implements IConfigurable,
-         LoaderCallbacks< RtmTaskNote >
+public class NoteFragment extends AbstractNoteFragment implements
+         IEditableFragment< NoteFragment >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + NoteFragment.class.getSimpleName();
    
    
-   public static class Config
+   public static class Config extends AbstractNoteFragment.Config
    {
-      public final static String NOTE = "note";
+      public final static String NOTE = AbstractNoteFragment.Config.NOTE;
       
-      public final static String NOTE_ID = "note_id";
+      public final static String NOTE_ID = AbstractNoteFragment.Config.NOTE_ID;
    }
    
-   private final static int NOTE_LOADER_ID = 1;
-   
-   private Bundle configuration;
-   
-   private ViewGroup content;
-   
-   private View loadingSpinner;
-   
-   private boolean noteNotFound;
    
    
-
    public final static NoteFragment newInstance( Bundle config )
    {
       final NoteFragment fragment = new NoteFragment();
@@ -76,200 +64,47 @@ public class NoteFragment extends Fragment implements IConfigurable,
       return fragment;
    }
    
-
-
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      configure( getArguments() );
-      
-      if ( getConfiguredNote() == null )
-         getLoaderManager().initLoader( NOTE_LOADER_ID, configuration, this );
-   }
    
-
-
+   
    @Override
-   public View onCreateView( LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState )
+   public View createFragmentView( LayoutInflater inflater,
+                                   ViewGroup container,
+                                   Bundle savedInstanceState )
    {
       final View fragmentView = inflater.inflate( R.layout.note_fragment,
                                                   container,
                                                   false );
-      
-      content = (ViewGroup) fragmentView.findViewById( android.R.id.content );
-      loadingSpinner = fragmentView.findViewById( R.id.loading_spinner );
-      
-      if ( noteNotFound )
-         showError();
-      else if ( getConfiguredNote() != null )
-         updateContentWithNote();
-      else
-         showLoadingSpinner();
-      
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
-   public void configure( Bundle config )
+   protected void showNote( View content, RtmTaskNote note )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
+      final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
+      createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
+                                                               .getTime(),
+                                                           MolokoDateUtils.FORMAT_WITH_YEAR ) );
       
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.NOTE ) )
-            configuration.putParcelable( Config.NOTE,
-                                         config.getParcelable( Config.NOTE ) );
-         if ( config.containsKey( Config.NOTE_ID ) )
-            configuration.putString( Config.NOTE_ID,
-                                     config.getString( Config.NOTE_ID ) );
-      }
+      if ( !UIUtils.initializeTitleWithTextLayout( content.findViewById( R.id.note ),
+                                                   note.getTitle(),
+                                                   note.getText() ) )
+         throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
    }
    
-
-
+   
+   
    @Override
-   public Bundle getConfiguration()
+   public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {
-      return new Bundle( configuration );
-   }
-   
-
-
-   @Override
-   public Bundle createDefaultConfiguration()
-   {
-      return new Bundle();
-   }
-   
-
-
-   public RtmTaskNote getConfiguredNote()
-   {
-      return configuration.getParcelable( Config.NOTE );
-   }
-   
-
-
-   public RtmTaskNote getConfiguredNoteAssertNotNull()
-   {
-      final RtmTaskNote note = getConfiguredNote();
+      final Bundle config = new Bundle();
       
-      if ( note == null )
-         throw new IllegalStateException( "note must not be null" );
+      if ( getConfiguredNote() != null )
+         config.putParcelable( NoteEditFragment.Config.NOTE,
+                               getConfiguredNote() );
       
-      return note;
-   }
-   
-
-
-   public String getConfiguredNoteId()
-   {
-      return configuration.getString( Config.NOTE_ID );
-   }
-   
-
-
-   private boolean hasViewCreated()
-   {
-      return content != null;
-   }
-   
-
-
-   private void updateContentWithNote()
-   {
-      if ( hasViewCreated() )
-      {
-         final RtmTaskNote note = getConfiguredNoteAssertNotNull();
-         
-         final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
-         createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
-                                                                  .getTime(),
-                                                              MolokoDateUtils.FORMAT_WITH_YEAR ) );
-         
-         if ( !UIUtils.initializeTitleWithTextLayout( content.findViewById( R.id.note ),
-                                                      note.getTitle(),
-                                                      note.getText() ) )
-            throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
-         
-         showView( content, true );
-         showView( loadingSpinner, false );
-      }
-   }
-   
-
-
-   private void showLoadingSpinner()
-   {
-      showView( content, false );
-      showView( loadingSpinner, true );
-   }
-   
-
-
-   private void showError()
-   {
-      if ( hasViewCreated() )
-      {
-         showView( content, true );
-         showView( loadingSpinner, false );
-         
-         content.removeAllViews();
-         UIUtils.initializeErrorWithIcon( getActivity(),
-                                          content,
-                                          R.string.err_entity_not_found,
-                                          getString( R.string.app_note ) );
-      }
-   }
-   
-
-
-   private void showView( View view, boolean show )
-   {
-      if ( view != null )
-         view.setVisibility( show ? View.VISIBLE : View.GONE );
-   }
-   
-
-
-   @Override
-   public Loader< RtmTaskNote > onCreateLoader( int id, Bundle args )
-   {
-      showLoadingSpinner();
-      
-      return new RtmTaskNoteLoader( getActivity(),
-                                    args.getString( Config.NOTE_ID ) );
-   }
-   
-
-
-   @Override
-   public void onLoadFinished( Loader< RtmTaskNote > loader, RtmTaskNote data )
-   {
-      noteNotFound = data == null;
-      
-      if ( noteNotFound )
-         showError();
-      else
-      {
-         final Bundle newConfig = getConfiguration();
-         newConfig.putParcelable( Config.NOTE, data );
-         configure( newConfig );
-         
-         updateContentWithNote();
-      }
-   }
-   
-
-
-   @Override
-   public void onLoaderReset( Loader< RtmTaskNote > loader )
-   {
+      final NoteEditFragment fragment = NoteEditFragment.newInstance( config );
+      return fragment;
    }
 }

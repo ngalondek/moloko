@@ -25,6 +25,7 @@ package dev.drsoran.moloko.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -32,15 +33,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
+import android.support.v4.view.SubMenu;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -154,7 +154,7 @@ public class SelectableTasksListsFragment extends
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -627,8 +627,6 @@ public class SelectableTasksListsFragment extends
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
-      notifyOptionsMenuChanged();
-      
       return new SelectableTasksListFragmentAdapter( getActivity(),
                                                      R.layout.selectmultipletasks_activity_listitem );
    }
@@ -647,8 +645,6 @@ public class SelectableTasksListsFragment extends
       
       if ( getTaskSortConfiguration() == TASK_SORT_SELECTION )
          adapter.sortBySelection();
-      
-      notifyOptionsMenuChanged();
       
       return adapter;
    }
@@ -675,6 +671,6 @@ public class SelectableTasksListsFragment extends
    @Override
    public void onSelectionChanged()
    {
-      notifyOptionsMenuChanged();
+      invalidateOptionsMenu();
    }
 }

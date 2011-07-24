@@ -20,8 +20,7 @@
    android:layout_width="fill_parent"
    android:layout_height="wrap_content"
    android:layout_marginTop="10dip"
-   android:layout_marginBottom="8dip"
-   android:paddingBottom="@dimen/task_overview_stroke_width"
+   android:layout_marginBottom="8dip"   
    android:orientation="vertical">
 
    <LinearLayout

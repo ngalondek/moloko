@@ -24,11 +24,11 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.view.LayoutInflater;
@@ -113,7 +113,7 @@ public class MinDetailedTasksListFragment extends
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -208,8 +208,6 @@ public class MinDetailedTasksListFragment extends
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
-      notifyOptionsMenuChanged();
-      
       return new MinDetailedTasksListFragmentAdapter( getActivity(),
                                                       R.layout.mindetailed_taskslist_listitem );
    }
@@ -220,8 +218,6 @@ public class MinDetailedTasksListFragment extends
    protected ListAdapter createListAdapterForResult( List< Task > result,
                                                      IFilter filter )
    {
-      notifyOptionsMenuChanged();
-      
       return new MinDetailedTasksListFragmentAdapter( getActivity(),
                                                       R.layout.mindetailed_taskslist_listitem,
                                                       result );

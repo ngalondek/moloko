@@ -45,7 +45,8 @@
    <string name="app_contacts">Contacts</string>
 	<string name="app_sort_alpha">Task Name</string>
    <string name="app_sort_prio">Priority</string>
-   <string name="app_sort_due_date">Due Date</string>   
+   <string name="app_sort_due_date">Due Date</string>
+   <string name="app_save">Save changes</string>   
    
    <string name="app_rtm_api_key">4070cf4b39d83778df99e7b988539cb7</string>
    <string name="app_rtm_shared_secret">8d263cfe92b542fa</string>   
@@ -368,9 +369,11 @@
       <string name="contactslist_listitem_open_tasks">Shared with %1$s</string>
       <string name="contactslist_listitem_open_contact">Details of %1$s</string>
       
-   <!-- NoteEdit activity -->
+   <!-- NoteEdit fragment -->
    <string name="note_edit_title_hint">Note title</string>
    <string name="note_edit_text_hint">Enter note here</string>
+      <!-- Toasts -->
+      <string name="note_edit_toast_title_and_text_empty">Please enter a note title or a note text</string>
    
    <!-- Quick add task fragment -->
    <string name="quick_add_task_hint">@string/app_task_add</string>      

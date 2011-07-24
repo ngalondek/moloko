@@ -16,6 +16,7 @@
 
 <FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:twt="http://schemas.android.com/apk/res/dev.drsoran.moloko"
    android:layout_width="fill_parent"
    android:layout_height="wrap_content">
 
@@ -38,14 +39,13 @@
          Apply the style directly and not via ?attr/titleWithTextStyle
          since this gets included in several places
       -->
-      <dev.drsoran.moloko.layouts.TitleWithTextLayout
-         xmlns:twt="http://schemas.android.com/apk/res/dev.drsoran.moloko"
+      <dev.drsoran.moloko.layouts.TitleWithTextLayout         
          style="@style/Note_TitleWithText"
          android:id="@+id/note"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
          android:layout_marginTop="5dip"
-         twt:title="note_title"
+         twt:titleText="note_title"
          twt:text="note_text" />
    </LinearLayout>
 

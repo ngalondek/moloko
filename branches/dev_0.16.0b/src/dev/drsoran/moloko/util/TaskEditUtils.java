@@ -47,14 +47,14 @@ public final class TaskEditUtils
       + TaskEditUtils.class.getSimpleName();
    
    
-
+   
    private TaskEditUtils()
    {
       throw new AssertionError();
    }
    
-
-
+   
+   
    public final static boolean setTaskCompletion( Activity activity,
                                                   Task task,
                                                   boolean complete )
@@ -64,8 +64,8 @@ public final class TaskEditUtils
                                  complete );
    }
    
-
-
+   
+   
    public final static boolean setTasksCompletion( Context context,
                                                    List< ? extends Task > tasks,
                                                    boolean complete )
@@ -107,15 +107,15 @@ public final class TaskEditUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean postponeTask( Context context, Task task )
    {
       return postponeTasks( context, Collections.singletonList( task ) );
    }
    
-
-
+   
+   
    public final static boolean postponeTasks( Context context,
                                               List< ? extends Task > tasks )
    {
@@ -200,16 +200,16 @@ public final class TaskEditUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean deleteTask( Activity activity, Task task )
    {
       return deleteTasks( activity, Collections.singletonList( task ) );
    }
    
-
-
-   public final static boolean deleteTasks( Context context,
+   
+   
+   public final static boolean deleteTasks( Activity activity,
                                             List< ? extends Task > tasks )
    {
       boolean ok = true;
@@ -234,16 +234,16 @@ public final class TaskEditUtils
                                                                                task.getId() ) );
          }
          
-         ok = Queries.applyModifications( context,
+         ok = Queries.applyModifications( activity,
                                           modifications,
                                           R.string.toast_delete_task );
          
          ok = ok
-            && Queries.transactionalApplyOperations( context,
+            && Queries.transactionalApplyOperations( activity,
                                                      removeCreatedOperations,
                                                      R.string.toast_delete_task );
          
-         UIUtils.reportStatus( context,
+         UIUtils.reportStatus( activity,
                                R.string.toast_delete_task_ok,
                                R.string.toast_delete_task_failed,
                                ok );

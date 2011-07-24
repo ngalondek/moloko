@@ -73,7 +73,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                    menu,
                                    OptionsMenu.DELETE_LIST,
                                    getString( R.string.taskslist_menu_opt_delete_list ),
-                                   Menu.CATEGORY_SECONDARY,
+                                   Menu.CATEGORY_ALTERNATIVE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_trash,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -152,24 +152,6 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    {
       reloadTasksListWithConfiguration( Intents.Extras.createOpenLocationExtras( this,
                                                                                  getTask( pos ).getLocationName() ) );
-   }
-   
-   
-   
-   @Override
-   public void onOpenNotes( int pos, List< String > noteIds )
-   {
-      if ( noteIds.size() > 0 )
-      {
-         if ( noteIds.size() == 1 )
-            startActivity( Intents.createOpenNotesIntent( this,
-                                                          null,
-                                                          noteIds.get( 0 ) ) );
-         else
-            startActivity( Intents.createOpenNotesIntent( this,
-                                                          getTask( pos ).getTaskSeriesId(),
-                                                          null ) );
-      }
    }
    
    

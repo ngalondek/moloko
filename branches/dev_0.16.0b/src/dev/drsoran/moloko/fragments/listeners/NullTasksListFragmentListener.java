@@ -27,8 +27,10 @@ import java.util.List;
 import dev.drsoran.rtm.Task;
 
 
-public class NullTasksListFragmentListener implements IFullDetailedTasksListFragmentListener,
-         IMinDetailedTasksListFragmentListener, ISelectableTasksListFragmentListener
+public class NullTasksListFragmentListener implements
+         IFullDetailedTasksListFragmentListener,
+         IMinDetailedTasksListFragmentListener,
+         ISelectableTasksListFragmentListener
 {
    
    public void onOpenTask( int pos )
@@ -62,12 +64,6 @@ public class NullTasksListFragmentListener implements IFullDetailedTasksListFrag
    
    
    public void onOpenLocation( int pos, String locationId )
-   {
-   }
-   
-   
-   
-   public void onOpenNotes( int pos, List< String > notes )
    {
    }
    

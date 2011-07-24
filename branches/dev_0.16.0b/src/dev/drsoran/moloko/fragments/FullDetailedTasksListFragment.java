@@ -33,7 +33,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.text.TextUtils;
@@ -116,8 +115,6 @@ public class FullDetailedTasksListFragment extends
       public final static int TAGS = R.id.ctx_menu_open_tags;
       
       public final static int TASKS_AT_LOCATION = R.id.ctx_menu_open_tasks_at_loc;
-      
-      public final static int NOTES = R.id.ctx_menu_open_notes;
    }
    
    private IFullDetailedTasksListFragmentListener listener;
@@ -151,7 +148,7 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public void onAttach( FragmentActivity activity )
+   public void onAttach( Activity activity )
    {
       super.onAttach( activity );
       
@@ -311,14 +308,6 @@ public class FullDetailedTasksListFragment extends
                                  locationName ) );
          }
       }
-      
-      final int notesCount = task.getNumberOfNotes();
-      if ( notesCount > 0 )
-         menu.add( Menu.NONE,
-                   CtxtMenu.NOTES,
-                   Menu.NONE,
-                   getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_notes,
-                                                     notesCount ) );
    }
    
    
@@ -366,11 +355,6 @@ public class FullDetailedTasksListFragment extends
          case CtxtMenu.TASKS_AT_LOCATION:
             listener.onOpenLocation( info.position,
                                      getTask( info.position ).getLocationId() );
-            return true;
-            
-         case CtxtMenu.NOTES:
-            listener.onOpenNotes( info.position,
-                                  getTask( info.position ).getNoteIds() );
             return true;
             
          default :
@@ -497,8 +481,6 @@ public class FullDetailedTasksListFragment extends
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
-      notifyOptionsMenuChanged();
-      
       return new FullDetailedTasksListFragmentAdapter( getActivity(),
                                                        R.layout.fulldetailed_taskslist_listitem );
    }
@@ -509,8 +491,6 @@ public class FullDetailedTasksListFragment extends
    protected ListAdapter createListAdapterForResult( List< Task > result,
                                                      IFilter filter )
    {
-      notifyOptionsMenuChanged();
-      
       final int flags = 0;
       return new FullDetailedTasksListFragmentAdapter( getActivity(),
                                                        R.layout.fulldetailed_taskslist_listitem,

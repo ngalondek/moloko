@@ -18,7 +18,7 @@
 
    <uses-sdk
       android:minSdkVersion="5"
-      android:targetSdkVersion="11" />
+      android:targetSdkVersion="13" />
 
    <application
       android:name=".MolokoApp"
@@ -199,54 +199,6 @@
          android:launchMode="singleTop"
          android:excludeFromRecents="true"
          android:theme="@style/Theme.Moloko.Task">
-      </activity>
-
-      <activity
-         android:label="@string/app_note"
-         android:name=".activities.NoteActivity"
-         android:theme="@style/Theme.Moloko.Note">
-         <intent-filter>
-            <!-- Show a single note -->
-            <!-- Show all notes of a task -->
-            <action
-               android:name="android.intent.action.VIEW" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />
-            <data
-               android:mimeType="vnd.android.cursor.dir/vnd.rtm.note" />
-         </intent-filter>
-      </activity>
-      
-      <activity
-         android:label="@string/app_note_edit"
-         android:name=".activities.NoteEditActivity"
-         android:theme="@style/Theme.Moloko.Note">
-         <intent-filter>
-            <!-- Edit a single note -->
-            <action
-               android:name="android.intent.action.EDIT" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.item/vnd.rtm.note" />            
-         </intent-filter>
-      </activity>
-      
-      <activity
-         android:label="@string/app_note_add"
-         android:name=".activities.AddNoteActivity"
-         android:theme="@style/Theme.Moloko.Note">
-         <intent-filter>
-            <!-- Add a new note -->
-            <action
-               android:name="android.intent.action.INSERT" />
-            <category
-               android:name="android.intent.category.DEFAULT" />
-            <data
-               android:mimeType="vnd.android.cursor.dir/vnd.rtm.note" />            
-         </intent-filter>
       </activity>
 
       <activity

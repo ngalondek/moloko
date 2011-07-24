@@ -27,11 +27,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -59,7 +59,7 @@ public class AddRenameListDialog
    private final static String TAG = "Moloko."
       + AddRenameListDialog.class.getSimpleName();
    
-   private final Context context;
+   private final Activity activity;
    
    private final Dialog impl;
    
@@ -71,14 +71,14 @@ public class AddRenameListDialog
    private final TextView filterEdit;
    
    
-
-   private AddRenameListDialog( Context context, RtmList list,
+   
+   private AddRenameListDialog( Activity activity, RtmList list,
       RtmSmartFilter filter )
    {
-      this.context = context;
+      this.activity = activity;
       this.list = list;
       
-      impl = new Dialog( context );
+      impl = new Dialog( activity );
       impl.setTitle( ( list == null ) ? R.string.dlg_add_list_title
                                      : R.string.dlg_rename_list_title );
       impl.setContentView( R.layout.add_rename_list_dialog );
@@ -113,22 +113,22 @@ public class AddRenameListDialog
           } );
    }
    
-
-
+   
+   
    public void cancel()
    {
       onCancel();
    }
    
-
-
+   
+   
    public void show()
    {
       impl.show();
    }
    
-
-
+   
+   
    private void onOK()
    {
       if ( hasChanged() )
@@ -152,7 +152,7 @@ public class AddRenameListDialog
                                                        0,
                                                        getSmartFilter() );
                   
-                  final Uri newUri = new AsyncInsertEntity< RtmList >( context )
+                  final Uri newUri = new AsyncInsertEntity< RtmList >( activity )
                   {
                      @Override
                      protected int getProgressMessageId()
@@ -160,8 +160,8 @@ public class AddRenameListDialog
                         return R.string.toast_insert_list;
                      }
                      
-
-
+                     
+                     
                      @Override
                      protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
                                                                                      RtmList entity )
@@ -188,16 +188,16 @@ public class AddRenameListDialog
                         return null;
                      }
                      
-
-
+                     
+                     
                      @Override
                      protected Uri getContentUri()
                      {
                         return Lists.CONTENT_URI;
                      }
                      
-
-
+                     
+                     
                      @Override
                      protected String getPath()
                      {
@@ -205,7 +205,7 @@ public class AddRenameListDialog
                      }
                   }.execute( newList ).get();
                   
-                  UIUtils.reportStatus( context,
+                  UIUtils.reportStatus( activity,
                                         R.string.toast_insert_list_ok,
                                         R.string.toast_insert_list_fail,
                                         newUri != null );
@@ -223,11 +223,11 @@ public class AddRenameListDialog
             // Rename list
             else
             {
-               UIUtils.newApplyChangesDialog( context, new Runnable()
+               UIUtils.newApplyChangesDialog( activity, new Runnable()
                {
                   public void run()
                   {
-                     RtmListEditUtils.setListName( context,
+                     RtmListEditUtils.setListName( activity,
                                                    list.getId(),
                                                    UIUtils.getTrimmedText( listNameEdit ) );
                   }
@@ -243,13 +243,13 @@ public class AddRenameListDialog
          impl.dismiss();
    }
    
-
-
+   
+   
    private void onCancel()
    {
       if ( hasChanged() )
       {
-         UIUtils.newCancelWithChangesDialog( context, new Runnable()
+         UIUtils.newCancelWithChangesDialog( activity, new Runnable()
          {
             public void run()
             {
@@ -261,8 +261,8 @@ public class AddRenameListDialog
          impl.cancel();
    }
    
-
-
+   
+   
    private boolean validateInput()
    {
       // Validate the list name
@@ -271,7 +271,7 @@ public class AddRenameListDialog
          
          if ( TextUtils.isEmpty( text ) )
          {
-            Toast.makeText( context,
+            Toast.makeText( activity,
                             R.string.dlg_add_rename_list_toast_empty_list_name,
                             Toast.LENGTH_LONG ).show();
             listNameEdit.requestFocus();
@@ -281,10 +281,10 @@ public class AddRenameListDialog
          {
             final String trimmedText = text.trim();
             
-            if ( trimmedText.equalsIgnoreCase( context.getString( R.string.app_list_name_inbox ) )
-               || trimmedText.equalsIgnoreCase( context.getString( R.string.app_list_name_sent ) ) )
+            if ( trimmedText.equalsIgnoreCase( activity.getString( R.string.app_list_name_inbox ) )
+               || trimmedText.equalsIgnoreCase( activity.getString( R.string.app_list_name_sent ) ) )
             {
-               Toast.makeText( context,
+               Toast.makeText( activity,
                                R.string.dlg_add_rename_list_toast_invalid_list_name,
                                Toast.LENGTH_LONG )
                     .show();
@@ -303,9 +303,9 @@ public class AddRenameListDialog
          {
             if ( RtmSmartFilter.evaluate( text.toString(), false ) == null )
             {
-               Toast.makeText( context,
-                               context.getString( R.string.dlg_add_rename_list_toast_invalid_filter,
-                                                  text ),
+               Toast.makeText( activity,
+                               activity.getString( R.string.dlg_add_rename_list_toast_invalid_filter,
+                                                   text ),
                                Toast.LENGTH_LONG )
                     .show();
                filterEdit.requestFocus();
@@ -317,8 +317,8 @@ public class AddRenameListDialog
       return true;
    }
    
-
-
+   
+   
    private final boolean hasChanged()
    {
       final String trimmedListName = UIUtils.getTrimmedText( listNameEdit );
@@ -330,8 +330,8 @@ public class AddRenameListDialog
             || !TextUtils.isEmpty( UIUtils.getTrimmedText( filterEdit ) );
    }
    
-
-
+   
+   
    private final RtmSmartFilter getSmartFilter()
    {
       RtmSmartFilter filter = null;
@@ -347,26 +347,26 @@ public class AddRenameListDialog
       return filter;
    }
    
-
-
-   public final static AddRenameListDialog newDialog( Context context )
+   
+   
+   public final static AddRenameListDialog newDialog( Activity activity )
    {
-      return new AddRenameListDialog( context, null, null );
+      return new AddRenameListDialog( activity, null, null );
    }
    
-
-
-   public final static AddRenameListDialog newDialogWithList( Context context,
+   
+   
+   public final static AddRenameListDialog newDialogWithList( Activity activity,
                                                               RtmList list )
    {
-      return new AddRenameListDialog( context, list, null );
+      return new AddRenameListDialog( activity, list, null );
    }
    
-
-
-   public final static AddRenameListDialog newDialogWithFilter( Context context,
+   
+   
+   public final static AddRenameListDialog newDialogWithFilter( Activity activity,
                                                                 RtmSmartFilter filter )
    {
-      return new AddRenameListDialog( context, null, filter );
+      return new AddRenameListDialog( activity, null, filter );
    }
 }

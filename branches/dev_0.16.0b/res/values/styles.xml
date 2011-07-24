@@ -14,19 +14,12 @@
 
 	<!-- *********** -->
 	<!-- Application -->
-
-	<style name="Theme.Moloko.Task" parent="Theme.Sherlock.Light">
-		<item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
-		<item name="android:windowContentOverlay">@null</item>
-	</style>
-
+	
 	<style name="Theme.Moloko.Authenticator" parent="Theme.Sherlock">
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowContentOverlay">@null</item>
 	</style>
-
-	<style name="Theme.Moloko.Note" parent="Theme.Moloko.Task" />
-
+	
 	<style name="Theme.Moloko.Preferences" parent="Theme.Sherlock">
 		<item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
 	</style>
@@ -34,25 +27,6 @@
    <style name="WindowTitleBackgroundStyle">
       <item name="android:background">@color/app_default_title_bgnd</item>
       <item name="android:paddingLeft">5dip</item>
-   </style>   
-	
-	<style name="ActionBarStyle">
-      <item name="android:background">@drawable/app_actionbar_bgnd</item>
-      <item name="actionBarSize">@dimen/app_actionbar_height</item>
-      <item name="titleTextStyle">@style/ActionBarTextStyle</item>
-      <item name="actionSpinnerItemStyle">@style/ActionBarTextStyle.Spinner</item>      
-   </style>
-   
-   <style name="ActionBarStyle.HomeIcon">      
-      <item name="icon">@drawable/ic_title_home</item>
-   </style>
-   
-   <style name="ActionBarStyle.AsUp">
-      <item name="displayOptions">showHome|homeAsUp|showTitle</item>      
-   </style>
-   
-   <style name="ActionBarStyle.AsUp.NoHomeIcon">
-      <item name="icon">@null</item> 
    </style>
    
    <style name="ActionBarTextStyle">      
@@ -61,7 +35,12 @@
       <item name="android:textStyle">bold</item>
    </style>
    
-   <style name="ActionBarTextStyle.Spinner" />
+   <style name="ActionBarSpinnerItemStyle" parent="Widget.Sherlock.TextView.SpinnerItem.ActionBar">
+      <item name="android:textSize">@dimen/app_actionbar_text_size</item>
+      <item name="android:textColor">@color/app_actionbar_text_color</item>
+      <item name="android:textStyle">bold</item>
+      <item name="android:gravity">left|center_horizontal</item>
+   </style>
    
    <style name="Tag">
       <item name="android:textColor">@color/app_tag_text</item>
@@ -133,6 +112,12 @@
    
    <style name="TextViewStyle" parent="@android:style/Widget.TextView">
       <item name="android:textColor">?android:attr/textColorPrimary</item>
+   </style>
+   
+   <!-- EditTextStyle -->
+   
+   <style name="TaskEditTextStyle" parent="@android:style/Widget.EditText">
+      <item name="android:textSize">?android:attr/textAppearanceSmall</item>
    </style>
       
    <!-- TextWith...Styles -->

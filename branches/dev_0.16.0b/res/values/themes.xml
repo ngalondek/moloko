@@ -11,8 +11,21 @@
       <item name="android:windowBackground">@color/app_default_bgnd</item>
       <item name="android:textColorPrimary">@color/app_default_text_color</item>
       
+      <!-- ProgressBar -->
+      <item name="android:progressBarStyle">@android:style/Widget.ProgressBar.Inverse</item>
+      <item name="android:progressBarStyleSmall">@android:style/Widget.ProgressBar.Small.Inverse</item>
+      <item name="android:progressBarStyleLarge">@android:style/Widget.ProgressBar.Large.Inverse</item>
+      <item name="android:progressBarStyleInverse">@android:style/Widget.ProgressBar</item>
+      <item name="android:progressBarStyleSmallInverse">@android:style/Widget.ProgressBar.Small</item>
+      <item name="android:progressBarStyleLargeInverse">@android:style/Widget.ProgressBar.Large</item>
+      
       <!-- ActionBar attributes -->
-      <item name="actionBarStyle">@style/ActionBarStyle</item>
+      <item name="abBackground">@drawable/app_actionbar_bgnd</item>
+      <item name="actionBarSize">@dimen/app_actionbar_height</item>
+      <item name="abTitleTextStyle">@style/ActionBarTextStyle</item>
+      <item name="actionSpinnerItemStyle">@style/ActionBarSpinnerItemStyle</item>
+      <item name="abDisplayOptions">showHome|showTitle</item>
+      <item name="abIcon">@drawable/ic_button_title_home</item>
       
       <!-- TitleBar attributes -->
       <item name="titleBarStyle">@style/TitleBarStyle</item>
@@ -37,34 +50,26 @@
    </style>
 
 
-
-   <style name="Theme.Moloko.NoActionBar">
-
-      <!-- Window attributes -->
-      <item name="android:windowNoTitle">false</item>      
-   </style>
-
-
-   
    <style
-      name="Theme.Moloko.Task"
-      parent="Theme.Moloko.NoActionBar">
+      name="Theme.Moloko.Task">
       
       <!-- Window attributes -->
       <item name="android:windowBackground">@color/task_bgnd</item>
       
       <!-- ActionBar attributes -->
-      <item name="actionBarStyle">@style/ActionBarStyle.AsUp.NoHomeIcon</item>
-            
+      <item name="abDisplayOptions">showHome|homeAsUp|showTitle</item>
+      <item name="abIcon">@drawable/app_actionbar_empty_icon</item> 
+      
+      <!-- Widgets -->
       <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
       <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
+      <item name="android:editTextStyle">@style/TaskEditTextStyle</item>
    </style>
 
 
    
    <style 
-      name="Theme.Moloko.Note"
-      parent="Theme.Moloko.NoActionBar">
+      name="Theme.Moloko.Note">
       
       <!-- Window attributes -->
       <item name="android:windowBackground">@color/note_bgnd</item>

@@ -43,7 +43,8 @@
    <string name="app_contacts">Kontakte</string>
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
-   <string name="app_sort_due_date">Fälligkeitsdatum</string>   
+   <string name="app_sort_due_date">Fälligkeitsdatum</string>
+   <string name="app_save">Änderungen übernehmen</string>   
    
    <string name="svc_sync">RTM Synchronisierung</string>	
    <string name="svc_auth">RTM Authentifizierung</string>
@@ -229,7 +230,7 @@
    <string name="task_edit_validate_empty_name">Der Name der Aufgabe darf nicht leer sein</string>   
    <string name="task_edit_validate_estimate">\'%1$s\' ist keine gültige Zeitschätzung</string>
    <string name="task_edit_validate_due">\'%1$s\' ist keine gültige Fälligkeit</string>
-    <string name="task_edit_validate_recurrence">\'%1$s\' ist keine gültige Wiederholung</string>
+   <string name="task_edit_validate_recurrence">\'%1$s\' ist keine gültige Wiederholung</string>
    
    <!-- EditMultipleTasks activity -->
    <string name="edit_multiple_tasks_multiple_values">Verschiedene Werte</string>
@@ -304,9 +305,11 @@
       <string name="select_multiple_tasks_dlg_postpone">%1$d %2$s aufschieben?</string>
       <string name="select_multiple_tasks_dlg_delete">%1$d %2$s löschen?</string>
   
-   <!-- NoteEdit activity -->
+   <!-- NoteEdit fragment -->
    <string name="note_edit_title_hint">Titel der Notiz</string>
    <string name="note_edit_text_hint">Notiz hier eingeben</string>
+      <!-- Toasts -->
+      <string name="note_edit_toast_title_and_text_empty">Bitte geben Sie einen Notiztitel oder einen Notitztext ein</string>
       
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>

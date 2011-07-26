@@ -33,18 +33,23 @@ import dev.drsoran.rtm.Task;
 
 public class TaskLoader extends AbstractLoader< Task >
 {
+   public static class Config
+   {
+      public final static String TASK_ID = "task_id";
+   }
+   
    private final String taskId;
    
    
-   
+
    public TaskLoader( Context context, String taskId )
    {
       super( context );
       this.taskId = taskId;
    }
    
-   
-   
+
+
    @Override
    protected Task queryResultInBackground( ContentProviderClient client )
    {
@@ -56,16 +61,16 @@ public class TaskLoader extends AbstractLoader< Task >
       return task;
    }
    
-   
-   
+
+
    @Override
    protected Uri getContentUri()
    {
       return Tasks.CONTENT_URI;
    }
    
-   
-   
+
+
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {

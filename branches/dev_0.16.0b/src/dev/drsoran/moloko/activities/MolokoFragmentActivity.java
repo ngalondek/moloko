@@ -52,7 +52,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    private boolean ignoreAccountListenerAfterRegister = true;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -74,8 +74,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       AccountUtils.registerAccountListener( this, handler, this );
    }
    
-   
-   
+
+
    @Override
    protected void onDestroy()
    {
@@ -84,8 +84,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       AccountUtils.unregisterAccountListener( this, this );
    }
    
-   
-   
+
+
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -93,8 +93,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       outState.putAll( getConfiguration() );
    }
    
-   
-   
+
+
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
@@ -102,8 +102,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       configure( state );
    }
    
-   
-   
+
+
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -126,23 +126,23 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return handled || super.onOptionsItemSelected( item );
    }
    
-   
-   
+
+
    protected boolean onFinishActivityByHome()
    {
       return true;
    }
    
-   
-   
+
+
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-   
-   
+
+
    @Override
    public void configure( Bundle config )
    {
@@ -153,8 +153,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          takeConfigurationFrom( config );
    }
    
-   
-   
+
+
    @Override
    public Bundle createDefaultConfiguration()
    {
@@ -165,8 +165,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return bundle;
    }
    
-   
-   
+
+
    public Bundle getActivityAndFragmentsConfiguration( int... fragmentIds )
    {
       final Bundle config = new Bundle();
@@ -177,8 +177,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return config;
    }
    
-   
-   
+
+
    public Bundle getFragmentConfigurations( int... fragmentIds )
    {
       final Bundle config = new Bundle();
@@ -195,20 +195,20 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       return config;
    }
    
-   
-   
+
+
    protected abstract void takeConfigurationFrom( Bundle config );
    
-   
-   
+
+
    protected abstract void putDefaultConfigurationTo( Bundle bundle );
    
-   
-   
+
+
    protected abstract int[] getFragmentIds();
    
-   
-   
+
+
    @Override
    public void onAccountsUpdated( Account[] accounts )
    {
@@ -220,16 +220,16 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          ignoreAccountListenerAfterRegister = false;
    }
    
-   
-   
+
+
    protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {
       invalidateOptionsMenu();
       notifyFragmentsAboutRtmAccessLevelChange( currentAccessLevel );
    }
    
-   
-   
+
+
    protected void notifyFragmentsAboutRtmAccessLevelChange( RtmAuth.Perms currentAccessLevel )
    {
       final int[] fragIds = getFragmentIds();
@@ -248,8 +248,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
    }
    
-   
-   
+
+
    protected final void showLoadingSpinner()
    {
       final View content = findViewById( android.R.id.content );
@@ -261,8 +261,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          spinner.setVisibility( View.VISIBLE );
    }
    
-   
-   
+
+
    protected final void showContent()
    {
       final View spinner = findViewById( R.id.loading_spinner );
@@ -272,26 +272,33 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       final View content = findViewById( android.R.id.content );
       if ( content != null )
       {
-         initContent( (ViewGroup) content );
-         content.setVisibility( View.VISIBLE );
+         handler.postAtFrontOfQueue( new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               initContent( (ViewGroup) content );
+               content.setVisibility( View.VISIBLE );
+            }
+         } );
       }
    }
    
-   
-   
+
+
    protected void initContent( ViewGroup container )
    {
    }
    
-   
-   
+
+
    protected View getContentView()
    {
       return findViewById( android.R.id.content );
    }
    
-   
-   
+
+
    protected final void showElementNotFoundError( final CharSequence elementType )
    {
       final View spinner = findViewById( R.id.loading_spinner );

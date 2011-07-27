@@ -90,24 +90,24 @@ public class TaskActivity extends MolokoFragmentActivity implements
    }
    
 
-   private final static class NoteFragmentContainerSate implements Parcelable
+   private final static class NoteFragmentContainerState implements Parcelable
    {
       @SuppressWarnings( "unused" )
-      public static final Parcelable.Creator< NoteFragmentContainerSate > CREATOR = new Parcelable.Creator< NoteFragmentContainerSate >()
+      public static final Parcelable.Creator< NoteFragmentContainerState > CREATOR = new Parcelable.Creator< NoteFragmentContainerState >()
       {
          
          @Override
-         public NoteFragmentContainerSate createFromParcel( Parcel source )
+         public NoteFragmentContainerState createFromParcel( Parcel source )
          {
-            return new NoteFragmentContainerSate( source );
+            return new NoteFragmentContainerState( source );
          }
          
 
 
          @Override
-         public NoteFragmentContainerSate[] newArray( int size )
+         public NoteFragmentContainerState[] newArray( int size )
          {
-            return new NoteFragmentContainerSate[ size ];
+            return new NoteFragmentContainerState[ size ];
          }
          
       };
@@ -118,7 +118,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       
 
-      public NoteFragmentContainerSate( String noteId,
+      public NoteFragmentContainerState( String noteId,
          int noteFragmentContainerId )
       {
          this.noteId = noteId;
@@ -127,7 +127,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
 
 
-      public NoteFragmentContainerSate( Parcel source )
+      public NoteFragmentContainerState( Parcel source )
       {
          noteId = source.readString();
          noteFragmentContainerId = source.readInt();
@@ -168,9 +168,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       super.onCreate( savedInstanceState );
       
-      // LoaderManager.enableDebugLogging( true );
-      // FragmentManager.enableDebugLogging( true );
-      
       setContentView( R.layout.task_activity );
       restoreNoteFragmentContainers();
       
@@ -198,7 +195,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       if ( task != null && task.getNumberOfNotes() > 0 )
       {
-         final List< NoteFragmentContainerSate > noteFragmentContainers = new ArrayList< NoteFragmentContainerSate >( task.getNumberOfNotes() );
+         final List< NoteFragmentContainerState > noteFragmentContainers = new ArrayList< NoteFragmentContainerState >( task.getNumberOfNotes() );
          final ViewGroup fragmentContainer = getFragmentContainer();
          final List< String > noteIds = task.getNoteIds();
          
@@ -207,9 +204,13 @@ public class TaskActivity extends MolokoFragmentActivity implements
             final String noteId = noteIds.get( i );
             final View noteFragmentContainer = fragmentContainer.findViewWithTag( noteId );
             
-            noteFragmentContainers.add( new NoteFragmentContainerSate( noteId,
-                                                                       noteFragmentContainer.getId() ) );
+            noteFragmentContainers.add( new NoteFragmentContainerState( noteId,
+                                                                        noteFragmentContainer.getId() ) );
          }
+         
+         if ( IsActivityInAddingNewNoteMode() )
+            noteFragmentContainers.add( new NoteFragmentContainerState( NEW_NOTE_TEMPORARY_ID,
+                                                                        NEW_NOTE_TEMPORARY_CONTAINER_ID ) );
          
          setConfiguredNoteFragmentContainers( noteFragmentContainers );
       }
@@ -219,19 +220,21 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    private void restoreNoteFragmentContainers()
    {
-      final List< NoteFragmentContainerSate > noteFragmentContainers = getConfiguredNoteFragmentContainers();
+      final List< NoteFragmentContainerState > noteFragmentContainers = getConfiguredNoteFragmentContainers();
       
       if ( noteFragmentContainers != null )
       {
          final ViewGroup fragmentContainer = getFragmentContainer();
          
-         for ( NoteFragmentContainerSate noteFragmentContainer : noteFragmentContainers )
+         for ( NoteFragmentContainerState noteFragmentContainer : noteFragmentContainers )
          {
             createAndAddNoteFragmentContainer( fragmentContainer,
                                                noteFragmentContainer.noteFragmentContainerId,
                                                noteFragmentContainer.noteId );
          }
       }
+      
+      setConfiguredNoteFragmentContainers( null );
    }
    
 
@@ -253,6 +256,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       if ( config.containsKey( Config.EDIT_MODE_FRAG_ID ) )
          configuration.putInt( Config.EDIT_MODE_FRAG_ID,
                                config.getInt( Config.EDIT_MODE_FRAG_ID ) );
+      
       if ( config.containsKey( Config.NOTE_FRAGMENT_CONTAINERS ) )
          configuration.putParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS,
                                                config.getParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS ) );
@@ -281,17 +285,20 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   public List< NoteFragmentContainerSate > getConfiguredNoteFragmentContainers()
+   public List< NoteFragmentContainerState > getConfiguredNoteFragmentContainers()
    {
       return configuration.getParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS );
    }
    
 
 
-   public void setConfiguredNoteFragmentContainers( List< NoteFragmentContainerSate > noteFragmentContainers )
+   public void setConfiguredNoteFragmentContainers( List< NoteFragmentContainerState > noteFragmentContainers )
    {
-      configuration.putParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS,
-                                            new ArrayList< NoteFragmentContainerSate >( noteFragmentContainers ) );
+      if ( noteFragmentContainers != null )
+         configuration.putParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS,
+                                               new ArrayList< NoteFragmentContainerState >( noteFragmentContainers ) );
+      else
+         configuration.remove( Config.NOTE_FRAGMENT_CONTAINERS );
    }
    
 
@@ -443,14 +450,9 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final Task task = getTaskAssertNotNull();
       
       initTaskFragmentWithTask( task );
-      createNoteFragmentsFromTask( task );
+      showNoteFragmentsOfTask( task );
       
       onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
-      
-      // TODO: Repair
-      // if ( IsActivityInAddingNewNoteMode()
-      // && !existsFragmentContainer( NEW_NOTE_TEMPORARY_ID ) )
-      // createAddNewNoteFragmentContainer();
       
       setActivityInEditMode( getConfiguredEditModeFragmentId() );
    }
@@ -763,13 +765,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private boolean isFragmentInEditMode( int fragmentId )
-   {
-      return ( getConfiguredEditModeFragmentId() == fragmentId );
-   }
-   
-
-
    private boolean isEditFragmentModified( int fragmentId )
    {
       boolean hasChanges = false;
@@ -914,7 +909,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private void createNoteFragmentsFromTask( Task task )
+   private void showNoteFragmentsOfTask( Task task )
    {
       if ( task.getNumberOfNotes() > 0 )
       {
@@ -941,6 +936,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
          
          transaction.commit();
       }
+      
+      removeDeletedNoteFragmentsOfTask( task );
    }
    
 
@@ -956,6 +953,30 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       final Fragment fragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
       transaction.add( fragmentContainerId, fragment, noteId );
+   }
+   
+
+
+   private void removeDeletedNoteFragmentsOfTask( Task task )
+   {
+      final List< String > noteIds = task.getNoteIds();
+      final ViewGroup fragmentContainer = getFragmentContainer();
+      
+      for ( int i = 0, cnt = fragmentContainer.getChildCount(); i < cnt; ++i )
+      {
+         final View view = fragmentContainer.getChildAt( i );
+         final Object tag = view.getTag();
+         
+         if ( tag instanceof String
+            && ( (String) tag ).startsWith( FRAGMENT_LAYOUT_TAG_STUB ) )
+         {
+            final View noteFragmentContainer = findViewById( R.id.note_fragment_container );
+            final String noteFragmentContainerTag = (String) noteFragmentContainer.getTag();
+            
+            if ( !noteIds.contains( noteFragmentContainerTag ) )
+               removeNoteFragmentById( noteFragmentContainerTag );
+         }
+      }
    }
    
 
@@ -1024,7 +1045,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    private void removeNoteFragmentById( String noteId )
    {
-      removeFragmentByTag( createFragmentLayoutTag( noteId ) );
+      removeFragmentByTag( noteId );
    }
    
 

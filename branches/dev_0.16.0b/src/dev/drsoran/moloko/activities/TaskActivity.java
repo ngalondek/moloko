@@ -153,7 +153,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
    private final static int TASK_LOADER_ID = 1;
    
-   private final static String FRAGMENT_LAYOUT_TAG_STUB = "frag_layout_";
+   private final static String TASK_NOTE_LAYOUT_TAG_STUB = "frag_layout_";
    
    private final static int NEW_NOTE_TEMPORARY_CONTAINER_ID = 1;
    
@@ -850,7 +850,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
          transaction.commit();
          
          final ViewGroup fragmentContainer = getFragmentContainer();
-         final View taggedFragmentContainer = fragmentContainer.findViewWithTag( createFragmentLayoutTag( fragmentTag ) );
+         final View taggedFragmentContainer = fragmentContainer.findViewWithTag( createTaskNoteLayoutTag( fragmentTag ) );
          
          if ( taggedFragmentContainer != null )
             fragmentContainer.removeView( taggedFragmentContainer );
@@ -872,7 +872,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
          final Object tag = view.getTag();
          
          if ( tag instanceof String
-            && ( (String) tag ).startsWith( FRAGMENT_LAYOUT_TAG_STUB ) )
+            && ( (String) tag ).startsWith( TASK_NOTE_LAYOUT_TAG_STUB ) )
          {
             final View buttonsContainer = view.findViewById( R.id.note_buttons );
             if ( buttonsContainer != null )
@@ -962,19 +962,29 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final List< String > noteIds = task.getNoteIds();
       final ViewGroup fragmentContainer = getFragmentContainer();
       
-      for ( int i = 0, cnt = fragmentContainer.getChildCount(); i < cnt; ++i )
+      for ( int i = 0, cntFragments = fragmentContainer.getChildCount(); i < cntFragments; ++i )
       {
          final View view = fragmentContainer.getChildAt( i );
          final Object tag = view.getTag();
          
          if ( tag instanceof String
-            && ( (String) tag ).startsWith( FRAGMENT_LAYOUT_TAG_STUB ) )
+            && ( (String) tag ).startsWith( TASK_NOTE_LAYOUT_TAG_STUB ) )
          {
-            final View noteFragmentContainer = findViewById( R.id.note_fragment_container );
-            final String noteFragmentContainerTag = (String) noteFragmentContainer.getTag();
+            final ViewGroup taskNoteLayout = (ViewGroup) view;
             
-            if ( !noteIds.contains( noteFragmentContainerTag ) )
-               removeNoteFragmentById( noteFragmentContainerTag );
+            for ( int j = 0, cntTaskNoteChilds = taskNoteLayout.getChildCount(); j < cntTaskNoteChilds; ++j )
+            {
+               final Object taskNoteChildTag = taskNoteLayout.getChildAt( j )
+                                                             .getTag();
+               
+               if ( taskNoteChildTag instanceof String )
+               {
+                  final String addedNoteId = (String) taskNoteChildTag;
+                  
+                  if ( !noteIds.contains( addedNoteId ) )
+                     removeNoteFragmentById( addedNoteId );
+               }
+            }
          }
       }
    }
@@ -1057,7 +1067,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final View taskNote = getLayoutInflater().inflate( R.layout.task_note,
                                                          fragmentContainer,
                                                          false );
-      taskNote.setTag( createFragmentLayoutTag( noteId ) );
+      taskNote.setTag( createTaskNoteLayoutTag( noteId ) );
       
       final View noteFragContainer = taskNote.findViewById( R.id.note_fragment_container );
       noteFragContainer.setId( fragmentContainerId );
@@ -1076,9 +1086,9 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private String createFragmentLayoutTag( String fragmentTag )
+   private String createTaskNoteLayoutTag( String fragmentTag )
    {
-      return FRAGMENT_LAYOUT_TAG_STUB + fragmentTag;
+      return TASK_NOTE_LAYOUT_TAG_STUB + fragmentTag;
    }
    
 

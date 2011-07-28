@@ -260,6 +260,7 @@
    <string name="task_url">URL</string>
       <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Open location with...</string>
+      <string name="task_dlg_removing_editing_note">The note you are editing is about to get removed by the background sync. If you continue editing a new note will be inserted with your changes.</string>
       <!-- Toasts -->
       <string name="task_toast_no_google_maps">Location could not be displayed due to missing Google Maps App.</string>            
       

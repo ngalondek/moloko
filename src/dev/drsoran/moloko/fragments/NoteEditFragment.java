@@ -62,7 +62,7 @@ public class NoteEditFragment extends AbstractNoteFragment implements
    private EditText text;
    
    
-   
+
    public final static NoteEditFragment newInstance( Bundle config )
    {
       final NoteEditFragment fragment = new NoteEditFragment();
@@ -72,8 +72,8 @@ public class NoteEditFragment extends AbstractNoteFragment implements
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -89,8 +89,8 @@ public class NoteEditFragment extends AbstractNoteFragment implements
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -98,8 +98,8 @@ public class NoteEditFragment extends AbstractNoteFragment implements
       text.requestFocus();
    }
    
-   
-   
+
+
    @Override
    public void onDestroyView()
    {
@@ -108,8 +108,22 @@ public class NoteEditFragment extends AbstractNoteFragment implements
       super.onDestroyView();
    }
    
+
+
+   public String getNoteTitle()
+   {
+      return title != null ? title.getText().toString() : Strings.EMPTY_STRING;
+   }
    
+
+
+   public String getNoteText()
+   {
+      return text != null ? text.getText().toString() : Strings.EMPTY_STRING;
+   }
    
+
+
    @Override
    protected void showNote( View content, RtmTaskNote note )
    {
@@ -122,8 +136,8 @@ public class NoteEditFragment extends AbstractNoteFragment implements
       text.setText( note.getText() );
    }
    
-   
-   
+
+
    @Override
    public boolean hasChanges()
    {
@@ -138,8 +152,8 @@ public class NoteEditFragment extends AbstractNoteFragment implements
          return false;
    }
    
-   
-   
+
+
    @Override
    public boolean onFinishEditing()
    {
@@ -173,15 +187,15 @@ public class NoteEditFragment extends AbstractNoteFragment implements
       return ok;
    }
    
-   
-   
+
+
    @Override
    public void onCancelEditing()
    {
    }
    
-   
-   
+
+
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

@@ -92,6 +92,12 @@ public class TaskActivity extends MolokoFragmentActivity implements
    }
    
 
+   private enum FinishEditMode
+   {
+      SAVE, CANCELED, FORCE_CANCELED
+   }
+   
+
    private final static class NoteFragmentContainerState implements Parcelable
    {
       @SuppressWarnings( "unused" )
@@ -431,11 +437,11 @@ public class TaskActivity extends MolokoFragmentActivity implements
             return true;
             
          case OptionsMenu.SAVE:
-            finishEditing( false );
+            finishEditing( FinishEditMode.SAVE );
             return true;
             
          case OptionsMenu.ABORT:
-            finishEditing( true );
+            finishEditing( FinishEditMode.CANCELED );
             return true;
             
          default :
@@ -489,20 +495,17 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       final String noteId = (String) noteDeleteButton.getTag();
       
-      requestRemovingEditNoteFragment( noteId );
-      
-      // TODO:
-      // UIUtils.newDeleteElementDialog( this,
-      // getString( R.string.app_note ),
-      // new Runnable()
-      // {
-      // @Override
-      // public void run()
-      // {
-      // deleteNoteImpl( noteId );
-      // }
-      // },
-      // null ).show();
+      UIUtils.newDeleteElementDialog( this,
+                                      getString( R.string.app_note ),
+                                      new Runnable()
+                                      {
+                                         @Override
+                                         public void run()
+                                         {
+                                            deleteNoteImpl( noteId );
+                                         }
+                                      },
+                                      null ).show();
    }
    
 
@@ -520,7 +523,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       else if ( IsActivityInEditMode() && !currentAccessLevel.allowsEditing() )
       {
          // TODO: In this case we have to force cancel editing, Show message box with reason.
-         finishEditing( true );
+         finishEditing( FinishEditMode.FORCE_CANCELED );
       }
    }
    
@@ -530,7 +533,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    public void onBackPressed()
    {
       if ( IsActivityInEditMode() )
-         finishEditing( true );
+         finishEditing( FinishEditMode.CANCELED );
       else
          super.onBackPressed();
    }
@@ -543,7 +546,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       boolean finish = super.onFinishActivityByHome();
       
       if ( finish && IsActivityInEditMode() )
-         finish = finishEditingAndFinishActivity( true );
+         finish = finishEditingAndFinishActivity( FinishEditMode.CANCELED );
       
       return finish;
    }
@@ -671,12 +674,12 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private boolean finishEditing( boolean canceled )
+   private boolean finishEditing( FinishEditMode how )
    {
       if ( !IsActivityInEditMode() )
          throw new IllegalStateException( "expected to be in edit mode" );
       
-      if ( canceled
+      if ( how == FinishEditMode.CANCELED
          && isEditFragmentModified( getConfiguredEditModeFragmentId() ) )
       {
          finishEditingShowCancelDialog( new Runnable()
@@ -692,8 +695,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
       else
       {
-         if ( finishFragmentEditing( getConfiguredEditModeFragmentId(),
-                                     canceled ) )
+         if ( finishFragmentEditing( getConfiguredEditModeFragmentId(), how ) )
             setActivityInEditMode( 0 );
          
          return true;
@@ -702,12 +704,12 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private boolean finishEditingAndFinishActivity( boolean canceled )
+   private boolean finishEditingAndFinishActivity( FinishEditMode how )
    {
       if ( !IsActivityInEditMode() )
          throw new IllegalStateException( "expected to be in edit mode" );
       
-      if ( canceled
+      if ( how == FinishEditMode.CANCELED
          && isEditFragmentModified( getConfiguredEditModeFragmentId() ) )
       {
          finishEditingShowCancelDialog( new Runnable()
@@ -725,8 +727,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       {
          // Do not call finish() here since the caller will finish if we return
          // true
-         return finishFragmentEditing( getConfiguredEditModeFragmentId(),
-                                       canceled );
+         return finishFragmentEditing( getConfiguredEditModeFragmentId(), how );
       }
    }
    
@@ -739,11 +740,13 @@ public class TaskActivity extends MolokoFragmentActivity implements
          @Override
          public void run()
          {
-            finishFragmentEditing( getConfiguredEditModeFragmentId(), true );
+            finishFragmentEditing( getConfiguredEditModeFragmentId(),
+                                   FinishEditMode.CANCELED );
             if ( cancelAction != null )
                cancelAction.run();
          }
-      }, null ).show();
+      },
+                                          null ).show();
    }
    
 
@@ -789,18 +792,18 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
 
    private boolean finishFragmentEditing( int fragmentContainerId,
-                                          boolean canceled )
+                                          FinishEditMode how )
    {
       if ( IsActivityInAddingNewNoteMode() )
-         return finishAddingNewNote( canceled );
+         return finishAddingNewNote( how );
       else
-         return finishFragmentEditingImpl( fragmentContainerId, canceled );
+         return finishFragmentEditingImpl( fragmentContainerId, how );
    }
    
 
 
    private boolean finishFragmentEditingImpl( int fragmentContainerId,
-                                              boolean canceled )
+                                              FinishEditMode how )
    {
       boolean finished = true;
       
@@ -810,7 +813,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       {
          final IEditFragment< ? > editFragment = (IEditFragment< ? >) fragment;
          
-         if ( !canceled )
+         if ( how == FinishEditMode.SAVE )
             finished = editFragment.onFinishEditing();
          else
             editFragment.onCancelEditing();
@@ -832,8 +835,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
             }
             else
             {
-               removeFragmentByTag( fragment.getTag(),
-                                    FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+               removeNoteFragmentById( fragment.getTag(),
+                                       FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
             }
          }
       }
@@ -843,7 +846,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private void removeFragmentByTag( String fragmentTag, int transit )
+   private void removeNoteFragmentById( String fragmentTag, int transit )
    {
       final Fragment fragment = findAddedFragmentByTag( fragmentTag );
       
@@ -857,10 +860,10 @@ public class TaskActivity extends MolokoFragmentActivity implements
          transaction.commit();
          
          final ViewGroup fragmentContainer = getFragmentContainer();
-         final View taggedFragmentContainer = fragmentContainer.findViewWithTag( createTaskNoteLayoutTag( fragmentTag ) );
+         final View taskNoteLayout = fragmentContainer.findViewWithTag( createTaskNoteLayoutTag( fragmentTag ) );
          
-         if ( taggedFragmentContainer != null )
-            fragmentContainer.removeView( taggedFragmentContainer );
+         if ( taskNoteLayout != null )
+            fragmentContainer.removeView( taskNoteLayout );
       }
    }
    
@@ -868,25 +871,24 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    private void showEditButtons( boolean show )
    {
-      // TODO:
-      // findViewById( R.id.task_buttons ).setVisibility( show ? View.VISIBLE
-      // : View.GONE );
-      //      
-      // final ViewGroup fragmentContainer = getFragmentContainer();
-      //      
-      // for ( int i = 0, cnt = fragmentContainer.getChildCount(); i < cnt; ++i )
-      // {
-      // final View view = fragmentContainer.getChildAt( i );
-      // final Object tag = view.getTag();
-      //         
-      // if ( tag instanceof String
-      // && ( (String) tag ).startsWith( TASK_NOTE_LAYOUT_TAG_STUB ) )
-      // {
-      // final View buttonsContainer = view.findViewById( R.id.note_buttons );
-      // if ( buttonsContainer != null )
-      // buttonsContainer.setVisibility( show ? View.VISIBLE : View.GONE );
-      // }
-      // }
+      findViewById( R.id.task_buttons ).setVisibility( show ? View.VISIBLE
+                                                           : View.GONE );
+      
+      final ViewGroup fragmentContainer = getFragmentContainer();
+      
+      for ( int i = 0, cnt = fragmentContainer.getChildCount(); i < cnt; ++i )
+      {
+         final View view = fragmentContainer.getChildAt( i );
+         final Object tag = view.getTag();
+         
+         if ( tag instanceof String
+            && ( (String) tag ).startsWith( TASK_NOTE_LAYOUT_TAG_STUB ) )
+         {
+            final View buttonsContainer = view.findViewById( R.id.note_buttons );
+            if ( buttonsContainer != null )
+               buttonsContainer.setVisibility( show ? View.VISIBLE : View.GONE );
+         }
+      }
    }
    
 
@@ -992,12 +994,12 @@ public class TaskActivity extends MolokoFragmentActivity implements
                   found = true;
                   
                   final String addedNoteId = (String) taskNoteChildTag;
+                  final int noteFragmentContainerId = taskNoteChild.getId();
                   
-                  if ( !noteIds.contains( addedNoteId ) )
+                  if ( noteFragmentContainerId != NEW_NOTE_TEMPORARY_CONTAINER_ID
+                     && !noteIds.contains( addedNoteId ) )
                   {
-                     final int noteFragmentContainerId = taskNoteChild.getId();
-                     
-                     if ( getConfiguredEditModeFragmentId() == noteFragmentContainerId )
+                     if ( noteFragmentContainerId == getConfiguredEditModeFragmentId() )
                      {
                         requestRemovingEditNoteFragment( addedNoteId );
                      }
@@ -1089,13 +1091,13 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private boolean finishAddingNewNote( boolean canceled )
+   private boolean finishAddingNewNote( FinishEditMode how )
    {
       final IEditFragment< ? > addNewNoteFragment = (IEditFragment< ? >) findAddedFragmentByTag( NEW_NOTE_TEMPORARY_ID );
       
       boolean ok = true;
       
-      if ( !canceled )
+      if ( how == FinishEditMode.SAVE )
          ok = addNewNoteFragment.onFinishEditing();
       else
          addNewNoteFragment.onCancelEditing();
@@ -1105,13 +1107,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                  FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
       
       return ok;
-   }
-   
-
-
-   private void removeNoteFragmentById( String noteId, int transit )
-   {
-      removeFragmentByTag( noteId, transit );
    }
    
 
@@ -1156,7 +1151,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                        @Override
                                        public void run()
                                        {
-                                          finishAddingNewNote( true );
+                                          finishAddingNewNote( FinishEditMode.FORCE_CANCELED );
+                                          setActivityInEditMode( 0 );
                                        }
                                     } )
              .show();

@@ -25,8 +25,11 @@ package dev.drsoran.moloko.sync.elements;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -38,7 +41,7 @@ public class SyncRtmTaskNotesList
       < T > void perform( List< T > list, Comparator< ? super T > cmp );
    }
    
-
+   
    private static enum GetMode implements IGetModeAction
    {
       AS_IS
@@ -66,42 +69,66 @@ public class SyncRtmTaskNotesList
       }
    };
    
-   private final List< SyncNote > notes;
+   private static final Comparator< RtmTaskNote > LESS_TASKSERIES_ID = new Comparator< RtmTaskNote >()
+   {
+      public int compare( RtmTaskNote object1, RtmTaskNote object2 )
+      {
+         return object1.getTaskSeriesId().compareTo( object2.getTaskSeriesId() );
+      }
+   };
+   
+   // Sync notes grouped by their taskseries ID
+   private final Map< String, List< SyncNote > > notes;
    
    
-
+   
    public SyncRtmTaskNotesList()
    {
-      notes = new ArrayList< SyncNote >();
+      notes = new HashMap< String, List< SyncNote >>();
    }
    
-
-
+   
+   
    public SyncRtmTaskNotesList( List< RtmTaskNote > notes )
    {
-      if ( notes == null )
-         throw new NullPointerException( "notes is null" );
+      this();
       
-      this.notes = new ArrayList< SyncNote >( notes.size() );
+      if ( notes == null )
+         throw new NullPointerException( "notes are null" );
       
       for ( RtmTaskNote rtmTaskNote : notes )
-         this.notes.add( new SyncNote( null, rtmTaskNote ) );
+      {
+         if ( !this.notes.containsKey( rtmTaskNote.getTaskSeriesId() ) )
+            this.notes.put( rtmTaskNote.getTaskSeriesId(),
+                            new ArrayList< SyncNote >() );
+         
+         this.notes.get( rtmTaskNote.getTaskSeriesId() )
+                   .add( new SyncNote( null, rtmTaskNote ) );
+      }
       
-      Collections.sort( this.notes, LESS_ID );
+      for ( List< SyncNote > syncNotes : this.notes.values() )
+      {
+         Collections.sort( syncNotes, LESS_ID );
+      }
    }
    
-
-
+   
+   
    public List< SyncNote > getSyncNotes()
    {
-      return getSyncNotes( SyncNote.LESS_ID );
+      return getSyncNotes( LESS_ID );
    }
    
-
-
+   
+   
    public List< SyncNote > getSyncNotes( Comparator< ? super SyncNote > cmp )
    {
-      final List< SyncNote > res = new ArrayList< SyncNote >( notes );
+      List< SyncNote > res = new LinkedList< SyncNote >();
+      
+      for ( List< SyncNote > syncNotes : this.notes.values() )
+      {
+         res.addAll( syncNotes );
+      }
       
       if ( cmp != null )
          GetMode.SORTED.perform( res, cmp );
@@ -109,85 +136,163 @@ public class SyncRtmTaskNotesList
       return res;
    }
    
-
-
+   
+   
    public void add( SyncNote note )
    {
       update( note );
    }
    
-
-
+   
+   
    public void remove( SyncNote note )
    {
-      final int pos = Collections.binarySearch( notes, note, LESS_ID );
+      if ( note == null )
+         throw new NullPointerException( "note is null" );
       
-      if ( pos >= 0 )
-         notes.remove( pos );
-   }
-   
-
-
-   public void intersect( List< RtmTaskNote > notes )
-   {
-      for ( Iterator< SyncNote > i = this.notes.iterator(); i.hasNext(); )
+      if ( note.getTaskSeriesId() == null )
+         throw new AssertionError( "note with taskseriesId expected" );
+      
+      final List< SyncNote > syncNotes = notes.get( note.getTaskSeriesId() );
+      
+      if ( syncNotes != null )
       {
-         SyncNote syncNote = i.next();
+         final int pos = Collections.binarySearch( syncNotes, note, LESS_ID );
          
-         boolean found = false;
-         
-         for ( RtmTaskNote rtmTaskNote : notes )
-         {
-            if ( rtmTaskNote.getId().equals( syncNote.getId() ) )
-            {
-               found = true;
-               break;
-            }
-         }
-         
-         if ( !found )
-            i.remove();
+         if ( pos >= 0 )
+            notes.remove( pos );
       }
    }
    
-
-
-   public SyncNote get( int location )
+   
+   
+   public void intersect( List< RtmTaskNote > notes )
+   {
+      final List< RtmTaskNote > rtmTaskNotes = new ArrayList< RtmTaskNote >( notes );
+      Collections.sort( rtmTaskNotes, LESS_TASKSERIES_ID );
+      
+      for ( Iterator< String > iterTaskSerieses = this.notes.keySet()
+                                                            .iterator(); iterTaskSerieses.hasNext(); )
+      {
+         final String taskSeriesId = iterTaskSerieses.next();
+         
+         boolean foundTaskSeriesId = false;
+         for ( Iterator< RtmTaskNote > iterRtmTaskNotes = notes.iterator(); iterRtmTaskNotes.hasNext()
+            && !foundTaskSeriesId; )
+         {
+            RtmTaskNote rtmTaskNote = iterRtmTaskNotes.next();
+            
+            if ( rtmTaskNote.getTaskSeriesId().equals( taskSeriesId ) )
+            {
+               foundTaskSeriesId = true;
+               
+               // Create a sub list with all RtmTaskNotes with the same taskSeriesId
+               final List< RtmTaskNote > rtmTaskNotesSubList = new LinkedList< RtmTaskNote >();
+               
+               do
+               {
+                  rtmTaskNotesSubList.add( rtmTaskNote );
+               }
+               while ( iterRtmTaskNotes.hasNext()
+                  && rtmTaskNote.getTaskSeriesId().equals( taskSeriesId ) );
+               
+               final List< SyncNote > syncNotes = this.notes.get( taskSeriesId );
+               
+               boolean foundSyncNote = false;
+               for ( Iterator< SyncNote > iterSyncNotes = syncNotes.iterator(); iterSyncNotes.hasNext()
+                  && !foundSyncNote; )
+               {
+                  final SyncNote syncNote = iterSyncNotes.next();
+                  
+                  for ( Iterator< RtmTaskNote > iterSubList = rtmTaskNotesSubList.iterator(); iterSubList.hasNext()
+                     && !foundSyncNote; )
+                  {
+                     foundSyncNote = iterSubList.next()
+                                                .getId()
+                                                .equals( syncNote.getId() );
+                  }
+                  
+                  if ( !foundSyncNote )
+                     iterSyncNotes.remove();
+               }
+            }
+         }
+         
+         if ( !foundTaskSeriesId )
+            iterTaskSerieses.remove();
+      }
+   }
+   
+   
+   
+   public void filterByTaskSeriesIds( List< String > taskSeriesIds )
+   {
+      for ( Iterator< String > iterTaskSerieses = this.notes.keySet()
+                                                            .iterator(); iterTaskSerieses.hasNext(); )
+      {
+         final String taskSeriesId = iterTaskSerieses.next();
+         
+         if ( !taskSeriesIds.contains( taskSeriesId ) )
+            iterTaskSerieses.remove();
+      }
+   }
+   
+   
+   
+   public List< String > getTaskSeriesIds()
+   {
+      return new ArrayList< String >( notes.keySet() );
+   }
+   
+   
+   
+   public List< SyncNote > get( int location )
    {
       return notes.get( location );
    }
    
-
-
+   
+   
    public int size()
    {
       return notes.size();
    }
    
-
-
+   
+   
    public void update( SyncNote note )
    {
       if ( note == null )
          throw new NullPointerException( "note is null" );
       
+      if ( note.getTaskSeriesId() == null )
+         throw new AssertionError( "note with taskseriesId expected" );
+      
+      List< SyncNote > syncNotes = notes.get( note.getTaskSeriesId() );
+      
+      if ( syncNotes == null )
+      {
+         syncNotes = new ArrayList< SyncNote >();
+         notes.put( note.getTaskSeriesId(), syncNotes );
+      }
+      
       // If the set already contains an element in respect to the Comparator,
       // then we update it by the new.
-      final int pos = Collections.binarySearch( notes, note, LESS_ID );
+      final int pos = Collections.binarySearch( syncNotes, note, LESS_ID );
       
       if ( pos >= 0 )
       {
-         notes.remove( pos );
-         notes.add( pos, note );
+         syncNotes.remove( pos );
+         syncNotes.add( pos, note );
       }
       else
       {
-         notes.add( ( -pos - 1 ), note );
+         syncNotes.add( ( -pos - 1 ), note );
       }
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {

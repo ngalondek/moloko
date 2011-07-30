@@ -76,7 +76,7 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( RtmTaskNote note,
                                                        boolean withId )
    {
@@ -110,8 +110,8 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static List< RtmTaskNote > getAllNotes( ContentProviderClient client )
    {
       List< RtmTaskNote > notes = null;
@@ -151,8 +151,8 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return notes;
    }
    
-
-
+   
+   
    public final static RtmTaskNotes getNotes( ContentProviderClient client,
                                               String taskSeriesId )
    {
@@ -206,8 +206,8 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return notes;
    }
    
-
-
+   
+   
    public final static RtmTaskNote getNote( ContentProviderClient client,
                                             String noteId )
    {
@@ -249,8 +249,8 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return note;
    }
    
-
-
+   
+   
    public final static List< RtmTaskNote > getLocalCreatedNotes( ContentProviderClient client )
    {
       List< RtmTaskNote > notes = null;
@@ -312,8 +312,8 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return notes;
    }
    
-
-
+   
+   
    public final static int getDeletedNotesCount( ContentProviderClient client )
    {
       int cnt = -1;
@@ -343,8 +343,53 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return cnt;
    }
    
-
-
+   
+   
+   public final static List< RtmTaskNote > getDeletedNotes( ContentProviderClient client )
+   {
+      List< RtmTaskNote > notes = null;
+      
+      Cursor c = null;
+      
+      try
+      {
+         c = client.query( Notes.CONTENT_URI, PROJECTION, Notes.NOTE_DELETED
+            + " IS NOT NULL", null, null );
+         
+         boolean ok = c != null;
+         
+         if ( ok )
+         {
+            notes = new ArrayList< RtmTaskNote >( c.getCount() );
+            
+            if ( c.getCount() > 0 )
+            {
+               for ( ok = c.moveToFirst(); ok && !c.isAfterLast(); c.moveToNext() )
+               {
+                  final RtmTaskNote note = createNote( c );
+                  ok = note != null;
+                  
+                  if ( ok )
+                     notes.add( note );
+               }
+            }
+         }
+      }
+      catch ( final RemoteException e )
+      {
+         Log.e( TAG, "Query notes failed. ", e );
+      }
+      finally
+      {
+         if ( c != null )
+            c.close();
+      }
+      
+      return notes;
+   }
+   
+   
+   
    public final static ContentProviderOperation insertLocalCreatedNote( ContentProviderClient client,
                                                                         RtmTaskNote note,
                                                                         NewNoteId outNewId )
@@ -380,15 +425,15 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return operation;
    }
    
-
-
+   
+   
    public RtmNotesProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Notes.PATH );
    }
    
-
-
+   
+   
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE " + path + " ( " + Notes._ID
@@ -404,8 +449,8 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       createModificationsTrigger( db );
    }
    
-
-
+   
+   
    @Override
    protected ContentValues getInitialValues( ContentValues initialValues )
    {
@@ -418,61 +463,61 @@ public class RtmNotesProviderPart extends AbstractModificationsRtmProviderPart
       return initialValues;
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Notes.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Notes.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Notes.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return Notes.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
    public String[] getProjection()
    {
       return PROJECTION;
    }
    
-
-
+   
+   
    private final static RtmTaskNote createNote( Cursor c )
    {
       return new RtmTaskNote( c.getString( COL_INDICES.get( Notes._ID ) ),

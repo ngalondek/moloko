@@ -51,6 +51,7 @@ import com.mdt.rtm.data.RtmTasks;
 import com.mdt.rtm.data.RtmTimeline;
 
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.rtm.RtmContacts;
 import dev.drsoran.rtm.RtmSettings;
 
@@ -86,7 +87,7 @@ public class ServiceImpl implements Service
    RtmFrob tempFrob;
    
    
-
+   
    public static ServiceImpl getInstance( Context context,
                                           ApplicationInfo applicationInfo ) throws ServiceInternalException
    {
@@ -119,8 +120,8 @@ public class ServiceImpl implements Service
       return serviceImpl;
    }
    
-
-
+   
+   
    protected ServiceImpl( ApplicationInfo applicationInfo,
       ProxySettings proxySettings, boolean useHttp )
       throws ServiceInternalException
@@ -146,8 +147,8 @@ public class ServiceImpl implements Service
       }
    }
    
-
-
+   
+   
    public boolean isServiceAuthorized() throws ServiceException
    {
       if ( currentAuthToken == null )
@@ -173,8 +174,8 @@ public class ServiceImpl implements Service
       }
    }
    
-
-
+   
+   
    public String beginAuthorization( RtmAuth.Perms permissions ) throws ServiceException
    {
       // Instructions from the "User authentication for desktop applications"
@@ -184,8 +185,8 @@ public class ServiceImpl implements Service
       return beginAuthorization( tempFrob, permissions );
    }
    
-
-
+   
+   
    public String beginAuthorization( RtmFrob frob, RtmAuth.Perms permissions ) throws ServiceException
    {
       String authBaseUrl = "http://" + SERVER_HOST_NAME + "/services/auth/";
@@ -207,15 +208,15 @@ public class ServiceImpl implements Service
       return authUrl.toString();
    }
    
-
-
+   
+   
    public String completeAuthorization() throws ServiceException
    {
       return completeAuthorization( tempFrob );
    }
    
-
-
+   
+   
    public String completeAuthorization( RtmFrob frob ) throws ServiceException
    {
       currentAuthToken = auth_getToken( frob.getValue() );
@@ -223,8 +224,8 @@ public class ServiceImpl implements Service
       return currentAuthToken;
    }
    
-
-
+   
+   
    public RtmAuth auth_checkToken( String authToken ) throws ServiceException
    {
       Element response = invoker.invoke( new Param( "method",
@@ -235,8 +236,8 @@ public class ServiceImpl implements Service
       return new RtmAuth( response );
    }
    
-
-
+   
+   
    public RtmFrob auth_getFrob() throws ServiceException
    {
       return new RtmFrob( invoker.invoke( new Param( "method",
@@ -245,8 +246,8 @@ public class ServiceImpl implements Service
                                                      applicationInfo.getApiKey() ) ) );
    }
    
-
-
+   
+   
    public String auth_getToken( String frob ) throws ServiceException
    {
       Element response = invoker.invoke( new Param( "method",
@@ -257,22 +258,22 @@ public class ServiceImpl implements Service
       return new RtmAuth( response ).getToken();
    }
    
-
-
+   
+   
    public void contacts_add()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void contacts_delete()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public RtmContacts contacts_getList() throws ServiceException
    {
       final Element response = invoker.invoke( new Param( "method",
@@ -284,43 +285,43 @@ public class ServiceImpl implements Service
       return new RtmContacts( response );
    }
    
-
-
+   
+   
    public void groups_add()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void groups_addContact()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void groups_delete()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void groups_getList()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void groups_removeContact()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmList > lists_add( String timelineId,
                                                String listName,
                                                String smartFilter ) throws ServiceException
@@ -346,15 +347,15 @@ public class ServiceImpl implements Service
       return newListResult( timelineId, elt );
    }
    
-
-
+   
+   
    public void lists_archive()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmList > lists_delete( String timelineId,
                                                   String listId ) throws ServiceException
    {
@@ -369,8 +370,8 @@ public class ServiceImpl implements Service
       return newListResult( timelineId, elt );
    }
    
-
-
+   
+   
    public RtmLists lists_getList() throws ServiceException
    {
       Element response = invoker.invoke( new Param( "method",
@@ -382,8 +383,8 @@ public class ServiceImpl implements Service
       return new RtmLists( response );
    }
    
-
-
+   
+   
    public RtmList lists_getList( String listName ) throws ServiceException
    {
       RtmLists fullList = lists_getList();
@@ -397,15 +398,15 @@ public class ServiceImpl implements Service
       return null;
    }
    
-
-
+   
+   
    public void lists_setDefaultList()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmList > lists_setName( String timelineId,
                                                    String listId,
                                                    String newName ) throws ServiceException
@@ -422,29 +423,29 @@ public class ServiceImpl implements Service
       return newListResult( timelineId, elt );
    }
    
-
-
+   
+   
    public void lists_unarchive()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void reflection_getMethodInfo()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void reflection_getMethods()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public RtmSettings settings_getList() throws ServiceException
    {
       Element response = invoker.invoke( new Param( "method",
@@ -456,8 +457,8 @@ public class ServiceImpl implements Service
       return new RtmSettings( response );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_add( String timelineId,
                                                    String listId,
                                                    String name ) throws ServiceException
@@ -483,15 +484,15 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public void tasks_addTags()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_complete( String timelineId,
                                                         String listId,
                                                         String taskSeriesId,
@@ -512,8 +513,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_uncomplete( String timelineId,
                                                           String listId,
                                                           String taskSeriesId,
@@ -533,8 +534,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_delete( String timelineId,
                                                       String listId,
                                                       String taskSeriesId,
@@ -554,8 +555,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public RtmTasks tasks_getList( String listId, String filter, Date lastSync ) throws ServiceException
    {
       Set< Param > params = new HashSet< Param >();
@@ -577,8 +578,8 @@ public class ServiceImpl implements Service
       return new RtmTasks( invoker.invoke( params.toArray( new Param[ params.size() ] ) ) );
    }
    
-
-
+   
+   
    public RtmTaskSeries tasks_getTask( String taskSeriesId,
                                        String taskName,
                                        String listId ) throws ServiceException
@@ -599,15 +600,15 @@ public class ServiceImpl implements Service
       return RtmTaskSeries.findTask( taskSeriesId, rtmTasks );
    }
    
-
-
+   
+   
    public RtmTaskSeries tasks_getTask( String taskName ) throws ServiceException
    {
       return tasks_getTask( null, taskName, null );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_movePriority( String timelineId,
                                                             String listId,
                                                             String taskSeriesId,
@@ -630,8 +631,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_moveTo( String timelineId,
                                                       String fromListId,
                                                       String toListId,
@@ -653,8 +654,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_postpone( String timelineId,
                                                         String listId,
                                                         String taskSeriesId,
@@ -674,15 +675,15 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public void tasks_removeTags()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_setDueDate( String timelineId,
                                                           String listId,
                                                           String taskSeriesId,
@@ -721,8 +722,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_setEstimate( String timelineId,
                                                            String listId,
                                                            String taskSeriesId,
@@ -744,8 +745,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_setName( String timelineId,
                                                        String listId,
                                                        String taskSeriesId,
@@ -767,8 +768,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_setPriority( String timelineId,
                                                            String listId,
                                                            String taskSeriesId,
@@ -791,8 +792,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_setRecurrence( String timelineId,
                                                              String listId,
                                                              String taskSeriesId,
@@ -824,8 +825,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_setTags( String timelineId,
                                                        String listId,
                                                        String taskSeriesId,
@@ -849,8 +850,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_setLocation( String timelineId,
                                                            String listId,
                                                            String taskSeriesId,
@@ -883,8 +884,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskList > tasks_setURL( String timelineId,
                                                       String listId,
                                                       String taskSeriesId,
@@ -906,8 +907,8 @@ public class ServiceImpl implements Service
       return newTaskResult( timelineId, elt );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskNote > tasks_notes_add( String timelineId,
                                                          String listId,
                                                          String taskSeriesId,
@@ -922,8 +923,10 @@ public class ServiceImpl implements Service
                                           new Param( "taskseries_id",
                                                      taskSeriesId ),
                                           new Param( "task_id", taskId ),
-                                          new Param( "note_title", title ),
-                                          new Param( "note_text", text ),
+                                          new Param( "note_title",
+                                                     Strings.emptyIfNull( title ) ),
+                                          new Param( "note_text",
+                                                     Strings.emptyIfNull( text ) ),
                                           new Param( "auth_token",
                                                      currentAuthToken ),
                                           new Param( "api_key",
@@ -931,8 +934,8 @@ public class ServiceImpl implements Service
       return newNoteResult( timelineId, elt, null, taskSeriesId );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskNote > tasks_notes_delete( String timelineId,
                                                             String taskSeriesId,
                                                             String noteId ) throws ServiceException
@@ -948,8 +951,8 @@ public class ServiceImpl implements Service
       return newNoteResult( timelineId, elt, noteId, taskSeriesId );
    }
    
-
-
+   
+   
    public TimeLineResult< RtmTaskNote > tasks_notes_edit( String timelineId,
                                                           String taskSeriesId,
                                                           String noteId,
@@ -969,36 +972,36 @@ public class ServiceImpl implements Service
       return newNoteResult( timelineId, elt, noteId, taskSeriesId );
    }
    
-
-
+   
+   
    public void test_echo()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void test_login()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void time_convert()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void time_parse()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public RtmTimeline timelines_create() throws ServiceException
    {
       return new RtmTimeline( invoker.invoke( new Param( "method",
@@ -1010,15 +1013,15 @@ public class ServiceImpl implements Service
                               this );
    }
    
-
-
+   
+   
    public void timezones_getList()
    {
       throw new UnsupportedOperationException( "Not supported yet." );
    }
    
-
-
+   
+   
    public void transactions_undo( String timeline, String transactionId ) throws ServiceException
    {
       invoker.invoke( new Param( "method", "rtm.transactions.undo" ),
@@ -1028,8 +1031,8 @@ public class ServiceImpl implements Service
                       new Param( "transaction_id ", transactionId ) );
    }
    
-
-
+   
+   
    public List< RtmLocation > locations_getList() throws ServiceException
    {
       Element result = invoker.invoke( new Param( "method",
@@ -1047,8 +1050,8 @@ public class ServiceImpl implements Service
       return locations;
    }
    
-
-
+   
+   
    private final static TimeLineResult< RtmTaskList > newTaskResult( String timelineId,
                                                                      Element elt ) throws ServiceException
    {
@@ -1102,8 +1105,8 @@ public class ServiceImpl implements Service
       }
    }
    
-
-
+   
+   
    private final static TimeLineResult< RtmTaskNote > newNoteResult( String timelineId,
                                                                      Element elt,
                                                                      String noteId,
@@ -1161,8 +1164,8 @@ public class ServiceImpl implements Service
       }
    }
    
-
-
+   
+   
    private final static TimeLineResult< RtmList > newListResult( String timelineId,
                                                                  Element elt ) throws ServiceException
    {

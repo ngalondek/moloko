@@ -72,7 +72,7 @@ public final class RtmTasksSync
       public final RtmTaskList taskList;
       
       
-
+      
       public AddTaskResult( int responseCode, RtmTaskList taskList )
       {
          this.responseCode = responseCode;
@@ -81,7 +81,7 @@ public final class RtmTasksSync
    }
    
    
-
+   
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       TimeLineFactory timeLineFactory,
@@ -123,19 +123,12 @@ public final class RtmTasksSync
             local_SyncTaskList = new SyncRtmTaskList( tasks );
       }
       
-      SyncRtmTaskList server_SyncTaskList = null;
+      final SyncRtmTaskList server_SyncTaskList = getServerTasksList( service,
+                                                                      lastSync,
+                                                                      syncResult );
+      if ( server_SyncTaskList == null )
       {
-         try
-         {
-            final RtmTasks tasks = service.tasks_getList( null, null, lastSync );
-            server_SyncTaskList = new SyncRtmTaskList( tasks );
-         }
-         catch ( ServiceException e )
-         {
-            Log.e( TAG, "Getting server lists failed.", e );
-            handleResponseCode( syncResult, e );
-            return false;
-         }
+         return false;
       }
       
       if ( timeLineFactory != null )
@@ -220,8 +213,31 @@ public final class RtmTasksSync
                                        syncResult );
    }
    
-
-
+   
+   
+   public static SyncRtmTaskList getServerTasksList( Service service,
+                                                     Date lastSync,
+                                                     MolokoSyncResult syncResult )
+   {
+      SyncRtmTaskList server_SyncTaskList = null;
+      {
+         try
+         {
+            final RtmTasks tasks = service.tasks_getList( null, null, lastSync );
+            server_SyncTaskList = new SyncRtmTaskList( tasks );
+         }
+         catch ( ServiceException e )
+         {
+            Log.e( TAG, "Getting server lists failed.", e );
+            handleResponseCode( syncResult, e );
+            return null;
+         }
+      }
+      return server_SyncTaskList;
+   }
+   
+   
+   
    private static void sendNewTasks( Service service,
                                      RtmProvider provider,
                                      TimeLineFactory timeLineFactory,
@@ -260,8 +276,8 @@ public final class RtmTasksSync
       }
    }
    
-
-
+   
+   
    private final static RtmTaskList sendTask( Service service,
                                               RtmProvider provider,
                                               RtmTimeline timeline,
@@ -331,8 +347,8 @@ public final class RtmTasksSync
       return res.taskList;
    }
    
-
-
+   
+   
    private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmTaskList > > serverOps,
                                                     SyncRtmTaskList serverList ) throws ServiceException
@@ -359,8 +375,8 @@ public final class RtmTasksSync
       }
    }
    
-
-
+   
+   
    private final static AddTaskResult addTask( RtmTimeline timeline,
                                                String name,
                                                String listId )
@@ -390,8 +406,8 @@ public final class RtmTasksSync
       return new AddTaskResult( respCode, taskList );
    }
    
-
-
+   
+   
    private final static void handleResponseCode( MolokoSyncResult syncResult,
                                                  ServiceException e )
    {

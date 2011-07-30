@@ -139,16 +139,16 @@ public class Invoker
          super( wrapped );
       }
       
-
-
+      
+      
       @Override
       public InputStream getContent() throws IOException
       {
          return new GZIPInputStream( wrappedEntity.getContent() );
       }
       
-
-
+      
+      
       @Override
       public long getContentLength()
       {
@@ -157,7 +157,7 @@ public class Invoker
    }
    
    
-
+   
    public Invoker( String serverHostName, int serverPortNumber,
       String serviceRelativeUri, ProxySettings proxySettings, boolean useHttp,
       ApplicationInfo applicationInfo ) throws ServiceInternalException
@@ -231,8 +231,8 @@ public class Invoker
       }
    }
    
-
-
+   
+   
    private StringBuffer computeRequestUri( Param... params ) throws ServiceInternalException
    {
       final StringBuffer requestUri = new StringBuffer( serviceRelativeUri );
@@ -242,18 +242,21 @@ public class Invoker
       }
       for ( Param param : params )
       {
-         try
+         if ( param != null )
          {
-            requestUri.append( param.getName() )
-                      .append( "=" )
-                      .append( URLEncoder.encode( param.getValue(), ENCODING ) )
-                      .append( "&" );
-         }
-         catch ( Exception exception )
-         {
-            final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
-            Log.e( TAG, message.toString(), exception );
-            throw new ServiceInternalException( message.toString() );
+            try
+            {
+               requestUri.append( param.getName() )
+                         .append( "=" )
+                         .append( URLEncoder.encode( param.getValue(), ENCODING ) )
+                         .append( "&" );
+            }
+            catch ( Exception exception )
+            {
+               final StringBuffer message = new StringBuffer( "Cannot encode properly the HTTP GET request URI: cannot execute query" );
+               Log.e( TAG, message.toString(), exception );
+               throw new ServiceInternalException( message.toString() );
+            }
          }
       }
       requestUri.append( API_SIG_PARAM )
@@ -262,8 +265,8 @@ public class Invoker
       return requestUri;
    }
    
-
-
+   
+   
    public Element invoke( Param... params ) throws ServiceException
    {
       final long timeSinceLastInvocation = System.currentTimeMillis()
@@ -426,8 +429,8 @@ public class Invoker
       return result;
    }
    
-
-
+   
+   
    final String calcApiSig( Param... params ) throws ServiceInternalException
    {
       try
@@ -450,8 +453,8 @@ public class Invoker
       }
    }
    
-
-
+   
+   
    private static String convertToHex( byte[] data )
    {
       StringBuffer buf = new StringBuffer();

@@ -39,14 +39,14 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
@@ -89,7 +89,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public final Bundle configuration;
       
       
-
+      
       public AsyncFillListResult( List< ListTask > tasks, IFilter filter,
          Bundle configuration )
       {
@@ -99,29 +99,29 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
+   
    protected class AsyncFillList extends
             AsyncTask< ContentResolver, Void, AsyncFillListResult >
    {
       private final Bundle configuration;
       
       
-
+      
       public AsyncFillList( Bundle configuration )
       {
          this.configuration = configuration;
       }
       
-
-
+      
+      
       @Override
       protected void onPreExecute()
       {
          beforeQueryTasksAsync( configuration );
       }
       
-
-
+      
+      
       @Override
       protected AsyncFillListResult doInBackground( ContentResolver... params )
       {
@@ -131,8 +131,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          return queryTasksAsync( params[ 0 ], configuration );
       }
       
-
-
+      
+      
       @Override
       protected void onPostExecute( AsyncFillListResult result )
       {
@@ -152,7 +152,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
+   
    protected class ClearAndAsyncFillList extends AsyncFillList
    {
       public ClearAndAsyncFillList( Bundle configuration )
@@ -160,8 +160,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          super( configuration );
       }
       
-
-
+      
+      
       @Override
       protected void onPreExecute()
       {
@@ -200,7 +200,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       public final static int EDIT_MULTIPLE_TASKS = START_IDX + 4;
    }
    
-
+   
    protected static class CtxtMenu
    {
       public final static int OPEN_TASK = 1;
@@ -255,7 +255,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
    };
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -289,8 +289,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       onNewIntent( getIntent() );
    }
    
-
-
+   
+   
    @Override
    protected void onStop()
    {
@@ -304,8 +304,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       UIUtils.showTitleBarAddTask( this, false );
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -318,8 +318,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       TasksProviderPart.unregisterContentObserver( this, dbObserver );
    }
    
-
-
+   
+   
    @Override
    protected void onNewIntent( Intent intent )
    {
@@ -329,8 +329,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       handleIntent( intent );
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -338,8 +338,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       outState.putAll( getIntent().getExtras() );
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle state )
    {
@@ -353,8 +353,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -366,8 +366,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       return addOptionsMenuIntents( menu );
    }
    
-
-
+   
+   
    @Override
    public boolean onPrepareOptionsMenu( Menu menu )
    {
@@ -400,8 +400,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -415,15 +415,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                                                   this )
                                            .setNegativeButton( R.string.btn_cancel,
                                                                this )
-                                           .show();
+                                           .show()
+                                           .setOwnerActivity( this );
             return true;
          default :
             return super.onOptionsItemSelected( item );
       }
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -468,7 +469,7 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       
       // If the list name was in the filter then we are in one list only. So no need to
       // open it again.
-      if ( !(filter instanceof RtmSmartFilter)
+      if ( !( filter instanceof RtmSmartFilter )
          || !RtmSmartFilterParsing.hasOperatorAndValue( ( (RtmSmartFilter) filter ).getTokens(),
                                                         RtmSmartFilterLexer.OP_LIST,
                                                         task.getListName(),
@@ -519,8 +520,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                                      notesCount ) );
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
@@ -574,16 +575,16 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    protected void onListItemClick( ListView l, View v, int position, long id )
    {
       onTaskClicked( position );
    }
    
-
-
+   
+   
    public void onClick( DialogInterface dialog, int which )
    {
       if ( dialog instanceof MultiChoiceDialog )
@@ -679,8 +680,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    public void onClick( View view )
    {
       if ( view.getId() == R.id.tags_layout_btn_tag )
@@ -689,44 +690,44 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    public void onTaskClicked( int pos )
    {
       startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-
-
+   
+   
    public void onTaskClicked( View view )
    {
       onTaskClicked( getListView().getPositionForView( view ) );
    }
    
-
-
+   
+   
    private void onTaskEdit( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-
-
+   
+   
    private void onTaskComplete( int pos )
    {
       final ListTask task = getTask( pos );
       TaskEditUtils.setTaskCompletion( this, task, task.getCompleted() == null );
    }
    
-
-
+   
+   
    private void onTaskPostpone( int pos )
    {
       TaskEditUtils.postponeTask( this, getTask( pos ) );
    }
    
-
-
+   
+   
    private void onTaskDelete( int pos )
    {
       final ListTask task = getTask( pos );
@@ -740,8 +741,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }, null ).show();
    }
    
-
-
+   
+   
    public void onListNameClicked( View view )
    {
       final int pos = getListView().getPositionForView( view );
@@ -758,8 +759,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    public void onTagClicked( View view )
    {
       final TextView tagCtrl = (TextView) view;
@@ -767,30 +768,30 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       onTagClicked( tagCtrl.getText() );
    }
    
-
-
+   
+   
    public void onTagClicked( CharSequence tag )
    {
       startActivity( Intents.createOpenTagIntent( this, tag.toString() ) );
    }
    
-
-
+   
+   
    public void gotoLocation( int pos )
    {
       LocationChooser.showChooser( this, getTask( pos ).getLocationName(), true );
    }
    
-
-
+   
+   
    public void onLocationClicked( int pos )
    {
       startActivity( Intents.createOpenLocationIntentByName( this,
                                                              getTask( pos ).getLocationName() ) );
    }
    
-
-
+   
+   
    public void onLocationClicked( View view )
    {
       final TextView location = (TextView) view;
@@ -799,8 +800,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                                                      .toString() ) );
    }
    
-
-
+   
+   
    public void openMultipleTags( List< String > tags )
    {
       final ArrayList< CharSequence > tmp = new ArrayList< CharSequence >();
@@ -818,8 +819,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
                                               .show();
    }
    
-
-
+   
+   
    public void openNotes( int position, String startNoteId )
    {
       final ListTask task = getTask( position );
@@ -844,8 +845,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldVlaues )
    {
@@ -868,8 +869,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    /**
     * Note: This will run in the GUI thread.
     */
@@ -878,39 +879,39 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       UIUtils.setTitle( AbstractTasksListActivity.this, R.string.phr_loading );
    }
    
-
-
+   
+   
    /**
     * Note: This will run in a background thread.
     */
    abstract protected AsyncFillListResult queryTasksAsync( ContentResolver contentResolver,
                                                            Bundle configuration );
    
-
-
+   
+   
    /**
     * Note: This will run in the GUI thread.
     */
    abstract protected void setTasksResult( AsyncFillListResult result );
    
-
-
+   
+   
    abstract protected ListAdapter createListAdapter( AsyncFillListResult result );
    
-
-
+   
+   
    abstract protected void handleIntent( Intent intent );
    
-
-
+   
+   
    protected void clearList( View emptyView )
    {
       setListAdapter( createListAdapter( null ) );
       switchEmptyView( emptyView );
    }
    
-
-
+   
+   
    protected void fillListAsync()
    {
       handler.post( new Runnable()
@@ -929,8 +930,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       } );
    }
    
-
-
+   
+   
    private boolean addOptionsMenuIntents( Menu menu )
    {
       boolean ok = true;
@@ -947,15 +948,15 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       return ok;
    }
    
-
-
+   
+   
    protected void updateTitleBar( TitleBarLayout titleBar )
    {
       
    }
    
-
-
+   
+   
    private static void updateTitleBarSmartFilter( IFilter filter,
                                                   TitleBarLayout titleBar )
    {
@@ -963,37 +964,37 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          titleBar.setAddTaskFilter( (RtmSmartFilter) filter );
    }
    
-
-
+   
+   
    protected final ListTask getTask( int pos )
    {
       return (ListTask) getListAdapter().getItem( pos );
    }
    
-
-
+   
+   
    protected int getTaskSortValue( int idx )
    {
       return TaskSortPreference.getValueOfIndex( idx );
    }
    
-
-
+   
+   
    protected int getTaskSortIndex( int value )
    {
       return TaskSortPreference.getIndexOfValue( value );
    }
    
-
-
+   
+   
    protected int getTaskSort()
    {
       return getIntent().getIntExtra( TASK_SORT_ORDER,
                                       Settings.TASK_SORT_DEFAULT );
    }
    
-
-
+   
+   
    protected void setTaskSort( int taskSort, boolean refillList )
    {
       getIntent().putExtra( TASK_SORT_ORDER, taskSort );
@@ -1002,15 +1003,15 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
          fillListAsync();
    }
    
-
-
+   
+   
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
       return getTaskSort() == sortOrder;
    }
    
-
-
+   
+   
    protected void addOptionalMenuItem( Menu menu,
                                        int id,
                                        String title,
@@ -1021,8 +1022,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       addOptionalMenuItem( menu, id, title, order, iconId, null, show );
    }
    
-
-
+   
+   
    protected void addOptionalMenuItem( Menu menu,
                                        int id,
                                        String title,
@@ -1054,8 +1055,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    protected void switchEmptyView( View newEmptyView )
    {
       final View currentView = getListView().getEmptyView();
@@ -1073,8 +1074,8 @@ public abstract class AbstractTasksListActivity extends ListActivity implements
       }
    }
    
-
-
+   
+   
    protected void showError( CharSequence text )
    {
       final View errorView = findViewById( R.id.taskslist_activity_error );

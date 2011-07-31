@@ -61,7 +61,7 @@ public class LocationChooser
    private final static String TAG = "Moloko."
       + LocationChooser.class.getSimpleName();
    
-   private final Activity context;
+   private final Activity activity;
    
    private ArrayList< Pair< Intent, ResolveInfo > > resolvedIntents;
    
@@ -120,7 +120,7 @@ public class LocationChooser
 
    public LocationChooser( Activity context, Task task )
    {
-      this.context = context;
+      this.activity = context;
       setIntents( task.getLongitude(),
                   task.getLatitude(),
                   task.getZoom(),
@@ -131,7 +131,7 @@ public class LocationChooser
 
    public LocationChooser( Activity context, RtmLocation location )
    {
-      this.context = context;
+      this.activity = context;
       setIntents( location.longitude,
                   location.latitude,
                   location.zoom,
@@ -143,7 +143,7 @@ public class LocationChooser
    public LocationChooser( Activity context, float lon, float lat, int zoom,
       String address )
    {
-      this.context = context;
+      this.activity = context;
       setIntents( lon, lat, zoom, address );
    }
    
@@ -151,7 +151,7 @@ public class LocationChooser
 
    public LocationChooser( Activity context, Intent[] intents )
    {
-      this.context = context;
+      this.activity = context;
       resolveLocationIntents( intents );
    }
    
@@ -166,9 +166,9 @@ public class LocationChooser
 
    public void showChooser()
    {
-      final AlertDialog.Builder builder = new AlertDialog.Builder( context );
+      final AlertDialog.Builder builder = new AlertDialog.Builder( activity );
       builder.setTitle( R.string.task_dlg_choose_location_app );
-      builder.setAdapter( new Adapter( context,
+      builder.setAdapter( new Adapter( activity,
                                        R.layout.location_chooser_listitem,
                                        resolvedIntents ), new OnClickListener()
       {
@@ -181,13 +181,13 @@ public class LocationChooser
             intent.setComponent( new ComponentName( info.activityInfo.packageName,
                                                     info.activityInfo.name ) );
             
-            context.startActivity( intent );
+            activity.startActivity( intent );
          }
       } );
       
       AlertDialog dialog = builder.create();
       
-      dialog.setOwnerActivity( context );
+      dialog.setOwnerActivity( activity );
       dialog.show();
    }
    
@@ -269,7 +269,7 @@ public class LocationChooser
    {
       resolvedIntents = new ArrayList< Pair< Intent, ResolveInfo > >();
       
-      final PackageManager pm = context.getPackageManager();
+      final PackageManager pm = activity.getPackageManager();
       final ResolveInfo.DisplayNameComparator cmp = new ResolveInfo.DisplayNameComparator( pm );
       
       for ( int i = 0; i < intents.length; i++ )

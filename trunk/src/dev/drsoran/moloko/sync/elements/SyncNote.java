@@ -43,6 +43,7 @@ import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoteServerSyncOperation;
+import dev.drsoran.moloko.sync.operation.ServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 import dev.drsoran.moloko.sync.util.SyncProperties;
@@ -76,7 +77,7 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
    private final RtmTaskNote note;
    
    
-
+   
    public SyncNote( RtmTaskSeries taskSeries, RtmTaskNote note )
    {
       if ( note == null )
@@ -89,79 +90,79 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
       this.note = note;
    }
    
-
-
+   
+   
    public String getId()
    {
       return note.getId();
    }
    
-
-
+   
+   
    public String getTaskSeriesId()
    {
       return note.getTaskSeriesId();
    }
    
-
-
+   
+   
    public String getTaskId()
    {
       return taskSeries != null ? taskSeries.getTasks().get( 0 ).getId() : null;
    }
    
-
-
+   
+   
    public String getListId()
    {
       return taskSeries != null ? taskSeries.getListId() : null;
    }
    
-
-
+   
+   
    public Date getCreatedDate()
    {
       return note.getCreatedDate();
    }
    
-
-
+   
+   
    public Date getModifiedDate()
    {
       return note.getModifiedDate();
    }
    
-
-
+   
+   
    public Date getDeletedDate()
    {
       return note.getDeletedDate();
    }
    
-
-
+   
+   
    public String getTitle()
    {
       return note.getTitle();
    }
    
-
-
+   
+   
    public String getText()
    {
       return note.getText();
    }
    
-
-
+   
+   
    public boolean hasModification( ModificationSet modificationSet )
    {
       return modificationSet.hasModification( Queries.contentUriWithId( Notes.CONTENT_URI,
                                                                         note.getId() ) );
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ContentProviderOperation.newInsert( Notes.CONTENT_URI )
@@ -171,8 +172,8 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
                                          .build();
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation handleAfterServerInsert( SyncNote serverElement )
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
@@ -197,8 +198,8 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
       return operation.build();
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( SyncNote serverElement )
    {
       if ( !note.getId().equals( serverElement.note.getId() ) )
@@ -238,8 +239,8 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
       return result.build();
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       return ContentProviderSyncOperation.newDelete( ContentProviderOperation.newDelete( Queries.contentUriWithId( Notes.CONTENT_URI,
@@ -248,13 +249,13 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
                                          .build();
    }
    
-
-
+   
+   
    public IServerSyncOperation< RtmTaskNote > computeServerUpdateOperation( RtmTimeline timeline,
                                                                             ModificationSet modifications,
                                                                             SyncNote serverElement )
    {
-      NoteServerSyncOperation.Builder< RtmTaskNote > operation = NoteServerSyncOperation.newUpdate();
+      ServerSyncOperation.Builder< RtmTaskNote > operation = ServerSyncOperation.newUpdate();
       
       // In case we have no server element (incremental sync)
       if ( serverElement == null )
@@ -297,12 +298,12 @@ public class SyncNote implements IContentProviderSyncable< SyncNote >,
       return operation.build( NoteServerSyncOperation.class );
    }
    
-
-
+   
+   
    public IServerSyncOperation< RtmTaskNote > computeServerDeleteOperation( RtmTimeline timeLine )
    {
-      return NoteServerSyncOperation.newDelete( timeLine.tasks_notes_delete( note.getTaskSeriesId(),
-                                                                             note.getId() ) )
-                                    .build( NoteServerSyncOperation.class );
+      return ServerSyncOperation.newDelete( timeLine.tasks_notes_delete( note.getTaskSeriesId(),
+                                                                         note.getId() ) )
+                                .build( NoteServerSyncOperation.class );
    }
 }

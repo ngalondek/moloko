@@ -56,7 +56,7 @@ public class NoteEditActivity extends AbstractNoteActivity
    private EditText text;
    
    
-
+   
    @Override
    protected void onCreate( Bundle savedInstanceState )
    {
@@ -77,8 +77,8 @@ public class NoteEditActivity extends AbstractNoteActivity
       }
    }
    
-
-
+   
+   
    public void onDone( View v )
    {
       if ( hasChanged() )
@@ -89,10 +89,8 @@ public class NoteEditActivity extends AbstractNoteActivity
             {
                final boolean ok = NoteEditUtils.setNoteTitleAndText( NoteEditActivity.this,
                                                                      getNote().getId(),
-                                                                     Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) )
-                                                                            .toString(),
-                                                                     Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) )
-                                                                            .toString() );
+                                                                     Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
+                                                                     Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
                setResult( ok ? RESULT_EDIT_NOTE_CHANGED
                             : RESULT_EDIT_NOTE_FAILED );
                finish();
@@ -109,8 +107,8 @@ public class NoteEditActivity extends AbstractNoteActivity
       }
    }
    
-
-
+   
+   
    public void onCancel( View v )
    {
       if ( hasChanged() )
@@ -131,16 +129,16 @@ public class NoteEditActivity extends AbstractNoteActivity
       }
    }
    
-
-
+   
+   
    @Override
    public void onBackPressed()
    {
       onCancel( null );
    }
    
-
-
+   
+   
    @Override
    protected void displayNote( RtmTaskNote note )
    {
@@ -150,8 +148,8 @@ public class NoteEditActivity extends AbstractNoteActivity
       text.setText( note.getText() );
    }
    
-
-
+   
+   
    private boolean hasChanged()
    {
       final RtmTaskNote note = getNote();

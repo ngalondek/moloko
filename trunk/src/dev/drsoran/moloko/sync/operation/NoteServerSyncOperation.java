@@ -22,47 +22,13 @@
 
 package dev.drsoran.moloko.sync.operation;
 
-import java.util.Collections;
-
 import com.mdt.rtm.data.RtmTaskNote;
-
-import dev.drsoran.moloko.sync.elements.SyncNote;
-import dev.drsoran.moloko.sync.elements.SyncRtmTaskNotesList;
 
 
 public class NoteServerSyncOperation extends ServerSyncOperation< RtmTaskNote >
 {
-   private SyncRtmTaskNotesList resultList;
-   
-   
-
    public NoteServerSyncOperation( Builder< RtmTaskNote > builder )
    {
       super( builder );
-   }
-   
-
-
-   @Override
-   protected RtmTaskNote handleResultElement( RtmTaskNote resultElement )
-   {
-      final RtmTaskNote result = super.handleResultElement( resultElement );
-      
-      if ( result != null )
-      {
-         if ( resultList == null )
-         {
-            resultList = new SyncRtmTaskNotesList( Collections.singletonList( result ) );
-         }
-         else
-         {
-            // Finally we want to have one list with RtmTaskNotes containing
-            // all changes from all server operations. So we merge the current
-            // change to the final resultList.
-            resultList.update( new SyncNote( null, result ) );
-         }
-      }
-      
-      return result;
    }
 }

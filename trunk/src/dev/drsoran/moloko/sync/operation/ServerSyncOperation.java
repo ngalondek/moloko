@@ -61,22 +61,22 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       private final Map< TimeLineMethod< T >, List< Modification > > methods = new HashMap< TimeLineMethod< T >, List< Modification > >();
       
       
-
+      
       public Builder( Op operationType )
       {
          this.operationType = operationType;
       }
       
-
-
+      
+      
       public Builder( Builder< T > other )
       {
          this.operationType = other.operationType;
          this.methods.putAll( other.methods );
       }
       
-
-
+      
+      
       public Builder( Op operationType, TimeLineMethod< T > method,
          Modification modification )
       {
@@ -84,8 +84,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          add( method, modification );
       }
       
-
-
+      
+      
       public Builder< T > add( TimeLineMethod< T > method )
       {
          if ( method == null )
@@ -95,8 +95,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          return this;
       }
       
-
-
+      
+      
       public Builder< T > add( TimeLineMethod< T > method,
                                Modification modification )
       {
@@ -107,8 +107,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          return this;
       }
       
-
-
+      
+      
       public Builder< T > add( TimeLineMethod< T > method,
                                List< Modification > modifications )
       {
@@ -119,8 +119,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          return this;
       }
       
-
-
+      
+      
       public Builder< T > add( IServerSyncOperation< T > operation )
       {
          if ( !( operation instanceof INoopSyncOperation ) )
@@ -133,16 +133,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
          return this;
       }
       
-
-
-      @SuppressWarnings( "unchecked" )
-      public IServerSyncOperation< T > build()
-      {
-         return build( ServerSyncOperation.class );
-      }
       
-
-
+      
       public < O extends IServerSyncOperation< T >> IServerSyncOperation< T > build( Class< O > opType )
       {
          if ( methods.size() == 0 )
@@ -194,15 +186,15 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
    private List< TimeLineResult.Transaction > transactions;
    
    
-
-   protected ServerSyncOperation( Builder< T > builder )
+   
+   public ServerSyncOperation( Builder< T > builder )
    {
       this.operationType = builder.operationType;
       this.serviceMethods = new HashMap< TimeLineMethod< T >, List< Modification > >( builder.methods );
    }
    
-
-
+   
+   
    public T execute( RtmProvider rtmProvider ) throws ServiceException
    {
       transactions = new LinkedList< TimeLineResult.Transaction >();
@@ -278,8 +270,8 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       return resultElement;
    }
    
-
-
+   
+   
    public List< TimeLineResult.Transaction > revert( Service service )
    {
       if ( transactions == null )
@@ -308,29 +300,29 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       return Collections.unmodifiableList( transactions );
    }
    
-
-
+   
+   
    public Op getOperationType()
    {
       return operationType;
    }
    
-
-
+   
+   
    public Map< TimeLineMethod< T >, List< Modification > > getMethods()
    {
       return this.serviceMethods;
    }
    
-
-
+   
+   
    protected T handleResultElement( T resultElement )
    {
       return resultElement;
    }
    
-
-
+   
+   
    public final static < T > Builder< T > fromType( ISyncOperation.Op type )
    {
       switch ( type )
@@ -346,66 +338,66 @@ public class ServerSyncOperation< T > implements IServerSyncOperation< T >
       }
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newInsert()
    {
       return new Builder< T >( Op.INSERT );
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newInsert( IServerSyncOperation< T > operation )
    {
       return new Builder< T >( Op.INSERT ).add( operation );
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newInsert( TimeLineMethod< T > method,
                                                      Modification modification )
    {
       return new Builder< T >( Op.INSERT, method, modification );
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newUpdate()
    {
       return new Builder< T >( Op.UPDATE );
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newUpdate( IServerSyncOperation< T > operation )
    {
       return new Builder< T >( Op.UPDATE ).add( operation );
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newUpdate( TimeLineMethod< T > method,
                                                      Modification modification )
    {
       return new Builder< T >( Op.UPDATE, method, modification );
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newDelete()
    {
       return new Builder< T >( Op.DELETE );
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newDelete( IServerSyncOperation< T > operation )
    {
       return new Builder< T >( Op.DELETE ).add( operation );
    }
    
-
-
+   
+   
    public final static < T > Builder< T > newDelete( TimeLineMethod< T > method )
    {
       return new Builder< T >( Op.DELETE, method, null );

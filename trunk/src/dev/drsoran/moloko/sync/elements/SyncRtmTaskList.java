@@ -42,7 +42,7 @@ public class SyncRtmTaskList
       < T > void perform( List< T > list, Comparator< ? super T > cmp );
    }
    
-
+   
    private static enum GetMode implements IGetModeAction
    {
       AS_IS
@@ -73,14 +73,14 @@ public class SyncRtmTaskList
    private final List< RtmTaskSeries > series;
    
    
-
+   
    public SyncRtmTaskList()
    {
       series = new ArrayList< RtmTaskSeries >();
    }
    
-
-
+   
+   
    public SyncRtmTaskList( List< RtmTaskSeries > taskSeries )
    {
       if ( taskSeries == null )
@@ -91,15 +91,15 @@ public class SyncRtmTaskList
       Collections.sort( series, LESS_ID );
    }
    
-
-
+   
+   
    public SyncRtmTaskList( RtmTaskList taskList )
    {
       this( taskList.getSeries() );
    }
    
-
-
+   
+   
    public SyncRtmTaskList( RtmTasks tasks )
    {
       if ( tasks == null )
@@ -112,8 +112,8 @@ public class SyncRtmTaskList
             this.series.add( series );
    }
    
-
-
+   
+   
    public List< InSyncRtmTaskSeries > getInSyncTasksSeries()
    {
       final List< InSyncRtmTaskSeries > res = new ArrayList< InSyncRtmTaskSeries >( series.size() );
@@ -126,15 +126,15 @@ public class SyncRtmTaskList
       return res;
    }
    
-
-
+   
+   
    public List< OutSyncTask > getOutSyncTasks()
    {
       return getOutSyncTasks( OutSyncTask.LESS_ID );
    }
    
-
-
+   
+   
    public List< OutSyncTask > getOutSyncTasks( Comparator< ? super OutSyncTask > cmp )
    {
       final List< OutSyncTask > res = new LinkedList< OutSyncTask >();
@@ -149,8 +149,8 @@ public class SyncRtmTaskList
       return res;
    }
    
-
-
+   
+   
    public SyncRtmTaskNotesList getSyncNotesList()
    {
       final SyncRtmTaskNotesList res = new SyncRtmTaskNotesList();
@@ -162,8 +162,20 @@ public class SyncRtmTaskList
       return res;
    }
    
-
-
+   
+   
+   public List< String > getTaskSeriesIds()
+   {
+      final List< String > res = new ArrayList< String >( series.size() );
+      
+      for ( RtmTaskSeries taskSeries : series )
+         res.add( taskSeries.getId() );
+      
+      return res;
+   }
+   
+   
+   
    public void remove( RtmTaskSeries taskSeries )
    {
       final int pos = Collections.binarySearch( series, taskSeries, LESS_ID );
@@ -172,22 +184,22 @@ public class SyncRtmTaskList
          series.remove( pos );
    }
    
-
-
+   
+   
    public RtmTaskSeries get( int location )
    {
       return series.get( location );
    }
    
-
-
+   
+   
    public int size()
    {
       return series.size();
    }
    
-
-
+   
+   
    public void update( RtmTaskList taskList )
    {
       if ( taskList == null )
@@ -211,15 +223,15 @@ public class SyncRtmTaskList
       }
    }
    
-
-
+   
+   
    public RtmTaskList toRtmTaskList()
    {
       return new RtmTaskList( null, series, null );
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {

@@ -29,8 +29,8 @@ import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
@@ -44,7 +44,7 @@ import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 
 public class RecurrPickerDialog extends AbstractPickerDialog
 {
-   private final Context context;
+   private final Activity activity;
    
    private AlertDialog impl;
    
@@ -57,20 +57,20 @@ public class RecurrPickerDialog extends AbstractPickerDialog
    private WheelView freqWheel;
    
    
-
-   public RecurrPickerDialog( Context context, String pattern, boolean isEvery )
+   
+   public RecurrPickerDialog( Activity activity, String pattern, boolean isEvery )
    {
-      this.context = context;
+      this.activity = activity;
       init( pattern, isEvery );
    }
    
-
-
+   
+   
    private void init( String pattern, boolean isEvery )
    {
       final Map< Integer, List< Object >> elements = RecurrenceParsing.parseRecurrencePattern( pattern );
       
-      final LayoutInflater inflater = LayoutInflater.from( context );
+      final LayoutInflater inflater = LayoutInflater.from( activity );
       container = inflater.inflate( R.layout.recurr_picker_dialog, null );
       
       // Every, After wheel
@@ -99,58 +99,59 @@ public class RecurrPickerDialog extends AbstractPickerDialog
          {
          }
          
-
-
+         
+         
          public void onScrollingFinished( WheelView wheel )
          {
             initFreqWheel( null );
          }
       } );
       
-      this.impl = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_recurrent )
-                                                    .setTitle( R.string.dlg_recurr_picker_title )
-                                                    .setView( container )
-                                                    .setPositiveButton( R.string.btn_ok,
-                                                                        new OnClickListener()
-                                                                        {
-                                                                           public void onClick( DialogInterface dialog,
-                                                                                                int which )
-                                                                           {
-                                                                              notifyOnDialogCloseListener( CloseReason.OK,
-                                                                                                           getPattern(),
-                                                                                                           Boolean.valueOf( isEvery() ) );
-                                                                           }
-                                                                        } )
-                                                    .setNegativeButton( R.string.btn_cancel,
-                                                                        new OnClickListener()
-                                                                        {
-                                                                           public void onClick( DialogInterface dialog,
-                                                                                                int which )
-                                                                           {
-                                                                              notifyOnDialogCloseListener( CloseReason.CANCELED,
-                                                                                                           null );
-                                                                           }
-                                                                        } )
-                                                    .create();
+      this.impl = new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_recurrent )
+                                                     .setTitle( R.string.dlg_recurr_picker_title )
+                                                     .setView( container )
+                                                     .setPositiveButton( R.string.btn_ok,
+                                                                         new OnClickListener()
+                                                                         {
+                                                                            public void onClick( DialogInterface dialog,
+                                                                                                 int which )
+                                                                            {
+                                                                               notifyOnDialogCloseListener( CloseReason.OK,
+                                                                                                            getPattern(),
+                                                                                                            Boolean.valueOf( isEvery() ) );
+                                                                            }
+                                                                         } )
+                                                     .setNegativeButton( R.string.btn_cancel,
+                                                                         new OnClickListener()
+                                                                         {
+                                                                            public void onClick( DialogInterface dialog,
+                                                                                                 int which )
+                                                                            {
+                                                                               notifyOnDialogCloseListener( CloseReason.CANCELED,
+                                                                                                            null );
+                                                                            }
+                                                                         } )
+                                                     .create();
+      this.impl.setOwnerActivity( activity );
    }
    
-
-
+   
+   
    @Override
    public void show()
    {
       impl.show();
    }
    
-
-
+   
+   
    public int getInterval()
    {
       return intervalWheel.getCurrentItem() + 1;
    }
    
-
-
+   
+   
    public int getFreqValue()
    {
       switch ( freqWheel.getCurrentItem() )
@@ -168,8 +169,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       }
    }
    
-
-
+   
+   
    public String getFreqValueAsString()
    {
       switch ( freqWheel.getCurrentItem() )
@@ -187,15 +188,15 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       }
    }
    
-
-
+   
+   
    public boolean isEvery()
    {
       return evAftWheel.getCurrentItem() == 0;
    }
    
-
-
+   
+   
    public String getPattern()
    {
       final StringBuilder sb = new StringBuilder();
@@ -211,19 +212,19 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       return RecurrenceParsing.ensureRecurrencePatternOrder( sb.toString() );
    }
    
-
-
+   
+   
    public String getSentence()
    {
       return RecurrenceParsing.parseRecurrencePattern( getPattern(), isEvery() );
    }
    
-
-
+   
+   
    private void initEvAftWheel( boolean isEvery )
    {
-      final Resources res = context.getResources();
-      evAftWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,
+      final Resources res = activity.getResources();
+      evAftWheel.setViewAdapter( new ArrayWheelAdapter< String >( activity,
                                                                   new String[]
                                                                   {
                                                                    res.getString( R.string.dlg_recurr_picker_every ),
@@ -231,11 +232,11 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       
    }
    
-
-
+   
+   
    private void initIntervalWheel( Integer interval )
    {
-      intervalWheel.setViewAdapter( new NumericWheelAdapter( context, 1, 999 ) );
+      intervalWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 999 ) );
       
       if ( interval != null )
          intervalWheel.setCurrentItem( interval.intValue() - 1 );
@@ -243,14 +244,14 @@ public class RecurrPickerDialog extends AbstractPickerDialog
          intervalWheel.setCurrentItem( 0 );
    }
    
-
-
+   
+   
    private void initFreqWheel( Map< Integer, List< Object >> elements )
    {
-      final Resources res = context.getResources();
+      final Resources res = activity.getResources();
       final int interval = getInterval();
       
-      freqWheel.setViewAdapter( new ArrayWheelAdapter< String >( context,
+      freqWheel.setViewAdapter( new ArrayWheelAdapter< String >( activity,
                                                                  new String[]
                                                                  {
                                                                   res.getQuantityText( R.plurals.g_year,
@@ -303,8 +304,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       }
    }
    
-
-
+   
+   
    private final static < V > V getPatternElement( Map< Integer, List< Object > > elements,
                                                    int key,
                                                    Class< V > type )

@@ -82,7 +82,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    private boolean newAccount;
    
    
-
+   
    @Override
    public void onCreate( Bundle icicle )
    {
@@ -109,8 +109,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       newAccount = getIntent().getStringExtra( AccountManager.KEY_ACCOUNT_NAME ) == null;
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -118,8 +118,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       super.onDestroy();
    }
    
-
-
+   
+   
    @Override
    protected Dialog onCreateDialog( int id )
    {
@@ -143,8 +143,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return dialog;
    }
    
-
-
+   
+   
    @Override
    public Object onRetainNonConfigurationInstance()
    {
@@ -153,8 +153,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return o;
    }
    
-
-
+   
+   
    public void onAuthenticate( View view )
    {
       messageText.setText( null );
@@ -168,26 +168,27 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
          new AlertDialog.Builder( this ).setTitle( R.string.err_not_connected )
                                         .setMessage( R.string.phr_establish_connection )
                                         .setIcon( android.R.drawable.ic_dialog_alert )
-                                        .show();
+                                        .show()
+                                        .setOwnerActivity( this );
       }
    }
    
-
-
+   
+   
    public void onCancel( View view )
    {
       finish();
    }
    
-
-
+   
+   
    public void onPreBeginAuthentication()
    {
       showDialog( 0 );
    }
    
-
-
+   
+   
    public void onPostBeginAuthentication( String loginUrl, Exception e )
    {
       if ( e != null )
@@ -213,8 +214,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    public void onPostCompleteAuthentication( String authToken,
                                              Exception exception )
    {
@@ -237,8 +238,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    public void onPostCheckAuthToken( RtmAuth rtmAuth, Exception exception )
    {
       removeDialog( 0 );
@@ -319,8 +320,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -338,8 +339,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    private void initializeGui()
    {
       if ( authenticator == null )
@@ -376,8 +377,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    private String getSelectedPermissionText()
    {
       final String[] rtmPermissions = getResources().getStringArray( R.array.rtm_permissions );
@@ -397,8 +398,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return text;
    }
    
-
-
+   
+   
    private RtmAuth.Perms getSelectedPermission()
    {
       RtmAuth.Perms perm = RtmAuth.Perms.nothing;
@@ -424,8 +425,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return perm;
    }
    
-
-
+   
+   
    private int selectPermission( String permissionValue )
    {
       int position = Spinner.INVALID_POSITION;
@@ -445,23 +446,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return position;
    }
    
-
-
+   
+   
    private String getErrorMessage( Exception exception )
    {
       return getString( R.string.auth_err_with_cause,
                         AsyncRtmAuthenticator.getExceptionCause( exception ) );
    }
    
-
-
+   
+   
    private String getErrorMessage( int resId )
    {
       return getString( R.string.auth_err_with_cause, getString( resId ) );
    }
    
-
-
+   
+   
    private void createOrReuseAuthenticator()
    {
       authenticator = (AsyncRtmAuthenticator) getLastNonConfigurationInstance();
@@ -472,8 +473,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    private void createAuthenticator()
    {
       try
@@ -487,8 +488,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    private void shutDownRtmAuthenticator()
    {
       if ( authenticator != null )

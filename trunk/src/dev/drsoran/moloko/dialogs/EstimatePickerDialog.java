@@ -26,6 +26,7 @@ import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -55,17 +56,17 @@ public class EstimatePickerDialog extends AbstractPickerDialog
    private WheelView unitWheel;
    
    
-
-   public EstimatePickerDialog( Context context )
+   
+   public EstimatePickerDialog( Activity activity )
    {
-      this( context, -1 );
+      this( activity, -1 );
    }
    
-
-
-   public EstimatePickerDialog( Context context, long initial )
+   
+   
+   public EstimatePickerDialog( Activity activity, long initial )
    {
-      this.context = context;
+      this.context = activity;
       
       final EstimateStruct estimateStruct = MolokoDateUtils.parseEstimated( initial );
       
@@ -90,21 +91,21 @@ public class EstimatePickerDialog extends AbstractPickerDialog
          unit = UNIT_MINUTE;
       }
       
-      init( context, value, unit );
+      init( activity, value, unit );
    }
    
-
-
-   private void init( final Context context, int initialValue, int unit )
+   
+   
+   private void init( final Activity activity, int initialValue, int unit )
    {
       if ( initialValue == 0 )
          initialValue = 1;
       
-      final LayoutInflater inflater = LayoutInflater.from( context );
+      final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.estimate_picker_dialog, null );
       
       numberWheel = (WheelView) view.findViewById( R.id.estimate_dlg_number_wheel );
-      numberWheel.setViewAdapter( new NumericWheelAdapter( context, 1, 999 ) );
+      numberWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 999 ) );
       numberWheel.setCurrentItem( initialValue - 1 );
       
       unitWheel = (WheelView) view.findViewById( R.id.estimate_dlg_unit_wheel );
@@ -119,8 +120,8 @@ public class EstimatePickerDialog extends AbstractPickerDialog
          {
          }
          
-
-
+         
+         
          public void onScrollingFinished( WheelView wheel )
          {
             // 0-based
@@ -129,56 +130,57 @@ public class EstimatePickerDialog extends AbstractPickerDialog
          }
       } );
       
-      this.impl = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_thumb )
-                                                    .setTitle( R.string.dlg_estimate_picker_title )
-                                                    .setView( view )
-                                                    .setPositiveButton( R.string.btn_ok,
-                                                                        new OnClickListener()
-                                                                        {
-                                                                           public void onClick( DialogInterface dialog,
-                                                                                                int which )
-                                                                           {
-                                                                              notifyOnDialogCloseListener( CloseReason.OK,
-                                                                                                           getMillis() );
-                                                                           }
-                                                                        } )
-                                                    .setNegativeButton( R.string.btn_cancel,
-                                                                        new OnClickListener()
-                                                                        {
-                                                                           public void onClick( DialogInterface dialog,
-                                                                                                int which )
-                                                                           {
-                                                                              notifyOnDialogCloseListener( CloseReason.CANCELED,
-                                                                                                           null );
-                                                                           }
-                                                                        } )
-                                                    .create();
+      this.impl = new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_thumb )
+                                                     .setTitle( R.string.dlg_estimate_picker_title )
+                                                     .setView( view )
+                                                     .setPositiveButton( R.string.btn_ok,
+                                                                         new OnClickListener()
+                                                                         {
+                                                                            public void onClick( DialogInterface dialog,
+                                                                                                 int which )
+                                                                            {
+                                                                               notifyOnDialogCloseListener( CloseReason.OK,
+                                                                                                            getMillis() );
+                                                                            }
+                                                                         } )
+                                                     .setNegativeButton( R.string.btn_cancel,
+                                                                         new OnClickListener()
+                                                                         {
+                                                                            public void onClick( DialogInterface dialog,
+                                                                                                 int which )
+                                                                            {
+                                                                               notifyOnDialogCloseListener( CloseReason.CANCELED,
+                                                                                                            null );
+                                                                            }
+                                                                         } )
+                                                     .create();
+      this.impl.setOwnerActivity( activity );
    }
    
-
-
+   
+   
    @Override
    public void show()
    {
       impl.show();
    }
    
-
-
+   
+   
    public int getValue()
    {
       return numberWheel.getCurrentItem() + 1;
    }
    
-
-
+   
+   
    public int getUnit()
    {
       return unitWheel.getCurrentItem();
    }
    
-
-
+   
+   
    public long getMillis()
    {
       long millis = 1000 * getValue(); // s -> ms
@@ -203,8 +205,8 @@ public class EstimatePickerDialog extends AbstractPickerDialog
       return millis;
    }
    
-
-
+   
+   
    private void setUnits( int pos )
    {
       final Resources res = context.getResources();

@@ -30,14 +30,14 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.prefs.TaskSortPreference;
 import dev.drsoran.moloko.util.Intents;
@@ -79,7 +79,7 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       public final static int DELETE = START_IDX + 8;
    }
    
-
+   
    private static class CtxtMenu
    {
       public final static int TOGGLE_SELECTION = 0;
@@ -92,7 +92,7 @@ public class SelectMultipleTasksActivity extends TasksListActivity
    private final static int SORT_SELECTION_VALUE = TAG.hashCode();
    
    
-
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -117,8 +117,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onPrepareOptionsMenu( Menu menu )
    {
@@ -205,8 +205,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       return false;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -239,7 +239,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                                                      this )
                                               .setNegativeButton( R.string.btn_cancel,
                                                                   null )
-                                              .show();
+                                              .show()
+                                              .setOwnerActivity( this );
                
                return true;
                
@@ -263,7 +264,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                                                   } )
                                               .setNegativeButton( R.string.btn_cancel,
                                                                   null )
-                                              .show();
+                                              .show()
+                                              .setOwnerActivity( this );
                return true;
                
             case OptionsMenu.UNCOMPLETE:
@@ -282,7 +284,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                                                   } )
                                               .setNegativeButton( R.string.btn_cancel,
                                                                   null )
-                                              .show();
+                                              .show()
+                                              .setOwnerActivity( this );
                return true;
                
             case OptionsMenu.POSTPONE:
@@ -301,7 +304,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                                                   } )
                                               .setNegativeButton( R.string.btn_cancel,
                                                                   null )
-                                              .show();
+                                              .show()
+                                              .setOwnerActivity( this );
             case OptionsMenu.DELETE:
                new AlertDialog.Builder( this ).setMessage( getString( R.string.select_multiple_tasks_dlg_delete,
                                                                       adapter.getSelectedCount(),
@@ -318,7 +322,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                                                   } )
                                               .setNegativeButton( R.string.btn_cancel,
                                                                   null )
-                                              .show();
+                                              .show()
+                                              .setOwnerActivity( this );
                return true;
                
             default :
@@ -329,8 +334,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       return super.onOptionsItemSelected( item );
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -354,8 +359,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                               task.getName() ) );
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( MenuItem item )
    {
@@ -371,16 +376,16 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       }
    }
    
-
-
+   
+   
    @Override
    public SelectMultipleTasksListAdapter getListAdapter()
    {
       return (SelectMultipleTasksListAdapter) super.getListAdapter();
    }
    
-
-
+   
+   
    @Override
    protected void onListItemClick( ListView l, View v, int position, long id )
    {
@@ -388,8 +393,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
       toggleSelection( position );
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createListAdapter( AsyncFillListResult result )
    {
@@ -405,8 +410,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                                                : new RtmSmartFilter( Strings.EMPTY_STRING ) );
    }
    
-
-
+   
+   
    @Override
    protected void beforeQueryTasksAsync( Bundle configuration )
    {
@@ -418,8 +423,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                            adapter.getSelectedTaskIds() );
    }
    
-
-
+   
+   
    @Override
    protected void setTasksResult( AsyncFillListResult result )
    {
@@ -429,8 +434,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          getListAdapter().setSelectedTaskIds( result.configuration.getStringArrayList( CHECK_STATE ) );
    }
    
-
-
+   
+   
    @Override
    protected int getTaskSortIndex( int value )
    {
@@ -440,8 +445,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          return super.getTaskSortIndex( value );
    }
    
-
-
+   
+   
    @Override
    protected int getTaskSortValue( int idx )
    {
@@ -451,8 +456,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          return super.getTaskSortValue( idx );
    }
    
-
-
+   
+   
    @Override
    protected void setTaskSort( int taskSort, boolean refillList )
    {
@@ -465,8 +470,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          super.setTaskSort( taskSort, refillList );
    }
    
-
-
+   
+   
    @Override
    protected boolean isSameTaskSortLikeCurrent( int sortOrder )
    {
@@ -478,16 +483,16 @@ public class SelectMultipleTasksActivity extends TasksListActivity
          return super.isSameTaskSortLikeCurrent( sortOrder );
    }
    
-
-
+   
+   
    private void toggleSelection( int pos )
    {
       final SelectMultipleTasksListAdapter adapter = getListAdapter();
       adapter.toggleSelection( pos );
    }
    
-
-
+   
+   
    private void onEditSelectedTasks()
    {
       final int selCnt = getListAdapter().getSelectedCount();
@@ -503,8 +508,8 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                     TaskEditActivity.REQ_EDIT_TASK );
    }
    
-
-
+   
+   
    private void onSelectedTasksCompletion( boolean complete )
    {
       TaskEditUtils.setTasksCompletion( this,
@@ -512,15 +517,15 @@ public class SelectMultipleTasksActivity extends TasksListActivity
                                         complete );
    }
    
-
-
+   
+   
    private void onSelectedTasksPostpone()
    {
       TaskEditUtils.postponeTasks( this, getListAdapter().getSelectedTasks() );
    }
    
-
-
+   
+   
    private void onSelectedTasksDelete()
    {
       TaskEditUtils.deleteTasks( this, getListAdapter().getSelectedTasks() );

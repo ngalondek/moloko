@@ -24,6 +24,7 @@ package dev.drsoran.moloko.sync;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ContentProviderClient;
@@ -60,7 +61,7 @@ public final class RtmNotesSync
       + RtmNotesSync.class.getSimpleName();
    
    
-
+   
    public static boolean computeSync( Service service,
                                       ContentProviderClient provider,
                                       TimeLineFactory timeLineFactory,
@@ -69,6 +70,8 @@ public final class RtmNotesSync
                                       Date lastSync,
                                       MolokoSyncResult syncResult )
    {
+      boolean hadOutgoingChanges = false;
+      
       // Check if we have server write access
       if ( timeLineFactory != null )
       {
@@ -81,11 +84,16 @@ public final class RtmNotesSync
             final SyncRtmTaskNotesList localNotes = localTasks.getSyncNotesList();
             localNotes.intersect( newNotes );
             
-            sendNewNotes( service,
-                          (RtmProvider) provider.getLocalContentProvider(),
-                          timeLineFactory,
-                          localNotes,
-                          syncResult );
+            if ( localNotes.size() > 0 )
+            {
+               sendNewNotes( service,
+                             (RtmProvider) provider.getLocalContentProvider(),
+                             timeLineFactory,
+                             localNotes,
+                             syncResult );
+               
+               hadOutgoingChanges = true;
+            }
          }
          else
          {
@@ -108,7 +116,7 @@ public final class RtmNotesSync
             local_Notes = new SyncRtmTaskNotesList( notes );
       }
       
-      final SyncRtmTaskNotesList server_Notes = serverTasks.getSyncNotesList();
+      SyncRtmTaskNotesList server_Notes = serverTasks.getSyncNotesList();
       
       if ( timeLineFactory != null )
       {
@@ -158,6 +166,8 @@ public final class RtmNotesSync
                applyServerOperations( (RtmProvider) provider.getLocalContentProvider(),
                                       serverOps,
                                       server_Notes );
+               
+               hadOutgoingChanges = true;
             }
             catch ( ServiceException e )
             {
@@ -167,22 +177,74 @@ public final class RtmNotesSync
          }
       }
       
-      // . <-- At this point we have an up-to-date list of server notes
-      // containing all changes made by outgoing sync.
+      final List< IContentProviderSyncOperation > syncOperations = new LinkedList< IContentProviderSyncOperation >();
+      
+      boolean ok = true;
+      // . <-- At this point we have applied all changes to the server, so we have to fetch an up-to-date list
+      // of server tasks, modified since we made our note changes. This is needed cause we always have to do
+      // a full sync of notes.
+      if ( hadOutgoingChanges )
       {
+         final SyncRtmTaskList server_Tasks = RtmTasksSync.getServerTasksList( service,
+                                                                               lastSync,
+                                                                               syncResult );
+         ok = server_Tasks != null;
+         if ( ok )
+         {
+            server_Notes = server_Tasks.getSyncNotesList();
+         }
+         
+         // TODO: HACK: RTM does not return a modified Task if deleting a note, so we delete
+         // local changes by ourself.
+         ok = ok
+            && localRemoveDeletedNotes( syncOperations, provider, syncResult );
+      }
+      
+      if ( ok )
+      {
+         // In case of a full sync, diff all notes. In case of a partial sync we only respect all notes belong
+         // to a affected task.
+         local_Notes.filterByTaskSeriesIds( server_Notes.getTaskSeriesIds() );
+         
          final ContentProviderSyncableList< SyncNote > local_SyncList = new ContentProviderSyncableList< SyncNote >( local_Notes.getSyncNotes(),
                                                                                                                      SyncNote.LESS_ID );
-         final List< IContentProviderSyncOperation > syncOperations = SyncDiffer.inDiff( server_Notes.getSyncNotes(),
-                                                                                         local_SyncList,
-                                                                                         lastSync == null );
+         syncOperations.addAll( SyncDiffer.inDiff( server_Notes.getSyncNotes(),
+                                                   local_SyncList,
+                                                   true /*
+                                                         * We must sync the notes always full cause deleted notes are
+                                                         * simply missing and do not appear as deleted.
+                                                         */) );
+         
          syncResult.localOps.addAll( syncOperations );
       }
       
-      return true;
+      return ok;
    }
    
-
-
+   
+   
+   private final static boolean localRemoveDeletedNotes( List< IContentProviderSyncOperation > syncOperations,
+                                                         ContentProviderClient provider,
+                                                         MolokoSyncResult syncResult )
+   {
+      boolean ok = true;
+      
+      final List< RtmTaskNote > deletedNotes = RtmNotesProviderPart.getDeletedNotes( provider );
+      ok = deletedNotes != null;
+      
+      if ( ok )
+      {
+         for ( RtmTaskNote note : deletedNotes )
+         {
+            syncOperations.add( new SyncNote( null, note ).computeContentProviderDeleteOperation() );
+         }
+      }
+      
+      return ok;
+   }
+   
+   
+   
    private final static boolean sendNewNotes( Service service,
                                               RtmProvider localContentProvider,
                                               TimeLineFactory timeLineFactory,
@@ -215,8 +277,8 @@ public final class RtmNotesSync
       return true;
    }
    
-
-
+   
+   
    private final static RtmTaskNote sendNote( Service service,
                                               RtmProvider provider,
                                               RtmTimeline timeline,
@@ -227,7 +289,6 @@ public final class RtmNotesSync
       
       if ( serverNote != null )
       {
-         
          final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
          
          localNote.handleAfterServerInsert( new SyncNote( null, serverNote ) )
@@ -257,8 +318,8 @@ public final class RtmNotesSync
       return serverNote;
    }
    
-
-
+   
+   
    private final static RtmTaskNote addNote( RtmTimeline timeline, SyncNote note )
    {
       RtmTaskNote resultNote = null;
@@ -286,8 +347,8 @@ public final class RtmNotesSync
       return resultNote;
    }
    
-
-
+   
+   
    private final static void applyServerOperations( RtmProvider rtmProvider /* for deleting modifications */,
                                                     List< ? extends IServerSyncOperation< RtmTaskNote > > serverOps,
                                                     SyncRtmTaskNotesList serverList ) throws ServiceException
@@ -314,8 +375,8 @@ public final class RtmNotesSync
       }
    }
    
-
-
+   
+   
    private final static void handleResponseCode( MolokoSyncResult syncResult,
                                                  ServiceException e )
    {

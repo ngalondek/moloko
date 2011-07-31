@@ -257,7 +257,12 @@
 
    <style
       name="Task_Overview_DescriptionText"
-      parent="@style/TasksList_ListItem_DescriptionText" />
+      parent="@style/TasksList_ListItem_DescriptionText">
+      <item
+         name="android:singleLine">false</item>
+      <item
+         name="android:ellipsize">none</item>
+   </style>
 
    <style
       name="Task_Overview_ListName"

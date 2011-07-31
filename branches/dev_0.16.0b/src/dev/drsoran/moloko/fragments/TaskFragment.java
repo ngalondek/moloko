@@ -37,7 +37,9 @@ import android.widget.TextView;
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
+import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -71,6 +73,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
    private ITaskFragmentListener listener;
    
+   private ILoaderFragmentListener loaderListener;
+   
    private ViewGroup content;
    
    private View priorityBar;
@@ -99,10 +103,10 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
    private View loadingSpinner;
    
-   private boolean taskNotFound;
+   private boolean taskFound;
    
    
-   
+
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -112,8 +116,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public void onAttach( Activity activity )
    {
@@ -123,10 +127,15 @@ public class TaskFragment extends Fragment implements IConfigurable,
          listener = (ITaskFragmentListener) activity;
       else
          listener = new NullTaskFragmentListener();
+      
+      if ( activity instanceof ILoaderFragmentListener )
+         loaderListener = (ILoaderFragmentListener) activity;
+      else
+         loaderListener = new NullLoaderFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -134,8 +143,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       listener = null;
    }
    
-   
-   
+
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -146,8 +155,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
          getLoaderManager().initLoader( TASK_LOADER_ID, configuration, this );
    }
    
-   
-   
+
+
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -175,7 +184,7 @@ public class TaskFragment extends Fragment implements IConfigurable,
       urlSection = content.findViewById( R.id.task_url );
       loadingSpinner = fragmentView.findViewById( R.id.loading_spinner );
       
-      if ( taskNotFound )
+      if ( taskFound )
          showError();
       else if ( getConfiguredTask() != null )
          updateContentWithTask();
@@ -185,8 +194,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void configure( Bundle config )
    {
@@ -204,31 +213,31 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    @Override
    public Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-   
-   
+
+
    @Override
    public Bundle createDefaultConfiguration()
    {
       return new Bundle();
    }
    
-   
-   
+
+
    public Task getConfiguredTask()
    {
       return configuration.getParcelable( Config.TASK );
    }
    
-   
-   
+
+
    public Task getConfiguredTaskAsertNotNull()
    {
       final Task task = getConfiguredTask();
@@ -239,22 +248,22 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return task;
    }
    
-   
-   
+
+
    public String getConfiguredTaskId()
    {
       return configuration.getString( Config.TASK_ID );
    }
    
-   
-   
+
+
    private boolean hasViewCreated()
    {
       return content != null;
    }
    
-   
-   
+
+
    private void updateContentWithTask()
    {
       if ( hasViewCreated() )
@@ -331,8 +340,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    private void showLoadingSpinnerOnly()
    {
       if ( hasViewCreated() )
@@ -342,8 +351,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    private void showError()
    {
       if ( hasViewCreated() )
@@ -360,8 +369,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -446,8 +455,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -521,8 +530,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -557,26 +566,26 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-   
-   
+
+
    @Override
    public Loader< Task > onCreateLoader( int id, Bundle args )
    {
       showLoadingSpinnerOnly();
       
+      loaderListener.onFragmentLoadStarted( getId(), getTag() );
+      
       return new TaskLoader( getActivity(), args.getString( Config.TASK_ID ) );
    }
    
-   
-   
+
+
    @Override
    public void onLoadFinished( Loader< Task > loader, Task data )
    {
-      taskNotFound = data == null;
+      taskFound = data != null;
       
-      if ( taskNotFound )
-         showError();
-      else
+      if ( taskFound )
       {
          final Bundle newConfig = getConfiguration();
          newConfig.putParcelable( Config.TASK, data );
@@ -584,10 +593,16 @@ public class TaskFragment extends Fragment implements IConfigurable,
          
          updateContentWithTask();
       }
+      else
+      {
+         showError();
+      }
+      
+      loaderListener.onFragmentLoadFinished( getId(), getTag(), taskFound );
    }
    
-   
-   
+
+
    @Override
    public void onLoaderReset( Loader< Task > loader )
    {

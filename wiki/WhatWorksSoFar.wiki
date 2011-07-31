@@ -59,7 +59,8 @@ This is a collection of features which are supported and what is todo.
 
 
 === TODO ===
- ==== Next steps ===   
+ ==== Next steps === 
+    * reworked UI supporting Android 3.0+ components like the ActionBar  
     * allow due time/date, estimations, repeat count to enter in non-English languages
     * translations to Czech and French 
 

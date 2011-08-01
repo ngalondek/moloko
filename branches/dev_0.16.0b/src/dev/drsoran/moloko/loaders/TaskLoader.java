@@ -41,15 +41,15 @@ public class TaskLoader extends AbstractLoader< Task >
    private final String taskId;
    
    
-
+   
    public TaskLoader( Context context, String taskId )
    {
       super( context );
       this.taskId = taskId;
    }
    
-
-
+   
+   
    @Override
    protected Task queryResultInBackground( ContentProviderClient client )
    {
@@ -61,19 +61,27 @@ public class TaskLoader extends AbstractLoader< Task >
       return task;
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return Tasks.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
       TasksProviderPart.registerContentObserver( getContext(), observer );
+   }
+   
+   
+   
+   @Override
+   protected void unregisterContentObserver( ContentObserver observer )
+   {
+      TasksProviderPart.unregisterContentObserver( getContext(), observer );
    }
 }

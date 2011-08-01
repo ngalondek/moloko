@@ -39,34 +39,43 @@ public class RtmListWithTaskCountLoader extends
    private final String slelection;
    
    
-
+   
    public RtmListWithTaskCountLoader( Context context, String selection )
    {
       super( context );
       this.slelection = selection;
    }
    
-
-
+   
+   
    @Override
    protected List< RtmListWithTaskCount > queryResultInBackground( ContentProviderClient client )
    {
       return ListOverviewsProviderPart.getListsOverview( client, slelection );
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return ListOverviews.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
       ListOverviewsProviderPart.registerContentObserver( getContext(), observer );
+   }
+   
+   
+   
+   @Override
+   protected void unregisterContentObserver( ContentObserver observer )
+   {
+      ListOverviewsProviderPart.unregisterContentObserver( getContext(),
+                                                           observer );
    }
 }

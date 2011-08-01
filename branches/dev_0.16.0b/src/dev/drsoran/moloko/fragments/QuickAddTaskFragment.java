@@ -7,7 +7,6 @@ import java.util.TreeSet;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -19,10 +18,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
-import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.RtmSmartAddAdapter;
+import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer;
 import dev.drsoran.moloko.grammar.RtmSmartAddTokenizer.Token;
 import dev.drsoran.moloko.util.Intents;
@@ -39,7 +38,7 @@ import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class QuickAddTaskFragment extends Fragment implements IConfigurable
+public class QuickAddTaskFragment extends MolokoFragment
 {
    public final static class Config
    {
@@ -47,8 +46,6 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
    }
    
    private Impl impl;
-   
-   private Bundle configuration;
    
    private View quickAddTaskContainer;
    
@@ -66,30 +63,12 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
    
    
    @Override
-   public void setArguments( Bundle args )
-   {
-      super.setArguments( args );
-      configure( args );
-   }
-   
-   
-   
-   @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
       super.onActivityCreated( savedInstanceState );
       
       configure( getArguments() );
       createNewImpl();
-   }
-   
-   
-   
-   @Override
-   public void onSaveInstanceState( Bundle outState )
-   {
-      super.onSaveInstanceState( outState );
-      outState.putAll( configuration );
    }
    
    
@@ -141,38 +120,22 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
    
    
    @Override
-   public Bundle getConfiguration()
+   public void takeConfigurationFrom( Bundle config )
    {
-      return new Bundle( configuration );
+      if ( config.containsKey( Config.FILTER ) )
+         getInternalConfiguration().putParcelable( Config.FILTER,
+                                                   config.getParcelable( Config.FILTER ) );
+      
+      getArguments().putAll( getInternalConfiguration() );
    }
    
    
    
    @Override
-   public void configure( Bundle config )
+   public void putDefaultConfigurationTo( Bundle bundle )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.FILTER ) )
-            configuration.putParcelable( Config.FILTER,
-                                         config.getParcelable( Config.FILTER ) );
-      }
-      
-      getArguments().putAll( configuration );
-   }
-   
-   
-   
-   @Override
-   public Bundle createDefaultConfiguration()
-   {
-      final Bundle bundle = new Bundle();
       bundle.putParcelable( Config.FILTER,
                             new RtmSmartFilter( Strings.EMPTY_STRING ) );
-      return bundle;
    }
    
    
@@ -196,7 +159,7 @@ public class QuickAddTaskFragment extends Fragment implements IConfigurable
    
    private RtmSmartFilter getConfiguredRtmSmartFilter()
    {
-      final IFilter filter = configuration.getParcelable( Config.FILTER );
+      final IFilter filter = getInternalConfiguration().getParcelable( Config.FILTER );
       if ( filter instanceof RtmSmartFilter )
          return (RtmSmartFilter) filter;
       else

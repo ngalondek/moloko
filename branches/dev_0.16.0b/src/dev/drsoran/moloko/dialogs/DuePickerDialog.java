@@ -27,6 +27,7 @@ import java.util.Calendar;
 import kankan.wheel.widget.OnWheelScrollListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -56,29 +57,29 @@ public class DuePickerDialog extends AbstractPickerDialog
    private int dateFormat;
    
    
-
-   public DuePickerDialog( Context context )
+   
+   public DuePickerDialog( Activity activity )
    {
-      this( context, System.currentTimeMillis(), false );
+      this( activity, System.currentTimeMillis(), false );
    }
    
-
-
-   public DuePickerDialog( Context context, long initial, boolean hasDueTime )
+   
+   
+   public DuePickerDialog( Activity activity, long initial, boolean hasDueTime )
    {
       this.calendar = MolokoCalendar.getInstance();
       this.calendar.setTimeInMillis( initial != -1 ? initial
                                                   : System.currentTimeMillis() );
       this.calendar.setHasTime( hasDueTime );
       
-      init( context, hasDueTime );
+      init( activity, hasDueTime );
    }
    
-
-
-   private void init( final Context context, boolean hasTime )
+   
+   
+   private void init( final Activity activity, boolean hasTime )
    {
-      final LayoutInflater inflater = LayoutInflater.from( context );
+      final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
       
       final Settings settings = MolokoApp.getSettings();
@@ -98,11 +99,11 @@ public class DuePickerDialog extends AbstractPickerDialog
       
       dateYearWheel = (WheelView) view.findViewById( R.id.due_dlg_year_wheel );
       
-      initDaysWheel( context );
-      initMonthsWheel( context );
-      initYearsWheel( context );
+      initDaysWheel( activity );
+      initMonthsWheel( activity );
+      initYearsWheel( activity );
       
-      timeWheelGroup = new TimeWheelGroup( context, view, 0, hasTime );
+      timeWheelGroup = new TimeWheelGroup( activity, view, 0, hasTime );
       
       dateMonthWheel.addScrollingListener( new OnWheelScrollListener()
       {
@@ -110,12 +111,12 @@ public class DuePickerDialog extends AbstractPickerDialog
          {
          }
          
-
-
+         
+         
          public void onScrollingFinished( WheelView wheel )
          {
             updateCalendarDate();
-            initDaysWheel( context );
+            initDaysWheel( activity );
          }
       } );
       
@@ -125,53 +126,54 @@ public class DuePickerDialog extends AbstractPickerDialog
          {
          }
          
-
-
+         
+         
          public void onScrollingFinished( WheelView wheel )
          {
             updateCalendarDate();
-            initDaysWheel( context );
+            initDaysWheel( activity );
          }
       } );
       
-      this.impl = new AlertDialog.Builder( context ).setIcon( R.drawable.ic_dialog_time )
-                                                    .setTitle( R.string.dlg_due_picker_title )
-                                                    .setView( view )
-                                                    .setPositiveButton( R.string.btn_ok,
-                                                                        new OnClickListener()
-                                                                        {
-                                                                           public void onClick( DialogInterface dialog,
-                                                                                                int which )
-                                                                           {
-                                                                              final MolokoCalendar cal = getCalendar();
-                                                                              notifyOnDialogCloseListener( CloseReason.OK,
-                                                                                                           cal.getTimeInMillis(),
-                                                                                                           Boolean.valueOf( hasTime() ) );
-                                                                           }
-                                                                        } )
-                                                    .setNegativeButton( R.string.btn_cancel,
-                                                                        new OnClickListener()
-                                                                        {
-                                                                           public void onClick( DialogInterface dialog,
-                                                                                                int which )
-                                                                           {
-                                                                              notifyOnDialogCloseListener( CloseReason.CANCELED,
-                                                                                                           null );
-                                                                           }
-                                                                        } )
-                                                    .create();
+      this.impl = new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_time )
+                                                     .setTitle( R.string.dlg_due_picker_title )
+                                                     .setView( view )
+                                                     .setPositiveButton( R.string.btn_ok,
+                                                                         new OnClickListener()
+                                                                         {
+                                                                            public void onClick( DialogInterface dialog,
+                                                                                                 int which )
+                                                                            {
+                                                                               final MolokoCalendar cal = getCalendar();
+                                                                               notifyOnDialogCloseListener( CloseReason.OK,
+                                                                                                            cal.getTimeInMillis(),
+                                                                                                            Boolean.valueOf( hasTime() ) );
+                                                                            }
+                                                                         } )
+                                                     .setNegativeButton( R.string.btn_cancel,
+                                                                         new OnClickListener()
+                                                                         {
+                                                                            public void onClick( DialogInterface dialog,
+                                                                                                 int which )
+                                                                            {
+                                                                               notifyOnDialogCloseListener( CloseReason.CANCELED,
+                                                                                                            null );
+                                                                            }
+                                                                         } )
+                                                     .create();
+      this.impl.setOwnerActivity( activity );
    }
    
-
-
+   
+   
    @Override
    public void show()
    {
       impl.show();
    }
    
-
-
+   
+   
    public MolokoCalendar getCalendar()
    {
       updateCalendarDate();
@@ -182,15 +184,15 @@ public class DuePickerDialog extends AbstractPickerDialog
       return timeWheelGroup.putTime( cal );
    }
    
-
-
+   
+   
    public boolean hasTime()
    {
       return timeWheelGroup.hasTime;
    }
    
-
-
+   
+   
    private void updateCalendarDate()
    {
       // First set the calendar to the first. Otherwise we get a wrap-around
@@ -207,8 +209,8 @@ public class DuePickerDialog extends AbstractPickerDialog
       calendar.set( Calendar.DAY_OF_MONTH, day );
    }
    
-
-
+   
+   
    private void initDaysWheel( Context context )
    {
       dateDayWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
@@ -220,8 +222,8 @@ public class DuePickerDialog extends AbstractPickerDialog
       dateDayWheel.setCurrentItem( calendar.get( Calendar.DAY_OF_MONTH ) - 1 );
    }
    
-
-
+   
+   
    private void initMonthsWheel( Context context )
    {
       dateMonthWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
@@ -233,8 +235,8 @@ public class DuePickerDialog extends AbstractPickerDialog
       dateMonthWheel.setCurrentItem( calendar.get( Calendar.MONTH ) );
    }
    
-
-
+   
+   
    private void initYearsWheel( Context context )
    {
       dateYearWheel.setViewAdapter( new NumericWheelAdapter( context,
@@ -261,7 +263,7 @@ public class DuePickerDialog extends AbstractPickerDialog
       private boolean hasTime;
       
       
-
+      
       public TimeWheelGroup( Context context, View view, int offIndex,
          boolean hasTime )
       {
@@ -285,14 +287,14 @@ public class DuePickerDialog extends AbstractPickerDialog
          wheelViews[ 2 ].addScrollingListener( this );
       }
       
-
-
+      
+      
       public void onScrollingStarted( WheelView wheel )
       {
       }
       
-
-
+      
+      
       public void onScrollingFinished( WheelView wheel )
       {
          if ( !notifying )
@@ -318,8 +320,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          setLastIndex( wheel );
       }
       
-
-
+      
+      
       public MolokoCalendar putTime( MolokoCalendar cal )
       {
          if ( !hasTime )
@@ -346,8 +348,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          return cal;
       }
       
-
-
+      
+      
       private void initHourWheel( Context context )
       {
          if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
@@ -372,8 +374,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       }
       
-
-
+      
+      
       private void initMinuteWheel( Context context )
       {
          wheelViews[ 1 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
@@ -385,8 +387,8 @@ public class DuePickerDialog extends AbstractPickerDialog
             wheelViews[ 1 ].setCurrentItem( calendar.get( Calendar.MINUTE ) + 1 );
       }
       
-
-
+      
+      
       private void initAmPmWheel( Context context )
       {
          if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_12 )
@@ -407,8 +409,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       }
       
-
-
+      
+      
       private void setOtherWheelsOff( WheelView wheel )
       {
          final int wheelIdx = getWheelIndex( wheel );
@@ -418,8 +420,8 @@ public class DuePickerDialog extends AbstractPickerDialog
                                                                                true );
       }
       
-
-
+      
+      
       private void restoreOtherWheels( WheelView wheel )
       {
          final int wheelIdx = getWheelIndex( wheel );
@@ -439,8 +441,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       }
       
-
-
+      
+      
       private int getWheelIndex( WheelView wheel )
       {
          for ( int i = 0; i < wheelViews.length; i++ )
@@ -450,8 +452,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          return -1;
       }
       
-
-
+      
+      
       private void setLastIndex( WheelView wheel )
       {
          final int wheelIdx = getWheelIndex( wheel );
@@ -472,8 +474,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       }
       
-
-
+      
+      
       private int getLastIndex( WheelView wheel )
       {
          final int wheelIdx = getWheelIndex( wheel );

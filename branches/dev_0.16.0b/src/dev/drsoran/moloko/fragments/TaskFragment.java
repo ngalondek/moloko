@@ -22,10 +22,8 @@
 
 package dev.drsoran.moloko.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -34,12 +32,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
-import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
+import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -50,8 +47,7 @@ import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskFragment extends Fragment implements IConfigurable,
-         LoaderCallbacks< Task >
+public class TaskFragment extends MolokoLoaderFragment< Task >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -62,18 +58,12 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
    public static class Config
    {
-      public final static String TASK = "task";
-      
       public final static String TASK_ID = "task_id";
    }
    
    private final static int TASK_LOADER_ID = 1;
    
-   private Bundle configuration;
-   
    private ITaskFragmentListener listener;
-   
-   private ILoaderFragmentListener loaderListener;
    
    private ViewGroup content;
    
@@ -101,12 +91,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
    
    private View urlSection;
    
-   private View loadingSpinner;
-   
-   private boolean taskFound;
    
    
-
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -116,10 +102,10 @@ public class TaskFragment extends Fragment implements IConfigurable,
       return fragment;
    }
    
-
-
+   
+   
    @Override
-   public void onAttach( Activity activity )
+   public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       
@@ -127,15 +113,10 @@ public class TaskFragment extends Fragment implements IConfigurable,
          listener = (ITaskFragmentListener) activity;
       else
          listener = new NullTaskFragmentListener();
-      
-      if ( activity instanceof ILoaderFragmentListener )
-         loaderListener = (ILoaderFragmentListener) activity;
-      else
-         loaderListener = new NullLoaderFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -143,24 +124,12 @@ public class TaskFragment extends Fragment implements IConfigurable,
       listener = null;
    }
    
-
-
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      configure( getArguments() );
-      
-      if ( getConfiguredTask() == null )
-         getLoaderManager().initLoader( TASK_LOADER_ID, configuration, this );
-   }
    
-
-
+   
    @Override
-   public View onCreateView( LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState )
+   public View createFragmentView( LayoutInflater inflater,
+                                   ViewGroup container,
+                                   Bundle savedInstanceState )
    {
       final View fragmentView = inflater.inflate( R.layout.task_fragment,
                                                   container,
@@ -182,195 +151,104 @@ public class TaskFragment extends Fragment implements IConfigurable,
       locationSection = content.findViewById( R.id.task_location );
       participantsSection = (ViewGroup) content.findViewById( R.id.task_participants );
       urlSection = content.findViewById( R.id.task_url );
-      loadingSpinner = fragmentView.findViewById( R.id.loading_spinner );
-      
-      if ( taskFound )
-         showError();
-      else if ( getConfiguredTask() != null )
-         updateContentWithTask();
-      else
-         showLoadingSpinnerOnly();
       
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
-   public void configure( Bundle config )
+   public void takeConfigurationFrom( Bundle config )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
+      super.takeConfigurationFrom( config );
       
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.TASK ) )
-            configuration.putParcelable( Config.TASK,
-                                         config.getParcelable( Config.TASK ) );
-         if ( config.containsKey( Config.TASK_ID ) )
-            configuration.putString( Config.TASK_ID,
-                                     config.getString( Config.TASK_ID ) );
-      }
+      if ( config.containsKey( Config.TASK_ID ) )
+         getInternalConfiguration().putString( Config.TASK_ID,
+                                               config.getString( Config.TASK_ID ) );
    }
    
-
-
-   @Override
-   public Bundle getConfiguration()
-   {
-      return new Bundle( configuration );
-   }
    
-
-
-   @Override
-   public Bundle createDefaultConfiguration()
-   {
-      return new Bundle();
-   }
    
-
-
-   public Task getConfiguredTask()
-   {
-      return configuration.getParcelable( Config.TASK );
-   }
-   
-
-
-   public Task getConfiguredTaskAsertNotNull()
-   {
-      final Task task = getConfiguredTask();
-      
-      if ( task == null )
-         throw new IllegalStateException( "task must not be null" );
-      
-      return task;
-   }
-   
-
-
    public String getConfiguredTaskId()
    {
-      return configuration.getString( Config.TASK_ID );
+      return getInternalConfiguration().getString( Config.TASK_ID );
    }
    
-
-
-   private boolean hasViewCreated()
-   {
-      return content != null;
-   }
    
-
-
-   private void updateContentWithTask()
+   
+   @Override
+   public void initContent( ViewGroup container )
    {
-      if ( hasViewCreated() )
+      final Task task = getLoaderDataAssertNotNull();
+      
+      if ( priorityBar != null )
+         UIUtils.setPriorityColor( priorityBar, task );
+      
+      addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
+                                                             .getTime(),
+                                                         FULL_DATE_FLAGS ) );
+      
+      if ( task.getCompleted() != null )
       {
-         final Task task = getConfiguredTaskAsertNotNull();
+         completedDate.setVisibility( View.VISIBLE );
+         completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
+                                                                    .getTime(),
+                                                                FULL_DATE_FLAGS ) );
+      }
+      else
+      {
+         completedDate.setVisibility( View.GONE );
+      }
+      
+      if ( task.getPosponed() > 0 )
+      {
+         postponed.setText( getString( R.string.task_postponed,
+                                       task.getPosponed() ) );
+         postponed.setVisibility( View.VISIBLE );
+      }
+      else
+         postponed.setVisibility( View.GONE );
+      
+      if ( !TextUtils.isEmpty( task.getSource() ) )
+      {
+         String sourceStr = task.getSource();
+         if ( sourceStr.equalsIgnoreCase( "js" ) )
+            sourceStr = "web";
          
-         loadingSpinner.setVisibility( View.GONE );
-         content.setVisibility( View.VISIBLE );
-         
-         if ( priorityBar != null )
-            UIUtils.setPriorityColor( priorityBar, task );
-         
-         addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
-                                                                .getTime(),
-                                                            FULL_DATE_FLAGS ) );
-         
-         if ( task.getCompleted() != null )
-         {
-            completedDate.setVisibility( View.VISIBLE );
-            completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
-                                                                       .getTime(),
-                                                                   FULL_DATE_FLAGS ) );
-         }
-         else
-         {
-            completedDate.setVisibility( View.GONE );
-         }
-         
-         if ( task.getPosponed() > 0 )
-         {
-            postponed.setText( getString( R.string.task_postponed,
-                                          task.getPosponed() ) );
-            postponed.setVisibility( View.VISIBLE );
-         }
-         else
-            postponed.setVisibility( View.GONE );
-         
-         if ( !TextUtils.isEmpty( task.getSource() ) )
-         {
-            String sourceStr = task.getSource();
-            if ( sourceStr.equalsIgnoreCase( "js" ) )
-               sourceStr = "web";
-            
-            source.setText( getString( R.string.task_source, sourceStr ) );
-         }
-         else
-            source.setText( "?" );
-         
-         UIUtils.setTaskDescription( description, task, null );
-         
-         listName.setText( task.getListName() );
-         
-         UIUtils.inflateTags( getActivity(),
-                              tagsLayout,
-                              task.getTags(),
-                              null,
-                              null );
-         
-         setDateTimeSection( dateTimeSection, task );
-         
-         setLocationSection( locationSection, task );
-         
-         setParticipantsSection( participantsSection, task );
-         
-         if ( !TextUtils.isEmpty( task.getUrl() ) )
-         {
-            urlSection.setVisibility( View.VISIBLE );
-            ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
-         }
-         else
-         {
-            urlSection.setVisibility( View.GONE );
-         }
+         source.setText( getString( R.string.task_source, sourceStr ) );
+      }
+      else
+         source.setText( "?" );
+      
+      UIUtils.setTaskDescription( description, task, null );
+      
+      listName.setText( task.getListName() );
+      
+      UIUtils.inflateTags( getActivity(),
+                           tagsLayout,
+                           task.getTags(),
+                           null,
+                           null );
+      
+      setDateTimeSection( dateTimeSection, task );
+      
+      setLocationSection( locationSection, task );
+      
+      setParticipantsSection( participantsSection, task );
+      
+      if ( !TextUtils.isEmpty( task.getUrl() ) )
+      {
+         urlSection.setVisibility( View.VISIBLE );
+         ( (TextView) urlSection.findViewById( R.id.title_with_text_text ) ).setText( task.getUrl() );
+      }
+      else
+      {
+         urlSection.setVisibility( View.GONE );
       }
    }
    
-
-
-   private void showLoadingSpinnerOnly()
-   {
-      if ( hasViewCreated() )
-      {
-         loadingSpinner.setVisibility( View.VISIBLE );
-         content.setVisibility( View.GONE );
-      }
-   }
    
-
-
-   private void showError()
-   {
-      if ( hasViewCreated() )
-      {
-         loadingSpinner.setVisibility( View.GONE );
-         content.setVisibility( View.VISIBLE );
-         
-         content.removeAllViews();
-         UIUtils.initializeErrorWithIcon( getActivity(),
-                                          content,
-                                          R.string.err_entity_not_found,
-                                          getResources().getQuantityString( R.plurals.g_task,
-                                                                            1 ) );
-      }
-   }
    
-
-
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -455,8 +333,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -530,8 +408,8 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -566,45 +444,35 @@ public class TaskFragment extends Fragment implements IConfigurable,
       }
    }
    
-
-
+   
+   
    @Override
-   public Loader< Task > onCreateLoader( int id, Bundle args )
+   public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
-      showLoadingSpinnerOnly();
-      
-      loaderListener.onFragmentLoadStarted( getId(), getTag() );
-      
       return new TaskLoader( getActivity(), args.getString( Config.TASK_ID ) );
    }
    
-
-
+   
+   
    @Override
-   public void onLoadFinished( Loader< Task > loader, Task data )
+   public String getLoaderDataName()
    {
-      taskFound = data != null;
-      
-      if ( taskFound )
-      {
-         final Bundle newConfig = getConfiguration();
-         newConfig.putParcelable( Config.TASK, data );
-         configure( newConfig );
-         
-         updateContentWithTask();
-      }
-      else
-      {
-         showError();
-      }
-      
-      loaderListener.onFragmentLoadFinished( getId(), getTag(), taskFound );
+      return getString( R.string.app_task );
    }
    
-
-
+   
+   
    @Override
-   public void onLoaderReset( Loader< Task > loader )
+   public int getLoaderId()
    {
+      return TASK_LOADER_ID;
+   }
+   
+   
+   
+   @Override
+   public int getSettingsMask()
+   {
+      return IOnSettingsChangedListener.DATE_TIME_RELATED;
    }
 }

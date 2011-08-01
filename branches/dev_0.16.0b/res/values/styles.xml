@@ -276,8 +276,11 @@
 		<item name="android:background">@drawable/task_overview_bgnd</item>
 	</style>
 
-	<style name="Task_Overview_DescriptionText" parent="@style/TasksList_ListItem_DescriptionText" />
-
+	<style name="Task_Overview_DescriptionText" parent="@style/TasksList_ListItem_DescriptionText">
+      <item name="android:singleLine">false</item>
+      <item name="android:ellipsize">none</item>
+    </style>
+ 
 	<style name="Task_Overview_ListName" parent="@style/TasksList_ListItem_ListName" />
 
 	<style name="Task_Date_Text" parent="@style/Note_Created_Date_Text" />

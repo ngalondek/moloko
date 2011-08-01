@@ -2,7 +2,7 @@
 <FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-   android:layout_height="wrap_content"
+   android:layout_height="wrap_content"   
    android:layout_width="fill_parent">
 
    <RelativeLayout

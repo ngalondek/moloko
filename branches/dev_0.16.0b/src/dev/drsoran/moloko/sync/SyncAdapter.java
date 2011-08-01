@@ -86,7 +86,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
    private final Context context;
    
    
-
+   
    public SyncAdapter( Context context, boolean autoInitialize )
    {
       super( context, autoInitialize );
@@ -94,8 +94,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       this.context = context;
    }
    
-
-
+   
+   
    @Override
    public void onPerformSync( Account account,
                               Bundle extras,
@@ -295,8 +295,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
    }
    
-
-
+   
+   
    private void applyLocalOperations( ContentProviderClient provider,
                                       List< ? extends IContentProviderSyncOperation > operations,
                                       SyncResult syncResult ) throws RemoteException,
@@ -315,8 +315,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       provider.applyBatch( contentProviderOperationsBatch );
    }
    
-
-
+   
+   
    private boolean computeOperationsBatch( Service service,
                                            ContentProviderClient provider,
                                            TimeLineFactory timeLineFactory,
@@ -338,7 +338,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          }
          
          // Sync RtmList
-         ok = ok
+         ok = true
+            || ok
             && RtmListsSync.computeSync( service,
                                          provider,
                                          timeLineFactory,
@@ -358,7 +359,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          ok = ok && logSyncStep( "RtmTasks and Notes", ok );
          
          // Sync locations
-         ok = ok
+         ok = true
+            || ok
             && RtmLocationsSync.computeSync( service,
                                              provider,
                                              lastSyncOut,
@@ -367,7 +369,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
          ok = ok && logSyncStep( "RtmLocations", ok );
          
          // Sync contacts
-         ok = ok
+         ok = true
+            || ok
             && RtmContactsSync.computeSync( service,
                                             provider,
                                             lastSyncOut,
@@ -377,15 +380,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
       
       // Sync settings
-      ok = ok && RtmSettingsSync.computeSync( service, provider, batch );
+      ok = true || ok && RtmSettingsSync.computeSync( service, provider, batch );
       
       ok = ok && logSyncStep( "RtmSettings", ok );
       
       return ok;
    }
    
-
-
+   
+   
    private final Pair< Long, Long > getSyncTime()
    {
       Pair< Long, Long > result = null;
@@ -418,8 +421,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return result;
    }
    
-
-
+   
+   
    public final static ModificationSet getAllModifications( Context context )
    {
       ModificationSet modifications = null;
@@ -444,8 +447,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return modifications;
    }
    
-
-
+   
+   
    public final static ModificationSet getModificationsFor( Context context,
                                                             Uri... entityUris )
    {
@@ -474,8 +477,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return modifications;
    }
    
-
-
+   
+   
    private final void updateSyncTime()
    {
       final ContentProviderClient client = context.getContentResolver()
@@ -490,8 +493,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       }
    }
    
-
-
+   
+   
    private final static boolean logSyncStep( String step, boolean result )
    {
       if ( result )
@@ -502,8 +505,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       return result;
    }
    
-
-
+   
+   
    private final static void clearSyncResult( SyncResult syncResult )
    {
       syncResult.stats.numInserts = 0;
@@ -511,8 +514,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter
       syncResult.stats.numDeletes = 0;
    }
    
-
-
+   
+   
    private final boolean shouldProcessRequest( Bundle bundle )
    {
       return ( bundle != null && ( bundle.containsKey( ContentResolver.SYNC_EXTRAS_INITIALIZE )

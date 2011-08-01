@@ -166,7 +166,7 @@ public class TitleBarLayout extends RelativeLayout implements
             break;
          
          case R.id.app_titlebar_btn_add_list:
-            AddRenameListDialog.newDialogWithFilter( getContext(),
+            AddRenameListDialog.newDialogWithFilter( (Activity) getContext(),
                                                      addSmartListFilter )
                                .show();
             break;

@@ -39,10 +39,13 @@ public interface IOnSettingsChangedListener
    
    public final static int TASK_SORT = 1 << 5;
    
+   public final static int DATE_TIME_RELATED = RTM_TIMEZONE | RTM_DATEFORMAT
+      | RTM_TIMEFORMAT;
+   
    public final static int ALL = Integer.MAX_VALUE;
    
    
-
+   
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues );
 }

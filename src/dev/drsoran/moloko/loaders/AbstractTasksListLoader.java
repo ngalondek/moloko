@@ -40,27 +40,35 @@ public abstract class AbstractTasksListLoader< T extends Task > extends
       super( context );
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return Tasks.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected void clearResult( List< T > result )
    {
       result.clear();
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
       TasksProviderPart.registerContentObserver( getContext(), observer );
+   }
+   
+   
+   
+   @Override
+   protected void unregisterContentObserver( ContentObserver observer )
+   {
+      TasksProviderPart.unregisterContentObserver( getContext(), observer );
    }
 }

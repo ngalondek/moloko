@@ -22,14 +22,11 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.HashMap;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
@@ -42,17 +39,15 @@ import android.widget.ListView;
 
 import com.mdt.rtm.data.RtmAuth;
 
-import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
+import dev.drsoran.moloko.fragments.base.MolokoListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.sync.util.SyncUtils;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
@@ -63,8 +58,7 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListFragment< T extends Task > extends
-         ListFragment implements LoaderCallbacks< List< T > >, IConfigurable,
-         IOnSettingsChangedListener, IRtmAccessLevelAware
+         MolokoListFragment< List< T > > implements IRtmAccessLevelAware
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -106,8 +100,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    private ITasksListFragmentListener listener;
    
-   protected Bundle configuration;
-   
    
    
    public abstract Intent newDefaultIntent();
@@ -115,7 +107,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public void onAttach( Activity activity )
+   public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       
@@ -123,12 +115,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          listener = (ITasksListFragmentListener) activity;
       else
          listener = new NullTasksListFragmentListener();
-      
-      MolokoApp.get( activity )
-               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_TIMEZONE
-                                                      | IOnSettingsChangedListener.RTM_DATEFORMAT
-                                                      | IOnSettingsChangedListener.RTM_TIMEFORMAT,
-                                                   this );
    }
    
    
@@ -138,17 +124,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    {
       super.onDetach();
       listener = null;
-      
-      MolokoApp.get( getActivity() ).unregisterOnSettingsChangedListener( this );
-   }
-   
-   
-   
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      configure( getArguments() );
    }
    
    
@@ -159,17 +134,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       super.onActivityCreated( savedInstanceState );
       
       setHasOptionsMenu( true );
-      
-      getLoaderManager().initLoader( TASKS_LOADER_ID, configuration, this );
-   }
-   
-   
-   
-   @Override
-   public void setArguments( Bundle args )
-   {
-      super.setArguments( args );
-      configure( args );
    }
    
    
@@ -182,64 +146,24 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    @Override
-   public void onSaveInstanceState( Bundle outState )
+   public void takeConfigurationFrom( Bundle config )
    {
-      super.onSaveInstanceState( outState );
-      outState.putAll( configuration );
+      if ( config.containsKey( Config.FILTER ) )
+         getInternalConfiguration().putParcelable( Config.FILTER,
+                                                   config.getParcelable( Config.FILTER ) );
+      getInternalConfiguration().putInt( Config.TASK_SORT_ORDER,
+                                         config.getInt( Config.TASK_SORT_ORDER,
+                                                        getInternalConfiguration().getInt( Config.TASK_SORT_ORDER ) ) );
    }
    
    
    
    @Override
-   public Bundle getConfiguration()
+   public void putDefaultConfigurationTo( Bundle bundle )
    {
-      return new Bundle( configuration );
-   }
-   
-   
-   
-   @Override
-   public void configure( Bundle config )
-   {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.FILTER ) )
-            configuration.putParcelable( Config.FILTER,
-                                         config.getParcelable( Config.FILTER ) );
-         configuration.putInt( Config.TASK_SORT_ORDER,
-                               config.getInt( Config.TASK_SORT_ORDER,
-                                              configuration.getInt( Config.TASK_SORT_ORDER ) ) );
-      }
-   }
-   
-   
-   
-   @Override
-   public Bundle createDefaultConfiguration()
-   {
-      final Bundle bundle = new Bundle();
       bundle.putParcelable( Config.FILTER,
                             new RtmSmartFilter( Strings.EMPTY_STRING ) );
       bundle.putInt( Config.TASK_SORT_ORDER, getDefaultTaskSort() );
-      
-      return bundle;
-   }
-   
-   
-   
-   @Override
-   public void onSettingsChanged( int which,
-                                  HashMap< Integer, Object > oldValues )
-   {
-      if ( which == IOnSettingsChangedListener.RTM_DATEFORMAT
-         || which == IOnSettingsChangedListener.RTM_TIMEZONE
-         || which == IOnSettingsChangedListener.RTM_TIMEFORMAT )
-      {
-         notifyDataSetChanged();
-      }
    }
    
    
@@ -287,8 +211,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       if ( sortMenuItem != null )
       {
          final int currentTaskSort = getTaskSortConfiguration();
-         initializeTasksSortSubMenu( (SubMenu) sortMenuItem.getSubMenu(),
-                                     currentTaskSort );
+         initializeTasksSortSubMenu( sortMenuItem.getSubMenu(), currentTaskSort );
       }
    }
    
@@ -407,7 +330,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    public IFilter getFilter()
    {
-      return configuration.getParcelable( Config.FILTER );
+      return getInternalConfiguration().getParcelable( Config.FILTER );
    }
    
    
@@ -458,13 +381,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   public boolean hasRtmWriteAccess()
-   {
-      return AccountUtils.isWriteableAccess( getActivity() );
-   }
-   
-   
-   
    public void reload()
    {
       getLoaderManager().restartLoader( TASKS_LOADER_ID,
@@ -476,7 +392,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    public int getTaskSortConfiguration()
    {
-      return configuration.getInt( Config.TASK_SORT_ORDER );
+      return getInternalConfiguration().getInt( Config.TASK_SORT_ORDER );
    }
    
    
@@ -507,25 +423,10 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
    
    
-   protected abstract ListAdapter createEmptyListAdapter();
-   
-   
-   
-   protected abstract ListAdapter createListAdapterForResult( List< T > result,
-                                                              IFilter filter );
-   
-   
-   
-   protected abstract void notifyDataSetChanged();
-   
-   
-   
    @Override
    public void onLoadFinished( Loader< List< T >> loader, List< T > data )
    {
-      showLoadingSpinner( false );
-      
-      setListAdapter( createListAdapterForResult( data, getFilter() ) );
+      super.onLoadFinished( loader, data );
       
       invalidateOptionsMenu();
    }
@@ -535,27 +436,46 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onLoaderReset( Loader< List< T >> loader )
    {
-      setListAdapter( createEmptyListAdapter() );
+      super.onLoaderReset( loader );
       
       invalidateOptionsMenu();
    }
    
    
    
-   protected void showLoadingSpinner( boolean show )
+   @Override
+   public int getLoaderId()
    {
-      getActivity().findViewById( android.R.id.empty )
-                   .setVisibility( show ? View.GONE : View.VISIBLE );
-      getActivity().findViewById( R.id.loading_spinner )
-                   .setVisibility( show ? View.VISIBLE : View.GONE );
+      return TASKS_LOADER_ID;
    }
    
    
    
-   protected void invalidateOptionsMenu()
+   @Override
+   public int getSettingsMask()
    {
-      if ( getActivity() != null )
-         getActivity().invalidateOptionsMenu();
+      return super.getSettingsMask()
+         | IOnSettingsChangedListener.DATE_TIME_RELATED;
    }
    
+   
+   
+   @Override
+   public String getLoaderDataName()
+   {
+      return getString( R.string.app_task );
+   }
+   
+   
+   
+   @Override
+   protected ListAdapter createListAdapterForResult( List< T > result )
+   {
+      return createListAdapterForResult( result, getFilter() );
+   }
+   
+   
+   
+   protected abstract ListAdapter createListAdapterForResult( List< T > result,
+                                                              IFilter filter );
 }

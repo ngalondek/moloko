@@ -44,13 +44,13 @@ import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
+import dev.drsoran.moloko.fragments.base.MolokoFragment;
 import dev.drsoran.moloko.util.AsyncInsertEntity;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -59,7 +59,7 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
 
-public class NoteAddFragment extends Fragment implements IConfigurable,
+public class NoteAddFragment extends MolokoFragment implements
          IEditFragment< NoteAddFragment >
 {
    private final static String TAG = "Moloko."
@@ -77,8 +77,6 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
       private final static String NEW_NOTE_ID = "new_note_id";
    }
    
-   private Bundle configuration;
-   
    private EditText title;
    
    private EditText text;
@@ -86,7 +84,7 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
    private final Time created = MolokoDateUtils.newTime();
    
    
-
+   
    public final static NoteAddFragment newInstance( Bundle config )
    {
       final NoteAddFragment fragment = new NoteAddFragment();
@@ -96,17 +94,8 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
       return fragment;
    }
    
-
-
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      configure( getArguments() );
-   }
    
-
-
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -118,8 +107,8 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
       return fragmentView;
    }
    
-
-
+   
+   
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
                                    Bundle savedInstanceState )
@@ -138,12 +127,14 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
+      
+      final Bundle configuration = getConfiguration();
       
       if ( configuration.containsKey( Config.NEW_NOTE_TITLE ) )
       {
@@ -160,8 +151,8 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
       title.requestFocus();
    }
    
-
-
+   
+   
    @Override
    public void onDestroyView()
    {
@@ -170,70 +161,50 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
       super.onDestroyView();
    }
    
-
-
+   
+   
    @Override
-   public void configure( Bundle config )
+   public void takeConfigurationFrom( Bundle config )
    {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
+      final Bundle configuration = getConfiguration();
       
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.TASKSERIES_ID ) )
-            configuration.putString( Config.TASKSERIES_ID,
-                                     config.getString( Config.TASKSERIES_ID ) );
-         if ( config.containsKey( Config.NEW_NOTE_ID ) )
-            configuration.putString( Config.NEW_NOTE_ID,
-                                     config.getString( Config.NEW_NOTE_ID ) );
-         if ( config.containsKey( Config.NEW_NOTE_TITLE ) )
-            configuration.putString( Config.NEW_NOTE_TITLE,
-                                     config.getString( Config.NEW_NOTE_TITLE ) );
-         if ( config.containsKey( Config.NEW_NOTE_TEXT ) )
-            configuration.putString( Config.NEW_NOTE_TEXT,
-                                     config.getString( Config.NEW_NOTE_TEXT ) );
-      }
+      if ( config.containsKey( Config.TASKSERIES_ID ) )
+         configuration.putString( Config.TASKSERIES_ID,
+                                  config.getString( Config.TASKSERIES_ID ) );
+      if ( config.containsKey( Config.NEW_NOTE_ID ) )
+         configuration.putString( Config.NEW_NOTE_ID,
+                                  config.getString( Config.NEW_NOTE_ID ) );
+      if ( config.containsKey( Config.NEW_NOTE_TITLE ) )
+         configuration.putString( Config.NEW_NOTE_TITLE,
+                                  config.getString( Config.NEW_NOTE_TITLE ) );
+      if ( config.containsKey( Config.NEW_NOTE_TEXT ) )
+         configuration.putString( Config.NEW_NOTE_TEXT,
+                                  config.getString( Config.NEW_NOTE_TEXT ) );
    }
    
-
-
-   @Override
-   public Bundle getConfiguration()
-   {
-      return new Bundle( configuration );
-   }
    
-
-
-   @Override
-   public Bundle createDefaultConfiguration()
-   {
-      return new Bundle();
-   }
    
-
-
    public String getConfiguredTaskSeriesId()
    {
-      return configuration.getString( Config.TASKSERIES_ID );
+      return getInternalConfiguration().getString( Config.TASKSERIES_ID );
    }
    
-
-
+   
+   
    public String getConfiguredNewNoteId()
    {
-      return configuration.getString( Config.NEW_NOTE_ID );
+      return getInternalConfiguration().getString( Config.NEW_NOTE_ID );
    }
    
-
-
+   
+   
    private void setConfiguredNewNoteId( String newNoteId )
    {
-      configuration.putString( Config.NEW_NOTE_ID, newNoteId );
+      getInternalConfiguration().putString( Config.NEW_NOTE_ID, newNoteId );
    }
    
-
-
+   
+   
    @Override
    public boolean hasChanges()
    {
@@ -244,8 +215,8 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
          return false;
    }
    
-
-
+   
+   
    @Override
    public boolean onFinishEditing()
    {
@@ -273,8 +244,8 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
                   return R.string.toast_insert_note;
                }
                
-
-
+               
+               
                @Override
                protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
                                                                                RtmTaskNote entity )
@@ -301,16 +272,16 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
                   return null;
                }
                
-
-
+               
+               
                @Override
                protected Uri getContentUri()
                {
                   return Notes.CONTENT_URI;
                }
                
-
-
+               
+               
                @Override
                protected String getPath()
                {
@@ -336,15 +307,15 @@ public class NoteAddFragment extends Fragment implements IConfigurable,
       return ok;
    }
    
-
-
+   
+   
    @Override
    public void onCancelEditing()
    {
    }
    
-
-
+   
+   
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

@@ -24,6 +24,7 @@ package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,11 +35,13 @@ import com.mdt.rtm.data.RtmTaskNote;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
+import dev.drsoran.moloko.loaders.RtmTaskNoteLoader;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class NoteFragment extends AbstractNoteFragment implements
+public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
          IEditableFragment< NoteFragment >
 {
    @SuppressWarnings( "unused" )
@@ -46,12 +49,12 @@ public class NoteFragment extends AbstractNoteFragment implements
       + NoteFragment.class.getSimpleName();
    
    
-   public static class Config extends AbstractNoteFragment.Config
+   public static class Config
    {
-      public final static String NOTE = AbstractNoteFragment.Config.NOTE;
-      
-      public final static String NOTE_ID = AbstractNoteFragment.Config.NOTE_ID;
+      public final static String NOTE_ID = "note_id";
    }
+   
+   private final static int NOTE_LOADER_ID = 1;
    
    
    
@@ -74,20 +77,23 @@ public class NoteFragment extends AbstractNoteFragment implements
       final View fragmentView = inflater.inflate( R.layout.note_fragment,
                                                   container,
                                                   false );
+      
       return fragmentView;
    }
    
    
    
    @Override
-   protected void showNote( View content, RtmTaskNote note )
+   public void initContent( ViewGroup container )
    {
-      final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
+      final RtmTaskNote note = getLoaderDataAssertNotNull();
+      
+      final TextView createdDate = (TextView) container.findViewById( R.id.note_created_date );
       createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
                                                                .getTime(),
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
       
-      if ( !UIUtils.initializeTitleWithTextLayout( content.findViewById( R.id.note ),
+      if ( !UIUtils.initializeTitleWithTextLayout( container.findViewById( R.id.note ),
                                                    note.getTitle(),
                                                    note.getText() ) )
          throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
@@ -96,15 +102,61 @@ public class NoteFragment extends AbstractNoteFragment implements
    
    
    @Override
+   public void takeConfigurationFrom( Bundle config )
+   {
+      super.takeConfigurationFrom( config );
+      
+      if ( config.containsKey( Config.NOTE_ID ) )
+         getInternalConfiguration().putString( Config.NOTE_ID,
+                                               config.getString( Config.NOTE_ID ) );
+   }
+   
+   
+   
+   public String getConfiguredNoteId()
+   {
+      return getInternalConfiguration().getString( Config.NOTE_ID );
+   }
+   
+   
+   
+   @Override
+   public Loader< RtmTaskNote > newLoaderInstance( int id, Bundle args )
+   {
+      return new RtmTaskNoteLoader( getActivity(),
+                                    args.getString( Config.NOTE_ID ) );
+   }
+   
+   
+   
+   @Override
+   public String getLoaderDataName()
+   {
+      return getString( R.string.app_note );
+   }
+   
+   
+   
+   @Override
+   public int getLoaderId()
+   {
+      return NOTE_LOADER_ID;
+   }
+   
+   
+   
+   @Override
    public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {
-      final Bundle config = new Bundle();
-      
-      if ( getConfiguredNote() != null )
-         config.putParcelable( NoteEditFragment.Config.NOTE,
-                               getConfiguredNote() );
-      
-      final NoteEditFragment fragment = NoteEditFragment.newInstance( config );
-      return fragment;
+      if ( getLoaderData() != null )
+      {
+         final Bundle config = new Bundle();
+         config.putParcelable( NoteEditFragment.Config.NOTE, getLoaderData() );
+         
+         final NoteEditFragment fragment = NoteEditFragment.newInstance( config );
+         return fragment;
+      }
+      else
+         return null;
    }
 }

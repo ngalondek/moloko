@@ -25,7 +25,6 @@ package dev.drsoran.moloko.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -33,6 +32,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.SubMenu;
@@ -154,7 +154,7 @@ public class SelectableTasksListsFragment extends
    
    
    @Override
-   public void onAttach( Activity activity )
+   public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       
@@ -186,9 +186,9 @@ public class SelectableTasksListsFragment extends
    
    
    @Override
-   public View onCreateView( LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState )
+   public View createFragmentView( LayoutInflater inflater,
+                                   ViewGroup container,
+                                   Bundle savedInstanceState )
    {
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
@@ -198,38 +198,28 @@ public class SelectableTasksListsFragment extends
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
+      putCurrentSelectionStateToConfig( getInternalConfiguration() );
+      
       super.onSaveInstanceState( outState );
-      
-      putCurrentSelectionStateToConfig( configuration );
-      outState.putAll( configuration );
    }
    
    
    
    @Override
-   public void configure( Bundle config )
+   public void takeConfigurationFrom( Bundle config )
    {
-      super.configure( config );
-      
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.SELECT_STATE ) )
-            configuration.putStringArrayList( Config.SELECT_STATE,
-                                              config.getStringArrayList( Config.SELECT_STATE ) );
-      }
+      if ( config.containsKey( Config.SELECT_STATE ) )
+         getInternalConfiguration().putStringArrayList( Config.SELECT_STATE,
+                                                        config.getStringArrayList( Config.SELECT_STATE ) );
    }
    
    
    
    @Override
-   public Bundle createDefaultConfiguration()
+   public void putDefaultConfigurationTo( Bundle bundle )
    {
-      final Bundle bundle = super.createDefaultConfiguration();
-      
       bundle.putStringArrayList( Config.SELECT_STATE,
                                  new ArrayList< String >( 0 ) );
-      
-      return bundle;
    }
    
    
@@ -565,7 +555,7 @@ public class SelectableTasksListsFragment extends
    public void toggle( int pos )
    {
       getListAdapter().toggleSelection( pos );
-      putCurrentSelectionStateToConfig( configuration );
+      putCurrentSelectionStateToConfig( getInternalConfiguration() );
    }
    
    
@@ -606,7 +596,7 @@ public class SelectableTasksListsFragment extends
    @Override
    public Loader< List< SelectableTask >> onCreateLoader( int id, Bundle config )
    {
-      showLoadingSpinner( true );
+      super.onCreateLoader( id, config );
       
       final IFilter filter = config.getParcelable( Config.FILTER );
       final String selection = filter != null ? filter.getSqlSelection() : null;
@@ -655,15 +645,6 @@ public class SelectableTasksListsFragment extends
    public SelectableTasksListFragmentAdapter getListAdapter()
    {
       return (SelectableTasksListFragmentAdapter) super.getListAdapter();
-   }
-   
-   
-   
-   @Override
-   protected void notifyDataSetChanged()
-   {
-      if ( getListAdapter() != null )
-         getListAdapter().notifyDataSetChanged();
    }
    
    

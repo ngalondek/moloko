@@ -38,15 +38,15 @@ public class RtmTaskNoteLoader extends AbstractLoader< RtmTaskNote >
    private final String noteId;
    
    
-
+   
    public RtmTaskNoteLoader( Context context, String noteId )
    {
       super( context );
       this.noteId = noteId;
    }
    
-
-
+   
+   
    @Override
    protected RtmTaskNote queryResultInBackground( ContentProviderClient client )
    {
@@ -58,20 +58,28 @@ public class RtmTaskNoteLoader extends AbstractLoader< RtmTaskNote >
       return note;
    }
    
-
-
+   
+   
    @Override
    protected Uri getContentUri()
    {
       return Notes.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
       getContext().getContentResolver()
                   .registerContentObserver( getContentUri(), true, observer );
+   }
+   
+   
+   
+   @Override
+   protected void unregisterContentObserver( ContentObserver observer )
+   {
+      getContext().getContentResolver().unregisterContentObserver( observer );
    }
 }

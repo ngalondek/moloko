@@ -164,7 +164,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
          new AlertDialog.Builder( this ).setTitle( R.string.err_not_connected )
                                         .setMessage( R.string.phr_establish_connection )
                                         .setIcon( android.R.drawable.ic_dialog_alert )
-                                        .show();
+                                        .show()
+                                        .setOwnerActivity( this );
       }
    }
    

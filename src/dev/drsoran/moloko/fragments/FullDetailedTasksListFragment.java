@@ -33,6 +33,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.text.TextUtils;
@@ -148,7 +149,7 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public void onAttach( Activity activity )
+   public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
       
@@ -180,9 +181,9 @@ public class FullDetailedTasksListFragment extends
    
    
    @Override
-   public View onCreateView( LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState )
+   public View createFragmentView( LayoutInflater inflater,
+                                   ViewGroup container,
+                                   Bundle savedInstanceState )
    {
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
@@ -462,7 +463,7 @@ public class FullDetailedTasksListFragment extends
    @Override
    public Loader< List< Task >> onCreateLoader( int id, Bundle config )
    {
-      showLoadingSpinner( true );
+      super.onCreateLoader( id, config );
       
       final IFilter filter = config.getParcelable( Config.FILTER );
       final String selection = filter != null ? filter.getSqlSelection() : null;
@@ -506,15 +507,6 @@ public class FullDetailedTasksListFragment extends
    public FullDetailedTasksListFragmentAdapter getListAdapter()
    {
       return (FullDetailedTasksListFragmentAdapter) super.getListAdapter();
-   }
-   
-   
-   
-   @Override
-   protected void notifyDataSetChanged()
-   {
-      if ( getListAdapter() != null )
-         getListAdapter().notifyDataSetChanged();
    }
    
    private final DialogInterface.OnClickListener chooseMultipleTagsDialogListener = new OnClickListener()

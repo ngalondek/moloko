@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.loaders;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.database.ContentObserver;
@@ -36,15 +38,29 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
    
    private volatile D result;
    
+   private final AtomicBoolean respectContentChanges = new AtomicBoolean( true );
    
-
+   
+   
    protected AbstractLoader( Context context )
    {
       super( context );
    }
    
-
-
+   
+   
+   public void setRespectContentChanges( boolean respect )
+   {
+      respectContentChanges.set( respect );
+      
+      if ( respect )
+         registerContentObserver( observer );
+      else
+         unregisterContentObserver( observer );
+   }
+   
+   
+   
    @Override
    public D loadInBackground()
    {
@@ -58,7 +74,7 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
          
          client.release();
          
-         if ( result != null )
+         if ( result != null && respectContentChanges.get() )
             registerContentObserver( observer );
       }
       else
@@ -71,16 +87,16 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       return result;
    }
    
-
-
+   
+   
    protected ContentProviderClient getContentProviderClient()
    {
       return getContext().getContentResolver()
                          .acquireContentProviderClient( getContentUri() );
    }
    
-
-
+   
+   
    /**
     * Runs on the UI thread
     */
@@ -106,8 +122,8 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       }
    }
    
-
-
+   
+   
    /**
     * Must be called from the UI thread
     */
@@ -125,8 +141,8 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       }
    }
    
-
-
+   
+   
    /**
     * Must be called from the UI thread
     */
@@ -137,8 +153,8 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       cancelLoad();
    }
    
-
-
+   
+   
    @Override
    public void onCanceled( D result )
    {
@@ -148,8 +164,8 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       }
    }
    
-
-
+   
+   
    @Override
    protected void onReset()
    {
@@ -161,20 +177,24 @@ public abstract class AbstractLoader< D > extends AsyncTaskLoader< D >
       result = null;
    }
    
-
-
+   
+   
    abstract protected D queryResultInBackground( ContentProviderClient client );
    
-
-
+   
+   
    abstract protected Uri getContentUri();
    
-
-
+   
+   
    abstract protected void registerContentObserver( ContentObserver observer );
    
-
-
+   
+   
+   abstract protected void unregisterContentObserver( ContentObserver observer );
+   
+   
+   
    protected void clearResult( D result )
    {
    }

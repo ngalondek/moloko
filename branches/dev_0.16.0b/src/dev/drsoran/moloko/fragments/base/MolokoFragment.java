@@ -41,7 +41,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    protected Bundle configuration;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -50,8 +50,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       configure( getArguments() );
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -78,8 +78,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       }
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -94,8 +94,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       }
    }
    
-   
-   
+
+
    @Override
    public void setArguments( Bundle args )
    {
@@ -104,8 +104,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       configure( args );
    }
    
-   
-   
+
+
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -114,22 +114,15 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       outState.putAll( getConfiguration() );
    }
    
-   
-   
+
+
    public final Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-   
-   
-   public Bundle getInternalConfiguration()
-   {
-      return configuration;
-   }
-   
-   
-   
+
+
    public final void configure( Bundle config )
    {
       if ( configuration == null )
@@ -139,8 +132,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
          takeConfigurationFrom( config );
    }
    
-   
-   
+
+
    public final Bundle createDefaultConfiguration()
    {
       final Bundle bundle = new Bundle();
@@ -150,20 +143,20 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       return bundle;
    }
    
-   
-   
+
+
    protected void takeConfigurationFrom( Bundle config )
    {
    }
    
-   
-   
+
+
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
    }
    
-   
-   
+
+
    public final ViewGroup getContentView()
    {
       final View root = getView();
@@ -174,15 +167,15 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
          return null;
    }
    
-   
-   
+
+
    protected void onSettingsChanged( int which,
                                      HashMap< Integer, Object > oldValues )
    {
    }
    
-   
-   
+
+
    public int getSettingsMask()
    {
       return 0;

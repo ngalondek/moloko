@@ -996,7 +996,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final List< String > noteIds = task.getNoteIds();
       final ViewGroup fragmentContainer = getFragmentContainer();
       
-      for ( int i = 0, cntFragments = fragmentContainer.getChildCount(); i < cntFragments; ++i )
+      // getChildCount() has to be evaluated in every iteration cause we may delete views here.
+      for ( int i = 0; i < fragmentContainer.getChildCount(); ++i )
       {
          final View view = fragmentContainer.getChildAt( i );
          final Object tag = view.getTag();

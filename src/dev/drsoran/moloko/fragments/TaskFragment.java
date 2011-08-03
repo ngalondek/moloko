@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.text.SpannableString;
@@ -32,6 +33,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import dev.drsoran.moloko.IEditFragment;
+import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
@@ -47,7 +50,8 @@ import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskFragment extends MolokoLoaderFragment< Task >
+public class TaskFragment extends MolokoLoaderFragment< Task > implements
+         IEditableFragment< TaskFragment >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -92,7 +96,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
    private View urlSection;
    
    
-   
+
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -102,8 +106,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -115,8 +119,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
          listener = new NullTaskFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -124,8 +128,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       listener = null;
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -155,27 +159,27 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
       super.takeConfigurationFrom( config );
       
       if ( config.containsKey( Config.TASK_ID ) )
-         getInternalConfiguration().putString( Config.TASK_ID,
-                                               config.getString( Config.TASK_ID ) );
+         configuration.putString( Config.TASK_ID,
+                                  config.getString( Config.TASK_ID ) );
    }
    
-   
-   
+
+
    public String getConfiguredTaskId()
    {
-      return getInternalConfiguration().getString( Config.TASK_ID );
+      return configuration.getString( Config.TASK_ID );
    }
    
-   
-   
+
+
    @Override
    public void initContent( ViewGroup container )
    {
@@ -247,8 +251,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       }
    }
    
-   
-   
+
+
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -333,8 +337,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       }
    }
    
-   
-   
+
+
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -408,8 +412,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       }
    }
    
-   
-   
+
+
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -444,35 +448,44 @@ public class TaskFragment extends MolokoLoaderFragment< Task >
       }
    }
    
-   
-   
+
+
    @Override
    public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
       return new TaskLoader( getActivity(), args.getString( Config.TASK_ID ) );
    }
    
-   
-   
+
+
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_task );
    }
    
-   
-   
+
+
    @Override
    public int getLoaderId()
    {
       return TASK_LOADER_ID;
    }
    
-   
-   
+
+
    @Override
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
+   }
+   
+
+
+   @Override
+   public IEditFragment< ? extends Fragment > createEditFragmentInstance()
+   {
+      // TODO: Implement
+      return null;
    }
 }

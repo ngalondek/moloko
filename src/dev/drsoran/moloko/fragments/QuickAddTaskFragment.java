@@ -50,7 +50,7 @@ public class QuickAddTaskFragment extends MolokoFragment
    private View quickAddTaskContainer;
    
    
-   
+
    public final static QuickAddTaskFragment newInstance( Bundle config )
    {
       final QuickAddTaskFragment fragment = new QuickAddTaskFragment();
@@ -60,8 +60,8 @@ public class QuickAddTaskFragment extends MolokoFragment
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -71,8 +71,8 @@ public class QuickAddTaskFragment extends MolokoFragment
       createNewImpl();
    }
    
-   
-   
+
+
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -84,8 +84,8 @@ public class QuickAddTaskFragment extends MolokoFragment
       return quickAddTaskContainer;
    }
    
-   
-   
+
+
    @Override
    public void onHiddenChanged( boolean hidden )
    {
@@ -106,8 +106,8 @@ public class QuickAddTaskFragment extends MolokoFragment
       }
    }
    
-   
-   
+
+
    @Override
    public void onDestroyView()
    {
@@ -117,20 +117,20 @@ public class QuickAddTaskFragment extends MolokoFragment
       impl = null;
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
       if ( config.containsKey( Config.FILTER ) )
-         getInternalConfiguration().putParcelable( Config.FILTER,
-                                                   config.getParcelable( Config.FILTER ) );
+         configuration.putParcelable( Config.FILTER,
+                                      config.getParcelable( Config.FILTER ) );
       
-      getArguments().putAll( getInternalConfiguration() );
+      getArguments().putAll( configuration );
    }
    
-   
-   
+
+
    @Override
    public void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -138,8 +138,8 @@ public class QuickAddTaskFragment extends MolokoFragment
                             new RtmSmartFilter( Strings.EMPTY_STRING ) );
    }
    
-   
-   
+
+
    private void createNewImpl()
    {
       impl = new Impl( getActivity(),
@@ -147,19 +147,19 @@ public class QuickAddTaskFragment extends MolokoFragment
                        getConfiguredRtmSmartFilter() );
    }
    
-   
-   
+
+
    private void hideSoftInput()
    {
       if ( impl != null )
          UIUtils.hideSoftInput( impl.addTaskEdit );
    }
    
-   
-   
+
+
    private RtmSmartFilter getConfiguredRtmSmartFilter()
    {
-      final IFilter filter = getInternalConfiguration().getParcelable( Config.FILTER );
+      final IFilter filter = configuration.getParcelable( Config.FILTER );
       if ( filter instanceof RtmSmartFilter )
          return (RtmSmartFilter) filter;
       else
@@ -195,7 +195,7 @@ public class QuickAddTaskFragment extends MolokoFragment
       private final RtmSmartAddTokenizer smartAddTokenizer = new RtmSmartAddTokenizer();
       
       
-      
+
       public Impl( Context context, View quickAddTaskContainer,
          RtmSmartFilter filter )
       {
@@ -237,15 +237,15 @@ public class QuickAddTaskFragment extends MolokoFragment
          }
       }
       
-      
-      
+
+
       public void clearEditText()
       {
          addTaskEdit.getEditableText().clear();
       }
       
-      
-      
+
+
       @Override
       public void onClick( View view )
       {
@@ -286,8 +286,8 @@ public class QuickAddTaskFragment extends MolokoFragment
          }
       }
       
-      
-      
+
+
       private final int preselectByFilter( RtmSmartFilter filter )
       {
          int numPreselected = 0;
@@ -310,8 +310,8 @@ public class QuickAddTaskFragment extends MolokoFragment
          return numPreselected;
       }
       
-      
-      
+
+
       private final Editable insertOperator( char operator, int pos )
       {
          final Editable text = addTaskEdit.getEditableText();
@@ -327,8 +327,8 @@ public class QuickAddTaskFragment extends MolokoFragment
          return text;
       }
       
-      
-      
+
+
       private final Editable insertOperatorAndValue( char operator,
                                                      String value,
                                                      int pos )
@@ -346,8 +346,8 @@ public class QuickAddTaskFragment extends MolokoFragment
          return text;
       }
       
-      
-      
+
+
       @SuppressWarnings( "unchecked" )
       private final void addNewTask()
       {

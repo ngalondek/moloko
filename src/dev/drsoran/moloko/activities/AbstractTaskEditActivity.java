@@ -250,11 +250,11 @@ abstract class AbstractTaskEditActivity extends Activity
       
       if ( shouldHandleIntentAction( intent.getAction() ) )
       {
-         setContentView( R.layout.task_edit_activity );
+         // setContentView( R.layout.task_edit_activity );
          
          try
          {
-            taskContainer = (ViewGroup) findViewById( R.id.task_edit_container );
+            taskContainer = null;
             addedDate = (TextView) taskContainer.findViewById( R.id.task_edit_added_date );
             completedDate = (TextView) taskContainer.findViewById( R.id.task_edit_completed_date );
             source = (TextView) taskContainer.findViewById( R.id.task_edit_src );

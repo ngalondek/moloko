@@ -84,7 +84,7 @@ public class NoteAddFragment extends MolokoFragment implements
    private final Time created = MolokoDateUtils.newTime();
    
    
-   
+
    public final static NoteAddFragment newInstance( Bundle config )
    {
       final NoteAddFragment fragment = new NoteAddFragment();
@@ -94,8 +94,8 @@ public class NoteAddFragment extends MolokoFragment implements
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -107,8 +107,8 @@ public class NoteAddFragment extends MolokoFragment implements
       return fragmentView;
    }
    
-   
-   
+
+
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
                                    Bundle savedInstanceState )
@@ -127,8 +127,8 @@ public class NoteAddFragment extends MolokoFragment implements
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -151,8 +151,8 @@ public class NoteAddFragment extends MolokoFragment implements
       title.requestFocus();
    }
    
-   
-   
+
+
    @Override
    public void onDestroyView()
    {
@@ -161,13 +161,11 @@ public class NoteAddFragment extends MolokoFragment implements
       super.onDestroyView();
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
-      final Bundle configuration = getConfiguration();
-      
       if ( config.containsKey( Config.TASKSERIES_ID ) )
          configuration.putString( Config.TASKSERIES_ID,
                                   config.getString( Config.TASKSERIES_ID ) );
@@ -182,29 +180,29 @@ public class NoteAddFragment extends MolokoFragment implements
                                   config.getString( Config.NEW_NOTE_TEXT ) );
    }
    
-   
-   
+
+
    public String getConfiguredTaskSeriesId()
    {
-      return getInternalConfiguration().getString( Config.TASKSERIES_ID );
+      return configuration.getString( Config.TASKSERIES_ID );
    }
    
-   
-   
+
+
    public String getConfiguredNewNoteId()
    {
-      return getInternalConfiguration().getString( Config.NEW_NOTE_ID );
+      return configuration.getString( Config.NEW_NOTE_ID );
    }
    
-   
-   
+
+
    private void setConfiguredNewNoteId( String newNoteId )
    {
-      getInternalConfiguration().putString( Config.NEW_NOTE_ID, newNoteId );
+      configuration.putString( Config.NEW_NOTE_ID, newNoteId );
    }
    
-   
-   
+
+
    @Override
    public boolean hasChanges()
    {
@@ -215,8 +213,8 @@ public class NoteAddFragment extends MolokoFragment implements
          return false;
    }
    
-   
-   
+
+
    @Override
    public boolean onFinishEditing()
    {
@@ -244,8 +242,8 @@ public class NoteAddFragment extends MolokoFragment implements
                   return R.string.toast_insert_note;
                }
                
-               
-               
+
+
                @Override
                protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
                                                                                RtmTaskNote entity )
@@ -272,16 +270,16 @@ public class NoteAddFragment extends MolokoFragment implements
                   return null;
                }
                
-               
-               
+
+
                @Override
                protected Uri getContentUri()
                {
                   return Notes.CONTENT_URI;
                }
                
-               
-               
+
+
                @Override
                protected String getPath()
                {
@@ -307,15 +305,15 @@ public class NoteAddFragment extends MolokoFragment implements
       return ok;
    }
    
-   
-   
+
+
    @Override
    public void onCancelEditing()
    {
    }
    
-   
-   
+
+
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

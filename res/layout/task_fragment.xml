@@ -145,4 +145,3 @@
       layout="@layout/app_loading_spinner"
       android:visibility="gone" />
 </FrameLayout>
-

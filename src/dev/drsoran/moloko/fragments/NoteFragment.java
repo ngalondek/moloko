@@ -57,7 +57,7 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
    private final static int NOTE_LOADER_ID = 1;
    
    
-   
+
    public final static NoteFragment newInstance( Bundle config )
    {
       final NoteFragment fragment = new NoteFragment();
@@ -67,8 +67,8 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -81,8 +81,8 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void initContent( ViewGroup container )
    {
@@ -99,27 +99,27 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
          throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
       super.takeConfigurationFrom( config );
       
       if ( config.containsKey( Config.NOTE_ID ) )
-         getInternalConfiguration().putString( Config.NOTE_ID,
-                                               config.getString( Config.NOTE_ID ) );
+         configuration.putString( Config.NOTE_ID,
+                                  config.getString( Config.NOTE_ID ) );
    }
    
-   
-   
+
+
    public String getConfiguredNoteId()
    {
-      return getInternalConfiguration().getString( Config.NOTE_ID );
+      return configuration.getString( Config.NOTE_ID );
    }
    
-   
-   
+
+
    @Override
    public Loader< RtmTaskNote > newLoaderInstance( int id, Bundle args )
    {
@@ -127,24 +127,24 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
                                     args.getString( Config.NOTE_ID ) );
    }
    
-   
-   
+
+
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_note );
    }
    
-   
-   
+
+
    @Override
    public int getLoaderId()
    {
       return NOTE_LOADER_ID;
    }
    
-   
-   
+
+
    @Override
    public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {

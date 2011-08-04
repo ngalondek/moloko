@@ -328,4 +328,11 @@
          moloko:titlePaddingTop="8dip"
          moloko:titleText="@string/task_url" />
    </RelativeLayout>
+   
+   <include
+      android:id="@+id/loading_spinner"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      layout="@layout/app_loading_spinner"
+      android:visibility="gone" />
 </FrameLayout>

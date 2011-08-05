@@ -22,21 +22,35 @@
 
 package dev.drsoran.moloko.fragments;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
+import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
@@ -44,9 +58,15 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
+import dev.drsoran.moloko.dialogs.DuePickerDialog;
+import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
+import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
@@ -58,6 +78,7 @@ import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 import dev.drsoran.provider.Rtm.RawTasks;
@@ -95,9 +116,43 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
          this.lists = lists;
          this.locations = locations;
       }
+      
+
+
+      public Map< String, String > getListIdsToListNames()
+      {
+         final Map< String, String > listIdToListName = new HashMap< String, String >();
+         
+         if ( lists != null )
+         {
+            final Map< String, RtmList > listIdToList = lists.getLists();
+            for ( String listId : listIdToList.keySet() )
+               listIdToListName.put( listId, listIdToList.get( listId )
+                                                         .getName() );
+         }
+         
+         return listIdToListName;
+      }
+      
+
+
+      public Map< String, String > getLocationIdsToLocationNames()
+      {
+         final Map< String, String > locationIdToLocationName = new HashMap< String, String >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationIdToLocationName.put( location.id, location.name );
+         }
+         
+         return locationIdToLocationName;
+      }
    }
    
-   public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   private final static String KEY_CHANGES = "changes";
+   
+   private final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
    private final static int TASK_EDIT_LOADER = 1;
    
@@ -109,11 +164,11 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    
    protected TextView postponed;
    
-   protected EditText nameEdit;
+   protected EditText nameEditText;
    
-   protected TitleWithSpinnerLayout list;
+   protected TitleWithSpinnerLayout listsSpinner;
    
-   protected TitleWithSpinnerLayout priority;
+   protected TitleWithSpinnerLayout prioritySpinner;
    
    protected ViewGroup tagsContainer;
    
@@ -121,19 +176,19 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    
    protected ViewGroup dueContainer;
    
-   protected EditText dueEdit;
+   protected EditText dueEditText;
    
    protected ViewGroup recurrContainer;
    
-   protected EditText recurrEdit;
+   protected EditText recurrEditText;
    
    protected ViewGroup estimateContainer;
    
-   protected EditText estimateEdit;
+   protected EditText estimateEditText;
    
-   protected TitleWithSpinnerLayout location;
+   protected TitleWithSpinnerLayout locationSpinner;
    
-   protected TitleWithEditTextLayout url;
+   protected TitleWithEditTextLayout urlEditText;
    
    protected AbstractPickerDialog pickerDlg;
    
@@ -142,6 +197,31 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    protected Bundle changes;
    
    
+
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      
+      if ( savedInstanceState != null )
+      {
+         if ( savedInstanceState.containsKey( KEY_CHANGES ) )
+            changes = savedInstanceState.getBundle( KEY_CHANGES );
+      }
+   }
+   
+
+
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      super.onSaveInstanceState( outState );
+      
+      if ( changes != null )
+         outState.putBundle( KEY_CHANGES, changes );
+   }
+   
+
 
    @Override
    public View createFragmentView( LayoutInflater inflater,
@@ -159,21 +239,304 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       postponed = (TextView) content.findViewById( R.id.task_edit_postponed );
       
       // Editables
-      nameEdit = (EditText) content.findViewById( R.id.task_edit_desc );
-      list = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_list );
-      priority = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_priority );
+      nameEditText = (EditText) content.findViewById( R.id.task_edit_desc );
+      listsSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_list );
+      prioritySpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_priority );
       tagsContainer = (ViewGroup) content.findViewById( R.id.task_edit_tags_layout );
       tagsLayout = (WrappingLayout) content.findViewById( R.id.task_edit_tags_container );
       dueContainer = (ViewGroup) content.findViewById( R.id.task_edit_due_layout );
-      dueEdit = (EditText) dueContainer.findViewById( R.id.task_edit_due_text );
+      dueEditText = (EditText) dueContainer.findViewById( R.id.task_edit_due_text );
       recurrContainer = (ViewGroup) content.findViewById( R.id.task_edit_recurrence_layout );
-      recurrEdit = (EditText) recurrContainer.findViewById( R.id.task_edit_recurrence_text );
+      recurrEditText = (EditText) recurrContainer.findViewById( R.id.task_edit_recurrence_text );
       estimateContainer = (ViewGroup) content.findViewById( R.id.task_edit_estimate_layout );
-      estimateEdit = (EditText) estimateContainer.findViewById( R.id.task_edit_estim_text );
-      location = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_location );
-      url = (TitleWithEditTextLayout) content.findViewById( R.id.task_edit_url );
+      estimateEditText = (EditText) estimateContainer.findViewById( R.id.task_edit_estim_text );
+      locationSpinner = (TitleWithSpinnerLayout) content.findViewById( R.id.task_edit_location );
+      urlEditText = (TitleWithEditTextLayout) content.findViewById( R.id.task_edit_url );
       
       return fragmentView;
+   }
+   
+
+
+   @Override
+   protected void initContent( ViewGroup content )
+   {
+      initialValues = getInitialValues();
+      
+      if ( initialValues != null )
+      {
+         nameEditText.setText( getCurrentValue( Tasks.TASKSERIES_NAME,
+                                                String.class ) );
+         
+         initializePrioritySpinner();
+         initializeListSpinner();
+         initializeLocationSpinner();
+         
+         UIUtils.inflateTags( getActivity(),
+                              tagsLayout,
+                              Arrays.asList( TextUtils.split( getCurrentValue( Tasks.TAGS,
+                                                                               String.class ),
+                                                              Tasks.TAGS_SEPARATOR ) ),
+                              null,
+                              null );
+         
+         initDueEditText( true );
+         initRecurrenceEditText();
+         initEstimateEditText();
+         
+         urlEditText.setText( getCurrentValue( Tasks.URL, String.class ) );
+         
+         registerInputListeners();
+      }
+   }
+   
+
+
+   protected void registerInputListeners()
+   {
+      nameEditText.addTextChangedListener( new UIUtils.AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            putChange( Tasks.TASKSERIES_NAME,
+                       Strings.getTrimmed( s ),
+                       String.class );
+         }
+      } );
+      
+      dueEditText.setOnEditorActionListener( new OnEditorActionListener()
+      {
+         @Override
+         public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
+         {
+            return onEditDueByInput( actionId );
+         }
+      } );
+      
+      dueEditText.setOnFocusChangeListener( new OnFocusChangeListener()
+      {
+         public void onFocusChange( View v, boolean hasFocus )
+         {
+            onDueFocused( hasFocus );
+         }
+      } );
+      
+      recurrEditText.setOnEditorActionListener( new OnEditorActionListener()
+      {
+         @Override
+         public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
+         {
+            return onEditRecurrenceByInput( actionId );
+         }
+      } );
+      
+      estimateEditText.setOnEditorActionListener( new OnEditorActionListener()
+      {
+         @Override
+         public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
+         {
+            return onEditEstimateByInput( actionId );
+         }
+      } );
+      
+      urlEditText.addTextChangedListener( new UIUtils.AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            putChange( Tasks.URL,
+                       Strings.nullIfEmpty( Strings.getTrimmed( s ) ),
+                       String.class );
+         }
+      } );
+      
+      final View contentView = getContentView();
+      
+      contentView.findViewById( R.id.task_edit_due_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       onEditDueByPicker();
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_recurrence_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       onEditRecurrenceByPicker();
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_estim_btn_picker )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       onEditEstimateByPicker();
+                    }
+                 } );
+      
+      contentView.findViewById( R.id.task_edit_tags_btn_change )
+                 .setOnClickListener( new OnClickListener()
+                 {
+                    @Override
+                    public void onClick( View v )
+                    {
+                       onChangeTags();
+                    }
+                 } );
+      
+      prioritySpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         public void onItemSelected( AdapterView< ? > arg0,
+                                     View arg1,
+                                     int arg2,
+                                     long arg3 )
+         {
+            putChange( Tasks.PRIORITY,
+                       prioritySpinner.getSelectedValue(),
+                       String.class );
+         }
+         
+
+
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+   }
+   
+
+
+   protected void initializeListSpinner()
+   {
+      final TaskEditDatabaseData loaderData = getLoaderData();
+      
+      if ( loaderData != null )
+      {
+         final Map< String, String > listIdsToListName = loaderData.getListIdsToListNames();
+         final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
+                                                                            android.R.layout.simple_spinner_item,
+                                                                            android.R.id.text1,
+                                                                            new ArrayList< String >( listIdsToListName.values() ) );
+         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+         listsSpinner.setAdapter( adapter );
+         listsSpinner.setValues( new ArrayList< String >( listIdsToListName.keySet() ) );
+         listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
+                                                            String.class ), 0 );
+      }
+   }
+   
+
+
+   protected void initializeLocationSpinner()
+   {
+      final TaskEditDatabaseData loaderData = getLoaderData();
+      
+      if ( loaderData != null )
+      {
+         final Map< String, String > locIdsToLocName = loaderData.getLocationIdsToLocationNames();
+         final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
+                                                                            android.R.layout.simple_spinner_item,
+                                                                            android.R.id.text1,
+                                                                            new ArrayList< String >( locIdsToLocName.values() ) );
+         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+         locationSpinner.setAdapter( adapter );
+         locationSpinner.setValues( new ArrayList< String >( locIdsToLocName.keySet() ) );
+         locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
+                                                               String.class ),
+                                              0 );
+      }
+   }
+   
+
+
+   protected void initializePrioritySpinner()
+   {
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
+                                                                         android.R.layout.simple_spinner_item,
+                                                                         android.R.id.text1,
+                                                                         getResources().getStringArray( R.array.rtm_priorities ) );
+      adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+      prioritySpinner.setAdapter( adapter );
+      prioritySpinner.setValues( getResources().getStringArray( R.array.rtm_priority_values ) );
+      prioritySpinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
+                                                            String.class ), 0 );
+   }
+   
+
+
+   protected void initDueEditText( boolean showWeekday )
+   {
+      final long due = getCurrentValue( Tasks.DUE_DATE, Long.class );
+      final boolean hasDueTime = getCurrentValue( Tasks.HAS_DUE_TIME,
+                                                  Boolean.class );
+      
+      int format = MolokoDateUtils.FORMAT_NUMERIC
+         | MolokoDateUtils.FORMAT_WITH_YEAR | MolokoDateUtils.FORMAT_ABR_ALL;
+      
+      if ( showWeekday )
+         format |= MolokoDateUtils.FORMAT_SHOW_WEEKDAY;
+      
+      if ( due == -1 )
+      {
+         dueEditText.setText( null );
+      }
+      else if ( hasDueTime )
+      {
+         dueEditText.setText( MolokoDateUtils.formatDateTime( due, format ) );
+      }
+      else
+      {
+         dueEditText.setText( MolokoDateUtils.formatDate( due, format ) );
+      }
+   }
+   
+
+
+   protected void initRecurrenceEditText()
+   {
+      final String recurrence = getCurrentValue( Tasks.RECURRENCE, String.class );
+      final boolean isEveryRecurrence = getCurrentValue( Tasks.RECURRENCE_EVERY,
+                                                         Boolean.class );
+      
+      if ( TextUtils.isEmpty( recurrence ) )
+      {
+         recurrEditText.setText( null );
+      }
+      else
+      {
+         final String sentence = RecurrenceParsing.parseRecurrencePattern( recurrence,
+                                                                           isEveryRecurrence );
+         recurrEditText.setText( ( sentence != null
+                                                   ? sentence
+                                                   : getString( R.string.task_datetime_err_recurr ) ) );
+      }
+   }
+   
+
+
+   protected void initEstimateEditText()
+   {
+      final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
+                                                   Long.class );
+      
+      if ( estimateMillis == -1 )
+      {
+         estimateEditText.setText( null );
+      }
+      else
+      {
+         estimateEditText.setText( MolokoDateUtils.formatEstimated( getActivity(),
+                                                                    estimateMillis ) );
+      }
    }
    
 
@@ -208,23 +571,23 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    protected boolean validateInput()
    {
       // Task name
-      boolean ok = validateName( nameEdit );
+      boolean ok = validateName();
       
       // Due
-      ok = ok && validateDue( dueEdit ) != null;
+      ok = ok && validateDue() != null;
       
       // Recurrence
-      ok = ok && validateRecurrence( recurrEdit ) != null;
+      ok = ok && validateRecurrence() != null;
       
       // Estimate
-      ok = ok && validateEstimate( estimateEdit ) != -1;
+      ok = ok && validateEstimate() != -1;
       
       return ok;
    }
    
 
 
-   protected boolean validateName( TextView name )
+   protected boolean validateName()
    {
       final boolean ok = !TextUtils.isEmpty( getCurrentValue( TaskSeries.TASKSERIES_NAME,
                                                               String.class ) );
@@ -233,7 +596,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
          Toast.makeText( getActivity(),
                          R.string.task_edit_validate_empty_name,
                          Toast.LENGTH_LONG ).show();
-         nameEdit.requestFocus();
+         nameEditText.requestFocus();
       }
       
       return ok;
@@ -241,11 +604,90 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    
 
 
-   protected MolokoCalendar validateDue( TextView dueEdit )
+   private void onEditDueByPicker()
+   {
+      pickerDlg = createDuePicker();
+      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
+      {
+         public void onDialogClosed( CloseReason reason,
+                                     Object value,
+                                     Object... extras )
+         {
+            pickerDlg = null;
+            
+            if ( reason == CloseReason.OK )
+            {
+               onDueEdited( (Long) value, (Boolean) extras[ 0 ] );
+               initDueEditText( true );
+            }
+         }
+      } );
+      pickerDlg.show();
+   }
+   
+
+
+   private AbstractPickerDialog createDuePicker()
+   {
+      return new DuePickerDialog( getActivity(),
+                                  getCurrentValue( Tasks.DUE_DATE, Long.class ),
+                                  getCurrentValue( Tasks.HAS_DUE_TIME,
+                                                   Boolean.class ) );
+   }
+   
+
+
+   private boolean onEditDueByInput( int actionId )
+   {
+      if ( hasInputCommitted( actionId ) )
+      {
+         final String dueStr = dueEditText.getText().toString();
+         
+         if ( !TextUtils.isEmpty( dueStr ) )
+         {
+            final MolokoCalendar cal = validateDue();
+            if ( cal != null )
+            {
+               onDueEdited( cal.getTimeInMillis(), cal.hasTime() );
+               initDueEditText( true );
+            }
+            else
+            {
+               return true;
+            }
+         }
+         else
+         {
+            onDueEdited( -1, false );
+            initDueEditText( true );
+         }
+      }
+      
+      return false;
+   }
+   
+
+
+   private void onDueEdited( long millis, boolean hasTime )
+   {
+      putChange( Tasks.DUE_DATE, millis, Long.class );
+      putChange( Tasks.HAS_DUE_TIME, hasTime, Boolean.class );
+   }
+   
+
+
+   private void onDueFocused( boolean hasFocus )
+   {
+      initDueEditText( !hasFocus );
+   }
+   
+
+
+   protected MolokoCalendar validateDue()
    {
       MolokoCalendar cal = null;
       
-      final String dueStr = dueEdit.getText().toString();
+      final String dueStr = dueEditText.getText().toString();
       
       if ( !TextUtils.isEmpty( dueStr ) )
       {
@@ -257,7 +699,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
                             getString( R.string.task_edit_validate_due, dueStr ),
                             Toast.LENGTH_LONG )
                  .show();
-            dueEdit.requestFocus();
+            dueEditText.requestFocus();
          }
       }
       
@@ -266,11 +708,85 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    
 
 
-   protected Pair< String, Boolean > validateRecurrence( TextView recurrenceEdit )
+   private void onEditRecurrenceByPicker()
+   {
+      pickerDlg = createRecurrencePicker();
+      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
+      {
+         public void onDialogClosed( CloseReason reason,
+                                     Object value,
+                                     Object... extras )
+         {
+            pickerDlg = null;
+            
+            if ( reason == CloseReason.OK )
+            {
+               onRecurrenceEdited( (String) value, (Boolean) extras[ 0 ] );
+               initRecurrenceEditText();
+            }
+         }
+      } );
+      pickerDlg.show();
+   }
+   
+
+
+   private AbstractPickerDialog createRecurrencePicker()
+   {
+      return new RecurrPickerDialog( getActivity(),
+                                     getCurrentValue( Tasks.RECURRENCE,
+                                                      String.class ),
+                                     getCurrentValue( Tasks.RECURRENCE_EVERY,
+                                                      Boolean.class ) );
+   }
+   
+
+
+   private boolean onEditRecurrenceByInput( int actionId )
+   {
+      if ( hasInputCommitted( actionId ) )
+      {
+         final String estimateStr = recurrEditText.getText().toString();
+         
+         if ( !TextUtils.isEmpty( estimateStr ) )
+         {
+            final Pair< String, Boolean > res = validateRecurrence();
+            
+            if ( res != null )
+            {
+               onRecurrenceEdited( res.first, res.second.booleanValue() );
+               initRecurrenceEditText();
+            }
+            else
+            {
+               return true;
+            }
+         }
+         else
+         {
+            onRecurrenceEdited( null, false );
+            initRecurrenceEditText();
+         }
+      }
+      
+      return false;
+   }
+   
+
+
+   private void onRecurrenceEdited( String pattern, boolean isEvery )
+   {
+      putChange( Tasks.RECURRENCE, pattern, String.class );
+      putChange( Tasks.RECURRENCE_EVERY, isEvery, Boolean.class );
+   }
+   
+
+
+   protected Pair< String, Boolean > validateRecurrence()
    {
       Pair< String, Boolean > res = new Pair< String, Boolean >( Strings.EMPTY_STRING,
                                                                  Boolean.FALSE );
-      final String recurrStr = recurrEdit.getText().toString();
+      final String recurrStr = recurrEditText.getText().toString();
       
       if ( !TextUtils.isEmpty( recurrStr ) )
       {
@@ -282,7 +798,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
                             getString( R.string.task_edit_validate_recurrence,
                                        recurrStr ),
                             Toast.LENGTH_LONG ).show();
-            recurrenceEdit.requestFocus();
+            recurrEditText.requestFocus();
          }
       }
       
@@ -291,11 +807,87 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    
 
 
-   protected long validateEstimate( TextView estimateEdit )
+   private void onEditEstimateByPicker()
+   {
+      pickerDlg = createEstimatePicker();
+      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
+      {
+         public void onDialogClosed( CloseReason reason,
+                                     Object value,
+                                     Object... extras )
+         {
+            pickerDlg = null;
+            
+            if ( reason == CloseReason.OK )
+            {
+               final long millis = (Long) value;
+               final String estStr = MolokoDateUtils.formatEstimated( getActivity(),
+                                                                      millis );
+               onEstimateEdited( estStr, millis );
+               initEstimateEditText();
+            }
+         }
+      } );
+      pickerDlg.show();
+   }
+   
+
+
+   private AbstractPickerDialog createEstimatePicker()
+   {
+      return new EstimatePickerDialog( getActivity(),
+                                       getCurrentValue( Tasks.ESTIMATE_MILLIS,
+                                                        Long.class ) );
+   }
+   
+
+
+   private boolean onEditEstimateByInput( int actionId )
+   {
+      if ( hasInputCommitted( actionId ) )
+      {
+         String estStr = estimateEditText.getText().toString();
+         
+         if ( !TextUtils.isEmpty( estStr ) )
+         {
+            final long millis = validateEstimate();
+            
+            if ( millis != -1 )
+            {
+               estStr = MolokoDateUtils.formatEstimated( getActivity(), millis );
+               onEstimateEdited( estStr, millis );
+               initEstimateEditText();
+            }
+            else
+            {
+               return true;
+            }
+         }
+         else
+         {
+            onEstimateEdited( null, -1 );
+            initEstimateEditText();
+         }
+      }
+      
+      return false;
+   }
+   
+
+
+   private void onEstimateEdited( String estimate, long millis )
+   {
+      putChange( Tasks.ESTIMATE, estimate, String.class );
+      putChange( Tasks.ESTIMATE_MILLIS, Long.valueOf( millis ), Long.class );
+   }
+   
+
+
+   protected long validateEstimate()
    {
       long millis = 0;
       
-      String estStr = estimateEdit.getText().toString();
+      String estStr = estimateEditText.getText().toString();
       
       if ( !TextUtils.isEmpty( estStr ) )
       {
@@ -307,11 +899,29 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
                             getString( R.string.task_edit_validate_estimate,
                                        estStr ),
                             Toast.LENGTH_LONG ).show();
-            estimateEdit.requestFocus();
+            estimateEditText.requestFocus();
          }
       }
       
       return millis;
+   }
+   
+
+
+   private void onChangeTags()
+   {
+      final String tags[] = TextUtils.split( getCurrentValue( TaskSeries.TAGS,
+                                                              String.class ),
+                                             Tasks.TAGS_SEPARATOR );
+      final Intent intent = new Intent( getActivity(), ChangeTagsActivity.class );
+      
+      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TASK_NAME,
+                       getCurrentValue( TaskSeries.TASKSERIES_NAME,
+                                        String.class ) );
+      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS, tags );
+      
+      // TOOO: Make fragment?
+      startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
    }
    
 

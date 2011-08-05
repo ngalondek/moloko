@@ -88,7 +88,7 @@ public final class UIUtils
    }
    
    
-   public static abstract class AfterTextChangeWatcher implements TextWatcher
+   public static abstract class AfterTextChangedWatcher implements TextWatcher
    {
       abstract public void afterTextChanged( Editable s );
       

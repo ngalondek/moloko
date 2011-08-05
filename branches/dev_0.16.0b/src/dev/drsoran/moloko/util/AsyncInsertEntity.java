@@ -27,12 +27,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -43,18 +43,18 @@ import dev.drsoran.provider.Rtm;
 
 public abstract class AsyncInsertEntity< T > extends AsyncTask< T, Void, Uri >
 {
-   private final Context context;
+   private final Activity activity;
    
    private ProgressDialog dialog;
    
    
 
-   public AsyncInsertEntity( Context context )
+   public AsyncInsertEntity( Activity activity )
    {
-      if ( context == null )
-         throw new NullPointerException( "context is null" );
+      if ( activity == null )
+         throw new NullPointerException( "activity is null" );
       
-      this.context = context;
+      this.activity = activity;
    }
    
 
@@ -79,8 +79,9 @@ public abstract class AsyncInsertEntity< T > extends AsyncTask< T, Void, Uri >
    @Override
    protected void onPreExecute()
    {
-      dialog = new ProgressDialog( context );
-      dialog.setMessage( context.getString( getProgressMessageId() ) );
+      dialog = new ProgressDialog( activity );
+      dialog.setOwnerActivity( activity );
+      dialog.setMessage( activity.getString( getProgressMessageId() ) );
       dialog.setCancelable( false );
       dialog.show();
    }
@@ -93,14 +94,14 @@ public abstract class AsyncInsertEntity< T > extends AsyncTask< T, Void, Uri >
       if ( entity == null || entity.length < 1 )
          return null;
       
-      final ContentProvider provider = context.getContentResolver()
-                                              .acquireContentProviderClient( Rtm.AUTHORITY )
-                                              .getLocalContentProvider();
+      final ContentProvider provider = activity.getContentResolver()
+                                               .acquireContentProviderClient( Rtm.AUTHORITY )
+                                               .getLocalContentProvider();
       
       if ( !( provider instanceof RtmProvider ) )
          return null;
       
-      final List< ContentProviderOperation > operations = getInsertOperations( context.getContentResolver(),
+      final List< ContentProviderOperation > operations = getInsertOperations( activity.getContentResolver(),
                                                                                entity[ 0 ] );
       
       if ( operations == null )

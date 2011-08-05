@@ -30,7 +30,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.ContentProviderOperation;
-import android.content.Context;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
@@ -47,14 +46,14 @@ public final class TaskEditUtils
       + TaskEditUtils.class.getSimpleName();
    
    
-   
+
    private TaskEditUtils()
    {
       throw new AssertionError();
    }
    
-   
-   
+
+
    public final static boolean setTaskCompletion( Activity activity,
                                                   Task task,
                                                   boolean complete )
@@ -64,9 +63,9 @@ public final class TaskEditUtils
                                  complete );
    }
    
-   
-   
-   public final static boolean setTasksCompletion( Context context,
+
+
+   public final static boolean setTasksCompletion( Activity activity,
                                                    List< ? extends Task > tasks,
                                                    boolean complete )
    {
@@ -94,11 +93,11 @@ public final class TaskEditUtils
             }
          }
          
-         ok = Queries.applyModifications( context,
+         ok = Queries.applyModifications( activity,
                                           modifications,
                                           R.string.toast_save_task );
          
-         UIUtils.reportStatus( context,
+         UIUtils.reportStatus( activity,
                                R.string.toast_save_task_ok,
                                R.string.toast_save_task_failed,
                                ok );
@@ -107,16 +106,16 @@ public final class TaskEditUtils
       return ok;
    }
    
-   
-   
-   public final static boolean postponeTask( Context context, Task task )
+
+
+   public final static boolean postponeTask( Activity activity, Task task )
    {
-      return postponeTasks( context, Collections.singletonList( task ) );
+      return postponeTasks( activity, Collections.singletonList( task ) );
    }
    
-   
-   
-   public final static boolean postponeTasks( Context context,
+
+
+   public final static boolean postponeTasks( Activity activity,
                                               List< ? extends Task > tasks )
    {
       /**
@@ -187,11 +186,11 @@ public final class TaskEditUtils
             modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
          }
          
-         ok = Queries.applyModifications( context,
+         ok = Queries.applyModifications( activity,
                                           modifications,
                                           R.string.toast_save_task );
          
-         UIUtils.reportStatus( context,
+         UIUtils.reportStatus( activity,
                                R.string.toast_save_task_ok,
                                R.string.toast_save_task_failed,
                                ok );
@@ -200,15 +199,15 @@ public final class TaskEditUtils
       return ok;
    }
    
-   
-   
+
+
    public final static boolean deleteTask( Activity activity, Task task )
    {
       return deleteTasks( activity, Collections.singletonList( task ) );
    }
    
-   
-   
+
+
    public final static boolean deleteTasks( Activity activity,
                                             List< ? extends Task > tasks )
    {

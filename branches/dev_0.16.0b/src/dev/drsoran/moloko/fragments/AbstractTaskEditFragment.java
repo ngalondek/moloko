@@ -38,17 +38,17 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -62,11 +62,11 @@ import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
@@ -156,6 +156,10 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    
    private final static int TASK_EDIT_LOADER = 1;
    
+   private Bundle initialValues;
+   
+   private Bundle changes;
+   
    protected TextView addedDate;
    
    protected TextView completedDate;
@@ -191,10 +195,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    protected TitleWithEditTextLayout urlEditText;
    
    protected AbstractPickerDialog pickerDlg;
-   
-   protected Bundle initialValues;
-   
-   protected Bundle changes;
    
    
 
@@ -316,6 +316,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       
       dueEditText.setOnFocusChangeListener( new OnFocusChangeListener()
       {
+         @Override
          public void onFocusChange( View v, boolean hasFocus )
          {
             onDueFocused( hasFocus );
@@ -395,6 +396,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       
       prioritySpinner.setOnItemSelectedListener( new OnItemSelectedListener()
       {
+         @Override
          public void onItemSelected( AdapterView< ? > arg0,
                                      View arg1,
                                      int arg2,
@@ -407,6 +409,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
          
 
 
+         @Override
          public void onNothingSelected( AdapterView< ? > arg0 )
          {
          }
@@ -430,7 +433,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
          listsSpinner.setAdapter( adapter );
          listsSpinner.setValues( new ArrayList< String >( listIdsToListName.keySet() ) );
          listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
-                                                            String.class ), 0 );
+                                                            String.class ),
+                                           0 );
       }
    }
    
@@ -468,7 +472,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       prioritySpinner.setAdapter( adapter );
       prioritySpinner.setValues( getResources().getStringArray( R.array.rtm_priority_values ) );
       prioritySpinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                            String.class ), 0 );
+                                                            String.class ),
+                                           0 );
    }
    
 
@@ -553,9 +558,14 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    
 
 
-   public String getConfiguredTaskId()
+   public Task getConfiguredTaskAssertNotNull()
    {
-      return configuration.getString( Config.TASK );
+      final Task task = configuration.getParcelable( Config.TASK );
+      
+      if ( task == null )
+         throw new AssertionError( "expected task to be not null" );
+      
+      return task;
    }
    
 
@@ -609,6 +619,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       pickerDlg = createDuePicker();
       pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
       {
+         @Override
          public void onDialogClosed( CloseReason reason,
                                      Object value,
                                      Object... extras )
@@ -713,6 +724,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       pickerDlg = createRecurrencePicker();
       pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
       {
+         @Override
          public void onDialogClosed( CloseReason reason,
                                      Object value,
                                      Object... extras )
@@ -812,6 +824,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       pickerDlg = createEstimatePicker();
       pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
       {
+         @Override
          public void onDialogClosed( CloseReason reason,
                                      Object value,
                                      Object... extras )
@@ -952,6 +965,14 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
          return false;
       
       return changes.containsKey( key );
+   }
+   
+
+
+   @Override
+   public boolean hasChanges()
+   {
+      return changes != null && changes.size() > 0;
    }
    
 

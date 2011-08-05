@@ -22,8 +22,8 @@
 
 package dev.drsoran.moloko.util;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
@@ -32,7 +32,7 @@ import dev.drsoran.moloko.content.ModificationsProviderPart;
 public class ApplyModificationsTask extends
          AsyncTask< ModificationSet, Void, Boolean >
 {
-   private final Context context;
+   private final Activity activity;
    
    private final int progressTitle;
    
@@ -40,12 +40,12 @@ public class ApplyModificationsTask extends
    
    
 
-   public ApplyModificationsTask( Context context, int progressTitle )
+   public ApplyModificationsTask( Activity activity, int progressTitle )
    {
-      if ( context == null )
+      if ( activity == null )
          throw new NullPointerException( "context is null" );
       
-      this.context = context;
+      this.activity = activity;
       this.progressTitle = progressTitle;
    }
    
@@ -54,10 +54,11 @@ public class ApplyModificationsTask extends
    @Override
    protected void onPreExecute()
    {
-      dialog = new ProgressDialog( context );
+      dialog = new ProgressDialog( activity );
+      dialog.setOwnerActivity( activity );
       
       if ( progressTitle != -1 )
-         dialog.setMessage( context.getString( progressTitle ) );
+         dialog.setMessage( activity.getString( progressTitle ) );
       
       dialog.setCancelable( false );
       dialog.show();
@@ -74,7 +75,7 @@ public class ApplyModificationsTask extends
       if ( params.length == 0 || params[ 0 ].size() == 0 )
          return Boolean.TRUE;
       
-      return Boolean.valueOf( ModificationsProviderPart.applyModifications( context.getContentResolver(),
+      return Boolean.valueOf( ModificationsProviderPart.applyModifications( activity.getContentResolver(),
                                                                             params[ 0 ] ) );
    }
    

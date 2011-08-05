@@ -267,21 +267,44 @@ public class MolokoDateUtils
 
    public final static Date getDate( ParcelableDate parcelableDate )
    {
-      return parcelableDate != null ? parcelableDate.getDate() : null;
+      return getDate( parcelableDate, null );
+   }
+   
+
+
+   public final static Date getDate( ParcelableDate parcelableDate,
+                                     Date defaultValue )
+   {
+      return parcelableDate != null ? parcelableDate.getDate() : defaultValue;
    }
    
 
 
    public final static Long getTime( ParcelableDate parcelableDate )
    {
-      return parcelableDate != null ? parcelableDate.getTime() : null;
+      return getTime( parcelableDate, null );
+   }
+   
+
+
+   public final static Long getTime( ParcelableDate parcelableDate,
+                                     Long defaultValue )
+   {
+      return parcelableDate != null ? parcelableDate.getTime() : defaultValue;
    }
    
 
 
    public final static Long getTime( Date date )
    {
-      return date != null ? date.getTime() : null;
+      return getTime( date, null );
+   }
+   
+
+
+   public final static Long getTime( Date date, Long defaultValue )
+   {
+      return date != null ? date.getTime() : defaultValue;
    }
    
 

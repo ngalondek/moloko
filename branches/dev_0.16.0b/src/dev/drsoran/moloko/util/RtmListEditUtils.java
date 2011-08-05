@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.content.Context;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
@@ -50,15 +49,15 @@ public final class RtmListEditUtils
       + RtmListEditUtils.class.getSimpleName();
    
    
-   
+
    private RtmListEditUtils()
    {
       throw new AssertionError();
    }
    
-   
-   
-   public final static boolean setListName( Context context,
+
+
+   public final static boolean setListName( Activity activity,
                                             String listId,
                                             String name )
    {
@@ -70,16 +69,16 @@ public final class RtmListEditUtils
                                                        name ) );
       modifications.add( Modification.newListModified( listId ) );
       
-      return UIUtils.reportStatus( context,
+      return UIUtils.reportStatus( activity,
                                    R.string.toast_save_list_ok,
                                    R.string.toast_save_list_failed,
-                                   Queries.applyModifications( context,
+                                   Queries.applyModifications( activity,
                                                                modifications,
                                                                R.string.toast_save_list ) );
    }
    
-   
-   
+
+
    public final static boolean deleteListByName( Activity activity,
                                                  String listName )
    {
@@ -99,8 +98,8 @@ public final class RtmListEditUtils
       return false;
    }
    
-   
-   
+
+
    public final static boolean deleteList( Activity activity, RtmList list )
    {
       boolean ok = true;

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -43,7 +44,23 @@ import dev.drsoran.rtm.Task;
 public class TaskEditFragment extends
          AbstractTaskEditFragment< TaskEditFragment >
 {
+   public final static TaskEditFragment newInstance( Bundle config )
+   {
+      final TaskEditFragment fragment = new TaskEditFragment();
+      
+      fragment.setArguments( config );
+      
+      return fragment;
+   }
    
+   
+   public static class Config
+   {
+      public final static String TASK = "task";
+   }
+   
+   
+
    @Override
    protected Bundle getInitialValues()
    {
@@ -76,6 +93,40 @@ public class TaskEditFragment extends
 
 
    @Override
+   protected void initializeHeadSection()
+   {
+      final Task task = getConfiguredTaskAssertNotNull();
+      
+      defaultInitializeHeadSectionImpl( task );
+   }
+   
+
+
+   @Override
+   public void takeConfigurationFrom( Bundle config )
+   {
+      super.takeConfigurationFrom( config );
+      
+      if ( config.containsKey( Config.TASK ) )
+         configuration.putParcelable( Config.TASK,
+                                      config.getParcelable( Config.TASK ) );
+   }
+   
+
+
+   public Task getConfiguredTaskAssertNotNull()
+   {
+      final Task task = configuration.getParcelable( Config.TASK );
+      
+      if ( task == null )
+         throw new AssertionError( "expected task to be not null" );
+      
+      return task;
+   }
+   
+
+
+   @Override
    public boolean onFinishEditing()
    {
       boolean ok = true;
@@ -89,7 +140,6 @@ public class TaskEditFragment extends
             
             if ( modifications != null && modifications.size() > 0 )
             {
-               // set the taskseries modification time to now
                try
                {
                   ok = new ApplyModificationsTask( getActivity(),
@@ -126,8 +176,14 @@ public class TaskEditFragment extends
 
 
    @Override
-   public IEditableFragment< TaskFragment > createEditableFragmentInstance()
+   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
-      return null;
+      final Bundle config = new Bundle();
+      
+      config.putString( TaskFragment.Config.TASK_ID,
+                        getConfiguredTaskAssertNotNull().getId() );
+      
+      final TaskFragment fragment = TaskFragment.newInstance( config );
+      return fragment;
    }
 }

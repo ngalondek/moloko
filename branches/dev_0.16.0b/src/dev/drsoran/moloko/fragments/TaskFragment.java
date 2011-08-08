@@ -485,7 +485,12 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    @Override
    public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {
-      // TODO: Implement
-      return null;
+      final Bundle config = new Bundle();
+      
+      config.putParcelable( TaskEditFragment.Config.TASK,
+                            getLoaderDataAssertNotNull() );
+      
+      final TaskEditFragment fragment = TaskEditFragment.newInstance( config );
+      return fragment;
    }
 }

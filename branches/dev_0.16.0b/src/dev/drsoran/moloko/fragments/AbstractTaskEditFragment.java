@@ -38,17 +38,17 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -62,11 +62,11 @@ import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
@@ -96,13 +96,9 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    private final static String TAG = "Moloko."
       + AbstractTaskEditFragment.class.getSimpleName();
    
+   protected final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
-   public static class Config
-   {
-      public final static String TASK = "task";
-   }
    
-
    public final static class TaskEditDatabaseData
    {
       public final RtmLists lists;
@@ -151,8 +147,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    }
    
    private final static String KEY_CHANGES = "changes";
-   
-   private final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
    private final static int TASK_EDIT_LOADER = 1;
    
@@ -265,8 +259,11 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       
       if ( initialValues != null )
       {
+         initializeHeadSection();
+         
          nameEditText.setText( getCurrentValue( Tasks.TASKSERIES_NAME,
                                                 String.class ) );
+         nameEditText.requestFocus();
          
          initializePrioritySpinner();
          initializeListSpinner();
@@ -288,6 +285,47 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
          
          registerInputListeners();
       }
+   }
+   
+
+
+   protected void initializeHeadSection()
+   {
+   }
+   
+
+
+   protected void defaultInitializeHeadSectionImpl( Task task )
+   {
+      addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
+                                                             .getTime(),
+                                                         FULL_DATE_FLAGS ) );
+      
+      if ( task.getCompleted() != null )
+      {
+         completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
+                                                                    .getTime(),
+                                                                FULL_DATE_FLAGS ) );
+         completedDate.setVisibility( View.VISIBLE );
+      }
+      else
+         completedDate.setVisibility( View.GONE );
+      
+      if ( task.getPosponed() > 0 )
+      {
+         postponed.setText( getString( R.string.task_postponed,
+                                       task.getPosponed() ) );
+         postponed.setVisibility( View.VISIBLE );
+      }
+      else
+         postponed.setVisibility( View.GONE );
+      
+      if ( !TextUtils.isEmpty( task.getSource() ) )
+         source.setText( getString( R.string.task_source,
+                                    UIUtils.convertSource( getActivity(),
+                                                           task.getSource() ) ) );
+      else
+         source.setText( "?" );
    }
    
 
@@ -425,17 +463,23 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       if ( loaderData != null )
       {
          final Map< String, String > listIdsToListName = loaderData.getListIdsToListNames();
-         final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
-                                                                            android.R.layout.simple_spinner_item,
-                                                                            android.R.id.text1,
-                                                                            new ArrayList< String >( listIdsToListName.values() ) );
-         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-         listsSpinner.setAdapter( adapter );
-         listsSpinner.setValues( new ArrayList< String >( listIdsToListName.keySet() ) );
-         listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
-                                                            String.class ),
-                                           0 );
+         createListSpinnerAdapterForValues( listIdsToListName );
       }
+   }
+   
+
+
+   protected void createListSpinnerAdapterForValues( Map< String, String > listIdsToListName )
+   {
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
+                                                                         android.R.layout.simple_spinner_item,
+                                                                         android.R.id.text1,
+                                                                         new ArrayList< String >( listIdsToListName.values() ) );
+      adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+      listsSpinner.setAdapter( adapter );
+      listsSpinner.setValues( new ArrayList< String >( listIdsToListName.keySet() ) );
+      listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
+                                                         String.class ), 0 );
    }
    
 
@@ -447,33 +491,47 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       if ( loaderData != null )
       {
          final Map< String, String > locIdsToLocName = loaderData.getLocationIdsToLocationNames();
-         final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
-                                                                            android.R.layout.simple_spinner_item,
-                                                                            android.R.id.text1,
-                                                                            new ArrayList< String >( locIdsToLocName.values() ) );
-         adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-         locationSpinner.setAdapter( adapter );
-         locationSpinner.setValues( new ArrayList< String >( locIdsToLocName.keySet() ) );
-         locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                               String.class ),
-                                              0 );
+         createLocationSpinnerAdapterForValues( locIdsToLocName );
       }
+   }
+   
+
+
+   protected void createLocationSpinnerAdapterForValues( Map< String, String > locIdsToLocName )
+   {
+      final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
+                                                                         android.R.layout.simple_spinner_item,
+                                                                         android.R.id.text1,
+                                                                         new ArrayList< String >( locIdsToLocName.values() ) );
+      adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+      locationSpinner.setAdapter( adapter );
+      locationSpinner.setValues( new ArrayList< String >( locIdsToLocName.keySet() ) );
+      locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
+                                                            String.class ), 0 );
    }
    
 
 
    protected void initializePrioritySpinner()
    {
+      createPrioritySpinnerAdapterForValues( getResources().getStringArray( R.array.rtm_priorities ),
+                                             getResources().getStringArray( R.array.rtm_priority_values ) );
+   }
+   
+
+
+   protected void createPrioritySpinnerAdapterForValues( String[] texts,
+                                                         String[] values )
+   {
       final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
-                                                                         getResources().getStringArray( R.array.rtm_priorities ) );
+                                                                         texts );
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
       prioritySpinner.setAdapter( adapter );
-      prioritySpinner.setValues( getResources().getStringArray( R.array.rtm_priority_values ) );
+      prioritySpinner.setValues( values );
       prioritySpinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                            String.class ),
-                                           0 );
+                                                            String.class ), 0 );
    }
    
 
@@ -542,30 +600,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
          estimateEditText.setText( MolokoDateUtils.formatEstimated( getActivity(),
                                                                     estimateMillis ) );
       }
-   }
-   
-
-
-   @Override
-   public void takeConfigurationFrom( Bundle config )
-   {
-      super.takeConfigurationFrom( config );
-      
-      if ( config.containsKey( Config.TASK ) )
-         configuration.putParcelable( Config.TASK,
-                                      config.getParcelable( Config.TASK ) );
-   }
-   
-
-
-   public Task getConfiguredTaskAssertNotNull()
-   {
-      final Task task = configuration.getParcelable( Config.TASK );
-      
-      if ( task == null )
-         throw new AssertionError( "expected task to be not null" );
-      
-      return task;
    }
    
 

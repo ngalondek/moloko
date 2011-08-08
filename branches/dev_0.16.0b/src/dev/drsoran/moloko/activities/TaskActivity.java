@@ -48,6 +48,7 @@ import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.fragments.NoteAddFragment;
 import dev.drsoran.moloko.fragments.NoteEditFragment;
 import dev.drsoran.moloko.fragments.NoteFragment;
+import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
@@ -318,9 +319,20 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    public Task getTask()
    {
-      final TaskFragment taskFragment = (TaskFragment) findAddedFragmentById( R.id.frag_task );
+      Task task = null;
       
-      return taskFragment != null ? taskFragment.getLoaderData() : null;
+      final Fragment fragment = findAddedFragmentById( R.id.frag_task );
+      
+      if ( fragment instanceof TaskEditFragment )
+      {
+         task = ( (TaskEditFragment) fragment ).getConfiguredTaskAssertNotNull();
+      }
+      else if ( fragment instanceof TaskFragment )
+      {
+         task = ( (TaskFragment) fragment ).getLoaderData();
+      }
+      
+      return task;
    }
    
 
@@ -466,13 +478,17 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    public void onEditTask( View taskEditButton )
    {
+      final Fragment fragment = findAddedFragmentById( R.id.frag_task );
+      
+      if ( setFragmentInEditMode( fragment ) )
+         setActivityInEditMode( fragment.getId() );
    }
    
 
 
    public void onAddNote( View addNoteButton )
    {
-      addNoteImpl();
+      setActivityInEditMode( createAddNewNoteFragment( createAddNewNoteFragmentConfiguration( getTaskAssertNotNull().getTaskSeriesId() ) ) );
    }
    
 
@@ -624,13 +640,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
       intent.addFlags( Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
       
       startActivity( intent );
-   }
-   
-
-
-   private void addNoteImpl()
-   {
-      setActivityInEditMode( createAddNewNoteFragment( createAddNewNoteFragmentConfiguration( getTaskAssertNotNull().getTaskSeriesId() ) ) );
    }
    
 

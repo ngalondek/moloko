@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
@@ -307,7 +306,7 @@ public class RtmTaskSeriesProviderPart extends
          
          tasksLists = new RtmTasks();
          
-         final Set< String > listIds = lists.getLists().keySet();
+         final List< String > listIds = lists.getListIds();
          
          // For each list
          for ( final Iterator< String > i = listIds.iterator(); ok

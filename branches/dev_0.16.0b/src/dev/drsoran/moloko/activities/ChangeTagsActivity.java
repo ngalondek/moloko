@@ -43,6 +43,7 @@ import android.widget.MultiAutoCompleteTextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.content.TagsProviderPart;
+import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tags;
@@ -196,7 +197,7 @@ public class ChangeTagsActivity extends ListActivity
       
       if ( isMutltiTaskMode && resultTags.length == 0 )
          intent.putExtra( INTENT_EXTRA_TAGS, new String[]
-         { EditMultipleTasksActivity.TAGS_MULTI_VALUE } );
+         { TaskEditMultipleFragment.TAGS_MULTI_VALUE } );
       else
          intent.putExtra( INTENT_EXTRA_TAGS, resultTags );
       

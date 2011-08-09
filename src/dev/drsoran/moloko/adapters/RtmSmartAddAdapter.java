@@ -268,7 +268,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
                         if ( lists != null )
                         {
                            lists_and_tags = new LinkedList< Pair< String, Pair< String, Boolean > > >();
-                           for ( RtmList rtmList : lists.getLists().values() )
+                           for ( RtmList rtmList : lists.getListsPlain() )
                               lists_and_tags.add( Pair.create( rtmList.getName(),
                                                                Pair.create( rtmList.getId(),
                                                                             Boolean.TRUE ) ) );

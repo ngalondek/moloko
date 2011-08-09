@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.fragments;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -43,9 +45,11 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -219,33 +223,11 @@ public class TaskEditMultipleFragment extends
       // Setup URL edit
       if ( !isCommonAttrib( Tasks.URL ) )
          urlEditText.setHint( R.string.edit_multiple_tasks_multiple_values );
-   }
-   
-
-
-   @Override
-   protected void initializeListSpinner()
-   {
-      // TODO Auto-generated method stub
-      super.initializeListSpinner();
-   }
-   
-
-
-   @Override
-   protected void initializeLocationSpinner()
-   {
-      // TODO Auto-generated method stub
-      super.initializeLocationSpinner();
-   }
-   
-
-
-   @Override
-   protected void initializePrioritySpinner()
-   {
-      // TODO Auto-generated method stub
-      super.initializePrioritySpinner();
+      
+      // These controls are not visible in multi edit task mode
+      dueContainer.setVisibility( View.GONE );
+      estimateContainer.setVisibility( View.GONE );
+      recurrContainer.setVisibility( View.GONE );
    }
    
 
@@ -268,6 +250,105 @@ public class TaskEditMultipleFragment extends
          postponed.setVisibility( View.GONE );
          source.setVisibility( View.GONE );
       }
+   }
+   
+
+
+   @Override
+   protected void initializeListSpinner()
+   {
+      if ( isCommonAttrib( Tasks.LIST_ID ) )
+      {
+         super.initializeListSpinner();
+      }
+      else
+      {
+         final TaskEditDatabaseData loaderData = getLoaderData();
+         
+         if ( loaderData != null )
+         {
+            final List< String > listIds = loaderData.getListIds();
+            final List< String > listNames = loaderData.getListNames();
+            
+            listIds.add( 0, STRING_MULTI_VALUE );
+            listNames.add( 0,
+                           getString( R.string.edit_multiple_tasks_multiple_values ) );
+            
+            createListSpinnerAdapterForValues( listIds, listNames );
+         }
+      }
+   }
+   
+
+
+   @Override
+   protected void initializeLocationSpinner()
+   {
+      if ( isCommonAttrib( Tasks.LOCATION_ID ) )
+      {
+         super.initializeLocationSpinner();
+      }
+      else
+      {
+         final TaskEditDatabaseData loaderData = getLoaderData();
+         
+         if ( loaderData != null )
+         {
+            final List< String > locationIds = loaderData.getLocationIds();
+            final List< String > locationNames = loaderData.getLocationNames();
+            
+            locationIds.add( 0, STRING_MULTI_VALUE );
+            locationNames.add( 0,
+                               getString( R.string.edit_multiple_tasks_multiple_values ) );
+            
+            createListSpinnerAdapterForValues( locationIds, locationNames );
+         }
+      }
+   }
+   
+
+
+   @Override
+   protected void initializePrioritySpinner()
+   {
+      if ( isCommonAttrib( Tasks.PRIORITY ) )
+      {
+         super.initializePrioritySpinner();
+      }
+      else
+      {
+         final List< String > priorityTexts = new ArrayList< String >( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ) );
+         final List< String > priorityValues = new ArrayList< String >( Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ) );
+         
+         priorityTexts.add( 0,
+                            getString( R.string.edit_multiple_tasks_multiple_values ) );
+         priorityValues.add( 0, STRING_MULTI_VALUE );
+         
+         createPrioritySpinnerAdapterForValues( priorityTexts, priorityValues );
+      }
+   }
+   
+
+
+   @Override
+   protected void onChangeTags()
+   {
+      final Intent intent = new Intent( getActivity(), ChangeTagsActivity.class );
+      
+      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TASKS_COUNT,
+                       getConfiguredTasksAssertNotNull().size() );
+      
+      if ( isCommonAttrib( Tasks.TAGS )
+         || !getCurrentValue( Tasks.TAGS, String.class ).equals( TAGS_MULTI_VALUE ) )
+      {
+         intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS,
+                          TextUtils.split( getCurrentValue( TaskSeries.TAGS,
+                                                            String.class ),
+                                           Tasks.TAGS_SEPARATOR ) );
+      }
+      
+      // TOOO: Make fragment?
+      startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
    }
    
 
@@ -348,7 +429,6 @@ public class TaskEditMultipleFragment extends
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
-      // TODO Auto-generated method stub
       return null;
    }
    
@@ -383,15 +463,6 @@ public class TaskEditMultipleFragment extends
    private final boolean isCommonAttrib( String key )
    {
       return attributeCount.get( key ).size() == 1;
-   }
-   
-
-
-   private final int getAttribValueCnt( String key, Object value )
-   {
-      final Integer cnt = attributeCount.get( key ).get( value );
-      
-      return cnt == null ? 0 : cnt.intValue();
    }
    
 

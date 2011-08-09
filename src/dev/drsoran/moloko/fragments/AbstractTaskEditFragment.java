@@ -24,9 +24,7 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -115,16 +113,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       
 
 
-      public Map< String, String > getListIdsToListNames()
+      public List< Pair< String, String > > getListIdsToListNames()
       {
-         final Map< String, String > listIdToListName = new HashMap< String, String >();
+         final List< Pair< String, String > > listIdToListName = new ArrayList< Pair< String, String > >();
          
          if ( lists != null )
          {
-            final Map< String, RtmList > listIdToList = lists.getLists();
-            for ( String listId : listIdToList.keySet() )
-               listIdToListName.put( listId, listIdToList.get( listId )
-                                                         .getName() );
+            final List< Pair< String, RtmList > > listIdToList = lists.getLists();
+            for ( Pair< String, RtmList > list : listIdToList )
+               listIdToListName.add( Pair.create( list.first,
+                                                  list.second.getName() ) );
          }
          
          return listIdToListName;
@@ -132,17 +130,62 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       
 
 
-      public Map< String, String > getLocationIdsToLocationNames()
+      public List< String > getListIds()
       {
-         final Map< String, String > locationIdToLocationName = new HashMap< String, String >();
+         return lists.getListIds();
+      }
+      
+
+
+      public List< String > getListNames()
+      {
+         return lists.getListNames();
+      }
+      
+
+
+      public List< Pair< String, String > > getLocationIdsToLocationNames()
+      {
+         final List< Pair< String, String > > locationIdToLocationName = new ArrayList< Pair< String, String > >();
          
          if ( locations != null )
          {
             for ( RtmLocation location : locations )
-               locationIdToLocationName.put( location.id, location.name );
+               locationIdToLocationName.add( Pair.create( location.id,
+                                                          location.name ) );
          }
          
          return locationIdToLocationName;
+      }
+      
+
+
+      public List< String > getLocationIds()
+      {
+         final List< String > locationIds = new ArrayList< String >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationIds.add( location.id );
+         }
+         
+         return locationIds;
+      }
+      
+
+
+      public List< String > getLocationNames()
+      {
+         final List< String > locationNames = new ArrayList< String >();
+         
+         if ( locations != null )
+         {
+            for ( RtmLocation location : locations )
+               locationNames.add( location.name );
+         }
+         
+         return locationNames;
       }
    }
    
@@ -462,22 +505,23 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       
       if ( loaderData != null )
       {
-         final Map< String, String > listIdsToListName = loaderData.getListIdsToListNames();
-         createListSpinnerAdapterForValues( listIdsToListName );
+         createListSpinnerAdapterForValues( loaderData.getListIds(),
+                                            loaderData.getListNames() );
       }
    }
    
 
 
-   protected void createListSpinnerAdapterForValues( Map< String, String > listIdsToListName )
+   protected void createListSpinnerAdapterForValues( List< String > listIds,
+                                                     List< String > listNames )
    {
       final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
-                                                                         new ArrayList< String >( listIdsToListName.values() ) );
+                                                                         listNames );
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
       listsSpinner.setAdapter( adapter );
-      listsSpinner.setValues( new ArrayList< String >( listIdsToListName.keySet() ) );
+      listsSpinner.setValues( listIds );
       listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
                                                          String.class ), 0 );
    }
@@ -490,22 +534,23 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       
       if ( loaderData != null )
       {
-         final Map< String, String > locIdsToLocName = loaderData.getLocationIdsToLocationNames();
-         createLocationSpinnerAdapterForValues( locIdsToLocName );
+         createLocationSpinnerAdapterForValues( loaderData.getLocationIds(),
+                                                loaderData.getLocationNames() );
       }
    }
    
 
 
-   protected void createLocationSpinnerAdapterForValues( Map< String, String > locIdsToLocName )
+   protected void createLocationSpinnerAdapterForValues( List< String > locationIds,
+                                                         List< String > locationNames )
    {
       final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
                                                                          android.R.layout.simple_spinner_item,
                                                                          android.R.id.text1,
-                                                                         new ArrayList< String >( locIdsToLocName.values() ) );
+                                                                         new ArrayList< String >( locationNames ) );
       adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
       locationSpinner.setAdapter( adapter );
-      locationSpinner.setValues( new ArrayList< String >( locIdsToLocName.keySet() ) );
+      locationSpinner.setValues( new ArrayList< String >( locationIds ) );
       locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
                                                             String.class ), 0 );
    }
@@ -514,14 +559,14 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
 
    protected void initializePrioritySpinner()
    {
-      createPrioritySpinnerAdapterForValues( getResources().getStringArray( R.array.rtm_priorities ),
-                                             getResources().getStringArray( R.array.rtm_priority_values ) );
+      createPrioritySpinnerAdapterForValues( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ),
+                                             Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ) );
    }
    
 
 
-   protected void createPrioritySpinnerAdapterForValues( String[] texts,
-                                                         String[] values )
+   protected void createPrioritySpinnerAdapterForValues( List< String > texts,
+                                                         List< String > values )
    {
       final ArrayAdapter< String > adapter = new ArrayAdapter< String >( getActivity(),
                                                                          android.R.layout.simple_spinner_item,
@@ -955,7 +1000,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    
 
 
-   private void onChangeTags()
+   protected void onChangeTags()
    {
       final String tags[] = TextUtils.split( getCurrentValue( TaskSeries.TAGS,
                                                               String.class ),

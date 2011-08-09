@@ -43,18 +43,19 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       + SelectMultipleTasksActivity.class.getSimpleName();
    
    
-   
+
    @Override
    protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
    {
       super.onReEvaluateRtmAccessLevel( currentAccessLevel );
       
+      // TODO: Show message
       if ( AccountUtils.isReadOnlyAccess( currentAccessLevel ) )
          finish();
    }
    
-   
-   
+
+
    @Override
    public void onOpenTask( int pos )
    {
@@ -62,8 +63,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
          getTasksListFragment().toggle( pos );
    }
    
-   
-   
+
+
    @Override
    public void onEditSelectedTasks( List< ? extends Task > tasks )
    {
@@ -71,8 +72,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       if ( selCnt > 0 )
          if ( selCnt > 1 )
             startActivityForResult( Intents.createEditMultipleTasksIntent( this,
-                                                                           getTaskIds( tasks ) ),
-                                    EditMultipleTasksActivity.REQ_EDIT_TASK );
+                                                                           tasks ),
+                                    EditMultipleTasksActivity.TaskEditMultipleActivity );
          else
             startActivityForResult( Intents.createEditTaskIntent( this,
                                                                   tasks.get( 0 )
@@ -81,24 +82,24 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       
    }
    
-   
-   
+
+
    @Override
    public void onCompleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.setTasksCompletion( this, tasks, true );
    }
    
-   
-   
+
+
    @Override
    public void onUncompleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.setTasksCompletion( this, tasks, false );
    }
    
-   
-   
+
+
    @Override
    public void onPostponeSelectedTasks( List< ? extends Task > tasks )
    {
@@ -106,16 +107,16 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       
    }
    
-   
-   
+
+
    @Override
    public void onDeleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.deleteTasks( this, tasks );
    }
    
-   
-   
+
+
    private List< String > getTaskIds( List< ? extends Task > tasks )
    {
       final List< String > taskIds = new ArrayList< String >( tasks.size() );
@@ -126,8 +127,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       return taskIds;
    }
    
-   
-   
+
+
    @Override
    protected SelectableTasksListsFragment getTasksListFragment()
    {

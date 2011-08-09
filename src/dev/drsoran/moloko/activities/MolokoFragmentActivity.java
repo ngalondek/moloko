@@ -197,11 +197,15 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    
 
 
-   protected abstract void takeConfigurationFrom( Bundle config );
+   protected void takeConfigurationFrom( Bundle config )
+   {
+   }
    
 
 
-   protected abstract void putDefaultConfigurationTo( Bundle bundle );
+   protected void putDefaultConfigurationTo( Bundle bundle )
+   {
+   }
    
 
 

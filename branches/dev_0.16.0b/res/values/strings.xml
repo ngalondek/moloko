@@ -289,6 +289,7 @@
    <string name="edit_multiple_tasks_titlebar">@string/app_task_edit_multiple</string>
    <string name="edit_multiple_tasks_multiple_values">Different values</string>
    <string name="edit_multiple_tasks_multiple_tags">Different tags</string>
+   <string name="edit_multiple_tasks_entry_with_count">%1$s (%2$d)</string>
       
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Comma separated tags</string>

@@ -22,6 +22,8 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.List;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -31,6 +33,7 @@ import com.mdt.rtm.data.RtmAuth;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.rtm.Task;
 
 
 public class TaskEditMultipleActivity extends MolokoFragmentActivity
@@ -61,6 +64,13 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.task_edit_multiple_activity );
+      
+      final List< Task > tasks = getConfiguredTasksFromIntentConfigAssertNotNull();
+      
+      setTitle( getString( R.string.edit_multiple_tasks_titlebar,
+                           tasks.size(),
+                           getResources().getQuantityString( R.plurals.g_task,
+                                                             tasks.size() ) ) );
       
       if ( savedInstanceState == null )
          createTaskEditMultipleFragment( getIntent().getExtras() );
@@ -97,5 +107,18 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
    {
       return new int[]
       { R.id.frag_task_edit_multiple };
+   }
+   
+
+
+   private List< Task > getConfiguredTasksFromIntentConfigAssertNotNull()
+   {
+      final List< Task > tasks = getIntent().getExtras()
+                                            .getParcelableArrayList( Config.TASKS );
+      
+      if ( tasks == null )
+         throw new AssertionError( "expected tasks to be not null" );
+      
+      return tasks;
    }
 }

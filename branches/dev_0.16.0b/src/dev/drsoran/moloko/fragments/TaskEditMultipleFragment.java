@@ -112,12 +112,14 @@ public class TaskEditMultipleFragment extends
                                getInitialValue( Tasks.PRIORITY,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.TAGS, getInitialValue( Tasks.TAGS,
-                                                            TAGS_MULTI_VALUE,
-                                                            String.class ) );
-      initialValues.putLong( Tasks.DUE_DATE, getInitialValue( Tasks.DUE_DATE,
-                                                              LONG_MULTI_VALUE,
-                                                              Long.class ) );
+      initialValues.putString( Tasks.TAGS,
+                               getInitialValue( Tasks.TAGS,
+                                                TAGS_MULTI_VALUE,
+                                                String.class ) );
+      initialValues.putLong( Tasks.DUE_DATE,
+                             getInitialValue( Tasks.DUE_DATE,
+                                              LONG_MULTI_VALUE,
+                                              Long.class ) );
       initialValues.putBoolean( Tasks.HAS_DUE_TIME,
                                 getInitialValue( Tasks.HAS_DUE_TIME,
                                                  Boolean.FALSE,
@@ -142,9 +144,10 @@ public class TaskEditMultipleFragment extends
                                getInitialValue( Tasks.LOCATION_ID,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.URL, getInitialValue( Tasks.URL,
-                                                           URL_MULTI_VALUE,
-                                                           String.class ) );
+      initialValues.putString( Tasks.URL,
+                               getInitialValue( Tasks.URL,
+                                                URL_MULTI_VALUE,
+                                                String.class ) );
       
       return initialValues;
    }
@@ -245,6 +248,7 @@ public class TaskEditMultipleFragment extends
       }
       else
       {
+         tagsContainer.setVisibility( View.GONE );
          addedDate.setVisibility( View.GONE );
          completedDate.setVisibility( View.GONE );
          postponed.setVisibility( View.GONE );
@@ -269,6 +273,8 @@ public class TaskEditMultipleFragment extends
          {
             final List< String > listIds = loaderData.getListIds();
             final List< String > listNames = loaderData.getListNames();
+            
+            appendQuantifierToEntries( Tasks.LIST_ID, listNames, listIds );
             
             listIds.add( 0, STRING_MULTI_VALUE );
             listNames.add( 0,
@@ -297,11 +303,17 @@ public class TaskEditMultipleFragment extends
             final List< String > locationIds = loaderData.getLocationIds();
             final List< String > locationNames = loaderData.getLocationNames();
             
+            insertNowhereLocationEntry( locationIds, locationNames );
+            
+            appendQuantifierToEntries( Tasks.LOCATION_ID,
+                                       locationNames,
+                                       locationIds );
+            
             locationIds.add( 0, STRING_MULTI_VALUE );
             locationNames.add( 0,
                                getString( R.string.edit_multiple_tasks_multiple_values ) );
             
-            createListSpinnerAdapterForValues( locationIds, locationNames );
+            createLocationSpinnerAdapterForValues( locationIds, locationNames );
          }
       }
    }
@@ -319,6 +331,10 @@ public class TaskEditMultipleFragment extends
       {
          final List< String > priorityTexts = new ArrayList< String >( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ) );
          final List< String > priorityValues = new ArrayList< String >( Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ) );
+         
+         appendQuantifierToEntries( Tasks.PRIORITY,
+                                    priorityTexts,
+                                    priorityValues );
          
          priorityTexts.add( 0,
                             getString( R.string.edit_multiple_tasks_multiple_values ) );
@@ -456,6 +472,44 @@ public class TaskEditMultipleFragment extends
          return type.cast( values.keySet().iterator().next() );
       else
          return multiVal;
+   }
+   
+
+
+   private final void appendQuantifierToEntries( String attributeKey,
+                                                 List< String > entries,
+                                                 List< String > values )
+   {
+      if ( entries.size() != values.size() )
+         throw new AssertionError( "expected entries and values have the same size" );
+      
+      for ( int i = 0, cnt = entries.size(); i < cnt; i++ )
+      {
+         entries.set( i,
+                      getEntryWithCountString( attributeKey,
+                                               values.get( i ),
+                                               entries.get( i ) ) );
+      }
+   }
+   
+
+
+   private final String getEntryWithCountString( String key,
+                                                 Object value,
+                                                 String entry )
+   {
+      return getResources().getString( R.string.edit_multiple_tasks_entry_with_count,
+                                       entry,
+                                       getAttribValueCnt( key, value ) );
+   }
+   
+
+
+   private final int getAttribValueCnt( String key, Object value )
+   {
+      final Integer cnt = attributeCount.get( key ).get( value );
+      
+      return cnt == null ? 0 : cnt.intValue();
    }
    
 

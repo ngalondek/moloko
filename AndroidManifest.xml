@@ -166,7 +166,7 @@
          android:label="@string/app_task_edit_multiple"
          android:name=".activities.TaskEditMultipleActivity"
          android:launchMode="singleTop"
-         android:theme="@style/Theme.Moloko.Task">
+         android:theme="@style/Theme.Moloko.Task.EditMultiple">
          <intent-filter>
             <!-- Edit a list of tasks -->
             <action

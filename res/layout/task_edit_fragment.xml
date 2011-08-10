@@ -17,7 +17,7 @@
 <FrameLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
    xmlns:moloko="http://schemas.android.com/apk/res/dev.drsoran.moloko"
-   android:layout_height="wrap_content"
+   android:layout_height="fill_parent"
    android:layout_width="fill_parent">
 
    <RelativeLayout
@@ -86,8 +86,7 @@
          android:layout_height="wrap_content"
          android:layout_below="@id/task_edit_status_container"
          android:layout_alignWithParentIfMissing="true"
-         android:layout_marginTop="3dip"
-         android:layout_marginLeft="10dip"
+         android:layout_marginTop="3dip"         
          android:text="Task_Desc"
          android:hint="@string/task_edit_desc_hint"
          android:inputType="text|textAutoCorrect|textCapSentences"
@@ -111,6 +110,7 @@
          android:layout_marginTop="3dip"
          android:layout_below="@id/task_edit_list"
          android:layout_alignLeft="@id/task_edit_desc"
+         moloko:titlePaddingTop="8dip"
          moloko:titleText="@string/task_edit_priority" />
 
       <!-- Tags -->

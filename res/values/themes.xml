@@ -65,8 +65,13 @@
       <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
       <item name="android:editTextStyle">@style/TaskEditTextStyle</item>
    </style>
-
-
+   
+   <style
+      name="Theme.Moloko.Task.EditMultiple">
+      
+      <!-- Window attributes -->
+      <item name="android:windowBackground">@color/app_default_bgnd</item>
+   </style>
    
    <style 
       name="Theme.Moloko.Note">

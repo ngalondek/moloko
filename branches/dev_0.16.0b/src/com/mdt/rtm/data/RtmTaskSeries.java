@@ -278,8 +278,8 @@ public class RtmTaskSeries extends RtmData
    {
       id = source.readString();
       listId = source.readString();
-      created = source.readParcelable( null );
-      modified = source.readParcelable( null );
+      created = ParcelableDate.fromParcel( source );
+      modified = ParcelableDate.fromParcel( source );
       name = source.readString();
       this.source = source.readString();
       tasks = source.createTypedArrayList( RtmTask.CREATOR );
@@ -289,7 +289,7 @@ public class RtmTaskSeries extends RtmData
       recurrence = source.readString();
       isEveryRecurrence = source.readInt() != 0;
       tags = source.createStringArrayList();
-      participants = source.readParcelable( null );
+      participants = source.readParcelable( ParticipantList.class.getClassLoader() );
    }
    
 

@@ -116,6 +116,8 @@ public class NoteEditFragment extends MolokoFragment implements
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
+      super.takeConfigurationFrom( config );
+      
       if ( config.containsKey( Config.NOTE ) )
          configuration.putParcelable( Config.NOTE,
                                       config.getParcelable( Config.NOTE ) );

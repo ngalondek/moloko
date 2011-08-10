@@ -85,7 +85,7 @@ public class RtmTaskList extends RtmData
    {
       id = source.readString();
       series = source.createTypedArrayList( RtmTaskSeries.CREATOR );
-      current = source.readParcelable( null );
+      current = ParcelableDate.fromParcel( source );
    }
    
 

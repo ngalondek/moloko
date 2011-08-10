@@ -188,6 +188,8 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
+      super.takeConfigurationFrom( config );
+      
       if ( config.containsKey( Config.TITLE ) )
          configuration.putString( Config.TITLE, config.getString( Config.TITLE ) );
       if ( config.containsKey( Config.TITLE_ICON ) )
@@ -203,6 +205,8 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    @Override
    public void putDefaultConfigurationTo( Bundle bundle )
    {
+      super.putDefaultConfigurationTo( bundle );
+      
       bundle.putString( Config.TITLE, getString( R.string.app_name ) );
    }
    

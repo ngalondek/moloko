@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.mdt.rtm.data.RtmAuth;
@@ -73,13 +72,12 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
          if ( selCnt > 1 )
             startActivityForResult( Intents.createEditMultipleTasksIntent( this,
                                                                            tasks ),
-                                    EditMultipleTasksActivity.TaskEditMultipleActivity );
+                                    TaskEditMultipleActivity.REQ_EDIT_TASKS );
          else
             startActivityForResult( Intents.createEditTaskIntent( this,
                                                                   tasks.get( 0 )
                                                                        .getId() ),
                                     TaskEditActivity.REQ_EDIT_TASK );
-      
    }
    
 
@@ -113,18 +111,6 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    public void onDeleteSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.deleteTasks( this, tasks );
-   }
-   
-
-
-   private List< String > getTaskIds( List< ? extends Task > tasks )
-   {
-      final List< String > taskIds = new ArrayList< String >( tasks.size() );
-      for ( Task task : tasks )
-      {
-         taskIds.add( task.getId() );
-      }
-      return taskIds;
    }
    
 

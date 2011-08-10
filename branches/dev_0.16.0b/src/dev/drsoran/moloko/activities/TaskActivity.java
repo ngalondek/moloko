@@ -253,6 +253,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
+      super.putDefaultConfigurationTo( config );
+      
       if ( config.containsKey( Config.EDIT_MODE_FRAG_ID ) )
          configuration.putInt( Config.EDIT_MODE_FRAG_ID,
                                config.getInt( Config.EDIT_MODE_FRAG_ID ) );
@@ -260,13 +262,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
       if ( config.containsKey( Config.NOTE_FRAGMENT_CONTAINERS ) )
          configuration.putParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS,
                                                config.getParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS ) );
-   }
-   
-
-
-   @Override
-   public void putDefaultConfigurationTo( Bundle bundle )
-   {
    }
    
 

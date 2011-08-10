@@ -166,6 +166,8 @@ public class NoteAddFragment extends MolokoFragment implements
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
+      super.takeConfigurationFrom( config );
+      
       if ( config.containsKey( Config.TASKSERIES_ID ) )
          configuration.putString( Config.TASKSERIES_ID,
                                   config.getString( Config.TASKSERIES_ID ) );

@@ -44,6 +44,15 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
    {
    }
    
+   public final static int REQ_EDIT_TASKS = 0;
+   
+   public final static int RESULT_EDIT_TASKS_FAILED = 1 << 0;
+   
+   public final static int RESULT_EDIT_TASKS_OK = 1 << 8;
+   
+   public final static int RESULT_EDIT_TASKS_CHANGED = 1 << 9
+      | RESULT_EDIT_TASKS_OK;
+   
    
 
    @Override

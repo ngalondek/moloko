@@ -53,7 +53,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    protected Bundle configuration;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -64,8 +64,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       startLoader();
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -97,8 +97,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
          loaderListener = new NullLoaderFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -115,8 +115,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       loaderListener = null;
    }
    
-   
-   
+
+
    @Override
    public final View onCreateView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -128,8 +128,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -139,8 +139,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
          showLoadingSpinner();
    }
    
-   
-   
+
+
    @Override
    public void setArguments( Bundle args )
    {
@@ -149,8 +149,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       configure( args );
    }
    
-   
-   
+
+
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -159,22 +159,15 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       outState.putAll( getConfiguration() );
    }
    
-   
-   
+
+
    public final Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-   
-   
-   public Bundle getInternalConfiguration()
-   {
-      return configuration;
-   }
-   
-   
-   
+
+
    public final void configure( Bundle config )
    {
       if ( configuration == null )
@@ -184,8 +177,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
          takeConfigurationFrom( config );
    }
    
-   
-   
+
+
    public final Bundle createDefaultConfiguration()
    {
       final Bundle bundle = new Bundle();
@@ -195,20 +188,20 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       return bundle;
    }
    
-   
-   
+
+
    protected void takeConfigurationFrom( Bundle config )
    {
    }
    
-   
-   
+
+
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
    }
    
-   
-   
+
+
    protected final void showLoadingSpinner()
    {
       if ( getView() != null )
@@ -223,30 +216,30 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       }
    }
    
-   
-   
+
+
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
       notifyDataSetChanged();
    }
    
-   
-   
+
+
    public int getSettingsMask()
    {
       return 0;
    }
    
-   
-   
+
+
    public final void startLoader()
    {
       getLoaderManager().initLoader( getLoaderId(), getConfiguration(), this );
    }
    
-   
-   
+
+
    public Loader< D > onCreateLoader( int id, Bundle args )
    {
       showLoadingSpinner();
@@ -256,8 +249,8 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       return null;
    }
    
-   
-   
+
+
    public void onLoadFinished( Loader< D > loader, D data )
    {
       if ( data != null )
@@ -266,55 +259,55 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
          getLoaderManager().destroyLoader( getLoaderId() );
    }
    
-   
-   
+
+
    public void onLoaderReset( Loader< D > loader )
    {
       setListAdapter( createEmptyListAdapter() );
    }
    
-   
-   
+
+
    protected void invalidateOptionsMenu()
    {
       if ( getActivity() != null )
          getActivity().invalidateOptionsMenu();
    }
    
-   
-   
+
+
    protected void notifyDataSetChanged()
    {
       if ( getListAdapter() instanceof BaseAdapter )
          ( (BaseAdapter) getListAdapter() ).notifyDataSetChanged();
    }
    
-   
-   
+
+
    public boolean hasRtmWriteAccess()
    {
       return AccountUtils.isWriteableAccess( getActivity() );
    }
    
-   
-   
+
+
    abstract protected View createFragmentView( LayoutInflater inflater,
                                                ViewGroup container,
                                                Bundle savedInstanceState );
    
-   
-   
+
+
    abstract protected String getLoaderDataName();
    
-   
-   
+
+
    abstract protected int getLoaderId();
    
-   
-   
+
+
    protected abstract ListAdapter createEmptyListAdapter();
    
-   
-   
+
+
    protected abstract ListAdapter createListAdapterForResult( D result );
 }

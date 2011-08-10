@@ -122,6 +122,8 @@ public class QuickAddTaskFragment extends MolokoFragment
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
+      super.takeConfigurationFrom( config );
+      
       if ( config.containsKey( Config.FILTER ) )
          configuration.putParcelable( Config.FILTER,
                                       config.getParcelable( Config.FILTER ) );
@@ -134,6 +136,8 @@ public class QuickAddTaskFragment extends MolokoFragment
    @Override
    public void putDefaultConfigurationTo( Bundle bundle )
    {
+      super.putDefaultConfigurationTo( bundle );
+      
       bundle.putParcelable( Config.FILTER,
                             new RtmSmartFilter( Strings.EMPTY_STRING ) );
    }

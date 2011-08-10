@@ -226,11 +226,11 @@ public class RtmTask extends RtmData
    {
       this.id = source.readString();
       this.taskSeriesId = source.readString();
-      this.due = source.readParcelable( null );
+      this.due = ParcelableDate.fromParcel( source );
       this.hasDueTime = source.readInt();
-      this.added = source.readParcelable( null );
-      this.completed = source.readParcelable( null );
-      this.deleted = source.readParcelable( null );
+      this.added = ParcelableDate.fromParcel( source );
+      this.completed = ParcelableDate.fromParcel( source );
+      this.deleted = ParcelableDate.fromParcel( source );
       this.priority = Priority.valueOf( source.readString() );
       this.postponed = source.readInt();
       this.estimate = source.readString();

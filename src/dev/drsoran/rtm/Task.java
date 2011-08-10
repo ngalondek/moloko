@@ -48,8 +48,8 @@ public class Task implements Parcelable
          return new Task( source );
       }
       
-      
-      
+
+
       public Task[] newArray( int size )
       {
          return new Task[ size ];
@@ -119,7 +119,7 @@ public class Task implements Parcelable
    private final List< String > noteIds;
    
    
-   
+
    public Task( String id, String taskSeriesId, String listName,
       boolean isSmartList, Date created, Date modified, String name,
       String source, String url, String recurrence, boolean isEveryRecurrence,
@@ -173,8 +173,8 @@ public class Task implements Parcelable
          this.noteIds = new ArrayList< String >( 0 );
    }
    
-   
-   
+
+
    public Task( String id, String taskSeriesId, String listName,
       boolean isSmartList, Date created, Date modified, String name,
       String source, String url, String recurrence, boolean isEveryRecurrence,
@@ -228,8 +228,8 @@ public class Task implements Parcelable
          this.noteIds = new ArrayList< String >( 0 );
    }
    
-   
-   
+
+
    public Task( Parcel source )
    {
       this.id = source.readString();
@@ -250,7 +250,13 @@ public class Task implements Parcelable
       this.added = ParcelableDate.fromParcel( source );
       this.completed = ParcelableDate.fromParcel( source );
       this.deleted = ParcelableDate.fromParcel( source );
-      this.priority = Priority.valueOf( source.readString() );
+      
+      {
+         final String prioString = source.readString();
+         this.priority = prioString != null ? Priority.valueOf( prioString )
+                                           : Priority.None;
+      }
+      
       this.posponed = source.readInt();
       this.estimate = source.readString();
       this.estimateMillis = source.readLong();
@@ -261,248 +267,244 @@ public class Task implements Parcelable
       this.isViewable = source.readInt() != 0;
       this.zoom = source.readInt();
       
-      this.tags = new ArrayList< String >();
-      source.readStringList( tags );
-      
-      this.participants = source.readParcelable( null );
-      
-      this.noteIds = new ArrayList< String >();
-      source.readStringList( noteIds );
+      this.tags = source.createStringArrayList();
+      this.participants = source.readParcelable( ParticipantList.class.getClassLoader() );
+      this.noteIds = source.createStringArrayList();
    }
    
-   
-   
+
+
    public String getId()
    {
       return id;
    }
    
-   
-   
+
+
    public String getTaskSeriesId()
    {
       return taskSeriesId;
    }
    
-   
-   
+
+
    public String getListName()
    {
       return listName;
    }
    
-   
-   
+
+
    public boolean isSmartList()
    {
       return isSmartList;
    }
    
-   
-   
+
+
    public Date getCreated()
    {
       return MolokoDateUtils.getDate( created );
    }
    
-   
-   
+
+
    public Date getModified()
    {
       return MolokoDateUtils.getDate( modified );
    }
    
-   
-   
+
+
    public String getName()
    {
       return name;
    }
    
-   
-   
+
+
    public String getSource()
    {
       return source;
    }
    
-   
-   
+
+
    public String getUrl()
    {
       return url;
    }
    
-   
-   
+
+
    public String getRecurrence()
    {
       return recurrence;
    }
    
-   
-   
+
+
    public boolean isEveryRecurrence()
    {
       return isEveryRecurrence;
    }
    
-   
-   
+
+
    public String getLocationId()
    {
       return locationId;
    }
    
-   
-   
+
+
    public String getListId()
    {
       return listId;
    }
    
-   
-   
+
+
    public Date getDue()
    {
       return MolokoDateUtils.getDate( due );
    }
    
-   
-   
+
+
    public boolean hasDueTime()
    {
       return hasDueTime;
    }
    
-   
-   
+
+
    public Date getAdded()
    {
       return MolokoDateUtils.getDate( added );
    }
    
-   
-   
+
+
    public Date getCompleted()
    {
       return MolokoDateUtils.getDate( completed );
    }
    
-   
-   
+
+
    public Date getDeleted()
    {
       return MolokoDateUtils.getDate( deleted );
    }
    
-   
-   
+
+
    public Priority getPriority()
    {
       return priority;
    }
    
-   
-   
+
+
    public int getPosponed()
    {
       return posponed;
    }
    
-   
-   
+
+
    public String getEstimate()
    {
       return estimate;
    }
    
-   
-   
+
+
    public long getEstimateMillis()
    {
       return estimateMillis;
    }
    
-   
-   
+
+
    public String getLocationName()
    {
       return locationName;
    }
    
-   
-   
+
+
    public float getLongitude()
    {
       return longitude;
    }
    
-   
-   
+
+
    public float getLatitude()
    {
       return latitude;
    }
    
-   
-   
+
+
    public String getLocationAddress()
    {
       return address;
    }
    
-   
-   
+
+
    public boolean isLocationViewable()
    {
       return isViewable;
    }
    
-   
-   
+
+
    public int getZoom()
    {
       return zoom;
    }
    
-   
-   
+
+
    public List< String > getTags()
    {
       return Collections.unmodifiableList( tags );
    }
    
-   
-   
+
+
    public ParticipantList getParticipants()
    {
       return participants;
    }
    
-   
-   
+
+
    public int getNumberOfNotes()
    {
       return noteIds.size();
    }
    
-   
-   
+
+
    public List< String > getNoteIds()
    {
       return Collections.unmodifiableList( noteIds );
    }
    
-   
-   
+
+
    public int describeContents()
    {
       return 0;
    }
    
-   
-   
+
+
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );

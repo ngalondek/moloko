@@ -39,8 +39,8 @@ public class ParcelableDate implements Parcelable
          return new ParcelableDate( source );
       }
       
-      
-      
+
+
       public ParcelableDate[] newArray( int size )
       {
          return new ParcelableDate[ size ];
@@ -51,89 +51,89 @@ public class ParcelableDate implements Parcelable
    private final Date date;
    
    
-   
+
    public ParcelableDate( final Date date )
    {
       this.date = date;
    }
    
-   
-   
+
+
    public ParcelableDate( long millis )
    {
       this.date = new Date( millis );
    }
    
-   
-   
+
+
    public ParcelableDate( Parcel source )
    {
       date = new Date( source.readLong() );
    }
    
-   
-   
+
+
    public Date getDate()
    {
       return date;
    }
    
-   
-   
+
+
    public long getTime()
    {
       return date.getTime();
    }
    
-   
-   
+
+
    @Override
    public boolean equals( Object o )
    {
       return date.equals( o );
    }
    
-   
-   
+
+
    @Override
    public int hashCode()
    {
       return date.hashCode();
    }
    
-   
-   
+
+
    @Override
    public String toString()
    {
       return date.toString();
    }
    
-   
-   
+
+
    public int describeContents()
    {
       return 0;
    }
    
-   
-   
+
+
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeLong( date.getTime() );
    }
    
-   
-   
+
+
    public final static ParcelableDate newInstanceIfNotNull( Date date )
    {
       return date != null ? new ParcelableDate( date ) : null;
    }
    
-   
-   
+
+
    public final static ParcelableDate fromParcel( Parcel source )
    {
-      return source.readParcelable( null );
+      return source.readParcelable( ParcelableDate.class.getClassLoader() );
    }
 }

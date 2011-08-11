@@ -24,13 +24,10 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
-import com.mdt.rtm.data.RtmAuth;
-
+import android.support.v4.view.Menu;
 import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.rtm.Task;
 
 
@@ -44,13 +41,9 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
 
    @Override
-   protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   public boolean onCreateOptionsMenu( Menu menu )
    {
-      super.onReEvaluateRtmAccessLevel( currentAccessLevel );
-      
-      // TODO: Show message
-      if ( AccountUtils.isReadOnlyAccess( currentAccessLevel ) )
-         finish();
+      return true;
    }
    
 
@@ -83,38 +76,6 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
 
 
    @Override
-   public void onCompleteSelectedTasks( List< ? extends Task > tasks )
-   {
-      TaskEditUtils.setTasksCompletion( this, tasks, true );
-   }
-   
-
-
-   @Override
-   public void onUncompleteSelectedTasks( List< ? extends Task > tasks )
-   {
-      TaskEditUtils.setTasksCompletion( this, tasks, false );
-   }
-   
-
-
-   @Override
-   public void onPostponeSelectedTasks( List< ? extends Task > tasks )
-   {
-      TaskEditUtils.postponeTasks( this, tasks );
-   }
-   
-
-
-   @Override
-   public void onDeleteSelectedTasks( List< ? extends Task > tasks )
-   {
-      TaskEditUtils.deleteTasks( this, tasks );
-   }
-   
-
-
-   @Override
    protected SelectableTasksListsFragment getTasksListFragment()
    {
       if ( super.getTasksListFragment() instanceof SelectableTasksListsFragment )
@@ -122,5 +83,4 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       else
          return null;
    }
-   
 }

@@ -112,7 +112,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       switch ( item.getItemId() )
       {
          case android.R.id.home:
-            if ( ( getSupportActionBar().getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP ) == ActionBar.DISPLAY_HOME_AS_UP )
+            if ( IsShowHomeAsUp() )
             {
                if ( onFinishActivityByHome() )
                   finish();
@@ -124,6 +124,13 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       }
       
       return handled || super.onOptionsItemSelected( item );
+   }
+
+
+
+   protected boolean IsShowHomeAsUp()
+   {
+      return ( getSupportActionBar().getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP ) == ActionBar.DISPLAY_HOME_AS_UP;
    }
    
 
@@ -206,10 +213,6 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
    }
-   
-
-
-   protected abstract int[] getFragmentIds();
    
 
 
@@ -321,4 +324,8 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          content.setVisibility( View.VISIBLE );
       }
    }
+   
+
+
+   protected abstract int[] getFragmentIds();
 }

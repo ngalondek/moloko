@@ -59,7 +59,10 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    {
       super.onCreate( savedInstanceState );
       
-      configure( getArguments() );
+      if ( savedInstanceState == null )
+         configure( getArguments() );
+      else
+         configure( savedInstanceState );
       
       startLoader();
    }
@@ -161,6 +164,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
+   @Override
    public final Bundle getConfiguration()
    {
       return new Bundle( configuration );
@@ -168,6 +172,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
+   @Override
    public final void configure( Bundle config )
    {
       if ( configuration == null )
@@ -179,6 +184,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
+   @Override
    public final Bundle createDefaultConfiguration()
    {
       final Bundle bundle = new Bundle();
@@ -240,6 +246,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
+   @Override
    public Loader< D > onCreateLoader( int id, Bundle args )
    {
       showLoadingSpinner();
@@ -251,6 +258,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
+   @Override
    public void onLoadFinished( Loader< D > loader, D data )
    {
       if ( data != null )
@@ -261,6 +269,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
+   @Override
    public void onLoaderReset( Loader< D > loader )
    {
       setListAdapter( createEmptyListAdapter() );

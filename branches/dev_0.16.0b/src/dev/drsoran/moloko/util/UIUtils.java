@@ -50,13 +50,13 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
@@ -90,10 +90,12 @@ public final class UIUtils
    
    public static abstract class AfterTextChangedWatcher implements TextWatcher
    {
+      @Override
       abstract public void afterTextChanged( Editable s );
       
 
 
+      @Override
       public void beforeTextChanged( CharSequence s,
                                      int start,
                                      int count,
@@ -103,6 +105,7 @@ public final class UIUtils
       
 
 
+      @Override
       public void onTextChanged( CharSequence s,
                                  int start,
                                  int before,
@@ -805,15 +808,21 @@ public final class UIUtils
    
 
 
-   public final static Dialog newReadOnlyAccessDialog( Activity activity,
-                                                       Runnable yesAction,
+   public final static Dialog newReadOnlyAccessDialog( final Activity activity,
                                                        Runnable noAction )
    {
       return newDialogWithActions( activity,
                                    activity.getString( R.string.err_modify_access_level_read ),
-                                   R.string.btn_delete,
+                                   R.string.btn_account_settings,
                                    R.string.btn_cancel,
-                                   yesAction,
+                                   new Runnable()
+                                   {
+                                      @Override
+                                      public void run()
+                                      {
+                                         activity.startActivity( Intents.createOpenSystemAccountSettingsIntent() );
+                                      }
+                                   },
                                    noAction );
    }
    

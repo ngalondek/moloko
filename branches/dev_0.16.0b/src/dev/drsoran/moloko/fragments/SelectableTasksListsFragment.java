@@ -27,9 +27,9 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -37,15 +37,15 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.SubMenu;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -56,6 +56,7 @@ import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListen
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.SelectableTasksLoader;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.SelectableTask;
@@ -438,7 +439,7 @@ public class SelectableTasksListsFragment extends
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
-                                                                                 listener.onCompleteSelectedTasks( getListAdapter().getSelectedTasks() );
+                                                                                 onCompleteSelectedTasks( getListAdapter().getSelectedTasks() );
                                                                               }
                                                                            } )
                                                        .setNegativeButton( R.string.btn_cancel,
@@ -458,7 +459,7 @@ public class SelectableTasksListsFragment extends
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
-                                                                                 listener.onUncompleteSelectedTasks( getListAdapter().getSelectedTasks() );
+                                                                                 onUncompleteSelectedTasks( getListAdapter().getSelectedTasks() );
                                                                               }
                                                                            } )
                                                        .setNegativeButton( R.string.btn_cancel,
@@ -478,7 +479,7 @@ public class SelectableTasksListsFragment extends
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
-                                                                                 listener.onPostponeSelectedTasks( getListAdapter().getSelectedTasks() );
+                                                                                 onPostponeSelectedTasks( getListAdapter().getSelectedTasks() );
                                                                               }
                                                                            } )
                                                        .setNegativeButton( R.string.btn_cancel,
@@ -496,7 +497,7 @@ public class SelectableTasksListsFragment extends
                                                                               public void onClick( DialogInterface dialog,
                                                                                                    int which )
                                                                               {
-                                                                                 listener.onDeleteSelectedTasks( getListAdapter().getSelectedTasks() );
+                                                                                 onDeleteSelectedTasks( getListAdapter().getSelectedTasks() );
                                                                               }
                                                                            } )
                                                        .setNegativeButton( R.string.btn_cancel,
@@ -559,7 +560,6 @@ public class SelectableTasksListsFragment extends
    public void toggle( int pos )
    {
       getListAdapter().toggleSelection( pos );
-      putCurrentSelectionStateToConfig( configuration );
    }
    
 
@@ -593,6 +593,62 @@ public class SelectableTasksListsFragment extends
          return true;
       else
          return super.shouldResortTasks( taskSort );
+   }
+   
+
+
+   private void onCompleteSelectedTasks( final List< ? extends Task > tasks )
+   {
+      performDatabaseModification( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            TaskEditUtils.setTasksCompletion( getActivity(), tasks, true );
+         }
+      } );
+   }
+   
+
+
+   private void onUncompleteSelectedTasks( final List< ? extends Task > tasks )
+   {
+      performDatabaseModification( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            TaskEditUtils.setTasksCompletion( getActivity(), tasks, false );
+         }
+      } );
+   }
+   
+
+
+   private void onPostponeSelectedTasks( final List< ? extends Task > tasks )
+   {
+      performDatabaseModification( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            TaskEditUtils.postponeTasks( getActivity(), tasks );
+         }
+      } );
+   }
+   
+
+
+   private void onDeleteSelectedTasks( final List< ? extends Task > tasks )
+   {
+      performDatabaseModification( new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            TaskEditUtils.deleteTasks( getActivity(), tasks );
+         }
+      } );
    }
    
 
@@ -657,5 +713,6 @@ public class SelectableTasksListsFragment extends
    public void onSelectionChanged()
    {
       invalidateOptionsMenu();
+      putCurrentSelectionStateToConfig( configuration );
    }
 }

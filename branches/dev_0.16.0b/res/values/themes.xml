@@ -45,10 +45,16 @@
       <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>      
             
       <!-- ButtonBar -->
-      <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>
-      
+      <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>      
    </style>
 
+   <style
+      name="Theme.Moloko.SelectMultipleTasks">
+      
+      <!-- ActionBar attributes -->
+      <item name="abDisplayOptions">showHome|homeAsUp|showTitle</item>
+      <item name="abIcon">@drawable/app_actionbar_empty_icon</item>
+   </style>
 
    <style
       name="Theme.Moloko.Task">

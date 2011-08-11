@@ -36,36 +36,35 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
 
-import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
-import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
+import dev.drsoran.moloko.fragments.base.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
 import dev.drsoran.moloko.layouts.WrappingLayout;
@@ -86,9 +85,9 @@ import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public abstract class AbstractTaskEditFragment< T extends Fragment > extends
-         MolokoLoaderFragment< AbstractTaskEditFragment.TaskEditDatabaseData >
-         implements IEditFragment< T >
+public abstract class AbstractTaskEditFragment< T extends Fragment >
+         extends
+         MolokoLoaderEditFragment< T, AbstractTaskEditFragment.TaskEditDatabaseData >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -565,7 +564,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       listsSpinner.setAdapter( adapter );
       listsSpinner.setValues( listIds );
       listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
-                                                         String.class ), 0 );
+                                                         String.class ),
+                                        0 );
    }
    
 
@@ -598,7 +598,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       locationSpinner.setAdapter( adapter );
       locationSpinner.setValues( new ArrayList< String >( locationIds ) );
       locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                            String.class ), 0 );
+                                                            String.class ),
+                                           0 );
    }
    
 
@@ -631,7 +632,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       prioritySpinner.setAdapter( adapter );
       prioritySpinner.setValues( values );
       prioritySpinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                            String.class ), 0 );
+                                                            String.class ),
+                                           0 );
    }
    
 
@@ -1107,6 +1109,14 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
    public boolean hasChanges()
    {
       return changes != null && changes.size() > 0;
+   }
+   
+
+
+   @Override
+   public boolean saveChanges()
+   {
+      return validateInput();
    }
    
 

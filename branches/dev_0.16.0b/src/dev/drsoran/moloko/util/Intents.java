@@ -31,6 +31,7 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
@@ -44,6 +45,7 @@ import dev.drsoran.moloko.content.ListOverviewsProviderPart;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.receivers.SyncAlarmReceiver;
+import dev.drsoran.provider.Rtm;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -314,6 +316,17 @@ public final class Intents
    public final static Intent createOpenPreferencesIntent( Context context )
    {
       return new Intent( context, MolokoPreferencesActivity.class );
+   }
+   
+
+
+   public final static Intent createOpenSystemAccountSettingsIntent()
+   {
+      final Intent intent = new Intent( Settings.ACTION_SYNC_SETTINGS );
+      
+      intent.putExtra( Settings.EXTRA_AUTHORITIES, Rtm.AUTHORITY );
+      
+      return intent;
    }
    
 

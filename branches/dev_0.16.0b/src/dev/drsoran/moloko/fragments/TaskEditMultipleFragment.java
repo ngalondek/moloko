@@ -394,50 +394,39 @@ public class TaskEditMultipleFragment extends
 
 
    @Override
-   public boolean onFinishEditing()
+   public boolean saveChanges()
    {
-      boolean ok = true;
+      boolean ok = super.saveChanges();
       
-      if ( hasChanges() )
+      if ( ok )
       {
-         ok = validateInput();
-         if ( ok )
+         final ModificationSet modifications = createModificationSet( getConfiguredTasksAssertNotNull() );
+         
+         if ( modifications != null && modifications.size() > 0 )
          {
-            final ModificationSet modifications = createModificationSet( getConfiguredTasksAssertNotNull() );
-            
-            if ( modifications != null && modifications.size() > 0 )
+            try
             {
-               try
-               {
-                  ok = new ApplyModificationsTask( getActivity(),
-                                                   R.string.toast_save_task ).execute( modifications )
-                                                                             .get();
-               }
-               catch ( InterruptedException e )
-               {
-                  ok = false;
-               }
-               catch ( ExecutionException e )
-               {
-                  ok = false;
-               }
-               
-               if ( !ok )
-                  Toast.makeText( getActivity(),
-                                  R.string.toast_delete_task_failed,
-                                  Toast.LENGTH_LONG ).show();
+               ok = new ApplyModificationsTask( getActivity(),
+                                                R.string.toast_save_task ).execute( modifications )
+                                                                          .get();
             }
+            catch ( InterruptedException e )
+            {
+               ok = false;
+            }
+            catch ( ExecutionException e )
+            {
+               ok = false;
+            }
+            
+            if ( !ok )
+               Toast.makeText( getActivity(),
+                               R.string.toast_delete_task_failed,
+                               Toast.LENGTH_LONG ).show();
          }
       }
       
       return ok;
-   }
-   
-
-
-   @Override
-   public void onCancelEditing()
-   {
    }
    
 

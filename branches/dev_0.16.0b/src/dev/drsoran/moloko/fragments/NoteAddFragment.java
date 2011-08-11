@@ -44,13 +44,12 @@ import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart;
 import dev.drsoran.moloko.content.RtmNotesProviderPart.NewNoteId;
-import dev.drsoran.moloko.fragments.base.MolokoFragment;
+import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
 import dev.drsoran.moloko.util.AsyncInsertEntity;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
@@ -59,8 +58,7 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Notes;
 
 
-public class NoteAddFragment extends MolokoFragment implements
-         IEditFragment< NoteAddFragment >
+public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
 {
    private final static String TAG = "Moloko."
       + NoteAddFragment.class.getSimpleName();
@@ -218,11 +216,11 @@ public class NoteAddFragment extends MolokoFragment implements
 
 
    @Override
-   public boolean onFinishEditing()
+   public boolean saveChanges()
    {
       boolean ok = true;
       
-      if ( hasChanges() && getView() != null )
+      if ( getView() != null )
       {
          Uri newNoteUri = null;
          
@@ -305,13 +303,6 @@ public class NoteAddFragment extends MolokoFragment implements
       }
       
       return ok;
-   }
-   
-
-
-   @Override
-   public void onCancelEditing()
-   {
    }
    
 

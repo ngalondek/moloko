@@ -34,10 +34,9 @@ import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTaskNote;
 
-import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.base.MolokoFragment;
+import dev.drsoran.moloko.fragments.base.MolokoEditFragment;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.NoteEditUtils;
@@ -45,8 +44,7 @@ import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class NoteEditFragment extends MolokoFragment implements
-         IEditFragment< NoteEditFragment >
+public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -178,43 +176,33 @@ public class NoteEditFragment extends MolokoFragment implements
 
 
    @Override
-   public boolean onFinishEditing()
+   public boolean saveChanges()
    {
       boolean ok = true;
       
-      if ( hasChanges() )
+      final String title = UIUtils.getTrimmedText( this.title );
+      final String text = UIUtils.getTrimmedText( this.text );
+      
+      ok = !TextUtils.isEmpty( title ) || !TextUtils.isEmpty( text );
+      
+      if ( !ok )
       {
-         final String title = UIUtils.getTrimmedText( this.title );
-         final String text = UIUtils.getTrimmedText( this.text );
+         this.text.requestFocus();
+         Toast.makeText( getActivity(),
+                         R.string.note_edit_toast_title_and_text_empty,
+                         Toast.LENGTH_LONG ).show();
+      }
+      else
+      {
+         final RtmTaskNote note = getConfiguredNoteAssertNotNull();
          
-         ok = !TextUtils.isEmpty( title ) || !TextUtils.isEmpty( text );
-         
-         if ( !ok )
-         {
-            this.text.requestFocus();
-            Toast.makeText( getActivity(),
-                            R.string.note_edit_toast_title_and_text_empty,
-                            Toast.LENGTH_LONG ).show();
-         }
-         else
-         {
-            final RtmTaskNote note = getConfiguredNoteAssertNotNull();
-            
-            ok = NoteEditUtils.setNoteTitleAndText( getActivity(),
-                                                    note.getId(),
-                                                    title,
-                                                    text );
-         }
+         ok = NoteEditUtils.setNoteTitleAndText( getActivity(),
+                                                 note.getId(),
+                                                 title,
+                                                 text );
       }
       
       return ok;
-   }
-   
-
-
-   @Override
-   public void onCancelEditing()
-   {
    }
    
 

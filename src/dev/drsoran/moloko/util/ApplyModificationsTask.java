@@ -75,6 +75,9 @@ public class ApplyModificationsTask extends
       if ( params.length == 0 || params[ 0 ].size() == 0 )
          return Boolean.TRUE;
       
+      if ( AccountUtils.isReadOnlyAccess( activity ) )
+         throw new SecurityException( LogUtils.DB_READ_ONLY_ERROR );
+      
       return Boolean.valueOf( ModificationsProviderPart.applyModifications( activity.getContentResolver(),
                                                                             params[ 0 ] ) );
    }

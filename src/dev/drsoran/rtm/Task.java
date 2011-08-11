@@ -250,13 +250,7 @@ public class Task implements Parcelable
       this.added = ParcelableDate.fromParcel( source );
       this.completed = ParcelableDate.fromParcel( source );
       this.deleted = ParcelableDate.fromParcel( source );
-      
-      {
-         final String prioString = source.readString();
-         this.priority = prioString != null ? Priority.valueOf( prioString )
-                                           : Priority.None;
-      }
-      
+      this.priority = Priority.valueOf( source.readString() );
       this.posponed = source.readInt();
       this.estimate = source.readString();
       this.estimateMillis = source.readLong();

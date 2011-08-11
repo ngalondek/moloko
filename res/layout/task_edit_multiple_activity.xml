@@ -24,7 +24,7 @@
       android:fillViewport="true">
 
       <LinearLayout
-         android:id="@+id/fragment_container"
+         android:id="@id/frag_task_edit_multiple"
          android:layout_height="wrap_content"
          android:layout_width="fill_parent"
          android:layout_marginRight="?android:attr/scrollbarSize"

@@ -94,6 +94,9 @@ public abstract class AsyncInsertEntity< T > extends AsyncTask< T, Void, Uri >
       if ( entity == null || entity.length < 1 )
          return null;
       
+      if ( AccountUtils.isReadOnlyAccess( activity ) )
+         throw new SecurityException( LogUtils.DB_READ_ONLY_ERROR );
+      
       final ContentProvider provider = activity.getContentResolver()
                                                .acquireContentProviderClient( Rtm.AUTHORITY )
                                                .getLocalContentProvider();

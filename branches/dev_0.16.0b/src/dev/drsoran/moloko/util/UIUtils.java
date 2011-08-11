@@ -805,6 +805,20 @@ public final class UIUtils
    
 
 
+   public final static Dialog newReadOnlyAccessDialog( Activity activity,
+                                                       Runnable yesAction,
+                                                       Runnable noAction )
+   {
+      return newDialogWithActions( activity,
+                                   activity.getString( R.string.err_modify_access_level_read ),
+                                   R.string.btn_delete,
+                                   R.string.btn_cancel,
+                                   yesAction,
+                                   noAction );
+   }
+   
+
+
    public final static Dialog newDialogWithActions( final Activity activity,
                                                     String message,
                                                     int positiveId,

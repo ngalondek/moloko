@@ -134,6 +134,7 @@ public class TaskEditFragment extends
       if ( hasChanges() )
       {
          ok = validateInput();
+         
          if ( ok )
          {
             final ModificationSet modifications = createModificationSet( Collections.singletonList( getConfiguredTaskAssertNotNull() ) );

@@ -33,6 +33,8 @@ public final class LogUtils
    // TODO: Check where this can be used more often.
    public final static String GENERIC_DB_ERROR = "Error during DB access";
    
+   public final static String DB_READ_ONLY_ERROR = "Cannot modify the RTM database with read only permission level";
+   
    
 
    private LogUtils()

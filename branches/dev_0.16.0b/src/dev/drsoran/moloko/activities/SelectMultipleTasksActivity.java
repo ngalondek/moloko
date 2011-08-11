@@ -102,7 +102,6 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    public void onPostponeSelectedTasks( List< ? extends Task > tasks )
    {
       TaskEditUtils.postponeTasks( this, tasks );
-      
    }
    
 

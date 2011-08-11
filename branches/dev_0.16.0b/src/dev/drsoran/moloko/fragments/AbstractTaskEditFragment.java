@@ -36,17 +36,17 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -60,11 +60,11 @@ import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
@@ -475,6 +475,48 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
                     }
                  } );
       
+      listsSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         @Override
+         public void onItemSelected( AdapterView< ? > arg0,
+                                     View arg1,
+                                     int arg2,
+                                     long arg3 )
+         {
+            putChange( Tasks.LIST_ID,
+                       listsSpinner.getSelectedValue(),
+                       String.class );
+         }
+         
+
+
+         @Override
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+      
+      locationSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
+      {
+         @Override
+         public void onItemSelected( AdapterView< ? > arg0,
+                                     View arg1,
+                                     int arg2,
+                                     long arg3 )
+         {
+            putChange( Tasks.LOCATION_ID,
+                       locationSpinner.getSelectedValue(),
+                       String.class );
+         }
+         
+
+
+         @Override
+         public void onNothingSelected( AdapterView< ? > arg0 )
+         {
+         }
+      } );
+      
       prioritySpinner.setOnItemSelectedListener( new OnItemSelectedListener()
       {
          @Override
@@ -523,8 +565,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       listsSpinner.setAdapter( adapter );
       listsSpinner.setValues( listIds );
       listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
-                                                         String.class ),
-                                        0 );
+                                                         String.class ), 0 );
    }
    
 
@@ -557,8 +598,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       locationSpinner.setAdapter( adapter );
       locationSpinner.setValues( new ArrayList< String >( locationIds ) );
       locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                            String.class ),
-                                           0 );
+                                                            String.class ), 0 );
    }
    
 
@@ -591,8 +631,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment > extends
       prioritySpinner.setAdapter( adapter );
       prioritySpinner.setValues( values );
       prioritySpinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                            String.class ),
-                                           0 );
+                                                            String.class ), 0 );
    }
    
 

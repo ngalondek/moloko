@@ -46,7 +46,7 @@ public class ApplyContentProviderOperationsTask extends
    private ProgressDialog dialog;
    
    
-   
+
    public ApplyContentProviderOperationsTask( Activity activity,
       int progressTitle, boolean transactional )
    {
@@ -58,8 +58,8 @@ public class ApplyContentProviderOperationsTask extends
       this.transactional = transactional;
    }
    
-   
-   
+
+
    @Override
    protected void onPreExecute()
    {
@@ -73,8 +73,8 @@ public class ApplyContentProviderOperationsTask extends
       dialog.show();
    }
    
-   
-   
+
+
    @Override
    protected Boolean doInBackground( ArrayList< ContentProviderOperation >... params )
    {
@@ -83,6 +83,9 @@ public class ApplyContentProviderOperationsTask extends
       
       if ( params.length == 0 || params[ 0 ].size() == 0 )
          return Boolean.TRUE;
+      
+      if ( AccountUtils.isReadOnlyAccess( activity ) )
+         throw new SecurityException( LogUtils.DB_READ_ONLY_ERROR );
       
       boolean ok = true;
       
@@ -137,8 +140,8 @@ public class ApplyContentProviderOperationsTask extends
       return Boolean.valueOf( ok );
    }
    
-   
-   
+
+
    @Override
    protected void onPostExecute( Boolean result )
    {

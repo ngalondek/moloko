@@ -27,12 +27,12 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-
-import com.mdt.rtm.data.RtmAuth;
-
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
 
@@ -45,6 +45,20 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
    
    public static class Config extends TaskEditMultipleFragment.Config
    {
+   }
+   
+
+   private static class OptionsMenu
+   {
+      public final static int SAVE = R.id.menu_save;
+      
+      public final static int ABORT = R.id.menu_abort_edit;
+   }
+   
+
+   private enum FinishEditMode
+   {
+      SAVE, CANCELED
    }
    
    public final static int REQ_EDIT_TASKS = 0;
@@ -78,26 +92,164 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
    
 
 
+   @Override
+   public boolean onCreateOptionsMenu( Menu menu )
+   {
+      super.onCreateOptionsMenu( menu );
+      
+      final boolean hasRtmWriteAccess = AccountUtils.isWriteableAccess( this );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.SAVE,
+                                   getString( R.string.app_save ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_disc,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   hasRtmWriteAccess );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ABORT,
+                                   getString( R.string.phr_cancel_sync ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_cancel,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   hasRtmWriteAccess );
+      return true;
+   }
+   
+
+
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case OptionsMenu.SAVE:
+            if ( finishEditing( FinishEditMode.SAVE ) )
+               finish();
+            
+            return true;
+            
+         case OptionsMenu.ABORT:
+            if ( finishEditing( FinishEditMode.CANCELED ) )
+               finish();
+            
+            return true;
+            
+         default :
+            return super.onOptionsItemSelected( item );
+      }
+   }
+   
+
+
+   @Override
+   public void onBackPressed()
+   {
+      if ( finishEditing( FinishEditMode.CANCELED ) )
+         super.onBackPressed();
+   }
+   
+
+
+   private boolean finishEditing( FinishEditMode how )
+   {
+      boolean finished = true;
+      
+      switch ( how )
+      {
+         case SAVE:
+            finished = saveChanges();
+            break;
+         
+         case CANCELED:
+            finished = cancelChanges();
+            break;
+         
+         default :
+            break;
+      }
+      
+      return finished;
+   }
+   
+
+
+   @Override
+   protected boolean onFinishActivityByHome()
+   {
+      return finishEditing( FinishEditMode.CANCELED );
+   }
+   
+
+
+   private boolean saveChanges()
+   {
+      final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
+      return taskEditMultipleFragment.onFinishEditing();
+   }
+   
+
+
+   private boolean cancelChanges()
+   {
+      final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
+      
+      boolean finish = true;
+      if ( taskEditMultipleFragment.hasChanges() )
+      {
+         finish = false;
+         
+         UIUtils.newCancelWithChangesDialog( this, new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               taskEditMultipleFragment.onCancelEditing();
+               finish();
+            }
+         }, null ).show();
+      }
+      else
+      {
+         taskEditMultipleFragment.onCancelEditing();
+      }
+      
+      return finish;
+   }
+   
+
+
    private void createTaskEditMultipleFragment( Bundle fragmentConfig )
    {
       final Fragment fragment = TaskEditMultipleFragment.newInstance( fragmentConfig );
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       
-      transaction.add( R.id.fragment_container, fragment, null );
+      transaction.add( R.id.frag_task_edit_multiple, fragment, null );
       
       transaction.commit();
    }
    
 
 
-   @Override
-   protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
+   private TaskEditMultipleFragment getTaskEditMultipleFragment()
    {
-      super.onReEvaluateRtmAccessLevel( currentAccessLevel );
+      return (TaskEditMultipleFragment) getSupportFragmentManager().findFragmentById( R.id.frag_task_edit_multiple );
+   }
+   
+
+
+   private List< Task > getConfiguredTasksFromIntentConfigAssertNotNull()
+   {
+      final List< Task > tasks = getIntent().getExtras()
+                                            .getParcelableArrayList( Config.TASKS );
+      if ( tasks == null )
+         throw new AssertionError( "expected tasks to be not null" );
       
-      // TODO: Show message
-      if ( AccountUtils.isReadOnlyAccess( currentAccessLevel ) )
-         finish();
+      return tasks;
    }
    
 
@@ -107,18 +259,5 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
    {
       return new int[]
       { R.id.frag_task_edit_multiple };
-   }
-   
-
-
-   private List< Task > getConfiguredTasksFromIntentConfigAssertNotNull()
-   {
-      final List< Task > tasks = getIntent().getExtras()
-                                            .getParcelableArrayList( Config.TASKS );
-      
-      if ( tasks == null )
-         throw new AssertionError( "expected tasks to be not null" );
-      
-      return tasks;
    }
 }

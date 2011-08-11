@@ -119,6 +119,7 @@
    <string name="err_db_typed">Datenbank-Zugriffsfehler beim Zugriff auf %1$s.</string>
    <string name="err_entity_not_found">%1$s konnte nicht aus der Datenbank geladen werden.\n\nBitte überprüfen Sie ob das Element existiert.</string>
    <string name="err_unsupported_intent_action">Die Aktion %1$s wird von dieser Activity nicht unterstützt.</string>
+   <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten. Sie können dies Ändern, indem Sie Ihr aktuelles, lokales RTM Konto entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.</string>
    
 	<!-- Global buttons -->
 	<string name="btn_continue">Weiter</string>

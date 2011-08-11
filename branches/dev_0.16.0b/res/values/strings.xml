@@ -161,6 +161,7 @@
    <string name="err_db_typed">Error during database access of %1$s.</string>
    <string name="err_entity_not_found">The %1$s could not be retrieved from the database.\n\nPlease check if the element exists.</string>
    <string name="err_unsupported_intent_action">The action %1$s is not supported by this activity.</string>
+   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data. You can change this by removing your local RTM account and create a new one with \'Read, Write and Delete\' permission.</string>
    
 	<!-- Global buttons -->
    <string name="btn_ok">OK</string>

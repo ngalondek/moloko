@@ -119,12 +119,13 @@
    <string name="err_db_typed">Datenbank-Zugriffsfehler beim Zugriff auf %1$s.</string>
    <string name="err_entity_not_found">%1$s konnte nicht aus der Datenbank geladen werden.\n\nBitte überprüfen Sie ob das Element existiert.</string>
    <string name="err_unsupported_intent_action">Die Aktion %1$s wird von dieser Activity nicht unterstützt.</string>
-   <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten. Sie können dies Ändern, indem Sie Ihr aktuelles, lokales RTM Konto entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.</string>
+   <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten.\n\nSie können dies Ändern, indem Sie Ihr aktuelles, lokales RTM Konto entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.\n\nIhre Daten bleiben unverändert.</string>
    
 	<!-- Global buttons -->
 	<string name="btn_continue">Weiter</string>
 	<string name="btn_cancel">Abbrechen</string>
 	<string name="btn_new_account">Neues Konto</string>
+   <string name="btn_account_settings">Konto</string>
    <string name="btn_edit">Bearbeiten</string>
    <string name="btn_done">Fertig</string>
    <string name="btn_complete">Erledigt</string>
@@ -133,6 +134,7 @@
    <string name="btn_delete">Löschen</string>
    <string name="btn_add">Neu</string>
    <string name="btn_back">Zurück</string>
+   <string name="btn_discard">Verwerfen</string>
 	
 	<!-- Global menu items -->
 	<string name="menu_opt_search_task_title">Suche Aufgaben</string>

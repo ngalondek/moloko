@@ -27,23 +27,8 @@ import java.util.List;
 import dev.drsoran.rtm.Task;
 
 
-public interface ISelectableTasksListFragmentListener extends ITasksListFragmentListener
+public interface ISelectableTasksListFragmentListener extends
+         ITasksListFragmentListener
 {
    void onEditSelectedTasks( List< ? extends Task > tasks );
-   
-
-
-   void onCompleteSelectedTasks( List< ? extends Task > tasks );
-   
-
-
-   void onUncompleteSelectedTasks( List< ? extends Task > tasks );
-   
-
-
-   void onPostponeSelectedTasks( List< ? extends Task > tasks );
-   
-
-
-   void onDeleteSelectedTasks( List< ? extends Task > tasks );
 }

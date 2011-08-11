@@ -161,13 +161,14 @@
    <string name="err_db_typed">Error during database access of %1$s.</string>
    <string name="err_entity_not_found">The %1$s could not be retrieved from the database.\n\nPlease check if the element exists.</string>
    <string name="err_unsupported_intent_action">The action %1$s is not supported by this activity.</string>
-   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data. You can change this by removing your local RTM account and create a new one with \'Read, Write and Delete\' permission.</string>
+   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nYou can change this by removing your local RTM account and create a new one with \'Read, Write and Delete\' permission.\n\nYour data remains unchanged.</string>
    
 	<!-- Global buttons -->
    <string name="btn_ok">OK</string>
    <string name="btn_continue">Continue</string>
    <string name="btn_cancel">Cancel</string>
    <string name="btn_new_account">New account</string>
+   <string name="btn_account_settings">Account</string>
    <string name="btn_edit">Edit</string>
    <string name="btn_done">Done</string>
    <string name="btn_complete">Complete</string>
@@ -176,6 +177,7 @@
    <string name="btn_delete">Delete</string>
    <string name="btn_add">Add</string>
    <string name="btn_back">Back</string>
+   <string name="btn_discard">Discard</string>
 	
 	<!-- Global menu items -->
    <string name="menu_opt_search_task_title">Search for tasks</string>

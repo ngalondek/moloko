@@ -119,7 +119,8 @@
       
       <activity
          android:label="@string/app_task_select_multiple"
-         android:name=".activities.SelectMultipleTasksActivity">
+         android:name=".activities.SelectMultipleTasksActivity"
+         android:theme="@style/Theme.Moloko.SelectMultipleTasks">
          <intent-filter>
             <!-- Choose multiple tasks from a list of tasks -->
             <action

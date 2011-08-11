@@ -44,7 +44,7 @@ import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.fragments.base.MolokoListFragment;
+import dev.drsoran.moloko.fragments.base.MolokoEditListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.sync.util.SyncUtils;
@@ -58,7 +58,7 @@ import dev.drsoran.rtm.Task;
 
 
 public abstract class AbstractTasksListFragment< T extends Task > extends
-         MolokoListFragment< List< T > > implements IRtmAccessLevelAware
+         MolokoEditListFragment< List< T > > implements IRtmAccessLevelAware
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."

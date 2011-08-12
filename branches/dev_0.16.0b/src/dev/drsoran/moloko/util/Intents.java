@@ -39,6 +39,7 @@ import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.activities.StartUpActivity;
+import dev.drsoran.moloko.activities.TaskActivity;
 import dev.drsoran.moloko.activities.TaskEditMultipleActivity;
 import dev.drsoran.moloko.activities.TasksListActivity;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
@@ -70,7 +71,17 @@ public final class Intents
 
    public final static class Extras
    {
+      public final static Bundle createEditTaskExtras( Task task )
+      {
+         final Bundle bundle = new Bundle( 1 );
+         
+         bundle.putParcelable( TaskActivity.Config.TASK, task );
+         
+         return bundle;
+      }
       
+
+
       public final static Bundle createOpenListExtrasById( Context context,
                                                            String id,
                                                            String additionalFilter )
@@ -465,11 +476,11 @@ public final class Intents
    
 
 
-   public final static Intent createEditTaskIntent( Context context,
-                                                    String taskId )
+   public final static Intent createEditTaskIntent( Context context, Task task )
    {
       return new Intent( Intent.ACTION_EDIT,
-                         Queries.contentUriWithId( Tasks.CONTENT_URI, taskId ) );
+                         Queries.contentUriWithId( Tasks.CONTENT_URI,
+                                                   task.getId() ) ).putExtras( Extras.createEditTaskExtras( task ) );
    }
    
 

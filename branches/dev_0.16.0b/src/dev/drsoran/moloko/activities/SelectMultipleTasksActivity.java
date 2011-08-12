@@ -63,14 +63,9 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       final int selCnt = tasks.size();
       if ( selCnt > 0 )
          if ( selCnt > 1 )
-            startActivityForResult( Intents.createEditMultipleTasksIntent( this,
-                                                                           tasks ),
-                                    TaskEditMultipleActivity.REQ_EDIT_TASKS );
+            startActivity( Intents.createEditMultipleTasksIntent( this, tasks ) );
          else
-            startActivityForResult( Intents.createEditTaskIntent( this,
-                                                                  tasks.get( 0 )
-                                                                       .getId() ),
-                                    TaskEditActivity.REQ_EDIT_TASK );
+            startActivity( Intents.createEditTaskIntent( this, tasks.get( 0 ) ) );
    }
    
 

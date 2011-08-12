@@ -144,15 +144,7 @@
                android:name="android.intent.category.DEFAULT" />
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
-         </intent-filter>
-      </activity>
-
-      <activity
-         android:label="@string/app_task_edit"
-         android:name=".activities.TaskEditActivity"
-         android:launchMode="singleTop"
-         android:theme="@style/Theme.Moloko.Task">
-         <intent-filter>
+               
             <!-- Edit a single task -->
             <action
                android:name="android.intent.action.EDIT" />
@@ -162,7 +154,7 @@
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
          </intent-filter>
       </activity>
-      
+
       <activity
          android:label="@string/app_task_edit_multiple"
          android:name=".activities.TaskEditMultipleActivity"

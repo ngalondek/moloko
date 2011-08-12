@@ -28,9 +28,9 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
@@ -38,9 +38,6 @@ import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.widget.SpinnerAdapter;
-
-import com.mdt.rtm.data.RtmAuth;
-
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
@@ -101,13 +98,21 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
       
       setContentView( R.layout.taskslist_activity );
       
-      getSupportActionBar().setTitle( getConfiguredTitle() );
-      
-      determineActionBarNavigationMode();
+      setTitleAndNavigationMode();
       
       // First-time init; create fragment to embed in activity.
       if ( savedInstanceState == null )
          initTasksListWithConfiguration( getIntent(), configuration );
+   }
+   
+
+
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      super.onNewIntent( intent );
+      
+      setTitleAndNavigationMode();
    }
    
 
@@ -135,7 +140,6 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
                                    R.drawable.ic_menu_search,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
                                    true );
-      
       return true;
    }
    
@@ -165,6 +169,15 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    
 
 
+   private void setTitleAndNavigationMode()
+   {
+      getSupportActionBar().setTitle( getConfiguredTitle() );
+      
+      setActionBarNavigationMode();
+   }
+   
+
+
    @Override
    public void onBackPressed()
    {
@@ -176,7 +189,7 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    
 
 
-   protected void determineActionBarNavigationMode()
+   protected void setActionBarNavigationMode()
    {
       // If we are opened for a list, then we show the other lists as navigation
       // alternative
@@ -185,6 +198,10 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
          getSupportLoaderManager().initLoader( LISTS_LOADER_ID,
                                                Bundle.EMPTY,
                                                this );
+      }
+      else
+      {
+         setDropDownNavigationMode( null );
       }
    }
    
@@ -239,18 +256,6 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
                      newTaskSort );
       
       newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
-   }
-   
-
-
-   @Override
-   protected void onReEvaluateRtmAccessLevel( RtmAuth.Perms currentAccessLevel )
-   {
-      super.onReEvaluateRtmAccessLevel( currentAccessLevel );
-      
-      if ( isQuickAddTaskFragmentOpen()
-         && AccountUtils.isReadOnlyAccess( currentAccessLevel ) )
-         showQuickAddTaskFragment( false );
    }
    
 
@@ -313,6 +318,21 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    
 
 
+   protected void setDropDownNavigationMode( SpinnerAdapter spinnerAdapter )
+   {
+      if ( spinnerAdapter != null )
+      {
+         getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
+         getSupportActionBar().setListNavigationCallbacks( spinnerAdapter, this );
+      }
+      else
+      {
+         getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+      }
+   }
+   
+
+
    protected SpinnerAdapter createActionBarNavigationAdapterForResult( List< RtmListWithTaskCount > lists )
    {
       final List< Pair< Integer, String > > items = new ArrayList< Pair< Integer, String > >( lists.size() );
@@ -341,9 +361,7 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    {
       if ( data.size() > 1 )
       {
-         getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
-         getSupportActionBar().setListNavigationCallbacks( createActionBarNavigationAdapterForResult( data ),
-                                                           this );
+         setDropDownNavigationMode( createActionBarNavigationAdapterForResult( data ) );
          
          int pos = -1;
          for ( int i = 0, cnt = data.size(); i < cnt && pos == -1; i++ )
@@ -365,7 +383,7 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    @Override
    public void onLoaderReset( Loader< List< RtmListWithTaskCount >> loader )
    {
-      getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+      setDropDownNavigationMode( null );
    }
    
 
@@ -384,8 +402,6 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
          newConfig.putAll( Intents.Extras.createOpenListExtrasByName( this,
                                                                       item.second,
                                                                       null ) );
-         
-         configure( newConfig );
          reloadTasksListWithConfiguration( newConfig );
          
          handled = true;
@@ -472,7 +488,10 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
 
    protected void reloadTasksListWithConfiguration( Bundle config )
    {
-      newTasksListFragmentbyIntent( getNewConfiguredIntent( config ) );
+      final Intent newIntent = getNewConfiguredIntent( config );
+      
+      onNewIntent( newIntent );
+      newTasksListFragmentbyIntent( newIntent );
    }
    
 

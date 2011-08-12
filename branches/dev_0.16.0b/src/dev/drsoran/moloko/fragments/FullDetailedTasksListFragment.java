@@ -28,9 +28,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -38,15 +38,15 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.text.TextUtils;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -346,7 +346,8 @@ public class FullDetailedTasksListFragment extends
             return true;
             
          case CtxtMenu.TAG:
-            showTasksWithTag( getTask( info.position ).getTags().get( 0 ) );
+            listener.onShowTasksWithTag( getTask( info.position ).getTags()
+                                                                 .get( 0 ) );
             return true;
             
          case CtxtMenu.TAGS:
@@ -372,7 +373,7 @@ public class FullDetailedTasksListFragment extends
       {
          case R.id.tags_layout_btn_tag:
             final String tag = ( (TextView) view ).getText().toString();
-            showTasksWithTag( tag );
+            listener.onShowTasksWithTag( tag );
             break;
          
          case R.id.taskslist_listitem_btn_list_name:
@@ -388,13 +389,6 @@ public class FullDetailedTasksListFragment extends
          default :
             break;
       }
-   }
-   
-
-
-   private void showTasksWithTag( String tag )
-   {
-      listener.onShowTasksWithTag( tag );
    }
    
 

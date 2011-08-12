@@ -116,6 +116,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    
 
 
+   @Override
    public final Bundle getConfiguration()
    {
       return new Bundle( configuration );
@@ -123,6 +124,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    
 
 
+   @Override
    public final void configure( Bundle config )
    {
       if ( configuration == null )
@@ -134,6 +136,16 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    
 
 
+   @Override
+   public void clearConfiguration()
+   {
+      if ( configuration != null )
+         configuration.clear();
+   }
+   
+
+
+   @Override
    public final Bundle createDefaultConfiguration()
    {
       final Bundle bundle = new Bundle();

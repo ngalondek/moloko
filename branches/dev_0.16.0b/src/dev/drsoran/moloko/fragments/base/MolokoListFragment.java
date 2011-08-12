@@ -185,6 +185,15 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
 
 
    @Override
+   public void clearConfiguration()
+   {
+      if ( configuration != null )
+         configuration.clear();
+   }
+   
+
+
+   @Override
    public final Bundle createDefaultConfiguration()
    {
       final Bundle bundle = new Bundle();

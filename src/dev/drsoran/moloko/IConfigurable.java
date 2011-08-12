@@ -29,11 +29,15 @@ public interface IConfigurable
 {
    Bundle getConfiguration();
    
-   
-   
+
+
    void configure( Bundle config );
    
+
+
+   void clearConfiguration();
    
-   
+
+
    Bundle createDefaultConfiguration();
 }

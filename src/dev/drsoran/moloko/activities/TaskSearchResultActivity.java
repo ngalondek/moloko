@@ -80,7 +80,7 @@ public class TaskSearchResultActivity extends TasksListActivity
    
    
    
-   protected void handleIntent( Intent intent )
+   protected void configureByIntent( Intent intent )
    {
       // TODO: Repair
       if ( Intent.ACTION_SEARCH.equals( intent.getAction() ) )

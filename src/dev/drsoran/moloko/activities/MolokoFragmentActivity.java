@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import android.accounts.Account;
 import android.accounts.OnAccountsUpdateListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActionBar;
@@ -58,6 +59,31 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
    {
       super.onCreate( savedInstanceState );
       
+      configureByIntent( getIntent() );
+      
+      if ( savedInstanceState != null )
+         getIntent().getExtras().putAll( savedInstanceState );
+      
+      AccountUtils.registerAccountListener( this, handler, this );
+   }
+   
+
+
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      super.onNewIntent( intent );
+      
+      clearConfiguration();
+      
+      setIntent( intent );
+      configureByIntent( getIntent() );
+   }
+   
+
+
+   protected void configureByIntent( Intent intent )
+   {
       final Bundle intentExtras = getIntent().getExtras();
       final Bundle intentConfig;
       
@@ -66,12 +92,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       else
          intentConfig = new Bundle();
       
-      if ( savedInstanceState != null )
-         intentConfig.putAll( savedInstanceState );
-      
       configure( intentConfig );
-      
-      AccountUtils.registerAccountListener( this, handler, this );
    }
    
 
@@ -125,7 +146,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       
       return handled || super.onOptionsItemSelected( item );
    }
-
+   
 
 
    protected boolean IsShowHomeAsUp()
@@ -158,6 +179,15 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       
       if ( config != null )
          takeConfigurationFrom( config );
+   }
+   
+
+
+   @Override
+   public void clearConfiguration()
+   {
+      if ( configuration != null )
+         configuration.clear();
    }
    
 

@@ -527,11 +527,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
          showEditButtons( currentAccessLevel.allowsEditing() );
          invalidateOptionsMenu();
       }
-      else if ( IsActivityInEditMode() && !currentAccessLevel.allowsEditing() )
-      {
-         // TODO: In this case we have to force cancel editing, Show message box with reason.
-         finishEditing( FinishEditMode.FORCE_CANCELED );
-      }
    }
    
 

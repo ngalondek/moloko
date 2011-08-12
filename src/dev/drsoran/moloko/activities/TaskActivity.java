@@ -50,6 +50,7 @@ import dev.drsoran.moloko.fragments.NoteEditFragment;
 import dev.drsoran.moloko.fragments.NoteFragment;
 import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
+import dev.drsoran.moloko.fragments.factories.TaskFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -70,6 +71,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
    public static class Config
    {
+      public final static String TASK = "task";
+      
       private final static String EDIT_MODE_FRAG_ID = "editModeFragmentId";
       
       private final static String NOTE_FRAGMENT_CONTAINERS = "note_fragment_containers";
@@ -173,18 +176,13 @@ public class TaskActivity extends MolokoFragmentActivity implements
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.task_activity );
+      
+      createTaskFragment();
       restoreNoteFragmentContainers();
       
-      final Intent intent = getIntent();
+      onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
       
-      if ( intent.getAction().equals( Intent.ACTION_VIEW ) )
-      {
-         createTaskFragment();
-         
-         onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
-         
-         setActivityInEditMode( getConfiguredEditModeFragmentId() );
-      }
+      setActivityInEditMode( getConfiguredEditModeFragmentId() );
    }
    
 
@@ -555,14 +553,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   public void onEditTask( String taskId )
-   {
-      startActivityForResult( Intents.createEditTaskIntent( this, taskId ),
-                              TaskEditActivity.REQ_EDIT_TASK );
-   }
-   
-
-
    public void onDeleteTask( String taskId )
    {
       final Task task = getTaskAssertNotNull();
@@ -890,15 +880,23 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    private void createTaskFragment()
    {
-      final Fragment fragment = TaskFragment.newInstance( createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
-      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      final Fragment fragment = TaskFragmentFactory.newFragment( this,
+                                                                 getIntent(),
+                                                                 createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
+      if ( fragment != null )
+      {
+         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+         
+         if ( findAddedFragmentById( R.id.frag_task ) == null )
+            transaction.add( R.id.frag_task, fragment );
+         else
+            transaction.replace( R.id.frag_task, fragment );
+         
+         transaction.commit();
+      }
       
-      if ( findAddedFragmentById( R.id.frag_task ) == null )
-         transaction.add( R.id.frag_task, fragment );
-      else
-         transaction.replace( R.id.frag_task, fragment );
-      
-      transaction.commit();
+      if ( !IsActivityInEditMode() && fragment instanceof IEditFragment< ? > )
+         setConfiguredEditModeFragmentId( R.id.frag_task );
    }
    
 
@@ -1150,13 +1148,17 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       final RtmAuth.Perms accessLevel = AccountUtils.getAccessLevel( this );
       
+      final boolean showNoteButtons = accessLevel.allowsEditing()
+         && !IsActivityInEditMode();
+      
+      taskNote.findViewById( R.id.note_buttons )
+              .setVisibility( showNoteButtons ? View.VISIBLE : View.GONE );
+      
       final View editNoteButton = taskNote.findViewById( R.id.note_buttons_edit );
       editNoteButton.setTag( noteId );
-      accessLevel.setVisible( editNoteButton );
       
       final View deleteNoteButton = taskNote.findViewById( R.id.note_buttons_delete );
       deleteNoteButton.setTag( noteId );
-      accessLevel.setVisible( deleteNoteButton );
       
       fragmentContainer.addView( taskNote );
       

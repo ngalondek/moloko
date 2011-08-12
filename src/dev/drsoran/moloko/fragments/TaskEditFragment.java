@@ -25,6 +25,9 @@ package dev.drsoran.moloko.fragments;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -44,6 +47,24 @@ import dev.drsoran.rtm.Task;
 public class TaskEditFragment extends
          AbstractTaskEditFragment< TaskEditFragment >
 {
+   private final static IntentFilter INTENT_FILTER;
+   
+   static
+   {
+      try
+      {
+         INTENT_FILTER = new IntentFilter( Intent.ACTION_EDIT,
+                                           "vnd.android.cursor.item/vnd.rtm.task" );
+         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
+      }
+      catch ( MalformedMimeTypeException e )
+      {
+         throw new RuntimeException( e );
+      }
+   }
+   
+   
+
    public final static TaskEditFragment newInstance( Bundle config )
    {
       final TaskEditFragment fragment = new TaskEditFragment();
@@ -51,6 +72,13 @@ public class TaskEditFragment extends
       fragment.setArguments( config );
       
       return fragment;
+   }
+   
+
+
+   public static IntentFilter getIntentFilter()
+   {
+      return INTENT_FILTER;
    }
    
    

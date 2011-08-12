@@ -27,27 +27,36 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
-import dev.drsoran.moloko.fragments.MinDetailedTasksListFragment;
-import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
+import dev.drsoran.moloko.fragments.TaskEditFragment;
+import dev.drsoran.moloko.fragments.TaskFragment;
 
 
-public final class TasksListFragmentFactory extends AbstractFragmentFactory
+public final class TaskFragmentFactory extends AbstractFragmentFactory
 {
    private final static List< Class< ? extends Fragment > > FRAGMENT_CLASSES = new ArrayList< Class< ? extends Fragment > >();
    
    static
    {
-      FRAGMENT_CLASSES.add( FullDetailedTasksListFragment.class );
-      FRAGMENT_CLASSES.add( MinDetailedTasksListFragment.class );
-      FRAGMENT_CLASSES.add( SelectableTasksListsFragment.class );
+      FRAGMENT_CLASSES.add( TaskFragment.class );
+      FRAGMENT_CLASSES.add( TaskEditFragment.class );
    }
    
    
 
-   public final static Fragment newFragment( Context context, Intent intent )
+   public final static Fragment newFragment( Context context,
+                                             Intent intent,
+                                             Bundle config )
    {
+      if ( config != null )
+      {
+         if ( intent.getExtras() != null )
+            intent.getExtras().putAll( config );
+         else
+            intent.putExtras( config );
+      }
+      
       return resolveIntentToFragment( context, intent, FRAGMENT_CLASSES );
    }
 }

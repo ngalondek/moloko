@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.fragments;
 
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -56,6 +59,22 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + TaskFragment.class.getSimpleName();
+   
+   private final static IntentFilter INTENT_FILTER;
+   
+   static
+   {
+      try
+      {
+         INTENT_FILTER = new IntentFilter( Intent.ACTION_VIEW,
+                                           "vnd.android.cursor.item/vnd.rtm.task" );
+         INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
+      }
+      catch ( MalformedMimeTypeException e )
+      {
+         throw new RuntimeException( e );
+      }
+   }
    
    public final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
    
@@ -104,6 +123,13 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       fragment.setArguments( config );
       
       return fragment;
+   }
+   
+
+
+   public static IntentFilter getIntentFilter()
+   {
+      return INTENT_FILTER;
    }
    
 

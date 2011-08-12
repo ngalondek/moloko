@@ -52,7 +52,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    }
    
    
-   
+
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -83,8 +83,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       return true;
    }
    
-   
-   
+
+
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -109,16 +109,16 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       }
    }
    
-   
-   
+
+
    @Override
    public void onOpenTask( int pos )
    {
       startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-   
-   
+
+
    @Override
    public void onSelectTasks()
    {
@@ -127,16 +127,16 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                               getTaskSort() ) );
    }
    
-   
-   
+
+
    @Override
    public void onEditTask( int pos )
    {
-      startActivity( Intents.createEditTaskIntent( this, getTask( pos ).getId() ) );
+      startActivity( Intents.createEditTaskIntent( this, getTask( pos ) ) );
    }
    
-   
-   
+
+
    @Override
    public void onOpenList( int pos, String listId )
    {
@@ -145,8 +145,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                                  null ) );
    }
    
-   
-   
+
+
    @Override
    public void onOpenLocation( int pos, String locationId )
    {
@@ -154,8 +154,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                                  getTask( pos ).getLocationName() ) );
    }
    
-   
-   
+
+
    @Override
    public void onShowTasksWithTag( String tag )
    {
@@ -163,8 +163,8 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                                                             tag ) );
    }
    
-   
-   
+
+
    @Override
    public void onShowTasksWithTags( List< String > tags, String logicalOperator )
    {

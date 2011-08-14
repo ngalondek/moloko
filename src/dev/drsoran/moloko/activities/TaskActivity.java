@@ -471,10 +471,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    public void onEditTask( View taskEditButton )
    {
-      final Fragment fragment = findAddedFragmentById( R.id.frag_task );
-      
-      if ( setFragmentInEditMode( fragment ) )
-         setActivityInEditMode( fragment.getId() );
+      setActivityInEditMode( R.id.frag_task );
+      createTaskFragmentByEditModeFragmentId();
    }
    
 
@@ -880,6 +878,18 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    private void createTaskFragment()
    {
+      final Fragment taskFragment = findAddedFragmentById( R.id.frag_task );
+      
+      if ( taskFragment == null )
+         createInitialTaskFragmentByIntent( getIntent() );
+      else
+         createTaskFragmentByEditModeFragmentId();
+   }
+   
+
+
+   private void createInitialTaskFragmentByIntent( Intent intent )
+   {
       final Fragment fragment = TaskFragmentFactory.newFragment( this,
                                                                  getIntent(),
                                                                  createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
@@ -887,16 +897,31 @@ public class TaskActivity extends MolokoFragmentActivity implements
       {
          final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
          
-         if ( findAddedFragmentById( R.id.frag_task ) == null )
-            transaction.add( R.id.frag_task, fragment );
-         else
-            transaction.replace( R.id.frag_task, fragment );
+         transaction.add( R.id.frag_task, fragment );
          
          transaction.commit();
+         
+         if ( fragment instanceof IEditFragment< ? > )
+            setConfiguredEditModeFragmentId( R.id.frag_task );
       }
+   }
+   
+
+
+   private void createTaskFragmentByEditModeFragmentId()
+   {
+      final Fragment fragment;
       
-      if ( !IsActivityInEditMode() && fragment instanceof IEditFragment< ? > )
-         setConfiguredEditModeFragmentId( R.id.frag_task );
+      if ( getConfiguredEditModeFragmentId() == R.id.frag_task )
+         fragment = TaskEditFragment.newInstance( createTaskEditFragmentConfiguration( getTaskAssertNotNull() ) );
+      else
+         fragment = TaskFragment.newInstance( createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
+      
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      
+      transaction.replace( R.id.frag_task, fragment );
+      
+      transaction.commit();
    }
    
 
@@ -906,6 +931,17 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final Bundle config = getFragmentConfigurations( R.id.frag_task );
       
       config.putString( TaskFragment.Config.TASK_ID, taskId );
+      
+      return config;
+   }
+   
+
+
+   private Bundle createTaskEditFragmentConfiguration( Task task )
+   {
+      final Bundle config = getFragmentConfigurations( R.id.frag_task );
+      
+      config.putParcelable( TaskEditFragment.Config.TASK, task );
       
       return config;
    }

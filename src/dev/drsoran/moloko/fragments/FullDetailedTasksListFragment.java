@@ -36,11 +36,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -314,7 +314,7 @@ public class FullDetailedTasksListFragment extends
 
 
    @Override
-   public boolean onContextItemSelected( MenuItem item )
+   public boolean onContextItemSelected( android.view.MenuItem item )
    {
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
       

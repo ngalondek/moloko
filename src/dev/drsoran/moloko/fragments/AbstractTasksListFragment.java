@@ -222,7 +222,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
 
 
    @Override
-   public boolean onOptionsItemSelected( android.view.MenuItem item )
+   public boolean onOptionsItemSelected( MenuItem item )
    {
       switch ( item.getItemId() )
       {

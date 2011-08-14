@@ -62,7 +62,7 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       configureByIntent( getIntent() );
       
       if ( savedInstanceState != null )
-         getIntent().getExtras().putAll( savedInstanceState );
+         configureBySavedInstanceState( savedInstanceState );
       
       AccountUtils.registerAccountListener( this, handler, this );
    }
@@ -93,6 +93,13 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          intentConfig = new Bundle();
       
       configure( intentConfig );
+   }
+   
+
+
+   protected void configureBySavedInstanceState( Bundle savedInstanceState )
+   {
+      configure( savedInstanceState );
    }
    
 

@@ -22,16 +22,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import com.actionbarsherlock.internal.view.menu.MenuBuilder;
-import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
-import com.actionbarsherlock.internal.view.menu.SubMenuBuilder;
 import android.content.Context;
 import android.content.res.XmlResourceParser;
 import android.util.AttributeSet;
 import android.util.Xml;
+import android.view.ContextMenu;
 import android.view.InflateException;
 import android.view.MenuItem;
 import android.view.View;
+import com.actionbarsherlock.internal.view.menu.MenuBuilder;
+import com.actionbarsherlock.internal.view.menu.MenuItemImpl;
+import com.actionbarsherlock.internal.view.menu.SubMenuBuilder;
 
 /**
  * This class is used to instantiate menu XML files into Menu objects.
@@ -62,15 +63,19 @@ public final class MenuInflater extends android.view.MenuInflater {
     /** Context from which to inflate resources. */
     private final Context mContext;
 
+    /** Native inflater for context menu fallback. */
+    private final android.view.MenuInflater mNativeMenuInflater;
+
 
     /**
      * Constructs a menu inflater.
      *
      * @see Activity#getMenuInflater()
      */
-    public MenuInflater(Context context) {
+    public MenuInflater(Context context, android.view.MenuInflater nativeMenuInflater) {
         super(context);
-        this.mContext = context;
+        mContext = context;
+        mNativeMenuInflater = nativeMenuInflater;
     }
 
 
@@ -85,6 +90,11 @@ public final class MenuInflater extends android.view.MenuInflater {
      */
     @Override
     public void inflate(int menuRes, android.view.Menu menu) {
+        if (menu instanceof ContextMenu) {
+            mNativeMenuInflater.inflate(menuRes, menu);
+            return;
+        }
+
         MenuBuilder actionBarMenu = (MenuBuilder)menu;
         XmlResourceParser parser = null;
         try {
@@ -407,7 +417,7 @@ public final class MenuInflater extends android.view.MenuInflater {
 
         public void addItem() {
             itemAdded = true;
-            setItem(menu.add(groupId, itemId, itemCategoryOrder, itemTitle));
+            setItem((MenuItemImpl)menu.add(groupId, itemId, itemCategoryOrder, itemTitle));
         }
 
         public SubMenuBuilder addSubMenuItem() {

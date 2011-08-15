@@ -45,7 +45,8 @@
                   android:id="@+id/task_overview_priority_bar"
                   android:layout_height="@dimen/task_overview_corner_radius"
                   android:layout_width="fill_parent"
-                  android:background="@drawable/app_simple_line" />
+                  android:background="@drawable/app_simple_line"
+                  android:visibility="gone" />
             </LinearLayout>
 
             <RelativeLayout

@@ -884,8 +884,6 @@ public class TaskActivity extends MolokoFragmentActivity implements
          createInitialTaskFragmentByIntent( getIntent() );
       else if ( R.id.frag_task != getConfiguredEditModeFragmentId() )
          updateTaskFragment();
-      
-      setPriorityBarVisibility();
    }
    
 
@@ -1335,6 +1333,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                   public void run()
                   {
                      showNoteFragmentsOfTask( getTaskAssertNotNull() );
+                     setPriorityBarVisibility();
                      invalidateOptionsMenu();
                   }
                } );

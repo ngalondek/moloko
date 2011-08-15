@@ -90,8 +90,6 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    
    private ViewGroup content;
    
-   private View priorityBar;
-   
    private TextView addedDate;
    
    private TextView completedDate;
@@ -165,10 +163,6 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                                                   container,
                                                   false );
       
-      // The PriorityBar is not part of our layout but may be provided by
-      // the container we layout into.
-      priorityBar = container.findViewById( R.id.task_overview_priority_bar );
-      
       content = (ViewGroup) fragmentView.findViewById( android.R.id.content );
       addedDate = (TextView) content.findViewById( R.id.task_overview_added_date );
       completedDate = (TextView) content.findViewById( R.id.task_overview_completed_date );
@@ -210,9 +204,6 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    public void initContent( ViewGroup container )
    {
       final Task task = getLoaderDataAssertNotNull();
-      
-      if ( priorityBar != null )
-         UIUtils.setPriorityColor( priorityBar, task );
       
       addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
                                                              .getTime(),

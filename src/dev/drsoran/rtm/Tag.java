@@ -22,6 +22,7 @@
 
 package dev.drsoran.rtm;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import android.os.Parcel;
@@ -40,6 +41,7 @@ public class Tag implements Parcelable
    
    public static final Parcelable.Creator< Tag > CREATOR = new Parcelable.Creator< Tag >()
    {
+      @Override
       public Tag createFromParcel( Parcel source )
       {
          return new Tag( source );
@@ -47,6 +49,7 @@ public class Tag implements Parcelable
       
 
 
+      @Override
       public Tag[] newArray( int size )
       {
          return new Tag[ size ];
@@ -54,8 +57,15 @@ public class Tag implements Parcelable
    };
    
    
-   public final static class ASC_ALPHA implements Comparator< Tag >
+   public final static class ASC_ALPHA implements Comparator< Tag >,
+            Serializable
    {
+      
+      private static final long serialVersionUID = -8573387797926369240L;
+      
+      
+
+      @Override
       public int compare( Tag object1, Tag object2 )
       {
          return object1.tag.compareToIgnoreCase( object2.tag );
@@ -94,6 +104,7 @@ public class Tag implements Parcelable
    
 
 
+   @Override
    public int describeContents()
    {
       return 0;
@@ -101,6 +112,7 @@ public class Tag implements Parcelable
    
 
 
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( taskSeriesId );

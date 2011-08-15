@@ -18,9 +18,27 @@ public final class Bundles
                                        V value,
                                        Class< V > type )
    {
-      if ( type == Boolean.TYPE )
+      if ( type == String.class )
       {
-         bundle.putBoolean( key, Boolean.TYPE.cast( value ) );
+         bundle.putString( key, String.class.cast( value ) );
+         return;
+      }
+      
+      else if ( type == Long.class )
+      {
+         bundle.putLong( key, Long.class.cast( value ) );
+         return;
+      }
+      
+      else if ( type == Integer.class )
+      {
+         bundle.putInt( key, Integer.class.cast( value ) );
+         return;
+      }
+      
+      else if ( type == Boolean.class )
+      {
+         bundle.putBoolean( key, Boolean.class.cast( value ) );
          return;
       }
       
@@ -30,27 +48,15 @@ public final class Bundles
          return;
       }
       
-      else if ( type == Integer.TYPE )
+      else if ( type == Float.class )
       {
-         bundle.putInt( key, Integer.TYPE.cast( value ) );
+         bundle.putFloat( key, Float.class.cast( value ) );
          return;
       }
       
-      else if ( type == Float.TYPE )
+      else if ( type == Double.class )
       {
-         bundle.putFloat( key, Float.TYPE.cast( value ) );
-         return;
-      }
-      
-      else if ( type == Double.TYPE )
-      {
-         bundle.putDouble( key, Double.TYPE.cast( value ) );
-         return;
-      }
-      
-      else if ( type == String.class )
-      {
-         bundle.putString( key, String.class.cast( value ) );
+         bundle.putDouble( key, Double.class.cast( value ) );
          return;
       }
       

@@ -472,7 +472,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    public void onEditTask( View taskEditButton )
    {
       setActivityInEditMode( R.id.frag_task );
-      createTaskFragmentByEditModeFragmentId();
+      createTaskEditFragment();
    }
    
 
@@ -882,8 +882,10 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       if ( taskFragment == null )
          createInitialTaskFragmentByIntent( getIntent() );
-      else
-         createTaskFragmentByEditModeFragmentId();
+      else if ( R.id.frag_task != getConfiguredEditModeFragmentId() )
+         updateTaskFragment();
+      
+      setPriorityBarVisibility();
    }
    
 
@@ -908,15 +910,21 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private void createTaskFragmentByEditModeFragmentId()
+   private void updateTaskFragment()
    {
-      final Fragment fragment;
+      final Fragment fragment = TaskFragment.newInstance( createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       
-      if ( getConfiguredEditModeFragmentId() == R.id.frag_task )
-         fragment = TaskEditFragment.newInstance( createTaskEditFragmentConfiguration( getTaskAssertNotNull() ) );
-      else
-         fragment = TaskFragment.newInstance( createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
+      transaction.replace( R.id.frag_task, fragment );
       
+      transaction.commit();
+   }
+   
+
+
+   private void createTaskEditFragment()
+   {
+      final Fragment fragment = TaskEditFragment.newInstance( createTaskEditFragmentConfiguration( getTaskAssertNotNull() ) );
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       
       transaction.replace( R.id.frag_task, fragment );
@@ -972,7 +980,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                                      noteId,
                                                      transaction );
             }
-            else
+            else if ( noteFragment.getId() != getConfiguredEditModeFragmentId() )
             {
                updateNoteFragment( noteFragment, transaction );
             }
@@ -1247,6 +1255,20 @@ public class TaskActivity extends MolokoFragmentActivity implements
       config.putString( NoteFragment.Config.NOTE_ID, noteId );
       
       return config;
+   }
+   
+
+
+   private void setPriorityBarVisibility()
+   {
+      final View taskFragmentContainer = findViewById( R.id.frag_task );
+      final View priorityBar = taskFragmentContainer.findViewById( R.id.task_overview_priority_bar );
+      
+      final boolean prioBarVisible = R.id.frag_task != getConfiguredEditModeFragmentId();
+      priorityBar.setVisibility( prioBarVisible ? View.VISIBLE : View.GONE );
+      
+      if ( prioBarVisible )
+         UIUtils.setPriorityColor( priorityBar, getTaskAssertNotNull() );
    }
    
 

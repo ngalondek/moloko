@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
@@ -36,17 +35,17 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -55,15 +54,14 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.layouts.TitleWithEditTextLayout;
 import dev.drsoran.moloko.layouts.TitleWithSpinnerLayout;
@@ -464,16 +462,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                     }
                  } );
       
-      contentView.findViewById( R.id.task_edit_tags_btn_change )
-                 .setOnClickListener( new OnClickListener()
-                 {
-                    @Override
-                    public void onClick( View v )
-                    {
-                       onChangeTags();
-                    }
-                 } );
-      
       listsSpinner.setOnItemSelectedListener( new OnItemSelectedListener()
       {
          @Override
@@ -564,8 +552,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       listsSpinner.setAdapter( adapter );
       listsSpinner.setValues( listIds );
       listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
-                                                         String.class ),
-                                        0 );
+                                                         String.class ), 0 );
    }
    
 
@@ -598,8 +585,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       locationSpinner.setAdapter( adapter );
       locationSpinner.setValues( new ArrayList< String >( locationIds ) );
       locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                            String.class ),
-                                           0 );
+                                                            String.class ), 0 );
    }
    
 
@@ -632,8 +618,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       prioritySpinner.setAdapter( adapter );
       prioritySpinner.setValues( values );
       prioritySpinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                            String.class ),
-                                           0 );
+                                                            String.class ), 0 );
    }
    
 
@@ -1053,24 +1038,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
       
       return millis;
-   }
-   
-
-
-   protected void onChangeTags()
-   {
-      final String tags[] = TextUtils.split( getCurrentValue( TaskSeries.TAGS,
-                                                              String.class ),
-                                             Tasks.TAGS_SEPARATOR );
-      final Intent intent = new Intent( getActivity(), ChangeTagsActivity.class );
-      
-      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TASK_NAME,
-                       getCurrentValue( TaskSeries.TASKSERIES_NAME,
-                                        String.class ) );
-      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS, tags );
-      
-      // TOOO: Make fragment?
-      startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
    }
    
 

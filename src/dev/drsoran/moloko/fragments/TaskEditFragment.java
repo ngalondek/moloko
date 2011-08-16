@@ -30,7 +30,10 @@ import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
@@ -38,6 +41,8 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.NullTaskEditFragmentListener;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -62,6 +67,8 @@ public class TaskEditFragment extends
          throw new RuntimeException( e );
       }
    }
+   
+   private ITaskEditFragmentListener listener;
    
    
 
@@ -88,6 +95,29 @@ public class TaskEditFragment extends
    }
    
    
+
+   @Override
+   public void onAttach( FragmentActivity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof ITaskEditFragmentListener )
+         listener = (ITaskEditFragmentListener) activity;
+      else
+         listener = new NullTaskEditFragmentListener();
+   }
+   
+
+
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      
+      listener = null;
+   }
+   
+
 
    @Override
    protected Bundle getInitialValues()
@@ -126,6 +156,24 @@ public class TaskEditFragment extends
       final Task task = getConfiguredTaskAssertNotNull();
       
       defaultInitializeHeadSectionImpl( task );
+   }
+   
+
+
+   @Override
+   protected void registerInputListeners()
+   {
+      super.registerInputListeners();
+      
+      getContentView().findViewById( R.id.task_edit_tags_btn_change )
+                      .setOnClickListener( new OnClickListener()
+                      {
+                         @Override
+                         public void onClick( View v )
+                         {
+                            listener.onChangeTags( getConfiguredTaskAssertNotNull().getTags() );
+                         }
+                      } );
    }
    
 

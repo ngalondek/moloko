@@ -22,11 +22,13 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-public interface ITaskFragmentListener
+import java.util.List;
+
+
+public class NullTaskEditFragmentListener implements ITaskEditFragmentListener
 {
-   void onOpenLocation( String locationId );
-   
-
-
-   void onOpenContact( String fullname, String username );
+   @Override
+   public void onChangeTags( List< String > tags )
+   {
+   }
 }

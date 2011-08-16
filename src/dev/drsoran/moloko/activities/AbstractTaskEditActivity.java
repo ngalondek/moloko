@@ -435,40 +435,42 @@ abstract class AbstractTaskEditActivity extends Activity
    
 
 
+   @Deprecated
    public void onChangeTags( View v )
    {
-      final String tags[] = TextUtils.split( getCurrentValue( TaskSeries.TAGS,
-                                                              String.class ),
-                                             Tasks.TAGS_SEPARATOR );
-      final Intent intent = new Intent( this, ChangeTagsActivity.class );
-      
-      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TASK_NAME,
-                       getCurrentValue( TaskSeries.TASKSERIES_NAME,
-                                        String.class ) );
-      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS, tags );
-      
-      startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
+      // final String tags[] = TextUtils.split( getCurrentValue( TaskSeries.TAGS,
+      // String.class ),
+      // Tasks.TAGS_SEPARATOR );
+      // final Intent intent = new Intent( this, ChangeTagsActivity.class );
+      //      
+      // intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TASK_NAME,
+      // getCurrentValue( TaskSeries.TASKSERIES_NAME,
+      // String.class ) );
+      // intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS, tags );
+      //      
+      // startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
    }
    
 
 
+   @Deprecated
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
-      switch ( requestCode )
-      {
-         case ChangeTagsActivity.REQ_CHANGE_TAGS:
-            if ( resultCode == RESULT_OK && data != null
-               && data.hasExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS ) )
-            {
-               putChange( Tasks.TAGS,
-                          TextUtils.join( Tasks.TAGS_SEPARATOR,
-                                          data.getStringArrayExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS ) ),
-                          String.class );
-            }
-         default :
-            break;
-      }
+      // switch ( requestCode )
+      // {
+      // case ChangeTagsActivity.REQ_CHANGE_TAGS:
+      // if ( resultCode == RESULT_OK && data != null
+      // && data.hasExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS ) )
+      // {
+      // putChange( Tasks.TAGS,
+      // TextUtils.join( Tasks.TAGS_SEPARATOR,
+      // data.getStringArrayExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS ) ),
+      // String.class );
+      // }
+      // default :
+      // break;
+      // }
    }
    
 

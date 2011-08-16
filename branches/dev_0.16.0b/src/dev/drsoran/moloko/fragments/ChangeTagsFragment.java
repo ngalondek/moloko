@@ -37,9 +37,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderDialogFragment;
@@ -105,14 +105,36 @@ public class ChangeTagsFragment extends
 
 
    @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      
+      setStyle( STYLE_NORMAL, R.style.Theme_ChangeTagsDialog );
+      
+      // if ( !TextUtils.isEmpty( getConfiguredTaskName() ) )
+      //         
+      //      
+      // if ( intent.hasExtra( INTENT_EXTRA_TASK_NAME ) )
+      // UIUtils.setTitle( this,
+      // getString( R.string.app_change_tags,
+      // intent.getStringExtra( INTENT_EXTRA_TASK_NAME ) ) );
+      // else
+      // UIUtils.setTitle( this,
+      // getString( R.string.app_change_tags,
+      // getResources().getQuantityString( R.plurals.g_task,
+      // 1 ) ) );
+   }
+   
+
+
+   @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
                                    Bundle savedInstanceState )
    {
-      final View fragmentView = inflater.inflate( R.layout.note_fragment,
+      final View fragmentView = inflater.inflate( R.layout.change_tags_fragment,
                                                   container,
                                                   false );
-      
       return fragmentView;
    }
    
@@ -121,6 +143,19 @@ public class ChangeTagsFragment extends
    @Override
    public void initContent( ViewGroup container )
    {
+      tagsList = (ListView) container.findViewById( android.R.id.list );
+      tagsList.setOnItemClickListener( new OnItemClickListener()
+      {
+         @Override
+         public void onItemClick( AdapterView< ? > parent,
+                                  View view,
+                                  int pos,
+                                  long id )
+         {
+            onListItemClick( tagsList, view, pos, id );
+         }
+      } );
+      
       editView = (MultiAutoCompleteTextView) container.findViewById( R.id.change_tags_fragment_edit );
       editView.setTokenizer( tokenizer );
       editView.addTextChangedListener( new UIUtils.AfterTextChangedWatcher()
@@ -136,19 +171,6 @@ public class ChangeTagsFragment extends
          chosenTags.add( tag );
       
       editView.setText( TextUtils.join( ", ", chosenTags ) );
-      
-      tagsList = (ListView) container.findViewById( android.R.id.list );
-      tagsList.setOnItemClickListener( new OnItemClickListener()
-      {
-         @Override
-         public void onItemClick( AdapterView< ? > parent,
-                                  View view,
-                                  int pos,
-                                  long id )
-         {
-            onListItemClick( tagsList, view, pos, id );
-         }
-      } );
    }
    
 

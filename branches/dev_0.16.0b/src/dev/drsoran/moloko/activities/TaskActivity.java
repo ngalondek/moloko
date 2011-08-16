@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.Menu;
@@ -45,6 +46,7 @@ import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
+import dev.drsoran.moloko.fragments.ChangeTagsFragment;
 import dev.drsoran.moloko.fragments.NoteAddFragment;
 import dev.drsoran.moloko.fragments.NoteEditFragment;
 import dev.drsoran.moloko.fragments.NoteFragment;
@@ -52,6 +54,7 @@ import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
 import dev.drsoran.moloko.fragments.factories.TaskFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
@@ -62,7 +65,8 @@ import dev.drsoran.rtm.Task;
 
 
 public class TaskActivity extends MolokoFragmentActivity implements
-         ITaskFragmentListener, ILoaderFragmentListener
+         ITaskFragmentListener, ITaskEditFragmentListener,
+         ILoaderFragmentListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -473,6 +477,15 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       setActivityInEditMode( R.id.frag_task );
       createTaskEditFragment();
+   }
+   
+
+
+   @Override
+   public void onChangeTags( List< String > tags )
+   {
+      showChangeTagsDialog( createTaskEditChangeTagsConfiguration( getTaskAssertNotNull().getName(),
+                                                                   tags ) );
    }
    
 
@@ -954,6 +967,20 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
+   private Bundle createTaskEditChangeTagsConfiguration( String taskName,
+                                                         List< String > tags )
+   {
+      final Bundle config = new Bundle( 2 );
+      
+      config.putString( ChangeTagsFragment.Config.TASK_NAME, taskName );
+      config.putStringArrayList( ChangeTagsFragment.Config.TAGS,
+                                 new ArrayList< String >( tags ) );
+      
+      return config;
+   }
+   
+
+
    private void showNoteFragmentsOfTask( Task task )
    {
       removeDeletedNoteFragmentsOfTask( task );
@@ -1253,6 +1280,17 @@ public class TaskActivity extends MolokoFragmentActivity implements
       config.putString( NoteFragment.Config.NOTE_ID, noteId );
       
       return config;
+   }
+   
+
+
+   private void showChangeTagsDialog( Bundle config )
+   {
+      final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+      final DialogFragment newFragment = ChangeTagsFragment.newInstance( config );
+      
+      newFragment.show( fragmentTransaction,
+                        String.valueOf( R.id.frag_change_tags ) );
    }
    
 

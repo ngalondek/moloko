@@ -22,11 +22,9 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-public interface ITaskFragmentListener
+import java.util.List;
+
+public interface ITaskEditFragmentListener
 {
-   void onOpenLocation( String locationId );
-   
-
-
-   void onOpenContact( String fullname, String username );
+   void onChangeTags( List< String > tags );
 }

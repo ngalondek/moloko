@@ -48,6 +48,9 @@
    <item
       type="id"
       name="frag_note" />
+   <item
+      type="id"
+      name="frag_change_tags" />
 
 
    <!-- Menu group IDs -->

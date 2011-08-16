@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -45,11 +44,9 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.activities.ChangeTagsActivity;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -112,14 +109,12 @@ public class TaskEditMultipleFragment extends
                                getInitialValue( Tasks.PRIORITY,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.TAGS,
-                               getInitialValue( Tasks.TAGS,
-                                                TAGS_MULTI_VALUE,
-                                                String.class ) );
-      initialValues.putLong( Tasks.DUE_DATE,
-                             getInitialValue( Tasks.DUE_DATE,
-                                              LONG_MULTI_VALUE,
-                                              Long.class ) );
+      initialValues.putString( Tasks.TAGS, getInitialValue( Tasks.TAGS,
+                                                            TAGS_MULTI_VALUE,
+                                                            String.class ) );
+      initialValues.putLong( Tasks.DUE_DATE, getInitialValue( Tasks.DUE_DATE,
+                                                              LONG_MULTI_VALUE,
+                                                              Long.class ) );
       initialValues.putBoolean( Tasks.HAS_DUE_TIME,
                                 getInitialValue( Tasks.HAS_DUE_TIME,
                                                  Boolean.FALSE,
@@ -144,10 +139,9 @@ public class TaskEditMultipleFragment extends
                                getInitialValue( Tasks.LOCATION_ID,
                                                 STRING_MULTI_VALUE,
                                                 String.class ) );
-      initialValues.putString( Tasks.URL,
-                               getInitialValue( Tasks.URL,
-                                                URL_MULTI_VALUE,
-                                                String.class ) );
+      initialValues.putString( Tasks.URL, getInitialValue( Tasks.URL,
+                                                           URL_MULTI_VALUE,
+                                                           String.class ) );
       
       return initialValues;
    }
@@ -347,29 +341,6 @@ public class TaskEditMultipleFragment extends
 
 
    @Override
-   protected void onChangeTags()
-   {
-      final Intent intent = new Intent( getActivity(), ChangeTagsActivity.class );
-      
-      intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TASKS_COUNT,
-                       getConfiguredTasksAssertNotNull().size() );
-      
-      if ( isCommonAttrib( Tasks.TAGS )
-         || !getCurrentValue( Tasks.TAGS, String.class ).equals( TAGS_MULTI_VALUE ) )
-      {
-         intent.putExtra( ChangeTagsActivity.INTENT_EXTRA_TAGS,
-                          TextUtils.split( getCurrentValue( TaskSeries.TAGS,
-                                                            String.class ),
-                                           Tasks.TAGS_SEPARATOR ) );
-      }
-      
-      // TOOO: Make fragment?
-      startActivityForResult( intent, ChangeTagsActivity.REQ_CHANGE_TAGS );
-   }
-   
-
-
-   @Override
    public void takeConfigurationFrom( Bundle config )
    {
       super.takeConfigurationFrom( config );
@@ -474,10 +445,9 @@ public class TaskEditMultipleFragment extends
       
       for ( int i = 0, cnt = entries.size(); i < cnt; i++ )
       {
-         entries.set( i,
-                      getEntryWithCountString( attributeKey,
-                                               values.get( i ),
-                                               entries.get( i ) ) );
+         entries.set( i, getEntryWithCountString( attributeKey,
+                                                  values.get( i ),
+                                                  entries.get( i ) ) );
       }
    }
    

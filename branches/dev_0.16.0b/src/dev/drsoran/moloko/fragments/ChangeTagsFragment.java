@@ -29,17 +29,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.support.v4.view.Window;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderDialogFragment;
@@ -110,19 +112,6 @@ public class ChangeTagsFragment extends
       super.onCreate( savedInstanceState );
       
       setStyle( STYLE_NORMAL, R.style.Theme_ChangeTagsDialog );
-      
-      // if ( !TextUtils.isEmpty( getConfiguredTaskName() ) )
-      //         
-      //      
-      // if ( intent.hasExtra( INTENT_EXTRA_TASK_NAME ) )
-      // UIUtils.setTitle( this,
-      // getString( R.string.app_change_tags,
-      // intent.getStringExtra( INTENT_EXTRA_TASK_NAME ) ) );
-      // else
-      // UIUtils.setTitle( this,
-      // getString( R.string.app_change_tags,
-      // getResources().getQuantityString( R.plurals.g_task,
-      // 1 ) ) );
    }
    
 
@@ -141,8 +130,23 @@ public class ChangeTagsFragment extends
 
 
    @Override
+   public Dialog onCreateDialog( Bundle savedInstanceState )
+   {
+      final Dialog dialog = super.onCreateDialog( savedInstanceState );
+      
+      setDialogTitleSection( dialog );
+      
+      return dialog;
+   }
+   
+
+
+   @Override
    public void initContent( ViewGroup container )
    {
+      getDialog().setFeatureDrawableResource( Window.FEATURE_LEFT_ICON,
+                                              R.drawable.ic_dialog_tag );
+      
       tagsList = (ListView) container.findViewById( android.R.id.list );
       tagsList.setOnItemClickListener( new OnItemClickListener()
       {
@@ -171,6 +175,21 @@ public class ChangeTagsFragment extends
          chosenTags.add( tag );
       
       editView.setText( TextUtils.join( ", ", chosenTags ) );
+   }
+   
+
+
+   private void setDialogTitleSection( Dialog dialog )
+   {
+      if ( !TextUtils.isEmpty( getConfiguredTaskName() ) )
+         dialog.setTitle( getString( R.string.app_change_tags,
+                                     getConfiguredTaskName() ) );
+      else
+         dialog.setTitle( getString( R.string.app_change_tags,
+                                     getResources().getQuantityString( R.plurals.g_task,
+                                                                       1 ) ) );
+      
+      dialog.requestWindowFeature( Window.FEATURE_LEFT_ICON );
    }
    
 

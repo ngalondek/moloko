@@ -34,7 +34,7 @@
    <string name="app_task_uncomplete">Nicht erledigt</string>
    <string name="app_task_delete">Aufgabe löschen</string>
    <string name="app_task_postpone">Aufgabe aufschieben</string>
-   <string name="app_change_tags">Tags von %1$s bearbeiten</string>
+   <string name="app_change_tags">Tags von \'%1$s\' bearbeiten</string>
 	<string name="app_note">Notiz</string>
    <string name="app_note_multiple">Notiz (%1$d/%2$d)</string>
    <string name="app_note_edit">Notiz bearbeiten</string>

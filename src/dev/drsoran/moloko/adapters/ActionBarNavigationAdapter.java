@@ -66,7 +66,7 @@ public class ActionBarNavigationAdapter extends
    {
       if ( convertView == null )
          convertView = View.inflate( getContext(),
-                                     android.R.layout.simple_spinner_item,
+                                     R.layout.abs__simple_spinner_item,
                                      null );
       
       final Pair< Integer, String > item = getItem( position );

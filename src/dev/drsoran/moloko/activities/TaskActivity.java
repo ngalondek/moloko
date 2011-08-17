@@ -53,6 +53,7 @@ import dev.drsoran.moloko.fragments.NoteFragment;
 import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
 import dev.drsoran.moloko.fragments.factories.TaskFragmentFactory;
+import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
@@ -66,7 +67,7 @@ import dev.drsoran.rtm.Task;
 
 public class TaskActivity extends MolokoFragmentActivity implements
          ITaskFragmentListener, ITaskEditFragmentListener,
-         ILoaderFragmentListener
+         ILoaderFragmentListener, IChangeTagsFragmentListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -1291,6 +1292,18 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       newFragment.show( fragmentTransaction,
                         String.valueOf( R.id.frag_change_tags ) );
+   }
+   
+
+
+   @Override
+   public void onTagsChanged( List< String > tags )
+   {
+      if ( getConfiguredEditModeFragmentId() != R.id.frag_task )
+         throw new AssertionError( "expected to be in task editing mode" );
+      
+      final TaskEditFragment taskEditFragment = (TaskEditFragment) findAddedFragmentById( R.id.frag_task );
+      taskEditFragment.setTags( tags );
    }
    
 

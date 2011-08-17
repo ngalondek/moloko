@@ -93,6 +93,7 @@
       
       <!-- Widgets -->
       <item name="android:listViewStyle">@style/ListViewStyle</item>
+      <item name="android:listPreferredItemHeight">50dip</item>
    </style>
    
 </resources>

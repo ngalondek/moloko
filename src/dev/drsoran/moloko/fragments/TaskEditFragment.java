@@ -171,7 +171,7 @@ public class TaskEditFragment extends
                          @Override
                          public void onClick( View v )
                          {
-                            listener.onChangeTags( getConfiguredTaskAssertNotNull().getTags() );
+                            listener.onChangeTags( getTags() );
                          }
                       } );
    }

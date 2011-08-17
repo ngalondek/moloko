@@ -309,13 +309,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          initializeListSpinner();
          initializeLocationSpinner();
          
-         UIUtils.inflateTags( getActivity(),
-                              tagsLayout,
-                              Arrays.asList( TextUtils.split( getCurrentValue( Tasks.TAGS,
-                                                                               String.class ),
-                                                              Tasks.TAGS_SEPARATOR ) ),
-                              null,
-                              null );
+         initializeTagsSection();
          
          initDueEditText( true );
          initRecurrenceEditText();
@@ -574,6 +568,13 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
 
 
+   protected void initializeTagsSection()
+   {
+      UIUtils.inflateTags( getActivity(), tagsLayout, getTags(), null, null );
+   }
+   
+
+
    protected void createLocationSpinnerAdapterForValues( List< String > locationIds,
                                                          List< String > locationNames )
    {
@@ -687,6 +688,29 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          estimateEditText.setText( MolokoDateUtils.formatEstimated( getActivity(),
                                                                     estimateMillis ) );
       }
+   }
+   
+
+
+   public void setTags( List< String > tags )
+   {
+      final String joinedTags = TextUtils.join( Tasks.TAGS_SEPARATOR, tags );
+      
+      if ( SyncUtils.hasChanged( getCurrentValue( Tasks.TAGS, String.class ),
+                                 joinedTags ) )
+      {
+         putChange( Tasks.TAGS, joinedTags, String.class );
+         initializeTagsSection();
+      }
+   }
+   
+
+
+   public List< String > getTags()
+   {
+      return Arrays.asList( TextUtils.split( getCurrentValue( Tasks.TAGS,
+                                                              String.class ),
+                                             Tasks.TAGS_SEPARATOR ) );
    }
    
 
@@ -1107,7 +1131,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
 
 
-   private final < V > void putChange( String key, V value, Class< V > type )
+   protected final < V > void putChange( String key, V value, Class< V > type )
    {
       // Check if it has reverted to the initial value
       if ( SyncUtils.hasChanged( value, initialValues.get( key ) ) )

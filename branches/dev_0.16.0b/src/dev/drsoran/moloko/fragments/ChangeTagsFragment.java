@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.fragments;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -31,20 +30,22 @@ import java.util.TreeSet;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
-import android.support.v4.view.Window;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderDialogFragment;
+import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.loaders.TagsLoader;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.UIUtils;
@@ -89,6 +90,8 @@ public class ChangeTagsFragment extends
    
    private final MultiAutoCompleteTextView.Tokenizer tokenizer = new MultiAutoCompleteTextView.CommaTokenizer();
    
+   private IChangeTagsFragmentListener listener;
+   
    private MultiAutoCompleteTextView editView;
    
    private ListView tagsList;
@@ -112,6 +115,41 @@ public class ChangeTagsFragment extends
       super.onCreate( savedInstanceState );
       
       setStyle( STYLE_NORMAL, R.style.Theme_ChangeTagsDialog );
+      
+      setChosenTagsFromConfiguration();
+   }
+   
+
+
+   @Override
+   public void onAttach( FragmentActivity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof IChangeTagsFragmentListener )
+         listener = (IChangeTagsFragmentListener) activity;
+      else
+         listener = null;
+   }
+   
+
+
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      
+      listener = null;
+   }
+   
+
+
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      configuredTags( new ArrayList< String >( chosenTags ) );
+      
+      super.onSaveInstanceState( outState );
    }
    
 
@@ -144,9 +182,6 @@ public class ChangeTagsFragment extends
    @Override
    public void initContent( ViewGroup container )
    {
-      getDialog().setFeatureDrawableResource( Window.FEATURE_LEFT_ICON,
-                                              R.drawable.ic_dialog_tag );
-      
       tagsList = (ListView) container.findViewById( android.R.id.list );
       tagsList.setOnItemClickListener( new OnItemClickListener()
       {
@@ -171,10 +206,44 @@ public class ChangeTagsFragment extends
          }
       } );
       
+      editView.setText( TextUtils.join( ", ", chosenTags ) );
+      
+      registerInputListeners( container );
+   }
+   
+
+
+   private void registerInputListeners( ViewGroup container )
+   {
+      container.findViewById( android.R.id.button1 )
+               .setOnClickListener( new OnClickListener()
+               {
+                  @Override
+                  public void onClick( View v )
+                  {
+                     if ( listener != null )
+                        listener.onTagsChanged( new ArrayList< String >( chosenTags ) );
+                     
+                     dismiss();
+                  }
+               } );
+      container.findViewById( android.R.id.button2 )
+               .setOnClickListener( new OnClickListener()
+               {
+                  @Override
+                  public void onClick( View v )
+                  {
+                     getDialog().cancel();
+                  }
+               } );
+   }
+   
+
+
+   private void setChosenTagsFromConfiguration()
+   {
       for ( String tag : getConfiguredTags() )
          chosenTags.add( tag );
-      
-      editView.setText( TextUtils.join( ", ", chosenTags ) );
    }
    
 
@@ -188,8 +257,6 @@ public class ChangeTagsFragment extends
          dialog.setTitle( getString( R.string.app_change_tags,
                                      getResources().getQuantityString( R.plurals.g_task,
                                                                        1 ) ) );
-      
-      dialog.requestWindowFeature( Window.FEATURE_LEFT_ICON );
    }
    
 
@@ -213,6 +280,14 @@ public class ChangeTagsFragment extends
    {
       final List< String > tags = configuration.getStringArrayList( Config.TAGS );
       return tags != null ? tags : new ArrayList< String >( 0 );
+   }
+   
+
+
+   // Use type ArrayList for performance reasons
+   public void configuredTags( ArrayList< String > tags )
+   {
+      configuration.putStringArrayList( Config.TAGS, tags );
    }
    
 
@@ -317,26 +392,10 @@ public class ChangeTagsFragment extends
    
 
 
-   @SuppressWarnings( "unchecked" )
    @Override
    public Loader< List< Tag > > newLoaderInstance( int id, Bundle args )
    {
-      if ( args != null && args.size() > 0 )
-      {
-         final Comparator< Tag > cmp;
-         if ( args.getSerializable( TagsLoader.Config.COMPARATOR ) instanceof Comparator< ? > )
-            cmp = (Comparator< Tag >) args.getSerializable( TagsLoader.Config.COMPARATOR );
-         else
-            cmp = null;
-         
-         return new TagsLoader( getActivity(),
-                                args.getString( TagsLoader.Config.TASKSERIES_ID ),
-                                cmp,
-                                args.getBoolean( TagsLoader.Config.DISTINCT,
-                                                 true ) );
-      }
-      else
-         return new TagsLoader( getActivity() );
+      return new TagsLoader( getActivity(), null, new Tag.ASC_ALPHA(), true );
    }
    
 

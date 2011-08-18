@@ -37,75 +37,82 @@ public class NullTasksListFragmentListener implements
    {
    }
    
-   
-   
+
+
    public void onSelectTasks()
    {
    }
    
-   
-   
+
+
    public void onTaskSortChanged( int newTaskSort )
    {
    }
    
-   
-   
+
+
    public void onEditTask( int pos )
    {
    }
    
-   
-   
+
+
    public void onOpenList( int pos, String listId )
    {
    }
    
-   
-   
+
+
    public void onOpenLocation( int pos, String locationId )
    {
    }
    
-   
-   
+
+
    public void onShowTasksWithTag( String tag )
    {
    }
    
-   
-   
+
+
    public void onShowTasksWithTags( List< String > tags, String logicalOperator )
    {
    }
    
-   
-   
+
+
    public void onEditSelectedTasks( List< ? extends Task > tasks )
    {
    }
    
-   
-   
+
+
    public void onCompleteSelectedTasks( List< ? extends Task > tasks )
    {
    }
    
-   
-   
+
+
    public void onUncompleteSelectedTasks( List< ? extends Task > tasks )
    {
    }
    
-   
-   
+
+
    public void onPostponeSelectedTasks( List< ? extends Task > tasks )
    {
    }
    
-   
-   
+
+
    public void onDeleteSelectedTasks( List< ? extends Task > tasks )
+   {
+   }
+   
+
+
+   @Override
+   public void onSelectionChanged( List< ? extends Task > selectedTasks )
    {
    }
 }

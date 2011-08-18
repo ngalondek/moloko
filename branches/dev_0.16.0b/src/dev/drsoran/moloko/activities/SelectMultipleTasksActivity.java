@@ -24,7 +24,8 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
-import android.support.v4.view.Menu;
+import android.os.Bundle;
+import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
@@ -41,9 +42,11 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    
 
    @Override
-   public boolean onCreateOptionsMenu( Menu menu )
+   public void onCreate( Bundle savedInstanceState )
    {
-      return true;
+      super.onCreate( savedInstanceState );
+      
+      setTitleWithSelectedCount( 0 );
    }
    
 
@@ -53,6 +56,14 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
    {
       if ( getTasksListFragment() != null )
          getTasksListFragment().toggle( pos );
+   }
+   
+
+
+   @Override
+   public void onSelectionChanged( List< ? extends Task > selectedTasks )
+   {
+      setTitleWithSelectedCount( selectedTasks.size() );
    }
    
 
@@ -77,5 +88,12 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
          return (SelectableTasksListsFragment) super.getTasksListFragment();
       else
          return null;
+   }
+   
+
+
+   private void setTitleWithSelectedCount( int cnt )
+   {
+      setTitle( getString( R.string.app_task_select_multiple, cnt ) );
    }
 }

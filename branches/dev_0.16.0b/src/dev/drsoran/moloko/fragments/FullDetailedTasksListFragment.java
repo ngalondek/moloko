@@ -57,6 +57,7 @@ import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentList
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.loaders.TasksLoader;
+import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
@@ -94,6 +95,8 @@ public class FullDetailedTasksListFragment extends
             AbstractTasksListFragment.OptionsMenu
    {
       public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
+      
+      public final static int SYNC = R.id.menu_sync;
    }
    
 
@@ -204,6 +207,12 @@ public class FullDetailedTasksListFragment extends
                                    R.drawable.ic_menu_edit_multiple_tasks,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    hasMultipleTasks() && hasRtmWriteAccess() );
+      
+      UIUtils.addSyncMenuItem( getActivity(),
+                               menu,
+                               OptionsMenu.SYNC,
+                               Menu.CATEGORY_SECONDARY,
+                               MenuItem.SHOW_AS_ACTION_NEVER );
    }
    
 
@@ -215,6 +224,10 @@ public class FullDetailedTasksListFragment extends
       {
          case OptionsMenu.EDIT_MULTIPLE_TASKS:
             listener.onSelectTasks();
+            return true;
+            
+         case OptionsMenu.SYNC:
+            SyncUtils.requestManualSync( getActivity() );
             return true;
             
          default :

@@ -31,7 +31,7 @@
    <string name="app_task_edit">Task Edit</string>
    <string name="app_task_edit_multiple">Edit %1$d %2$s</string>
    <string name="app_task_add">New Task</string>
-   <string name="app_task_select_multiple">Select tasks to edit</string>
+   <string name="app_task_select_multiple">Select tasks (%1$d)</string>
    <string name="app_task_complete">Complete</string>
    <string name="app_task_uncomplete">Incomplete</string>
    <string name="app_task_delete">Delete Task</string>

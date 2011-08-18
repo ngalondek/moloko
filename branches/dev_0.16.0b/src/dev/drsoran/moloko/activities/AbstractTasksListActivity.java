@@ -33,8 +33,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v4.view.Menu;
-import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.widget.SpinnerAdapter;
@@ -46,9 +44,7 @@ import dev.drsoran.moloko.fragments.QuickAddTaskFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
-import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.Task;
@@ -73,16 +69,6 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
       public final static String TITLE_ICON = "title_icon";
       
       public final static String LIST_NAME = Lists.LIST_NAME;
-   }
-   
-
-   protected static class OptionsMenu
-   {
-      public final static int QUICK_ADD_TASK = R.id.menu_quick_add_task;
-      
-      public final static int SEARCH = R.id.menu_search_tasks;
-      
-      public final static int DELETE_LIST = R.id.menu_delete_list;
    }
    
    private final static int LISTS_LOADER_ID = 1;
@@ -113,58 +99,6 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
       super.onNewIntent( intent );
       
       setTitleAndNavigationMode();
-   }
-   
-
-
-   @Override
-   public boolean onCreateOptionsMenu( Menu menu )
-   {
-      super.onCreateOptionsMenu( menu );
-      
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.QUICK_ADD_TASK,
-                                   getString( R.string.app_task_add ),
-                                   Menu.CATEGORY_CONTAINER,
-                                   Menu.NONE,
-                                   R.drawable.ic_button_title_add_task,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   !AccountUtils.isReadOnlyAccess( this ) );
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.SEARCH,
-                                   getString( R.string.search_hint ),
-                                   Menu.CATEGORY_ALTERNATIVE,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_search,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   true );
-      return true;
-   }
-   
-
-
-   @Override
-   public boolean onOptionsItemSelected( MenuItem item )
-   {
-      switch ( item.getItemId() )
-      {
-         case OptionsMenu.QUICK_ADD_TASK:
-            showQuickAddTaskFragment( !isQuickAddTaskFragmentOpen() );
-            return true;
-            
-         case android.R.id.home:
-            if ( !IsShowHomeAsUp() )
-            {
-               startActivity( Intents.createOpenHomeIntent( this ) );
-               return true;
-            }
-         default :
-            break;
-      }
-      
-      return super.onOptionsItemSelected( item );
    }
    
 

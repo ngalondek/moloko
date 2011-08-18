@@ -43,9 +43,12 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       + TasksListActivity.class.getSimpleName();
    
    
-   protected static class OptionsMenu extends
-            AbstractTasksListActivity.OptionsMenu
+   protected static class OptionsMenu
    {
+      public final static int QUICK_ADD_TASK = R.id.menu_quick_add_task;
+      
+      public final static int SEARCH = R.id.menu_search_tasks;
+      
       public final static int SHOW_LISTS = R.id.menu_show_lists;
       
       public final static int DELETE_LIST = R.id.menu_delete_list;
@@ -57,6 +60,26 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    public boolean onCreateOptionsMenu( Menu menu )
    {
       super.onCreateOptionsMenu( menu );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.QUICK_ADD_TASK,
+                                   getString( R.string.app_task_add ),
+                                   Menu.CATEGORY_CONTAINER,
+                                   Menu.NONE,
+                                   R.drawable.ic_button_title_add_task,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   !AccountUtils.isReadOnlyAccess( this ) );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.SEARCH,
+                                   getString( R.string.search_hint ),
+                                   Menu.CATEGORY_SECONDARY,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_search,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   true );
       
       UIUtils.addOptionalMenuItem( this,
                                    menu,
@@ -79,7 +102,6 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    isConfiguredWithListName()
                                       && !AccountUtils.isReadOnlyAccess( this ) );
-      
       return true;
    }
    
@@ -90,6 +112,10 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    {
       switch ( item.getItemId() )
       {
+         case OptionsMenu.QUICK_ADD_TASK:
+            showQuickAddTaskFragment( !isQuickAddTaskFragmentOpen() );
+            return true;
+            
          case OptionsMenu.DELETE_LIST:
             final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
             UIUtils.newDeleteElementDialog( this, listName, new Runnable()
@@ -104,6 +130,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
             },
                                             null ).show();
             return true;
+            
          default :
             return super.onOptionsItemSelected( item );
       }

@@ -36,12 +36,12 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderDialogFragment;
@@ -395,7 +395,14 @@ public class ChangeTagsFragment extends
    @Override
    public Loader< List< Tag > > newLoaderInstance( int id, Bundle args )
    {
-      return new TagsLoader( getActivity(), null, new Tag.ASC_ALPHA(), true );
+      final TagsLoader loader = new TagsLoader( getActivity(),
+                                                null,
+                                                new Tag.ASC_ALPHA(),
+                                                true );
+      
+      loader.setRespectContentChanges( false );
+      
+      return loader;
    }
    
 

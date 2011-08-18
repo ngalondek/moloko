@@ -24,19 +24,22 @@ package dev.drsoran.moloko.fragments;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,12 +49,21 @@ import com.mdt.rtm.data.RtmTask;
 
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.content.ModificationSet;
+import dev.drsoran.moloko.content.CreationsProviderPart;
+import dev.drsoran.moloko.content.TasksProviderPart;
+import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskEditFragmentListener;
-import dev.drsoran.moloko.util.ApplyModificationsTask;
+import dev.drsoran.moloko.util.AsyncInsertEntity;
+import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.provider.Rtm.RawTasks;
+import dev.drsoran.provider.Rtm.TaskSeries;
 import dev.drsoran.provider.Rtm.Tasks;
+import dev.drsoran.rtm.ParcelableDate;
+import dev.drsoran.rtm.ParticipantList;
 import dev.drsoran.rtm.Task;
 
 
@@ -101,11 +113,13 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       public final static String ESTIMATE = Tasks.ESTIMATE;
       
       public final static String ESTIMATE_MILLIS = Tasks.ESTIMATE_MILLIS;
+      
+      private final static String NEW_TASK_URI = "new_task_uri";
+      
+      private final static String CREATED_DATE = "created_date";
    }
    
    private ITaskEditFragmentListener listener;
-   
-   private Date created;
    
    
 
@@ -153,50 +167,46 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    @Override
    protected Bundle getInitialValues()
    {
-      final List< String > tags = new ArrayList< String >( Arrays.asList( TextUtils.split( emptyIfNull( intent.getStringExtra( Tasks.TAGS ) ),
-                                                                                           Tasks.TAGS_SEPARATOR ) ) );
+      final List< String > tags = getConfiguredTags();
+      final String locationId = getConfiguredLocationId();
       
-      // Try to determine the list ID
-      final String listId = getConfiguredListId();
+      String listId = getConfiguredListId();
       
-      // Check if the list name is part of the tags. This can happen
-      // if the list name has been entered w/o taken the suggestion.
+      // Check if a list name is part of the tags. This can happen
+      // if a list name has been entered w/o taken the suggestion.
       // So it has been parsed as a tag since the operator (#) is the
       // same.
-      else
       {
-         for ( Iterator< String > i = tags.iterator(); i.hasNext()
-            && listId == null; )
-         {
-            final String tag = i.next();
-            // Check if the tag is a list name
-            listId = getListIdByName( tag );
-            
-            if ( listId != null )
-               i.remove();
-         }
+         final String lastRemovedListId = removeListsFromTags( tags );
+         if ( listId == null )
+            listId = lastRemovedListId;
       }
       
       final Bundle initialValues = new Bundle();
       
-      initialValues.putString( Tasks.TASKSERIES_NAME, task.getName() );
-      initialValues.putString( Tasks.LIST_ID, task.getListId() );
+      initialValues.putString( Tasks.TASKSERIES_NAME,
+                               configuration.getString( Config.TASK_NAME ) );
+      initialValues.putString( Tasks.LIST_ID, listId );
       initialValues.putString( Tasks.PRIORITY,
-                               RtmTask.convertPriority( task.getPriority() ) );
+                               configuration.getString( Config.PRIORITY ) );
       initialValues.putString( Tasks.TAGS,
-                               TextUtils.join( Tasks.TAGS_SEPARATOR,
-                                               task.getTags() ) );
+                               TextUtils.join( Tasks.TAGS_SEPARATOR, tags ) );
       initialValues.putLong( Tasks.DUE_DATE,
-                             MolokoDateUtils.getTime( task.getDue(),
-                                                      Long.valueOf( -1 ) ) );
-      initialValues.putBoolean( Tasks.HAS_DUE_TIME, task.hasDueTime() );
-      initialValues.putString( Tasks.RECURRENCE, task.getRecurrence() );
+                             configuration.getLong( Config.DUE_DATE,
+                                                    Long.valueOf( -1 ) ) );
+      initialValues.putBoolean( Tasks.HAS_DUE_TIME,
+                                configuration.getBoolean( Config.HAS_DUE_TIME ) );
+      initialValues.putString( Tasks.RECURRENCE,
+                               configuration.getString( Config.RECURRENCE ) );
       initialValues.putBoolean( Tasks.RECURRENCE_EVERY,
-                                task.isEveryRecurrence() );
-      initialValues.putString( Tasks.ESTIMATE, task.getEstimate() );
-      initialValues.putLong( Tasks.ESTIMATE_MILLIS, task.getEstimateMillis() );
-      initialValues.putString( Tasks.LOCATION_ID, task.getLocationId() );
-      initialValues.putString( Tasks.URL, task.getUrl() );
+                                configuration.getBoolean( Config.RECURRENCE_EVERY ) );
+      initialValues.putString( Tasks.ESTIMATE,
+                               configuration.getString( Config.ESTIMATE ) );
+      initialValues.putLong( Tasks.ESTIMATE_MILLIS,
+                             configuration.getLong( Config.ESTIMATE_MILLIS,
+                                                    Long.valueOf( -1 ) ) );
+      initialValues.putString( Tasks.LOCATION_ID, locationId );
+      initialValues.putString( Tasks.URL, null );
       
       return initialValues;
    }
@@ -206,9 +216,15 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    @Override
    protected void initializeHeadSection()
    {
-      final Task task = getConfiguredTaskAssertNotNull();
+      final ParcelableDate created = getConfiguredCreatedDateAssertNotNull();
       
-      defaultInitializeHeadSectionImpl( task );
+      addedDate.setText( MolokoDateUtils.formatDateTime( created.getTime(),
+                                                         FULL_DATE_FLAGS ) );
+      completedDate.setVisibility( View.GONE );
+      postponed.setVisibility( View.GONE );
+      
+      source.setText( getString( R.string.task_source,
+                                 getString( R.string.app_name ) ) );
    }
    
 
@@ -274,6 +290,49 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       if ( config.containsKey( Config.ESTIMATE_MILLIS ) )
          configuration.putLong( Config.ESTIMATE_MILLIS,
                                 config.getLong( Config.ESTIMATE_MILLIS ) );
+      if ( config.containsKey( Config.CREATED_DATE ) )
+         configuration.putParcelable( Config.CREATED_DATE,
+                                      config.getParcelable( Config.CREATED_DATE ) );
+      if ( config.containsKey( Config.NEW_TASK_URI ) )
+         configuration.putString( Config.NEW_TASK_URI,
+                                  config.getString( Config.NEW_TASK_URI ) );
+   }
+   
+
+
+   @Override
+   protected void putDefaultConfigurationTo( Bundle bundle )
+   {
+      super.putDefaultConfigurationTo( bundle );
+      
+      bundle.putParcelable( Config.CREATED_DATE,
+                            ParcelableDate.newInstanceIfNotNull( new Date() ) );
+   }
+   
+
+
+   private ParcelableDate getConfiguredCreatedDateAssertNotNull()
+   {
+      final ParcelableDate date = configuration.getParcelable( Config.CREATED_DATE );
+      
+      if ( date != null )
+         throw new AssertionError( "expected date to be not null" );
+      
+      return date;
+   }
+   
+
+
+   private Uri getConfiguredNewTaskUri()
+   {
+      return configuration.getParcelable( Config.NEW_TASK_URI );
+   }
+   
+
+
+   private void configuredNewTaskUri( Uri newTaskUri )
+   {
+      configuration.putParcelable( Config.NEW_TASK_URI, newTaskUri );
    }
    
 
@@ -287,6 +346,50 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                              configuration.getString( Tasks.LIST_NAME ) );
       else
          return null;
+   }
+   
+
+
+   private String getConfiguredLocationId()
+   {
+      if ( configuration.containsKey( Tasks.LOCATION_ID ) )
+         return configuration.getString( Tasks.LOCATION_ID );
+      else if ( configuration.containsKey( Tasks.LOCATION_NAME ) )
+         return getIdByName( getLoaderDataAssertNotNull().getLocationIdsToLocationNames(),
+                             configuration.getString( Tasks.LOCATION_NAME ) );
+      else
+         return null;
+   }
+   
+
+
+   private List< String > getConfiguredTags()
+   {
+      return new ArrayList< String >( Arrays.asList( TextUtils.split( Strings.emptyIfNull( configuration.getString( Tasks.TAGS ) ),
+                                                                      Tasks.TAGS_SEPARATOR ) ) );
+   }
+   
+
+
+   /**
+    * @return the list ID of the last removed list name
+    */
+   private String removeListsFromTags( List< String > tags )
+   {
+      String listId = null;
+      
+      final List< Pair< String, String > > listIdsToName = getLoaderDataAssertNotNull().getListIdsToListNames();
+      
+      for ( Iterator< String > i = tags.iterator(); i.hasNext(); )
+      {
+         final String tag = i.next();
+         // Check if the tag is a list name
+         listId = getIdByName( listIdsToName, tag );
+         
+         if ( listId != null )
+            i.remove();
+      }
+      return listId;
    }
    
 
@@ -316,30 +419,81 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       
       if ( ok )
       {
-         final ModificationSet modifications = createModificationSet( Collections.singletonList( getConfiguredTaskAssertNotNull() ) );
+         // Apply the modifications to the DB.
+         // set the taskseries modification time to now
+         Uri newTaskUri = null;
          
-         if ( modifications != null && modifications.size() > 0 )
+         try
          {
-            try
+            final Task newTask = newTask();
+            newTaskUri = new AsyncInsertEntity< Task >( getActivity() )
             {
-               ok = new ApplyModificationsTask( getActivity(),
-                                                R.string.toast_save_task ).execute( modifications )
-                                                                          .get();
-            }
-            catch ( InterruptedException e )
-            {
-               ok = false;
-            }
-            catch ( ExecutionException e )
-            {
-               ok = false;
-            }
-            
-            if ( !ok )
-               Toast.makeText( getActivity(),
-                               R.string.toast_delete_task_failed,
-                               Toast.LENGTH_LONG ).show();
+               @Override
+               protected int getProgressMessageId()
+               {
+                  return R.string.toast_insert_task;
+               }
+               
+
+
+               @Override
+               protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
+                                                                               Task entity )
+               {
+                  final NewTaskIds newIds = new NewTaskIds( null, null );
+                  final List< ContentProviderOperation > operations = TasksProviderPart.insertLocalCreatedTask( contentResolver,
+                                                                                                                entity,
+                                                                                                                newIds );
+                  
+                  operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                               newIds.taskSeriesId ),
+                                                                     entity.getCreated()
+                                                                           .getTime() ) );
+                  operations.add( CreationsProviderPart.newCreation( Queries.contentUriWithId( RawTasks.CONTENT_URI,
+                                                                                               newIds.rawTaskId ),
+                                                                     entity.getCreated()
+                                                                           .getTime() ) );
+                  return operations;
+               }
+               
+
+
+               @Override
+               protected Uri getContentUri()
+               {
+                  return Tasks.CONTENT_URI;
+               }
+               
+
+
+               @Override
+               protected String getPath()
+               {
+                  return RawTasks.PATH;
+               }
+            }.execute( newTask ).get();
          }
+         catch ( InterruptedException e )
+         {
+            Log.e( LogUtils.toTag( TaskAddFragment.class ),
+                   "Failed to insert new task",
+                   e );
+            ok = false;
+         }
+         catch ( ExecutionException e )
+         {
+            Log.e( LogUtils.toTag( TaskAddFragment.class ),
+                   "Failed to insert new task",
+                   e );
+            ok = false;
+         }
+         
+         if ( ok )
+            configuredNewTaskUri( newTaskUri );
+         else
+            Toast.makeText( getActivity(),
+                            R.string.toast_insert_task_fail,
+                            Toast.LENGTH_LONG ).show();
       }
       
       return ok;
@@ -347,15 +501,65 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    
 
 
+   private final Task newTask()
+   {
+      final Date created = getConfiguredCreatedDateAssertNotNull().getDate();
+      final long dueDate = getCurrentValue( Tasks.DUE_DATE, Long.class );
+      
+      return new Task( (String) null,
+                       (String) null,
+                       (String) null,
+                       false,
+                       created,
+                       created,
+                       getCurrentValue( Tasks.TASKSERIES_NAME, String.class ),
+                       TaskSeries.NEW_TASK_SOURCE,
+                       getCurrentValue( Tasks.URL, String.class ),
+                       getCurrentValue( Tasks.RECURRENCE, String.class ),
+                       getCurrentValue( Tasks.RECURRENCE_EVERY, Boolean.class ),
+                       getCurrentValue( Tasks.LOCATION_ID, String.class ),
+                       getCurrentValue( Tasks.LIST_ID, String.class ),
+                       dueDate == -1 ? null : new Date( dueDate ),
+                       getCurrentValue( Tasks.HAS_DUE_TIME, Boolean.class ),
+                       created,
+                       (Date) null,
+                       (Date) null,
+                       RtmTask.convertPriority( getCurrentValue( Tasks.PRIORITY,
+                                                                 String.class ) ),
+                       0,
+                       getCurrentValue( Tasks.ESTIMATE, String.class ),
+                       getCurrentValue( Tasks.ESTIMATE_MILLIS, Long.class ),
+                       (String) null,
+                       0.0f,
+                       0.0f,
+                       (String) null,
+                       false,
+                       0,
+                       getCurrentValue( Tasks.TAGS, String.class ),
+                       (ParticipantList) null,
+                       Strings.EMPTY_STRING );
+   }
+   
+
+
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
-      final Bundle config = new Bundle();
+      final Uri newTaskUri = getConfiguredNewTaskUri();
       
-      config.putString( TaskFragment.Config.TASK_ID,
-                        getConfiguredTaskAssertNotNull().getId() );
-      
-      final TaskFragment fragment = TaskFragment.newInstance( config );
-      return fragment;
+      if ( newTaskUri != null )
+      {
+         final Bundle config = new Bundle();
+         
+         config.putString( TaskFragment.Config.TASK_ID,
+                           newTaskUri.getLastPathSegment() );
+         
+         final TaskFragment fragment = TaskFragment.newInstance( config );
+         return fragment;
+      }
+      else
+      {
+         return null;
+      }
    }
 }

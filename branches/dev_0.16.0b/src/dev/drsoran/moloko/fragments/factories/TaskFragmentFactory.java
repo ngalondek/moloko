@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import dev.drsoran.moloko.fragments.TaskAddFragment;
 import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
 
@@ -41,6 +42,7 @@ public final class TaskFragmentFactory extends AbstractFragmentFactory
    {
       FRAGMENT_CLASSES.add( TaskFragment.class );
       FRAGMENT_CLASSES.add( TaskEditFragment.class );
+      FRAGMENT_CLASSES.add( TaskAddFragment.class );
    }
    
    

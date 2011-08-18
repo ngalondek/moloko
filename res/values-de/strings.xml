@@ -29,7 +29,7 @@
    <string name="app_task_edit">Aufgabe Bearbeiten</string>
    <string name="app_task_edit_multiple">%1$d %2$s bearbeiten</string>
    <string name="app_task_add">Neue Aufgabe</string>
-   <string name="app_task_select_multiple">Aufgaben zum bearb. wählen</string>
+   <string name="app_task_select_multiple">Aufgaben wählen (%1$d)</string>
    <string name="app_task_complete">Erledigt</string>
    <string name="app_task_uncomplete">Nicht erledigt</string>
    <string name="app_task_delete">Aufgabe löschen</string>

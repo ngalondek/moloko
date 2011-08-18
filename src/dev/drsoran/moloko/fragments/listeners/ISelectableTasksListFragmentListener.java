@@ -30,5 +30,9 @@ import dev.drsoran.rtm.Task;
 public interface ISelectableTasksListFragmentListener extends
          ITasksListFragmentListener
 {
+   void onSelectionChanged( List< ? extends Task > selectedTasks );
+   
+
+
    void onEditSelectedTasks( List< ? extends Task > tasks );
 }

@@ -22,7 +22,12 @@
 
 package dev.drsoran.moloko.fragments;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import android.content.Intent;
@@ -32,6 +37,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
@@ -49,8 +55,7 @@ import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditFragment extends
-         AbstractTaskEditFragment< TaskEditFragment >
+public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
 {
    private final static IntentFilter INTENT_FILTER;
    
@@ -58,7 +63,7 @@ public class TaskEditFragment extends
    {
       try
       {
-         INTENT_FILTER = new IntentFilter( Intent.ACTION_EDIT,
+         INTENT_FILTER = new IntentFilter( Intent.ACTION_INSERT,
                                            "vnd.android.cursor.item/vnd.rtm.task" );
          INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
       }
@@ -69,18 +74,44 @@ public class TaskEditFragment extends
    }
    
    
-   public static class Config
+   public final static class Config
    {
-      public final static String TASK = "task";
+      public final static String TASK_NAME = Tasks.TASKSERIES_NAME;
+      
+      public final static String LIST_ID = Tasks.LIST_ID;
+      
+      public final static String LIST_NAME = Tasks.LIST_NAME;
+      
+      public final static String LOCATION_ID = Tasks.LOCATION_ID;
+      
+      public final static String LOCATION_NAME = Tasks.LOCATION_NAME;
+      
+      public final static String PRIORITY = Tasks.PRIORITY;
+      
+      public final static String TAGS = Tasks.TAGS;
+      
+      public final static String DUE_DATE = Tasks.DUE_DATE;
+      
+      public final static String HAS_DUE_TIME = Tasks.HAS_DUE_TIME;
+      
+      public final static String RECURRENCE = Tasks.RECURRENCE;
+      
+      public final static String RECURRENCE_EVERY = Tasks.RECURRENCE_EVERY;
+      
+      public final static String ESTIMATE = Tasks.ESTIMATE;
+      
+      public final static String ESTIMATE_MILLIS = Tasks.ESTIMATE_MILLIS;
    }
    
    private ITaskEditFragmentListener listener;
    
+   private Date created;
+   
    
 
-   public final static TaskEditFragment newInstance( Bundle config )
+   public final static TaskAddFragment newInstance( Bundle config )
    {
-      final TaskEditFragment fragment = new TaskEditFragment();
+      final TaskAddFragment fragment = new TaskAddFragment();
       
       fragment.setArguments( config );
       
@@ -122,7 +153,29 @@ public class TaskEditFragment extends
    @Override
    protected Bundle getInitialValues()
    {
-      final Task task = getConfiguredTaskAssertNotNull();
+      final List< String > tags = new ArrayList< String >( Arrays.asList( TextUtils.split( emptyIfNull( intent.getStringExtra( Tasks.TAGS ) ),
+                                                                                           Tasks.TAGS_SEPARATOR ) ) );
+      
+      // Try to determine the list ID
+      final String listId = getConfiguredListId();
+      
+      // Check if the list name is part of the tags. This can happen
+      // if the list name has been entered w/o taken the suggestion.
+      // So it has been parsed as a tag since the operator (#) is the
+      // same.
+      else
+      {
+         for ( Iterator< String > i = tags.iterator(); i.hasNext()
+            && listId == null; )
+         {
+            final String tag = i.next();
+            // Check if the tag is a list name
+            listId = getListIdByName( tag );
+            
+            if ( listId != null )
+               i.remove();
+         }
+      }
       
       final Bundle initialValues = new Bundle();
       
@@ -183,21 +236,75 @@ public class TaskEditFragment extends
    {
       super.takeConfigurationFrom( config );
       
-      if ( config.containsKey( Config.TASK ) )
-         configuration.putParcelable( Config.TASK,
-                                      config.getParcelable( Config.TASK ) );
+      if ( config.containsKey( Config.TASK_NAME ) )
+         configuration.putString( Config.TASK_NAME,
+                                  config.getString( Config.TASK_NAME ) );
+      if ( config.containsKey( Config.LIST_ID ) )
+         configuration.putString( Config.LIST_ID,
+                                  config.getString( Config.LIST_ID ) );
+      if ( config.containsKey( Config.LIST_NAME ) )
+         configuration.putString( Config.LIST_NAME,
+                                  config.getString( Config.LIST_NAME ) );
+      if ( config.containsKey( Config.LOCATION_ID ) )
+         configuration.putString( Config.LOCATION_ID,
+                                  config.getString( Config.LOCATION_ID ) );
+      if ( config.containsKey( Config.LOCATION_NAME ) )
+         configuration.putString( Config.LOCATION_NAME,
+                                  config.getString( Config.LOCATION_NAME ) );
+      if ( config.containsKey( Config.PRIORITY ) )
+         configuration.putString( Config.PRIORITY,
+                                  config.getString( Config.PRIORITY ) );
+      if ( config.containsKey( Config.TAGS ) )
+         configuration.putString( Config.TAGS, config.getString( Config.TAGS ) );
+      if ( config.containsKey( Config.DUE_DATE ) )
+         configuration.putLong( Config.DUE_DATE,
+                                config.getLong( Config.DUE_DATE ) );
+      if ( config.containsKey( Config.HAS_DUE_TIME ) )
+         configuration.putBoolean( Config.HAS_DUE_TIME,
+                                   config.getBoolean( Config.HAS_DUE_TIME ) );
+      if ( config.containsKey( Config.RECURRENCE ) )
+         configuration.putString( Config.RECURRENCE,
+                                  config.getString( Config.RECURRENCE ) );
+      if ( config.containsKey( Config.RECURRENCE_EVERY ) )
+         configuration.putBoolean( Config.RECURRENCE_EVERY,
+                                   config.getBoolean( Config.RECURRENCE_EVERY ) );
+      if ( config.containsKey( Config.ESTIMATE ) )
+         configuration.putString( Config.ESTIMATE,
+                                  config.getString( Config.ESTIMATE ) );
+      if ( config.containsKey( Config.ESTIMATE_MILLIS ) )
+         configuration.putLong( Config.ESTIMATE_MILLIS,
+                                config.getLong( Config.ESTIMATE_MILLIS ) );
    }
    
 
 
-   public Task getConfiguredTaskAssertNotNull()
+   private String getConfiguredListId()
    {
-      final Task task = configuration.getParcelable( Config.TASK );
+      if ( configuration.containsKey( Tasks.LIST_ID ) )
+         return configuration.getString( Tasks.LIST_ID );
+      else if ( configuration.containsKey( Tasks.LIST_NAME ) )
+         return getIdByName( getLoaderDataAssertNotNull().getListIdsToListNames(),
+                             configuration.getString( Tasks.LIST_NAME ) );
+      else
+         return null;
+   }
+   
+
+
+   private String getIdByName( List< Pair< String, String >> idsToNames,
+                               String name )
+   {
+      String res = null;
       
-      if ( task == null )
-         throw new AssertionError( "expected task to be not null" );
+      for ( Iterator< Pair< String, String >> i = idsToNames.iterator(); res == null
+         && i.hasNext(); )
+      {
+         Pair< String, String > listIdToListName = i.next();
+         if ( listIdToListName.second.equalsIgnoreCase( name ) )
+            res = listIdToListName.first;
+      }
       
-      return task;
+      return res;
    }
    
 

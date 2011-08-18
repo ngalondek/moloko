@@ -245,19 +245,19 @@ public class SelectableTasksListsFragment extends
       
       menu.add( Menu.NONE,
                 OptionsMenu.SELECT_ALL,
-                Menu.CATEGORY_CONTAINER,
+                Menu.CATEGORY_SECONDARY,
                 R.string.select_multiple_tasks_menu_opt_select_all )
           .setIcon( R.drawable.ic_menu_select_all_tasks );
       
       menu.add( Menu.NONE,
                 OptionsMenu.DESELECT_ALL,
-                Menu.CATEGORY_CONTAINER,
+                Menu.CATEGORY_SECONDARY,
                 R.string.select_multiple_tasks_menu_opt_unselect_all )
           .setIcon( R.drawable.ic_menu_select_no_tasks );
       
       menu.add( Menu.NONE,
                 OptionsMenu.INVERT_SELECTION,
-                Menu.CATEGORY_CONTAINER,
+                Menu.CATEGORY_SECONDARY,
                 R.string.select_multiple_tasks_menu_opt_inv_selection )
           .setIcon( R.drawable.ic_menu_select_invert_tasks );
       
@@ -714,5 +714,7 @@ public class SelectableTasksListsFragment extends
    {
       invalidateOptionsMenu();
       putCurrentSelectionStateToConfig( configuration );
+      
+      listener.onSelectionChanged( getListAdapter().getSelectedTasks() );
    }
 }

@@ -47,11 +47,9 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.fragments.base.MolokoEditListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
-import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
@@ -84,8 +82,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       public final static int SORT_NAME = R.id.menu_sort_task_name;
       
       public final static int SETTINGS = R.id.menu_settings;
-      
-      public final static int SYNC = R.id.menu_sync;
    }
    
 
@@ -184,19 +180,13 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      menu.add( Menu.NONE,
+      menu.add( Integer.MAX_VALUE,
                 OptionsMenu.SETTINGS,
                 Menu.CATEGORY_SECONDARY,
                 R.string.phr_settings )
           .setIcon( R.drawable.ic_menu_settings )
           .setIntent( Intents.createOpenPreferencesIntent( getActivity() ) )
           .setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
-      
-      UIUtils.addSyncMenuItem( getActivity(),
-                               menu,
-                               OptionsMenu.SYNC,
-                               Menu.CATEGORY_SECONDARY,
-                               MenuItem.SHOW_AS_ACTION_IF_ROOM );
       
       {
          final SubMenu subMenu = createTasksSortSubMenu( menu );
@@ -239,10 +229,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
          case OptionsMenu.SORT_NAME:
             resortTasks( Settings.TASK_SORT_NAME );
             item.setChecked( true );
-            return true;
-            
-         case OptionsMenu.SYNC:
-            SyncUtils.requestManualSync( getActivity() );
             return true;
             
          default :

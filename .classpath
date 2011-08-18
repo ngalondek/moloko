@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/*.g|**/*.tokens|dev/drsoran/moloko/grammar/TimeAutoCompl.java|dev/drsoran/moloko/activities/RtmSmartFilterTestActivity.java|dev/drsoran/moloko/layouts/TitleBarLayout.java|dev/drsoran/moloko/activities/TaskEditActivity.java|dev/drsoran/moloko/activities/AbstractNoteActivity.java|dev/drsoran/moloko/activities/ChangeTagsActivity.java" kind="src" path="src"/>
+	<classpathentry excluding="**/*.g|**/*.tokens|dev/drsoran/moloko/grammar/TimeAutoCompl.java|dev/drsoran/moloko/activities/RtmSmartFilterTestActivity.java|dev/drsoran/moloko/layouts/TitleBarLayout.java|dev/drsoran/moloko/activities/TaskEditActivity.java|dev/drsoran/moloko/activities/AbstractNoteActivity.java|dev/drsoran/moloko/activities/ChangeTagsActivity.java|dev/drsoran/moloko/activities/AddTaskActivity.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="aidl"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>

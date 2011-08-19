@@ -76,7 +76,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       try
       {
          INTENT_FILTER = new IntentFilter( Intent.ACTION_INSERT,
-                                           "vnd.android.cursor.item/vnd.rtm.task" );
+                                           "vnd.android.cursor.dir/vnd.rtm.task" );
          INTENT_FILTER.addCategory( Intent.CATEGORY_DEFAULT );
       }
       catch ( MalformedMimeTypeException e )
@@ -315,7 +315,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    {
       final ParcelableDate date = configuration.getParcelable( Config.CREATED_DATE );
       
-      if ( date != null )
+      if ( date == null )
          throw new AssertionError( "expected date to be not null" );
       
       return date;

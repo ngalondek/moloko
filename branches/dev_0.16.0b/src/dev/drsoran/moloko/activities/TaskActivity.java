@@ -354,70 +354,72 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       final Task task = getTask();
       
-      if ( task != null )
-      {
-         final boolean hasRtmWriteAccess = AccountUtils.isWriteableAccess( this );
-         final boolean isInEditMode = IsActivityInEditMode();
-         
-         UIUtils.addOptionalMenuItem( this,
-                                      menu,
-                                      OptionsMenu.COMPLETE_TASK,
-                                      getString( R.string.app_task_complete ),
-                                      Menu.NONE,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_complete,
-                                      MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                      !isInEditMode && hasRtmWriteAccess
-                                         && task.getCompleted() == null );
-         UIUtils.addOptionalMenuItem( this,
-                                      menu,
-                                      OptionsMenu.UNCOMPLETE_TASK,
-                                      getString( R.string.app_task_uncomplete ),
-                                      Menu.NONE,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_incomplete,
-                                      MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                      !isInEditMode && hasRtmWriteAccess
-                                         && task.getCompleted() != null );
-         UIUtils.addOptionalMenuItem( this,
-                                      menu,
-                                      OptionsMenu.POSTPONE_TASK,
-                                      getString( R.string.app_task_postpone ),
-                                      Menu.NONE,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_postponed,
-                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                      !isInEditMode && hasRtmWriteAccess );
-         UIUtils.addOptionalMenuItem( this,
-                                      menu,
-                                      OptionsMenu.DELETE_TASK,
-                                      getString( R.string.app_task_delete ),
-                                      Menu.NONE,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_trash,
-                                      MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                      !isInEditMode && hasRtmWriteAccess );
-         
-         UIUtils.addOptionalMenuItem( this,
-                                      menu,
-                                      OptionsMenu.SAVE,
-                                      getString( R.string.app_save ),
-                                      Menu.NONE,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_disc,
-                                      MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                      isInEditMode && hasRtmWriteAccess );
-         UIUtils.addOptionalMenuItem( this,
-                                      menu,
-                                      OptionsMenu.ABORT,
-                                      getString( R.string.phr_cancel_sync ),
-                                      Menu.NONE,
-                                      Menu.NONE,
-                                      R.drawable.ic_menu_cancel,
-                                      MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                      isInEditMode && hasRtmWriteAccess );
-      }
+      final boolean hasRtmWriteAccess = AccountUtils.isWriteableAccess( this );
+      final boolean isInEditMode = IsActivityInEditMode();
       
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.COMPLETE_TASK,
+                                   getString( R.string.app_task_complete ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_complete,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   !isInEditMode && hasRtmWriteAccess
+                                      && task != null
+                                      && task.getCompleted() == null );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.UNCOMPLETE_TASK,
+                                   getString( R.string.app_task_uncomplete ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_incomplete,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   !isInEditMode && hasRtmWriteAccess
+                                      && task != null
+                                      && task.getCompleted() != null );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.POSTPONE_TASK,
+                                   getString( R.string.app_task_postpone ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_postponed,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   !isInEditMode && hasRtmWriteAccess
+                                      && task != null );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.DELETE_TASK,
+                                   getString( R.string.app_task_delete ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_trash,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   !isInEditMode && hasRtmWriteAccess
+                                      && task != null );
+      
+      // Do not check for task != null here cause this is also needed
+      // when adding a new task. In this case the task is always null
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.SAVE,
+                                   getString( R.string.app_save ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_disc,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   isInEditMode && hasRtmWriteAccess );
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ABORT,
+                                   getString( R.string.phr_cancel_sync ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_cancel,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   isInEditMode && hasRtmWriteAccess );
       return true;
    }
    
@@ -640,8 +642,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       if ( NoteEditUtils.deleteNote( this, noteId ) )
       {
-         removeNoteFragmentById( noteId,
-                                 FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+         removeNoteFragmentByNoteId( noteId,
+                                     FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
       }
    }
    
@@ -832,8 +834,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
             }
             else
             {
-               removeNoteFragmentById( fragment.getTag(),
-                                       FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+               finish();
             }
          }
       }
@@ -843,8 +844,10 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private void removeNoteFragmentById( String fragmentTag, int transit )
+   private boolean removeFragmentByTag( String fragmentTag, int transit )
    {
+      boolean removed = false;
+      
       final Fragment fragment = findAddedFragmentByTag( fragmentTag );
       
       if ( fragment != null )
@@ -856,8 +859,20 @@ public class TaskActivity extends MolokoFragmentActivity implements
          
          transaction.commit();
          
+         removed = true;
+      }
+      
+      return removed;
+   }
+   
+
+
+   private void removeNoteFragmentByNoteId( String noteId, int transit )
+   {
+      if ( removeFragmentByTag( noteId, transit ) )
+      {
          final ViewGroup fragmentContainer = getFragmentContainer();
-         final View taskNoteLayout = fragmentContainer.findViewWithTag( createTaskNoteLayoutTag( fragmentTag ) );
+         final View taskNoteLayout = fragmentContainer.findViewWithTag( createTaskNoteLayoutTag( noteId ) );
          
          if ( taskNoteLayout != null )
             fragmentContainer.removeView( taskNoteLayout );
@@ -911,7 +926,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       {
          final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
          
-         transaction.add( R.id.frag_task, fragment );
+         transaction.add( R.id.frag_task, fragment, createTaskFragmentTag() );
          
          transaction.commit();
          
@@ -927,7 +942,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final Fragment fragment = TaskFragment.newInstance( createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       
-      transaction.replace( R.id.frag_task, fragment );
+      transaction.replace( R.id.frag_task, fragment, createTaskFragmentTag() );
       
       transaction.commit();
    }
@@ -939,7 +954,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final Fragment fragment = TaskEditFragment.newInstance( createTaskEditFragmentConfiguration( getTaskAssertNotNull() ) );
       final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
       
-      transaction.replace( R.id.frag_task, fragment );
+      transaction.replace( R.id.frag_task, fragment, createTaskFragmentTag() );
       
       transaction.commit();
    }
@@ -964,6 +979,13 @@ public class TaskActivity extends MolokoFragmentActivity implements
       config.putParcelable( TaskEditFragment.Config.TASK, task );
       
       return config;
+   }
+   
+
+
+   private String createTaskFragmentTag()
+   {
+      return String.valueOf( R.id.frag_task );
    }
    
 
@@ -1097,8 +1119,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
                      }
                      else
                      {
-                        removeNoteFragmentById( addedNoteId,
-                                                FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+                        removeNoteFragmentByNoteId( addedNoteId,
+                                                    FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
                      }
                   }
                }
@@ -1134,7 +1156,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       final String currentTitle = noteEditFragment.getNoteTitle();
       final String currentText = noteEditFragment.getNoteText();
       
-      removeNoteFragmentById( noteId, FragmentTransaction.TRANSIT_NONE );
+      removeNoteFragmentByNoteId( noteId, FragmentTransaction.TRANSIT_NONE );
       
       setActivityInEditMode( createAddNewNoteFragment( createAddNewNoteFragmentConfiguration( task.getTaskSeriesId(),
                                                                                               currentTitle,
@@ -1195,8 +1217,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
          addNewNoteFragment.onCancelEditing();
       
       if ( ok )
-         removeNoteFragmentById( NEW_NOTE_TEMPORARY_ID,
-                                 FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
+         removeNoteFragmentByNoteId( NEW_NOTE_TEMPORARY_ID,
+                                     FragmentTransaction.TRANSIT_FRAGMENT_CLOSE );
       
       return ok;
    }
@@ -1383,7 +1405,11 @@ public class TaskActivity extends MolokoFragmentActivity implements
                   @Override
                   public void run()
                   {
-                     showNoteFragmentsOfTask( getTaskAssertNotNull() );
+                     final Task task = getTask();
+                     
+                     if ( task != null )
+                        showNoteFragmentsOfTask( task );
+                     
                      setPriorityBarVisibility();
                      invalidateOptionsMenu();
                   }

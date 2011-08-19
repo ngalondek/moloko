@@ -136,22 +136,35 @@
          android:label="@string/app_task"
          android:name=".activities.TaskActivity"
          android:theme="@style/Theme.Moloko.Task">
+         
+         <!-- Show a single task -->
          <intent-filter>
-            <!-- Show a single task -->
             <action
                android:name="android.intent.action.VIEW" />
             <category
                android:name="android.intent.category.DEFAULT" />
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
-               
-            <!-- Edit a single task -->
+         </intent-filter>
+         
+         <!-- Edit a single task -->
+         <intent-filter>
             <action
                android:name="android.intent.action.EDIT" />
             <category
                android:name="android.intent.category.DEFAULT" />
             <data
                android:mimeType="vnd.android.cursor.item/vnd.rtm.task" />
+         </intent-filter>
+         
+         <!-- Insert a new task -->      
+         <intent-filter>
+            <action
+               android:name="android.intent.action.INSERT" />
+            <category
+               android:name="android.intent.category.DEFAULT" />
+            <data
+               android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
          </intent-filter>
       </activity>
 

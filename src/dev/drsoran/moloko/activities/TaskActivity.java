@@ -46,6 +46,7 @@ import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
+import dev.drsoran.moloko.fragments.AbstractTaskEditFragment;
 import dev.drsoran.moloko.fragments.ChangeTagsFragment;
 import dev.drsoran.moloko.fragments.NoteAddFragment;
 import dev.drsoran.moloko.fragments.NoteEditFragment;
@@ -487,8 +488,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    @Override
    public void onChangeTags( List< String > tags )
    {
-      showChangeTagsDialog( createTaskEditChangeTagsConfiguration( getTaskAssertNotNull().getName(),
-                                                                   tags ) );
+      showChangeTagsDialog( createTaskEditChangeTagsConfiguration( tags ) );
    }
    
 
@@ -990,12 +990,10 @@ public class TaskActivity extends MolokoFragmentActivity implements
    
 
 
-   private Bundle createTaskEditChangeTagsConfiguration( String taskName,
-                                                         List< String > tags )
+   private Bundle createTaskEditChangeTagsConfiguration( List< String > tags )
    {
       final Bundle config = new Bundle( 2 );
       
-      config.putString( ChangeTagsFragment.Config.TASK_NAME, taskName );
       config.putStringArrayList( ChangeTagsFragment.Config.TAGS,
                                  new ArrayList< String >( tags ) );
       
@@ -1324,7 +1322,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       if ( getConfiguredEditModeFragmentId() != R.id.frag_task )
          throw new AssertionError( "expected to be in task editing mode" );
       
-      final TaskEditFragment taskEditFragment = (TaskEditFragment) findAddedFragmentById( R.id.frag_task );
+      final AbstractTaskEditFragment< ? > taskEditFragment = (AbstractTaskEditFragment< ? >) findAddedFragmentById( R.id.frag_task );
       taskEditFragment.setTags( tags );
    }
    

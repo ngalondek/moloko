@@ -112,6 +112,10 @@ public class TasksListActivity extends AbstractTasksListActivity implements
    {
       switch ( item.getItemId() )
       {
+         case android.R.id.home:
+            startActivity( Intents.createOpenHomeIntent( this ) );
+            return true;
+            
          case OptionsMenu.QUICK_ADD_TASK:
             showQuickAddTaskFragment( !isQuickAddTaskFragmentOpen() );
             return true;

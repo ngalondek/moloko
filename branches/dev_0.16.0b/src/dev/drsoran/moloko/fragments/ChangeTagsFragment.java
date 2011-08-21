@@ -36,12 +36,12 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderDialogFragment;
@@ -80,8 +80,6 @@ public class ChangeTagsFragment extends
    public static class Config
    {
       public final static String TAGS = Tasks.TAGS;
-      
-      public final static String TASK_NAME = Tasks.TASKSERIES_NAME;
    }
    
    private final static int TAGS_LOADER_ID = 1;
@@ -250,13 +248,7 @@ public class ChangeTagsFragment extends
 
    private void setDialogTitleSection( Dialog dialog )
    {
-      if ( !TextUtils.isEmpty( getConfiguredTaskName() ) )
-         dialog.setTitle( getString( R.string.app_change_tags,
-                                     getConfiguredTaskName() ) );
-      else
-         dialog.setTitle( getString( R.string.app_change_tags,
-                                     getResources().getQuantityString( R.plurals.g_task,
-                                                                       1 ) ) );
+      dialog.setTitle( getString( R.string.app_change_tags ) );
    }
    
 
@@ -269,9 +261,6 @@ public class ChangeTagsFragment extends
       if ( config.containsKey( Config.TAGS ) )
          configuration.putStringArrayList( Config.TAGS,
                                            config.getStringArrayList( Config.TAGS ) );
-      if ( config.containsKey( Config.TASK_NAME ) )
-         configuration.putString( Config.TASK_NAME,
-                                  config.getString( Config.TASK_NAME ) );
    }
    
 
@@ -288,13 +277,6 @@ public class ChangeTagsFragment extends
    public void configuredTags( ArrayList< String > tags )
    {
       configuration.putStringArrayList( Config.TAGS, tags );
-   }
-   
-
-
-   public String getConfiguredTaskName()
-   {
-      return configuration.getString( Config.TASK_NAME );
    }
    
 

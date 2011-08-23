@@ -729,13 +729,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       boolean ok = validateName();
       
       // Due
-      ok = ok && validateDue() != null;
+      if ( ok && !TextUtils.isEmpty( dueEditText.getText() ) )
+         ok = validateDue( dueEditText.getText().toString() ) != null;
       
       // Recurrence
-      ok = ok && validateRecurrence() != null;
+      if ( ok && !TextUtils.isEmpty( recurrEditText.getText() ) )
+         ok = validateRecurrence( recurrEditText.getText().toString() ) != null;
       
       // Estimate
-      ok = ok && validateEstimate() != -1;
+      if ( ok && !TextUtils.isEmpty( estimateEditText.getText() ) )
+         ok = validateEstimate( estimateEditText.getText().toString() ) != -1;
       
       return ok;
    }
@@ -801,7 +804,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          
          if ( !TextUtils.isEmpty( dueStr ) )
          {
-            final MolokoCalendar cal = validateDue();
+            final MolokoCalendar cal = validateDue( dueStr );
             if ( cal != null )
             {
                onDueEdited( cal.getTimeInMillis(), cal.hasTime() );
@@ -839,11 +842,9 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
 
 
-   protected MolokoCalendar validateDue()
+   protected MolokoCalendar validateDue( String dueStr )
    {
       MolokoCalendar cal = null;
-      
-      final String dueStr = dueEditText.getText().toString();
       
       if ( !TextUtils.isEmpty( dueStr ) )
       {
@@ -903,11 +904,11 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    {
       if ( hasInputCommitted( actionId ) )
       {
-         final String estimateStr = recurrEditText.getText().toString();
+         final String recurrStr = recurrEditText.getText().toString();
          
-         if ( !TextUtils.isEmpty( estimateStr ) )
+         if ( !TextUtils.isEmpty( recurrStr ) )
          {
-            final Pair< String, Boolean > res = validateRecurrence();
+            final Pair< String, Boolean > res = validateRecurrence( recurrStr );
             
             if ( res != null )
             {
@@ -939,12 +940,10 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
 
 
-   protected Pair< String, Boolean > validateRecurrence()
+   protected Pair< String, Boolean > validateRecurrence( String recurrStr )
    {
       Pair< String, Boolean > res = new Pair< String, Boolean >( Strings.EMPTY_STRING,
                                                                  Boolean.FALSE );
-      final String recurrStr = recurrEditText.getText().toString();
-      
       if ( !TextUtils.isEmpty( recurrStr ) )
       {
          res = RecurrenceParsing.parseRecurrence( recurrStr );
@@ -1008,7 +1007,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          
          if ( !TextUtils.isEmpty( estStr ) )
          {
-            final long millis = validateEstimate();
+            final long millis = validateEstimate( estStr );
             
             if ( millis != -1 )
             {
@@ -1041,11 +1040,9 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
 
 
-   protected long validateEstimate()
+   protected long validateEstimate( String estStr )
    {
       long millis = 0;
-      
-      String estStr = estimateEditText.getText().toString();
       
       if ( !TextUtils.isEmpty( estStr ) )
       {

@@ -446,20 +446,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
             return true;
             
          case OptionsMenu.DELETE_TASK:
-            UIUtils.newDeleteElementDialog( this,
-                                            getString( R.string.app_task ),
-                                            new Runnable()
-                                            {
-                                               @Override
-                                               public void run()
-                                               {
-                                                  TaskEditUtils.deleteTask( TaskActivity.this,
-                                                                            getTaskAssertNotNull() );
-                                                  finish();
-                                               }
-                                            },
-                                            null )
-                   .show();
+            onDeleteTask( getTaskAssertNotNull().getId() );
             return true;
             
          case OptionsMenu.SAVE:

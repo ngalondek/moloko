@@ -40,6 +40,7 @@ import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -144,9 +145,14 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
             {
                if ( onFinishActivityByHome() )
                   finish();
-               
-               handled = true;
             }
+            else
+            {
+               startActivity( Intents.createOpenHomeIntent( this ) );
+            }
+            
+            handled = true;
+            
          default :
             handled = false;
       }

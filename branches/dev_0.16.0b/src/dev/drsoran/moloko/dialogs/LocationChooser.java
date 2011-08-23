@@ -32,8 +32,8 @@ import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -73,7 +73,7 @@ public class LocationChooser
       private final int resourceId;
       
       
-      
+
       public Adapter( Context context, int resourceId,
          List< Pair< Intent, ResolveInfo >> objects )
       {
@@ -83,8 +83,8 @@ public class LocationChooser
          this.resourceId = resourceId;
       }
       
-      
-      
+
+
       @Override
       public View getView( int position, View convertView, ViewGroup parent )
       {
@@ -117,7 +117,7 @@ public class LocationChooser
    }
    
    
-   
+
    public LocationChooser( Activity context, Task task )
    {
       this.activity = context;
@@ -127,8 +127,8 @@ public class LocationChooser
                   task.getLocationAddress() );
    }
    
-   
-   
+
+
    public LocationChooser( Activity context, RtmLocation location )
    {
       this.activity = context;
@@ -138,8 +138,8 @@ public class LocationChooser
                   location.address );
    }
    
-   
-   
+
+
    public LocationChooser( Activity context, float lon, float lat, int zoom,
       String address )
    {
@@ -147,23 +147,23 @@ public class LocationChooser
       setIntents( lon, lat, zoom, address );
    }
    
-   
-   
+
+
    public LocationChooser( Activity context, Intent[] intents )
    {
       this.activity = context;
       resolveLocationIntents( intents );
    }
    
-   
-   
+
+
    public boolean hasIntents()
    {
       return resolvedIntents.size() > 0;
    }
    
-   
-   
+
+
    public void showChooser()
    {
       final AlertDialog.Builder builder = new AlertDialog.Builder( activity );
@@ -191,11 +191,11 @@ public class LocationChooser
       dialog.show();
    }
    
-   
-   
+
+
    public static void showChooser( Activity context,
                                    String locationName,
-                                   boolean onlyViewable )
+                                   boolean onlyViewableLocation )
    {
       boolean ok = true;
       
@@ -212,7 +212,7 @@ public class LocationChooser
                                                                                + "'" );
          if ( location != null )
          {
-            if ( onlyViewable && location.viewable )
+            if ( onlyViewableLocation && location.viewable )
             {
                final LocationChooser locationChooser = new LocationChooser( context,
                                                                             location );
@@ -220,7 +220,6 @@ public class LocationChooser
                if ( locationChooser.hasIntents() )
                   locationChooser.showChooser();
             }
-            
          }
          else
          {
@@ -234,15 +233,15 @@ public class LocationChooser
       }
    }
    
-   
-   
+
+
    public static boolean hasIntentHandler( Context context, String address )
    {
       return canResolveIntents( context, createIntents( 1.0f, 1.0f, 1, address ) );
    }
    
-   
-   
+
+
    private static boolean canResolveIntents( Context context, Intent[] intents )
    {
       final PackageManager pm = context.getPackageManager();
@@ -264,8 +263,8 @@ public class LocationChooser
       return atLeastOneResolved;
    }
    
-   
-   
+
+
    private static Intent[] createIntents( float lon,
                                           float lat,
                                           int zoom,
@@ -296,15 +295,15 @@ public class LocationChooser
       return intents;
    }
    
-   
-   
+
+
    private void setIntents( float lon, float lat, int zoom, String address )
    {
       resolveLocationIntents( createIntents( lon, lat, zoom, address ) );
    }
    
-   
-   
+
+
    private void resolveLocationIntents( Intent[] intents )
    {
       resolvedIntents = new ArrayList< Pair< Intent, ResolveInfo > >();

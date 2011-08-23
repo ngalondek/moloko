@@ -42,6 +42,7 @@ import dev.drsoran.moloko.adapters.ActionBarNavigationAdapter;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
 import dev.drsoran.moloko.fragments.QuickAddTaskFragment;
 import dev.drsoran.moloko.fragments.factories.TasksListFragmentFactory;
+import dev.drsoran.moloko.fragments.listeners.IQuickAddTaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.Intents;
@@ -52,6 +53,7 @@ import dev.drsoran.rtm.Task;
 
 abstract class AbstractTasksListActivity extends MolokoFragmentActivity
          implements ITasksListFragmentListener, OnNavigationListener,
+         IQuickAddTaskFragmentListener,
          LoaderCallbacks< List< RtmListWithTaskCount > >
 {
    @SuppressWarnings( "unused" )
@@ -360,6 +362,8 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
          if ( quickAddTaskFragment == null )
          {
             quickAddTaskFragment = QuickAddTaskFragment.newInstance( config );
+            quickAddTaskFragment.setRetainInstance( true );
+            
             transaction.add( R.id.frag_quick_add_task, quickAddTaskFragment );
          }
          else
@@ -393,6 +397,15 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
       config.putParcelable( QuickAddTaskFragment.Config.FILTER,
                             getConfiguredFilter() );
       return config;
+   }
+   
+
+
+   @Override
+   public void onAddNewTask( Bundle parsedValues )
+   {
+      startActivity( Intents.createAddTaskIntent( this, parsedValues ) );
+      showQuickAddTaskFragment( false );
    }
    
 

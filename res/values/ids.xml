@@ -51,6 +51,9 @@
    <item
       type="id"
       name="frag_change_tags" />
+   <item
+      type="id"
+      name="frag_tag_cloud" />
 
 
    <!-- Menu group IDs -->

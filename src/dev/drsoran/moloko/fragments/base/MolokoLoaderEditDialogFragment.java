@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -34,8 +34,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.IConfigurable;
-import dev.drsoran.moloko.IOnSettingsChangedListener;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
@@ -43,8 +41,9 @@ import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
-         implements IConfigurable, LoaderCallbacks< D >
+public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
+         extends MolokoEditDialogFragment< T, D > implements IConfigurable,
+         LoaderCallbacks< D >
 {
    private final static class Config
    {
@@ -53,15 +52,11 @@ public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
    
    private final Handler handler = new Handler();
    
-   private IOnSettingsChangedListener onSettingsChangedListener;
-   
    private ILoaderFragmentListener loaderListener;
    
    private D loaderData;
    
    private boolean loaderNotDataFound;
-   
-   protected Bundle configuration;
    
    
 
@@ -69,11 +64,6 @@ public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
-      
-      if ( savedInstanceState == null )
-         configure( getArguments() );
-      else
-         configure( savedInstanceState );
       
       if ( getLoaderData() == null )
          startLoader();
@@ -85,27 +75,6 @@ public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
    public void onAttach( FragmentActivity activity )
    {
       super.onAttach( activity );
-      
-      final int settingsMask = getSettingsMask();
-      
-      if ( settingsMask != 0 )
-      {
-         onSettingsChangedListener = new IOnSettingsChangedListener()
-         {
-            @Override
-            public void onSettingsChanged( int which,
-                                           HashMap< Integer, Object > oldValues )
-            {
-               if ( isAdded() && !isDetached() )
-                  MolokoLoaderDialogFragment.this.onSettingsChanged( which,
-                                                                     oldValues );
-            }
-         };
-         
-         MolokoApp.get( activity )
-                  .registerOnSettingsChangedListener( settingsMask,
-                                                      onSettingsChangedListener );
-      }
       
       if ( activity instanceof ILoaderFragmentListener )
          loaderListener = (ILoaderFragmentListener) activity;
@@ -119,15 +88,6 @@ public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
    public void onDetach()
    {
       super.onDetach();
-      
-      if ( onSettingsChangedListener != null )
-      {
-         MolokoApp.get( getActivity() )
-                  .unregisterOnSettingsChangedListener( onSettingsChangedListener );
-         
-         onSettingsChangedListener = null;
-      }
-      
       loaderListener = null;
    }
    
@@ -162,68 +122,10 @@ public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
 
 
    @Override
-   public void setArguments( Bundle args )
-   {
-      super.setArguments( args );
-      
-      configure( args );
-   }
-   
-
-
-   @Override
-   public void onSaveInstanceState( Bundle outState )
-   {
-      super.onSaveInstanceState( outState );
-      
-      outState.putAll( getConfiguration() );
-   }
-   
-
-
-   @Override
-   public final Bundle getConfiguration()
-   {
-      return new Bundle( configuration );
-   }
-   
-
-
-   @Override
-   public final void configure( Bundle config )
-   {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-         takeConfigurationFrom( config );
-   }
-   
-
-
-   @Override
-   public void clearConfiguration()
-   {
-      if ( configuration != null )
-         configuration.clear();
-   }
-   
-
-
-   @Override
-   public final Bundle createDefaultConfiguration()
-   {
-      final Bundle bundle = new Bundle();
-      
-      putDefaultConfigurationTo( bundle );
-      
-      return bundle;
-   }
-   
-
-
    protected void takeConfigurationFrom( Bundle config )
    {
+      super.takeConfigurationFrom( config );
+      
       if ( config.containsKey( Config.LOADER_RESPECT_CONTENT_CHANGES ) )
          configuration.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES,
                                    config.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES ) );
@@ -231,21 +133,12 @@ public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
    
 
 
+   @Override
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
-      bundle.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, true );
-   }
-   
-
-
-   public final ViewGroup getContentView()
-   {
-      final View root = getView();
+      super.putDefaultConfigurationTo( bundle );
       
-      if ( root != null )
-         return (ViewGroup) root.findViewById( android.R.id.content );
-      else
-         return null;
+      bundle.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, true );
    }
    
 
@@ -347,6 +240,7 @@ public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
    
 
 
+   @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
@@ -430,6 +324,7 @@ public abstract class MolokoLoaderDialogFragment< D > extends DialogFragment
    
 
 
+   @Override
    public int getSettingsMask()
    {
       return 0;

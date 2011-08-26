@@ -44,7 +44,7 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
-import dev.drsoran.moloko.fragments.base.MolokoLoaderDialogFragment;
+import dev.drsoran.moloko.fragments.base.MolokoLoaderEditDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.loaders.TagsLoader;
 import dev.drsoran.moloko.util.Strings;
@@ -54,7 +54,7 @@ import dev.drsoran.rtm.Tag;
 
 
 public class ChangeTagsFragment extends
-         MolokoLoaderDialogFragment< List< Tag > >
+         MolokoLoaderEditDialogFragment< List< Tag > >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."

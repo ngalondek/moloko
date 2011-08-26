@@ -54,6 +54,12 @@
    <item
       type="id"
       name="frag_tag_cloud" />
+   <item
+      type="id"
+      name="frag_contactslist" />
+   <item
+      type="id"
+      name="frag_tasklists" />
 
 
    <!-- Menu group IDs -->
@@ -168,5 +174,26 @@
    <item
       type="id"
       name="ctx_menu_toggle_selection" />
+   <item
+      type="id"
+      name="ctx_menu_show_phonebook_contact" />
+   <item
+      type="id"
+      name="ctx_menu_expand" />
+   <item
+      type="id"
+      name="ctx_menu_collapse" />
+   <item
+      type="id"
+      name="ctx_menu_delete_list" />
+   <item
+      type="id"
+      name="ctx_menu_rename_list" />
+   <item
+      type="id"
+      name="ctx_menu_set_default_list" />
+   <item
+      type="id"
+      name="ctx_menu_unset_default_list" />
 
 </resources>

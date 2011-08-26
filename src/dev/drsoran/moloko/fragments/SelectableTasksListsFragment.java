@@ -654,10 +654,9 @@ public class SelectableTasksListsFragment extends
 
 
    @Override
-   public Loader< List< SelectableTask >> onCreateLoader( int id, Bundle config )
+   public Loader< List< SelectableTask >> newLoaderInstance( int id,
+                                                             Bundle config )
    {
-      super.onCreateLoader( id, config );
-      
       final IFilter filter = config.getParcelable( Config.FILTER );
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Config.TASK_SORT_ORDER ) );

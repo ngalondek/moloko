@@ -40,12 +40,19 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
+import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.AccountUtils;
 
 
 public abstract class MolokoListFragment< D > extends ListFragment implements
          IConfigurable, LoaderCallbacks< D >
 {
+   
+   private final static class Config
+   {
+      public final static String LOADER_RESPECT_CONTENT_CHANGES = "loader_respect_content_changes";
+   }
+   
    private IOnSettingsChangedListener onSettingsChangedListener;
    
    private ILoaderFragmentListener loaderListener;
@@ -138,8 +145,20 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    {
       super.onViewCreated( view, savedInstanceState );
       
-      if ( getListAdapter() == null )
+      if ( !hasListAdapter() )
          showLoadingSpinner();
+   }
+   
+
+
+   public View getEmptyView()
+   {
+      View emptyView = null;
+      
+      if ( getListView() != null )
+         emptyView = getListView().getEmptyView();
+      
+      return emptyView;
    }
    
 
@@ -207,21 +226,25 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
 
    protected void takeConfigurationFrom( Bundle config )
    {
+      if ( config.containsKey( Config.LOADER_RESPECT_CONTENT_CHANGES ) )
+         configuration.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES,
+                                   config.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES ) );
    }
    
 
 
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
+      bundle.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, true );
    }
    
 
 
-   protected final void showLoadingSpinner()
+   protected void showLoadingSpinner()
    {
       if ( getView() != null )
       {
-         final View emptyView = getListView().getEmptyView();
+         final View emptyView = getEmptyView();
          if ( emptyView != null )
             emptyView.setVisibility( View.GONE );
          
@@ -248,6 +271,13 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
+   public boolean hasListAdapter()
+   {
+      return getListAdapter() != null;
+   }
+   
+
+
    public final void startLoader()
    {
       getLoaderManager().initLoader( getLoaderId(), getConfiguration(), this );
@@ -255,14 +285,26 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
-   @Override
-   public Loader< D > onCreateLoader( int id, Bundle args )
+   public final boolean isRespectingContentChanges()
+   {
+      return configuration.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES,
+                                       false );
+   }
+   
+
+
+   public final Loader< D > onCreateLoader( int id, Bundle args )
    {
       showLoadingSpinner();
       
+      final Loader< D > loader = newLoaderInstance( id, args );
+      
+      if ( loader instanceof AbstractLoader< ? > )
+         ( (AbstractLoader< ? >) loader ).setRespectContentChanges( isRespectingContentChanges() );
+      
       loaderListener.onFragmentLoadStarted( getId(), getTag() );
       
-      return null;
+      return loader;
    }
    
 
@@ -312,6 +354,10 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    abstract protected View createFragmentView( LayoutInflater inflater,
                                                ViewGroup container,
                                                Bundle savedInstanceState );
+   
+
+
+   abstract protected Loader< D > newLoaderInstance( int id, Bundle config );
    
 
 

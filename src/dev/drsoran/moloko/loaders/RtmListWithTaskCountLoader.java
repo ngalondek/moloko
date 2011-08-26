@@ -29,6 +29,7 @@ import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
 import dev.drsoran.moloko.content.ListOverviewsProviderPart;
+import dev.drsoran.moloko.content.RtmListsProviderPart;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.rtm.RtmListWithTaskCount;
 
@@ -39,39 +40,46 @@ public class RtmListWithTaskCountLoader extends
    private final String slelection;
    
    
+
+   public RtmListWithTaskCountLoader( Context context )
+   {
+      this( context, RtmListsProviderPart.SELECTION_EXCLUDE_DELETED );
+   }
    
+
+
    public RtmListWithTaskCountLoader( Context context, String selection )
    {
       super( context );
       this.slelection = selection;
    }
    
-   
-   
+
+
    @Override
    protected List< RtmListWithTaskCount > queryResultInBackground( ContentProviderClient client )
    {
       return ListOverviewsProviderPart.getListsOverview( client, slelection );
    }
    
-   
-   
+
+
    @Override
    protected Uri getContentUri()
    {
       return ListOverviews.CONTENT_URI;
    }
    
-   
-   
+
+
    @Override
    protected void registerContentObserver( ContentObserver observer )
    {
       ListOverviewsProviderPart.registerContentObserver( getContext(), observer );
    }
    
-   
-   
+
+
    @Override
    protected void unregisterContentObserver( ContentObserver observer )
    {

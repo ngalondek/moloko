@@ -370,9 +370,8 @@
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">No contacts</string>
    <string name="contactslist_listitem_num_tasks">%1$d %2$s</string>
-      <!-- Menus -->
-      <string name="contactslist_listitem_open_tasks">Shared with %1$s</string>
-      <string name="contactslist_listitem_open_contact">Details of %1$s</string>
+      <!-- Menus -->      
+      <string name="contactslist_listitem_show_phonebook_contact">Details of %1$s</string>
       
    <!-- NoteEdit fragment -->
    <string name="note_edit_title_hint">Note title</string>

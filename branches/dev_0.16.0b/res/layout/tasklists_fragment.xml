@@ -14,14 +14,28 @@
       implementation
    -->
 
-<merge
-   xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   android:orientation="vertical"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
 
-   <fragment
-      android:id="@id/frag_tasklists"
+   <ExpandableListView
+      android:id="@android:id/list"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" />
+
+   <TextView
+      android:id="@android:id/empty"
+      style="@style/No_List_Elements_Text"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:name="dev.drsoran.moloko.fragments.TaskListsFragment">
-      <!-- Preview: layout=@layout/tasklists_fragment -->
-   </fragment>
-</merge>
+      android:text="@string/tasklists_no_lists" />
+
+   <include
+      android:id="@+id/loading_spinner"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      layout="@layout/app_loading_spinner"
+      android:visibility="gone" />
+</LinearLayout>

@@ -14,26 +14,14 @@
       implementation
    -->
 
-<LinearLayout
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   android:orientation="vertical"
-   android:layout_width="fill_parent"
-   android:layout_height="fill_parent">
+<merge
+   xmlns:android="http://schemas.android.com/apk/res/android">
 
-   <ListView
-      android:id="@id/android:list"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent" />
-
-   <TextView
-      android:id="@+id/contactslist_activity_no_contacts"
-      style="@style/No_List_Elements_Text"
+   <fragment
+      android:id="@id/frag_contactslist"
       android:layout_width="fill_parent"
       android:layout_height="fill_parent"
-      android:text="@string/contactslist_no_contacts"
-      android:visibility="gone" />
-
-   <include
-      android:id="@id/android:empty"
-      layout="@layout/app_loading_spinner" />
-</LinearLayout>
+      android:name="dev.drsoran.moloko.fragments.ContactsListFragment" >
+       <!-- Preview: layout=@layout/contactslist_fragment -->
+   </fragment>
+</merge>

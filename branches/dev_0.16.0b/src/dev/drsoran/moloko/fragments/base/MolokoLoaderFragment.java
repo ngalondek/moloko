@@ -329,7 +329,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
 
 
-   abstract protected Loader< D > newLoaderInstance( int id, Bundle args );
+   abstract protected Loader< D > newLoaderInstance( int id, Bundle config );
    
 
 

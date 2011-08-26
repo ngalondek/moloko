@@ -30,7 +30,9 @@ import android.app.PendingIntent;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.TextUtils;
 import dev.drsoran.moloko.IFilter;
@@ -450,6 +452,15 @@ public final class Intents
       return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createOpenContactExtras( context,
                                                                                                             fullname,
                                                                                                             username ) );
+   }
+   
+
+
+   public final static Intent createShowPhonebookContactIntent( String lookUpKey )
+   {
+      return new Intent( Intent.ACTION_VIEW,
+                         Uri.withAppendedPath( ContactsContract.Contacts.CONTENT_LOOKUP_URI,
+                                               lookUpKey ) );
    }
    
 

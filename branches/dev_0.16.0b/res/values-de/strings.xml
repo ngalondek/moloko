@@ -318,8 +318,7 @@
    <!-- ContactsList activity -->
    <string name="contactslist_no_contacts">Keine Kontakte</string>
       <!-- Menus -->
-      <string name="contactslist_listitem_open_tasks">Für %1$s freigegeben</string>
-      <string name="contactslist_listitem_open_contact">Details von %1$s</string>
+      <string name="contactslist_listitem_show_phonebook_contact">Details von %1$s</string>
       
    <!-- Authenticator activity -->
    <string name="auth_permission_label">Berechtigung</string>

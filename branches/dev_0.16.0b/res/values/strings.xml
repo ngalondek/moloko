@@ -224,10 +224,10 @@
       <string name="toast_delete_locked_list">The list \'%1$s\' is locked and cannot be deleted</string>
       
    <!-- Add/Rename list dialog -->      
-   <string name="dlg_add_list_title">New List</string>
-   <string name="dlg_rename_list_title">Rename List</string>
+   <string name="dlg_add_list_title">New list</string>
+   <string name="dlg_rename_list_title">Rename list</string>
    <string name="dlg_add_rename_list_list_name_hint">List name</string>
-   <string name="dlg_add_rename_list_smart_filter_hint">Smart List Filter</string>
+   <string name="dlg_add_rename_list_smart_filter_hint">SmartList filter</string>
       <!-- Toasts -->
       <string name="dlg_add_rename_list_toast_empty_list_name">The name of the list must not be empty</string>
       <string name="dlg_add_rename_list_toast_invalid_list_name">The name of the list cannot be \'Inbox\' or \'Sent\'</string>
@@ -305,6 +305,7 @@
    <string name="tasklists_child_overdue">%1$s overdue</string>
    <string name="tasklists_child_completed">%1$s completed</string>
      <!-- Menus -->
+     <string name="tasklists_menu_add_list">@string/dlg_add_list_title</string>
      <string name="tasklists_menu_ctx_expand">Expand \'%1$s\'</string>
      <string name="tasklists_menu_ctx_collapse">Reduce \'%1$s\'</string>
      <string name="tasklists_menu_ctx_rename_list">Rename \'%1$s\'</string>     
@@ -338,7 +339,7 @@
 	<string name="taskslist_titlebar">%1$s</string>
 	  <!-- Menus -->
 	  <string name="taskslist_menu_opt_lists">@string/app_tasklists</string>
-     <string name="taskslist_menu_opt_delete_list">Delete List</string>
+     <string name="taskslist_menu_opt_delete_list">Delete list</string>
      
    <!-- TaskSearchResultActivity -->
    <string name="tasksearchresult_titlebar">%1$s</string>

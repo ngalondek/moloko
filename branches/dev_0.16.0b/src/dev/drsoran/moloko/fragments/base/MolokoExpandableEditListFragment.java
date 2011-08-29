@@ -160,14 +160,6 @@ public abstract class MolokoExpandableEditListFragment< D > extends
 
 
    @Override
-   public void onLoaderReset( Loader< D > loader )
-   {
-      setExpandableListAdapter( createEmptyExpandableListAdapter() );
-   }
-   
-
-
-   @Override
    protected void invalidateOptionsMenu()
    {
       if ( getActivity() != null )

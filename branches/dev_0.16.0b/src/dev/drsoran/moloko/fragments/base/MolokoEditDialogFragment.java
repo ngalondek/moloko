@@ -222,6 +222,9 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          }
       }
       
+      if ( ok )
+         getDialog().dismiss();
+      
       return ok;
    }
    
@@ -234,6 +237,7 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       {
          UIUtils.newCancelWithChangesDialog( getActivity(), new Runnable()
          {
+            @Override
             public void run()
             {
                getDialog().cancel();

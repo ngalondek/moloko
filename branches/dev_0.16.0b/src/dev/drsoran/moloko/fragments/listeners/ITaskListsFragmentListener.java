@@ -32,4 +32,8 @@ public interface ITaskListsFragmentListener
 
 
    void openChild( Intent intent );
+   
+
+
+   void renameList( int pos );
 }

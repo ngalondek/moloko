@@ -29,14 +29,13 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.Loader;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
@@ -45,6 +44,7 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.adapters.TaskListsAdapter;
+import dev.drsoran.moloko.adapters.TaskListsAdapter.IOnGroupIndicatorClickedListener;
 import dev.drsoran.moloko.fragments.base.MolokoExpandableEditListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
@@ -56,6 +56,7 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 
 public class TaskListsFragment extends
          MolokoExpandableEditListFragment< List< RtmListWithTaskCount > >
+         implements IOnGroupIndicatorClickedListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -137,6 +138,14 @@ public class TaskListsFragment extends
                                                   false );
       
       return fragmentView;
+   }
+   
+
+
+   @Override
+   public void onViewCreated( View view, Bundle savedInstanceState )
+   {
+      super.onViewCreated( view, savedInstanceState );
    }
    
 
@@ -232,7 +241,8 @@ public class TaskListsFragment extends
             return true;
             
          case CtxtMenu.RENAME:
-            renameList( getRtmList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) ) );
+            if ( listener != null )
+               listener.renameList( ExpandableListView.getPackedPositionGroup( info.packedPosition ) );
             return true;
             
          case CtxtMenu.MAKE_DEFAULT_LIST:
@@ -266,20 +276,16 @@ public class TaskListsFragment extends
    
 
 
-   // TODO: Create button listener for this in Adapter!?
-   public void onGroupIndicatorClicked( View v )
+   @Override
+   public void onGroupIndicatorClicked( View groupView )
    {
       final ExpandableListView listView = getExpandableListView();
-      final int pos = ExpandableListView.getPackedPositionGroup( listView.getExpandableListPosition( listView.getPositionForView( v ) ) );
+      final int pos = ExpandableListView.getPackedPositionGroup( listView.getExpandableListPosition( listView.getPositionForView( groupView ) ) );
       
       if ( listView.isGroupExpanded( pos ) )
-      {
          listView.collapseGroup( pos );
-      }
       else
-      {
          listView.expandGroup( pos );
-      }
    }
    
 
@@ -302,33 +308,6 @@ public class TaskListsFragment extends
       }
       else
          return super.onChildClick( parent, v, groupPosition, childPosition, id );
-   }
-   
-
-
-   public void renameList( RtmListWithTaskCount list )
-   {
-      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-      
-      transaction.add( AddRenameListDialogFragment.newInstance( createRenameListFragmentConfig( list ) ),
-                       String.valueOf( R.id.frag_add_rename_list ) );
-      
-      transaction.commit();
-   }
-   
-
-
-   private Bundle createRenameListFragmentConfig( RtmListWithTaskCount list )
-   {
-      final Bundle config = new Bundle();
-      
-      config.putParcelable( AddRenameListDialogFragment.Config.LIST,
-                            list.getRtmList() );
-      if ( list.getRtmList().getSmartFilter() != null )
-         config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
-                               list.getRtmList().getSmartFilter() );
-      
-      return config;
    }
    
 
@@ -393,10 +372,13 @@ public class TaskListsFragment extends
    @Override
    protected ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
    {
-      return new TaskListsAdapter( getActivity(),
-                                   R.layout.tasklists_fragment_group,
-                                   R.layout.tasklists_fragment_child,
-                                   result );
+      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getActivity(),
+                                                                      R.layout.tasklists_fragment_group,
+                                                                      R.layout.tasklists_fragment_child,
+                                                                      result );
+      taskListsAdapter.setOnGroupIndicatorClickedListener( this );
+      
+      return taskListsAdapter;
    }
    
 

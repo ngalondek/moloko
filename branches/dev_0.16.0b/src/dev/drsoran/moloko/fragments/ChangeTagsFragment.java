@@ -30,6 +30,7 @@ import java.util.TreeSet;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.text.Editable;
@@ -42,6 +43,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.AdapterView.OnItemClickListener;
+import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderEditDialogFragment;
@@ -54,7 +56,7 @@ import dev.drsoran.rtm.Tag;
 
 
 public class ChangeTagsFragment extends
-         MolokoLoaderEditDialogFragment< List< Tag > >
+         MolokoLoaderEditDialogFragment< ChangeTagsFragment, List< Tag > >
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -136,7 +138,6 @@ public class ChangeTagsFragment extends
    public void onDetach()
    {
       super.onDetach();
-      
       listener = null;
    }
    
@@ -401,5 +402,29 @@ public class ChangeTagsFragment extends
    public int getLoaderId()
    {
       return TAGS_LOADER_ID;
+   }
+   
+
+
+   @Override
+   public boolean saveChanges()
+   {
+      return true;
+   }
+   
+
+
+   @Override
+   public boolean hasChanges()
+   {
+      return false;
+   }
+   
+
+
+   @Override
+   public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
+   {
+      return null;
    }
 }

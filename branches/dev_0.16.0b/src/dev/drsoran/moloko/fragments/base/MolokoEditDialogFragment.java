@@ -38,7 +38,7 @@ import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public abstract class MolokoEditDialogFragment< T extends Fragment, D > extends
+public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          DialogFragment implements IConfigurable, IEditFragment< T >
 {
    private IOnSettingsChangedListener onSettingsChangedListener;
@@ -207,9 +207,9 @@ public abstract class MolokoEditDialogFragment< T extends Fragment, D > extends
    @Override
    public final boolean onFinishEditing()
    {
-      boolean ok = true;
+      boolean ok = validateInput();
       
-      if ( hasChanges() )
+      if ( ok && hasChanges() )
       {
          if ( !hasWritableDatabaseAccess() )
          {
@@ -228,8 +228,29 @@ public abstract class MolokoEditDialogFragment< T extends Fragment, D > extends
 
 
    @Override
-   public void onCancelEditing()
+   public final void onCancelEditing()
    {
+      if ( hasChanges() )
+      {
+         UIUtils.newCancelWithChangesDialog( getActivity(), new Runnable()
+         {
+            public void run()
+            {
+               getDialog().cancel();
+            }
+         }, null ).show();
+      }
+      else
+      {
+         getDialog().cancel();
+      }
+   }
+   
+
+
+   protected boolean validateInput()
+   {
+      return true;
    }
    
 

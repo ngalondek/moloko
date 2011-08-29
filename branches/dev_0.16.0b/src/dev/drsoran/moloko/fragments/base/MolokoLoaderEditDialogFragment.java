@@ -42,7 +42,7 @@ import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
-         extends MolokoEditDialogFragment< T, D > implements IConfigurable,
+         extends MolokoEditDialogFragment< T > implements IConfigurable,
          LoaderCallbacks< D >
 {
    private final static class Config

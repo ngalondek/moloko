@@ -29,6 +29,7 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.Loader;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -44,7 +45,6 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.adapters.TaskListsAdapter;
-import dev.drsoran.moloko.dialogs.AddRenameListDialog;
 import dev.drsoran.moloko.fragments.base.MolokoExpandableEditListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
@@ -308,8 +308,27 @@ public class TaskListsFragment extends
 
    public void renameList( RtmListWithTaskCount list )
    {
-      AddRenameListDialog.newDialogWithList( getActivity(), list.getRtmList() )
-                         .show();
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      
+      transaction.add( AddRenameListDialogFragment.newInstance( createRenameListFragmentConfig( list ) ),
+                       String.valueOf( R.id.frag_add_rename_list ) );
+      
+      transaction.commit();
+   }
+   
+
+
+   private Bundle createRenameListFragmentConfig( RtmListWithTaskCount list )
+   {
+      final Bundle config = new Bundle();
+      
+      config.putParcelable( AddRenameListDialogFragment.Config.LIST,
+                            list.getRtmList() );
+      if ( list.getRtmList().getSmartFilter() != null )
+         config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
+                               list.getRtmList().getSmartFilter() );
+      
+      return config;
    }
    
 

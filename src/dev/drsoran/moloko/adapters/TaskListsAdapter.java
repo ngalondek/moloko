@@ -387,7 +387,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          container.setVisibility( View.VISIBLE );
          
          icon = (ImageView) ImageView.inflate( context,
-                                               R.layout.tasklists_activity_group_icon,
+                                               R.layout.tasklists_fragment_group_icon,
                                                null );
          
          if ( icon != null )

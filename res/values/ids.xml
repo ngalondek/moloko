@@ -60,6 +60,9 @@
    <item
       type="id"
       name="frag_tasklists" />
+   <item
+      type="id"
+      name="frag_add_rename_list" />
 
 
    <!-- Menu group IDs -->

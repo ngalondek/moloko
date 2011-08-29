@@ -24,14 +24,18 @@ package dev.drsoran.moloko.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity.Config;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
+import dev.drsoran.moloko.fragments.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -49,6 +53,8 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
    
    protected static class OptionsMenu
    {
+      public final static int ADD_LIST = R.id.menu_add_list;
+      
       public final static int SETTINGS = R.id.menu_settings;
       
       public final static int SYNC = R.id.menu_sync;
@@ -77,12 +83,38 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
           .setIntent( new Intent( this, MolokoPreferencesActivity.class ) )
           .setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
       
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ADD_LIST,
+                                   getString( R.string.tasklists_menu_add_list ),
+                                   Menu.NONE,
+                                   Menu.NONE,
+                                   R.drawable.ic_button_title_add_list,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   AccountUtils.isWriteableAccess( this ) );
+      
       UIUtils.addSyncMenuItem( this,
                                menu,
                                OptionsMenu.SYNC,
                                Menu.NONE,
                                MenuItem.SHOW_AS_ACTION_IF_ROOM );
       return true;
+   }
+   
+
+
+   @Override
+   public boolean onOptionsItemSelected( MenuItem item )
+   {
+      switch ( item.getItemId() )
+      {
+         case OptionsMenu.ADD_LIST:
+            showAddListDialog();
+            return true;
+            
+         default :
+            return super.onOptionsItemSelected( item );
+      }
    }
    
 
@@ -101,8 +133,8 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
          final Intent intent = new Intent( Intent.ACTION_VIEW,
                                            Tasks.CONTENT_URI );
          
-         intent.putExtra( Config.TITLE, getString( R.string.taskslist_titlebar,
-                                                   listName ) );
+         intent.putExtra( Config.TITLE,
+                          getString( R.string.taskslist_titlebar, listName ) );
          intent.putExtra( Config.TITLE_ICON, R.drawable.ic_title_list );
          
          RtmSmartFilter filter = rtmList.getSmartFilter();
@@ -126,8 +158,44 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
    @Override
    public void openChild( Intent intent )
    {
-      // TODO Auto-generated method stub
+      startActivity( intent );
+   }
+   
+
+
+   @Override
+   public void renameList( int pos )
+   {
+      showRenameListDialog( getRtmList( pos ) );
+   }
+   
+
+
+   private void showRenameListDialog( RtmListWithTaskCount list )
+   {
+      createAddRenameListDialogFragment( createRenameListFragmentConfig( list ) );
+   }
+   
+
+
+   private Bundle createRenameListFragmentConfig( RtmListWithTaskCount list )
+   {
+      final Bundle config = new Bundle();
       
+      config.putParcelable( AddRenameListDialogFragment.Config.LIST,
+                            list.getRtmList() );
+      if ( list.getRtmList().getSmartFilter() != null )
+         config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
+                               list.getRtmList().getSmartFilter() );
+      
+      return config;
+   }
+   
+
+
+   private void showAddListDialog()
+   {
+      createAddRenameListDialogFragment( Bundle.EMPTY );
    }
    
 
@@ -140,10 +208,22 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
    
 
 
+   private void createAddRenameListDialogFragment( Bundle config )
+   {
+      final DialogFragment dialogFragment = AddRenameListDialogFragment.newInstance( config );
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      
+      dialogFragment.show( transaction,
+                           String.valueOf( R.id.frag_add_rename_list ) );
+   }
+   
+
+
    @Override
    protected int[] getFragmentIds()
    {
       return new int[]
       { R.id.frag_tasklists };
    }
+   
 }

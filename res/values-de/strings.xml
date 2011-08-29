@@ -250,7 +250,7 @@
    <string name="tasklists_child_due_tomorrow">%1$s morgen fällig</string>
    <string name="tasklists_child_overdue">%1$s überfällig</string>
    <string name="tasklists_child_completed">%1$s erledigt</string>
-     <!-- Menus -->
+     <!-- Menus -->     
      <string name="tasklists_menu_ctx_expand">Erweitere \'%1$s\'</string>
      <string name="tasklists_menu_ctx_collapse">Reduziere \'%1$s\'</string>
      <string name="tasklists_menu_ctx_rename_list">Benenne \'%1$s\' um</string>     

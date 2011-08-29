@@ -293,6 +293,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
+   @Override
    public final Loader< D > onCreateLoader( int id, Bundle args )
    {
       showLoadingSpinner();
@@ -323,7 +324,6 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    @Override
    public void onLoaderReset( Loader< D > loader )
    {
-      setListAdapter( createEmptyListAdapter() );
    }
    
 

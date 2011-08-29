@@ -50,6 +50,12 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    private final static String TAG = "Moloko."
       + TaskListsAdapter.class.getName();
    
+   
+   public interface IOnGroupIndicatorClickedListener
+   {
+      void onGroupIndicatorClicked( View groupView );
+   }
+   
    private final Context context;
    
    public final static int DUE_TODAY_TASK_COUNT = 1;
@@ -66,6 +72,16 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    
    private final static int ID_ICON_LOCKED = 2;
    
+   private final View.OnClickListener iconExpandCollapseListener = new View.OnClickListener()
+   {
+      @Override
+      public void onClick( View view )
+      {
+         if ( groupIndicatorClickedListener != null )
+            groupIndicatorClickedListener.onGroupIndicatorClicked( view );
+      }
+   };
+   
    private final int groupId;
    
    private final int childId;
@@ -73,6 +89,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    private final LayoutInflater inflater;
    
    private final ArrayList< RtmListWithTaskCount > lists;
+   
+   private IOnGroupIndicatorClickedListener groupIndicatorClickedListener;
    
    
 
@@ -93,23 +111,30 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    
 
 
+   public void setOnGroupIndicatorClickedListener( IOnGroupIndicatorClickedListener listener )
+   {
+      groupIndicatorClickedListener = listener;
+   }
+   
+
+
    @Override
    public Object getChild( int groupPosition, int childPosition )
    {
       switch ( childPosition + 1 )
       {
          case DUE_TODAY_TASK_COUNT:
-            return new Integer( lists.get( groupPosition )
-                                     .getExtendedListInfo( context ).dueTodayTaskCount );
+            return Integer.valueOf( lists.get( groupPosition )
+                                         .getExtendedListInfo( context ).dueTodayTaskCount );
          case DUE_TOMORROW_TASK_COUNT:
-            return new Integer( lists.get( groupPosition )
-                                     .getExtendedListInfo( context ).dueTomorrowTaskCount );
+            return Integer.valueOf( lists.get( groupPosition )
+                                         .getExtendedListInfo( context ).dueTomorrowTaskCount );
          case OVER_DUE_TASK_COUNT:
-            return new Integer( lists.get( groupPosition )
-                                     .getExtendedListInfo( context ).overDueTaskCount );
+            return Integer.valueOf( lists.get( groupPosition )
+                                         .getExtendedListInfo( context ).overDueTaskCount );
          case COMPLETED_TASK_COUNT:
-            return new Integer( lists.get( groupPosition )
-                                     .getExtendedListInfo( context ).completedTaskCount );
+            return Integer.valueOf( lists.get( groupPosition )
+                                         .getExtendedListInfo( context ).completedTaskCount );
          case SUM_ESTIMATE:
             return MolokoDateUtils.formatEstimated( context,
                                                     lists.get( groupPosition )
@@ -135,6 +160,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                    list,
                                                    RtmSmartFilterLexer.OP_DUE_LIT
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
+            
             intent.removeExtra( TasksListActivity.Config.TITLE );
             intent.putExtra( TasksListActivity.Config.TITLE,
                              context.getString( R.string.tasklists_child_due_today,
@@ -177,6 +203,10 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          default :
             break;
       }
+      
+      if ( intent != null )
+         // We have to remove the list name cause we want prevent the list navigation mode
+         intent.removeExtra( TasksListActivity.Config.LIST_NAME );
       
       return intent;
    }
@@ -315,6 +345,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
          try
          {
             groupIndicator = (ImageView) view.findViewById( R.id.tasklists_group_indicator );
+            groupIndicator.setOnClickListener( iconExpandCollapseListener );
+            
             listName = (TextView) view.findViewById( R.id.tasklists_group_list_name );
             tasksCount = (TextView) view.findViewById( R.id.tasklists_group_num_tasks );
             iconsContainer = (ViewGroup) view.findViewById( R.id.tasklists_group_icons_container );

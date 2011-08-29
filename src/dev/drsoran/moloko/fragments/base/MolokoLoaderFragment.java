@@ -278,6 +278,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
 
 
+   @Override
    public final Loader< D > onCreateLoader( int id, Bundle args )
    {
       showLoadingSpinner();
@@ -294,6 +295,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
 
 
+   @Override
    public void onLoadFinished( Loader< D > loader, D data )
    {
       loaderData = data;
@@ -311,6 +313,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
 
 
+   @Override
    public void onLoaderReset( Loader< D > loader )
    {
       loaderData = null;

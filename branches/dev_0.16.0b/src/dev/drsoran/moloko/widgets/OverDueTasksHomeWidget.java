@@ -133,8 +133,7 @@ public class OverDueTasksHomeWidget extends AsyncTimeDependentHomeWidget
       
       return Intents.createSqlSelectionFilterIntent( getContext(),
                                                      filter,
-                                                     label.getText().toString(),
-                                                     -1 );
+                                                     label.getText().toString() );
    }
    
 

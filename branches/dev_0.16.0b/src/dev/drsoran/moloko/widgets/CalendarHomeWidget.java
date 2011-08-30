@@ -170,7 +170,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
                                                    MolokoDateUtils.formatDate( cal.getTimeInMillis(),
                                                                                0 ) );
       
-      return Intents.createSmartFilterIntent( getContext(), filter, title, -1 );
+      return Intents.createSmartFilterIntent( getContext(), filter, title );
    }
    
 
@@ -201,7 +201,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
          final Integer cnt = Integer.valueOf( c.getCount() );
          c.close();
          
-         return cnt; 
+         return cnt;
       }
       
       return null;

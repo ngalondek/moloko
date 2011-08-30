@@ -31,8 +31,8 @@ import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.AbstractTasksListActivity.Config;
 import dev.drsoran.moloko.fragments.AbstractTasksListFragment;
-import dev.drsoran.moloko.fragments.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.TaskListsFragment;
+import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -89,7 +89,7 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
                                    getString( R.string.tasklists_menu_add_list ),
                                    Menu.NONE,
                                    Menu.NONE,
-                                   R.drawable.ic_button_title_add_list,
+                                   R.drawable.ic_menu_add_list,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    AccountUtils.isWriteableAccess( this ) );
       
@@ -133,9 +133,8 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
          final Intent intent = new Intent( Intent.ACTION_VIEW,
                                            Tasks.CONTENT_URI );
          
-         intent.putExtra( Config.TITLE,
-                          getString( R.string.taskslist_titlebar, listName ) );
-         intent.putExtra( Config.TITLE_ICON, R.drawable.ic_title_list );
+         intent.putExtra( Config.TITLE, getString( R.string.taskslist_titlebar,
+                                                   listName ) );
          
          RtmSmartFilter filter = rtmList.getSmartFilter();
          

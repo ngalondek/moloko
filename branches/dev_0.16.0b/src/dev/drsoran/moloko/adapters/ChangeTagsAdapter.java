@@ -33,11 +33,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.fragments.ChangeTagsFragment;
+import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
 
 
 public class ChangeTagsAdapter extends
-         ArrayAdapter< ChangeTagsFragment.ChangeTag >
+         ArrayAdapter< ChangeTagsDialogFragment.ChangeTag >
 {
    private final static String TAG = "Moloko."
       + ChangeTagsAdapter.class.getName();
@@ -49,7 +49,7 @@ public class ChangeTagsAdapter extends
    
 
    public ChangeTagsAdapter( Context context, int resourceId,
-      List< ChangeTagsFragment.ChangeTag > tags )
+      List< ChangeTagsDialogFragment.ChangeTag > tags )
    {
       super( context, 0, tags );
       
@@ -79,7 +79,7 @@ public class ChangeTagsAdapter extends
          throw e;
       }
       
-      final ChangeTagsFragment.ChangeTag tag = getItem( position );
+      final ChangeTagsDialogFragment.ChangeTag tag = getItem( position );
       
       icon.setImageResource( tag.isAvailable
                                             ? R.drawable.ic_list_change_tags_tag_add

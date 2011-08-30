@@ -67,7 +67,7 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                    getString( R.string.app_task_add ),
                                    Menu.CATEGORY_CONTAINER,
                                    Menu.NONE,
-                                   R.drawable.ic_button_title_add_task,
+                                   R.drawable.ic_menu_add_task,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
                                    !AccountUtils.isReadOnlyAccess( this ) );
       

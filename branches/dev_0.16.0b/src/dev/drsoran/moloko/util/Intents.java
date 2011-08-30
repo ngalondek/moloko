@@ -170,8 +170,7 @@ public final class Intents
          final Bundle extras = createSmartFilterExtras( context,
                                                         new RtmSmartFilter( filterString ),
                                                         context.getString( R.string.taskslist_titlebar,
-                                                                           list.getName() ),
-                                                        R.drawable.ic_title_list );
+                                                                           list.getName() ) );
          extras.putString( Lists.LIST_NAME, list.getName() );
          return extras;
       }
@@ -185,8 +184,7 @@ public final class Intents
                                          new RtmSmartFilter( RtmSmartFilterLexer.OP_LOCATION_LIT
                                             + RtmSmartFilterLexer.quotify( name ) ),
                                          context.getString( R.string.taskslist_titlebar,
-                                                            name ),
-                                         R.drawable.ic_title_location );
+                                                            name ) );
       }
       
 
@@ -200,8 +198,7 @@ public final class Intents
                                          new RtmSmartFilter( RtmSmartFilterLexer.OP_SHARED_WITH_LIT
                                             + RtmSmartFilterLexer.quotify( username ) ),
                                          context.getString( R.string.taskslist_titlebar,
-                                                            fullname ),
-                                         R.drawable.ic_title_user );
+                                                            fullname ) );
       }
       
 
@@ -242,16 +239,14 @@ public final class Intents
                                          new RtmSmartFilter( filterString.toString() ),
                                          context.getString( R.string.taskslist_titlebar,
                                                             TextUtils.join( ", ",
-                                                                            tags ) ),
-                                         R.drawable.ic_title_tag );
+                                                                            tags ) ) );
       }
       
 
 
       public final static Bundle createSqlSelectionFilterExtras( Context context,
                                                                  SqlSelectionFilter filter,
-                                                                 String title,
-                                                                 int iconId )
+                                                                 String title )
       {
          final Bundle extras = new Bundle();
          
@@ -260,8 +255,6 @@ public final class Intents
                                               ( title != null )
                                                                ? title
                                                                : context.getString( R.string.app_name ) ) );
-         if ( iconId != -1 )
-            extras.putInt( TasksListActivity.Config.TITLE_ICON, iconId );
          
          extras.putParcelable( AbstractTasksListFragment.Config.FILTER, filter );
          
@@ -272,8 +265,7 @@ public final class Intents
 
       public final static Bundle createSmartFilterExtras( Context context,
                                                           RtmSmartFilter filter,
-                                                          String title,
-                                                          int iconId )
+                                                          String title )
       {
          final Bundle extras = new Bundle();
          
@@ -282,9 +274,6 @@ public final class Intents
                                               ( title != null )
                                                                ? title
                                                                : filter.getFilterString() ) );
-         if ( iconId != -1 )
-            extras.putInt( TasksListActivity.Config.TITLE_ICON, iconId );
-         
          extras.putParcelable( AbstractTasksListFragment.Config.FILTER, filter );
          
          return extras;
@@ -467,13 +456,11 @@ public final class Intents
 
    public final static Intent createSqlSelectionFilterIntent( Context context,
                                                               SqlSelectionFilter filter,
-                                                              String title,
-                                                              int iconId )
+                                                              String title )
    {
       return new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI ).putExtras( Extras.createSqlSelectionFilterExtras( context,
                                                                                                                    filter,
-                                                                                                                   title,
-                                                                                                                   iconId ) );
+                                                                                                                   title ) );
    }
    
 
@@ -517,13 +504,11 @@ public final class Intents
       if ( filter instanceof SqlSelectionFilter )
          intent = createSqlSelectionFilterIntent( context,
                                                   (SqlSelectionFilter) filter,
-                                                  context.getString( R.string.select_multiple_tasks_titlebar ),
-                                                  -1 );
+                                                  context.getString( R.string.select_multiple_tasks_titlebar ) );
       else
          intent = createSmartFilterIntent( context,
                                            (RtmSmartFilter) filter,
-                                           context.getString( R.string.select_multiple_tasks_titlebar ),
-                                           -1 );
+                                           context.getString( R.string.select_multiple_tasks_titlebar ) );
       
       intent.setAction( Intent.ACTION_PICK );
       
@@ -551,15 +536,11 @@ public final class Intents
 
    public final static Intent createSmartFilterIntent( Context context,
                                                        RtmSmartFilter filter,
-                                                       String title,
-                                                       int iconId )
+                                                       String title )
    {
       final Intent intent = new Intent( Intent.ACTION_VIEW, Tasks.CONTENT_URI );
       
-      intent.putExtras( Extras.createSmartFilterExtras( context,
-                                                        filter,
-                                                        title,
-                                                        iconId ) );
+      intent.putExtras( Extras.createSmartFilterExtras( context, filter, title ) );
       
       return intent;
    }

@@ -47,7 +47,7 @@ public class TaskSearchResultActivity extends TasksListActivity
    }
    
    
-   
+
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -62,8 +62,8 @@ public class TaskSearchResultActivity extends TasksListActivity
       return true;
    }
    
-   
-   
+
+
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -78,8 +78,9 @@ public class TaskSearchResultActivity extends TasksListActivity
       }
    }
    
-   
-   
+
+
+   @Override
    protected void configureByIntent( Intent intent )
    {
       // TODO: Repair
@@ -102,8 +103,7 @@ public class TaskSearchResultActivity extends TasksListActivity
             final Intent newIntent = Intents.createSmartFilterIntent( this,
                                                                       filter,
                                                                       getString( R.string.tasksearchresult_titlebar,
-                                                                                 filter.getFilterString() ),
-                                                                      -1 );
+                                                                                 filter.getFilterString() ) );
             setIntent( newIntent );
             // super.handleIntent( newIntent );
          }
@@ -111,7 +111,7 @@ public class TaskSearchResultActivity extends TasksListActivity
          {
             UIUtils.setTitle( this,
                               getString( R.string.tasksearchresult_titlebar_error ),
-                              R.drawable.ic_title_error );
+                              0 );
             
             // configureTitleBar( TitleBarLayout.BUTTON_HOME
             // | TitleBarLayout.BUTTON_SEARCH, null );
@@ -122,8 +122,8 @@ public class TaskSearchResultActivity extends TasksListActivity
       }
    }
    
-   
-   
+
+
    private final SearchRecentSuggestions getRecentSuggestions()
    {
       return new SearchRecentSuggestions( this,
@@ -131,8 +131,8 @@ public class TaskSearchResultActivity extends TasksListActivity
                                           TasksSearchRecentSuggestionsProvider.MODE );
    }
    
-   
-   
+
+
    private final void configureTitleBar( int buttonMask,
                                          RtmSmartFilter addSmartListFilter )
    {

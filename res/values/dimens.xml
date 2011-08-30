@@ -17,7 +17,7 @@
    <dimen
       name="app_listPreferredItemHeight">70dip</dimen>
    <dimen
-      name="app_actionbar_height">40dip</dimen>
+      name="app_actionbar_height">45dip</dimen>
    <dimen
       name="app_actionbar_text_size">14sp</dimen>
    <dimen

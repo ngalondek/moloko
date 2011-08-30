@@ -34,6 +34,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.MenuItem.OnMenuItemClickListener;
@@ -50,14 +52,15 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
+import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
 import dev.drsoran.rtm.RtmListWithTaskCount;
@@ -866,6 +869,15 @@ public final class UIUtils
       
       return dialog;
    };
+   
+
+
+   public final static void newAboutMolokoDialog( FragmentActivity fragActivity )
+   {
+      final DialogFragment dialog = AboutMolokoDialogFragment.newInstance( Bundle.EMPTY );
+      dialog.show( fragActivity.getSupportFragmentManager(),
+                   String.valueOf( R.id.frag_about_moloko ) );
+   }
    
 
 

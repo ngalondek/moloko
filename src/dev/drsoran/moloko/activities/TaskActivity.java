@@ -47,12 +47,12 @@ import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.fragments.AbstractTaskEditFragment;
-import dev.drsoran.moloko.fragments.ChangeTagsFragment;
 import dev.drsoran.moloko.fragments.NoteAddFragment;
 import dev.drsoran.moloko.fragments.NoteEditFragment;
 import dev.drsoran.moloko.fragments.NoteFragment;
 import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
+import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
 import dev.drsoran.moloko.fragments.factories.TaskFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
@@ -981,7 +981,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       final Bundle config = new Bundle( 2 );
       
-      config.putStringArrayList( ChangeTagsFragment.Config.TAGS,
+      config.putStringArrayList( ChangeTagsDialogFragment.Config.TAGS,
                                  new ArrayList< String >( tags ) );
       
       return config;
@@ -1295,7 +1295,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    private void showChangeTagsDialog( Bundle config )
    {
       final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-      final DialogFragment newFragment = ChangeTagsFragment.newInstance( config );
+      final DialogFragment newFragment = ChangeTagsDialogFragment.newInstance( config );
       
       newFragment.show( fragmentTransaction,
                         String.valueOf( R.id.frag_change_tags ) );

@@ -28,9 +28,9 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
@@ -67,8 +67,6 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    public static class Config
    {
       public final static String TITLE = "title";
-      
-      public final static String TITLE_ICON = "title_icon";
       
       public final static String LIST_NAME = Lists.LIST_NAME;
    }
@@ -150,9 +148,6 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
       
       if ( config.containsKey( Config.TITLE ) )
          configuration.putString( Config.TITLE, config.getString( Config.TITLE ) );
-      if ( config.containsKey( Config.TITLE_ICON ) )
-         configuration.putInt( Config.TITLE_ICON,
-                               config.getInt( Config.TITLE_ICON ) );
       if ( config.containsKey( Config.LIST_NAME ) )
          configuration.putString( Config.LIST_NAME,
                                   config.getString( Config.LIST_NAME ) );

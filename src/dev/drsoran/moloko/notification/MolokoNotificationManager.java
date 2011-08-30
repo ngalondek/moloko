@@ -437,8 +437,7 @@ public class MolokoNotificationManager implements
                                        text.second,
                                        Intents.createSmartFilterIntent( context,
                                                                         filter,
-                                                                        title,
-                                                                        -1 ) );
+                                                                        title ) );
       else
          permanentNotification.cancel();
    }
@@ -537,8 +536,8 @@ public class MolokoNotificationManager implements
       }
       else
       {
-         Log.e( TAG,
-                "Error evaluating RtmSmartFilter " + filter.getFilterString() );
+         Log.e( TAG, "Error evaluating RtmSmartFilter "
+            + filter.getFilterString() );
       }
       
       return new Pair< String, Integer >( result, count );

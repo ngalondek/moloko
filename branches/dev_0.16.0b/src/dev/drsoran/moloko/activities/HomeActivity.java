@@ -29,8 +29,8 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -43,11 +43,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
 {
    private static class OptionsMenu
    {
-      public final static int SYNC = R.id.menu_sync;
-      
       public final static int ADD_TASK = R.id.menu_quick_add_task;
-      
-      public final static int SEARCH = R.id.menu_search_tasks;
    }
    
    private final Handler handler = new Handler();
@@ -110,27 +106,22 @@ public class HomeActivity extends MolokoFragmentActivity implements
                                    menu,
                                    OptionsMenu.ADD_TASK,
                                    getString( R.string.app_task_add ),
-                                   Menu.NONE,
+                                   Menu.CATEGORY_CONTAINER,
                                    Menu.NONE,
                                    R.drawable.ic_menu_add_task,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
                                    AccountUtils.isWriteableAccess( this ) );
       
+      UIUtils.addSearchMenuItem( this,
+                                 menu,
+                                 Menu.CATEGORY_ALTERNATIVE,
+                                 MenuItem.SHOW_AS_ACTION_ALWAYS );
+      
       UIUtils.addSyncMenuItem( this,
                                menu,
-                               OptionsMenu.SYNC,
-                               Menu.NONE,
+                               Menu.CATEGORY_ALTERNATIVE,
                                MenuItem.SHOW_AS_ACTION_ALWAYS );
       
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
-                                   OptionsMenu.SEARCH,
-                                   getString( R.string.search_hint ),
-                                   Menu.CATEGORY_SECONDARY,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_search,
-                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
-                                   true );
       return true;
    }
    
@@ -166,6 +157,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
    
 
 
+   @Override
    public void onItemClick( AdapterView< ? > adapterView,
                             View view,
                             int pos,
@@ -191,7 +183,6 @@ public class HomeActivity extends MolokoFragmentActivity implements
    @Override
    protected int[] getFragmentIds()
    {
-      // TODO Auto-generated method stub
       return null;
    }
 }

@@ -28,9 +28,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -39,14 +39,14 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -57,7 +57,6 @@ import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentList
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.loaders.TasksLoader;
-import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RtmSmartFilterParsing;
@@ -95,8 +94,6 @@ public class FullDetailedTasksListFragment extends
             AbstractTasksListFragment.OptionsMenu
    {
       public final static int EDIT_MULTIPLE_TASKS = R.id.menu_edit_multiple_tasks;
-      
-      public final static int SYNC = R.id.menu_sync;
    }
    
 
@@ -210,7 +207,6 @@ public class FullDetailedTasksListFragment extends
       
       UIUtils.addSyncMenuItem( getActivity(),
                                menu,
-                               OptionsMenu.SYNC,
                                Menu.CATEGORY_SECONDARY,
                                MenuItem.SHOW_AS_ACTION_NEVER );
    }
@@ -224,10 +220,6 @@ public class FullDetailedTasksListFragment extends
       {
          case OptionsMenu.EDIT_MULTIPLE_TASKS:
             listener.onSelectTasks();
-            return true;
-            
-         case OptionsMenu.SYNC:
-            SyncUtils.requestManualSync( getActivity() );
             return true;
             
          default :

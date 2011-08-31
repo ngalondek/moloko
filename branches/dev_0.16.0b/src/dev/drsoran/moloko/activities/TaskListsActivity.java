@@ -54,10 +54,6 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
    protected static class OptionsMenu
    {
       public final static int ADD_LIST = R.id.menu_add_list;
-      
-      public final static int SETTINGS = R.id.menu_settings;
-      
-      public final static int SYNC = R.id.menu_sync;
    }
    
    
@@ -75,28 +71,29 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      menu.add( Menu.NONE,
-                OptionsMenu.SETTINGS,
-                Menu.NONE,
-                R.string.phr_settings )
-          .setIcon( R.drawable.ic_menu_settings )
-          .setIntent( new Intent( this, MolokoPreferencesActivity.class ) )
-          .setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
+      UIUtils.addSettingsMenuItem( this,
+                                   menu,
+                                   Menu.CATEGORY_ALTERNATIVE,
+                                   MenuItem.SHOW_AS_ACTION_NEVER );
       
       UIUtils.addOptionalMenuItem( this,
                                    menu,
                                    OptionsMenu.ADD_LIST,
                                    getString( R.string.tasklists_menu_add_list ),
-                                   Menu.NONE,
+                                   Menu.CATEGORY_CONTAINER,
                                    Menu.NONE,
                                    R.drawable.ic_menu_add_list,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    AccountUtils.isWriteableAccess( this ) );
       
+      UIUtils.addSearchMenuItem( this,
+                                 menu,
+                                 Menu.CATEGORY_ALTERNATIVE,
+                                 MenuItem.SHOW_AS_ACTION_IF_ROOM );
+      
       UIUtils.addSyncMenuItem( this,
                                menu,
-                               OptionsMenu.SYNC,
-                               Menu.NONE,
+                               Menu.CATEGORY_ALTERNATIVE,
                                MenuItem.SHOW_AS_ACTION_IF_ROOM );
       return true;
    }
@@ -133,8 +130,8 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
          final Intent intent = new Intent( Intent.ACTION_VIEW,
                                            Tasks.CONTENT_URI );
          
-         intent.putExtra( Config.TITLE, getString( R.string.taskslist_titlebar,
-                                                   listName ) );
+         intent.putExtra( Config.TITLE,
+                          getString( R.string.taskslist_titlebar, listName ) );
          
          RtmSmartFilter filter = rtmList.getSmartFilter();
          

@@ -73,16 +73,6 @@ public class TasksListActivity extends AbstractTasksListActivity implements
       
       UIUtils.addOptionalMenuItem( this,
                                    menu,
-                                   OptionsMenu.SEARCH,
-                                   getString( R.string.search_hint ),
-                                   Menu.CATEGORY_SECONDARY,
-                                   Menu.NONE,
-                                   R.drawable.ic_menu_search,
-                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   true );
-      
-      UIUtils.addOptionalMenuItem( this,
-                                   menu,
                                    OptionsMenu.SHOW_LISTS,
                                    getString( R.string.taskslist_menu_opt_lists ),
                                    Menu.CATEGORY_SECONDARY,
@@ -102,6 +92,17 @@ public class TasksListActivity extends AbstractTasksListActivity implements
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    isConfiguredWithListName()
                                       && !AccountUtils.isReadOnlyAccess( this ) );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.SEARCH,
+                                   getString( R.string.search_hint ),
+                                   Menu.CATEGORY_ALTERNATIVE,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_search,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   true );
+      
       return true;
    }
    

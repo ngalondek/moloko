@@ -29,8 +29,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
-import android.view.ViewGroup.LayoutParams;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
 
@@ -64,32 +64,27 @@ public class AboutMolokoDialogFragment extends DialogFragment
    {
       final Activity context = getActivity();
       
-      final TextView content = new TextView( context );
-      content.setLayoutParams( new LayoutParams( LayoutParams.FILL_PARENT,
-                                                 LayoutParams.FILL_PARENT ) );
-      content.setPadding( 10, 10, 10, 10 );
-      content.setTextSize( 16.0f );
+      final View content = LayoutInflater.from( context )
+                                         .inflate( R.layout.about_moloko_dialog_fragment,
+                                                   null );
+      final TextView aboutText = (TextView) content.findViewById( android.R.id.content );
       
       try
       {
-         content.setText( Html.fromHtml( context.getString( R.string.moloko_about_info,
-                                                            context.getPackageManager()
-                                                                   .getPackageInfo( context.getPackageName(),
-                                                                                    0 ).versionName ) ) );
-         content.setMovementMethod( LinkMovementMethod.getInstance() );
-         
-         return new AlertDialog.Builder( context ).setTitle( context.getString( R.string.moloko_about_text ) )
-                                                  .setIcon( R.drawable.ic_prefs_info )
-                                                  .setPositiveButton( context.getString( R.string.phr_ok ),
-                                                                      null )
-                                                  .setView( content )
-                                                  .create();
+         aboutText.setText( Html.fromHtml( context.getString( R.string.moloko_about_info,
+                                                              context.getPackageManager()
+                                                                     .getPackageInfo( context.getPackageName(),
+                                                                                      0 ).versionName ) ) );
       }
       catch ( NameNotFoundException e )
       {
-         
       }
       
-      return null;
+      return new AlertDialog.Builder( context ).setTitle( context.getString( R.string.moloko_about_text ) )
+                                               .setIcon( R.drawable.ic_prefs_info )
+                                               .setPositiveButton( context.getString( R.string.phr_ok ),
+                                                                   null )
+                                               .setView( content )
+                                               .create();
    }
 }

@@ -33,7 +33,6 @@ import dev.drsoran.moloko.prefs.IMolokoPreference;
 
 public class MolokoPreferencesActivity extends PreferenceActivity
 {
-   
    @Override
    protected void onCreate( Bundle savedInstanceState )
    {
@@ -44,8 +43,8 @@ public class MolokoPreferencesActivity extends PreferenceActivity
       
       addPreferencesFromResource( R.xml.moloko_preferences_activity );
       
-      // getWindow().setFeatureDrawableResource( Window.FEATURE_LEFT_ICON,
-      // R.drawable.ic_title_settings );
+      getWindow().setFeatureDrawableResource( Window.FEATURE_LEFT_ICON,
+                                              R.drawable.ic_title_raw_launcher );
    }
    
 

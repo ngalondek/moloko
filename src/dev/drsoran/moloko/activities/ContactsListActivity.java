@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
@@ -40,14 +39,6 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
       + ContactsListActivity.class.getSimpleName();
    
    
-   private static class OptionsMenu
-   {
-      public final static int SETTINGS = R.id.menu_settings;
-      
-      public final static int SYNC = R.id.menu_sync;
-   }
-   
-   
 
    @Override
    public void onCreate( Bundle savedInstanceState )
@@ -62,17 +53,13 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
-      menu.add( Menu.NONE,
-                OptionsMenu.SETTINGS,
-                Menu.NONE,
-                R.string.phr_settings )
-          .setIcon( R.drawable.ic_menu_settings )
-          .setIntent( new Intent( this, MolokoPreferencesActivity.class ) )
-          .setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
+      UIUtils.addSettingsMenuItem( this,
+                                   menu,
+                                   Menu.CATEGORY_ALTERNATIVE,
+                                   MenuItem.SHOW_AS_ACTION_NEVER );
       
       UIUtils.addSyncMenuItem( this,
                                menu,
-                               OptionsMenu.SYNC,
                                Menu.NONE,
                                MenuItem.SHOW_AS_ACTION_IF_ROOM );
       return true;

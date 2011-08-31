@@ -52,14 +52,15 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
@@ -561,15 +562,64 @@ public final class UIUtils
    
 
 
+   public final static MenuItem addSettingsMenuItem( final Context context,
+                                                     Menu menu,
+                                                     int menuOrder,
+                                                     int showAsActionFlags )
+   {
+      final MenuItem menuItem = addOptionalMenuItem( context,
+                                                     menu,
+                                                     R.id.menu_settings,
+                                                     context.getString( R.string.phr_settings ),
+                                                     menuOrder,
+                                                     Menu.NONE,
+                                                     R.drawable.ic_menu_settings,
+                                                     showAsActionFlags,
+                                                     new Intent( context,
+                                                                 MolokoPreferencesActivity.class ),
+                                                     true );
+      return menuItem;
+   }
+   
+
+
+   public final static MenuItem addSearchMenuItem( final Activity activity,
+                                                   Menu menu,
+                                                   int menuOrder,
+                                                   int showAsActionFlags )
+   {
+      final MenuItem menuItem = addOptionalMenuItem( activity,
+                                                     menu,
+                                                     R.id.menu_search_tasks,
+                                                     activity.getString( R.string.search_hint ),
+                                                     menuOrder,
+                                                     Menu.NONE,
+                                                     R.drawable.ic_menu_search,
+                                                     showAsActionFlags,
+                                                     true );
+      
+      menuItem.setOnMenuItemClickListener( new OnMenuItemClickListener()
+      {
+         @Override
+         public boolean onMenuItemClick( MenuItem item )
+         {
+            return activity.onSearchRequested();
+         }
+      } );
+      
+      return menuItem;
+   }
+   
+
+
    public final static MenuItem addSyncMenuItem( final Context context,
                                                  Menu menu,
-                                                 int itemId,
                                                  int menuOrder,
                                                  int showAsActionFlags )
    {
       final MenuItem menuItem = addOptionalMenuItem( context,
                                                      menu,
-                                                     itemId,
+                                                     R.id.menu_sync,
                                                      context.getString( R.string.phr_do_sync ),
                                                      menuOrder,
                                                      Menu.NONE,

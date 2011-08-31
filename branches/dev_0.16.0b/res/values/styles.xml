@@ -15,16 +15,7 @@
 	<!-- *********** -->
 	<!-- Application -->
 	
-	<style name="Theme.Moloko.Authenticator" parent="Theme.Sherlock">
-		<item name="android:windowNoTitle">true</item>
-		<item name="android:windowContentOverlay">@null</item>
-	</style>
-	
-	<style name="Theme.Moloko.Preferences" parent="Theme.Sherlock">
-		<item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
-	</style>
-   
-   <style name="WindowTitleBackgroundStyle">
+	<style name="WindowTitleBackgroundStyle">
       <item name="android:background">@color/app_default_title_bgnd</item>
       <item name="android:paddingLeft">5dip</item>
    </style>

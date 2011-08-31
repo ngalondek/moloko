@@ -46,6 +46,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
       public final static int SYNC = R.id.menu_sync;
       
       public final static int ADD_TASK = R.id.menu_quick_add_task;
+      
+      public final static int SEARCH = R.id.menu_search_tasks;
    }
    
    private final Handler handler = new Handler();
@@ -113,12 +115,22 @@ public class HomeActivity extends MolokoFragmentActivity implements
                                    R.drawable.ic_menu_add_task,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
                                    AccountUtils.isWriteableAccess( this ) );
+      
       UIUtils.addSyncMenuItem( this,
                                menu,
                                OptionsMenu.SYNC,
                                Menu.NONE,
                                MenuItem.SHOW_AS_ACTION_ALWAYS );
       
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.SEARCH,
+                                   getString( R.string.search_hint ),
+                                   Menu.CATEGORY_SECONDARY,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_search,
+                                   MenuItem.SHOW_AS_ACTION_ALWAYS,
+                                   true );
       return true;
    }
    

@@ -48,6 +48,16 @@
       <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>      
    </style>
 
+   <style name="Theme.Moloko.Authenticator">
+      <item name="android:windowNoTitle">true</item>
+      <item name="android:windowContentOverlay">@null</item>
+   </style>
+   
+   <style name="Theme.Moloko.Preferences" parent="Theme.Sherlock">
+      <item name="android:windowNoTitle">false</item>
+      <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
+   </style>
+
    <style
       name="Theme.Moloko.Home">
       
@@ -104,5 +114,5 @@
       <item name="android:listViewStyle">@style/ListViewStyle</item>
       <item name="android:listPreferredItemHeight">50dip</item>
    </style>
-   
+
 </resources>

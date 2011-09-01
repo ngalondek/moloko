@@ -42,6 +42,7 @@ import android.support.v4.view.MenuItem.OnMenuItemClickListener;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.Time;
@@ -52,13 +53,13 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
+import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
@@ -550,6 +551,22 @@ public final class UIUtils
       text.setText( msg );
       
       Log.e( LogUtils.toTag( Context.class ), msg );
+   }
+   
+
+
+   public final static void initializeErrorWithIcon( Context context,
+                                                     ViewGroup container,
+                                                     Spanned errorText )
+   {
+      final View view = LayoutInflater.from( context )
+                                      .inflate( R.layout.error_with_icon,
+                                                container,
+                                                true );
+      final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
+      text.setText( errorText );
+      
+      Log.e( LogUtils.toTag( Context.class ), errorText.toString() );
    }
    
 

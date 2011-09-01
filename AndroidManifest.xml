@@ -73,11 +73,6 @@
             <data
                android:mimeType="vnd.android.cursor.dir/vnd.rtm.task" />
          </intent-filter>
-         <intent-filter>
-            <!-- Handle search queries -->
-            <action
-               android:name="android.intent.action.SEARCH" />               
-         </intent-filter>         
       </activity>
 
       <activity

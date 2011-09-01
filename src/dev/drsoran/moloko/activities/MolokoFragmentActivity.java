@@ -31,6 +31,7 @@ import android.support.v4.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItem;
+import android.text.Spanned;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -77,15 +78,15 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
       
       clearConfiguration();
       
+      configureByIntent( intent );
       setIntent( intent );
-      configureByIntent( getIntent() );
    }
    
 
 
    protected void configureByIntent( Intent intent )
    {
-      final Bundle intentExtras = getIntent().getExtras();
+      final Bundle intentExtras = intent.getExtras();
       final Bundle intentConfig;
       
       if ( intentExtras != null )
@@ -351,21 +352,62 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
 
    protected final void showElementNotFoundError( final CharSequence elementType )
    {
+      final ViewGroup errorView = prepareErrorView();
+      
+      if ( errorView != null )
+      {
+         UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
+                                          errorView,
+                                          R.string.err_entity_not_found,
+                                          elementType );
+      }
+   }
+   
+
+
+   protected final void showCustomError( int errorResId, Object... params )
+   {
+      final ViewGroup errorView = prepareErrorView();
+      
+      if ( errorView != null )
+      {
+         UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
+                                          errorView,
+                                          errorResId,
+                                          params );
+      }
+   }
+   
+
+
+   protected final void showCustomError( Spanned errorText )
+   {
+      final ViewGroup errorView = prepareErrorView();
+      
+      if ( errorView != null )
+      {
+         UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
+                                          errorView,
+                                          errorText );
+      }
+   }
+   
+
+
+   private ViewGroup prepareErrorView()
+   {
       final View spinner = findViewById( R.id.loading_spinner );
       if ( spinner != null )
          spinner.setVisibility( View.GONE );
       
-      final ViewGroup content = (ViewGroup) findViewById( android.R.id.content );
+      final ViewGroup content = (ViewGroup) getContentView();
       if ( content != null )
       {
          content.removeAllViews();
-         
-         UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
-                                          content,
-                                          R.string.err_entity_not_found,
-                                          elementType );
          content.setVisibility( View.VISIBLE );
       }
+      
+      return content;
    }
    
 

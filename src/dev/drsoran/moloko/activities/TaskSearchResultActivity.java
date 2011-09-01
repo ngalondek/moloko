@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -24,11 +24,9 @@ package dev.drsoran.moloko.activities;
 
 import android.app.SearchManager;
 import android.content.Intent;
-import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
-import android.text.Html;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
 import dev.drsoran.moloko.util.Intents;
@@ -52,27 +50,11 @@ public class TaskSearchResultActivity extends
    
 
    @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      final Intent smartFilterIntent = transformQueryIntentToSmartFilterIntent( getIntent() );
-      
-      if ( smartFilterIntent != null )
-         setIntent( smartFilterIntent );
-      
-      super.onCreate( savedInstanceState );
-   }
-   
-
-
-   @Override
    protected void onNewIntent( Intent intent )
    {
-      final Intent smartFilterIntent = transformQueryIntentToSmartFilterIntent( intent );
+      super.onNewIntent( intent );
       
-      if ( smartFilterIntent != null )
-         reloadTasksListWithConfiguration( smartFilterIntent.getExtras() );
-      else
-         super.onNewIntent( intent );
+      newTasksListFragmentbyIntent( intent );
    }
    
 
@@ -137,8 +119,8 @@ public class TaskSearchResultActivity extends
          }
          else
          {
-            showCustomError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
-                                                           filter.getFilterString() ) ) );
+            // showCustomError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
+            // filter.getFilterString() ) ) );
          }
       }
       

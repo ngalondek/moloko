@@ -146,7 +146,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
       super.onViewCreated( view, savedInstanceState );
       
       if ( !hasListAdapter() )
-         showLoadingSpinner();
+         showLoadingSpinner( true );
    }
    
 
@@ -159,6 +159,24 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
          emptyView = getListView().getEmptyView();
       
       return emptyView;
+   }
+   
+
+
+   public void showEmptyView( boolean show )
+   {
+      final View emptyView = getEmptyView();
+      if ( emptyView != null )
+         emptyView.setVisibility( show ? View.VISIBLE : View.GONE );
+   }
+   
+
+
+   public void showListView( boolean show )
+   {
+      final View listView = getListView();
+      if ( listView != null )
+         listView.setVisibility( show ? View.VISIBLE : View.GONE );
    }
    
 
@@ -240,18 +258,25 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
-   protected void showLoadingSpinner()
+   protected View getLoadingSpinnerView()
    {
+      View spinnerView = null;
+      
       if ( getView() != null )
-      {
-         final View emptyView = getEmptyView();
-         if ( emptyView != null )
-            emptyView.setVisibility( View.GONE );
-         
-         final View spinner = getView().findViewById( R.id.loading_spinner );
-         if ( spinner != null )
-            spinner.setVisibility( View.VISIBLE );
-      }
+         return getView().findViewById( R.id.loading_spinner );
+      
+      return spinnerView;
+   }
+   
+
+
+   protected void showLoadingSpinner( boolean show )
+   {
+      showEmptyView( !show );
+      
+      final View spinner = getLoadingSpinnerView();
+      if ( spinner != null )
+         spinner.setVisibility( show ? View.VISIBLE : View.GONE );
    }
    
 
@@ -278,9 +303,16 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    
 
 
-   public final void startLoader()
+   public void startLoader()
    {
-      getLoaderManager().initLoader( getLoaderId(), getConfiguration(), this );
+      startLoaderWithConfiguration( getConfiguration() );
+   }
+   
+
+
+   public void startLoaderWithConfiguration( Bundle config )
+   {
+      getLoaderManager().initLoader( getLoaderId(), config, this );
    }
    
 
@@ -296,7 +328,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    @Override
    public final Loader< D > onCreateLoader( int id, Bundle args )
    {
-      showLoadingSpinner();
+      showLoadingSpinner( true );
       
       final Loader< D > loader = newLoaderInstance( id, args );
       

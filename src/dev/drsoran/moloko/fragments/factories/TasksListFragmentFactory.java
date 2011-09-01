@@ -31,6 +31,7 @@ import android.support.v4.app.Fragment;
 import dev.drsoran.moloko.fragments.FullDetailedTasksListFragment;
 import dev.drsoran.moloko.fragments.MinDetailedTasksListFragment;
 import dev.drsoran.moloko.fragments.SelectableTasksListsFragment;
+import dev.drsoran.moloko.fragments.TaskSearchResultListFragment;
 
 
 public final class TasksListFragmentFactory extends AbstractFragmentFactory
@@ -42,6 +43,7 @@ public final class TasksListFragmentFactory extends AbstractFragmentFactory
       FRAGMENT_CLASSES.add( FullDetailedTasksListFragment.class );
       FRAGMENT_CLASSES.add( MinDetailedTasksListFragment.class );
       FRAGMENT_CLASSES.add( SelectableTasksListsFragment.class );
+      FRAGMENT_CLASSES.add( TaskSearchResultListFragment.class );
    }
    
    

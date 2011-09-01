@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -28,9 +28,9 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
@@ -86,7 +86,6 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
       
       setTitleAndNavigationMode();
       
-      // First-time init; create fragment to embed in activity.
       if ( savedInstanceState == null )
          initTasksListWithConfiguration( getIntent(), configuration );
    }

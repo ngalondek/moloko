@@ -36,6 +36,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.mdt.rtm.data.RtmAuth;
 
@@ -47,7 +48,7 @@ import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.fragments.base.MolokoEditListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
-import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.widgets.ActionBarMenuItemView;
@@ -97,10 +98,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    private ITasksListFragmentListener listener;
    
    
-
-   public abstract Intent newDefaultIntent();
-   
-
 
    @Override
    public void onAttach( FragmentActivity activity )
@@ -180,19 +177,9 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
-      menu.add( Integer.MAX_VALUE,
-                OptionsMenu.SETTINGS,
-                Menu.CATEGORY_SECONDARY,
-                R.string.phr_settings )
-          .setIcon( R.drawable.ic_menu_settings )
-          .setIntent( Intents.createOpenPreferencesIntent( getActivity() ) )
-          .setShowAsAction( MenuItem.SHOW_AS_ACTION_NEVER );
-      
-      {
-         final SubMenu subMenu = createTasksSortSubMenu( menu );
-         if ( subMenu != null )
-            subMenu.setGroupCheckable( OptionsMenuGroup.SORT, true, true );
-      }
+      final SubMenu subMenu = createTasksSortSubMenu( menu );
+      if ( subMenu != null )
+         subMenu.setGroupCheckable( OptionsMenuGroup.SORT, true, true );
    }
    
 
@@ -394,10 +381,6 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
 
 
-   protected abstract int getDefaultTaskSort();
-   
-
-
    protected String resolveTaskSortToSqlite( int taskSort )
    {
       return Queries.resolveTaskSortToSqlite( taskSort );
@@ -407,7 +390,19 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
 
    public void showError( CharSequence text )
    {
-      setEmptyText( text );
+      final TitleWithTextLayout errorView = getErrorView();
+      
+      if ( errorView != null )
+      {
+         showEmptyView( false );
+         showListView( false );
+         showLoadingSpinner( false );
+         showErrorView( true );
+         
+         final TextView errorTextView = (TextView) errorView.findViewById( R.id.title_with_text_text );
+         errorTextView.setText( text );
+      }
+      
       getLoaderManager().destroyLoader( TASKS_LOADER_ID );
    }
    
@@ -463,6 +458,35 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    {
       return createListAdapterForResult( result, getFilter() );
    }
+   
+
+
+   private TitleWithTextLayout getErrorView()
+   {
+      View errorView = null;
+      
+      if ( getView() != null )
+         errorView = getView().findViewById( R.id.error );
+      
+      return (TitleWithTextLayout) errorView;
+   }
+   
+
+
+   private void showErrorView( boolean show )
+   {
+      final View errorView = getErrorView();
+      if ( errorView != null )
+         errorView.setVisibility( show ? View.VISIBLE : View.GONE );
+   }
+   
+
+
+   public abstract Intent newDefaultIntent();
+   
+
+
+   protected abstract int getDefaultTaskSort();
    
 
 

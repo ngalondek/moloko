@@ -31,18 +31,13 @@ import android.support.v4.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItem;
-import android.text.Spanned;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
-import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoFragmentActivity extends FragmentActivity implements
@@ -297,117 +292,6 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
                ( (IRtmAccessLevelAware) fragment ).reEvaluateRtmAccessLevel( currentAccessLevel );
          }
       }
-   }
-   
-
-
-   protected final void showLoadingSpinner()
-   {
-      final View content = findViewById( android.R.id.content );
-      if ( content != null )
-         content.setVisibility( View.GONE );
-      
-      final View spinner = findViewById( R.id.loading_spinner );
-      if ( spinner != null )
-         spinner.setVisibility( View.VISIBLE );
-   }
-   
-
-
-   protected final void showContent()
-   {
-      final View spinner = findViewById( R.id.loading_spinner );
-      if ( spinner != null )
-         spinner.setVisibility( View.GONE );
-      
-      final View content = findViewById( android.R.id.content );
-      if ( content != null )
-      {
-         handler.postAtFrontOfQueue( new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               initContent( (ViewGroup) content );
-               content.setVisibility( View.VISIBLE );
-            }
-         } );
-      }
-   }
-   
-
-
-   protected void initContent( ViewGroup container )
-   {
-   }
-   
-
-
-   protected View getContentView()
-   {
-      return findViewById( android.R.id.content );
-   }
-   
-
-
-   protected final void showElementNotFoundError( final CharSequence elementType )
-   {
-      final ViewGroup errorView = prepareErrorView();
-      
-      if ( errorView != null )
-      {
-         UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
-                                          errorView,
-                                          R.string.err_entity_not_found,
-                                          elementType );
-      }
-   }
-   
-
-
-   protected final void showCustomError( int errorResId, Object... params )
-   {
-      final ViewGroup errorView = prepareErrorView();
-      
-      if ( errorView != null )
-      {
-         UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
-                                          errorView,
-                                          errorResId,
-                                          params );
-      }
-   }
-   
-
-
-   protected final void showCustomError( Spanned errorText )
-   {
-      final ViewGroup errorView = prepareErrorView();
-      
-      if ( errorView != null )
-      {
-         UIUtils.initializeErrorWithIcon( MolokoFragmentActivity.this,
-                                          errorView,
-                                          errorText );
-      }
-   }
-   
-
-
-   private ViewGroup prepareErrorView()
-   {
-      final View spinner = findViewById( R.id.loading_spinner );
-      if ( spinner != null )
-         spinner.setVisibility( View.GONE );
-      
-      final ViewGroup content = (ViewGroup) getContentView();
-      if ( content != null )
-      {
-         content.removeAllViews();
-         content.setVisibility( View.VISIBLE );
-      }
-      
-      return content;
    }
    
 

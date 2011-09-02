@@ -329,6 +329,10 @@
 		<item name="text">@string/err_error</item>
 	</style>
 
+   <style name="Error.NoAccount" parent="@android:style/TextAppearance.Small">
+      <item name="android:text">@string/startup_no_account</item>
+   </style>
+
 
 	<!-- ********* -->
 	<!-- StartUp   -->
@@ -337,11 +341,7 @@
 		<item name="android:layout_height">fill_parent</item>
 	</style>
 
-	<style name="StartUp.Error.NoAccount">
-		<item name="imageSrc">@drawable/rtm</item>
-		<item name="text">@string/startup_no_account</item>
-	</style>
-
+	
 	<style name="StartUp.Error.NoDefList">
 		<item name="text">@string/startup_no_def_list</item>
 	</style>

@@ -29,9 +29,12 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
@@ -107,6 +110,10 @@ public class TaskSearchResultActivity extends
             // TODO: Show toast that history was cleared
             return true;
             
+         case OptionsMenu.ADD_LIST:
+            showAddListDialog();
+            return true;
+            
          default :
             return super.onOptionsItemSelected( item );
       }
@@ -173,6 +180,21 @@ public class TaskSearchResultActivity extends
    public void onShowTasksWithTags( List< String > tags, String logicalOperator )
    {
       startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperator ) );
+   }
+   
+
+
+   private void showAddListDialog()
+   {
+      final Bundle config = new Bundle();
+      config.putParcelable( AddRenameListDialogFragment.Config.FILTER,
+                            getConfiguredFilter() );
+      
+      final DialogFragment dialogFragment = AddRenameListDialogFragment.newInstance( config );
+      final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      
+      dialogFragment.show( transaction,
+                           String.valueOf( R.id.frag_add_rename_list ) );
    }
    
 

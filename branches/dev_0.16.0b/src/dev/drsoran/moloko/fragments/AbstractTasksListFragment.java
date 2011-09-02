@@ -180,7 +180,12 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    {
       final SubMenu subMenu = createTasksSortSubMenu( menu );
       if ( subMenu != null )
+      {
          subMenu.setGroupCheckable( OptionsMenuGroup.SORT, true, true );
+         
+         final int currentTaskSort = getTaskSortConfiguration();
+         initializeTasksSortSubMenu( subMenu, currentTaskSort );
+      }
    }
    
 
@@ -188,7 +193,7 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    @Override
    public final void onPrepareOptionsMenu( Menu menu )
    {
-      final MenuItem sortMenuItem = menu.findItem( OptionsMenuGroup.SORT );
+      final MenuItem sortMenuItem = menu.findItem( OptionsMenu.SORT );
       
       if ( sortMenuItem != null )
       {

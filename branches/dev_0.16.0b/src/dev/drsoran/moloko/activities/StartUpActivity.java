@@ -30,7 +30,6 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
@@ -38,6 +37,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,6 +48,7 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.fragments.dialogs.NoAccountDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
@@ -55,7 +56,7 @@ import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 
 
-public class StartUpActivity extends Activity implements
+public class StartUpActivity extends MolokoFragmentActivity implements
          AccountManagerCallback< Bundle >
 {
    @SuppressWarnings( "unused" )
@@ -88,7 +89,7 @@ public class StartUpActivity extends Activity implements
    
 
    @Override
-   protected void onCreate( Bundle savedInstanceState )
+   public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
@@ -133,27 +134,31 @@ public class StartUpActivity extends Activity implements
       
       if ( account == null )
       {
-         widgetContainer.removeAllViews();
+         final DialogFragment dialogFragment = NoAccountDialogFragment.newInstance( Bundle.EMPTY );
+         dialogFragment.show( getSupportFragmentManager(),
+                              NoAccountDialogFragment.class.getSimpleName() );
          
-         LayoutInflater.from( this )
-                       .inflate( R.layout.startup_activity_no_account_widget,
-                                 widgetContainer,
-                                 true );
-         
-         final Button btnCenter = getButton( android.R.id.button1 );
-         btnCenter.setVisibility( View.VISIBLE );
-         btnCenter.setText( R.string.btn_new_account );
-         btnCenter.setOnClickListener( new OnClickListener()
-         {
-            @Override
-            public void onClick( View v )
-            {
-               onAddNewAccount();
-            }
-         } );
-         setButtonIcon( btnCenter, R.drawable.ic_button_add );
-         
-         buttonBar.setVisibility( View.VISIBLE );
+         // widgetContainer.removeAllViews();
+         //
+         // // LayoutInflater.from( this )
+         // // .inflate( R.layout.startup_activity_no_account_widget,
+         // // widgetContainer,
+         // // true );
+         //
+         // final Button btnCenter = getButton( android.R.id.button1 );
+         // btnCenter.setVisibility( View.VISIBLE );
+         // btnCenter.setText( R.string.btn_new_account );
+         // btnCenter.setOnClickListener( new OnClickListener()
+         // {
+         // @Override
+         // public void onClick( View v )
+         // {
+         // onAddNewAccount();
+         // }
+         // } );
+         // setButtonIcon( btnCenter, R.drawable.ic_button_add );
+         //
+         // buttonBar.setVisibility( View.VISIBLE );
          
       }
       
@@ -314,7 +319,8 @@ public class StartUpActivity extends Activity implements
             // According to the doc this can only happen
             // if there is no authenticator registered for the
             // account type. This should not happen.
-            Toast.makeText( this, R.string.err_unexpected, Toast.LENGTH_LONG );
+            Toast.makeText( this, R.string.err_unexpected, Toast.LENGTH_LONG )
+                 .show();
          }
          catch ( IOException e )
          {
@@ -378,6 +384,14 @@ public class StartUpActivity extends Activity implements
       return client != null && Queries.exists( client, Lists.CONTENT_URI, id );
    }
    
+
+
+   @Override
+   protected int[] getFragmentIds()
+   {
+      return null;
+   }
+   
    private final Handler handler = new Handler()
    {
       @Override
@@ -411,5 +425,4 @@ public class StartUpActivity extends Activity implements
          }
       }
    };
-   
 }

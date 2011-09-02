@@ -53,13 +53,13 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
@@ -537,9 +537,10 @@ public final class UIUtils
    
 
 
+   @Deprecated
    public final static void initializeErrorWithIcon( Context context,
                                                      ViewGroup container,
-                                                     int resId,
+                                                     int errorMsgResId,
                                                      Object... params )
    {
       final View view = LayoutInflater.from( context )
@@ -547,7 +548,8 @@ public final class UIUtils
                                                 container,
                                                 true );
       final TextView text = (TextView) view.findViewById( R.id.title_with_text_text );
-      final String msg = context.getResources().getString( resId, params );
+      final String msg = context.getResources().getString( errorMsgResId,
+                                                           params );
       text.setText( msg );
       
       Log.e( LogUtils.toTag( Context.class ), msg );
@@ -555,6 +557,7 @@ public final class UIUtils
    
 
 
+   @Deprecated
    public final static void initializeErrorWithIcon( Context context,
                                                      ViewGroup container,
                                                      Spanned errorText )

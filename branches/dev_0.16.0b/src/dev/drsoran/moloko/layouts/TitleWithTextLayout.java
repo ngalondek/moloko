@@ -36,15 +36,15 @@ public class TitleWithTextLayout extends TitleWithViewLayout
    private TextView textView;
    
    
-   
+
    public TitleWithTextLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       initView( context, attrs, getViewContainer() );
    }
    
-   
-   
+
+
    public TitleWithTextLayout( Context context, AttributeSet attrs,
       ViewGroup root )
    {
@@ -52,8 +52,8 @@ public class TitleWithTextLayout extends TitleWithViewLayout
       initView( context, attrs, getViewContainer() );
    }
    
-   
-   
+
+
    @Override
    public void setEnabled( boolean enabled )
    {
@@ -61,14 +61,13 @@ public class TitleWithTextLayout extends TitleWithViewLayout
       textView.setEnabled( false );
    }
    
-   
-   
+
+
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      textView = !isInEditMode() ? new TextView( context )
-                                : new TextView( context, attrs );
+      textView = new TextView( context, attrs );
       textView.setId( R.id.title_with_text_text );
       textView.setAutoLinkMask( Linkify.ALL );
       

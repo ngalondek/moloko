@@ -70,7 +70,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                    menu,
                                    OptionsMenu.SHOW_LISTS,
                                    getString( R.string.taskslist_menu_opt_lists ),
-                                   Menu.CATEGORY_SECONDARY,
+                                   Menu.CATEGORY_ALTERNATIVE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_list,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,

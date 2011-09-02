@@ -155,7 +155,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
    {
       View emptyView = null;
       
-      if ( getListView() != null )
+      if ( getView() != null && getListView() != null )
          emptyView = getListView().getEmptyView();
       
       return emptyView;
@@ -272,7 +272,7 @@ public abstract class MolokoListFragment< D > extends ListFragment implements
 
    protected void showLoadingSpinner( boolean show )
    {
-      showEmptyView( !show );
+      showEmptyView( false );
       
       final View spinner = getLoadingSpinnerView();
       if ( spinner != null )

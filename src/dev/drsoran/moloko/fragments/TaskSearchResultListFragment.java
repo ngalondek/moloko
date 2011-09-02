@@ -26,10 +26,14 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
@@ -53,6 +57,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       public final static String QUERY = SearchManager.QUERY;
    }
    
+   private ITasksSearchResultListFragmentListener listener;
+   
    private boolean queryEvalFailed;
    
    
@@ -64,6 +70,28 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       fragment.setArguments( configuration );
       
       return fragment;
+   }
+   
+
+
+   @Override
+   public void onAttach( FragmentActivity activity )
+   {
+      super.onAttach( activity );
+      
+      if ( activity instanceof ITasksSearchResultListFragmentListener )
+         listener = (ITasksSearchResultListFragmentListener) activity;
+      else
+         listener = null;
+   }
+   
+
+
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      listener = null;
    }
    
 
@@ -108,7 +136,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       if ( queryEvalFailed )
-         showError( "Query failed!!" );
+         showError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
+                                                  getConfiguredQueryString() ) ) );
       else
          super.onViewCreated( view, savedInstanceState );
    }
@@ -118,37 +147,70 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    @Override
    public void startLoader()
    {
-      final Bundle loaderConfig = transformQueryToSmartFilter();
+      final Bundle loaderConfig = transformQueryToSmartFilterConfig( getConfiguration() );
       
       if ( !queryEvalFailed )
+      {
          startLoaderWithConfiguration( loaderConfig );
+         if ( listener != null )
+            listener.onQuerySucceeded( getConfiguredQueryString() );
+      }
+      else
+      {
+         if ( listener != null )
+            listener.onQueryFailed( getConfiguredQueryString() );
+      }
    }
    
 
 
-   private Bundle transformQueryToSmartFilter()
+   @Override
+   public IFilter getFilter()
    {
-      queryEvalFailed = false;
-      Bundle smartFilterConfig = null;
+      return getRtmSmartFilter();
+   }
+   
+
+
+   @Override
+   public RtmSmartFilter getRtmSmartFilter()
+   {
+      RtmSmartFilter filter = new RtmSmartFilter( getConfiguredQueryString() );
       
-      final RtmSmartFilter filter = new RtmSmartFilter( configuration.getString( SearchManager.QUERY ) );
-      
-      // Try to evaluate the query
       // Collect tokens for the quick add task fragment
       final String evalQuery = filter.getEvaluatedFilterString( true );
       
-      if ( evalQuery != null )
+      if ( evalQuery == null )
       {
-         smartFilterConfig = super.createDefaultConfiguration();
-         smartFilterConfig.putParcelable( Config.FILTER, filter );
+         filter = null;
+      }
+      
+      return filter;
+   }
+   
+
+
+   private Bundle transformQueryToSmartFilterConfig( Bundle config )
+   {
+      final RtmSmartFilter filter = getRtmSmartFilter();
+      
+      if ( filter != null )
+      {
+         config.putParcelable( Config.FILTER, filter );
       }
       else
       {
+         config.remove( Config.FILTER );
          queryEvalFailed = true;
-         // showCustomError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
-         // filter.getFilterString() ) ) );
       }
       
-      return smartFilterConfig;
+      return config;
+   }
+   
+
+
+   private String getConfiguredQueryString()
+   {
+      return configuration.getString( Config.QUERY );
    }
 }

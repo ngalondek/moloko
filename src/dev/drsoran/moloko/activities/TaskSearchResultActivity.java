@@ -22,20 +22,27 @@
 
 package dev.drsoran.moloko.activities;
 
+import java.util.Collections;
+import java.util.List;
+
 import android.app.SearchManager;
 import android.content.Intent;
+import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
+import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
-import dev.drsoran.rtm.RtmSmartFilter;
 
 
 public class TaskSearchResultActivity extends
-         AbstractFullDetailedTasksListActivity
+         AbstractFullDetailedTasksListActivity implements
+         ITasksSearchResultListFragmentListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -44,6 +51,8 @@ public class TaskSearchResultActivity extends
    
    private static class OptionsMenu
    {
+      public final static int ADD_LIST = R.id.menu_add_list;
+      
       public final static int CLEAR_HISTORY = R.id.menu_clear_search_history;
    }
    
@@ -63,6 +72,16 @@ public class TaskSearchResultActivity extends
    public boolean onCreateOptionsMenu( Menu menu )
    {
       super.onCreateOptionsMenu( menu );
+      
+      UIUtils.addOptionalMenuItem( this,
+                                   menu,
+                                   OptionsMenu.ADD_LIST,
+                                   getString( R.string.tasklists_menu_add_list ),
+                                   Menu.CATEGORY_CONTAINER,
+                                   Menu.NONE,
+                                   R.drawable.ic_menu_add_list,
+                                   MenuItem.SHOW_AS_ACTION_IF_ROOM,
+                                   AccountUtils.isWriteableAccess( this ) );
       
       UIUtils.addOptionalMenuItem( this,
                                    menu,
@@ -95,43 +114,65 @@ public class TaskSearchResultActivity extends
    
 
 
-   private Intent transformQueryIntentToSmartFilterIntent( Intent queryIntent )
+   @Override
+   protected void takeConfigurationFrom( Bundle config )
    {
-      Intent smartFilterIntent = null;
+      super.takeConfigurationFrom( config );
       
-      if ( Intent.ACTION_SEARCH.equals( queryIntent.getAction() ) )
-      {
-         final RtmSmartFilter filter = new RtmSmartFilter( getConfiguredQueryString( queryIntent ) );
-         
-         // Try to evaluate the query
-         // Collect tokens for the quick add task fragment
-         final String evalQuery = filter.getEvaluatedFilterString( true );
-         
-         if ( evalQuery != null )
-         {
-            getRecentSuggestions().saveRecentQuery( filter.getFilterString(),
-                                                    null );
-            
-            smartFilterIntent = Intents.createSmartFilterIntent( this,
-                                                                 filter,
-                                                                 getString( R.string.tasksearchresult_titlebar,
-                                                                            filter.getFilterString() ) );
-         }
-         else
-         {
-            // showCustomError( Html.fromHtml( String.format( getString( R.string.tasksearchresult_wrong_syntax_html ),
-            // filter.getFilterString() ) ) );
-         }
-      }
-      
-      return smartFilterIntent;
+      if ( config.containsKey( SearchManager.QUERY ) )
+         configuration.putString( Config.TITLE,
+                                  config.getString( SearchManager.QUERY ) );
    }
    
 
 
-   private String getConfiguredQueryString( Intent queryIntent )
+   @Override
+   public void onQuerySucceeded( String queryString )
    {
-      return queryIntent.getStringExtra( SearchManager.QUERY );
+      getRecentSuggestions().saveRecentQuery( queryString, null );
+      
+   }
+   
+
+
+   @Override
+   public void onQueryFailed( String queryString )
+   {
+   }
+   
+
+
+   @Override
+   public void onOpenList( int pos, String listId )
+   {
+      startActivity( Intents.createOpenListIntentById( this, listId, null ) );
+   }
+   
+
+
+   @Override
+   public void onOpenLocation( int pos, String locationId )
+   {
+      startActivity( Intents.createOpenLocationIntentByName( this,
+                                                             getTask( pos ).getLocationName() ) );
+   }
+   
+
+
+   @Override
+   public void onShowTasksWithTag( String tag )
+   {
+      startActivity( Intents.createOpenTagsIntent( this,
+                                                   Collections.singletonList( tag ),
+                                                   RtmSmartFilterLexer.AND_LIT ) );
+   }
+   
+
+
+   @Override
+   public void onShowTasksWithTags( List< String > tags, String logicalOperator )
+   {
+      startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperator ) );
    }
    
 

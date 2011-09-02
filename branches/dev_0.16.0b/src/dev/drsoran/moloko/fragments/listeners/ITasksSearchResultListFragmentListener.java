@@ -22,10 +22,12 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-
-
 public interface ITasksSearchResultListFragmentListener extends
          IFullDetailedTasksListFragmentListener
 {
+   void onQuerySucceeded( String queryString );
    
+
+
+   void onQueryFailed( String queryString );
 }

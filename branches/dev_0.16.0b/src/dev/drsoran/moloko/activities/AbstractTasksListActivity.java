@@ -28,9 +28,9 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
-import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActionBar.OnNavigationListener;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
@@ -221,6 +221,13 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
    protected String getConfiguredListName()
    {
       return configuration.getString( Config.LIST_NAME );
+   }
+   
+
+
+   protected void configuredTitle( String title )
+   {
+      configuration.putString( Config.TITLE, title );
    }
    
 

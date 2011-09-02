@@ -58,7 +58,7 @@ public abstract class MolokoExpandableEditListFragment< D > extends
    {
       View emptyView = null;
       
-      if ( getExpandableListView() != null )
+      if ( getView() != null && getExpandableListView() != null )
          emptyView = getExpandableListView().getEmptyView();
       
       return emptyView;

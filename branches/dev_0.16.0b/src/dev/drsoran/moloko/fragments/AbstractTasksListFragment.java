@@ -31,6 +31,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.SubMenu;
+import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.view.MenuInflater;
 import android.view.View;
@@ -233,10 +234,10 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       {
          subMenu = menu.addSubMenu( OptionsMenuGroup.SORT,
                                     OptionsMenu.SORT,
-                                    Menu.NONE,
+                                    Menu.CATEGORY_SECONDARY,
                                     R.string.abstaskslist_menu_opt_sort );
-         subMenu.setIcon( R.drawable.ic_menu_sort );
          
+         subMenu.setIcon( R.drawable.ic_menu_sort );
          subMenu.getItem().setShowAsAction( MenuItem.SHOW_AS_ACTION_IF_ROOM );
          subMenu.getItem()
                 .setActionView( new ActionBarMenuItemView( getActivity() ).setIcon( getResources().getDrawable( R.drawable.ic_menu_sort ) ) );
@@ -388,20 +389,22 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
    
 
 
-   public void showError( CharSequence text )
+   public void showError( CharSequence errorMessage )
    {
-      final TitleWithTextLayout errorView = getErrorView();
+      final TextView errorTextView = prepareErrorViewAndGetMessageView();
+      if ( errorTextView != null )
+         errorTextView.setText( errorMessage );
       
-      if ( errorView != null )
-      {
-         showEmptyView( false );
-         showListView( false );
-         showLoadingSpinner( false );
-         showErrorView( true );
-         
-         final TextView errorTextView = (TextView) errorView.findViewById( R.id.title_with_text_text );
-         errorTextView.setText( text );
-      }
+      getLoaderManager().destroyLoader( TASKS_LOADER_ID );
+   }
+   
+
+
+   public void showError( Spanned errorMessage )
+   {
+      final TextView errorTextView = prepareErrorViewAndGetMessageView();
+      if ( errorTextView != null )
+         errorTextView.setText( errorMessage );
       
       getLoaderManager().destroyLoader( TASKS_LOADER_ID );
    }
@@ -478,6 +481,26 @@ public abstract class AbstractTasksListFragment< T extends Task > extends
       final View errorView = getErrorView();
       if ( errorView != null )
          errorView.setVisibility( show ? View.VISIBLE : View.GONE );
+   }
+   
+
+
+   private TextView prepareErrorViewAndGetMessageView()
+   {
+      TextView errorTextView = null;
+      final TitleWithTextLayout errorView = getErrorView();
+      
+      if ( errorView != null )
+      {
+         showEmptyView( false );
+         showListView( false );
+         showLoadingSpinner( false );
+         showErrorView( true );
+         
+         errorTextView = (TextView) errorView.findViewById( R.id.title_with_text_text );
+      }
+      
+      return errorTextView;
    }
    
 

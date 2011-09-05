@@ -24,14 +24,28 @@ package dev.drsoran.moloko.fragments.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.Intents;
 
 
 public class NoAccountDialogFragment extends DialogFragment
 {
+   public final static NoAccountDialogFragment show( FragmentActivity activity )
+   {
+      final NoAccountDialogFragment fragment = new NoAccountDialogFragment();
+      fragment.show( activity.getSupportFragmentManager(),
+                     NoAccountDialogFragment.class.getName() );
+      
+      return fragment;
+   }
    
+
+
    public final static NoAccountDialogFragment newInstance( Bundle config )
    {
       final NoAccountDialogFragment fragment = new NoAccountDialogFragment();
@@ -60,8 +74,16 @@ public class NoAccountDialogFragment extends DialogFragment
                                                      .setIcon( R.drawable.rtm )
                                                      .setMessage( R.string.dlg_no_account_text )
                                                      .setPositiveButton( R.string.btn_new_account,
-                                                                         null )
-                                                     .setNegativeButton( R.string.btn_continue,
+                                                                         new OnClickListener()
+                                                                         {
+                                                                            @Override
+                                                                            public void onClick( DialogInterface dialog,
+                                                                                                 int which )
+                                                                            {
+                                                                               startActivity( Intents.createNewAccountIntent() );
+                                                                            }
+                                                                         } )
+                                                     .setNegativeButton( R.string.dlg_no_account_btn_no_account,
                                                                          null )
                                                      .create();
    }

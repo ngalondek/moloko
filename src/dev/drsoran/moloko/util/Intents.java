@@ -40,7 +40,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.SqlSelectionFilter;
 import dev.drsoran.moloko.activities.HomeActivity;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
-import dev.drsoran.moloko.activities.StartUpActivity;
 import dev.drsoran.moloko.activities.TaskActivity;
 import dev.drsoran.moloko.activities.TaskEditMultipleActivity;
 import dev.drsoran.moloko.activities.TasksListActivity;
@@ -340,10 +339,9 @@ public final class Intents
    
 
 
-   public final static Intent createNewAccountIntent( Context context )
+   public final static Intent createNewAccountIntent()
    {
-      return new Intent( context, StartUpActivity.class ).putExtra( StartUpActivity.ONLY_CHECK_ACCOUNT,
-                                                                    Boolean.TRUE );
+      return new Intent( Settings.ACTION_ADD_ACCOUNT );
    }
    
 

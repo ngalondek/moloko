@@ -53,13 +53,13 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
@@ -632,15 +632,15 @@ public final class UIUtils
    
 
 
-   public final static MenuItem addSyncMenuItem( final Context context,
+   public final static MenuItem addSyncMenuItem( final FragmentActivity activity,
                                                  Menu menu,
                                                  int menuOrder,
                                                  int showAsActionFlags )
    {
-      final MenuItem menuItem = addOptionalMenuItem( context,
+      final MenuItem menuItem = addOptionalMenuItem( activity,
                                                      menu,
                                                      R.id.menu_sync,
-                                                     context.getString( R.string.phr_do_sync ),
+                                                     activity.getString( R.string.phr_do_sync ),
                                                      menuOrder,
                                                      Menu.NONE,
                                                      R.drawable.ic_menu_refresh,
@@ -652,7 +652,7 @@ public final class UIUtils
          @Override
          public boolean onMenuItemClick( MenuItem item )
          {
-            SyncUtils.requestManualSync( context );
+            SyncUtils.requestManualSync( activity );
             return true;
          }
       } );

@@ -36,8 +36,8 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SyncStatusObserver;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.SyncStatusObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -85,6 +85,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
 
 
+   @Override
    public void run( AccountManagerFuture< Bundle > future )
    {
       addAccountHandle = null;
@@ -120,6 +121,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
 
 
+   @Override
    public void onAccountsUpdated( Account[] accounts )
    {
       final AccountManager accountManager = AccountManager.get( getContext() );
@@ -241,6 +243,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
 
 
+   @Override
    public void onStatusChanged( int which )
    {
       if ( !ContentResolver.isSyncActive( account, Rtm.AUTHORITY ) )
@@ -249,6 +252,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
          
          handler.post( new Runnable()
          {
+            @Override
             public void run()
             {
                notifyChanged();
@@ -265,6 +269,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
    
 
 
+   @Override
    public void onCancel( DialogInterface dialog )
    {
       onSyncFinished();

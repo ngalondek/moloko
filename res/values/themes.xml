@@ -48,9 +48,7 @@
       <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>      
    </style>
 
-   <style name="Theme.Moloko.Authenticator">
-      <item name="android:windowNoTitle">true</item>
-      <item name="android:windowContentOverlay">@null</item>
+   <style name="Theme.Moloko.Authenticator" parent="@android:style/Theme">      
    </style>
    
    <style name="Theme.Moloko.Preferences" parent="Theme.Sherlock">

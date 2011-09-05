@@ -150,6 +150,7 @@
    <string name="phr_loading">Loading...</string>
    <string name="phr_edit_dlg_done">Applying changes?</string>
    <string name="phr_edit_dlg_cancel">Cancel editing and lose all changes?</string>
+   <string name="phr_hint">Hint</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>
@@ -190,8 +191,6 @@
    <string name="dlg_recurr_picker_title">Set Recurrence</string>
    <string name="dlg_recurr_picker_every">Every</string>
    <string name="dlg_recurr_picker_after">After</string>
-   <string name="dlg_no_account_title">No Remember The Milk account</string>
-   <string name="dlg_no_account_text">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>   
    
    <!-- Global Toasts -->
       <!-- Task -->   
@@ -235,6 +234,11 @@
       <string name="dlg_add_rename_list_toast_empty_list_name">The name of the list must not be empty</string>
       <string name="dlg_add_rename_list_toast_invalid_list_name">The name of the list cannot be \'Inbox\' or \'Sent\'</string>
       <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' is not a valid Smart Filter</string>
+      
+   <!-- No account dialog -->
+   <string name="dlg_no_account_title">New Remember The Milk account</string>
+   <string name="dlg_no_account_text">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>   
+   <string name="dlg_no_account_btn_no_account">No account</string>
 	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>

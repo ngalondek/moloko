@@ -108,6 +108,7 @@
    <string name="phr_loading">Lädt gerade...</string>
    <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
+   <string name="phr_hint">Hinweis</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -145,11 +146,8 @@
    <string name="dlg_due_picker_title">Fälligkeit</string>
    <string name="dlg_recurr_picker_title">Wiederholung</string>
    <string name="dlg_recurr_picker_every">Alle</string>
-   <string name="dlg_recurr_picker_after">Nach</string>
-   <string name="dlg_no_account_title">Kein Remember The Milk Konto</string>
-   <string name="dlg_no_account_text">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
-   
-   
+   <string name="dlg_recurr_picker_after">Nach</string>   
+      
    <!-- Global Toasts -->
       <!-- Task -->   
       <string name="toast_insert_task">Füge neue Aufgabe hinzu...</string>
@@ -191,7 +189,12 @@
       <string name="dlg_add_rename_list_toast_empty_list_name">Der Name der Liste darf nicht leer sein</string>
       <string name="dlg_add_rename_list_toast_invalid_list_name">Der Name der Liste darf nicht \'Inbox\' oder \'Sent\' sein</string>
       <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' ist kein gültiger Smart Filter</string>
-         
+   
+   <!-- No account dialog -->
+   <string name="dlg_no_account_title">Neues Remember The Milk Konto</string>
+   <string name="dlg_no_account_text">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
+   <string name="dlg_no_account_btn_no_account">Kein Konto</string>   
+   
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>
 	

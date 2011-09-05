@@ -33,6 +33,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.util.Pair;
 
@@ -44,6 +45,7 @@ import dev.drsoran.moloko.auth.prefs.SyncIntervalPreference;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.RtmProvider;
 import dev.drsoran.moloko.content.SyncProviderPart;
+import dev.drsoran.moloko.fragments.dialogs.NoAccountDialogFragment;
 import dev.drsoran.moloko.sync.Constants;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
@@ -92,14 +94,15 @@ public final class SyncUtils
    
 
 
-   public final static void requestManualSync( Context context )
+   public final static void requestManualSync( FragmentActivity activity )
    {
-      SyncUtils.requestManualSync( context, SyncUtils.isReadyToSync( context ) );
+      SyncUtils.requestManualSync( activity, SyncUtils.isReadyToSync( activity ) );
    }
    
 
 
-   public final static void requestManualSync( Context context, Account account )
+   public final static void requestManualSync( FragmentActivity activity,
+                                               Account account )
    {
       if ( account != null )
       {
@@ -112,7 +115,7 @@ public final class SyncUtils
       }
       else
       {
-         context.startActivity( Intents.createNewAccountIntent( context ) );
+         NoAccountDialogFragment.show( activity );
       }
    }
    
@@ -134,7 +137,8 @@ public final class SyncUtils
       }
       else
       {
-         context.startActivity( Intents.createNewAccountIntent( context ) );
+         // TODO: Show NoAccountDialogFragment if we use PreferenceFragment
+         context.startActivity( Intents.createNewAccountIntent() );
       }
    }
    

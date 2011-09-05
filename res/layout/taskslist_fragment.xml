@@ -38,6 +38,6 @@
       
    <dev.drsoran.moloko.layouts.TitleWithTextLayout
       android:id="@+id/error"
-      style="@style/StartUp.Error"
+      style="@style/Error"
       android:visibility="gone" />
 </LinearLayout>

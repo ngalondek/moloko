@@ -22,13 +22,10 @@
 
 package dev.drsoran.moloko.fragments.dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
 import dev.drsoran.moloko.R;
 
 
@@ -59,17 +56,13 @@ public class NoAccountDialogFragment extends DialogFragment
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      final Activity context = getActivity();
-      
-      final View content = LayoutInflater.from( context )
-                                         .inflate( R.layout.no_account_dialog_fragment,
-                                                   null );
-      
-      return new AlertDialog.Builder( context ).setTitle( context.getString( R.string.moloko_about_text ) )
-                                               .setIcon( R.drawable.rtm )
-                                               .setPositiveButton( context.getString( R.string.phr_ok ),
-                                                                   null )
-                                               .setView( content )
-                                               .create();
+      return new AlertDialog.Builder( getActivity() ).setTitle( R.string.dlg_no_account_title )
+                                                     .setIcon( R.drawable.rtm )
+                                                     .setMessage( R.string.dlg_no_account_text )
+                                                     .setPositiveButton( R.string.btn_new_account,
+                                                                         null )
+                                                     .setNegativeButton( R.string.btn_continue,
+                                                                         null )
+                                                     .create();
    }
 }

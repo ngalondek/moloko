@@ -40,8 +40,8 @@ import android.os.RemoteException;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 import dev.drsoran.moloko.MolokoApp;
@@ -107,6 +107,16 @@ public class StartUpActivity extends MolokoFragmentActivity implements
 
 
    @Override
+   protected void onDestroy()
+   {
+      handler.removeMessages( MSG_STATE_CHANGED );
+      
+      super.onStop();
+   }
+   
+
+
+   @Override
    protected void onSaveInstanceState( Bundle outState )
    {
       super.onSaveInstanceState( outState );
@@ -134,9 +144,8 @@ public class StartUpActivity extends MolokoFragmentActivity implements
       
       if ( account == null )
       {
-         final DialogFragment dialogFragment = NoAccountDialogFragment.newInstance( Bundle.EMPTY );
-         dialogFragment.show( getSupportFragmentManager(),
-                              NoAccountDialogFragment.class.getSimpleName() );
+         if ( !isDialogFragmentAdded( NoAccountDialogFragment.class ) )
+            showDialogFragment( NoAccountDialogFragment.newInstance( Bundle.EMPTY ) );
          
          // widgetContainer.removeAllViews();
          //
@@ -390,6 +399,21 @@ public class StartUpActivity extends MolokoFragmentActivity implements
    protected int[] getFragmentIds()
    {
       return null;
+   }
+   
+
+
+   private boolean isDialogFragmentAdded( Class< ? extends DialogFragment > clazz )
+   {
+      return getSupportFragmentManager().findFragmentByTag( clazz.getName() ) != null;
+   }
+   
+
+
+   private void showDialogFragment( DialogFragment newInstance )
+   {
+      newInstance.show( getSupportFragmentManager(), newInstance.getClass()
+                                                                .getName() );
    }
    
    private final Handler handler = new Handler()

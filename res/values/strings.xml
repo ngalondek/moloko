@@ -190,6 +190,8 @@
    <string name="dlg_recurr_picker_title">Set Recurrence</string>
    <string name="dlg_recurr_picker_every">Every</string>
    <string name="dlg_recurr_picker_after">After</string>
+   <string name="dlg_no_account_title">No Remember The Milk account</string>
+   <string name="dlg_no_account_text">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>   
    
    <!-- Global Toasts -->
       <!-- Task -->   
@@ -244,8 +246,7 @@
    <string name="home_label_overdue">Overdue</string>
    <string name="home_label_sync">@string/phr_do_sync</string>
 	
-	<!-- StartUp activity -->
-   <string name="startup_no_account">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>
+	<!-- StartUp activity -->   
    <string name="startup_no_def_list">It can not be started with the standard list because it does not exist.\n\nIt will be started with the default view.</string>
      <!-- Toasts -->
      <string name="startup_toast_no_settings">Settings could not be loaded. Starting with default settings.</string>     

@@ -146,6 +146,9 @@
    <string name="dlg_recurr_picker_title">Wiederholung</string>
    <string name="dlg_recurr_picker_every">Alle</string>
    <string name="dlg_recurr_picker_after">Nach</string>
+   <string name="dlg_no_account_title">Kein Remember The Milk Konto</string>
+   <string name="dlg_no_account_text">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
+   
    
    <!-- Global Toasts -->
       <!-- Task -->   
@@ -195,8 +198,7 @@
 	<!-- Home activity -->
 	<string name="home_label_overdue">Überfällig</string>
 	
-	<!-- StartUp activity -->
-	<string name="startup_no_account">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
+	<!-- StartUp activity -->	
 	<string name="startup_no_def_list">Es kann nicht mit der Standardliste gestartet werden, da diese nicht existiert.\n\nEs wird mit der Standardansicht gestartet.</string>
 	  <!-- Toasts -->
 	  <string name="startup_toast_no_settings">Einstellungen konnten nicht geladen werden. Starte mit Standarseinstellungen.</string>	  

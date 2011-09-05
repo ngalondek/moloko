@@ -325,16 +325,11 @@
 		<item name="textSize">@dimen/app_title_with_text_textSize</item>
 		<item name="textStyle">normal</item>
 		<item name="showTopLine">false</item>
-		<item name="imageSrc">@drawable/ic_black_error</item>
+		<item name="imageSrc">@drawable/ic_black_error</item>      
 		<item name="text">@string/err_error</item>
 	</style>
 
-   <style name="Error.NoAccount" parent="@android:style/TextAppearance.Small">
-      <item name="android:text">@string/startup_no_account</item>
-   </style>
-
-
-	<!-- ********* -->
+ 	<!-- ********* -->
 	<!-- StartUp   -->
 
 	<style name="StartUp.Error" parent="Error">

@@ -45,7 +45,8 @@
       <!-- Activities -->
       <activity
          android:label="@string/app_name"
-         android:name=".activities.StartUpActivity">
+         android:name=".activities.StartUpActivity"
+         android:theme="@style/Theme.Moloko.Home">
          <intent-filter>
             <action
                android:name="android.intent.action.MAIN" />

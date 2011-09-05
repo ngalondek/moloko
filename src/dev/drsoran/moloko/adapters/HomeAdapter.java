@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -22,6 +22,9 @@
 
 package dev.drsoran.moloko.adapters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -31,6 +34,8 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.ContactsListActivity;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.activities.TagCloudActivity;
+import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
@@ -40,71 +45,73 @@ import dev.drsoran.provider.Rtm.ListOverviews;
 
 public class HomeAdapter extends BaseAdapter
 {
-   private final IMolokoHomeWidget[] WIDGETS;
+   private final List< IMolokoHomeWidget > widgets = new ArrayList< IMolokoHomeWidget >( 7 );
    
    
 
    public HomeAdapter( final Context context )
    {
-      WIDGETS = new IMolokoHomeWidget[]
-      {
-       new CalendarHomeWidget( context,
-                               null,
-                               R.string.home_label_today,
-                               CalendarHomeWidget.TODAY ),
-       
-       new CalendarHomeWidget( context,
-                               null,
-                               R.string.home_label_tomorrow,
-                               CalendarHomeWidget.TOMORROW ),
-       
-       new OverDueTasksHomeWidget( context, null, R.string.home_label_overdue ),
-       
-       new SimpleHomeWidgetLayout( context,
-                                   null,
-                                   R.string.app_tasklists,
-                                   R.drawable.ic_home_list_detailed,
-                                   new Intent( Intent.ACTION_VIEW,
-                                               ListOverviews.CONTENT_URI ) ),
-       
-       new SimpleHomeWidgetLayout( context,
-                                   null,
-                                   R.string.app_tagcloud,
-                                   R.drawable.ic_home_tag,
-                                   new Intent( context, TagCloudActivity.class ) ),
-       
-       new SimpleHomeWidgetLayout( context,
-                                   null,
-                                   R.string.app_contacts,
-                                   R.drawable.ic_home_user,
-                                   new Intent( context,
-                                               ContactsListActivity.class ) ),
-       
-       new SimpleHomeWidgetLayout( context,
-                                   null,
-                                   R.string.app_preferences,
-                                   R.drawable.ic_home_settings,
-                                   new Intent( context,
-                                               MolokoPreferencesActivity.class ) )
-
-      // new SimpleHomeWidgetLayout( context,
-      // null,
-      // android.R.string.untitled,
-      // R.drawable.ic_home_settings,
-      // new Intent( context,
-      // RtmSmartFilterTestActivity.class ) )
-      };
+      widgets.add( new CalendarHomeWidget( context,
+                                           null,
+                                           R.string.home_label_today,
+                                           CalendarHomeWidget.TODAY ) );
+      
+      widgets.add( new CalendarHomeWidget( context,
+                                           null,
+                                           R.string.home_label_tomorrow,
+                                           CalendarHomeWidget.TOMORROW ) );
+      
+      widgets.add( new OverDueTasksHomeWidget( context,
+                                               null,
+                                               R.string.home_label_overdue ) );
+      
+      widgets.add( new SimpleHomeWidgetLayout( context,
+                                               null,
+                                               R.string.app_tasklists,
+                                               R.drawable.ic_home_list_detailed,
+                                               new Intent( Intent.ACTION_VIEW,
+                                                           ListOverviews.CONTENT_URI ) ) );
+      
+      widgets.add( new SimpleHomeWidgetLayout( context,
+                                               null,
+                                               R.string.app_tagcloud,
+                                               R.drawable.ic_home_tag,
+                                               new Intent( context,
+                                                           TagCloudActivity.class ) ) );
+      
+      widgets.add( new SimpleHomeWidgetLayout( context,
+                                               null,
+                                               R.string.app_contacts,
+                                               R.drawable.ic_home_user,
+                                               new Intent( context,
+                                                           ContactsListActivity.class ) ) );
+      
+      widgets.add( new SimpleHomeWidgetLayout( context,
+                                               null,
+                                               R.string.app_preferences,
+                                               R.drawable.ic_home_settings,
+                                               new Intent( context,
+                                                           MolokoPreferencesActivity.class ) ) );
+      
+      if ( AccountUtils.getRtmAccount( context ) == null )
+         widgets.add( new SimpleHomeWidgetLayout( context,
+                                                  null,
+                                                  R.string.btn_new_account,
+                                                  R.drawable.ic_button_add,
+                                                  Intents.createNewAccountIntent() ) );
    }
    
 
 
+   @Override
    public int getCount()
    {
-      return WIDGETS.length;
+      return widgets.size();
    }
    
 
 
+   @Override
    public Object getItem( int position )
    {
       return null;
@@ -112,6 +119,7 @@ public class HomeAdapter extends BaseAdapter
    
 
 
+   @Override
    public long getItemId( int position )
    {
       return 0;
@@ -119,17 +127,18 @@ public class HomeAdapter extends BaseAdapter
    
 
 
+   @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
-      return (View) WIDGETS[ position ];
+      return (View) widgets.get( position );
    }
    
 
 
    public Intent getIntentForWidget( int position )
    {
-      if ( position < WIDGETS.length )
-         return ( WIDGETS[ position ] ).getIntent();
+      if ( position < widgets.size() )
+         return ( widgets.get( position ) ).getIntent();
       else
          return null;
    }
@@ -138,8 +147,8 @@ public class HomeAdapter extends BaseAdapter
 
    public Runnable getRunnableForWidget( int position )
    {
-      if ( position < WIDGETS.length )
-         return ( WIDGETS[ position ] ).getRunnable();
+      if ( position < widgets.size() )
+         return ( widgets.get( position ) ).getRunnable();
       else
          return null;
    }
@@ -148,19 +157,15 @@ public class HomeAdapter extends BaseAdapter
 
    public void startWidgets()
    {
-      for ( int i = 0; i < WIDGETS.length; i++ )
-      {
-         WIDGETS[ i ].start();
-      }
+      for ( IMolokoHomeWidget widget : widgets )
+         widget.start();
    }
    
 
 
    public void stopWidgets()
    {
-      for ( int i = 0; i < WIDGETS.length; i++ )
-      {
-         WIDGETS[ i ].stop();
-      }
+      for ( IMolokoHomeWidget widget : widgets )
+         widget.stop();
    }
 }

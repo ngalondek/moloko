@@ -108,6 +108,7 @@
    <string name="key_conn_proxy_port">conn_proxy_port</string>
    <string name="key_conn_proxy_user">conn_proxy_user</string>
    <string name="key_conn_proxy_pass">conn_proxy_pass</string>
+   <string name="key_notified_account_creation">notified_account_creation</string>
    
    <!-- Time phrases -->
    <string name="time_interval_15min">Every 15 min.</string>

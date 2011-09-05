@@ -40,7 +40,7 @@ import dev.drsoran.moloko.R;
 
 public class AsyncRtmAuthenticator
 {
-  private final Service rtmService;
+   private final Service rtmService;
    
    private AsyncTask< ?, Void, ? > runningTask;
    
@@ -231,7 +231,8 @@ public class AsyncRtmAuthenticator
    
 
 
-   public void beginAuthentication( AuthenticatorActivity activity, Perms permission )
+   public void beginAuthentication( AuthenticatorActivity activity,
+                                    Perms permission )
    {
       if ( runningTask != null && !( runningTask instanceof BeginAuthTask ) )
       {
@@ -269,12 +270,14 @@ public class AsyncRtmAuthenticator
 
    public static String getExceptionCause( final Exception e )
    {
-      if ( e instanceof ServiceInternalException )
+      if ( e instanceof ServiceException )
       {
          return ( (ServiceInternalException) e ).getResponseMessage();
       }
       else
+      {
          return e.getMessage();
+      }
    }
    
 

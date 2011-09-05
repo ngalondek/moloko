@@ -23,8 +23,11 @@
 package dev.drsoran.moloko.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.view.View;
@@ -33,6 +36,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.HomeAdapter;
+import dev.drsoran.moloko.fragments.dialogs.NoAccountDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.UIUtils;
@@ -55,6 +59,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
    {
       super.onCreate( savedInstanceState );
       setContentView( R.layout.home_activity );
+      
+      checkRtmAccountExists();
       
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setOnItemClickListener( this );
@@ -184,5 +190,42 @@ public class HomeActivity extends MolokoFragmentActivity implements
    protected int[] getFragmentIds()
    {
       return null;
+   }
+   
+
+
+   private void checkRtmAccountExists()
+   {
+      if ( AccountUtils.getRtmAccount( this ) == null )
+      {
+         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
+         if ( prefs != null )
+         {
+            final String prefKey = getString( R.string.key_notified_account_creation );
+            
+            if ( !prefs.getBoolean( prefKey, false ) )
+            {
+               if ( !isDialogFragmentAdded( NoAccountDialogFragment.class ) )
+                  showDialogFragment( NoAccountDialogFragment.newInstance( Bundle.EMPTY ) );
+               
+               prefs.edit().putBoolean( prefKey, true ).commit();
+            }
+         }
+      }
+   }
+   
+
+
+   private boolean isDialogFragmentAdded( Class< ? extends DialogFragment > clazz )
+   {
+      return getSupportFragmentManager().findFragmentByTag( clazz.getName() ) != null;
+   }
+   
+
+
+   private void showDialogFragment( DialogFragment newInstance )
+   {
+      newInstance.show( getSupportFragmentManager(), newInstance.getClass()
+                                                                .getName() );
    }
 }

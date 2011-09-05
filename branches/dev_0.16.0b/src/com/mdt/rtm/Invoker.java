@@ -139,16 +139,16 @@ public class Invoker
          super( wrapped );
       }
       
-      
-      
+
+
       @Override
       public InputStream getContent() throws IOException
       {
          return new GZIPInputStream( wrappedEntity.getContent() );
       }
       
-      
-      
+
+
       @Override
       public long getContentLength()
       {
@@ -157,7 +157,7 @@ public class Invoker
    }
    
    
-   
+
    public Invoker( String serverHostName, int serverPortNumber,
       String serviceRelativeUri, ProxySettings proxySettings, boolean useHttp,
       ApplicationInfo applicationInfo ) throws ServiceInternalException
@@ -207,6 +207,7 @@ public class Invoker
       
       client.addRequestInterceptor( new HttpRequestInterceptor()
       {
+         @Override
          public void process( HttpRequest request, HttpContext context )
          {
             // Add header to accept gzip content
@@ -231,8 +232,8 @@ public class Invoker
       }
    }
    
-   
-   
+
+
    private StringBuffer computeRequestUri( Param... params ) throws ServiceInternalException
    {
       final StringBuffer requestUri = new StringBuffer( serviceRelativeUri );
@@ -265,8 +266,8 @@ public class Invoker
       return requestUri;
    }
    
-   
-   
+
+
    public Element invoke( Param... params ) throws ServiceException
    {
       final long timeSinceLastInvocation = System.currentTimeMillis()
@@ -411,15 +412,15 @@ public class Invoker
       }
       catch ( SSLException e )
       {
-         throw new ServiceInternalException( "", e );
+         throw new ServiceInternalException( e.getLocalizedMessage(), e );
       }
       catch ( IOException e )
       {
-         throw new ServiceInternalException( "", e );
+         throw new ServiceInternalException( e.getLocalizedMessage(), e );
       }
       catch ( SAXException e )
       {
-         throw new ServiceInternalException( "", e );
+         throw new ServiceInternalException( e.getLocalizedMessage(), e );
       }
       finally
       {
@@ -429,8 +430,8 @@ public class Invoker
       return result;
    }
    
-   
-   
+
+
    final String calcApiSig( Param... params ) throws ServiceInternalException
    {
       try
@@ -453,8 +454,8 @@ public class Invoker
       }
    }
    
-   
-   
+
+
    private static String convertToHex( byte[] data )
    {
       StringBuffer buf = new StringBuffer();

@@ -46,9 +46,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.auth.Constants;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm;
 import dev.drsoran.rtm.RtmSettings;
@@ -211,21 +211,7 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
       }
       else
       {
-         if ( addAccountHandle == null )
-         {
-            final AccountManager accountManager = AccountManager.get( getContext() );
-            
-            if ( accountManager != null )
-            {
-               addAccountHandle = accountManager.addAccount( Constants.ACCOUNT_TYPE,
-                                                             Constants.AUTH_TOKEN_TYPE,
-                                                             null,
-                                                             new Bundle(),
-                                                             (Activity) getContext(),
-                                                             this,
-                                                             handler );
-            }
-         }
+         ( (Activity) getContext() ).startActivity( Intents.createNewAccountIntent() );
       }
    }
    

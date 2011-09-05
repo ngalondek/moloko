@@ -48,7 +48,6 @@ import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.auth.Constants;
-import dev.drsoran.moloko.fragments.dialogs.NoAccountDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
@@ -144,8 +143,8 @@ public class StartUpActivity extends MolokoFragmentActivity implements
       
       if ( account == null )
       {
-         if ( !isDialogFragmentAdded( NoAccountDialogFragment.class ) )
-            showDialogFragment( NoAccountDialogFragment.newInstance( Bundle.EMPTY ) );
+         // if ( !isDialogFragmentAdded( NoAccountDialogFragment.class ) )
+         // showDialogFragment( NoAccountDialogFragment.newInstance( Bundle.EMPTY ) );
          
          // widgetContainer.removeAllViews();
          //

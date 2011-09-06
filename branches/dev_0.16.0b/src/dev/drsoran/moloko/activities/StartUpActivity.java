@@ -22,32 +22,21 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.io.IOException;
-
 import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.ContentProviderClient;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.auth.Constants;
+import dev.drsoran.moloko.fragments.dialogs.MissingDefaultListDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.NoAccountDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
@@ -55,14 +44,11 @@ import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 
 
-public class StartUpActivity extends MolokoFragmentActivity implements
-         AccountManagerCallback< Bundle >
+public class StartUpActivity extends MolokoFragmentActivity
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
       + StartUpActivity.class.getSimpleName();
-   
-   public final static String ONLY_CHECK_ACCOUNT = "only_check_account";
    
    private final static String STATE_INDEX_KEY = "state_index";
    
@@ -77,12 +63,6 @@ public class StartUpActivity extends MolokoFragmentActivity implements
    private final static int[] STATE_SEQUENCE =
    { STATE_CHECK_ACCOUNT, STATE_DETERMINE_STARTUP_VIEW, STATE_COMPLETED };
    
-   private ViewGroup widgetContainer;
-   
-   private ViewGroup buttonBar;
-   
-   private AccountManagerFuture< Bundle > addAccountHandle;
-   
    private int stateIndex = 0;
    
    
@@ -93,9 +73,6 @@ public class StartUpActivity extends MolokoFragmentActivity implements
       super.onCreate( savedInstanceState );
       
       setContentView( R.layout.startup_activity );
-      
-      widgetContainer = (ViewGroup) findViewById( android.R.id.widget_frame );
-      buttonBar = (ViewGroup) findViewById( R.id.btn_bar );
       
       if ( savedInstanceState != null )
          stateIndex = savedInstanceState.getInt( STATE_INDEX_KEY, 0 );
@@ -110,7 +87,7 @@ public class StartUpActivity extends MolokoFragmentActivity implements
    {
       handler.removeMessages( MSG_STATE_CHANGED );
       
-      super.onStop();
+      super.onDestroy();
    }
    
 
@@ -137,48 +114,34 @@ public class StartUpActivity extends MolokoFragmentActivity implements
    
 
 
-   private boolean checkAccount()
+   private void checkAccountAndSwitchToNext()
+   {
+      checkAccount();
+      switchToNextState();
+   }
+   
+
+
+   private void checkAccount()
    {
       final Account account = AccountUtils.getRtmAccount( this );
       
       if ( account == null )
       {
-         // if ( !isDialogFragmentAdded( NoAccountDialogFragment.class ) )
-         // showDialogFragment( NoAccountDialogFragment.newInstance( Bundle.EMPTY ) );
-         
-         // widgetContainer.removeAllViews();
-         //
-         // // LayoutInflater.from( this )
-         // // .inflate( R.layout.startup_activity_no_account_widget,
-         // // widgetContainer,
-         // // true );
-         //
-         // final Button btnCenter = getButton( android.R.id.button1 );
-         // btnCenter.setVisibility( View.VISIBLE );
-         // btnCenter.setText( R.string.btn_new_account );
-         // btnCenter.setOnClickListener( new OnClickListener()
-         // {
-         // @Override
-         // public void onClick( View v )
-         // {
-         // onAddNewAccount();
-         // }
-         // } );
-         // setButtonIcon( btnCenter, R.drawable.ic_button_add );
-         //
-         // buttonBar.setVisibility( View.VISIBLE );
-         
+         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
+         if ( prefs != null )
+         {
+            final String prefKey = getString( R.string.key_notified_account_creation );
+            
+            if ( !prefs.getBoolean( prefKey, false ) )
+            {
+               if ( !isDialogFragmentAdded( NoAccountDialogFragment.class ) )
+                  showDialogFragment( NoAccountDialogFragment.newInstance( Bundle.EMPTY ) );
+               
+               prefs.edit().putBoolean( prefKey, true ).commit();
+            }
+         }
       }
-      
-      return account != null;
-   }
-   
-
-
-   private void createAccountOrSwitchToNext()
-   {
-      if ( checkAccount() )
-         switchToNextState();
    }
    
 
@@ -200,33 +163,8 @@ public class StartUpActivity extends MolokoFragmentActivity implements
             {
                if ( !existsList( defaultListId ) )
                {
-                  widgetContainer.removeAllViews();
-                  
-                  LayoutInflater.from( this )
-                                .inflate( R.layout.startup_activity_no_def_list_widget,
-                                          widgetContainer,
-                                          true );
-                  
-                  final Button btnCenter = getButton( android.R.id.button1 );
-                  btnCenter.setVisibility( View.VISIBLE );
-                  btnCenter.setText( R.string.btn_continue );
-                  btnCenter.setOnClickListener( new OnClickListener()
-                  {
-                     @Override
-                     public void onClick( View v )
-                     {
-                        settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-                        settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
-                        switchToNextState();
-                     }
-                  } );
-                  
-                  buttonBar.setVisibility( View.VISIBLE );
-               }
-               else
-               {
-                  // STARTUP_VIEW_DEFAULT_LIST
-                  switchToNextState();
+                  if ( !isDialogFragmentAdded( MissingDefaultListDialogFragment.class ) )
+                     showDialogFragment( MissingDefaultListDialogFragment.newInstance( Bundle.EMPTY ) );
                }
             }
             catch ( RemoteException e )
@@ -239,7 +177,6 @@ public class StartUpActivity extends MolokoFragmentActivity implements
          }
          else
          {
-            // STARTUP_VIEW_LISTS
             switchToNextState();
          }
       }
@@ -283,62 +220,6 @@ public class StartUpActivity extends MolokoFragmentActivity implements
    
 
 
-   private void onAddNewAccount()
-   {
-      if ( addAccountHandle != null )
-      {
-         addAccountHandle.cancel( true );
-         addAccountHandle = null;
-      }
-      
-      final AccountManager accountManager = AccountManager.get( this );
-      
-      addAccountHandle = accountManager.addAccount( Constants.ACCOUNT_TYPE,
-                                                    Constants.AUTH_TOKEN_TYPE,
-                                                    null,
-                                                    new Bundle(),
-                                                    this,
-                                                    this,
-                                                    handler );
-   }
-   
-
-
-   @Override
-   public void run( AccountManagerFuture< Bundle > result )
-   {
-      addAccountHandle = null;
-      
-      if ( result.isDone() )
-      {
-         try
-         {
-            result.getResult();
-            switchToNextState();
-         }
-         catch ( OperationCanceledException e )
-         {
-            Toast.makeText( this,
-                            R.string.err_add_account_canceled,
-                            Toast.LENGTH_SHORT );
-         }
-         catch ( AuthenticatorException e )
-         {
-            // According to the doc this can only happen
-            // if there is no authenticator registered for the
-            // account type. This should not happen.
-            Toast.makeText( this, R.string.err_unexpected, Toast.LENGTH_LONG )
-                 .show();
-         }
-         catch ( IOException e )
-         {
-            // Will be notified in the AuthenticatorActivity
-         }
-      }
-   }
-   
-
-
    private void switchToNextState()
    {
       if ( stateIndex + 1 < STATE_SEQUENCE.length )
@@ -356,31 +237,7 @@ public class StartUpActivity extends MolokoFragmentActivity implements
 
    private void reEvaluateCurrentState()
    {
-      if ( getIntent().hasExtra( ONLY_CHECK_ACCOUNT ) )
-      {
-         if ( checkAccount() )
-            finish();
-      }
-      else
-         handler.sendEmptyMessage( MSG_STATE_CHANGED );
-   }
-   
-
-
-   private Button getButton( int id )
-   {
-      return (Button) buttonBar.findViewById( id );
-   }
-   
-
-
-   private void setButtonIcon( Button button, int id )
-   {
-      final BitmapDrawable icon = new BitmapDrawable( getResources().openRawResource( id ) );
-      
-      icon.setBounds( 0, 0, 30, 30 );
-      
-      button.setCompoundDrawables( icon, null, null, null );
+      handler.sendEmptyMessage( MSG_STATE_CHANGED );
    }
    
 
@@ -426,7 +283,7 @@ public class StartUpActivity extends MolokoFragmentActivity implements
                switch ( stateIndex )
                {
                   case STATE_CHECK_ACCOUNT:
-                     createAccountOrSwitchToNext();
+                     checkAccountAndSwitchToNext();
                      break;
                   
                   case STATE_DETERMINE_STARTUP_VIEW:

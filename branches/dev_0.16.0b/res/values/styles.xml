@@ -329,16 +329,4 @@
 		<item name="text">@string/err_error</item>
 	</style>
 
- 	<!-- ********* -->
-	<!-- StartUp   -->
-
-	<style name="StartUp.Error" parent="Error">
-		<item name="android:layout_height">fill_parent</item>
-	</style>
-
-	
-	<style name="StartUp.Error.NoDefList">
-		<item name="text">@string/startup_no_def_list</item>
-	</style>
-	
-</resources>
+ </resources>

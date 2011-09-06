@@ -22,24 +22,30 @@
 
 package dev.drsoran.moloko.activities;
 
+import android.accounts.Account;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
+import android.os.RemoteException;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.AdapterView.OnItemClickListener;
+import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.adapters.HomeAdapter;
-import dev.drsoran.moloko.fragments.dialogs.NoAccountDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.MissingDefaultListDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
+import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
+import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
+import dev.drsoran.provider.Rtm;
+import dev.drsoran.provider.Rtm.Lists;
 
 
 public class HomeActivity extends MolokoFragmentActivity implements
@@ -52,6 +58,8 @@ public class HomeActivity extends MolokoFragmentActivity implements
    
    private final Handler handler = new Handler();
    
+   private IMolokoHomeWidget addAccountWidget;
+   
    
 
    @Override
@@ -59,8 +67,6 @@ public class HomeActivity extends MolokoFragmentActivity implements
    {
       super.onCreate( savedInstanceState );
       setContentView( R.layout.home_activity );
-      
-      checkRtmAccountExists();
       
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
       gridview.setOnItemClickListener( this );
@@ -75,8 +81,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
    {
       super.onResume();
       
-      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
-      final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
+      final HomeAdapter homeAdapter = getHomeAdapter();
       
       if ( homeAdapter != null )
       {
@@ -92,13 +97,10 @@ public class HomeActivity extends MolokoFragmentActivity implements
    {
       super.onStop();
       
-      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
-      final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
+      final HomeAdapter homeAdapter = getHomeAdapter();
       
       if ( homeAdapter != null )
-      {
          homeAdapter.stopWidgets();
-      }
    }
    
 
@@ -153,6 +155,26 @@ public class HomeActivity extends MolokoFragmentActivity implements
    
 
 
+   @Override
+   public void onAccountsUpdated( Account[] accounts )
+   {
+      super.onAccountsUpdated( accounts );
+      
+      showAddAccountWidget( AccountUtils.getRtmAccount( this ) == null );
+   }
+   
+
+
+   private HomeAdapter getHomeAdapter()
+   {
+      final GridView gridview = (GridView) findViewById( R.id.home_gridview );
+      final HomeAdapter homeAdapter = (HomeAdapter) gridview.getAdapter();
+      
+      return homeAdapter;
+   }
+   
+
+
    private void fillGrid()
    {
       final GridView gridview = (GridView) findViewById( R.id.home_gridview );
@@ -194,38 +216,59 @@ public class HomeActivity extends MolokoFragmentActivity implements
    
 
 
-   private void checkRtmAccountExists()
+   private void showAddAccountWidget( boolean show )
    {
-      if ( AccountUtils.getRtmAccount( this ) == null )
+      if ( show )
       {
-         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-         if ( prefs != null )
+         if ( addAccountWidget == null )
          {
-            final String prefKey = getString( R.string.key_notified_account_creation );
-            
-            if ( !prefs.getBoolean( prefKey, false ) )
-            {
-               if ( !isDialogFragmentAdded( NoAccountDialogFragment.class ) )
-                  showDialogFragment( NoAccountDialogFragment.newInstance( Bundle.EMPTY ) );
-               
-               prefs.edit().putBoolean( prefKey, true ).commit();
-            }
+            getHomeAdapter().addWidget( new SimpleHomeWidgetLayout( this,
+                                                                    null,
+                                                                    R.string.btn_new_account,
+                                                                    R.drawable.ic_home_add,
+                                                                    Intents.createNewAccountIntent() ) );
+         }
+      }
+      else
+      {
+         if ( addAccountWidget != null )
+         {
+            getHomeAdapter().removeWidget( addAccountWidget );
+            addAccountWidget = null;
          }
       }
    }
    
 
 
-   private boolean isDialogFragmentAdded( Class< ? extends DialogFragment > clazz )
+   private void checkDefaultListStartup()
    {
-      return getSupportFragmentManager().findFragmentByTag( clazz.getName() ) != null;
-   }
-   
-
-
-   private void showDialogFragment( DialogFragment newInstance )
-   {
-      newInstance.show( getSupportFragmentManager(), newInstance.getClass()
-                                                                .getName() );
+      final Settings settings = MolokoApp.getSettings();
+      
+      if ( settings != null )
+      {
+         // Check that the set default list exists and can be shown
+         final String defaultListId = settings.getDefaultListId();
+         
+         try
+         {
+            if ( !Queries.exists( getContentResolver().acquireContentProviderClient( Rtm.AUTHORITY ),
+                                  Lists.CONTENT_URI,
+                                  defaultListId ) )
+            {
+               MissingDefaultListDialogFragment.show( this );
+            }
+         }
+         catch ( RemoteException e )
+         {
+            // We simply ignore the exception and start with lists view.
+            // Perhaps next time it works again.
+            settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
+         }
+      }
+      else
+      {
+         throw new IllegalStateException( "Moloko settings instace is null." );
+      }
    }
 }

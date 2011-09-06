@@ -34,8 +34,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.ContactsListActivity;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.activities.TagCloudActivity;
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.widgets.CalendarHomeWidget;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.OverDueTasksHomeWidget;
@@ -92,13 +90,6 @@ public class HomeAdapter extends BaseAdapter
                                                R.drawable.ic_home_settings,
                                                new Intent( context,
                                                            MolokoPreferencesActivity.class ) ) );
-      
-      if ( AccountUtils.getRtmAccount( context ) == null )
-         widgets.add( new SimpleHomeWidgetLayout( context,
-                                                  null,
-                                                  R.string.btn_new_account,
-                                                  R.drawable.ic_button_add,
-                                                  Intents.createNewAccountIntent() ) );
    }
    
 
@@ -159,6 +150,26 @@ public class HomeAdapter extends BaseAdapter
    {
       for ( IMolokoHomeWidget widget : widgets )
          widget.start();
+   }
+   
+
+
+   public void addWidget( IMolokoHomeWidget widget )
+   {
+      widgets.add( widget );
+      widget.start();
+      
+      notifyDataSetChanged();
+   }
+   
+
+
+   public void removeWidget( IMolokoHomeWidget widget )
+   {
+      widget.stop();
+      widgets.remove( widget );
+      
+      notifyDataSetChanged();
    }
    
 

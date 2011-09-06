@@ -193,7 +193,11 @@
    <!-- No account dialog -->
    <string name="dlg_no_account_title">Neues Remember The Milk Konto</string>
    <string name="dlg_no_account_text">Es wurden noch keine Remember The Milk (RTM) Zugangsdaten hinterlegt. Die RTM Zugangsdaten sind nötig, um die Aufgabensynchronisierung mit dem RTM Server durchzuführen.\n\nSie können jetzt Ihre RTM Zugangsdaten hinterlegen und somit die Hintergrundsynchronisierung aktivieren.</string>
-   <string name="dlg_no_account_btn_no_account">Kein Konto</string>   
+   <string name="dlg_no_account_btn_no_account">Kein Konto</string>
+   
+   <!-- Missing default list dialog -->
+   <string name="dlg_missing_def_list_title">Fehlende Standardliste</string>
+   <string name="dlg_missing_def_list_text">Es kann nicht mit der Standardliste gestartet werden, da diese nicht existiert.\n\nEs wird mit der Standardansicht gestartet.</string>   
    
 	<!-- Searchable -->
 	<string name="search_hint">Suche nach Aufgaben</string>
@@ -202,7 +206,6 @@
 	<string name="home_label_overdue">Überfällig</string>
 	
 	<!-- StartUp activity -->	
-	<string name="startup_no_def_list">Es kann nicht mit der Standardliste gestartet werden, da diese nicht existiert.\n\nEs wird mit der Standardansicht gestartet.</string>
 	  <!-- Toasts -->
 	  <string name="startup_toast_no_settings">Einstellungen konnten nicht geladen werden. Starte mit Standarseinstellungen.</string>	  
 	

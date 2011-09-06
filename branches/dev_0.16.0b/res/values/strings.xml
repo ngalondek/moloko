@@ -240,6 +240,10 @@
    <string name="dlg_no_account_title">New Remember The Milk account</string>
    <string name="dlg_no_account_text">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>   
    <string name="dlg_no_account_btn_no_account">No account</string>
+   
+   <!-- Missing default list dialog -->
+   <string name="dlg_missing_def_list_title">Missing default list</string>
+   <string name="dlg_missing_def_list_text">It can not be started with the standard list because it does not exist.\n\nIt will be started with the default view.</string>
 	
 	<!-- Searchable -->
 	<string name="search_label">@string/app_name</string>
@@ -252,7 +256,6 @@
    <string name="home_label_sync">@string/phr_do_sync</string>
 	
 	<!-- StartUp activity -->   
-   <string name="startup_no_def_list">It can not be started with the standard list because it does not exist.\n\nIt will be started with the default view.</string>
      <!-- Toasts -->
      <string name="startup_toast_no_settings">Settings could not be loaded. Starting with default settings.</string>     
    

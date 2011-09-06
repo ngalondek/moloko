@@ -263,7 +263,9 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
          onReEvaluateRtmAccessLevel( AccountUtils.getAccessLevel( this ) );
       }
       else
+      {
          ignoreAccountListenerAfterRegister = false;
+      }
    }
    
 

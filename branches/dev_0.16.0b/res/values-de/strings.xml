@@ -44,7 +44,8 @@
 	<string name="app_sort_alpha">Aufgabenbezeichnung</string>
    <string name="app_sort_prio">Priorität</string>
    <string name="app_sort_due_date">Fälligkeitsdatum</string>
-   <string name="app_save">Änderungen übernehmen</string>   
+   <string name="app_save">Änderungen übernehmen</string>
+   <string name="app_startup">Starte Moloko ...</string>
    
    <string name="svc_sync">RTM Synchronisierung</string>	
    <string name="svc_auth">RTM Authentifizierung</string>

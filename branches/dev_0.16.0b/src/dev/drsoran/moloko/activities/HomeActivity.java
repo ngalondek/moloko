@@ -26,26 +26,19 @@ import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.RemoteException;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
-import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.adapters.HomeAdapter;
-import dev.drsoran.moloko.fragments.dialogs.MissingDefaultListDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
-import dev.drsoran.provider.Rtm;
-import dev.drsoran.provider.Rtm.Lists;
 
 
 public class HomeActivity extends MolokoFragmentActivity implements
@@ -236,39 +229,6 @@ public class HomeActivity extends MolokoFragmentActivity implements
             getHomeAdapter().removeWidget( addAccountWidget );
             addAccountWidget = null;
          }
-      }
-   }
-   
-
-
-   private void checkDefaultListStartup()
-   {
-      final Settings settings = MolokoApp.getSettings();
-      
-      if ( settings != null )
-      {
-         // Check that the set default list exists and can be shown
-         final String defaultListId = settings.getDefaultListId();
-         
-         try
-         {
-            if ( !Queries.exists( getContentResolver().acquireContentProviderClient( Rtm.AUTHORITY ),
-                                  Lists.CONTENT_URI,
-                                  defaultListId ) )
-            {
-               MissingDefaultListDialogFragment.show( this );
-            }
-         }
-         catch ( RemoteException e )
-         {
-            // We simply ignore the exception and start with lists view.
-            // Perhaps next time it works again.
-            settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-         }
-      }
-      else
-      {
-         throw new IllegalStateException( "Moloko settings instace is null." );
       }
    }
 }

@@ -29,12 +29,15 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
+import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.UIUtils;
 
@@ -165,8 +168,10 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
 
 
-   protected final void showLoadingSpinner()
+   protected final void showLoadingSpinner( boolean show )
    {
+      showEmptyView( false );
+      
       if ( getView() != null )
       {
          final View content = getContentView();
@@ -210,6 +215,28 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
             showContent();
          }
       } );
+   }
+   
+
+
+   public void showError( CharSequence errorMessage )
+   {
+      final TextView errorTextView = prepareErrorViewAndGetMessageView();
+      if ( errorTextView != null )
+         errorTextView.setText( errorMessage );
+      
+      getLoaderManager().destroyLoader( getLoaderId() );
+   }
+   
+
+
+   public void showError( Spanned errorMessage )
+   {
+      final TextView errorTextView = prepareErrorViewAndGetMessageView();
+      if ( errorTextView != null )
+         errorTextView.setText( errorMessage );
+      
+      getLoaderManager().destroyLoader( getLoaderId() );
    }
    
 
@@ -318,6 +345,45 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    {
       loaderData = null;
       loaderNotDataFound = false;
+   }
+   
+
+
+   protected TitleWithTextLayout getErrorView()
+   {
+      View errorView = null;
+      
+      if ( getView() != null )
+         errorView = getView().findViewById( R.id.error );
+      
+      return (TitleWithTextLayout) errorView;
+   }
+   
+
+
+   private void showErrorView( boolean show )
+   {
+      final View errorView = getErrorView();
+      if ( errorView != null )
+         errorView.setVisibility( show ? View.VISIBLE : View.GONE );
+   }
+   
+
+
+   private TextView prepareErrorViewAndGetMessageView()
+   {
+      TextView errorTextView = null;
+      final TitleWithTextLayout errorView = getErrorView();
+      
+      if ( errorView != null )
+      {
+         showLoadingSpinner( false );
+         showErrorView( true );
+         
+         errorTextView = (TextView) errorView.findViewById( R.id.title_with_text_text );
+      }
+      
+      return errorTextView;
    }
    
 

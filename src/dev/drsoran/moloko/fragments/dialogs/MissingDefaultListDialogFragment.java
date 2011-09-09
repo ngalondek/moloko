@@ -30,22 +30,22 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 
 
-public class NoAccountDialogFragment extends MolokoDialogFragment
+public class MissingDefaultListDialogFragment extends MolokoDialogFragment
 {
-   public final static NoAccountDialogFragment show( FragmentActivity activity )
+   public final static MissingDefaultListDialogFragment show( FragmentActivity activity )
    {
-      final NoAccountDialogFragment fragment = new NoAccountDialogFragment();
+      final MissingDefaultListDialogFragment fragment = new MissingDefaultListDialogFragment();
       fragment.show( activity.getSupportFragmentManager(),
-                     NoAccountDialogFragment.class.getName() );
+                     MissingDefaultListDialogFragment.class.getName() );
       
       return fragment;
    }
    
 
 
-   public final static NoAccountDialogFragment newInstance( Bundle config )
+   public final static MissingDefaultListDialogFragment newInstance( Bundle config )
    {
-      final NoAccountDialogFragment fragment = new NoAccountDialogFragment();
+      final MissingDefaultListDialogFragment fragment = new MissingDefaultListDialogFragment();
       
       fragment.setArguments( config );
       
@@ -57,13 +57,11 @@ public class NoAccountDialogFragment extends MolokoDialogFragment
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      return new AlertDialog.Builder( getActivity() ).setTitle( R.string.dlg_no_account_title )
-                                                     .setIcon( R.drawable.rtm )
-                                                     .setMessage( R.string.dlg_no_account_text )
-                                                     .setPositiveButton( R.string.btn_new_account,
-                                                                         getGenericOnClickListener() )
-                                                     .setNegativeButton( R.string.dlg_no_account_btn_no_account,
-                                                                         getGenericOnClickListener() )
+      return new AlertDialog.Builder( getActivity() ).setTitle( R.string.dlg_missing_def_list_title )
+                                                     .setIcon( R.drawable.ic_prefs_info )
+                                                     .setMessage( R.string.dlg_missing_def_list_text )
+                                                     .setNeutralButton( R.string.btn_continue,
+                                                                        getGenericOnClickListener() )
                                                      .create();
    }
 }

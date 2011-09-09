@@ -25,7 +25,6 @@ package dev.drsoran.moloko.fragments.base;
 import java.util.HashMap;
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -39,7 +38,7 @@ import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoEditDialogFragment< T extends Fragment > extends
-         DialogFragment implements IConfigurable, IEditFragment< T >
+         MolokoDialogFragment implements IConfigurable, IEditFragment< T >
 {
    private IOnSettingsChangedListener onSettingsChangedListener;
    

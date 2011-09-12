@@ -53,13 +53,13 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
+import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
@@ -537,11 +537,10 @@ public final class UIUtils
    
 
 
-   @Deprecated
-   public final static void initializeErrorWithIcon( Context context,
-                                                     ViewGroup container,
-                                                     int errorMsgResId,
-                                                     Object... params )
+   public final static void inflateErrorWithIcon( Context context,
+                                                  ViewGroup container,
+                                                  int errorMsgResId,
+                                                  Object... params )
    {
       final View view = LayoutInflater.from( context )
                                       .inflate( R.layout.error_with_icon,
@@ -557,10 +556,9 @@ public final class UIUtils
    
 
 
-   @Deprecated
-   public final static void initializeErrorWithIcon( Context context,
-                                                     ViewGroup container,
-                                                     Spanned errorText )
+   public final static void inflateErrorWithIcon( Context context,
+                                                  ViewGroup container,
+                                                  Spanned errorText )
    {
       final View view = LayoutInflater.from( context )
                                       .inflate( R.layout.error_with_icon,

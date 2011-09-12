@@ -229,7 +229,7 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
          {
             content.removeAllViews();
             
-            UIUtils.initializeErrorWithIcon( getActivity(),
+            UIUtils.inflateErrorWithIcon( getActivity(),
                                              content,
                                              R.string.err_entity_not_found,
                                              getLoaderDataName() );

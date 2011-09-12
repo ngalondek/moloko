@@ -29,11 +29,9 @@ import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
@@ -168,20 +166,30 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
 
 
-   protected final void showLoadingSpinner( boolean show )
+   protected final void showLoadingSpinner()
    {
-      showEmptyView( false );
-      
       if ( getView() != null )
       {
-         final View content = getContentView();
-         if ( content != null )
-            content.setVisibility( View.GONE );
-         
-         final View spinner = getView().findViewById( R.id.loading_spinner );
+         final View spinner = getLoadingSpinnerView();
          if ( spinner != null )
             spinner.setVisibility( View.VISIBLE );
+         
+         final View contentView = getContentView();
+         if ( contentView != null )
+            contentView.setVisibility( View.GONE );
       }
+   }
+   
+
+
+   protected View getLoadingSpinnerView()
+   {
+      View loadView = null;
+      
+      if ( getView() != null )
+         loadView = getView().findViewById( R.id.loading_spinner );
+      
+      return loadView;
    }
    
 
@@ -190,7 +198,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    {
       if ( getView() != null )
       {
-         final View spinner = getView().findViewById( R.id.loading_spinner );
+         final View spinner = getLoadingSpinnerView();
          if ( spinner != null )
             spinner.setVisibility( View.GONE );
          
@@ -219,28 +227,6 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
 
 
-   public void showError( CharSequence errorMessage )
-   {
-      final TextView errorTextView = prepareErrorViewAndGetMessageView();
-      if ( errorTextView != null )
-         errorTextView.setText( errorMessage );
-      
-      getLoaderManager().destroyLoader( getLoaderId() );
-   }
-   
-
-
-   public void showError( Spanned errorMessage )
-   {
-      final TextView errorTextView = prepareErrorViewAndGetMessageView();
-      if ( errorTextView != null )
-         errorTextView.setText( errorMessage );
-      
-      getLoaderManager().destroyLoader( getLoaderId() );
-   }
-   
-
-
    protected final void showElementNotFoundError()
    {
       if ( getView() != null )
@@ -254,10 +240,10 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
          {
             content.removeAllViews();
             
-            UIUtils.initializeErrorWithIcon( getActivity(),
-                                             content,
-                                             R.string.err_entity_not_found,
-                                             getLoaderDataName() );
+            UIUtils.inflateErrorWithIcon( getActivity(),
+                                          content,
+                                          R.string.err_entity_not_found,
+                                          getLoaderDataName() );
             content.setVisibility( View.VISIBLE );
          }
       }
@@ -357,33 +343,6 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
          errorView = getView().findViewById( R.id.error );
       
       return (TitleWithTextLayout) errorView;
-   }
-   
-
-
-   private void showErrorView( boolean show )
-   {
-      final View errorView = getErrorView();
-      if ( errorView != null )
-         errorView.setVisibility( show ? View.VISIBLE : View.GONE );
-   }
-   
-
-
-   private TextView prepareErrorViewAndGetMessageView()
-   {
-      TextView errorTextView = null;
-      final TitleWithTextLayout errorView = getErrorView();
-      
-      if ( errorView != null )
-      {
-         showLoadingSpinner( false );
-         showErrorView( true );
-         
-         errorTextView = (TextView) errorView.findViewById( R.id.title_with_text_text );
-      }
-      
-      return errorTextView;
    }
    
 

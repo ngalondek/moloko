@@ -45,6 +45,7 @@ import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
@@ -495,6 +496,15 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
+   }
+   
+
+
+   @Override
+   public boolean canBeEdited()
+   {
+      return getLoaderData() != null
+         && AccountUtils.isWriteableAccess( getActivity() );
    }
    
 

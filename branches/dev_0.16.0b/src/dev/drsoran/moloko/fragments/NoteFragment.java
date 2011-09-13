@@ -37,6 +37,7 @@ import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
 import dev.drsoran.moloko.loaders.RtmTaskNoteLoader;
+import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 
@@ -120,6 +121,13 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
    
 
 
+   public RtmTaskNote getNote()
+   {
+      return getLoaderData();
+   }
+   
+
+
    @Override
    public Loader< RtmTaskNote > newLoaderInstance( int id, Bundle args )
    {
@@ -141,6 +149,15 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
    public int getLoaderId()
    {
       return NOTE_LOADER_ID;
+   }
+   
+
+
+   @Override
+   public boolean canBeEdited()
+   {
+      return getNote() != null
+         && AccountUtils.isWriteableAccess( getActivity() );
    }
    
 

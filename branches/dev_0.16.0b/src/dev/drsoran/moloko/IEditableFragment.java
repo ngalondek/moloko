@@ -27,5 +27,9 @@ import android.support.v4.app.Fragment;
 
 public interface IEditableFragment< T extends Fragment >
 {
+   boolean canBeEdited();
+   
+
+
    IEditFragment< ? extends Fragment > createEditFragmentInstance();
 }

@@ -35,7 +35,6 @@ import android.view.ViewGroup;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
-import dev.drsoran.moloko.layouts.TitleWithTextLayout;
 import dev.drsoran.moloko.loaders.AbstractLoader;
 import dev.drsoran.moloko.util.UIUtils;
 
@@ -159,7 +158,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    
 
 
-   public boolean hasLoaderDataFound()
+   public boolean isLoaderDataFound()
    {
       return !loaderNotDataFound;
    }
@@ -331,18 +330,6 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    {
       loaderData = null;
       loaderNotDataFound = false;
-   }
-   
-
-
-   protected TitleWithTextLayout getErrorView()
-   {
-      View errorView = null;
-      
-      if ( getView() != null )
-         errorView = getView().findViewById( R.id.error );
-      
-      return (TitleWithTextLayout) errorView;
    }
    
 

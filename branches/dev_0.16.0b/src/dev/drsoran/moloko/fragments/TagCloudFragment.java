@@ -37,9 +37,9 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
@@ -70,7 +70,7 @@ public class TagCloudFragment extends
       public final int count;
       
       
-
+      
       public TagCloudEntry( int type, String name, int count )
       {
          this.type = type;
@@ -78,15 +78,16 @@ public class TagCloudFragment extends
          this.count = count;
       }
       
-
-
+      
+      
+      @Override
       public int compareTo( TagCloudEntry another )
       {
          return name.compareToIgnoreCase( another.name );
       }
       
-
-
+      
+      
       @Override
       public String toString()
       {
@@ -117,6 +118,7 @@ public class TagCloudFragment extends
    
    private final OnClickListener listClickListener = new OnClickListener()
    {
+      @Override
       public void onClick( View v )
       {
          if ( listener != null )
@@ -126,6 +128,7 @@ public class TagCloudFragment extends
    
    private final OnClickListener tagClickListener = new OnClickListener()
    {
+      @Override
       public void onClick( View v )
       {
          if ( listener != null )
@@ -135,6 +138,7 @@ public class TagCloudFragment extends
    
    private final OnClickListener locationClickListener = new OnClickListener()
    {
+      @Override
       public void onClick( View v )
       {
          if ( listener != null )
@@ -145,6 +149,7 @@ public class TagCloudFragment extends
    
    private final OnLongClickListener locationLongClickListener = new View.OnLongClickListener()
    {
+      @Override
       public boolean onLongClick( View v )
       {
          if ( listener != null )
@@ -170,7 +175,7 @@ public class TagCloudFragment extends
    private ITagCloudFragmentListener listener;
    
    
-
+   
    public final static TagCloudFragment newInstance( Bundle config )
    {
       final TagCloudFragment fragment = new TagCloudFragment();
@@ -180,8 +185,8 @@ public class TagCloudFragment extends
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -193,8 +198,8 @@ public class TagCloudFragment extends
          listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -203,8 +208,8 @@ public class TagCloudFragment extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -217,8 +222,8 @@ public class TagCloudFragment extends
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void initContent( ViewGroup container )
    {
@@ -226,7 +231,7 @@ public class TagCloudFragment extends
       
       if ( cloudEntries.size() > 0 )
       {
-         final Activity activity = getActivity();
+         final Activity activity = getFragmentActivity();
          
          // Sort all cloud entries by their name
          Collections.sort( cloudEntries );
@@ -287,32 +292,32 @@ public class TagCloudFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    public Loader< List< TagCloudEntry > > newLoaderInstance( int id, Bundle args )
    {
-      return new TagCloudEntryLoader( getActivity() );
+      return new TagCloudEntryLoader( getFragmentActivity() );
    }
    
-
-
+   
+   
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_tagcloud );
    }
    
-
-
+   
+   
    @Override
    public int getLoaderId()
    {
       return TAG_CLOUD_ENTRY_LOADER_ID;
    }
    
-
-
+   
+   
    private final static void addButtons( List< Button > buttons,
                                          ViewGroup container )
    {
@@ -341,8 +346,8 @@ public class TagCloudFragment extends
       }
    }
    
-
-
+   
+   
    private final static float getMagnifyFactor( int count )
    {
       Float result = MAGNIFY_LOOKUP.get( count );

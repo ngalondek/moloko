@@ -41,8 +41,8 @@ public class NoAccountDialogFragment extends MolokoDialogFragment
       return fragment;
    }
    
-
-
+   
+   
    public final static NoAccountDialogFragment newInstance( Bundle config )
    {
       final NoAccountDialogFragment fragment = new NoAccountDialogFragment();
@@ -52,18 +52,18 @@ public class NoAccountDialogFragment extends MolokoDialogFragment
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      return new AlertDialog.Builder( getActivity() ).setTitle( R.string.dlg_no_account_title )
-                                                     .setIcon( R.drawable.rtm )
-                                                     .setMessage( R.string.dlg_no_account_text )
-                                                     .setPositiveButton( R.string.btn_new_account,
-                                                                         getGenericOnClickListener() )
-                                                     .setNegativeButton( R.string.dlg_no_account_btn_no_account,
-                                                                         getGenericOnClickListener() )
-                                                     .create();
+      return new AlertDialog.Builder( getFragmentActivity() ).setTitle( R.string.dlg_no_account_title )
+                                                             .setIcon( R.drawable.rtm )
+                                                             .setMessage( R.string.dlg_no_account_text )
+                                                             .setPositiveButton( R.string.btn_new_account,
+                                                                                 getGenericOnClickListener() )
+                                                             .setNegativeButton( R.string.dlg_no_account_btn_no_account,
+                                                                                 getGenericOnClickListener() )
+                                                             .create();
    }
 }

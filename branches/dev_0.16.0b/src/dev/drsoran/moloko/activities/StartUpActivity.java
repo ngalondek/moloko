@@ -70,7 +70,7 @@ public class StartUpActivity extends MolokoFragmentActivity
    private int stateIndex = 0;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -85,8 +85,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       reEvaluateCurrentState();
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -95,8 +95,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       super.onDestroy();
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -105,8 +105,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       outState.putInt( STATE_INDEX_KEY, stateIndex );
    }
    
-
-
+   
+   
    @Override
    protected void onRestoreInstanceState( Bundle savedInstanceState )
    {
@@ -117,8 +117,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       reEvaluateCurrentState();
    }
    
-
-
+   
+   
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -128,8 +128,8 @@ public class StartUpActivity extends MolokoFragmentActivity
          super.onActivityResult( requestCode, resultCode, data );
    }
    
-
-
+   
+   
    private void checkAccount()
    {
       boolean switchToNextState = true;
@@ -180,8 +180,8 @@ public class StartUpActivity extends MolokoFragmentActivity
          switchToNextState();
    }
    
-
-
+   
+   
    private void determineStartupView()
    {
       final Settings settings = MolokoApp.getSettings();
@@ -222,13 +222,10 @@ public class StartUpActivity extends MolokoFragmentActivity
                // We simply ignore the exception and start with default view.
                // Perhaps next time it works again.
                settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-               switchToNextState();
             }
          }
-         else
-         {
-            switchToNextState();
-         }
+         
+         switchToNextState();
       }
       else
       {
@@ -236,8 +233,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       }
    }
    
-
-
+   
+   
    private void onStartUpCompleted()
    {
       final int startUpView = MolokoApp.getSettings().getStartupView();
@@ -268,8 +265,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       finish();
    }
    
-
-
+   
+   
    private void switchToNextState()
    {
       if ( stateIndex + 1 < STATE_SEQUENCE.length )
@@ -283,15 +280,15 @@ public class StartUpActivity extends MolokoFragmentActivity
       }
    }
    
-
-
+   
+   
    private void reEvaluateCurrentState()
    {
       handler.sendEmptyMessage( MSG_STATE_CHANGED );
    }
    
-
-
+   
+   
    private boolean existsList( String id ) throws RemoteException
    {
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
@@ -299,16 +296,16 @@ public class StartUpActivity extends MolokoFragmentActivity
       return client != null && Queries.exists( client, Lists.CONTENT_URI, id );
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {
       return null;
    }
    
-
-
+   
+   
    private void setCreateNewAccountAsNotified()
    {
       final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
@@ -318,15 +315,15 @@ public class StartUpActivity extends MolokoFragmentActivity
            .commit();
    }
    
-
-
+   
+   
    private boolean isDialogFragmentAdded( Class< ? extends DialogFragment > clazz )
    {
       return getSupportFragmentManager().findFragmentByTag( clazz.getName() ) != null;
    }
    
-
-
+   
+   
    private MolokoDialogFragment showDialogFragment( MolokoDialogFragment newInstance )
    {
       newInstance.show( getSupportFragmentManager(), newInstance.getClass()
@@ -349,7 +346,7 @@ public class StartUpActivity extends MolokoFragmentActivity
     * @Override public void onClick( DialogInterface dialog, int which ) { setCreateNewAccountAsNotified();
     * switchToNextState(); } } ) .create(); } }
     */
-
+   
    /*
     * Must be public due to recreation if device orientation changes public final class MissingDefaultListDialogFragment
     * extends DialogFragment {
@@ -366,7 +363,7 @@ public class StartUpActivity extends MolokoFragmentActivity
     * 
     * switchToNextState(); } } ) .create(); } }
     */
-
+   
    private final Handler handler = new Handler()
    {
       @Override

@@ -27,15 +27,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 
 
-public class AboutMolokoDialogFragment extends DialogFragment
+public class AboutMolokoDialogFragment extends MolokoDialogFragment
 {
    
    public final static AboutMolokoDialogFragment newInstance( Bundle config )
@@ -47,8 +47,8 @@ public class AboutMolokoDialogFragment extends DialogFragment
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -57,12 +57,12 @@ public class AboutMolokoDialogFragment extends DialogFragment
       setStyle( STYLE_NORMAL, 0 );
    }
    
-
-
+   
+   
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      final Activity context = getActivity();
+      final Activity context = getFragmentActivity();
       
       final View content = LayoutInflater.from( context )
                                          .inflate( R.layout.about_moloko_dialog_fragment,

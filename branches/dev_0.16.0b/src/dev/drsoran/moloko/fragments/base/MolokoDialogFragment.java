@@ -22,10 +22,10 @@
 
 package dev.drsoran.moloko.fragments.base;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 
 
 public abstract class MolokoDialogFragment extends DialogFragment
@@ -44,15 +44,15 @@ public abstract class MolokoDialogFragment extends DialogFragment
       {
          switch ( which )
          {
-            case Dialog.BUTTON_POSITIVE:
+            case DialogInterface.BUTTON_POSITIVE:
                if ( listenerPositive != null )
                   listenerPositive.onClick( getDialog(), which );
                break;
-            case Dialog.BUTTON_NEGATIVE:
+            case DialogInterface.BUTTON_NEGATIVE:
                if ( listenerNegative != null )
                   listenerNegative.onClick( getDialog(), which );
                break;
-            case Dialog.BUTTON_NEUTRAL:
+            case DialogInterface.BUTTON_NEUTRAL:
                if ( listenerNeutral != null )
                   listenerNeutral.onClick( getDialog(), which );
                break;
@@ -63,19 +63,26 @@ public abstract class MolokoDialogFragment extends DialogFragment
    };
    
    
-
+   
+   public FragmentActivity getFragmentActivity()
+   {
+      return (FragmentActivity) getSupportActivity();
+   }
+   
+   
+   
    public void setButtonClickListener( int buttonType,
                                        DialogInterface.OnClickListener listener )
    {
       switch ( buttonType )
       {
-         case Dialog.BUTTON_POSITIVE:
+         case DialogInterface.BUTTON_POSITIVE:
             listenerPositive = listener;
             break;
-         case Dialog.BUTTON_NEGATIVE:
+         case DialogInterface.BUTTON_NEGATIVE:
             listenerNegative = listener;
             break;
-         case Dialog.BUTTON_NEUTRAL:
+         case DialogInterface.BUTTON_NEUTRAL:
             listenerNeutral = listener;
             break;
          default :
@@ -83,8 +90,8 @@ public abstract class MolokoDialogFragment extends DialogFragment
       }
    }
    
-
-
+   
+   
    protected OnClickListener getGenericOnClickListener()
    {
       return genericListener;

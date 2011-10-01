@@ -62,14 +62,14 @@ public final class SyncUtils
       + SyncUtils.class.getSimpleName();
    
    
-
+   
    private SyncUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
+   
+   
    public final static void handleServiceInternalException( ServiceInternalException exception,
                                                             String tag,
                                                             SyncResult syncResult )
@@ -92,15 +92,15 @@ public final class SyncUtils
       }
    }
    
-
-
+   
+   
    public final static void requestManualSync( FragmentActivity activity )
    {
       SyncUtils.requestManualSync( activity, SyncUtils.isReadyToSync( activity ) );
    }
    
-
-
+   
+   
    public final static void requestManualSync( FragmentActivity activity,
                                                Account account )
    {
@@ -119,8 +119,8 @@ public final class SyncUtils
       }
    }
    
-
-
+   
+   
    public final static void requestSettingsOnlySync( Context context,
                                                      Account account )
    {
@@ -142,8 +142,8 @@ public final class SyncUtils
       }
    }
    
-
-
+   
+   
    public final static void requestScheduledSync( Context context,
                                                   Account account )
    {
@@ -158,8 +158,8 @@ public final class SyncUtils
       }
    }
    
-
-
+   
+   
    public final static void cancelSync( Context context )
    {
       final Account account = AccountUtils.getRtmAccount( context );
@@ -168,8 +168,8 @@ public final class SyncUtils
          ContentResolver.cancelSync( account, Rtm.AUTHORITY );
    }
    
-
-
+   
+   
    public final static Account isReadyToSync( Context context )
    {
       // Check if we are connected.
@@ -190,8 +190,8 @@ public final class SyncUtils
       return account;
    }
    
-
-
+   
+   
    public final static boolean isSyncing( Context context )
    {
       final Account account = AccountUtils.getRtmAccount( context );
@@ -201,8 +201,8 @@ public final class SyncUtils
          && ContentResolver.isSyncActive( account, Rtm.AUTHORITY );
    }
    
-
-
+   
+   
    /**
     * Loads the start time from the Sync database table and the interval from the settings.
     */
@@ -214,8 +214,8 @@ public final class SyncUtils
          SyncUtils.schedulePeriodicSync( context, interval );
    }
    
-
-
+   
+   
    /**
     * Loads the start time from the Sync database table.
     */
@@ -251,8 +251,8 @@ public final class SyncUtils
       MolokoApp.schedulePeriodicSync( startUtc, interval );
    }
    
-
-
+   
+   
    public final static < V > boolean hasChanged( V oldVal, V newVal )
    {
       return ( oldVal == null && newVal != null )
@@ -266,7 +266,7 @@ public final class SyncUtils
    }
    
    
-
+   
    public final static < V > SyncResultDirection getSyncDirection( SyncProperties properties,
                                                                    String columnName,
                                                                    V serverValue,
@@ -323,8 +323,8 @@ public final class SyncUtils
       return syncDir;
    }
    
-
-
+   
+   
    public final static < T > void applyServerOperations( RtmProvider rtmProvider,
                                                          List< ? extends IServerSyncOperation< T > > serverOps,
                                                          List< T > sortedServerElements,

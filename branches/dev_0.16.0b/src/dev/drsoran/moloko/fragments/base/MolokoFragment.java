@@ -27,6 +27,7 @@ import java.util.HashMap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import dev.drsoran.moloko.IConfigurable;
@@ -41,7 +42,7 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
    protected Bundle configuration;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -50,13 +51,20 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       configure( getArguments() );
    }
    
-
-
+   
+   
    @Override
-   public void onAttach( FragmentActivity activity )
+   public final void onAttach( SupportActivity activity )
    {
       super.onAttach( activity );
       
+      onAttach( (FragmentActivity) activity );
+   }
+   
+   
+   
+   public void onAttach( FragmentActivity activity )
+   {
       final int settingsMask = getSettingsMask();
       
       if ( settingsMask != 0 )
@@ -78,8 +86,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       }
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -87,15 +95,22 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       
       if ( onSettingsChangedListener != null )
       {
-         MolokoApp.get( getActivity() )
+         MolokoApp.get( getFragmentActivity() )
                   .unregisterOnSettingsChangedListener( onSettingsChangedListener );
          
          onSettingsChangedListener = null;
       }
    }
    
-
-
+   
+   
+   public FragmentActivity getFragmentActivity()
+   {
+      return (FragmentActivity) getSupportActivity();
+   }
+   
+   
+   
    @Override
    public void setArguments( Bundle args )
    {
@@ -104,8 +119,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       configure( args );
    }
    
-
-
+   
+   
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -114,16 +129,16 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       outState.putAll( getConfiguration() );
    }
    
-
-
+   
+   
    @Override
    public final Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-
-
+   
+   
    @Override
    public final void configure( Bundle config )
    {
@@ -134,8 +149,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
          takeConfigurationFrom( config );
    }
    
-
-
+   
+   
    @Override
    public void clearConfiguration()
    {
@@ -143,8 +158,8 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
          configuration.clear();
    }
    
-
-
+   
+   
    @Override
    public final Bundle createDefaultConfiguration()
    {
@@ -155,20 +170,20 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
       return bundle;
    }
    
-
-
+   
+   
    protected void takeConfigurationFrom( Bundle config )
    {
    }
    
-
-
+   
+   
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
    }
    
-
-
+   
+   
    public final ViewGroup getContentView()
    {
       final View root = getView();
@@ -179,15 +194,15 @@ public abstract class MolokoFragment extends Fragment implements IConfigurable
          return null;
    }
    
-
-
+   
+   
    protected void onSettingsChanged( int which,
                                      HashMap< Integer, Object > oldValues )
    {
    }
    
-
-
+   
+   
    public int getSettingsMask()
    {
       return 0;

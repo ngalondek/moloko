@@ -56,7 +56,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
    private boolean loaderNotDataFound;
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -66,8 +66,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
          startLoader();
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -79,8 +79,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
          loaderListener = new NullLoaderFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -89,8 +89,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       loaderListener = null;
    }
    
-
-
+   
+   
    @Override
    public final View onCreateView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -102,8 +102,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -117,8 +117,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
          showLoadingSpinner();
    }
    
-
-
+   
+   
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
@@ -129,8 +129,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
                                    config.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES ) );
    }
    
-
-
+   
+   
    @Override
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -139,15 +139,15 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       bundle.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, true );
    }
    
-
-
+   
+   
    public D getLoaderData()
    {
       return loaderData;
    }
    
-
-
+   
+   
    public D getLoaderDataAssertNotNull()
    {
       if ( getLoaderData() == null )
@@ -156,15 +156,15 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       return getLoaderData();
    }
    
-
-
+   
+   
    public boolean isLoaderDataFound()
    {
       return !loaderNotDataFound;
    }
    
-
-
+   
+   
    protected final void showLoadingSpinner()
    {
       if ( getView() != null )
@@ -179,8 +179,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       }
    }
    
-
-
+   
+   
    protected View getLoadingSpinnerView()
    {
       View loadView = null;
@@ -191,8 +191,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       return loadView;
    }
    
-
-
+   
+   
    protected final void showContent()
    {
       if ( getView() != null )
@@ -210,8 +210,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       }
    }
    
-
-
+   
+   
    protected final void showContentAsync()
    {
       handler.post( new Runnable()
@@ -224,8 +224,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       } );
    }
    
-
-
+   
+   
    protected final void showElementNotFoundError()
    {
       if ( getView() != null )
@@ -239,7 +239,7 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
          {
             content.removeAllViews();
             
-            UIUtils.inflateErrorWithIcon( getActivity(),
+            UIUtils.inflateErrorWithIcon( getFragmentActivity(),
                                           content,
                                           R.string.err_entity_not_found,
                                           getLoaderDataName() );
@@ -248,8 +248,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       }
    }
    
-
-
+   
+   
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -258,15 +258,15 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
          initContent( getContentView() );
    }
    
-
-
+   
+   
    public final void startLoader()
    {
       getLoaderManager().initLoader( getLoaderId(), getConfiguration(), this );
    }
    
-
-
+   
+   
    public final void setRespectContentChanges( boolean respect )
    {
       configuration.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, respect );
@@ -280,16 +280,16 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       }
    }
    
-
-
+   
+   
    public final boolean isRespectingContentChanges()
    {
       return configuration.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES,
                                        false );
    }
    
-
-
+   
+   
    @Override
    public final Loader< D > onCreateLoader( int id, Bundle args )
    {
@@ -305,8 +305,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       return loader;
    }
    
-
-
+   
+   
    @Override
    public void onLoadFinished( Loader< D > loader, D data )
    {
@@ -323,8 +323,8 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
                                              !loaderNotDataFound );
    }
    
-
-
+   
+   
    @Override
    public void onLoaderReset( Loader< D > loader )
    {
@@ -332,25 +332,25 @@ public abstract class MolokoLoaderFragment< D > extends MolokoFragment
       loaderNotDataFound = false;
    }
    
-
-
+   
+   
    abstract protected View createFragmentView( LayoutInflater inflater,
                                                ViewGroup container,
                                                Bundle savedInstanceState );
    
-
-
+   
+   
    abstract protected void initContent( ViewGroup content );
    
-
-
+   
+   
    abstract protected Loader< D > newLoaderInstance( int id, Bundle config );
    
-
-
+   
+   
    abstract protected String getLoaderDataName();
    
-
-
+   
+   
    abstract protected int getLoaderId();
 }

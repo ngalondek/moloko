@@ -541,7 +541,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       
       if ( !IsActivityInEditMode() )
       {
-         showEditButtons( true );
+         showEditButtons( currentAccessLevel.allowsEditing() );
          invalidateOptionsMenu();
       }
    }
@@ -1470,7 +1470,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                   showNoteFragmentsOfTask( task );
                
                setPriorityBarVisibility();
-               showTaskEditButtons( task != null );
+               showTaskEditButtons( !IsActivityInEditMode() && task != null );
                invalidateOptionsMenu();
             }
          } );
@@ -1483,7 +1483,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
             public void run()
             {
                showNoteEditButtonsOfNoteFragment( createTaskNoteLayoutTag( fragmentTag ),
-                                                  success );
+                                                  !IsActivityInEditMode()
+                                                     && success );
             }
          } );
       }

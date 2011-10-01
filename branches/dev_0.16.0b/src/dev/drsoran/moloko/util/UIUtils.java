@@ -135,67 +135,6 @@ public final class UIUtils
    
 
 
-   @Deprecated
-   public final static void setTitle( Activity activity, String text )
-   {
-      // final View titleBarText = activity.findViewById( R.id.app_actionbar_title );
-      //
-      // if ( titleBarText instanceof TextView )
-      // {
-      // ( (TextView) titleBarText ).setText( text );
-      // }
-      // else
-      // {
-      // activity.setTitle( text );
-      // }
-   }
-   
-
-
-   @Deprecated
-   public final static void setTitle( Activity activity, int resId )
-   {
-      setTitle( activity, activity.getResources().getString( resId ) );
-   }
-   
-
-
-   @Deprecated
-   public final static void setTitle( Activity activity,
-                                      String text,
-                                      int iconResId )
-   {
-      // final View view = activity.findViewById( R.id.app_actionbar_title );
-      //
-      // if ( view instanceof TextView )
-      // {
-      // final TextView titleBarText = (TextView) view;
-      //
-      // titleBarText.setText( text );
-      //
-      // BitmapDrawable bitmap = null;
-      //
-      // if ( iconResId != -1 )
-      // {
-      // bitmap = new BitmapDrawable( activity.getResources()
-      // .openRawResource( iconResId ) );
-      //
-      // final int iconSize = activity.getResources()
-      // .getDimensionPixelSize( R.dimen.app_actionbar_text_size );
-      //
-      // bitmap.setBounds( 0, 0, iconSize, iconSize );
-      // }
-      //
-      // titleBarText.setCompoundDrawables( bitmap, null, null, null );
-      // }
-      // else
-      // {
-      // activity.setTitle( text );
-      // }
-   }
-   
-
-
    public final static void hideSoftInput( View view )
    {
       if ( view != null )
@@ -518,21 +457,6 @@ public final class UIUtils
          }
       
       return ok;
-   }
-   
-
-
-   @Deprecated
-   public final static void initializeErrorWithIcon( Activity activity,
-                                                     int resId,
-                                                     Object... params )
-   {
-      activity.setContentView( R.layout.error_with_icon );
-      final TextView text = (TextView) activity.findViewById( R.id.title_with_text_text );
-      final String msg = activity.getResources().getString( resId, params );
-      text.setText( msg );
-      
-      Log.e( LogUtils.toTag( Activity.class ), msg );
    }
    
 

@@ -31,6 +31,17 @@ import dev.drsoran.moloko.util.UIUtils;
 public abstract class MolokoEditFragment< T extends Fragment > extends
          MolokoFragment implements IEditFragment< T >
 {
+   
+   @Override
+   public void onDestroyView()
+   {
+      UIUtils.hideSoftInput( getContentView() );
+      
+      super.onDestroyView();
+   }
+   
+
+
    @Override
    public final boolean onFinishEditing()
    {

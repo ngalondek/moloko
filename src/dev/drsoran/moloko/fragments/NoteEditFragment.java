@@ -102,16 +102,6 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
 
 
    @Override
-   public void onDestroyView()
-   {
-      UIUtils.hideSoftInput( getView() );
-      
-      super.onDestroyView();
-   }
-   
-
-
-   @Override
    public void takeConfigurationFrom( Bundle config )
    {
       super.takeConfigurationFrom( config );
@@ -143,7 +133,6 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
                                                                .getTime(),
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
-      
       title.setText( note.getTitle() );
       text.setText( note.getText() );
    }
@@ -218,5 +207,4 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       final NoteFragment fragment = NoteFragment.newInstance( config );
       return fragment;
    }
-   
 }

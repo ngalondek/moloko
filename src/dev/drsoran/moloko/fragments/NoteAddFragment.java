@@ -152,16 +152,6 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
 
 
    @Override
-   public void onDestroyView()
-   {
-      UIUtils.hideSoftInput( getView() );
-      
-      super.onDestroyView();
-   }
-   
-
-
-   @Override
    public void takeConfigurationFrom( Bundle config )
    {
       super.takeConfigurationFrom( config );

@@ -1096,7 +1096,19 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    @Override
    public boolean hasChanges()
    {
-      return changes != null && changes.size() > 0;
+      return ( changes != null && changes.size() > 0 )
+         || hasUncommitedChanges();
+   }
+   
+
+
+   private boolean hasUncommitedChanges()
+   {
+      boolean hasUncommitedChanges = SyncUtils.hasChanged( getCurrentValue( Tasks.DUE_DATE,
+                                                                            Long.class ),
+                                                           newVal );
+      
+      return hasUncommitedChanges;
    }
    
 

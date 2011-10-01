@@ -32,6 +32,16 @@ public abstract class MolokoLoaderEditFragment< T extends Fragment, D > extends
          MolokoLoaderFragment< D > implements IEditFragment< T >
 {
    @Override
+   public void onDestroyView()
+   {
+      UIUtils.hideSoftInput( getContentView() );
+      
+      super.onDestroyView();
+   }
+   
+
+
+   @Override
    public final boolean onFinishEditing()
    {
       boolean ok = true;

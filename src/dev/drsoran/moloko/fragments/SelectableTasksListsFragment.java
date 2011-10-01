@@ -27,9 +27,9 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -38,14 +38,14 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.SubMenu;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -110,13 +110,13 @@ public class SelectableTasksListsFragment extends
       public final static int DELETE = R.id.menu_delete_selected_tasks;
    }
    
-
+   
    private final static class CtxtMenu
    {
       public final static int TOGGLE_SELECTION = R.id.ctx_menu_toggle_selection;
    }
    
-
+   
    public static class Config extends MinDetailedTasksListFragment.Config
    {
       private final static String SELECT_STATE = "check_state";
@@ -125,7 +125,7 @@ public class SelectableTasksListsFragment extends
    public final static int TASK_SORT_SELECTION = 1 << 16;
    
    
-
+   
    public static SelectableTasksListsFragment newInstance( Bundle configuration )
    {
       final SelectableTasksListsFragment fragment = new SelectableTasksListsFragment();
@@ -138,22 +138,22 @@ public class SelectableTasksListsFragment extends
    private ISelectableTasksListFragmentListener listener;
    
    
-
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -165,8 +165,8 @@ public class SelectableTasksListsFragment extends
          listener = new NullTasksListFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -174,8 +174,8 @@ public class SelectableTasksListsFragment extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -184,8 +184,8 @@ public class SelectableTasksListsFragment extends
       registerForContextMenu( getListView() );
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -194,8 +194,8 @@ public class SelectableTasksListsFragment extends
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-
-
+   
+   
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -204,8 +204,8 @@ public class SelectableTasksListsFragment extends
       super.onSaveInstanceState( outState );
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -216,8 +216,8 @@ public class SelectableTasksListsFragment extends
                                            config.getStringArrayList( Config.SELECT_STATE ) );
    }
    
-
-
+   
+   
    @Override
    public void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -227,8 +227,8 @@ public class SelectableTasksListsFragment extends
                                  new ArrayList< String >( 0 ) );
    }
    
-
-
+   
+   
    private final void putCurrentSelectionStateToConfig( Bundle config )
    {
       if ( getListAdapter() != null )
@@ -236,8 +236,8 @@ public class SelectableTasksListsFragment extends
                                     getListAdapter().getSelectedTaskIds() );
    }
    
-
-
+   
+   
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -270,7 +270,7 @@ public class SelectableTasksListsFragment extends
          final List< SelectableTask > tasks = adapter.getSelectedTasks();
          final int selCnt = tasks.size();
          
-         UIUtils.addOptionalMenuItem( getActivity(),
+         UIUtils.addOptionalMenuItem( getFragmentActivity(),
                                       menu,
                                       OptionsMenu.DO_EDIT,
                                       getString( R.string.select_multiple_tasks_menu_opt_do_edit,
@@ -292,7 +292,7 @@ public class SelectableTasksListsFragment extends
          }
          
          // The complete task menu is only shown if all selected tasks are uncompleted
-         UIUtils.addOptionalMenuItem( getActivity(),
+         UIUtils.addOptionalMenuItem( getFragmentActivity(),
                                       menu,
                                       OptionsMenu.COMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_complete,
@@ -304,7 +304,7 @@ public class SelectableTasksListsFragment extends
                                       someSelected && selUncompl == selCnt );
          
          // The uncomplete task menu is only shown if all selected tasks are completed
-         UIUtils.addOptionalMenuItem( getActivity(),
+         UIUtils.addOptionalMenuItem( getFragmentActivity(),
                                       menu,
                                       OptionsMenu.UNCOMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
@@ -315,7 +315,7 @@ public class SelectableTasksListsFragment extends
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected && selCompl == selCnt );
          
-         UIUtils.addOptionalMenuItem( getActivity(),
+         UIUtils.addOptionalMenuItem( getFragmentActivity(),
                                       menu,
                                       OptionsMenu.POSTPONE,
                                       getString( R.string.select_multiple_tasks_menu_opt_postpone,
@@ -326,7 +326,7 @@ public class SelectableTasksListsFragment extends
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected );
          
-         UIUtils.addOptionalMenuItem( getActivity(),
+         UIUtils.addOptionalMenuItem( getFragmentActivity(),
                                       menu,
                                       OptionsMenu.DELETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_delete,
@@ -348,8 +348,8 @@ public class SelectableTasksListsFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected SubMenu createTasksSortSubMenu( Menu menu )
    {
@@ -373,8 +373,8 @@ public class SelectableTasksListsFragment extends
       return subMenu;
    }
    
-
-
+   
+   
    @Override
    protected void initializeTasksSortSubMenu( SubMenu subMenu,
                                               int currentTaskSort )
@@ -394,8 +394,8 @@ public class SelectableTasksListsFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -428,81 +428,81 @@ public class SelectableTasksListsFragment extends
                return true;
                
             case OptionsMenu.COMPLETE:
-               new AlertDialog.Builder( getActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_complete,
-                                                                               adapter.getSelectedCount(),
-                                                                               getResources().getQuantityString( R.plurals.g_task,
-                                                                                                                 adapter.getSelectedCount() ) ) )
-                                                       .setPositiveButton( R.string.btn_complete,
-                                                                           new OnClickListener()
-                                                                           {
-                                                                              @Override
-                                                                              public void onClick( DialogInterface dialog,
-                                                                                                   int which )
-                                                                              {
-                                                                                 onCompleteSelectedTasks( getListAdapter().getSelectedTasks() );
-                                                                              }
-                                                                           } )
-                                                       .setNegativeButton( R.string.btn_cancel,
-                                                                           null )
-                                                       .show();
+               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_complete,
+                                                                                       adapter.getSelectedCount(),
+                                                                                       getResources().getQuantityString( R.plurals.g_task,
+                                                                                                                         adapter.getSelectedCount() ) ) )
+                                                               .setPositiveButton( R.string.btn_complete,
+                                                                                   new OnClickListener()
+                                                                                   {
+                                                                                      @Override
+                                                                                      public void onClick( DialogInterface dialog,
+                                                                                                           int which )
+                                                                                      {
+                                                                                         onCompleteSelectedTasks( getListAdapter().getSelectedTasks() );
+                                                                                      }
+                                                                                   } )
+                                                               .setNegativeButton( R.string.btn_cancel,
+                                                                                   null )
+                                                               .show();
                return true;
                
             case OptionsMenu.UNCOMPLETE:
-               new AlertDialog.Builder( getActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_uncomplete,
-                                                                               adapter.getSelectedCount(),
-                                                                               getResources().getQuantityString( R.plurals.g_task,
-                                                                                                                 adapter.getSelectedCount() ) ) )
-                                                       .setPositiveButton( R.string.btn_uncomplete,
-                                                                           new OnClickListener()
-                                                                           {
-                                                                              @Override
-                                                                              public void onClick( DialogInterface dialog,
-                                                                                                   int which )
-                                                                              {
-                                                                                 onUncompleteSelectedTasks( getListAdapter().getSelectedTasks() );
-                                                                              }
-                                                                           } )
-                                                       .setNegativeButton( R.string.btn_cancel,
-                                                                           null )
-                                                       .show();
+               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_uncomplete,
+                                                                                       adapter.getSelectedCount(),
+                                                                                       getResources().getQuantityString( R.plurals.g_task,
+                                                                                                                         adapter.getSelectedCount() ) ) )
+                                                               .setPositiveButton( R.string.btn_uncomplete,
+                                                                                   new OnClickListener()
+                                                                                   {
+                                                                                      @Override
+                                                                                      public void onClick( DialogInterface dialog,
+                                                                                                           int which )
+                                                                                      {
+                                                                                         onUncompleteSelectedTasks( getListAdapter().getSelectedTasks() );
+                                                                                      }
+                                                                                   } )
+                                                               .setNegativeButton( R.string.btn_cancel,
+                                                                                   null )
+                                                               .show();
                return true;
                
             case OptionsMenu.POSTPONE:
-               new AlertDialog.Builder( getActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_postpone,
-                                                                               adapter.getSelectedCount(),
-                                                                               getResources().getQuantityString( R.plurals.g_task,
-                                                                                                                 adapter.getSelectedCount() ) ) )
-                                                       .setPositiveButton( R.string.btn_postpone,
-                                                                           new OnClickListener()
-                                                                           {
-                                                                              @Override
-                                                                              public void onClick( DialogInterface dialog,
-                                                                                                   int which )
-                                                                              {
-                                                                                 onPostponeSelectedTasks( getListAdapter().getSelectedTasks() );
-                                                                              }
-                                                                           } )
-                                                       .setNegativeButton( R.string.btn_cancel,
-                                                                           null )
-                                                       .show();
+               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_postpone,
+                                                                                       adapter.getSelectedCount(),
+                                                                                       getResources().getQuantityString( R.plurals.g_task,
+                                                                                                                         adapter.getSelectedCount() ) ) )
+                                                               .setPositiveButton( R.string.btn_postpone,
+                                                                                   new OnClickListener()
+                                                                                   {
+                                                                                      @Override
+                                                                                      public void onClick( DialogInterface dialog,
+                                                                                                           int which )
+                                                                                      {
+                                                                                         onPostponeSelectedTasks( getListAdapter().getSelectedTasks() );
+                                                                                      }
+                                                                                   } )
+                                                               .setNegativeButton( R.string.btn_cancel,
+                                                                                   null )
+                                                               .show();
             case OptionsMenu.DELETE:
-               new AlertDialog.Builder( getActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_delete,
-                                                                               adapter.getSelectedCount(),
-                                                                               getResources().getQuantityString( R.plurals.g_task,
-                                                                                                                 adapter.getSelectedCount() ) ) )
-                                                       .setPositiveButton( R.string.btn_delete,
-                                                                           new OnClickListener()
-                                                                           {
-                                                                              @Override
-                                                                              public void onClick( DialogInterface dialog,
-                                                                                                   int which )
-                                                                              {
-                                                                                 onDeleteSelectedTasks( getListAdapter().getSelectedTasks() );
-                                                                              }
-                                                                           } )
-                                                       .setNegativeButton( R.string.btn_cancel,
-                                                                           null )
-                                                       .show();
+               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_delete,
+                                                                                       adapter.getSelectedCount(),
+                                                                                       getResources().getQuantityString( R.plurals.g_task,
+                                                                                                                         adapter.getSelectedCount() ) ) )
+                                                               .setPositiveButton( R.string.btn_delete,
+                                                                                   new OnClickListener()
+                                                                                   {
+                                                                                      @Override
+                                                                                      public void onClick( DialogInterface dialog,
+                                                                                                           int which )
+                                                                                      {
+                                                                                         onDeleteSelectedTasks( getListAdapter().getSelectedTasks() );
+                                                                                      }
+                                                                                   } )
+                                                               .setNegativeButton( R.string.btn_cancel,
+                                                                                   null )
+                                                               .show();
                return true;
                
             default :
@@ -513,8 +513,8 @@ public class SelectableTasksListsFragment extends
       return super.onOptionsItemSelected( item );
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -538,8 +538,8 @@ public class SelectableTasksListsFragment extends
                               task.getName() ) );
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( android.view.MenuItem item )
    {
@@ -555,23 +555,23 @@ public class SelectableTasksListsFragment extends
       }
    }
    
-
-
+   
+   
    public void toggle( int pos )
    {
       getListAdapter().toggleSelection( pos );
    }
    
-
-
+   
+   
    @Override
    protected int getDefaultTaskSort()
    {
       return MolokoApp.getSettings().getTaskSort();
    }
    
-
-
+   
+   
    @Override
    protected String resolveTaskSortToSqlite( int taskSort )
    {
@@ -582,8 +582,8 @@ public class SelectableTasksListsFragment extends
          return super.resolveTaskSortToSqlite( taskSort );
    }
    
-
-
+   
+   
    @Override
    public boolean shouldResortTasks( int taskSort )
    {
@@ -595,8 +595,8 @@ public class SelectableTasksListsFragment extends
          return super.shouldResortTasks( taskSort );
    }
    
-
-
+   
+   
    private void onCompleteSelectedTasks( final List< ? extends Task > tasks )
    {
       performDatabaseModification( new Runnable()
@@ -604,13 +604,15 @@ public class SelectableTasksListsFragment extends
          @Override
          public void run()
          {
-            TaskEditUtils.setTasksCompletion( getActivity(), tasks, true );
+            TaskEditUtils.setTasksCompletion( getFragmentActivity(),
+                                              tasks,
+                                              true );
          }
       } );
    }
    
-
-
+   
+   
    private void onUncompleteSelectedTasks( final List< ? extends Task > tasks )
    {
       performDatabaseModification( new Runnable()
@@ -618,13 +620,15 @@ public class SelectableTasksListsFragment extends
          @Override
          public void run()
          {
-            TaskEditUtils.setTasksCompletion( getActivity(), tasks, false );
+            TaskEditUtils.setTasksCompletion( getFragmentActivity(),
+                                              tasks,
+                                              false );
          }
       } );
    }
    
-
-
+   
+   
    private void onPostponeSelectedTasks( final List< ? extends Task > tasks )
    {
       performDatabaseModification( new Runnable()
@@ -632,13 +636,13 @@ public class SelectableTasksListsFragment extends
          @Override
          public void run()
          {
-            TaskEditUtils.postponeTasks( getActivity(), tasks );
+            TaskEditUtils.postponeTasks( getFragmentActivity(), tasks );
          }
       } );
    }
    
-
-
+   
+   
    private void onDeleteSelectedTasks( final List< ? extends Task > tasks )
    {
       performDatabaseModification( new Runnable()
@@ -646,13 +650,13 @@ public class SelectableTasksListsFragment extends
          @Override
          public void run()
          {
-            TaskEditUtils.deleteTasks( getActivity(), tasks );
+            TaskEditUtils.deleteTasks( getFragmentActivity(), tasks );
          }
       } );
    }
    
-
-
+   
+   
    @Override
    public Loader< List< SelectableTask >> newLoaderInstance( int id,
                                                              Bundle config )
@@ -661,7 +665,7 @@ public class SelectableTasksListsFragment extends
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Config.TASK_SORT_ORDER ) );
       
-      final SelectableTasksLoader loader = new SelectableTasksLoader( getActivity(),
+      final SelectableTasksLoader loader = new SelectableTasksLoader( getFragmentActivity(),
                                                                       selection,
                                                                       order,
                                                                       config.getStringArrayList( Config.SELECT_STATE ) );
@@ -671,22 +675,22 @@ public class SelectableTasksListsFragment extends
       return loader;
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
-      return new SelectableTasksListFragmentAdapter( getActivity(),
+      return new SelectableTasksListFragmentAdapter( getFragmentActivity(),
                                                      R.layout.selectmultipletasks_activity_listitem );
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createListAdapterForResult( List< SelectableTask > result,
                                                      IFilter filter )
    {
-      final SelectableTasksListFragmentAdapter adapter = new SelectableTasksListFragmentAdapter( getActivity(),
+      final SelectableTasksListFragmentAdapter adapter = new SelectableTasksListFragmentAdapter( getFragmentActivity(),
                                                                                                  R.layout.selectmultipletasks_activity_listitem,
                                                                                                  result );
       
@@ -698,16 +702,16 @@ public class SelectableTasksListsFragment extends
       return adapter;
    }
    
-
-
+   
+   
    @Override
    public SelectableTasksListFragmentAdapter getListAdapter()
    {
       return (SelectableTasksListFragmentAdapter) super.getListAdapter();
    }
    
-
-
+   
+   
    @Override
    public void onSelectionChanged()
    {

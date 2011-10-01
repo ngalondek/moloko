@@ -85,7 +85,7 @@ public class TaskListsFragment extends
    private ITaskListsFragmentListener listener;
    
    
-
+   
    public final static TaskListsFragment newInstance( Bundle config )
    {
       final TaskListsFragment fragment = new TaskListsFragment();
@@ -95,8 +95,8 @@ public class TaskListsFragment extends
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -108,8 +108,8 @@ public class TaskListsFragment extends
          listener = null;
    }
    
-
-
+   
+   
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -117,8 +117,8 @@ public class TaskListsFragment extends
       registerForContextMenu( getExpandableListView() );
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -126,8 +126,8 @@ public class TaskListsFragment extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -140,16 +140,16 @@ public class TaskListsFragment extends
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
       super.onViewCreated( view, savedInstanceState );
    }
    
-
-
+   
+   
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -188,7 +188,7 @@ public class TaskListsFragment extends
       }
       
       if ( list.getLocked() == 0
-         && AccountUtils.isWriteableAccess( getActivity() ) )
+         && AccountUtils.isWriteableAccess( getFragmentActivity() ) )
       {
          menu.add( Menu.NONE,
                    CtxtMenu.DELETE,
@@ -214,8 +214,8 @@ public class TaskListsFragment extends
                    getString( R.string.tasklists_menu_ctx_make_def_list ) );
    }
    
-
-
+   
+   
    @Override
    public boolean onContextItemSelected( android.view.MenuItem item )
    {
@@ -260,8 +260,8 @@ public class TaskListsFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onGroupClick( ExpandableListView parent,
                                 View v,
@@ -274,8 +274,8 @@ public class TaskListsFragment extends
       return true;
    }
    
-
-
+   
+   
    @Override
    public void onGroupIndicatorClicked( View groupView )
    {
@@ -288,8 +288,8 @@ public class TaskListsFragment extends
          listView.expandGroup( pos );
    }
    
-
-
+   
+   
    @Override
    public boolean onChildClick( ExpandableListView parent,
                                 View v,
@@ -310,11 +310,11 @@ public class TaskListsFragment extends
          return super.onChildClick( parent, v, groupPosition, childPosition, id );
    }
    
-
-
+   
+   
    public void deleteList( final RtmListWithTaskCount list )
    {
-      UIUtils.newDeleteElementDialog( getActivity(),
+      UIUtils.newDeleteElementDialog( getFragmentActivity(),
                                       list.getName(),
                                       new Runnable()
                                       {
@@ -326,7 +326,7 @@ public class TaskListsFragment extends
                                                @Override
                                                public void run()
                                                {
-                                                  RtmListEditUtils.deleteList( getActivity(),
+                                                  RtmListEditUtils.deleteList( getFragmentActivity(),
                                                                                list.getRtmList() );
                                                }
                                             } );
@@ -336,8 +336,8 @@ public class TaskListsFragment extends
              .show();
    }
    
-
-
+   
+   
    @Override
    public int getSettingsMask()
    {
@@ -345,8 +345,8 @@ public class TaskListsFragment extends
          | IOnSettingsChangedListener.RTM_DEFAULTLIST;
    }
    
-
-
+   
+   
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -356,23 +356,23 @@ public class TaskListsFragment extends
          expandableListView.requestLayout();
    }
    
-
-
+   
+   
    @Override
    protected ExpandableListAdapter createEmptyExpandableListAdapter()
    {
-      return new TaskListsAdapter( getActivity(),
+      return new TaskListsAdapter( getFragmentActivity(),
                                    R.layout.tasklists_fragment_group,
                                    R.layout.tasklists_fragment_child,
                                    Collections.< RtmListWithTaskCount > emptyList() );
    }
    
-
-
+   
+   
    @Override
    protected ExpandableListAdapter createExpandableListAdapterForResult( List< RtmListWithTaskCount > result )
    {
-      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getActivity(),
+      final TaskListsAdapter taskListsAdapter = new TaskListsAdapter( getFragmentActivity(),
                                                                       R.layout.tasklists_fragment_group,
                                                                       R.layout.tasklists_fragment_child,
                                                                       result );
@@ -381,41 +381,41 @@ public class TaskListsFragment extends
       return taskListsAdapter;
    }
    
-
-
+   
+   
    @Override
    protected Loader< List< RtmListWithTaskCount >> newLoaderInstance( int id,
                                                                       Bundle config )
    {
-      return new RtmListWithTaskCountLoader( getActivity() );
+      return new RtmListWithTaskCountLoader( getFragmentActivity() );
    }
    
-
-
+   
+   
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_tasklists );
    }
    
-
-
+   
+   
    @Override
    public int getLoaderId()
    {
       return LISTS_LOADER_ID;
    }
    
-
-
+   
+   
    @Override
    public TaskListsAdapter getExpandableListAdapter()
    {
       return (TaskListsAdapter) super.getExpandableListAdapter();
    }
    
-
-
+   
+   
    public RtmListWithTaskCount getRtmList( int flatPos )
    {
       return (RtmListWithTaskCount) getExpandableListAdapter().getGroup( flatPos );

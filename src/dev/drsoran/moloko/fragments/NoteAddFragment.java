@@ -82,7 +82,7 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
    private final Time created = MolokoDateUtils.newTime();
    
    
-
+   
    public final static NoteAddFragment newInstance( Bundle config )
    {
       final NoteAddFragment fragment = new NoteAddFragment();
@@ -92,8 +92,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -105,8 +105,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       return fragmentView;
    }
    
-
-
+   
+   
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
                                    Bundle savedInstanceState )
@@ -125,8 +125,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -149,8 +149,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       title.requestFocus();
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -170,29 +170,29 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
                                   config.getString( Config.NEW_NOTE_TEXT ) );
    }
    
-
-
+   
+   
    public String getConfiguredTaskSeriesId()
    {
       return configuration.getString( Config.TASKSERIES_ID );
    }
    
-
-
+   
+   
    public String getConfiguredNewNoteId()
    {
       return configuration.getString( Config.NEW_NOTE_ID );
    }
    
-
-
+   
+   
    private void setConfiguredNewNoteId( String newNoteId )
    {
       configuration.putString( Config.NEW_NOTE_ID, newNoteId );
    }
    
-
-
+   
+   
    @Override
    public boolean hasChanges()
    {
@@ -203,8 +203,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
          return false;
    }
    
-
-
+   
+   
    @Override
    public boolean saveChanges()
    {
@@ -224,7 +224,7 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
                                                          Strings.nullIfEmpty( UIUtils.getTrimmedText( title ) ),
                                                          Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
             
-            newNoteUri = new AsyncInsertEntity< RtmTaskNote >( getActivity() )
+            newNoteUri = new AsyncInsertEntity< RtmTaskNote >( getFragmentActivity() )
             {
                @Override
                protected int getProgressMessageId()
@@ -232,8 +232,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
                   return R.string.toast_insert_note;
                }
                
-
-
+               
+               
                @Override
                protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
                                                                                RtmTaskNote entity )
@@ -260,16 +260,16 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
                   return null;
                }
                
-
-
+               
+               
                @Override
                protected Uri getContentUri()
                {
                   return Notes.CONTENT_URI;
                }
                
-
-
+               
+               
                @Override
                protected String getPath()
                {
@@ -295,8 +295,8 @@ public class NoteAddFragment extends MolokoEditFragment< NoteAddFragment >
       return ok;
    }
    
-
-
+   
+   
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

@@ -114,7 +114,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    private View urlSection;
    
    
-
+   
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -124,15 +124,15 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -144,8 +144,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          listener = new NullTaskFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -153,8 +153,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -180,8 +180,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       return fragmentView;
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -192,15 +192,15 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                                   config.getString( Config.TASK_ID ) );
    }
    
-
-
+   
+   
    public String getConfiguredTaskId()
    {
       return configuration.getString( Config.TASK_ID );
    }
    
-
-
+   
+   
    @Override
    public void initContent( ViewGroup container )
    {
@@ -246,7 +246,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       
       listName.setText( task.getListName() );
       
-      UIUtils.inflateTags( getActivity(),
+      UIUtils.inflateTags( getFragmentActivity(),
                            tagsLayout,
                            task.getTags(),
                            null,
@@ -269,8 +269,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -334,7 +334,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          {
             UIUtils.appendAtNewLine( textBuffer,
                                      getString( R.string.task_datetime_estimate_inline,
-                                                MolokoDateUtils.formatEstimated( getActivity(),
+                                                MolokoDateUtils.formatEstimated( getFragmentActivity(),
                                                                                  task.getEstimateMillis() ) ) );
          }
          
@@ -355,8 +355,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -397,7 +397,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          if ( locationIsClickable )
          {
             // Check if we can click the location
-            if ( LocationChooser.hasIntentHandler( getActivity(),
+            if ( LocationChooser.hasIntentHandler( getFragmentActivity(),
                                                    task.getLocationAddress() ) )
             {
                final SpannableString clickableLocation = new SpannableString( locationName );
@@ -430,8 +430,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -454,7 +454,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                }
             }, 0, clickableContact.length(), 0 );
             
-            final TextView textView = new TextView( getActivity() );
+            final TextView textView = new TextView( getFragmentActivity() );
             UIUtils.applySpannable( textView, clickableContact );
             
             view.addView( textView );
@@ -466,49 +466,50 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-
-
+   
+   
    @Override
    public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
-      return new TaskLoader( getActivity(), args.getString( Config.TASK_ID ) );
+      return new TaskLoader( getFragmentActivity(),
+                             args.getString( Config.TASK_ID ) );
    }
    
-
-
+   
+   
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_task );
    }
    
-
-
+   
+   
    @Override
    public int getLoaderId()
    {
       return TASK_LOADER_ID;
    }
    
-
-
+   
+   
    @Override
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
    }
    
-
-
+   
+   
    @Override
    public boolean canBeEdited()
    {
       return getLoaderData() != null
-         && AccountUtils.isWriteableAccess( getActivity() );
+         && AccountUtils.isWriteableAccess( getFragmentActivity() );
    }
    
-
-
+   
+   
    @Override
    public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {

@@ -77,7 +77,7 @@ public class TaskEditFragment extends
    private ITaskEditFragmentListener listener;
    
    
-
+   
    public final static TaskEditFragment newInstance( Bundle config )
    {
       final TaskEditFragment fragment = new TaskEditFragment();
@@ -87,15 +87,15 @@ public class TaskEditFragment extends
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -107,8 +107,8 @@ public class TaskEditFragment extends
          listener = new NullTaskEditFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -117,8 +117,8 @@ public class TaskEditFragment extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    protected Bundle getInitialValues()
    {
@@ -148,8 +148,8 @@ public class TaskEditFragment extends
       return initialValues;
    }
    
-
-
+   
+   
    @Override
    protected void initializeHeadSection()
    {
@@ -158,8 +158,8 @@ public class TaskEditFragment extends
       defaultInitializeHeadSectionImpl( task );
    }
    
-
-
+   
+   
    @Override
    protected void registerInputListeners()
    {
@@ -176,8 +176,8 @@ public class TaskEditFragment extends
                       } );
    }
    
-
-
+   
+   
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -188,8 +188,8 @@ public class TaskEditFragment extends
                                       config.getParcelable( Config.TASK ) );
    }
    
-
-
+   
+   
    public Task getConfiguredTaskAssertNotNull()
    {
       final Task task = configuration.getParcelable( Config.TASK );
@@ -200,8 +200,8 @@ public class TaskEditFragment extends
       return task;
    }
    
-
-
+   
+   
    @Override
    public boolean saveChanges()
    {
@@ -215,7 +215,7 @@ public class TaskEditFragment extends
          {
             try
             {
-               ok = new ApplyModificationsTask( getActivity(),
+               ok = new ApplyModificationsTask( getFragmentActivity(),
                                                 R.string.toast_save_task ).execute( modifications )
                                                                           .get();
             }
@@ -229,7 +229,7 @@ public class TaskEditFragment extends
             }
             
             if ( !ok )
-               Toast.makeText( getActivity(),
+               Toast.makeText( getFragmentActivity(),
                                R.string.toast_delete_task_failed,
                                Toast.LENGTH_LONG ).show();
          }
@@ -238,8 +238,8 @@ public class TaskEditFragment extends
       return ok;
    }
    
-
-
+   
+   
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

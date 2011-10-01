@@ -41,8 +41,8 @@ public class MissingDefaultListDialogFragment extends MolokoDialogFragment
       return fragment;
    }
    
-
-
+   
+   
    public final static MissingDefaultListDialogFragment newInstance( Bundle config )
    {
       final MissingDefaultListDialogFragment fragment = new MissingDefaultListDialogFragment();
@@ -52,16 +52,16 @@ public class MissingDefaultListDialogFragment extends MolokoDialogFragment
       return fragment;
    }
    
-
-
+   
+   
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
-      return new AlertDialog.Builder( getActivity() ).setTitle( R.string.dlg_missing_def_list_title )
-                                                     .setIcon( R.drawable.ic_prefs_info )
-                                                     .setMessage( R.string.dlg_missing_def_list_text )
-                                                     .setNeutralButton( R.string.btn_continue,
-                                                                        getGenericOnClickListener() )
-                                                     .create();
+      return new AlertDialog.Builder( getFragmentActivity() ).setTitle( R.string.dlg_missing_def_list_title )
+                                                             .setIcon( R.drawable.ic_prefs_info )
+                                                             .setMessage( R.string.dlg_missing_def_list_text )
+                                                             .setNeutralButton( R.string.btn_continue,
+                                                                                getGenericOnClickListener() )
+                                                             .create();
    }
 }

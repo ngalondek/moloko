@@ -44,17 +44,17 @@ public abstract class MolokoEditListFragment< D > extends
       }
    }
    
-
-
+   
+   
    private boolean hasWritableDatabaseAccess()
    {
-      return AccountUtils.isWriteableAccess( getActivity() );
+      return AccountUtils.isWriteableAccess( getFragmentActivity() );
    }
    
-
-
+   
+   
    protected void showOnlyReadableDatabaseAccessDialog()
    {
-      UIUtils.newReadOnlyAccessDialog( getActivity(), null ).show();
+      UIUtils.newReadOnlyAccessDialog( getFragmentActivity(), null ).show();
    }
 }

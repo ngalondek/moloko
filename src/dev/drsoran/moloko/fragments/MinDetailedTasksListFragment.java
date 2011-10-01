@@ -85,7 +85,7 @@ public class MinDetailedTasksListFragment extends
    private IMinDetailedTasksListFragmentListener listener;
    
    
-
+   
    public static MinDetailedTasksListFragment newInstance( Bundle configuration )
    {
       final MinDetailedTasksListFragment fragment = new MinDetailedTasksListFragment();
@@ -95,23 +95,23 @@ public class MinDetailedTasksListFragment extends
       return fragment;
    }
    
-
-
+   
+   
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-
-
+   
+   
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
    }
    
-
-
+   
+   
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -123,8 +123,8 @@ public class MinDetailedTasksListFragment extends
          listener = new NullTasksListFragmentListener();
    }
    
-
-
+   
+   
    @Override
    public void onDetach()
    {
@@ -132,8 +132,8 @@ public class MinDetailedTasksListFragment extends
       listener = null;
    }
    
-
-
+   
+   
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -142,14 +142,14 @@ public class MinDetailedTasksListFragment extends
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-
-
+   
+   
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
       super.onCreateOptionsMenu( menu, inflater );
       
-      UIUtils.addOptionalMenuItem( getActivity(),
+      UIUtils.addOptionalMenuItem( getFragmentActivity(),
                                    menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
                                    getString( R.string.abstaskslist_menu_opt_edit_multiple ),
@@ -160,8 +160,8 @@ public class MinDetailedTasksListFragment extends
                                    hasMultipleTasks() && hasRtmWriteAccess() );
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -176,16 +176,16 @@ public class MinDetailedTasksListFragment extends
       }
    }
    
-
-
+   
+   
    @Override
    protected int getDefaultTaskSort()
    {
       return MolokoApp.getSettings().getTaskSort();
    }
    
-
-
+   
+   
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
@@ -193,7 +193,7 @@ public class MinDetailedTasksListFragment extends
       final String selection = filter != null ? filter.getSqlSelection() : null;
       final String order = resolveTaskSortToSqlite( config.getInt( Config.TASK_SORT_ORDER ) );
       
-      final TasksLoader loader = new TasksLoader( getActivity(),
+      final TasksLoader loader = new TasksLoader( getFragmentActivity(),
                                                   selection,
                                                   order );
       loader.setUpdateThrottle( DEFAULT_LOADER_THROTTLE_MS );
@@ -201,36 +201,36 @@ public class MinDetailedTasksListFragment extends
       return loader;
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
-      return new MinDetailedTasksListFragmentAdapter( getActivity(),
+      return new MinDetailedTasksListFragmentAdapter( getFragmentActivity(),
                                                       R.layout.mindetailed_taskslist_listitem );
    }
    
-
-
+   
+   
    @Override
    protected ListAdapter createListAdapterForResult( List< Task > result,
                                                      IFilter filter )
    {
-      return new MinDetailedTasksListFragmentAdapter( getActivity(),
+      return new MinDetailedTasksListFragmentAdapter( getFragmentActivity(),
                                                       R.layout.mindetailed_taskslist_listitem,
                                                       result );
    }
    
-
-
+   
+   
    @Override
    public MinDetailedTasksListFragmentAdapter getListAdapter()
    {
       return (MinDetailedTasksListFragmentAdapter) super.getListAdapter();
    }
    
-
-
+   
+   
    @Override
    protected void notifyDataSetChanged()
    {

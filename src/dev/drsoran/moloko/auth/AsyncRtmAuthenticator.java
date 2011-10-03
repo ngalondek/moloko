@@ -55,15 +55,15 @@ public class AsyncRtmAuthenticator
       protected volatile ServiceException exception;
       
       
-
+      
       public RtmAsyncAuthTask( AuthenticatorActivity activity, Service service )
       {
          this.activity = new WeakReference< AuthenticatorActivity >( activity );
          this.service = service;
       }
       
-
-
+      
+      
       @Override
       protected void onPostExecute( Result result )
       {
@@ -72,7 +72,7 @@ public class AsyncRtmAuthenticator
       }
    }
    
-
+   
    private final class BeginAuthTask extends RtmAsyncAuthTask< Perms, String >
    {
       public BeginAuthTask( AuthenticatorActivity activity, Service service )
@@ -80,8 +80,8 @@ public class AsyncRtmAuthenticator
          super( activity, service );
       }
       
-
-
+      
+      
       @Override
       protected void onPreExecute()
       {
@@ -89,8 +89,8 @@ public class AsyncRtmAuthenticator
          super.onPreExecute();
       }
       
-
-
+      
+      
       @Override
       protected String doInBackground( Perms... params )
       {
@@ -111,8 +111,8 @@ public class AsyncRtmAuthenticator
          return result;
       }
       
-
-
+      
+      
       @Override
       protected void onPostExecute( String result )
       {
@@ -123,7 +123,7 @@ public class AsyncRtmAuthenticator
       }
    }
    
-
+   
    private final class CompleteAuthTask extends RtmAsyncAuthTask< Void, String >
    {
       
@@ -132,8 +132,8 @@ public class AsyncRtmAuthenticator
          super( activity, service );
       }
       
-
-
+      
+      
       @Override
       protected String doInBackground( Void... params )
       {
@@ -151,8 +151,8 @@ public class AsyncRtmAuthenticator
          return result;
       }
       
-
-
+      
+      
       @Override
       protected void onPostExecute( String result )
       {
@@ -163,7 +163,7 @@ public class AsyncRtmAuthenticator
       }
    }
    
-
+   
    private final class CheckAuthTokenTask extends
             RtmAsyncAuthTask< String, RtmAuth >
    {
@@ -173,8 +173,8 @@ public class AsyncRtmAuthenticator
          super( activity, service );
       }
       
-
-
+      
+      
       @Override
       protected RtmAuth doInBackground( String... params )
       {
@@ -195,8 +195,8 @@ public class AsyncRtmAuthenticator
          return result;
       }
       
-
-
+      
+      
       @Override
       protected void onPostExecute( RtmAuth result )
       {
@@ -208,15 +208,15 @@ public class AsyncRtmAuthenticator
    }
    
    
-
+   
    public AsyncRtmAuthenticator( AuthenticatorActivity activity )
       throws ServiceInternalException
    {
       this.rtmService = createService( activity );
    }
    
-
-
+   
+   
    public boolean cancelExecution()
    {
       boolean ok = false;
@@ -229,8 +229,8 @@ public class AsyncRtmAuthenticator
       return ok;
    }
    
-
-
+   
+   
    public void beginAuthentication( AuthenticatorActivity activity,
                                     Perms permission )
    {
@@ -242,8 +242,8 @@ public class AsyncRtmAuthenticator
       runningTask = new BeginAuthTask( activity, rtmService ).execute( permission );
    }
    
-
-
+   
+   
    public void completeAuthentication( AuthenticatorActivity activity )
    {
       if ( runningTask != null && !( runningTask instanceof CompleteAuthTask ) )
@@ -254,8 +254,8 @@ public class AsyncRtmAuthenticator
       runningTask = new CompleteAuthTask( activity, rtmService ).execute();
    }
    
-
-
+   
+   
    public void checkAuthToken( AuthenticatorActivity activity, String authToken )
    {
       if ( runningTask != null && !( runningTask instanceof CheckAuthTokenTask ) )
@@ -266,13 +266,13 @@ public class AsyncRtmAuthenticator
       runningTask = new CheckAuthTokenTask( activity, rtmService ).execute( authToken );
    }
    
-
-
+   
+   
    public static String getExceptionCause( final Exception e )
    {
       if ( e instanceof ServiceException )
       {
-         return ( (ServiceInternalException) e ).getResponseMessage();
+         return ( (ServiceException) e ).getResponseMessage();
       }
       else
       {
@@ -280,8 +280,8 @@ public class AsyncRtmAuthenticator
       }
    }
    
-
-
+   
+   
    private Service createService( AuthenticatorActivity activity ) throws ServiceInternalException
    {
       final ApplicationInfo applicationInfo = new ApplicationInfo( MolokoApp.getRtmApiKey( activity ),

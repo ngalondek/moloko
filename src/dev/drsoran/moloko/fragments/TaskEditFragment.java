@@ -113,7 +113,6 @@ public class TaskEditFragment extends
    public void onDetach()
    {
       super.onDetach();
-      
       listener = null;
    }
    
@@ -230,7 +229,7 @@ public class TaskEditFragment extends
             
             if ( !ok )
                Toast.makeText( getFragmentActivity(),
-                               R.string.toast_delete_task_failed,
+                               R.string.toast_save_task_failed,
                                Toast.LENGTH_LONG ).show();
          }
       }

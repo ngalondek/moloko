@@ -31,12 +31,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -92,6 +92,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       + AbstractTaskEditFragment.class.getSimpleName();
    
    protected final int FULL_DATE_FLAGS = MolokoDateUtils.FORMAT_WITH_YEAR;
+   
+   
+   private final static class ExtraInitialValues
+   {
+      public final static String EDIT_DUE_TEXT = "edit_due_text";
+      
+      public final static String EDIT_RECURRENCE_TEXT = "edit_recurrence_text";
+      
+      public final static String EDIT_ESTIMATE_TEXT = "edit_estimate_text";
+   }
    
    
    public final static class TaskEditDatabaseData
@@ -311,14 +321,30 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          
          initializeTagsSection();
          
-         initDueEditText( true );
+         initDueEditText();
          initRecurrenceEditText();
          initEstimateEditText();
          
          urlEditText.setText( getCurrentValue( Tasks.URL, String.class ) );
          
          registerInputListeners();
+         
+         putExtaInitialValues();
       }
+   }
+   
+   
+   
+   private void putExtaInitialValues()
+   {
+      initialValues.putString( ExtraInitialValues.EDIT_DUE_TEXT,
+                               dueEditText.getText().toString() );
+      
+      initialValues.putString( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
+                               recurrEditText.getText().toString() );
+      
+      initialValues.putString( ExtraInitialValues.EDIT_ESTIMATE_TEXT,
+                               estimateEditText.getText().toString() );
    }
    
    
@@ -377,6 +403,15 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          }
       } );
       
+      dueEditText.addTextChangedListener( new UIUtils.AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            putEditDueChange();
+         }
+      } );
+      
       dueEditText.setOnEditorActionListener( new OnEditorActionListener()
       {
          @Override
@@ -386,12 +421,12 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          }
       } );
       
-      dueEditText.setOnFocusChangeListener( new OnFocusChangeListener()
+      recurrEditText.addTextChangedListener( new UIUtils.AfterTextChangedWatcher()
       {
          @Override
-         public void onFocusChange( View v, boolean hasFocus )
+         public void afterTextChanged( Editable s )
          {
-            onDueFocused( hasFocus );
+            putEditedRecurrenceChange();
          }
       } );
       
@@ -401,6 +436,15 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
          {
             return onEditRecurrenceByInput( actionId );
+         }
+      } );
+      
+      estimateEditText.addTextChangedListener( new UIUtils.AfterTextChangedWatcher()
+      {
+         @Override
+         public void afterTextChanged( Editable s )
+         {
+            putEditEstimateChange();
          }
       } );
       
@@ -631,30 +675,13 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
-   protected void initDueEditText( boolean showWeekday )
+   protected void initDueEditText()
    {
       final long due = getCurrentValue( Tasks.DUE_DATE, Long.class );
       final boolean hasDueTime = getCurrentValue( Tasks.HAS_DUE_TIME,
                                                   Boolean.class );
       
-      int format = MolokoDateUtils.FORMAT_NUMERIC
-         | MolokoDateUtils.FORMAT_WITH_YEAR | MolokoDateUtils.FORMAT_ABR_ALL;
-      
-      if ( showWeekday )
-         format |= MolokoDateUtils.FORMAT_SHOW_WEEKDAY;
-      
-      if ( due == -1 )
-      {
-         dueEditText.setText( null );
-      }
-      else if ( hasDueTime )
-      {
-         dueEditText.setText( MolokoDateUtils.formatDateTime( due, format ) );
-      }
-      else
-      {
-         dueEditText.setText( MolokoDateUtils.formatDate( due, format ) );
-      }
+      setEditDueText( due, hasDueTime );
    }
    
    
@@ -665,18 +692,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       final boolean isEveryRecurrence = getCurrentValue( Tasks.RECURRENCE_EVERY,
                                                          Boolean.class );
       
-      if ( TextUtils.isEmpty( recurrence ) )
-      {
-         recurrEditText.setText( null );
-      }
-      else
-      {
-         final String sentence = RecurrenceParsing.parseRecurrencePattern( recurrence,
-                                                                           isEveryRecurrence );
-         recurrEditText.setText( ( sentence != null
-                                                   ? sentence
-                                                   : getString( R.string.task_datetime_err_recurr ) ) );
-      }
+      setEditRecurrenceText( recurrence, isEveryRecurrence );
    }
    
    
@@ -686,15 +702,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
                                                    Long.class );
       
-      if ( estimateMillis == -1 )
-      {
-         estimateEditText.setText( null );
-      }
-      else
-      {
-         estimateEditText.setText( MolokoDateUtils.formatEstimated( getFragmentActivity(),
-                                                                    estimateMillis ) );
-      }
+      setEditEstimateText( estimateMillis );
    }
    
    
@@ -736,16 +744,13 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       boolean ok = validateName();
       
       // Due
-      if ( ok && !TextUtils.isEmpty( dueEditText.getText() ) )
-         ok = validateDue( dueEditText.getText().toString() ) != null;
+      ok = ok && validateDue() != null;
       
       // Recurrence
-      if ( ok && !TextUtils.isEmpty( recurrEditText.getText() ) )
-         ok = validateRecurrence( recurrEditText.getText().toString() ) != null;
+      ok = ok && validateRecurrence() != null;
       
       // Estimate
-      if ( ok && !TextUtils.isEmpty( estimateEditText.getText() ) )
-         ok = validateEstimate( estimateEditText.getText().toString() ) != -1;
+      ok = ok && validateEstimate() != -1;
       
       return ok;
    }
@@ -769,6 +774,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
+   // DUE DATE EDITING
+   
    private void onEditDueByPicker()
    {
       pickerDlg = createDuePicker();
@@ -783,8 +790,9 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
             
             if ( reason == CloseReason.OK )
             {
-               onDueEdited( (Long) value, (Boolean) extras[ 0 ] );
-               initDueEditText( true );
+               setEditDueText( ( (Long) value ).longValue(),
+                               ( (Boolean) extras[ 0 ] ).booleanValue() );
+               putEditDueChange();
             }
          }
       } );
@@ -795,82 +803,137 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    private AbstractPickerDialog createDuePicker()
    {
+      MolokoCalendar cal = parseDue();
+      
+      if ( cal == null )
+      {
+         cal = MolokoDateUtils.newCalendar( System.currentTimeMillis() );
+         cal.setHasTime( false );
+      }
+      
       return new DuePickerDialog( getFragmentActivity(),
-                                  getCurrentValue( Tasks.DUE_DATE, Long.class ),
-                                  getCurrentValue( Tasks.HAS_DUE_TIME,
-                                                   Boolean.class ) );
+                                  cal.getTimeInMillis(),
+                                  cal.hasTime() );
    }
    
    
    
    private boolean onEditDueByInput( int actionId )
    {
+      boolean stayInEditText = false;
+      
       if ( hasInputCommitted( actionId ) )
       {
-         final String dueStr = dueEditText.getText().toString();
-         
-         if ( !TextUtils.isEmpty( dueStr ) )
+         if ( !TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_DUE_TEXT,
+                                                   String.class ) ) )
          {
-            final MolokoCalendar cal = validateDue( dueStr );
-            if ( cal != null )
-            {
-               onDueEdited( cal.getTimeInMillis(), cal.hasTime() );
-               initDueEditText( true );
-            }
-            else
-            {
-               return true;
-            }
-         }
-         else
-         {
-            onDueEdited( -1, false );
-            initDueEditText( true );
+            final MolokoCalendar cal = validateDue();
+            stayInEditText = cal == null;
+            
+            if ( !stayInEditText )
+               setEditDueText( cal.getTimeInMillis(), cal.hasTime() );
          }
       }
       
-      return false;
+      return stayInEditText;
    }
    
    
    
-   private void onDueEdited( long millis, boolean hasTime )
+   private void setEditDueText( long due, boolean hasDueTime )
    {
-      putChange( Tasks.DUE_DATE, millis, Long.class );
-      putChange( Tasks.HAS_DUE_TIME, hasTime, Boolean.class );
-   }
-   
-   
-   
-   private void onDueFocused( boolean hasFocus )
-   {
-      initDueEditText( !hasFocus );
-   }
-   
-   
-   
-   protected MolokoCalendar validateDue( String dueStr )
-   {
-      MolokoCalendar cal = null;
+      int format = MolokoDateUtils.FORMAT_NUMERIC
+         | MolokoDateUtils.FORMAT_WITH_YEAR | MolokoDateUtils.FORMAT_ABR_ALL;
       
-      if ( !TextUtils.isEmpty( dueStr ) )
+      if ( due == -1 )
       {
-         cal = RtmDateTimeParsing.parseDateTimeSpec( dueStr );
+         dueEditText.setText( null );
+      }
+      else if ( hasDueTime )
+      {
+         dueEditText.setText( MolokoDateUtils.formatDateTime( due, format ) );
+      }
+      else
+      {
+         dueEditText.setText( MolokoDateUtils.formatDate( due, format ) );
+      }
+   }
+   
+   
+   
+   private void putEditDueChange()
+   {
+      putChange( ExtraInitialValues.EDIT_DUE_TEXT,
+                 dueEditText.getText().toString(),
+                 String.class );
+   }
+   
+   
+   
+   private MolokoCalendar parseDue()
+   {
+      final String dueStr = getCurrentValue( ExtraInitialValues.EDIT_DUE_TEXT,
+                                             String.class );
+      final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( dueStr );
+      
+      return cal;
+   }
+   
+   
+   
+   protected MolokoCalendar validateDue()
+   {
+      final MolokoCalendar cal = parseDue();
+      
+      if ( cal == null )
+      {
+         Toast.makeText( getFragmentActivity(),
+                         getString( R.string.task_edit_validate_due,
+                                    getCurrentValue( ExtraInitialValues.EDIT_DUE_TEXT,
+                                                     String.class ) ),
+                         Toast.LENGTH_LONG )
+              .show();
          
-         if ( cal == null )
-         {
-            Toast.makeText( getFragmentActivity(),
-                            getString( R.string.task_edit_validate_due, dueStr ),
-                            Toast.LENGTH_LONG )
-                 .show();
-            dueEditText.requestFocus();
-         }
+         dueEditText.requestFocus();
       }
       
       return cal;
    }
    
    
+   
+   private void commitEditDue()
+   {
+      final String dueEditText = getCurrentValue( ExtraInitialValues.EDIT_DUE_TEXT,
+                                                  String.class );
+      if ( !TextUtils.isEmpty( dueEditText ) )
+      {
+         final MolokoCalendar cal = parseDue();
+         if ( cal != null )
+         {
+            putChange( Tasks.DUE_DATE,
+                       Long.valueOf( cal.getTimeInMillis() ),
+                       Long.class );
+            putChange( Tasks.HAS_DUE_TIME,
+                       Boolean.valueOf( cal.hasTime() ),
+                       Boolean.class );
+         }
+         else
+         {
+            throw new IllegalStateException( String.format( "Expected valid due edit text to parse. Found %s",
+                                                            dueEditText ) );
+         }
+      }
+      else
+      {
+         putChange( Tasks.DUE_DATE, Long.valueOf( -1 ), Long.class );
+         putChange( Tasks.HAS_DUE_TIME, Boolean.FALSE, Boolean.class );
+      }
+   }
+   
+   
+   
+   // RECURRENCE EDITING
    
    private void onEditRecurrenceByPicker()
    {
@@ -886,8 +949,9 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
             
             if ( reason == CloseReason.OK )
             {
-               onRecurrenceEdited( (String) value, (Boolean) extras[ 0 ] );
-               initRecurrenceEditText();
+               setEditRecurrenceText( (String) value,
+                                      ( (Boolean) extras[ 0 ] ).booleanValue() );
+               putEditedRecurrenceChange();
             }
          }
       } );
@@ -898,77 +962,134 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    private AbstractPickerDialog createRecurrencePicker()
    {
+      Pair< String, Boolean > recurrence = parseRecurrence();
+      
+      if ( recurrence == null )
+         recurrence = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
+      
       return new RecurrPickerDialog( getFragmentActivity(),
-                                     getCurrentValue( Tasks.RECURRENCE,
-                                                      String.class ),
-                                     getCurrentValue( Tasks.RECURRENCE_EVERY,
-                                                      Boolean.class ) );
+                                     recurrence.first,
+                                     recurrence.second );
    }
    
    
    
    private boolean onEditRecurrenceByInput( int actionId )
    {
+      boolean stayInEditText = false;
+      
       if ( hasInputCommitted( actionId ) )
       {
-         final String recurrStr = recurrEditText.getText().toString();
-         
-         if ( !TextUtils.isEmpty( recurrStr ) )
+         if ( !TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
+                                                   String.class ) ) )
          {
-            final Pair< String, Boolean > res = validateRecurrence( recurrStr );
+            final Pair< String, Boolean > recurrence = parseRecurrence();
+            stayInEditText = recurrence == null;
             
-            if ( res != null )
-            {
-               onRecurrenceEdited( res.first, res.second.booleanValue() );
-               initRecurrenceEditText();
-            }
-            else
-            {
-               return true;
-            }
-         }
-         else
-         {
-            onRecurrenceEdited( null, false );
-            initRecurrenceEditText();
+            if ( !stayInEditText )
+               setEditRecurrenceText( recurrence.first, recurrence.second );
          }
       }
       
-      return false;
+      return stayInEditText;
    }
    
    
    
-   private void onRecurrenceEdited( String pattern, boolean isEvery )
+   private void setEditRecurrenceText( String recurrence,
+                                       boolean isEveryRecurrence )
    {
-      putChange( Tasks.RECURRENCE, pattern, String.class );
-      putChange( Tasks.RECURRENCE_EVERY, isEvery, Boolean.class );
+      if ( TextUtils.isEmpty( recurrence ) )
+      {
+         recurrEditText.setText( null );
+      }
+      else
+      {
+         final String sentence = RecurrenceParsing.parseRecurrencePattern( recurrence,
+                                                                           isEveryRecurrence );
+         recurrEditText.setText( ( sentence != null
+                                                   ? sentence
+                                                   : getString( R.string.task_datetime_err_recurr ) ) );
+      }
    }
    
    
    
-   protected Pair< String, Boolean > validateRecurrence( String recurrStr )
+   private void putEditedRecurrenceChange()
    {
+      putChange( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
+                 recurrEditText.getText().toString(),
+                 String.class );
+   }
+   
+   
+   
+   private Pair< String, Boolean > parseRecurrence()
+   {
+      final String recurrStr = getCurrentValue( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
+                                                String.class );
       Pair< String, Boolean > res = new Pair< String, Boolean >( Strings.EMPTY_STRING,
                                                                  Boolean.FALSE );
+      
       if ( !TextUtils.isEmpty( recurrStr ) )
       {
          res = RecurrenceParsing.parseRecurrence( recurrStr );
-         
-         if ( res == null )
-         {
-            Toast.makeText( getFragmentActivity(),
-                            getString( R.string.task_edit_validate_recurrence,
-                                       recurrStr ),
-                            Toast.LENGTH_LONG ).show();
-            recurrEditText.requestFocus();
-         }
       }
       
       return res;
    }
    
    
+   
+   protected Pair< String, Boolean > validateRecurrence()
+   {
+      final Pair< String, Boolean > recurrence = parseRecurrence();
+      
+      if ( recurrence == null )
+      {
+         Toast.makeText( getFragmentActivity(),
+                         getString( R.string.task_edit_validate_recurrence,
+                                    getCurrentValue( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
+                                                     String.class ) ),
+                         Toast.LENGTH_LONG )
+              .show();
+         recurrEditText.requestFocus();
+      }
+      
+      return recurrence;
+   }
+   
+   
+   
+   private void commitEditRecurrence()
+   {
+      final String recurrStr = getCurrentValue( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
+                                                String.class );
+      
+      if ( !TextUtils.isEmpty( recurrStr ) )
+      {
+         final Pair< String, Boolean > res = parseRecurrence();
+         if ( res != null )
+         {
+            putChange( Tasks.RECURRENCE, res.first, String.class );
+            putChange( Tasks.RECURRENCE_EVERY, res.second, Boolean.class );
+         }
+         else
+         {
+            throw new IllegalStateException( String.format( "Expected valid recurrence edit text to parse. Found %s",
+                                                            recurrStr ) );
+         }
+      }
+      else
+      {
+         putChange( Tasks.RECURRENCE, (String) null, String.class );
+         putChange( Tasks.RECURRENCE_EVERY, Boolean.FALSE, Boolean.class );
+      }
+   }
+   
+   
+   
+   // ESTIMATE EDITING
    
    private void onEditEstimateByPicker()
    {
@@ -984,11 +1105,9 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
             
             if ( reason == CloseReason.OK )
             {
-               final long millis = (Long) value;
-               final String estStr = MolokoDateUtils.formatEstimated( getFragmentActivity(),
-                                                                      millis );
-               onEstimateEdited( estStr, millis );
-               initEstimateEditText();
+               final long millis = ( (Long) value ).longValue();
+               setEditEstimateText( millis );
+               putEditEstimateChange();
             }
          }
       } );
@@ -999,71 +1118,71 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    private AbstractPickerDialog createEstimatePicker()
    {
-      return new EstimatePickerDialog( getFragmentActivity(),
-                                       getCurrentValue( Tasks.ESTIMATE_MILLIS,
-                                                        Long.class ) );
+      long millis = parseEstimate();
+      
+      if ( millis == -1 )
+         millis = DateUtils.DAY_IN_MILLIS;
+      
+      return new EstimatePickerDialog( getFragmentActivity(), millis );
    }
    
    
    
    private boolean onEditEstimateByInput( int actionId )
    {
+      boolean stayInEditText = false;
+      
       if ( hasInputCommitted( actionId ) )
       {
-         String estStr = estimateEditText.getText().toString();
-         
-         if ( !TextUtils.isEmpty( estStr ) )
+         if ( !TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_ESTIMATE_TEXT,
+                                                   String.class ) ) )
          {
-            final long millis = validateEstimate( estStr );
+            final long millis = validateEstimate();
+            stayInEditText = millis == -1;
             
-            if ( millis != -1 )
-            {
-               estStr = MolokoDateUtils.formatEstimated( getFragmentActivity(),
-                                                         millis );
-               onEstimateEdited( estStr, millis );
-               initEstimateEditText();
-            }
-            else
-            {
-               return true;
-            }
-         }
-         else
-         {
-            onEstimateEdited( null, -1 );
-            initEstimateEditText();
+            if ( !stayInEditText )
+               setEditEstimateText( millis );
          }
       }
       
-      return false;
+      return stayInEditText;
    }
    
    
    
-   private void onEstimateEdited( String estimate, long millis )
+   private void setEditEstimateText( long estimateMillis )
    {
-      putChange( Tasks.ESTIMATE, estimate, String.class );
-      putChange( Tasks.ESTIMATE_MILLIS, Long.valueOf( millis ), Long.class );
+      if ( estimateMillis == -1 )
+      {
+         estimateEditText.setText( null );
+      }
+      else
+      {
+         estimateEditText.setText( MolokoDateUtils.formatEstimated( getFragmentActivity(),
+                                                                    estimateMillis ) );
+      }
    }
    
    
    
-   protected long validateEstimate( String estStr )
+   private void putEditEstimateChange()
+   {
+      putChange( ExtraInitialValues.EDIT_ESTIMATE_TEXT,
+                 estimateEditText.getText().toString(),
+                 String.class );
+   }
+   
+   
+   
+   private long parseEstimate()
    {
       long millis = 0;
+      final String estStr = getCurrentValue( ExtraInitialValues.EDIT_ESTIMATE_TEXT,
+                                             String.class );
       
       if ( !TextUtils.isEmpty( estStr ) )
       {
          millis = RtmDateTimeParsing.parseEstimated( estStr );
-         
-         if ( millis == -1 )
-         {
-            Toast.makeText( getFragmentActivity(),
-                            getString( R.string.task_edit_validate_estimate,
-                                       estStr ),
-                            Toast.LENGTH_LONG ).show();
-            estimateEditText.requestFocus();
-         }
       }
       
       return millis;
@@ -1071,11 +1190,66 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    
    
+   protected long validateEstimate()
+   {
+      long millis = parseEstimate();
+      
+      if ( millis == -1 )
+      {
+         Toast.makeText( getFragmentActivity(),
+                         getString( R.string.task_edit_validate_estimate,
+                                    getCurrentValue( ExtraInitialValues.EDIT_ESTIMATE_TEXT,
+                                                     String.class ) ),
+                         Toast.LENGTH_LONG )
+              .show();
+         estimateEditText.requestFocus();
+      }
+      
+      return millis;
+   }
+   
+   
+   
+   private void commitEditEstimate()
+   {
+      String estEditText = getCurrentValue( ExtraInitialValues.EDIT_ESTIMATE_TEXT,
+                                            String.class );
+      
+      if ( !TextUtils.isEmpty( estEditText ) )
+      {
+         final long millis = parseEstimate();
+         
+         if ( millis != -1 )
+         {
+            estEditText = MolokoDateUtils.formatEstimated( getFragmentActivity(),
+                                                           millis );
+            putChange( Tasks.ESTIMATE, estEditText, String.class );
+            putChange( Tasks.ESTIMATE_MILLIS,
+                       Long.valueOf( millis ),
+                       Long.class );
+         }
+         else
+         {
+            throw new IllegalStateException( String.format( "Expected valid estimate edit text to parse. Found %s",
+                                                            estEditText ) );
+         }
+      }
+      else
+      {
+         putChange( Tasks.ESTIMATE, (String) null, String.class );
+         putChange( Tasks.ESTIMATE_MILLIS, Long.valueOf( -1 ), Long.class );
+      }
+   }
+   
+   
+   
    protected final < V > V getCurrentValue( String key, Class< V > type )
    {
-      V res = getChange( key, type );
+      V res = null;
       
-      if ( res == null )
+      if ( hasChange( key ) )
+         res = getChange( key, type );
+      else
       {
          final Object o = initialValues.get( key );
          
@@ -1104,19 +1278,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    @Override
    public boolean hasChanges()
    {
-      return ( changes != null && changes.size() > 0 )
-         || hasUncommitedChanges();
-   }
-   
-   
-   
-   private boolean hasUncommitedChanges()
-   {
-      boolean hasUncommitedChanges = SyncUtils.hasChanged( getCurrentValue( Tasks.DUE_DATE,
-                                                                            Long.class ),
-                                                           null ); // TODO: Fix null
-      
-      return hasUncommitedChanges;
+      return ( changes != null && changes.size() > 0 );
    }
    
    
@@ -1124,7 +1286,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    @Override
    public boolean saveChanges()
    {
-      return validateInput();
+      boolean ok = validateInput();
+      
+      if ( ok )
+      {
+         commitEditDue();
+         commitEditRecurrence();
+         commitEditEstimate();
+      }
+      
+      return ok;
    }
    
    
@@ -1373,8 +1544,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    private boolean hasInputCommitted( int actionId )
    {
       return actionId == EditorInfo.IME_ACTION_DONE
-         | actionId == EditorInfo.IME_ACTION_NEXT
-         | actionId == EditorInfo.IME_NULL;
+         || actionId == EditorInfo.IME_ACTION_NEXT
+         || actionId == EditorInfo.IME_NULL;
    }
    
    

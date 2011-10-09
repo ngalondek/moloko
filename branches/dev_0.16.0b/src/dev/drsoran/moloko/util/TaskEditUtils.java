@@ -46,14 +46,14 @@ public final class TaskEditUtils
       + TaskEditUtils.class.getSimpleName();
    
    
-
+   
    private TaskEditUtils()
    {
       throw new AssertionError();
    }
    
-
-
+   
+   
    public final static boolean setTaskCompletion( Activity activity,
                                                   Task task,
                                                   boolean complete )
@@ -63,8 +63,8 @@ public final class TaskEditUtils
                                  complete );
    }
    
-
-
+   
+   
    public final static boolean setTasksCompletion( Activity activity,
                                                    List< ? extends Task > tasks,
                                                    boolean complete )
@@ -98,23 +98,28 @@ public final class TaskEditUtils
                                           R.string.toast_save_task );
          
          UIUtils.reportStatus( activity,
-                               R.string.toast_save_task_ok,
-                               R.string.toast_save_task_failed,
+                               activity.getResources()
+                                       .getQuantityString( !complete
+                                                                    ? R.plurals.toast_completed_task
+                                                                    : R.plurals.toast_incompleted_task,
+                                                           tasks.size(),
+                                                           String.valueOf( tasks.size() ) ),
+                               activity.getString( R.string.toast_save_task_failed ),
                                ok );
       }
       
       return ok;
    }
    
-
-
+   
+   
    public final static boolean postponeTask( Activity activity, Task task )
    {
       return postponeTasks( activity, Collections.singletonList( task ) );
    }
    
-
-
+   
+   
    public final static boolean postponeTasks( Activity activity,
                                               List< ? extends Task > tasks )
    {
@@ -191,23 +196,26 @@ public final class TaskEditUtils
                                           R.string.toast_save_task );
          
          UIUtils.reportStatus( activity,
-                               R.string.toast_save_task_ok,
-                               R.string.toast_save_task_failed,
+                               activity.getResources()
+                                       .getQuantityString( R.plurals.toast_postponed_task,
+                                                           tasks.size(),
+                                                           String.valueOf( tasks.size() ) ),
+                               activity.getString( R.string.toast_save_task_failed ),
                                ok );
       }
       
       return ok;
    }
    
-
-
+   
+   
    public final static boolean deleteTask( Activity activity, Task task )
    {
       return deleteTasks( activity, Collections.singletonList( task ) );
    }
    
-
-
+   
+   
    public final static boolean deleteTasks( Activity activity,
                                             List< ? extends Task > tasks )
    {
@@ -243,8 +251,11 @@ public final class TaskEditUtils
                                                      R.string.toast_delete_task );
          
          UIUtils.reportStatus( activity,
-                               R.string.toast_delete_task_ok,
-                               R.string.toast_delete_task_failed,
+                               activity.getResources()
+                                       .getQuantityString( R.plurals.toast_deleted_task,
+                                                           tasks.size(),
+                                                           String.valueOf( tasks.size() ) ),
+                               activity.getString( R.string.toast_delete_task_failed ),
                                ok );
       }
       

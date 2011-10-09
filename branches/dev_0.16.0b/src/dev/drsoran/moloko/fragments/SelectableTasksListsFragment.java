@@ -103,7 +103,7 @@ public class SelectableTasksListsFragment extends
       
       public final static int COMPLETE = R.id.menu_complete_selected_tasks;
       
-      public final static int UNCOMPLETE = R.id.menu_uncomplete_selected_tasks;
+      public final static int INCOMPLETE = R.id.menu_uncomplete_selected_tasks;
       
       public final static int POSTPONE = R.id.menu_postpone_selected_tasks;
       
@@ -303,10 +303,10 @@ public class SelectableTasksListsFragment extends
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                       someSelected && selUncompl == selCnt );
          
-         // The uncomplete task menu is only shown if all selected tasks are completed
+         // The incomplete task menu is only shown if all selected tasks are completed
          UIUtils.addOptionalMenuItem( getFragmentActivity(),
                                       menu,
-                                      OptionsMenu.UNCOMPLETE,
+                                      OptionsMenu.INCOMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
                                                  selCnt ),
                                       Menu.CATEGORY_SECONDARY,
@@ -428,10 +428,9 @@ public class SelectableTasksListsFragment extends
                return true;
                
             case OptionsMenu.COMPLETE:
-               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_complete,
-                                                                                       adapter.getSelectedCount(),
-                                                                                       getResources().getQuantityString( R.plurals.g_task,
-                                                                                                                         adapter.getSelectedCount() ) ) )
+               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_complete,
+                                                                                                              adapter.getSelectedCount(),
+                                                                                                              adapter.getSelectedCount() ) )
                                                                .setPositiveButton( R.string.btn_complete,
                                                                                    new OnClickListener()
                                                                                    {
@@ -447,11 +446,10 @@ public class SelectableTasksListsFragment extends
                                                                .show();
                return true;
                
-            case OptionsMenu.UNCOMPLETE:
-               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_uncomplete,
-                                                                                       adapter.getSelectedCount(),
-                                                                                       getResources().getQuantityString( R.plurals.g_task,
-                                                                                                                         adapter.getSelectedCount() ) ) )
+            case OptionsMenu.INCOMPLETE:
+               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_incomplete,
+                                                                                                              adapter.getSelectedCount(),
+                                                                                                              adapter.getSelectedCount() ) )
                                                                .setPositiveButton( R.string.btn_uncomplete,
                                                                                    new OnClickListener()
                                                                                    {
@@ -468,10 +466,9 @@ public class SelectableTasksListsFragment extends
                return true;
                
             case OptionsMenu.POSTPONE:
-               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_postpone,
-                                                                                       adapter.getSelectedCount(),
-                                                                                       getResources().getQuantityString( R.plurals.g_task,
-                                                                                                                         adapter.getSelectedCount() ) ) )
+               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_postpone,
+                                                                                                              adapter.getSelectedCount(),
+                                                                                                              adapter.getSelectedCount() ) )
                                                                .setPositiveButton( R.string.btn_postpone,
                                                                                    new OnClickListener()
                                                                                    {
@@ -486,10 +483,9 @@ public class SelectableTasksListsFragment extends
                                                                                    null )
                                                                .show();
             case OptionsMenu.DELETE:
-               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getString( R.string.select_multiple_tasks_dlg_delete,
-                                                                                       adapter.getSelectedCount(),
-                                                                                       getResources().getQuantityString( R.plurals.g_task,
-                                                                                                                         adapter.getSelectedCount() ) ) )
+               new AlertDialog.Builder( getFragmentActivity() ).setMessage( getResources().getQuantityString( R.plurals.select_multiple_tasks_dlg_delete,
+                                                                                                              adapter.getSelectedCount(),
+                                                                                                              adapter.getSelectedCount() ) )
                                                                .setPositiveButton( R.string.btn_delete,
                                                                                    new OnClickListener()
                                                                                    {

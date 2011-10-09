@@ -53,13 +53,13 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
@@ -86,7 +86,7 @@ public final class UIUtils
    { android.R.attr.state_checked };
    
    
-
+   
    private UIUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
@@ -98,8 +98,8 @@ public final class UIUtils
       @Override
       abstract public void afterTextChanged( Editable s );
       
-
-
+      
+      
       @Override
       public void beforeTextChanged( CharSequence s,
                                      int start,
@@ -108,8 +108,8 @@ public final class UIUtils
       {
       }
       
-
-
+      
+      
       @Override
       public void onTextChanged( CharSequence s,
                                  int start,
@@ -120,21 +120,21 @@ public final class UIUtils
    }
    
    
-
+   
    public final static String getTrimmedText( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-
-
+   
+   
    public final static CharSequence getTrimmedSequence( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-
-
+   
+   
    public final static void hideSoftInput( View view )
    {
       if ( view != null )
@@ -145,8 +145,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static View setDropDownItemIconAndText( View dropDownView,
                                                         Pair< Integer, String > iconWithText )
    {
@@ -158,8 +158,8 @@ public final class UIUtils
       
    }
    
-
-
+   
+   
    public final static View setDropDownItemIconAndText( View dropDownView,
                                                         int iconId,
                                                         String text )
@@ -179,8 +179,8 @@ public final class UIUtils
       return dropDownView;
    }
    
-
-
+   
+   
    public final static void setTaskDescription( TextView view,
                                                 Task task,
                                                 Time timeBase )
@@ -229,8 +229,8 @@ public final class UIUtils
          view.setTypeface( Typeface.DEFAULT );
    }
    
-
-
+   
+   
    public final static void setListTasksCountView( TextView tasksCount,
                                                    RtmListWithTaskCount list )
    {
@@ -255,8 +255,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static void inflateTags( Context context,
                                          ViewGroup container,
                                          Collection< String > tags,
@@ -338,8 +338,8 @@ public final class UIUtils
          container.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    public final static void setPriorityColor( View view, Task task )
    {
       switch ( task.getPriority() )
@@ -360,8 +360,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static StringBuilder appendAtNewLine( StringBuilder stringBuilder,
                                                       String string )
    {
@@ -373,8 +373,8 @@ public final class UIUtils
       return stringBuilder;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithViewLayout( View layout,
                                                               String title )
    {
@@ -403,8 +403,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               String text )
@@ -435,8 +435,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               Spannable text )
@@ -459,8 +459,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static void inflateErrorWithIcon( Context context,
                                                   ViewGroup container,
                                                   int errorMsgResId,
@@ -478,8 +478,8 @@ public final class UIUtils
       Log.e( LogUtils.toTag( Context.class ), msg );
    }
    
-
-
+   
+   
    public final static void inflateErrorWithIcon( Context context,
                                                   ViewGroup container,
                                                   Spanned errorText )
@@ -494,16 +494,16 @@ public final class UIUtils
       Log.e( LogUtils.toTag( Context.class ), errorText.toString() );
    }
    
-
-
+   
+   
    public final static void applySpannable( TextView textView, Spannable text )
    {
       textView.setMovementMethod( LinkMovementMethod.getInstance() );
       textView.setText( text, BufferType.SPANNABLE );
    }
    
-
-
+   
+   
    public final static MenuItem addSettingsMenuItem( final Context context,
                                                      Menu menu,
                                                      int menuOrder,
@@ -523,8 +523,8 @@ public final class UIUtils
       return menuItem;
    }
    
-
-
+   
+   
    public final static MenuItem addSearchMenuItem( final Activity activity,
                                                    Menu menu,
                                                    int menuOrder,
@@ -552,8 +552,8 @@ public final class UIUtils
       return menuItem;
    }
    
-
-
+   
+   
    public final static MenuItem addSyncMenuItem( final FragmentActivity activity,
                                                  Menu menu,
                                                  int menuOrder,
@@ -582,8 +582,8 @@ public final class UIUtils
       return menuItem;
    }
    
-
-
+   
+   
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
@@ -606,8 +606,8 @@ public final class UIUtils
                                   show );
    }
    
-
-
+   
+   
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
@@ -656,8 +656,8 @@ public final class UIUtils
       return item;
    }
    
-
-
+   
+   
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -667,8 +667,8 @@ public final class UIUtils
                                                            activityClass ) );
    }
    
-
-
+   
+   
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -680,8 +680,8 @@ public final class UIUtils
          item.setIntent( intent );
    }
    
-
-
+   
+   
    public final static String convertSource( Context context, String source )
    {
       if ( source.equalsIgnoreCase( "js" ) )
@@ -693,8 +693,8 @@ public final class UIUtils
       return source;
    }
    
-
-
+   
+   
    public final static Pair< Integer, Integer > getTaggedViewRange( ViewGroup container,
                                                                     String tag )
    {
@@ -718,8 +718,8 @@ public final class UIUtils
          return Pair.create( 0, 0 );
    }
    
-
-
+   
+   
    public final static int getTaggedViewPos( ViewGroup container, String tag )
    {
       int pos = -1;
@@ -733,8 +733,8 @@ public final class UIUtils
       return pos;
    }
    
-
-
+   
+   
    public final static void removeTaggedViews( ViewGroup container, String tag )
    {
       List< View > views = null;
@@ -756,8 +756,8 @@ public final class UIUtils
             container.removeView( view );
    }
    
-
-
+   
+   
    public final static Dialog newCancelWithChangesDialog( Activity activity,
                                                           Runnable yesAction,
                                                           Runnable noAction )
@@ -770,8 +770,8 @@ public final class UIUtils
                                    noAction );
    }
    
-
-
+   
+   
    public final static Dialog newApplyChangesDialog( Activity activity,
                                                      Runnable yesAction,
                                                      Runnable noAction )
@@ -784,8 +784,8 @@ public final class UIUtils
                                    noAction );
    }
    
-
-
+   
+   
    public final static Dialog newDeleteElementDialog( Activity activity,
                                                       String elementName,
                                                       Runnable yesAction,
@@ -801,8 +801,8 @@ public final class UIUtils
                                    noAction );
    }
    
-
-
+   
+   
    public final static Dialog newReadOnlyAccessDialog( final Activity activity,
                                                        Runnable noAction )
    {
@@ -821,8 +821,8 @@ public final class UIUtils
                                    noAction );
    }
    
-
-
+   
+   
    public final static Dialog newDialogWithActions( final Activity activity,
                                                     String message,
                                                     int positiveId,
@@ -862,8 +862,8 @@ public final class UIUtils
       return dialog;
    };
    
-
-
+   
+   
    public final static void newAboutMolokoDialog( FragmentActivity fragActivity )
    {
       final DialogFragment dialog = AboutMolokoDialogFragment.newInstance( Bundle.EMPTY );
@@ -871,14 +871,27 @@ public final class UIUtils
                    String.valueOf( R.id.frag_about_moloko ) );
    }
    
-
-
+   
+   
    public final static boolean reportStatus( Context context,
                                              int resIdOk,
                                              int resIdFailed,
                                              boolean ok )
    {
       Toast.makeText( context, ok ? resIdOk : resIdFailed, Toast.LENGTH_LONG )
+           .show();
+      
+      return ok;
+   }
+   
+   
+   
+   public final static boolean reportStatus( Context context,
+                                             CharSequence strOk,
+                                             CharSequence strFailed,
+                                             boolean ok )
+   {
+      Toast.makeText( context, ok ? strOk : strFailed, Toast.LENGTH_LONG )
            .show();
       
       return ok;

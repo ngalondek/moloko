@@ -395,7 +395,7 @@ public class TaskEditMultipleFragment extends
             
             if ( !ok )
                Toast.makeText( getFragmentActivity(),
-                               R.string.toast_delete_task_failed,
+                               R.string.toast_save_task_failed,
                                Toast.LENGTH_LONG ).show();
          }
       }

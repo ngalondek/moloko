@@ -93,7 +93,7 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
    private IOnGroupIndicatorClickedListener groupIndicatorClickedListener;
    
    
-
+   
    public TaskListsAdapter( Context context, int groupId, int childId,
       List< RtmListWithTaskCount > lists )
    {
@@ -109,15 +109,15 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       this.lists = new ArrayList< RtmListWithTaskCount >( lists );
    }
    
-
-
+   
+   
    public void setOnGroupIndicatorClickedListener( IOnGroupIndicatorClickedListener listener )
    {
       groupIndicatorClickedListener = listener;
    }
    
-
-
+   
+   
    @Override
    public Object getChild( int groupPosition, int childPosition )
    {
@@ -144,12 +144,12 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       }
    }
    
-
-
+   
+   
    public Intent getChildIntent( int groupPosition, int childPosition )
    {
       final RtmListWithTaskCount list = lists.get( groupPosition );
-      final String title = list.getName() + " -";
+      final String listName = list.getName();
       
       Intent intent = null;
       
@@ -163,8 +163,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
             
             intent.removeExtra( TasksListActivity.Config.TITLE );
             intent.putExtra( TasksListActivity.Config.TITLE,
-                             context.getString( R.string.tasklists_child_due_today,
-                                                title ) );
+                             context.getString( R.string.taskslist_titlebar_due_today,
+                                                listName ) );
             break;
          
          case DUE_TOMORROW_TASK_COUNT:
@@ -174,8 +174,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                       + DateParser.tokenNames[ DateParser.TOMORROW ] );
             intent.removeExtra( TasksListActivity.Config.TITLE );
             intent.putExtra( TasksListActivity.Config.TITLE,
-                             context.getString( R.string.tasklists_child_due_tomorrow,
-                                                title ) );
+                             context.getString( R.string.taskslist_titlebar_due_tomorrow,
+                                                listName ) );
             break;
          
          case OVER_DUE_TASK_COUNT:
@@ -185,8 +185,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                       + DateParser.tokenNames[ DateParser.TODAY ] );
             intent.removeExtra( TasksListActivity.Config.TITLE );
             intent.putExtra( TasksListActivity.Config.TITLE,
-                             context.getString( R.string.tasklists_child_overdue,
-                                                title ) );
+                             context.getString( R.string.taskslist_titlebar_overdue,
+                                                listName ) );
             break;
          
          case COMPLETED_TASK_COUNT:
@@ -196,8 +196,8 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
                                                       + RtmSmartFilterLexer.COMPLETED_LIT );
             intent.removeExtra( TasksListActivity.Config.TITLE );
             intent.putExtra( TasksListActivity.Config.TITLE,
-                             context.getString( R.string.tasklists_child_completed,
-                                                title ) );
+                             context.getString( R.string.taskslist_titlebar_completed,
+                                                listName ) );
             break;
          
          default :
@@ -211,16 +211,16 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return intent;
    }
    
-
-
+   
+   
    @Override
    public long getChildId( int groupPosition, int childPosition )
    {
       return childPosition + 1;
    }
    
-
-
+   
+   
    @Override
    public View getChildView( int groupPosition,
                              int childPosition,
@@ -242,31 +242,40 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       if ( view != null )
       {
          final TextView textView = (TextView) view;
+         final Object childObject = getChild( groupPosition, childPosition );
+         final int quantity = childObject instanceof Integer
+                                                            ? ( (Integer) getChild( groupPosition,
+                                                                                    childPosition ) ).intValue()
+                                                            : -1;
          
          switch ( childPosition + 1 )
          {
             case DUE_TODAY_TASK_COUNT:
-               textView.setText( context.getString( R.string.tasklists_child_due_today,
-                                                    Integer.toString( (Integer) getChild( groupPosition,
-                                                                                          childPosition ) ) ) );
+               textView.setText( context.getResources()
+                                        .getQuantityString( R.plurals.tasklists_child_due_today,
+                                                            quantity,
+                                                            quantity ) );
                break;
             
             case DUE_TOMORROW_TASK_COUNT:
-               textView.setText( context.getString( R.string.tasklists_child_due_tomorrow,
-                                                    Integer.toString( (Integer) getChild( groupPosition,
-                                                                                          childPosition ) ) ) );
+               textView.setText( context.getResources()
+                                        .getQuantityString( R.plurals.tasklists_child_due_tomorrow,
+                                                            quantity,
+                                                            quantity ) );
                break;
             
             case OVER_DUE_TASK_COUNT:
-               textView.setText( context.getString( R.string.tasklists_child_overdue,
-                                                    Integer.toString( (Integer) getChild( groupPosition,
-                                                                                          childPosition ) ) ) );
+               textView.setText( context.getResources()
+                                        .getQuantityString( R.plurals.tasklists_child_overdue,
+                                                            quantity,
+                                                            quantity ) );
                break;
             
             case COMPLETED_TASK_COUNT:
-               textView.setText( context.getString( R.string.tasklists_child_completed,
-                                                    Integer.toString( (Integer) getChild( groupPosition,
-                                                                                          childPosition ) ) ) );
+               textView.setText( context.getResources()
+                                        .getQuantityString( R.plurals.tasklists_child_completed,
+                                                            quantity,
+                                                            quantity ) );
                break;
             
             case SUM_ESTIMATE:
@@ -284,40 +293,40 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return view;
    }
    
-
-
+   
+   
    @Override
    public int getChildrenCount( int groupPosition )
    {
       return SUM_ESTIMATE;
    }
    
-
-
+   
+   
    @Override
    public Object getGroup( int groupPosition )
    {
       return lists.get( groupPosition );
    }
    
-
-
+   
+   
    @Override
    public int getGroupCount()
    {
       return lists.size();
    }
    
-
-
+   
+   
    @Override
    public long getGroupId( int groupPosition )
    {
       return Long.valueOf( lists.get( groupPosition ).getId() );
    }
    
-
-
+   
+   
    @Override
    public View getGroupView( int groupPosition,
                              boolean isExpanded,
@@ -388,24 +397,24 @@ public class TaskListsAdapter extends BaseExpandableListAdapter
       return view;
    }
    
-
-
+   
+   
    @Override
    public boolean hasStableIds()
    {
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean isChildSelectable( int groupPosition, int childPosition )
    {
       return childPosition != SUM_ESTIMATE;
    }
    
-
-
+   
+   
    private void addConditionalIcon( ViewGroup container,
                                     int resId,
                                     int iconId,

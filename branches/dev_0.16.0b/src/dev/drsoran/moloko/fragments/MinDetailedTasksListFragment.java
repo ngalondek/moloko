@@ -46,6 +46,7 @@ import dev.drsoran.moloko.fragments.listeners.IMinDetailedTasksListFragmentListe
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.TasksLoader;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
@@ -85,7 +86,7 @@ public class MinDetailedTasksListFragment extends
    private IMinDetailedTasksListFragmentListener listener;
    
    
-   
+
    public static MinDetailedTasksListFragment newInstance( Bundle configuration )
    {
       final MinDetailedTasksListFragment fragment = new MinDetailedTasksListFragment();
@@ -95,23 +96,23 @@ public class MinDetailedTasksListFragment extends
       return fragment;
    }
    
-   
-   
+
+
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-   
-   
+
+
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -123,8 +124,8 @@ public class MinDetailedTasksListFragment extends
          listener = new NullTasksListFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -132,8 +133,8 @@ public class MinDetailedTasksListFragment extends
       listener = null;
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -142,8 +143,8 @@ public class MinDetailedTasksListFragment extends
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-   
-   
+
+
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -153,15 +154,15 @@ public class MinDetailedTasksListFragment extends
                                    menu,
                                    OptionsMenu.EDIT_MULTIPLE_TASKS,
                                    getString( R.string.abstaskslist_menu_opt_edit_multiple ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_edit_multiple_tasks,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
                                    hasMultipleTasks() && hasRtmWriteAccess() );
    }
    
-   
-   
+
+
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -176,16 +177,16 @@ public class MinDetailedTasksListFragment extends
       }
    }
    
-   
-   
+
+
    @Override
    protected int getDefaultTaskSort()
    {
       return MolokoApp.getSettings().getTaskSort();
    }
    
-   
-   
+
+
    @Override
    public Loader< List< Task >> newLoaderInstance( int id, Bundle config )
    {
@@ -201,8 +202,8 @@ public class MinDetailedTasksListFragment extends
       return loader;
    }
    
-   
-   
+
+
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
@@ -210,8 +211,8 @@ public class MinDetailedTasksListFragment extends
                                                       R.layout.mindetailed_taskslist_listitem );
    }
    
-   
-   
+
+
    @Override
    protected ListAdapter createListAdapterForResult( List< Task > result,
                                                      IFilter filter )
@@ -221,16 +222,16 @@ public class MinDetailedTasksListFragment extends
                                                       result );
    }
    
-   
-   
+
+
    @Override
    public MinDetailedTasksListFragmentAdapter getListAdapter()
    {
       return (MinDetailedTasksListFragmentAdapter) super.getListAdapter();
    }
    
-   
-   
+
+
    @Override
    protected void notifyDataSetChanged()
    {

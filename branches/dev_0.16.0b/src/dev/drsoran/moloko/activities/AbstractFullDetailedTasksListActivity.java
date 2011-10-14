@@ -30,6 +30,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -60,7 +61,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                    menu,
                                    OptionsMenu.QUICK_ADD_TASK,
                                    getString( R.string.app_task_add ),
-                                   Menu.CATEGORY_CONTAINER,
+                                   MenuCategory.CONTAINER,
                                    Menu.NONE,
                                    R.drawable.ic_menu_add_task,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
@@ -70,7 +71,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                    menu,
                                    OptionsMenu.SHOW_LISTS,
                                    getString( R.string.taskslist_menu_opt_lists ),
-                                   Menu.CATEGORY_ALTERNATIVE,
+                                   MenuCategory.ALTERNATIVE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_list,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -79,7 +80,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       
       UIUtils.addSearchMenuItem( this,
                                  menu,
-                                 Menu.CATEGORY_ALTERNATIVE,
+                                 MenuCategory.ALTERNATIVE,
                                  MenuItem.SHOW_AS_ACTION_IF_ROOM );
       
       return true;

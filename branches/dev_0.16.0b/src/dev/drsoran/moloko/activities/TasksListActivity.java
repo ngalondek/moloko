@@ -26,6 +26,7 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.RtmListEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
@@ -54,7 +55,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
                                    menu,
                                    OptionsMenu.DELETE_LIST,
                                    getString( R.string.taskslist_menu_opt_delete_list ),
-                                   Menu.CATEGORY_ALTERNATIVE,
+                                   MenuCategory.ALTERNATIVE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_trash,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,

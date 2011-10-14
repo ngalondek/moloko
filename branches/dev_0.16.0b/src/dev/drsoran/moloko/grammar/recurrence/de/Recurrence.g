@@ -288,13 +288,13 @@ EVERY         : 'jede'('s'|'r'|'n')? | 'alle';
 
 AFTER         : 'nach';
 
-YEARS         : 'jahr''e'?;
+YEARS         : 'jahr'('e'|'en')?;
 
-MONTHS        : 'monat''e'?;
+MONTHS        : 'monat'('e'|'en')?;
 
 WEEKS         : 'woche''n'?;
 
-DAYS          : 'tag''e'?;
+DAYS          : 'tag'('e'|'en')?;
 
 MONTH         : 'januar'    | 'jan'  | 'februar'  | 'feb'     | 'märz'  | 'april'    | 'apr'   |
                 'mai'       | 'juni' | 'jun'      | 'juli'    | 'jul'   | 'august'   | 'aug'   |
@@ -333,7 +333,7 @@ LAST          : 'letzt'('e'|'s'|'r'|'en'|'em');
 
 OTHER         : 'ander'('e'|'es'|'er'|'en');
 
-NUM_ONE       : 'eins';
+NUM_ONE       : 'ein'('s'|'e'|'er'|'em'|'en'|'es')?;
 
 NUM_TWO       : 'zwei';
 

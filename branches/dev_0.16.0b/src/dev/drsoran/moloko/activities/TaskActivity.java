@@ -61,6 +61,7 @@ import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.NoteEditUtils;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
@@ -208,20 +209,24 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       final Task task = getTask();
       
-      if ( task != null && task.getNumberOfNotes() > 0 )
+      if ( task != null )
       {
          final List< NoteFragmentContainerState > noteFragmentContainers = new ArrayList< NoteFragmentContainerState >( task.getNumberOfNotes() );
-         final ViewGroup fragmentContainer = getFragmentContainer();
-         final List< String > noteIds = task.getNoteIds();
          
-         for ( int i = 0, cnt = noteIds.size(); i < cnt; ++i )
+         if ( task.getNumberOfNotes() > 0 )
          {
-            final String noteId = noteIds.get( i );
-            final View noteFragmentContainer = fragmentContainer.findViewWithTag( noteId );
+            final ViewGroup fragmentContainer = getFragmentContainer();
+            final List< String > noteIds = task.getNoteIds();
             
-            if ( noteFragmentContainer != null )
-               noteFragmentContainers.add( new NoteFragmentContainerState( noteId,
-                                                                           noteFragmentContainer.getId() ) );
+            for ( int i = 0, cnt = noteIds.size(); i < cnt; ++i )
+            {
+               final String noteId = noteIds.get( i );
+               final View noteFragmentContainer = fragmentContainer.findViewWithTag( noteId );
+               
+               if ( noteFragmentContainer != null )
+                  noteFragmentContainers.add( new NoteFragmentContainerState( noteId,
+                                                                              noteFragmentContainer.getId() ) );
+            }
          }
          
          if ( IsActivityInAddingNewNoteMode() )
@@ -384,7 +389,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                    menu,
                                    OptionsMenu.COMPLETE_TASK,
                                    getString( R.string.app_task_complete ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_complete,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
@@ -394,7 +399,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                    menu,
                                    OptionsMenu.UNCOMPLETE_TASK,
                                    getString( R.string.app_task_uncomplete ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_incomplete,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
@@ -404,7 +409,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                    menu,
                                    OptionsMenu.POSTPONE_TASK,
                                    getString( R.string.app_task_postpone ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_postponed,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -413,7 +418,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                    menu,
                                    OptionsMenu.DELETE_TASK,
                                    getString( R.string.app_task_delete ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_trash,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -425,7 +430,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                    menu,
                                    OptionsMenu.SAVE,
                                    getString( R.string.app_save ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_disc,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
@@ -434,7 +439,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                    menu,
                                    OptionsMenu.ABORT,
                                    getString( R.string.phr_cancel_sync ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_cancel,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,

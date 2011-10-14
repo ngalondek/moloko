@@ -46,6 +46,8 @@ public class AboutPreference extends InfoTextPreference
    @Override
    protected void onClick()
    {
+      // TODO: Try using AboutMolokoDialogFragment if PreferenceFragment is supported by ActionBarSherlock
+      
       final Context context = getContext();
       
       final TextView content = new TextView( context );

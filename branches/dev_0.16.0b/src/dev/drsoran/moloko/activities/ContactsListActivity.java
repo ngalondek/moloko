@@ -28,6 +28,7 @@ import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.IContactsListFragmentListener;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -55,12 +56,12 @@ public class ContactsListActivity extends MolokoFragmentActivity implements
    {
       UIUtils.addSettingsMenuItem( this,
                                    menu,
-                                   Menu.CATEGORY_ALTERNATIVE,
+                                   MenuCategory.ALTERNATIVE,
                                    MenuItem.SHOW_AS_ACTION_NEVER );
       
       UIUtils.addSyncMenuItem( this,
                                menu,
-                               Menu.NONE,
+                               MenuCategory.NONE,
                                MenuItem.SHOW_AS_ACTION_IF_ROOM );
       return true;
    }

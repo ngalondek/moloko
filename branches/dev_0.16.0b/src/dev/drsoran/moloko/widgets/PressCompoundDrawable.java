@@ -70,6 +70,7 @@ public class PressCompoundDrawable
             case MotionEvent.ACTION_UP:
                textView.clearComposingText();
                textView.getEditableText().clear();
+               textView.requestFocus();
                
             default :
                clearBtnDown = false;

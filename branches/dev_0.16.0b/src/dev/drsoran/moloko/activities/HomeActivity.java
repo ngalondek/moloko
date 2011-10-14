@@ -36,6 +36,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.HomeAdapter;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.moloko.widgets.IMolokoHomeWidget;
 import dev.drsoran.moloko.widgets.SimpleHomeWidgetLayout;
@@ -80,6 +81,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
       {
          homeAdapter.startWidgets();
          onContentChanged();
+         showAddAccountWidget( AccountUtils.getRtmAccount( this ) == null );
       }
    }
    
@@ -107,7 +109,7 @@ public class HomeActivity extends MolokoFragmentActivity implements
                                    menu,
                                    OptionsMenu.ADD_TASK,
                                    getString( R.string.app_task_add ),
-                                   Menu.CATEGORY_CONTAINER,
+                                   MenuCategory.CONTAINER,
                                    Menu.NONE,
                                    R.drawable.ic_menu_add_task,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
@@ -115,12 +117,12 @@ public class HomeActivity extends MolokoFragmentActivity implements
       
       UIUtils.addSearchMenuItem( this,
                                  menu,
-                                 Menu.CATEGORY_ALTERNATIVE,
+                                 MenuCategory.ALTERNATIVE,
                                  MenuItem.SHOW_AS_ACTION_ALWAYS );
       
       UIUtils.addSyncMenuItem( this,
                                menu,
-                               Menu.CATEGORY_ALTERNATIVE,
+                               MenuCategory.ALTERNATIVE,
                                MenuItem.SHOW_AS_ACTION_ALWAYS );
       
       return true;

@@ -32,6 +32,7 @@ import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
@@ -94,7 +95,7 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
                                    menu,
                                    OptionsMenu.SAVE,
                                    getString( R.string.app_save ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_disc,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,
@@ -103,7 +104,7 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
                                    menu,
                                    OptionsMenu.ABORT,
                                    getString( R.string.phr_cancel_sync ),
-                                   Menu.NONE,
+                                   MenuCategory.NONE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_cancel,
                                    MenuItem.SHOW_AS_ACTION_ALWAYS,

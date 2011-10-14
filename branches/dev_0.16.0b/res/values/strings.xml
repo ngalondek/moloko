@@ -176,7 +176,7 @@
    <string name="btn_edit">Edit</string>
    <string name="btn_done">Done</string>
    <string name="btn_complete">Complete</string>
-   <string name="btn_uncomplete">Uncomplete</string>
+   <string name="btn_uncomplete">Incomplete</string>
    <string name="btn_postpone">Postpone</string>
    <string name="btn_delete">Delete</string>
    <string name="btn_add">Add</string>
@@ -332,7 +332,7 @@
      <string name="abstaskslist_menu_opt_sort">Sort by</string>
      <string name="abstaskslist_menu_opt_edit_multiple">Edit multiple</string>
      <string name="abstaskslist_listitem_ctx_complete_task">Complete \'%1$s\'</string>
-     <string name="abstaskslist_listitem_ctx_uncomplete_task">Uncomplete \'%1$s\'</string>
+     <string name="abstaskslist_listitem_ctx_uncomplete_task">Incomplete \'%1$s\'</string>
      <string name="abstaskslist_listitem_ctx_postpone_task">Postpone \'%1$s\'</string>
      <string name="abstaskslist_listitem_ctx_open_list">Open list \'%1$s\'</string>
      <string name="abstaskslist_listitem_ctx_tasks_at_location">Tasks at \'%1$s\'</string>
@@ -368,7 +368,7 @@
       <string name="select_multiple_tasks_menu_opt_inv_selection">Invert</string>
       <string name="select_multiple_tasks_menu_opt_do_edit">Edit %1$d</string>
       <string name="select_multiple_tasks_menu_opt_complete">Complete %1$d</string>
-      <string name="select_multiple_tasks_menu_opt_uncomplete">Uncomplete %1$d</string>
+      <string name="select_multiple_tasks_menu_opt_uncomplete">Incomplete %1$d</string>
       <string name="select_multiple_tasks_menu_opt_postpone">Postpone %1$d</string>
       <string name="select_multiple_tasks_menu_opt_delete">Delete %1$d</string>
       <string name="select_multiple_tasks_menu_ctx_select">Select %1$s</string>

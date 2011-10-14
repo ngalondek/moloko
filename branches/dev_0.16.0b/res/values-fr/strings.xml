@@ -30,12 +30,12 @@
    <string name="app_task_edit">Modifier Tâche</string>
    <string name="app_task_edit_multiple">Modifier %1$d %2$s</string>
    <string name="app_task_add">Nouvelle Tâche</string>
-   <string name="app_task_select_multiple">Select tasks (%1$d)</string>
-   <string name="app_task_complete">Complete</string>
-   <string name="app_task_uncomplete">Incomplete</string>
-   <string name="app_task_delete">Delete Task</string>
-   <string name="app_task_postpone">Postpone Task</string>
-   <string name="app_change_tags">Change tags</string>
+   <string name="app_task_select_multiple">Selectionner des tâches (%1$d)</string>
+   <string name="app_task_complete">Marquer faite</string>
+   <string name="app_task_uncomplete">Marquer à faire</string>
+   <string name="app_task_delete">Supprimer la tâche</string>
+   <string name="app_task_postpone">Reporter la tâche</string>
+   <string name="app_change_tags">Changer les mots clés</string>
    <string name="app_note">Note</string>
    <string name="app_note_multiple">Note (%1$d/%2$d)</string>
    <string name="app_note_edit">Modifier Note</string>
@@ -45,8 +45,8 @@
    <string name="app_sort_alpha">Nom de la Tâche</string>
    <string name="app_sort_prio">Priorité</string>
    <string name="app_sort_due_date">Échéance</string>
-   <string name="app_save">Save changes</string>
-   <string name="app_startup">Launching Moloko ...</string>
+   <string name="app_save">Enregistrer les modifications</string>
+   <string name="app_startup">Démarrage de Moloko ...</string>
 
    <string name="svc_sync">Synchronisation RTM</string>
    <string name="svc_auth">Authentification RTM</string>
@@ -86,7 +86,7 @@
    <string name="phr_please_wait">Patientez</string>
    <string name="phr_now">Maintenant</string>
    <string name="phr_today">Aujourd\'hui</string>
-   <string name="phr_today_with_date">Ajourd\'hui le %1$s</string>
+   <string name="phr_today_with_date">Aujourd\'hui le %1$s</string>
    <string name="phr_tomorrow">Demain</string>
    <string name="phr_tomorrow_with_date">Demain le %1$s</string>
    <string name="phr_establish_connection">Connexion à Internet pour continuer.</string>
@@ -96,17 +96,17 @@
    <string name="phr_ok">OK</string>
    <string name="phr_close">Fermer</string>
    <string name="phr_settings">Paramètres</string>
-   <string name="phr_none_f">none</string>
-   <string name="phr_none_m">none</string>
-   <string name="phr_none_mainly">none</string>
-   <string name="phr_nothing">nothing</string>
+   <string name="phr_none_f">aucune</string>
+   <string name="phr_none_m">aucun</string>
+   <string name="phr_none_mainly">aucun</string>
+   <string name="phr_nothing">rien</string>
    <string name="phr_sync">Synchronisation</string>
    <string name="phr_do_sync">Synchroniser</string>
    <string name="phr_cancel_sync">Arrêter la synchronisation</string>
    <string name="phr_on">On</string>
    <string name="phr_off">Off</string>
    <string name="phr_manuell">Manuel</string>
-   <string name="phr_password_set">set</string>
+   <string name="phr_password_set">entré</string>
    <string name="phr_loading">Chargement...</string>
    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
@@ -123,14 +123,14 @@
    <string name="err_db_typed">Erreur d\'accès à la base de données de %1$s.</string>
    <string name="err_entity_not_found">Le %1$s n\'a pas pu être récupéré dans la base de données.\n\nVeuillez vérifier si l\'élément existe.</string>
    <string name="err_unsupported_intent_action">L\'action %1$s n\'est pas supportée.</string>
-   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nYou can change this by removing your local RTM account and create a new one with \'Read, Write and Delete\' permission.\n\nYour data remains unchanged.</string>
+   <string name="err_modify_access_level_read">Moloko accède vos données en \'Lecture seule\'.\n\nVous pouvez changer cela en supprimant votre compte RTM local (celui de Moloko) et en le recréant avec les permissions \'Lecture, Ecriture, Suppression\'.\n\nVos données ne seront pas modifiées.</string>
 
    <!-- Global buttons -->
    <string name="btn_ok">OK</string>
    <string name="btn_continue">Continuer</string>
    <string name="btn_cancel">Annuler</string>
    <string name="btn_new_account">Nouveau Compte</string>
-   <string name="btn_account_settings">Account</string>
+   <string name="btn_account_settings">Compte</string>
    <string name="btn_edit">Modifier</string>
    <string name="btn_done">Fait</string>
    <string name="btn_complete">Marquer faite</string>
@@ -139,7 +139,7 @@
    <string name="btn_delete">Supprimer</string>
    <string name="btn_add">Ajouter</string>
    <string name="btn_back">Retour</string>
-   <string name="btn_discard">Discard</string>
+   <string name="btn_discard">Annuler</string>
 
    <!-- Global menu items -->
    <string name="menu_opt_search_task_title">Rechercher des tâches</string>
@@ -195,13 +195,13 @@
       <string name="dlg_add_rename_list_toast_invalid_filter">\'%1$s\' n\'est pas une sélection correcte</string>
 
    <!-- No account dialog -->
-   <string name="dlg_no_account_title">New Remember The Milk account</string>
-   <string name="dlg_no_account_text">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>
-   <string name="dlg_no_account_btn_no_account">No account</string>
+   <string name="dlg_no_account_title">Nouveau compte Remember The Milk</string>
+   <string name="dlg_no_account_text">Il n\'y a pas d\'accréditations enregistrées pour Remember The Milk (RTM). Les accréditations RTM sont nécessaires pour permettre la synchronisation avec le serveur RTM. \n\nVous pouvez enregistrer vos accréditations maintenant et ainsi bénéficier de la synchronisation en tâche de fond.</string>
+   <string name="dlg_no_account_btn_no_account">Aucun compte</string>
 
    <!-- Missing default list dialog -->
-   <string name="dlg_missing_def_list_title">Missing default list</string>
-   <string name="dlg_missing_def_list_text">It can not be started with the standard list because it does not exist.\n\nIt will be started with the default view.</string>
+   <string name="dlg_missing_def_list_title">Liste par défaut manquante</string>
+   <string name="dlg_missing_def_list_text">La liste par défaut ne peut pas être affichée car elle est manquante.\n\nLa vue par défaut va être affichée.</string>
 
    <!-- Searchable -->
    <string name="search_label">@string/app_name</string>
@@ -215,7 +215,7 @@
      <string name="startup_toast_no_settings">Les paramètres n\'ont pas pu être chargés : utilisation des paramètres par défaut.</string>
 
    <!-- Task activity -->
-   <string name="task_source">from %1$s</string>
+   <string name="task_source">source : %1$s</string>
    <string name="task_postponed">%1$dx,</string>
    <string name="task_datetime_title_due">Quand</string>
    <string name="task_datetime_title_estimate">Durée</string>
@@ -227,7 +227,7 @@
    <string name="task_participants">Partagée avec</string>
       <!-- Dialogs -->
       <string name="task_dlg_choose_location_app">Afficher le lieu avec...</string>
-      <string name="task_dlg_removing_editing_note">The note you are editing is removed by processing a background sync. If you continue editing, a new note is inserted with your changes.</string>
+      <string name="task_dlg_removing_editing_note">La note que vous modifiez a été supprimée par une mise à jour en tâche de fond. Si vous continuez l\'édition, une nouvelle note sera créée avec vos modifications.</string>
       <!-- Toasts -->
       <string name="task_toast_no_google_maps">Le lieu ne peut pas être affiché parce que Google Maps App est absent</string>
 
@@ -293,10 +293,10 @@
      <string name="abstaskslist_dlg_sort_title">Trier par...</string>
 
    <!-- TasksList activity -->
-   <string name="taskslist_titlebar_due_today">%1$s - today</string>
-   <string name="taskslist_titlebar_due_tomorrow">%1$s - tomorrow</string>
-   <string name="taskslist_titlebar_overdue">%1$s - overdue</string>
-   <string name="taskslist_titlebar_completed">%1$s - completed</string>
+   <string name="taskslist_titlebar_due_today">%1$s - aujourd\'hui</string>
+   <string name="taskslist_titlebar_due_tomorrow">%1$s - demain</string>
+   <string name="taskslist_titlebar_overdue">%1$s - en retard</string>
+   <string name="taskslist_titlebar_completed">%1$s - faites</string>
      <!-- Menus -->
      <string name="taskslist_menu_opt_delete_list">Supprimer la liste</string>
 
@@ -307,7 +307,7 @@
      <string name="tasksearchresult_menu_opt_clear_history_title">Effacer l\'historique de recherche</string>
 
    <!-- SelectMultipleTasks activity -->
-   <string name="select_multiple_tasks_sort_selection">Selection</string>
+   <string name="select_multiple_tasks_sort_selection">Sélectionnées ou pas</string>
       <!-- Menus -->
       <string name="select_multiple_tasks_menu_opt_select_all">Toutes</string>
       <string name="select_multiple_tasks_menu_opt_unselect_all">Aucunne</string>
@@ -329,7 +329,7 @@
    <string name="note_edit_title_hint">Titre de la Note</string>
    <string name="note_edit_text_hint">Rédigez la note ici</string>
       <!-- Toasts -->
-      <string name="note_edit_toast_title_and_text_empty">Please enter a note title or a note text</string>
+      <string name="note_edit_toast_title_and_text_empty">Veuiller entrer un titre ou un corps pour la note</string>
 
    <!-- Authenticator activity -->
    <string name="auth_permission_label">Permission</string>

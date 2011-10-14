@@ -47,18 +47,18 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
       super.onCreate( savedInstanceState );
       
-      setStyle( STYLE_NORMAL, 0 );
+      setStyle( STYLE_NORMAL, android.R.style.Theme_Dialog );
    }
    
-   
-   
+
+
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
@@ -75,6 +75,8 @@ public class AboutMolokoDialogFragment extends MolokoDialogFragment
                                                               context.getPackageManager()
                                                                      .getPackageInfo( context.getPackageName(),
                                                                                       0 ).versionName ) ) );
+         aboutText.setTextAppearance( context,
+                                      android.R.style.TextAppearance_Small );
       }
       catch ( NameNotFoundException e )
       {

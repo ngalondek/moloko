@@ -341,7 +341,7 @@ OTHER         : 'other';
 
 ST_S          : 'st' | 'nd' | 'rd' | 'th';
 
-NUM_ONE       : 'one';
+NUM_ONE       : 'one' | 'a';
 
 NUM_TWO       : 'two';
 

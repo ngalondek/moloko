@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g 2011-06-18 09:58:21
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g 2011-10-13 06:01:13
 
 package dev.drsoran.moloko.grammar.recurrence;
 
@@ -34,39 +34,35 @@ public class RecurrenceParser extends AbstractRecurrenceParser
     "SUNDAY", "WEEKEND", "WEEKDAY_LIT", "MONTH", "STRING", "TIMES", "MINUS",
     "NUMBER", "WS" };
    
-   public static final int EOF = -1;
+   public static final int THIRD = 26;
    
-   public static final int EVERY = 4;
+   public static final int NUM_TWO = 30;
    
-   public static final int AFTER = 5;
+   public static final int NUM_NINE = 37;
    
-   public static final int DAYS = 6;
-   
-   public static final int WEEKS = 7;
-   
-   public static final int BIWEEKLY = 8;
-   
-   public static final int ON = 9;
+   public static final int WEDNESDAY = 41;
    
    public static final int THE = 10;
    
-   public static final int MONTHS = 11;
-   
-   public static final int YEARS = 12;
-   
-   public static final int IN = 13;
-   
-   public static final int OF = 14;
-   
-   public static final int UNTIL = 15;
-   
    public static final int FOR = 16;
    
-   public static final int INT = 17;
+   public static final int NUM_SIX = 34;
    
    public static final int AND = 18;
    
+   public static final int EOF = -1;
+   
+   public static final int MONTH = 48;
+   
+   public static final int FRIDAY = 43;
+   
+   public static final int IN = 13;
+   
+   public static final int NUM_THREE = 31;
+   
    public static final int COMMA = 19;
+   
+   public static final int NUM_ONE = 29;
    
    public static final int LAST = 20;
    
@@ -74,67 +70,71 @@ public class RecurrenceParser extends AbstractRecurrenceParser
    
    public static final int ST_S = 22;
    
-   public static final int FIRST = 23;
+   public static final int NUM_EIGHT = 36;
+   
+   public static final int FOURTH = 27;
+   
+   public static final int BIWEEKLY = 8;
    
    public static final int SECOND = 24;
    
    public static final int OTHER = 25;
    
-   public static final int THIRD = 26;
-   
-   public static final int FOURTH = 27;
-   
-   public static final int FIFTH = 28;
-   
-   public static final int NUM_ONE = 29;
-   
-   public static final int NUM_TWO = 30;
-   
-   public static final int NUM_THREE = 31;
-   
    public static final int NUM_FOUR = 32;
-   
-   public static final int NUM_FIVE = 33;
-   
-   public static final int NUM_SIX = 34;
-   
-   public static final int NUM_SEVEN = 35;
-   
-   public static final int NUM_EIGHT = 36;
-   
-   public static final int NUM_NINE = 37;
-   
-   public static final int NUM_TEN = 38;
-   
-   public static final int MONDAY = 39;
-   
-   public static final int TUESDAY = 40;
-   
-   public static final int WEDNESDAY = 41;
-   
-   public static final int THURSDAY = 42;
-   
-   public static final int FRIDAY = 43;
    
    public static final int SATURDAY = 44;
    
-   public static final int SUNDAY = 45;
+   public static final int NUMBER = 52;
+   
+   public static final int NUM_SEVEN = 35;
+   
+   public static final int EVERY = 4;
    
    public static final int WEEKEND = 46;
    
-   public static final int WEEKDAY_LIT = 47;
+   public static final int ON = 9;
    
-   public static final int MONTH = 48;
+   public static final int MONDAY = 39;
    
-   public static final int STRING = 49;
+   public static final int SUNDAY = 45;
    
-   public static final int TIMES = 50;
+   public static final int INT = 17;
    
    public static final int MINUS = 51;
    
-   public static final int NUMBER = 52;
+   public static final int AFTER = 5;
+   
+   public static final int OF = 14;
+   
+   public static final int YEARS = 12;
+   
+   public static final int NUM_FIVE = 33;
+   
+   public static final int FIFTH = 28;
+   
+   public static final int DAYS = 6;
+   
+   public static final int NUM_TEN = 38;
    
    public static final int WS = 53;
+   
+   public static final int WEEKS = 7;
+   
+   public static final int THURSDAY = 42;
+   
+   public static final int UNTIL = 15;
+   
+   public static final int MONTHS = 11;
+   
+   public static final int WEEKDAY_LIT = 47;
+   
+   public static final int TIMES = 50;
+   
+   public static final int TUESDAY = 40;
+   
+   public static final int STRING = 49;
+   
+   public static final int FIRST = 23;
    
    
 

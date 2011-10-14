@@ -24,13 +24,11 @@
       android:fillViewport="true">
 
       <TextView
-         android:id="@android:id/content"         
+         android:id="@android:id/content"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:padding="?android:attr/scrollbarSize"
-         android:textAppearance="?android:attr/textAppearanceSmall"
          android:text="Info"
-         android:textColor="?android:attr/textColorPrimary"
          android:autoLink="web|email" />
    </ScrollView>
 </LinearLayout>

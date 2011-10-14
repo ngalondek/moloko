@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g 2011-06-18 09:58:21
+// $ANTLR 3.2 Sep 23, 2009 12:02:23 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g 2011-10-13 06:01:13
 
 package dev.drsoran.moloko.grammar.recurrence;
 
@@ -17,39 +17,35 @@ import dev.drsoran.moloko.grammar.LexerException;
 
 public class RecurrenceLexer extends Lexer
 {
-   public static final int EOF = -1;
+   public static final int THIRD = 26;
    
-   public static final int EVERY = 4;
+   public static final int NUM_TWO = 30;
    
-   public static final int AFTER = 5;
+   public static final int NUM_NINE = 37;
    
-   public static final int DAYS = 6;
-   
-   public static final int WEEKS = 7;
-   
-   public static final int BIWEEKLY = 8;
-   
-   public static final int ON = 9;
+   public static final int WEDNESDAY = 41;
    
    public static final int THE = 10;
    
-   public static final int MONTHS = 11;
-   
-   public static final int YEARS = 12;
-   
-   public static final int IN = 13;
-   
-   public static final int OF = 14;
-   
-   public static final int UNTIL = 15;
-   
    public static final int FOR = 16;
    
-   public static final int INT = 17;
+   public static final int NUM_SIX = 34;
    
    public static final int AND = 18;
    
+   public static final int EOF = -1;
+   
+   public static final int MONTH = 48;
+   
+   public static final int FRIDAY = 43;
+   
+   public static final int IN = 13;
+   
+   public static final int NUM_THREE = 31;
+   
    public static final int COMMA = 19;
+   
+   public static final int NUM_ONE = 29;
    
    public static final int LAST = 20;
    
@@ -57,67 +53,71 @@ public class RecurrenceLexer extends Lexer
    
    public static final int ST_S = 22;
    
-   public static final int FIRST = 23;
+   public static final int NUM_EIGHT = 36;
+   
+   public static final int FOURTH = 27;
+   
+   public static final int BIWEEKLY = 8;
    
    public static final int SECOND = 24;
    
    public static final int OTHER = 25;
    
-   public static final int THIRD = 26;
-   
-   public static final int FOURTH = 27;
-   
-   public static final int FIFTH = 28;
-   
-   public static final int NUM_ONE = 29;
-   
-   public static final int NUM_TWO = 30;
-   
-   public static final int NUM_THREE = 31;
-   
    public static final int NUM_FOUR = 32;
-   
-   public static final int NUM_FIVE = 33;
-   
-   public static final int NUM_SIX = 34;
-   
-   public static final int NUM_SEVEN = 35;
-   
-   public static final int NUM_EIGHT = 36;
-   
-   public static final int NUM_NINE = 37;
-   
-   public static final int NUM_TEN = 38;
-   
-   public static final int MONDAY = 39;
-   
-   public static final int TUESDAY = 40;
-   
-   public static final int WEDNESDAY = 41;
-   
-   public static final int THURSDAY = 42;
-   
-   public static final int FRIDAY = 43;
    
    public static final int SATURDAY = 44;
    
-   public static final int SUNDAY = 45;
+   public static final int NUMBER = 52;
+   
+   public static final int NUM_SEVEN = 35;
+   
+   public static final int EVERY = 4;
    
    public static final int WEEKEND = 46;
    
-   public static final int WEEKDAY_LIT = 47;
+   public static final int ON = 9;
    
-   public static final int MONTH = 48;
+   public static final int MONDAY = 39;
    
-   public static final int STRING = 49;
+   public static final int SUNDAY = 45;
    
-   public static final int TIMES = 50;
+   public static final int INT = 17;
    
    public static final int MINUS = 51;
    
-   public static final int NUMBER = 52;
+   public static final int AFTER = 5;
+   
+   public static final int OF = 14;
+   
+   public static final int YEARS = 12;
+   
+   public static final int NUM_FIVE = 33;
+   
+   public static final int FIFTH = 28;
+   
+   public static final int DAYS = 6;
+   
+   public static final int NUM_TEN = 38;
+   
+   public static final int WEEKS = 7;
    
    public static final int WS = 53;
+   
+   public static final int THURSDAY = 42;
+   
+   public static final int UNTIL = 15;
+   
+   public static final int MONTHS = 11;
+   
+   public static final int WEEKDAY_LIT = 47;
+   
+   public static final int TIMES = 50;
+   
+   public static final int TUESDAY = 40;
+   
+   public static final int FIRST = 23;
+   
+   public static final int STRING = 49;
    
    
 
@@ -1868,14 +1868,47 @@ public class RecurrenceLexer extends Lexer
          int _type = NUM_ONE;
          int _channel = DEFAULT_TOKEN_CHANNEL;
          // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:344:15:
-         // ( 'one' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:344:17:
-         // 'one'
+         // ( 'one' | 'a' )
+         int alt18 = 2;
+         int LA18_0 = input.LA( 1 );
+         
+         if ( ( LA18_0 == 'o' ) )
          {
-            match( "one" );
+            alt18 = 1;
+         }
+         else if ( ( LA18_0 == 'a' ) )
+         {
+            alt18 = 2;
+         }
+         else
+         {
+            NoViableAltException nvae = new NoViableAltException( "",
+                                                                  18,
+                                                                  0,
+                                                                  input );
+            
+            throw nvae;
+         }
+         switch ( alt18 )
+         {
+            case 1:
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:344:17:
+               // 'one'
+            {
+               match( "one" );
+               
+            }
+               break;
+            case 2:
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:344:25:
+               // 'a'
+            {
+               match( 'a' );
+               
+            }
+               break;
             
          }
-         
          state.type = _type;
          state.channel = _channel;
       }
@@ -2488,14 +2521,14 @@ public class RecurrenceLexer extends Lexer
          {
             // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:389:17:
             // ( MINUS )?
-            int alt18 = 2;
-            int LA18_0 = input.LA( 1 );
+            int alt19 = 2;
+            int LA19_0 = input.LA( 1 );
             
-            if ( ( LA18_0 == '-' ) )
+            if ( ( LA19_0 == '-' ) )
             {
-               alt18 = 1;
+               alt19 = 1;
             }
-            switch ( alt18 )
+            switch ( alt19 )
             {
                case 1:
                   // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:389:17:
@@ -2510,18 +2543,18 @@ public class RecurrenceLexer extends Lexer
             
             // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:389:24:
             // ( NUMBER )+
-            int cnt19 = 0;
-            loop19: do
+            int cnt20 = 0;
+            loop20: do
             {
-               int alt19 = 2;
-               int LA19_0 = input.LA( 1 );
+               int alt20 = 2;
+               int LA20_0 = input.LA( 1 );
                
-               if ( ( ( LA19_0 >= '0' && LA19_0 <= '9' ) ) )
+               if ( ( ( LA20_0 >= '0' && LA20_0 <= '9' ) ) )
                {
-                  alt19 = 1;
+                  alt20 = 1;
                }
                
-               switch ( alt19 )
+               switch ( alt20 )
                {
                   case 1:
                      // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:389:24:
@@ -2533,12 +2566,12 @@ public class RecurrenceLexer extends Lexer
                      break;
                   
                   default :
-                     if ( cnt19 >= 1 )
-                        break loop19;
-                     EarlyExitException eee = new EarlyExitException( 19, input );
+                     if ( cnt20 >= 1 )
+                        break loop20;
+                     EarlyExitException eee = new EarlyExitException( 20, input );
                      throw eee;
                }
-               cnt19++;
+               cnt20++;
             }
             while ( true );
             
@@ -2568,22 +2601,22 @@ public class RecurrenceLexer extends Lexer
          {
             // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:392:17:
             // ( ' ' | . )+
-            int cnt20 = 0;
-            loop20: do
+            int cnt21 = 0;
+            loop21: do
             {
-               int alt20 = 3;
-               int LA20_0 = input.LA( 1 );
+               int alt21 = 3;
+               int LA21_0 = input.LA( 1 );
                
-               if ( ( LA20_0 == ' ' ) )
+               if ( ( LA21_0 == ' ' ) )
                {
-                  alt20 = 1;
+                  alt21 = 1;
                }
-               else if ( ( ( LA20_0 >= '\u0000' && LA20_0 <= '\u001F' ) || ( LA20_0 >= '!' && LA20_0 <= '\uFFFF' ) ) )
+               else if ( ( ( LA21_0 >= '\u0000' && LA21_0 <= '\u001F' ) || ( LA21_0 >= '!' && LA21_0 <= '\uFFFF' ) ) )
                {
-                  alt20 = 2;
+                  alt21 = 2;
                }
                
-               switch ( alt20 )
+               switch ( alt21 )
                {
                   case 1:
                      // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:392:18:
@@ -2603,12 +2636,12 @@ public class RecurrenceLexer extends Lexer
                      break;
                   
                   default :
-                     if ( cnt20 >= 1 )
-                        break loop20;
-                     EarlyExitException eee = new EarlyExitException( 20, input );
+                     if ( cnt21 >= 1 )
+                        break loop21;
+                     EarlyExitException eee = new EarlyExitException( 21, input );
                      throw eee;
                }
-               cnt20++;
+               cnt21++;
             }
             while ( true );
             
@@ -2673,9 +2706,9 @@ public class RecurrenceLexer extends Lexer
       // WEDNESDAY | THURSDAY | FRIDAY | SATURDAY | SUNDAY | FIRST | SECOND | THIRD | FOURTH | FIFTH | LAST | OTHER |
       // ST_S | NUM_ONE | NUM_TWO | NUM_THREE | NUM_FOUR | NUM_FIVE | NUM_SIX | NUM_SEVEN | NUM_EIGHT | NUM_NINE |
       // NUM_TEN | AND | IN | ON | OF | THE | UNTIL | FOR | TIMES | DOT | MINUS | COMMA | INT | WS )
-      int alt21 = 48;
-      alt21 = dfa21.predict( input );
-      switch ( alt21 )
+      int alt22 = 48;
+      alt22 = dfa22.predict( input );
+      switch ( alt22 )
       {
          case 1:
             // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\recurrence\\Recurrence.g:1:10:
@@ -3074,7 +3107,7 @@ public class RecurrenceLexer extends Lexer
    
    protected DFA7 dfa7 = new DFA7( this );
    
-   protected DFA21 dfa21 = new DFA21( this );
+   protected DFA22 dfa22 = new DFA22( this );
    
    static final String DFA3_eotS = "\3\uffff\1\6\3\uffff\1\11\2\uffff";
    
@@ -3350,89 +3383,89 @@ public class RecurrenceLexer extends Lexer
       }
    }
    
-   static final String DFA21_eotS = "\23\uffff\1\57\23\uffff\1\73\3\uffff\1\17\4\uffff\1\100\4\uffff"
-      + "\1\102\13\uffff\1\106\2\uffff\1\40\4\uffff";
+   static final String DFA22_eotS = "\2\uffff\1\33\20\uffff\1\60\24\uffff\1\73\3\uffff\1\17\4\uffff"
+      + "\1\100\4\uffff\1\102\12\uffff\1\106\2\uffff\1\41\4\uffff";
    
-   static final String DFA21_eofS = "\111\uffff";
+   static final String DFA22_eofS = "\111\uffff";
    
-   static final String DFA21_minS = "\1\11\1\141\1\146\1\145\2\uffff\1\141\1\145\1\141\1\uffff\1\141"
-      + "\1\143\1\144\1\145\5\uffff\1\60\7\uffff\1\162\1\uffff\1\146\1\156"
+   static final String DFA22_minS = "\1\11\1\141\1\146\1\145\2\uffff\1\141\1\145\1\141\1\uffff\1\141"
+      + "\1\143\1\144\1\145\5\uffff\1\60\10\uffff\1\162\1\uffff\1\146\1\156"
       + "\1\144\2\uffff\1\143\4\uffff\1\145\3\uffff\1\145\4\uffff\1\164\1"
-      + "\162\3\uffff\1\144\1\153\12\uffff\1\164\2\uffff\1\144\4\uffff";
+      + "\162\3\uffff\1\144\1\153\11\uffff\1\164\2\uffff\1\144\4\uffff";
    
-   static final String DFA21_maxS = "\1\171\1\166\1\165\1\162\2\uffff\1\157\1\153\1\145\1\uffff\1\165"
-      + "\1\164\1\157\1\167\5\uffff\1\71\7\uffff\1\165\1\uffff\1\166\1\156"
+   static final String DFA22_maxS = "\1\171\1\166\1\165\1\162\2\uffff\1\157\1\153\1\145\1\uffff\1\165"
+      + "\1\164\1\157\1\167\5\uffff\1\71\10\uffff\1\165\1\uffff\1\166\1\156"
       + "\1\145\2\uffff\1\166\4\uffff\1\145\3\uffff\1\165\4\uffff\1\164\1"
-      + "\162\3\uffff\1\144\1\153\12\uffff\1\164\2\uffff\1\145\4\uffff";
+      + "\162\3\uffff\1\144\1\153\11\uffff\1\164\2\uffff\1\145\4\uffff";
    
-   static final String DFA21_acceptS = "\4\uffff\1\3\1\4\3\uffff\1\10\4\uffff\1\27\1\31\1\45\1\51\1\54"
-      + "\1\uffff\1\56\1\57\1\60\1\1\1\41\1\2\1\44\1\uffff\1\17\3\uffff\1"
-      + "\6\1\7\1\uffff\1\20\1\21\1\37\1\30\1\uffff\1\47\1\42\1\14\1\uffff"
+   static final String DFA22_acceptS = "\4\uffff\1\3\1\4\3\uffff\1\10\4\uffff\1\27\1\31\1\45\1\51\1\54"
+      + "\1\uffff\1\56\1\57\1\60\1\1\1\41\1\2\1\44\1\32\1\uffff\1\17\3\uffff"
+      + "\1\6\1\7\1\uffff\1\20\1\21\1\37\1\30\1\uffff\1\47\1\42\1\14\1\uffff"
       + "\1\33\1\43\1\53\1\55\2\uffff\1\22\1\26\1\36\2\uffff\1\15\1\23\1"
-      + "\40\1\32\1\46\1\16\1\24\1\34\1\50\1\52\1\uffff\1\5\1\13\1\uffff"
-      + "\1\25\1\35\1\11\1\12";
+      + "\40\1\46\1\16\1\24\1\34\1\50\1\52\1\uffff\1\5\1\13\1\uffff\1\25"
+      + "\1\35\1\11\1\12";
    
-   static final String DFA21_specialS = "\111\uffff}>";
+   static final String DFA22_specialS = "\111\uffff}>";
    
-   static final String[] DFA21_transitionS =
+   static final String[] DFA22_transitionS =
    {
     "\2\26\2\uffff\1\26\22\uffff\1\26\13\uffff\1\24\1\23\1\22\1"
        + "\uffff\12\25\47\uffff\1\2\1\4\1\uffff\1\10\1\1\1\3\2\uffff\1"
        + "\20\1\11\1\uffff\1\16\1\6\1\14\1\13\2\uffff\1\17\1\12\1\15\1"
        + "\21\1\uffff\1\7\1\uffff\1\5", "\1\27\7\uffff\1\30\14\uffff\1\27",
     "\1\31\7\uffff\1\32\1\uffff\1\11\4\uffff\1\11",
-    "\1\11\3\uffff\1\35\5\uffff\1\33\2\uffff\1\34", "", "",
-    "\1\11\15\uffff\1\36", "\1\37\5\uffff\1\40", "\1\41\3\uffff\1\11", "",
-    "\1\43\3\uffff\1\42\3\uffff\1\45\12\uffff\1\17\1\44",
-    "\1\11\2\uffff\1\50\7\uffff\1\47\5\uffff\1\46",
-    "\1\17\4\uffff\1\51\5\uffff\1\11",
-    "\1\55\2\uffff\1\53\1\56\13\uffff\1\52\1\uffff\1\54", "", "", "", "", "",
-    "\12\25", "", "", "", "", "", "", "", "\1\60\2\uffff\1\61", "",
-    "\1\63\13\uffff\1\62\3\uffff\1\64", "\1\65", "\1\67\1\66", "", "",
-    "\1\70\14\uffff\1\11\5\uffff\1\71", "", "", "", "", "\1\72", "", "", "",
+    "\1\11\3\uffff\1\36\5\uffff\1\34\2\uffff\1\35", "", "",
+    "\1\11\15\uffff\1\37", "\1\40\5\uffff\1\41", "\1\42\3\uffff\1\11", "",
+    "\1\44\3\uffff\1\43\3\uffff\1\46\12\uffff\1\17\1\45",
+    "\1\11\2\uffff\1\51\7\uffff\1\50\5\uffff\1\47",
+    "\1\17\4\uffff\1\52\5\uffff\1\11",
+    "\1\56\2\uffff\1\54\1\57\13\uffff\1\53\1\uffff\1\55", "", "", "", "", "",
+    "\12\25", "", "", "", "", "", "", "", "", "\1\61\2\uffff\1\62", "",
+    "\1\64\13\uffff\1\63\3\uffff\1\65", "\1\66", "\1\70\1\67", "", "",
+    "\1\71\14\uffff\1\11\5\uffff\1\72", "", "", "", "", "\1\33", "", "", "",
     "\1\77\3\uffff\1\75\10\uffff\1\76\2\uffff\1\74", "", "", "", "", "\1\4",
     "\1\101", "", "", "", "\1\103", "\1\104", "", "", "", "", "", "", "", "",
-    "", "", "\1\105", "", "", "\1\107\1\110", "", "", "", "" };
+    "", "\1\105", "", "", "\1\107\1\110", "", "", "", "" };
    
-   static final short[] DFA21_eot = DFA.unpackEncodedString( DFA21_eotS );
+   static final short[] DFA22_eot = DFA.unpackEncodedString( DFA22_eotS );
    
-   static final short[] DFA21_eof = DFA.unpackEncodedString( DFA21_eofS );
+   static final short[] DFA22_eof = DFA.unpackEncodedString( DFA22_eofS );
    
-   static final char[] DFA21_min = DFA.unpackEncodedStringToUnsignedChars( DFA21_minS );
+   static final char[] DFA22_min = DFA.unpackEncodedStringToUnsignedChars( DFA22_minS );
    
-   static final char[] DFA21_max = DFA.unpackEncodedStringToUnsignedChars( DFA21_maxS );
+   static final char[] DFA22_max = DFA.unpackEncodedStringToUnsignedChars( DFA22_maxS );
    
-   static final short[] DFA21_accept = DFA.unpackEncodedString( DFA21_acceptS );
+   static final short[] DFA22_accept = DFA.unpackEncodedString( DFA22_acceptS );
    
-   static final short[] DFA21_special = DFA.unpackEncodedString( DFA21_specialS );
+   static final short[] DFA22_special = DFA.unpackEncodedString( DFA22_specialS );
    
-   static final short[][] DFA21_transition;
+   static final short[][] DFA22_transition;
    
    static
    {
-      int numStates = DFA21_transitionS.length;
-      DFA21_transition = new short[ numStates ][];
+      int numStates = DFA22_transitionS.length;
+      DFA22_transition = new short[ numStates ][];
       for ( int i = 0; i < numStates; i++ )
       {
-         DFA21_transition[ i ] = DFA.unpackEncodedString( DFA21_transitionS[ i ] );
+         DFA22_transition[ i ] = DFA.unpackEncodedString( DFA22_transitionS[ i ] );
       }
    }
    
    
-   class DFA21 extends DFA
+   class DFA22 extends DFA
    {
       
-      public DFA21( BaseRecognizer recognizer )
+      public DFA22( BaseRecognizer recognizer )
       {
          this.recognizer = recognizer;
-         this.decisionNumber = 21;
-         this.eot = DFA21_eot;
-         this.eof = DFA21_eof;
-         this.min = DFA21_min;
-         this.max = DFA21_max;
-         this.accept = DFA21_accept;
-         this.special = DFA21_special;
-         this.transition = DFA21_transition;
+         this.decisionNumber = 22;
+         this.eot = DFA22_eot;
+         this.eof = DFA22_eof;
+         this.min = DFA22_min;
+         this.max = DFA22_max;
+         this.accept = DFA22_accept;
+         this.special = DFA22_special;
+         this.transition = DFA22_transition;
       }
       
 

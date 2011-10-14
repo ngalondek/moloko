@@ -48,6 +48,25 @@
       <item quantity="other">Aufgaben</item>
    </plurals>
    
+   <!-- Global Toasts -->
+      <!-- Task -->
+      <plurals name="toast_completed_task">
+         <item quantity="one">Aufgabe erledigt</item>
+         <item quantity="other">%1$d Aufgaben erledigt</item>
+      </plurals>
+      <plurals name="toast_incompleted_task">
+         <item quantity="one">Aufgabe ist zu erledigen</item>
+         <item quantity="other">%1$d Aufgaben sind zu erledigen</item>
+      </plurals>
+      <plurals name="toast_postponed_task">
+         <item quantity="one">Aufgabe wurde aufgeschoben</item>
+         <item quantity="other">%1$d Aufgaben wurden aufgeschoben</item>
+      </plurals>
+      <plurals name="toast_deleted_task">
+         <item quantity="one">Aufgabe wurde gelöscht</item>
+         <item quantity="other">%1$d Aufgaben wurden gelöscht</item>
+      </plurals>
+   
    <!-- TaskLists fragment -->
    <plurals name="tasklists_child_due_today">
       <item quantity="one">1 heute fällig</item>

@@ -125,6 +125,24 @@ public class RecurrenceTestCase_de
                        null,
                        null,
                        true );
+      parseRecurrence( "nach 1 monat",
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
+                       1,
+                       null,
+                       null,
+                       false );
+      parseRecurrence( "nach einem monat",
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
+                       1,
+                       null,
+                       null,
+                       false );
+      parseRecurrence( "nach 2 monaten",
+                       RecurrencePatternParser.VAL_MONTHLY_LIT,
+                       2,
+                       null,
+                       null,
+                       false );
       parseRecurrence( "jeden monat am 4.",
                        RecurrencePatternParser.VAL_MONTHLY_LIT,
                        1,

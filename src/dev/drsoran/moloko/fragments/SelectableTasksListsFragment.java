@@ -27,9 +27,9 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -38,14 +38,14 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.SubMenu;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
@@ -55,6 +55,7 @@ import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter.ISelection
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.loaders.SelectableTasksLoader;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
@@ -110,13 +111,13 @@ public class SelectableTasksListsFragment extends
       public final static int DELETE = R.id.menu_delete_selected_tasks;
    }
    
-   
+
    private final static class CtxtMenu
    {
       public final static int TOGGLE_SELECTION = R.id.ctx_menu_toggle_selection;
    }
    
-   
+
    public static class Config extends MinDetailedTasksListFragment.Config
    {
       private final static String SELECT_STATE = "check_state";
@@ -125,7 +126,7 @@ public class SelectableTasksListsFragment extends
    public final static int TASK_SORT_SELECTION = 1 << 16;
    
    
-   
+
    public static SelectableTasksListsFragment newInstance( Bundle configuration )
    {
       final SelectableTasksListsFragment fragment = new SelectableTasksListsFragment();
@@ -138,22 +139,22 @@ public class SelectableTasksListsFragment extends
    private ISelectableTasksListFragmentListener listener;
    
    
-   
+
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-   
-   
+
+
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ), Tasks.CONTENT_URI );
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -165,8 +166,8 @@ public class SelectableTasksListsFragment extends
          listener = new NullTasksListFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -174,8 +175,8 @@ public class SelectableTasksListsFragment extends
       listener = null;
    }
    
-   
-   
+
+
    @Override
    public void onActivityCreated( Bundle savedInstanceState )
    {
@@ -184,8 +185,8 @@ public class SelectableTasksListsFragment extends
       registerForContextMenu( getListView() );
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -194,8 +195,8 @@ public class SelectableTasksListsFragment extends
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-   
-   
+
+
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -204,8 +205,8 @@ public class SelectableTasksListsFragment extends
       super.onSaveInstanceState( outState );
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -216,8 +217,8 @@ public class SelectableTasksListsFragment extends
                                            config.getStringArrayList( Config.SELECT_STATE ) );
    }
    
-   
-   
+
+
    @Override
    public void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -227,8 +228,8 @@ public class SelectableTasksListsFragment extends
                                  new ArrayList< String >( 0 ) );
    }
    
-   
-   
+
+
    private final void putCurrentSelectionStateToConfig( Bundle config )
    {
       if ( getListAdapter() != null )
@@ -236,8 +237,8 @@ public class SelectableTasksListsFragment extends
                                     getListAdapter().getSelectedTaskIds() );
    }
    
-   
-   
+
+
    @Override
    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
    {
@@ -245,19 +246,19 @@ public class SelectableTasksListsFragment extends
       
       menu.add( Menu.NONE,
                 OptionsMenu.SELECT_ALL,
-                Menu.CATEGORY_SECONDARY,
+                MenuCategory.SECONDARY,
                 R.string.select_multiple_tasks_menu_opt_select_all )
           .setIcon( R.drawable.ic_menu_select_all_tasks );
       
       menu.add( Menu.NONE,
                 OptionsMenu.DESELECT_ALL,
-                Menu.CATEGORY_SECONDARY,
+                MenuCategory.SECONDARY,
                 R.string.select_multiple_tasks_menu_opt_unselect_all )
           .setIcon( R.drawable.ic_menu_select_no_tasks );
       
       menu.add( Menu.NONE,
                 OptionsMenu.INVERT_SELECTION,
-                Menu.CATEGORY_SECONDARY,
+                MenuCategory.SECONDARY,
                 R.string.select_multiple_tasks_menu_opt_inv_selection )
           .setIcon( R.drawable.ic_menu_select_invert_tasks );
       
@@ -275,7 +276,7 @@ public class SelectableTasksListsFragment extends
                                       OptionsMenu.DO_EDIT,
                                       getString( R.string.select_multiple_tasks_menu_opt_do_edit,
                                                  selCnt ),
-                                      Menu.CATEGORY_SECONDARY,
+                                      MenuCategory.SECONDARY,
                                       Menu.NONE,
                                       R.drawable.ic_menu_edit,
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -297,7 +298,7 @@ public class SelectableTasksListsFragment extends
                                       OptionsMenu.COMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_complete,
                                                  selCnt ),
-                                      Menu.CATEGORY_SECONDARY,
+                                      MenuCategory.SECONDARY,
                                       Menu.NONE,
                                       R.drawable.ic_menu_complete,
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -309,7 +310,7 @@ public class SelectableTasksListsFragment extends
                                       OptionsMenu.INCOMPLETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_uncomplete,
                                                  selCnt ),
-                                      Menu.CATEGORY_SECONDARY,
+                                      MenuCategory.SECONDARY,
                                       Menu.NONE,
                                       R.drawable.ic_menu_incomplete,
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -320,7 +321,7 @@ public class SelectableTasksListsFragment extends
                                       OptionsMenu.POSTPONE,
                                       getString( R.string.select_multiple_tasks_menu_opt_postpone,
                                                  selCnt ),
-                                      Menu.CATEGORY_SECONDARY,
+                                      MenuCategory.SECONDARY,
                                       Menu.NONE,
                                       R.drawable.ic_menu_postponed,
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -331,7 +332,7 @@ public class SelectableTasksListsFragment extends
                                       OptionsMenu.DELETE,
                                       getString( R.string.select_multiple_tasks_menu_opt_delete,
                                                  selCnt ),
-                                      Menu.CATEGORY_SECONDARY,
+                                      MenuCategory.SECONDARY,
                                       Menu.NONE,
                                       R.drawable.ic_menu_trash,
                                       MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -348,8 +349,8 @@ public class SelectableTasksListsFragment extends
       }
    }
    
-   
-   
+
+
    @Override
    protected SubMenu createTasksSortSubMenu( Menu menu )
    {
@@ -373,8 +374,8 @@ public class SelectableTasksListsFragment extends
       return subMenu;
    }
    
-   
-   
+
+
    @Override
    protected void initializeTasksSortSubMenu( SubMenu subMenu,
                                               int currentTaskSort )
@@ -394,8 +395,8 @@ public class SelectableTasksListsFragment extends
       }
    }
    
-   
-   
+
+
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -509,8 +510,8 @@ public class SelectableTasksListsFragment extends
       return super.onOptionsItemSelected( item );
    }
    
-   
-   
+
+
    @Override
    public void onCreateContextMenu( ContextMenu menu,
                                     View v,
@@ -534,8 +535,8 @@ public class SelectableTasksListsFragment extends
                               task.getName() ) );
    }
    
-   
-   
+
+
    @Override
    public boolean onContextItemSelected( android.view.MenuItem item )
    {
@@ -551,23 +552,23 @@ public class SelectableTasksListsFragment extends
       }
    }
    
-   
-   
+
+
    public void toggle( int pos )
    {
       getListAdapter().toggleSelection( pos );
    }
    
-   
-   
+
+
    @Override
    protected int getDefaultTaskSort()
    {
       return MolokoApp.getSettings().getTaskSort();
    }
    
-   
-   
+
+
    @Override
    protected String resolveTaskSortToSqlite( int taskSort )
    {
@@ -578,8 +579,8 @@ public class SelectableTasksListsFragment extends
          return super.resolveTaskSortToSqlite( taskSort );
    }
    
-   
-   
+
+
    @Override
    public boolean shouldResortTasks( int taskSort )
    {
@@ -591,8 +592,8 @@ public class SelectableTasksListsFragment extends
          return super.shouldResortTasks( taskSort );
    }
    
-   
-   
+
+
    private void onCompleteSelectedTasks( final List< ? extends Task > tasks )
    {
       performDatabaseModification( new Runnable()
@@ -607,8 +608,8 @@ public class SelectableTasksListsFragment extends
       } );
    }
    
-   
-   
+
+
    private void onUncompleteSelectedTasks( final List< ? extends Task > tasks )
    {
       performDatabaseModification( new Runnable()
@@ -623,8 +624,8 @@ public class SelectableTasksListsFragment extends
       } );
    }
    
-   
-   
+
+
    private void onPostponeSelectedTasks( final List< ? extends Task > tasks )
    {
       performDatabaseModification( new Runnable()
@@ -637,8 +638,8 @@ public class SelectableTasksListsFragment extends
       } );
    }
    
-   
-   
+
+
    private void onDeleteSelectedTasks( final List< ? extends Task > tasks )
    {
       performDatabaseModification( new Runnable()
@@ -651,8 +652,8 @@ public class SelectableTasksListsFragment extends
       } );
    }
    
-   
-   
+
+
    @Override
    public Loader< List< SelectableTask >> newLoaderInstance( int id,
                                                              Bundle config )
@@ -671,8 +672,8 @@ public class SelectableTasksListsFragment extends
       return loader;
    }
    
-   
-   
+
+
    @Override
    protected ListAdapter createEmptyListAdapter()
    {
@@ -680,8 +681,8 @@ public class SelectableTasksListsFragment extends
                                                      R.layout.selectmultipletasks_activity_listitem );
    }
    
-   
-   
+
+
    @Override
    protected ListAdapter createListAdapterForResult( List< SelectableTask > result,
                                                      IFilter filter )
@@ -698,16 +699,16 @@ public class SelectableTasksListsFragment extends
       return adapter;
    }
    
-   
-   
+
+
    @Override
    public SelectableTasksListFragmentAdapter getListAdapter()
    {
       return (SelectableTasksListFragmentAdapter) super.getListAdapter();
    }
    
-   
-   
+
+
    @Override
    public void onSelectionChanged()
    {

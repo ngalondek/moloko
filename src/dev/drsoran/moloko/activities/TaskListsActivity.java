@@ -36,6 +36,7 @@ import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Lists;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -73,14 +74,14 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
    {
       UIUtils.addSettingsMenuItem( this,
                                    menu,
-                                   Menu.CATEGORY_ALTERNATIVE,
+                                   MenuCategory.ALTERNATIVE,
                                    MenuItem.SHOW_AS_ACTION_NEVER );
       
       UIUtils.addOptionalMenuItem( this,
                                    menu,
                                    OptionsMenu.ADD_LIST,
                                    getString( R.string.tasklists_menu_add_list ),
-                                   Menu.CATEGORY_CONTAINER,
+                                   MenuCategory.CONTAINER,
                                    Menu.NONE,
                                    R.drawable.ic_menu_add_list,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
@@ -88,12 +89,12 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
       
       UIUtils.addSearchMenuItem( this,
                                  menu,
-                                 Menu.CATEGORY_ALTERNATIVE,
+                                 MenuCategory.ALTERNATIVE,
                                  MenuItem.SHOW_AS_ACTION_IF_ROOM );
       
       UIUtils.addSyncMenuItem( this,
                                menu,
-                               Menu.CATEGORY_ALTERNATIVE,
+                               MenuCategory.ALTERNATIVE,
                                MenuItem.SHOW_AS_ACTION_IF_ROOM );
       return true;
    }
@@ -130,8 +131,8 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
          final Intent intent = new Intent( Intent.ACTION_VIEW,
                                            Tasks.CONTENT_URI );
          
-         intent.putExtra( Config.TITLE,
-                          getString( R.string.taskslist_titlebar, listName ) );
+         intent.putExtra( Config.TITLE, getString( R.string.taskslist_titlebar,
+                                                   listName ) );
          
          RtmSmartFilter filter = rtmList.getSmartFilter();
          

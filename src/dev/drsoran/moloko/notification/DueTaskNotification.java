@@ -28,7 +28,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.format.DateUtils;
-import android.widget.RemoteViews;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -118,8 +117,7 @@ public class DueTaskNotification
    {
       if ( notification != null )
       {
-         setDueTimeText();
-         
+         setLatestEventInfo();
          getNotificationManager().notify( taskId.hashCode(), notification );
       }
    }
@@ -157,46 +155,51 @@ public class DueTaskNotification
 
    private void createNotification()
    {
-      this.notification = new Notification( R.drawable.ic_notify_logo_red,
-                                            context.getString( R.string.notification_due_ticker,
-                                                               taskName,
-                                                               getRelativeTimeString() ),
-                                            dueTimeMillis );
+      notification = new Notification( R.drawable.ic_notify_logo_red,
+                                       context.getString( R.string.notification_due_ticker,
+                                                          taskName,
+                                                          getRelativeTimeString() ),
+                                       dueTimeMillis );
       
-      this.notification.flags = Notification.FLAG_AUTO_CANCEL;
-      this.notification.contentView = new RemoteViews( context.getPackageName(),
-                                                       R.layout.notification_due_task );
-      this.notification.contentView.setTextViewText( R.id.notification_due_task_title,
-                                                     taskName );
-      setDueTimeText();
-      this.notification.contentIntent = Intents.createNotificationIntent( context,
-                                                                          Intents.createOpenTaskIntent( context,
-                                                                                                        taskId ) );
+      notification.flags = Notification.FLAG_AUTO_CANCEL;
       
-      this.notification.defaults = 0;
+      setLatestEventInfo();
+      
+      notification.defaults = 0;
       
       if ( vibrate )
-         this.notification.defaults |= Notification.DEFAULT_VIBRATE;
+         notification.defaults |= Notification.DEFAULT_VIBRATE;
       if ( led )
       {
-         this.notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-         this.notification.ledARGB = Color.GREEN;
-         this.notification.ledOffMS = 400;
-         this.notification.ledOnMS = 300;
+         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+         notification.ledARGB = Color.GREEN;
+         notification.ledOffMS = 400;
+         notification.ledOnMS = 300;
       }
       
-      this.notification.sound = sound;
+      notification.sound = sound;
       
       getNotificationManager().notify( taskId.hashCode(), notification );
    }
    
 
 
-   private void setDueTimeText()
+   private void setLatestEventInfo()
    {
-      this.notification.contentView.setTextViewText( R.id.notification_due_task_text,
-                                                     context.getString( R.string.notification_due,
-                                                                        MolokoDateUtils.formatTime( dueTimeMillis ) ) );
+      notification.setLatestEventInfo( context,
+                                       taskName,
+                                       getDueTimeText(),
+                                       Intents.createNotificationIntent( context,
+                                                                         Intents.createOpenTaskIntent( context,
+                                                                                                       taskId ) ) );
+   }
+   
+
+
+   private String getDueTimeText()
+   {
+      return context.getString( R.string.notification_due,
+                                MolokoDateUtils.formatTime( dueTimeMillis ) );
    }
    
 

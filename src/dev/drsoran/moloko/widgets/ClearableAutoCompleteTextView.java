@@ -30,7 +30,6 @@ import android.widget.AutoCompleteTextView;
 
 public class ClearableAutoCompleteTextView extends AutoCompleteTextView
 {
-   
    private PressCompoundDrawable clearButton;
    
    

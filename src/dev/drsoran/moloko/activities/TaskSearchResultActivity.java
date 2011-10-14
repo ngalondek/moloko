@@ -40,6 +40,7 @@ import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
+import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
 
 
@@ -58,6 +59,8 @@ public class TaskSearchResultActivity extends
       
       public final static int CLEAR_HISTORY = R.id.menu_clear_search_history;
    }
+   
+   private boolean lastQuerySucceeded = true;
    
    
 
@@ -80,17 +83,18 @@ public class TaskSearchResultActivity extends
                                    menu,
                                    OptionsMenu.ADD_LIST,
                                    getString( R.string.tasklists_menu_add_list ),
-                                   Menu.CATEGORY_CONTAINER,
+                                   MenuCategory.CONTAINER,
                                    Menu.NONE,
                                    R.drawable.ic_menu_add_list,
                                    MenuItem.SHOW_AS_ACTION_IF_ROOM,
-                                   AccountUtils.isWriteableAccess( this ) );
+                                   lastQuerySucceeded
+                                      && AccountUtils.isWriteableAccess( this ) );
       
       UIUtils.addOptionalMenuItem( this,
                                    menu,
                                    OptionsMenu.CLEAR_HISTORY,
                                    getString( R.string.tasksearchresult_menu_opt_clear_history_title ),
-                                   Menu.CATEGORY_ALTERNATIVE,
+                                   MenuCategory.ALTERNATIVE,
                                    Menu.NONE,
                                    R.drawable.ic_menu_delete,
                                    MenuItem.SHOW_AS_ACTION_NEVER,
@@ -138,6 +142,8 @@ public class TaskSearchResultActivity extends
    {
       getRecentSuggestions().saveRecentQuery( queryString, null );
       
+      lastQuerySucceeded = true;
+      invalidateOptionsMenu();
    }
    
 
@@ -145,6 +151,8 @@ public class TaskSearchResultActivity extends
    @Override
    public void onQueryFailed( String queryString )
    {
+      lastQuerySucceeded = false;
+      invalidateOptionsMenu();
    }
    
 

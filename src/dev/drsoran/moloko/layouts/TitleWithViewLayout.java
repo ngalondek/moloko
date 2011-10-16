@@ -66,6 +66,17 @@ public abstract class TitleWithViewLayout extends LinearLayout
    
    
    
+   public TextView getTitleView()
+   {
+      return (TextView) findViewById( R.id.title_with_view_title );
+   }
+   
+   
+   
+   public abstract View getView();
+   
+   
+   
    protected ViewGroup getViewContainer()
    {
       return (ViewGroup) findViewById( R.id.title_with_view_container );

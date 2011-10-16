@@ -104,12 +104,6 @@
    <style name="TextViewStyle" parent="@android:style/Widget.TextView">
       <item name="android:textColor">?android:attr/textColorPrimary</item>
    </style>
-   
-   <!-- EditTextStyle -->
-   
-   <style name="TaskEditTextStyle" parent="@android:style/Widget.EditText">
-      <item name="android:textSize">?android:attr/textAppearanceSmall</item>
-   </style>
       
    <!-- TextWith...Styles -->
    

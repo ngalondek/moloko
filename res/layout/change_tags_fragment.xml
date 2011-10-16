@@ -47,7 +47,7 @@
             android:layout_marginLeft="5dip"
             android:layout_marginRight="5dip"
             android:hint="@string/change_tags_edit_hint"
-            android:inputType="text|textAutoCorrect"
+            android:inputType="textNoSuggestions"
             android:imeOptions="actionDone"
             android:completionThreshold="1" />
 

@@ -86,7 +86,6 @@
       <!-- Widgets -->
       <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner.NoLine</item>
       <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle.Task</item>
-      <item name="android:editTextStyle">@style/TaskEditTextStyle</item>
    </style>
    
    <style

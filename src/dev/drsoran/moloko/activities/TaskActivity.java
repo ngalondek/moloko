@@ -40,8 +40,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mdt.rtm.data.RtmAuth;
-import com.mdt.rtm.data.RtmTaskNote;
 import com.mdt.rtm.data.RtmAuth.Perms;
+import com.mdt.rtm.data.RtmTaskNote;
 
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
@@ -86,7 +86,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       private final static String NOTE_FRAGMENT_CONTAINERS = "note_fragment_containers";
    }
    
-
+   
    protected static class OptionsMenu
    {
       public final static int POSTPONE_TASK = R.id.menu_postpone_selected_tasks;
@@ -102,13 +102,13 @@ public class TaskActivity extends MolokoFragmentActivity implements
       public final static int ABORT = R.id.menu_abort_edit;
    }
    
-
+   
    private enum FinishEditMode
    {
       SAVE, CANCELED, FORCE_CANCELED
    }
    
-
+   
    private final static class NoteFragmentContainerState implements Parcelable
    {
       @SuppressWarnings( "unused" )
@@ -121,8 +121,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
             return new NoteFragmentContainerState( source );
          }
          
-
-
+         
+         
          @Override
          public NoteFragmentContainerState[] newArray( int size )
          {
@@ -136,7 +136,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
       public final int noteFragmentContainerId;
       
       
-
+      
       public NoteFragmentContainerState( String noteId,
          int noteFragmentContainerId )
       {
@@ -144,16 +144,16 @@ public class TaskActivity extends MolokoFragmentActivity implements
          this.noteFragmentContainerId = noteFragmentContainerId;
       }
       
-
-
+      
+      
       public NoteFragmentContainerState( Parcel source )
       {
          noteId = source.readString();
          noteFragmentContainerId = source.readInt();
       }
       
-
-
+      
+      
       @Override
       public void writeToParcel( Parcel dest, int flags )
       {
@@ -161,8 +161,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
          dest.writeInt( noteFragmentContainerId );
       }
       
-
-
+      
+      
       @Override
       public int describeContents()
       {
@@ -177,7 +177,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    private final static String NEW_NOTE_TEMPORARY_ID = Integer.toString( NEW_NOTE_TEMPORARY_CONTAINER_ID );
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -193,8 +193,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       setActivityInEditMode( getConfiguredEditModeFragmentId() );
    }
    
-
-
+   
+   
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -203,8 +203,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       super.onSaveInstanceState( outState );
    }
    
-
-
+   
+   
    private void saveNoteFragmentContainers()
    {
       final Task task = getTask();
@@ -237,8 +237,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void restoreNoteFragmentContainers()
    {
       final List< NoteFragmentContainerState > noteFragmentContainers = getConfiguredNoteFragmentContainers();
@@ -258,8 +258,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       setConfiguredNoteFragmentContainers( null );
    }
    
-
-
+   
+   
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
@@ -274,29 +274,29 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                                config.getParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS ) );
    }
    
-
-
+   
+   
    public int getConfiguredEditModeFragmentId()
    {
       return configuration.getInt( Config.EDIT_MODE_FRAG_ID, 0 );
    }
    
-
-
+   
+   
    public void setConfiguredEditModeFragmentId( int fragmentId )
    {
       configuration.putInt( Config.EDIT_MODE_FRAG_ID, fragmentId );
    }
    
-
-
+   
+   
    public List< NoteFragmentContainerState > getConfiguredNoteFragmentContainers()
    {
       return configuration.getParcelableArrayList( Config.NOTE_FRAGMENT_CONTAINERS );
    }
    
-
-
+   
+   
    public void setConfiguredNoteFragmentContainers( List< NoteFragmentContainerState > noteFragmentContainers )
    {
       if ( noteFragmentContainers != null )
@@ -306,8 +306,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
          configuration.remove( Config.NOTE_FRAGMENT_CONTAINERS );
    }
    
-
-
+   
+   
    public String getTaskIdFromIntent()
    {
       String taskId = null;
@@ -320,8 +320,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return taskId;
    }
    
-
-
+   
+   
    public Task getTask()
    {
       Task task = null;
@@ -340,8 +340,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return task;
    }
    
-
-
+   
+   
    public Task getTaskAssertNotNull()
    {
       final Task task = getTask();
@@ -352,8 +352,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return task;
    }
    
-
-
+   
+   
    public RtmTaskNote getNoteOfNoteFragment( String fragmentTag )
    {
       RtmTaskNote note = null;
@@ -372,8 +372,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return note;
    }
    
-
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -447,8 +447,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -485,31 +485,48 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    public void onEditTask( View taskEditButton )
    {
       setActivityInEditMode( R.id.frag_task );
       createTaskEditFragment();
    }
    
-
-
+   
+   
    @Override
    public void onChangeTags( List< String > tags )
    {
       showChangeTagsDialog( createTaskEditChangeTagsConfiguration( tags ) );
    }
    
-
-
+   
+   
+   @Override
+   public boolean onFinishTaskEditingByInputMethod()
+   {
+      boolean finished = true;
+      final Fragment fragment = findAddedFragmentById( R.id.frag_task );
+      
+      if ( fragment instanceof IEditFragment< ? > )
+      {
+         final IEditFragment< ? > editFragment = (IEditFragment< ? >) fragment;
+         finished = editFragment.onFinishEditing();
+      }
+      
+      return finished;
+   }
+   
+   
+   
    public void onAddNote( View addNoteButton )
    {
       setActivityInEditMode( createAddNewNoteFragment( createAddNewNoteFragmentConfiguration( getTaskAssertNotNull().getTaskSeriesId() ) ) );
    }
    
-
-
+   
+   
    public void onEditNote( View noteEditButton )
    {
       final Fragment fragment = findAddedFragmentByTag( (String) noteEditButton.getTag() );
@@ -518,8 +535,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
          setActivityInEditMode( fragment.getId() );
    }
    
-
-
+   
+   
    public void onDeleteNote( View noteDeleteButton )
    {
       final String noteId = (String) noteDeleteButton.getTag();
@@ -537,8 +554,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                       null ).show();
    }
    
-
-
+   
+   
    @Override
    protected void onReEvaluateRtmAccessLevel( Perms currentAccessLevel )
    {
@@ -551,8 +568,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    @Override
    public void onBackPressed()
    {
@@ -562,8 +579,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
          super.onBackPressed();
    }
    
-
-
+   
+   
    @Override
    protected boolean onFinishActivityByHome()
    {
@@ -575,8 +592,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return finish;
    }
    
-
-
+   
+   
    public void onDeleteTask( String taskId )
    {
       final Task task = getTaskAssertNotNull();
@@ -592,8 +609,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }, null ).show();
    }
    
-
-
+   
+   
    public void onPostponeTask( String taskId )
    {
       final Task task = getTaskAssertNotNull();
@@ -601,8 +618,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       TaskEditUtils.postponeTask( this, task );
    }
    
-
-
+   
+   
    public void onCompleteTask( String taskId )
    {
       final Task task = getTaskAssertNotNull();
@@ -610,8 +627,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       TaskEditUtils.setTaskCompletion( this, task, true );
    }
    
-
-
+   
+   
    public void onUncompleteTask( String taskId )
    {
       final Task task = getTaskAssertNotNull();
@@ -619,8 +636,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       TaskEditUtils.setTaskCompletion( this, task, false );
    }
    
-
-
+   
+   
    @Override
    public void onOpenLocation( String locationId )
    {
@@ -629,8 +646,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       new LocationChooser( this, task ).showChooser();
    }
    
-
-
+   
+   
    @Override
    public void onOpenContact( String fullname, String username )
    {
@@ -646,8 +663,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       startActivity( intent );
    }
    
-
-
+   
+   
    private void deleteNoteImpl( String noteId )
    {
       if ( NoteEditUtils.deleteNote( this, noteId ) )
@@ -657,8 +674,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void setActivityInEditMode( int editFragmentId )
    {
       setConfiguredEditModeFragmentId( editFragmentId );
@@ -667,22 +684,22 @@ public class TaskActivity extends MolokoFragmentActivity implements
       invalidateOptionsMenu();
    }
    
-
-
+   
+   
    private boolean IsActivityInEditMode()
    {
       return getConfiguredEditModeFragmentId() != 0;
    }
    
-
-
+   
+   
    private boolean IsActivityInAddingNewNoteMode()
    {
       return getConfiguredEditModeFragmentId() == NEW_NOTE_TEMPORARY_CONTAINER_ID;
    }
    
-
-
+   
+   
    private boolean finishEditing( FinishEditMode how )
    {
       if ( !IsActivityInEditMode() )
@@ -711,8 +728,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private boolean finishEditingAndFinishActivity( FinishEditMode how )
    {
       if ( !IsActivityInEditMode() )
@@ -740,8 +757,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void finishEditingShowCancelDialog( final Runnable cancelAction )
    {
       UIUtils.newCancelWithChangesDialog( this, new Runnable()
@@ -758,8 +775,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                           null ).show();
    }
    
-
-
+   
+   
    private boolean setFragmentInEditMode( Fragment fragment )
    {
       if ( fragment instanceof IEditableFragment< ? > )
@@ -781,8 +798,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return false;
    }
    
-
-
+   
+   
    private boolean isEditFragmentModified( int fragmentId )
    {
       boolean hasChanges = false;
@@ -798,8 +815,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return hasChanges;
    }
    
-
-
+   
+   
    private boolean finishFragmentEditing( int fragmentContainerId,
                                           FinishEditMode how )
    {
@@ -809,8 +826,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
          return finishFragmentEditingImpl( fragmentContainerId, how );
    }
    
-
-
+   
+   
    private boolean finishFragmentEditingImpl( int fragmentContainerId,
                                               FinishEditMode how )
    {
@@ -852,8 +869,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return finished;
    }
    
-
-
+   
+   
    private boolean removeFragmentByTag( String fragmentTag, int transit )
    {
       boolean removed = false;
@@ -875,8 +892,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return removed;
    }
    
-
-
+   
+   
    private void removeNoteFragmentByNoteId( String noteId, int transit )
    {
       if ( removeFragmentByTag( noteId, transit ) )
@@ -889,8 +906,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void showEditButtons( boolean show )
    {
       showTaskEditButtons( show );
@@ -910,8 +927,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void showTaskEditButtons( boolean show )
    {
       show = show && canEditFragment( R.id.frag_task );
@@ -919,8 +936,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                                            : View.GONE );
    }
    
-
-
+   
+   
    private void showNoteEditButtonsOfNoteFragment( String taskNoteLayoutTag,
                                                    boolean show )
    {
@@ -939,8 +956,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void createTaskFragment()
    {
       final Fragment taskFragment = findAddedFragmentById( R.id.frag_task );
@@ -951,8 +968,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
          updateTaskFragment();
    }
    
-
-
+   
+   
    private void createInitialTaskFragmentByIntent( Intent intent )
    {
       final Fragment fragment = TaskFragmentFactory.newFragment( this,
@@ -971,8 +988,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void updateTaskFragment()
    {
       final Fragment fragment = TaskFragment.newInstance( createTaskFragmentConfiguration( getTaskIdFromIntent() ) );
@@ -983,8 +1000,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       transaction.commit();
    }
    
-
-
+   
+   
    private void createTaskEditFragment()
    {
       final Fragment fragment = TaskEditFragment.newInstance( createTaskEditFragmentConfiguration( getTaskAssertNotNull() ) );
@@ -995,8 +1012,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       transaction.commit();
    }
    
-
-
+   
+   
    private Bundle createTaskFragmentConfiguration( String taskId )
    {
       final Bundle config = getFragmentConfigurations( R.id.frag_task );
@@ -1006,8 +1023,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    private Bundle createTaskEditFragmentConfiguration( Task task )
    {
       final Bundle config = getFragmentConfigurations( R.id.frag_task );
@@ -1017,15 +1034,15 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    private String createTaskFragmentTag()
    {
       return String.valueOf( R.id.frag_task );
    }
    
-
-
+   
+   
    private Bundle createTaskEditChangeTagsConfiguration( List< String > tags )
    {
       final Bundle config = new Bundle( 2 );
@@ -1036,8 +1053,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    private void showNoteFragmentsOfTask( Task task )
    {
       removeDeletedNoteFragmentsOfTask( task );
@@ -1072,8 +1089,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private void createNoteFragmentAndContainerFromId( ViewGroup fragmentContainer,
                                                       int fragmentContainerId,
                                                       String noteId,
@@ -1088,8 +1105,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       transaction.add( fragmentContainerId, noteFragment, noteId );
    }
    
-
-
+   
+   
    private NoteFragment createNoteFragment( String noteId )
    {
       final NoteFragment noteFragment = NoteFragment.newInstance( createNoteFragmentConfiguration( noteId ) );
@@ -1101,8 +1118,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return noteFragment;
    }
    
-
-
+   
+   
    private void updateNoteFragment( Fragment oldFragment,
                                     FragmentTransaction transaction )
    {
@@ -1112,8 +1129,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
                            oldFragment.getTag() );
    }
    
-
-
+   
+   
    private void removeDeletedNoteFragmentsOfTask( Task task )
    {
       final List< String > noteIds = task.getNoteIds();
@@ -1163,8 +1180,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       }
    }
    
-
-
+   
+   
    private int createAddNewNoteFragment( Bundle fragmentConfig )
    {
       final int noteFragmentContainerId = createAddNewNoteFragmentContainer();
@@ -1180,8 +1197,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return noteFragmentContainerId;
    }
    
-
-
+   
+   
    private void replaceEditNoteFragmentWithAddNoteFragment( String noteId )
    {
       final Task task = getTaskAssertNotNull();
@@ -1197,8 +1214,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
                                                                                               currentText ) ) );
    }
    
-
-
+   
+   
    private int createAddNewNoteFragmentContainer()
    {
       final ViewGroup fragmentContainer = getFragmentContainer();
@@ -1210,8 +1227,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return NEW_NOTE_TEMPORARY_CONTAINER_ID;
    }
    
-
-
+   
+   
    private Bundle createAddNewNoteFragmentConfiguration( String taskSeriesId )
    {
       final Bundle config = new Bundle();
@@ -1221,8 +1238,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    private Bundle createAddNewNoteFragmentConfiguration( String taskSeriesId,
                                                          String noteTitle,
                                                          String noteText )
@@ -1237,8 +1254,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    private boolean finishAddingNewNote( FinishEditMode how )
    {
       final IEditFragment< ? > addNewNoteFragment = (IEditFragment< ? >) findAddedFragmentByTag( NEW_NOTE_TEMPORARY_ID );
@@ -1257,8 +1274,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return ok;
    }
    
-
-
+   
+   
    private View createAndAddNoteFragmentContainer( ViewGroup fragmentContainer,
                                                    int fragmentContainerId,
                                                    String noteId )
@@ -1291,8 +1308,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return noteFragContainer;
    }
    
-
-
+   
+   
    private void requestRemovingEditNoteFragment( final String noteId )
    {
       replaceEditNoteFragmentWithAddNoteFragment( noteId );
@@ -1314,29 +1331,29 @@ public class TaskActivity extends MolokoFragmentActivity implements
              .show();
    }
    
-
-
+   
+   
    private String createTaskNoteLayoutTag( String fragmentTag )
    {
       return TASK_NOTE_LAYOUT_TAG_STUB + fragmentTag;
    }
    
-
-
+   
+   
    private String getNoteIdFromTaskNoteLayoutTag( String taskNoteLayoutTag )
    {
       return taskNoteLayoutTag.substring( TASK_NOTE_LAYOUT_TAG_STUB.length() );
    }
    
-
-
+   
+   
    private int createNoteFragmentContainerId( String noteId )
    {
       return Integer.parseInt( noteId );
    }
    
-
-
+   
+   
    private Bundle createNoteFragmentConfiguration( String noteId )
    {
       final Bundle config = new Bundle();
@@ -1346,8 +1363,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return config;
    }
    
-
-
+   
+   
    private void showChangeTagsDialog( Bundle config )
    {
       final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -1357,8 +1374,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
                         String.valueOf( R.id.frag_change_tags ) );
    }
    
-
-
+   
+   
    @Override
    public void onTagsChanged( List< String > tags )
    {
@@ -1369,8 +1386,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       taskEditFragment.setTags( tags );
    }
    
-
-
+   
+   
    private void setPriorityBarVisibility()
    {
       final View taskFragmentContainer = findViewById( R.id.frag_task );
@@ -1383,15 +1400,15 @@ public class TaskActivity extends MolokoFragmentActivity implements
          UIUtils.setPriorityColor( priorityBar, getTaskAssertNotNull() );
    }
    
-
-
+   
+   
    private ViewGroup getFragmentContainer()
    {
       return (ViewGroup) findViewById( R.id.fragment_container );
    }
    
-
-
+   
+   
    private Fragment findAddedFragmentById( int fragmentId )
    {
       Fragment fragment = getSupportFragmentManager().findFragmentById( fragmentId );
@@ -1402,8 +1419,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return fragment;
    }
    
-
-
+   
+   
    private Fragment findAddedFragmentByTag( String fragmentTag )
    {
       Fragment fragment = getSupportFragmentManager().findFragmentByTag( fragmentTag );
@@ -1414,8 +1431,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return fragment;
    }
    
-
-
+   
+   
    private boolean canEditFragment( int fragId )
    {
       boolean canEdit = false;
@@ -1427,8 +1444,8 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return canEdit;
    }
    
-
-
+   
+   
    private boolean canEditFragment( String fragmentTag )
    {
       boolean canEdit = false;
@@ -1440,23 +1457,23 @@ public class TaskActivity extends MolokoFragmentActivity implements
       return canEdit;
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {
       return null;
    }
    
-
-
+   
+   
    @Override
    public void onFragmentLoadStarted( int fragmentId, String fragmentTag )
    {
    }
    
-
-
+   
+   
    @Override
    public void onFragmentLoadFinished( final int fragmentId,
                                        final String fragmentTag,

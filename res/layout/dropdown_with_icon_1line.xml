@@ -12,6 +12,7 @@
 
 <RelativeLayout
    xmlns:android="http://schemas.android.com/apk/res/android"
+   style="?android:attr/dropDownItemStyle"
    android:layout_height="?android:attr/listPreferredItemHeight"
    android:layout_width="fill_parent"
    android:layout_marginTop="3dip"
@@ -29,9 +30,11 @@
       android:id="@android:id/text1"      
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_toRightOf="@android:id/icon1"
+      android:layout_toRightOf="@android:id/icon1"      
       android:layout_centerVertical="true"
       android:layout_marginLeft="5dip"
-      android:textAppearance="?android:attr/textAppearanceLargePopupMenu" />
+      android:textAppearance="?android:attr/textAppearanceLargeInverse"
+      android:singleLine="true"
+      android:ellipsize="marquee" />
 
 </RelativeLayout>

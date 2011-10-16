@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -31,13 +31,15 @@ import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.TaskEditMultipleFragment;
+import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.MenuCategory;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditMultipleActivity extends MolokoFragmentActivity
+public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
+         ITaskEditFragmentListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -48,7 +50,7 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
    {
    }
    
-
+   
    private static class OptionsMenu
    {
       public final static int SAVE = R.id.menu_save;
@@ -56,14 +58,14 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
       public final static int ABORT = R.id.menu_abort_edit;
    }
    
-
+   
    private enum FinishEditMode
    {
       SAVE, CANCELED
    }
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -82,8 +84,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
          createTaskEditMultipleFragment( getIntent().getExtras() );
    }
    
-
-
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -112,8 +114,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -136,8 +138,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
       }
    }
    
-
-
+   
+   
    @Override
    public void onBackPressed()
    {
@@ -145,8 +147,29 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
          super.onBackPressed();
    }
    
-
-
+   
+   
+   @Override
+   public void onChangeTags( List< String > tags )
+   {
+   }
+   
+   
+   
+   @Override
+   public boolean onFinishTaskEditingByInputMethod()
+   {
+      if ( finishEditing( FinishEditMode.SAVE ) )
+      {
+         finish();
+         return true;
+      }
+      
+      return false;
+   }
+   
+   
+   
    private boolean finishEditing( FinishEditMode how )
    {
       boolean finished = true;
@@ -168,24 +191,24 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
       return finished;
    }
    
-
-
+   
+   
    @Override
    protected boolean onFinishActivityByHome()
    {
       return finishEditing( FinishEditMode.CANCELED );
    }
    
-
-
+   
+   
    private boolean saveChanges()
    {
       final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
       return taskEditMultipleFragment.onFinishEditing();
    }
    
-
-
+   
+   
    private boolean cancelChanges()
    {
       final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
@@ -213,8 +236,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
       return finish;
    }
    
-
-
+   
+   
    private void createTaskEditMultipleFragment( Bundle fragmentConfig )
    {
       final Fragment fragment = TaskEditMultipleFragment.newInstance( fragmentConfig );
@@ -225,15 +248,15 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
       transaction.commit();
    }
    
-
-
+   
+   
    private TaskEditMultipleFragment getTaskEditMultipleFragment()
    {
       return (TaskEditMultipleFragment) getSupportFragmentManager().findFragmentById( R.id.frag_task_edit_multiple );
    }
    
-
-
+   
+   
    private List< Task > getConfiguredTasksFromIntentConfigAssertNotNull()
    {
       final List< Task > tasks = getIntent().getExtras()
@@ -244,8 +267,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity
       return tasks;
    }
    
-
-
+   
+   
    @Override
    protected int[] getFragmentIds()
    {

@@ -35,11 +35,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
@@ -118,31 +120,71 @@ public class AddRenameListDialogFragment extends
    {
       super.onViewCreated( view, savedInstanceState );
       
-      final RtmList list = getConfiguredList();
+      final boolean isRenameMode = isRenameMode();
       
-      getDialog().setTitle( ( list == null ) ? R.string.dlg_add_list_title
-                                            : R.string.dlg_rename_list_title );
+      getDialog().setTitle( !isRenameMode ? R.string.dlg_add_list_title
+                                         : R.string.dlg_rename_list_title );
       
       listNameEdit = ( (TextView) view.findViewById( R.id.add_rename_list_list_name ) );
       filterEdit = ( (TextView) view.findViewById( R.id.add_rename_list_smart_filter ) );
       
-      if ( list != null )
+      if ( isRenameMode )
       {
-         listNameEdit.setText( list.getName() );
-         filterEdit.setVisibility( View.GONE );
+         configureAsRenameListDialog();
+      }
+      else
+      {
+         configureAsNewListDialog();
       }
       
-      final IFilter filter = getConfiguredFilter();
-      
-      if ( filter instanceof RtmSmartFilter )
-         filterEdit.setText( ( (RtmSmartFilter) filter ).getFilterString() );
-      
-      registerInputListeners( view );
+      registerCommitInputListener( isRenameMode ? listNameEdit : filterEdit );
+      registerButtonListeners( view );
    }
    
    
    
-   private void registerInputListeners( View view )
+   private void configureAsRenameListDialog()
+   {
+      listNameEdit.setText( getConfiguredList().getName() );
+      
+      // Show only the list name edit, so this will close on IME action
+      listNameEdit.setImeActionLabel( filterEdit.getImeActionLabel(),
+                                      filterEdit.getImeActionId() );
+      filterEdit.setVisibility( View.GONE );
+   }
+   
+   
+   
+   private void configureAsNewListDialog()
+   {
+      final IFilter filter = getConfiguredFilter();
+      
+      if ( filter instanceof RtmSmartFilter )
+         filterEdit.setText( ( (RtmSmartFilter) filter ).getFilterString() );
+   }
+   
+   
+   
+   private void registerCommitInputListener( TextView textView )
+   {
+      textView.setOnEditorActionListener( new OnEditorActionListener()
+      {
+         @Override
+         public boolean onEditorAction( TextView v, int actionId, KeyEvent event )
+         {
+            if ( UIUtils.hasInputCommitted( actionId ) )
+            {
+               return onFinishEditing();
+            }
+            
+            return false;
+         }
+      } );
+   }
+   
+   
+   
+   private void registerButtonListeners( View view )
    {
       view.findViewById( android.R.id.button1 )
           .setOnClickListener( new OnClickListener()
@@ -177,6 +219,13 @@ public class AddRenameListDialogFragment extends
       if ( config.containsKey( Config.FILTER ) )
          configuration.putParcelable( Config.FILTER,
                                       config.getParcelable( Config.FILTER ) );
+   }
+   
+   
+   
+   private boolean isRenameMode()
+   {
+      return getConfiguredList() != null;
    }
    
    

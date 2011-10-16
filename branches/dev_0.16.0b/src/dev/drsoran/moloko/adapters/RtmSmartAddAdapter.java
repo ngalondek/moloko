@@ -81,30 +81,30 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
    private volatile List< Pair< String, Long > > estimates;
    
    
-
+   
    public RtmSmartAddAdapter( Context context )
    {
       this.context = context;
    }
    
-
-
+   
+   
    @Override
    public Object getItem( int position )
    {
       return data.get( position ).second;
    }
    
-
-
+   
+   
    @Override
    public long getItemId( int position )
    {
       return position;
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
@@ -123,24 +123,24 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       return UIUtils.setDropDownItemIconAndText( view, item );
    }
    
-
-
+   
+   
    @Override
    public Filter getFilter()
    {
       return filter;
    }
    
-
-
+   
+   
    @Override
    public int getCount()
    {
       return data.size();
    }
    
-
-
+   
+   
    public Object getSuggestionValue( int tokenType, String tokenText )
    {
       switch ( tokenType )
@@ -162,8 +162,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       }
    }
    
-
-
+   
+   
    private final static < T > T findSuggestion( List< Pair< String, T > > list,
                                                 String text )
    {
@@ -185,7 +185,7 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
       private int listsCnt = 0;
       
       
-
+      
       /**
        * Runs in a background thread
        */
@@ -392,8 +392,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          return results;
       }
       
-
-
+      
+      
       /**
        * Runs in the UI thread
        */
@@ -414,8 +414,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          }
       }
       
-
-
+      
+      
       private < T > List< Pair< Integer, String > > filter( List< Pair< String, T > > list,
                                                             String prefix,
                                                             int iconId )
@@ -429,8 +429,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          return newData;
       }
       
-
-
+      
+      
       private < T > List< Pair< Integer, String > > filter( List< Pair< String, T > > list,
                                                             String prefix,
                                                             int toIdx,
@@ -451,8 +451,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          return newData;
       }
       
-
-
+      
+      
       private void addRecurrence( String sentence, boolean every )
       {
          final Pair< String, Boolean > result = RecurrenceParsing.parseRecurrence( sentence );
@@ -469,8 +469,8 @@ public class RtmSmartAddAdapter extends BaseAdapter implements Filterable
          }
       }
       
-
-
+      
+      
       private void addEstimate( long estimate )
       {
          estimates.add( Pair.create( MolokoDateUtils.formatEstimated( context,

@@ -53,6 +53,14 @@ public class TitleWithWrappingLayout extends TitleWithViewLayout
    
    
    @Override
+   public WrappingLayout getView()
+   {
+      return wrappingLayout;
+   }
+   
+   
+   
+   @Override
    public void setEnabled( boolean enabled )
    {
       super.setEnabled( enabled );

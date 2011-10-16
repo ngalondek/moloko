@@ -30,10 +30,10 @@ import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
@@ -41,8 +41,6 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullTaskEditFragmentListener;
 import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.provider.Rtm.Tasks;
@@ -74,8 +72,6 @@ public class TaskEditFragment extends
       public final static String TASK = "task";
    }
    
-   private ITaskEditFragmentListener listener;
-   
    
    
    public final static TaskEditFragment newInstance( Bundle config )
@@ -92,28 +88,6 @@ public class TaskEditFragment extends
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
-   }
-   
-   
-   
-   @Override
-   public void onAttach( FragmentActivity activity )
-   {
-      super.onAttach( activity );
-      
-      if ( activity instanceof ITaskEditFragmentListener )
-         listener = (ITaskEditFragmentListener) activity;
-      else
-         listener = new NullTaskEditFragmentListener();
-   }
-   
-   
-   
-   @Override
-   public void onDetach()
-   {
-      super.onDetach();
-      listener = null;
    }
    
    
@@ -249,5 +223,13 @@ public class TaskEditFragment extends
       
       final TaskFragment fragment = TaskFragment.newInstance( config );
       return fragment;
+   }
+   
+   
+   
+   @Override
+   protected TextView getCommitTextView()
+   {
+      return urlEditText.getView();
    }
 }

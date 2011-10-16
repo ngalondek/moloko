@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
@@ -145,7 +146,6 @@ public class TaskEditMultipleFragment extends
                                getInitialValue( Tasks.URL,
                                                 URL_MULTI_VALUE,
                                                 String.class ) );
-      
       return initialValues;
    }
    
@@ -201,7 +201,7 @@ public class TaskEditMultipleFragment extends
       // Setup tasks name edit
       if ( !isCommonAttrib( Tasks.TASKSERIES_NAME ) )
       {
-         nameEditText.setHint( R.string.edit_multiple_tasks_multiple_values );
+         nameEditText.setHint( R.string.edit_multiple_tasks_different_task_names );
          
          if ( nameEditText instanceof AutoCompleteTextView )
          {
@@ -222,7 +222,7 @@ public class TaskEditMultipleFragment extends
       
       // Setup URL edit
       if ( !isCommonAttrib( Tasks.URL ) )
-         urlEditText.setHint( R.string.edit_multiple_tasks_multiple_values );
+         urlEditText.setHint( R.string.edit_multiple_tasks_different_urls );
       
       // These controls are not visible in multi edit task mode
       dueContainer.setVisibility( View.GONE );
@@ -275,7 +275,7 @@ public class TaskEditMultipleFragment extends
             
             listIds.add( 0, STRING_MULTI_VALUE );
             listNames.add( 0,
-                           getString( R.string.edit_multiple_tasks_multiple_values ) );
+                           getString( R.string.edit_multiple_tasks_different_lists ) );
             
             createListSpinnerAdapterForValues( listIds, listNames );
          }
@@ -308,7 +308,7 @@ public class TaskEditMultipleFragment extends
             
             locationIds.add( 0, STRING_MULTI_VALUE );
             locationNames.add( 0,
-                               getString( R.string.edit_multiple_tasks_multiple_values ) );
+                               getString( R.string.edit_multiple_tasks_different_locations ) );
             
             createLocationSpinnerAdapterForValues( locationIds, locationNames );
          }
@@ -334,7 +334,7 @@ public class TaskEditMultipleFragment extends
                                     priorityValues );
          
          priorityTexts.add( 0,
-                            getString( R.string.edit_multiple_tasks_multiple_values ) );
+                            getString( R.string.edit_multiple_tasks_different_priorities ) );
          priorityValues.add( 0, STRING_MULTI_VALUE );
          
          createPrioritySpinnerAdapterForValues( priorityTexts, priorityValues );
@@ -363,6 +363,17 @@ public class TaskEditMultipleFragment extends
          throw new AssertionError( "expected tasks to be not null" );
       
       return tasks;
+   }
+   
+   
+   
+   @Override
+   protected boolean validateName()
+   {
+      if ( hasChange( Tasks.TASKSERIES_NAME ) )
+         return super.validateName();
+      else
+         return true;
    }
    
    
@@ -409,6 +420,14 @@ public class TaskEditMultipleFragment extends
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
       return null;
+   }
+   
+   
+   
+   @Override
+   protected TextView getCommitTextView()
+   {
+      return urlEditText.getView();
    }
    
    

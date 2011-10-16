@@ -36,15 +36,15 @@ public class TitleWithTextLayout extends TitleWithViewLayout
    private TextView textView;
    
    
-
+   
    public TitleWithTextLayout( Context context, AttributeSet attrs )
    {
       super( context, attrs );
       initView( context, attrs, getViewContainer() );
    }
    
-
-
+   
+   
    public TitleWithTextLayout( Context context, AttributeSet attrs,
       ViewGroup root )
    {
@@ -52,8 +52,16 @@ public class TitleWithTextLayout extends TitleWithViewLayout
       initView( context, attrs, getViewContainer() );
    }
    
-
-
+   
+   
+   @Override
+   public TextView getView()
+   {
+      return textView;
+   }
+   
+   
+   
    @Override
    public void setEnabled( boolean enabled )
    {
@@ -61,8 +69,8 @@ public class TitleWithTextLayout extends TitleWithViewLayout
       textView.setEnabled( false );
    }
    
-
-
+   
+   
    private void initView( Context context,
                           AttributeSet attrs,
                           ViewGroup container )

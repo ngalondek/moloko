@@ -25,7 +25,7 @@
       android:layout_alignRight="@+id/note_edit_title"
       android:text="Created_Date" />
 
-   <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
+   <dev.drsoran.moloko.widgets.ClearableEditText
       android:id="@+id/note_edit_title"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
       android:textStyle="bold"
       android:inputType="text" />
 
-   <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
+   <dev.drsoran.moloko.widgets.ClearableEditText
       android:id="@+id/note_edit_text"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
@@ -45,5 +45,5 @@
       android:layout_alignRight="@+id/note_edit_title"
       android:gravity="top|left"
       android:hint="@string/note_edit_text_hint"
-      android:inputType="text|textMultiLine" />
+      android:inputType="textMultiLine" />
 </RelativeLayout>

@@ -299,10 +299,13 @@
    <string name="task_edit_validate_due">\'%1$s\' is not a valid due date</string>
    <string name="task_edit_validate_recurrence">\'%1$s\' is not a valid recurrence</string>
 
-    <!-- EditMultipleTasks activity -->
+    <!-- EditMultipleTasks fragment -->
    <string name="edit_multiple_tasks_titlebar">@string/app_task_edit_multiple</string>
-   <string name="edit_multiple_tasks_multiple_values">Different values</string>
-   <string name="edit_multiple_tasks_multiple_tags">Different tags</string>
+   <string name="edit_multiple_tasks_different_task_names">Different names</string>
+   <string name="edit_multiple_tasks_different_lists">Different lists</string>
+   <string name="edit_multiple_tasks_different_priorities">Different priorities</string>
+   <string name="edit_multiple_tasks_different_locations">Different locations</string>
+   <string name="edit_multiple_tasks_different_urls">Different URLs</string>
    <string name="edit_multiple_tasks_entry_with_count">%1$s (%2$d)</string>
 
    <!-- Change Tags Activity -->

@@ -30,7 +30,7 @@ import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView;
+import dev.drsoran.moloko.widgets.ClearableEditText;
 
 
 public class TitleWithEditTextLayout extends TitleWithViewLayout
@@ -56,6 +56,14 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
    {
       super( context, attrs, root );
       initView( context, attrs, getViewContainer() );
+   }
+   
+   
+   
+   @Override
+   public EditText getView()
+   {
+      return editText;
    }
    
    
@@ -118,7 +126,7 @@ public class TitleWithEditTextLayout extends TitleWithViewLayout
                           AttributeSet attrs,
                           ViewGroup container )
    {
-      editText = new ClearableAutoCompleteTextView( context, attrs );
+      editText = new ClearableEditText( context, attrs );
       editText.setLayoutParams( generateDefaultLayoutParams() );
       editText.setId( R.id.title_with_edit_text );
       

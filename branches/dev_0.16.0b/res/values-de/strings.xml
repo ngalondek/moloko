@@ -246,9 +246,12 @@
    <string name="task_edit_validate_due">\'%1$s\' ist keine gültige Fälligkeit</string>
    <string name="task_edit_validate_recurrence">\'%1$s\' ist keine gültige Wiederholung</string>
    
-   <!-- EditMultipleTasks activity -->
-   <string name="edit_multiple_tasks_multiple_values">Verschiedene Werte</string>
-   <string name="edit_multiple_tasks_multiple_tags">Verschiedene Tags</string>
+   <!-- EditMultipleTasks fragment -->
+   <string name="edit_multiple_tasks_different_task_names">Unterschiedliche Namen</string>
+   <string name="edit_multiple_tasks_different_lists">Unterschiedliche Listen</string>
+   <string name="edit_multiple_tasks_different_priorities">Unterschiedliche Prioritäten</string>
+   <string name="edit_multiple_tasks_different_locations">Unterschiedliche Orte</string>
+   <string name="edit_multiple_tasks_different_urls">Unterschiedliche URLs</string>
       
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Durch Komma getrennte Tags</string>

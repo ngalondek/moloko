@@ -24,7 +24,12 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
+
 public interface ITaskEditFragmentListener
 {
    void onChangeTags( List< String > tags );
+   
+   
+   
+   boolean onFinishTaskEditingByInputMethod();
 }

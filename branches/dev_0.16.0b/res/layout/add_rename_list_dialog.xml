@@ -5,25 +5,25 @@
    android:layout_width="fill_parent"
    android:layout_height="fill_parent">
 
-   <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
+   <dev.drsoran.moloko.widgets.ClearableEditText
       android:id="@+id/add_rename_list_list_name"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_margin="5dip"
       android:layout_alignParentTop="true"
       android:hint="@string/dlg_add_rename_list_list_name_hint"
-      android:inputType="text|textAutoCorrect|textCapSentences"
-      android:imeOptions="actionDone"
+      android:inputType="textCapSentences"
+      android:imeOptions="actionNext"
       android:selectAllOnFocus="true" />
 
-   <dev.drsoran.moloko.widgets.ClearableAutoCompleteTextView
+   <dev.drsoran.moloko.widgets.ClearableEditText
       android:id="@+id/add_rename_list_smart_filter"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:layout_margin="5dip"
       android:layout_below="@+id/add_rename_list_list_name"
       android:hint="@string/dlg_add_rename_list_smart_filter_hint"
-      android:inputType="text|textAutoCorrect"
+      android:inputType="textNoSuggestions"
       android:imeOptions="actionDone"
       android:selectAllOnFocus="true" />
 

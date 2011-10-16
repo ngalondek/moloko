@@ -31,4 +31,12 @@ public class NullTaskEditFragmentListener implements ITaskEditFragmentListener
    public void onChangeTags( List< String > tags )
    {
    }
+   
+   
+   
+   @Override
+   public boolean onFinishTaskEditingByInputMethod()
+   {
+      return true;
+   }
 }

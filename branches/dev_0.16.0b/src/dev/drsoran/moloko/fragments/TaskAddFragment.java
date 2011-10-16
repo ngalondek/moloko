@@ -37,12 +37,12 @@ import android.content.IntentFilter.MalformedMimeTypeException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
@@ -52,8 +52,6 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart;
 import dev.drsoran.moloko.content.TasksProviderPart.NewTaskIds;
-import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
-import dev.drsoran.moloko.fragments.listeners.NullTaskEditFragmentListener;
 import dev.drsoran.moloko.util.AsyncInsertEntity;
 import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -119,8 +117,6 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       private final static String CREATED_DATE = "created_date";
    }
    
-   private ITaskEditFragmentListener listener;
-   
    
    
    public final static TaskAddFragment newInstance( Bundle config )
@@ -137,29 +133,6 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
-   }
-   
-   
-   
-   @Override
-   public void onAttach( FragmentActivity activity )
-   {
-      super.onAttach( activity );
-      
-      if ( activity instanceof ITaskEditFragmentListener )
-         listener = (ITaskEditFragmentListener) activity;
-      else
-         listener = new NullTaskEditFragmentListener();
-   }
-   
-   
-   
-   @Override
-   public void onDetach()
-   {
-      super.onDetach();
-      
-      listener = null;
    }
    
    
@@ -561,5 +534,13 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       {
          return null;
       }
+   }
+   
+   
+   
+   @Override
+   protected TextView getCommitTextView()
+   {
+      return urlEditText.getView();
    }
 }

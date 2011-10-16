@@ -252,9 +252,12 @@
    <string name="task_edit_validate_due">\'%1$s\' n\'est pas une échéance valide</string>
    <string name="task_edit_validate_recurrence">\'%1$s\' n\'est pas une répétition valide</string>
 
-   <!-- EditMultipleTasks activity -->
-   <string name="edit_multiple_tasks_multiple_values">Valeurs Différentes</string>
-   <string name="edit_multiple_tasks_multiple_tags">Mots Clés Différents</string>
+   <!-- EditMultipleTasks fragment -->
+   <string name="edit_multiple_tasks_different_task_names">Different names</string>
+   <string name="edit_multiple_tasks_different_lists">Different lists</string>
+   <string name="edit_multiple_tasks_different_priorities">Different priorities</string>
+   <string name="edit_multiple_tasks_different_locations">Different locations</string>
+   <string name="edit_multiple_tasks_different_urls">Different URLs</string>
 
    <!-- Change Tags Activity -->
    <string name="change_tags_edit_hint">Mots Clés séparés par des virgules</string>

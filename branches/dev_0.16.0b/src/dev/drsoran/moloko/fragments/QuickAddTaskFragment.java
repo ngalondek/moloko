@@ -12,12 +12,15 @@ import android.text.Selection;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.RtmSmartAddAdapter;
@@ -68,7 +71,8 @@ public class QuickAddTaskFragment extends MolokoFragment
       super.onActivityCreated( savedInstanceState );
       
       configure( getArguments() );
-      createNewImpl();
+      
+      showFragment();
    }
    
    
@@ -93,16 +97,11 @@ public class QuickAddTaskFragment extends MolokoFragment
       
       if ( hidden )
       {
-         hideSoftInput();
-         if ( impl != null )
-         {
-            impl.clearEditText();
-            impl = null;
-         }
+         hideFragment();
       }
       else
       {
-         createNewImpl();
+         showFragment();
       }
    }
    
@@ -112,9 +111,7 @@ public class QuickAddTaskFragment extends MolokoFragment
    public void onDestroyView()
    {
       super.onDestroyView();
-      
-      hideSoftInput();
-      impl = null;
+      hideFragment();
    }
    
    
@@ -144,6 +141,28 @@ public class QuickAddTaskFragment extends MolokoFragment
    
    
    
+   private void showFragment()
+   {
+      createNewImpl();
+      connectToCommitInput();
+      showSoftInput();
+   }
+   
+   
+   
+   private void hideFragment()
+   {
+      hideSoftInput();
+      
+      if ( impl != null )
+      {
+         impl.clearEditText();
+         impl = null;
+      }
+   }
+   
+   
+   
    private void createNewImpl()
    {
       impl = new Impl( getFragmentActivity(),
@@ -153,10 +172,43 @@ public class QuickAddTaskFragment extends MolokoFragment
    
    
    
+   private void showSoftInput()
+   {
+      if ( impl != null )
+         UIUtils.showSoftInput( impl.addTaskEdit );
+   }
+   
+   
+   
    private void hideSoftInput()
    {
       if ( impl != null )
          UIUtils.hideSoftInput( impl.addTaskEdit );
+   }
+   
+   
+   
+   private void connectToCommitInput()
+   {
+      if ( impl != null )
+      {
+         impl.addTaskEdit.setOnEditorActionListener( new OnEditorActionListener()
+         {
+            @Override
+            public boolean onEditorAction( TextView v,
+                                           int actionId,
+                                           KeyEvent event )
+            {
+               if ( UIUtils.hasInputCommitted( actionId ) )
+               {
+                  impl.addNewTask();
+                  return true;
+               }
+               
+               return false;
+            }
+         } );
+      }
    }
    
    
@@ -360,7 +412,7 @@ public class QuickAddTaskFragment extends MolokoFragment
       
       
       @SuppressWarnings( "unchecked" )
-      private final void addNewTask()
+      public final void addNewTask()
       {
          if ( listener != null )
          {

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -331,19 +333,6 @@ public class RtmTaskSeries extends RtmData
    
    
    
-   public Date getDeletedDate()
-   {
-      for ( RtmTask task : tasks )
-      {
-         if ( task.getDeletedDate() != null )
-            return task.getDeletedDate();
-      }
-      
-      return null;
-   }
-   
-   
-   
    public String getName()
    {
       return name;
@@ -361,6 +350,40 @@ public class RtmTaskSeries extends RtmData
    public List< RtmTask > getTasks()
    {
       return tasks;
+   }
+   
+   
+   
+   public List< RtmTask > getDeletedTasks()
+   {
+      List< RtmTask > deletedTasks = new LinkedList< RtmTask >();
+      
+      for ( RtmTask task : tasks )
+      {
+         if ( task.isDeleted() )
+            deletedTasks.add( task );
+      }
+      
+      return deletedTasks;
+   }
+   
+   
+   
+   public List< RtmTask > getAndRemoveDeletedTasks()
+   {
+      List< RtmTask > deletedTasks = new LinkedList< RtmTask >();
+      
+      for ( Iterator< RtmTask > i = tasks.iterator(); i.hasNext(); )
+      {
+         final RtmTask rtmTask = i.next();
+         if ( rtmTask.isDeleted() )
+         {
+            deletedTasks.add( rtmTask );
+            i.remove();
+         }
+      }
+      
+      return deletedTasks;
    }
    
    

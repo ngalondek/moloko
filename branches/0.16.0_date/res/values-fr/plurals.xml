@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Copyright (c) 2011 Ronny Röhricht This file is part of Moloko. Moloko
+		is free software: you can redistribute it and/or modify it under the
+		terms of the GNU General Public License as published by the Free
+		Software Foundation, either version 3 of the License, or (at your
+		option) any later version. Moloko is distributed in the hope that it
+		will be useful, but WITHOUT ANY WARRANTY; without even the implied
+		warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+		the GNU General Public License for more details. You should have
+		received a copy of the GNU General Public License along with Moloko.
+		If not, see <http://www.gnu.org/licenses/>.
+      
+      Contributors:
+         David Vermeille - implementation
+	-->
+
+<resources>
+   <!-- Globals -->
+   <plurals name="g_year">
+      <item quantity="one">année</item>
+      <item quantity="other">années</item>
+   </plurals>
+   <plurals name="g_month">
+      <item quantity="one">mois</item>
+      <item quantity="other">mois</item>
+   </plurals>
+   <plurals name="g_week">
+      <item quantity="one">semaine</item>
+      <item quantity="other">semaines</item>
+   </plurals>
+   <plurals name="g_day">
+      <item quantity="one">jour</item>
+      <item quantity="other">jours</item>
+   </plurals>
+   <plurals name="g_hour">
+      <item quantity="one">heure</item>
+      <item quantity="other">heures</item>
+   </plurals>
+   <plurals name="g_minute">
+      <item quantity="one">minute</item>
+      <item quantity="other">minutes</item>
+   </plurals>
+   <plurals name="g_second">
+      <item quantity="one">seconde</item>
+      <item quantity="other">secondes</item>
+   </plurals>   
+   <plurals name="g_task">
+      <item quantity="one">tâche</item>
+      <item quantity="other">tâches</item>
+   </plurals>
+   
+   <!-- Global Toasts -->
+      <!-- Task -->
+      <plurals name="toast_completed_task">
+         <item quantity="one">Task has been completed</item>
+         <item quantity="other">%1$d tasks have been completed</item>
+      </plurals>
+      <plurals name="toast_incompleted_task">
+         <item quantity="one">Task is now incomplete</item>
+         <item quantity="other">%1$d tasks are now incomplete</item>
+      </plurals>
+      <plurals name="toast_postponed_task">
+         <item quantity="one">Task has been postponed</item>
+         <item quantity="other">%1$d tasks have been postponed</item>
+      </plurals>
+      <plurals name="toast_deleted_task">
+         <item quantity="one">Task has been deleted</item>
+         <item quantity="other">%1$d tasks have been deleted</item>
+      </plurals>
+   
+   <!-- TaskLists fragment -->
+   <plurals name="tasklists_child_due_today">
+      <item quantity="one">1 à faire aujourd\'hui</item>
+      <item quantity="other">%1$d à faire aujourd\'hui</item>
+   </plurals>
+   <plurals name="tasklists_child_due_tomorrow">
+      <item quantity="one">1 à faire demain</item>
+      <item quantity="other">%1$d à faire demain</item>
+   </plurals>
+   <plurals name="tasklists_child_overdue">
+      <item quantity="one">1 en retard</item>
+      <item quantity="other">%1$d en retard</item>
+   </plurals>
+   <plurals name="tasklists_child_completed">
+      <item quantity="one">1 faite</item>
+      <item quantity="other">%1$d faites</item>
+   </plurals>
+   
+   <!-- SelectMultipleTasks fragment -->
+      <!-- Dialogs -->
+      <plurals name="select_multiple_tasks_dlg_complete">
+         <item quantity="one">Marquer 1 tâche faite ?</item>
+         <item quantity="other">Marquer %1$d tâches faites ?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_incomplete">
+         <item quantity="one">Marquer 1 tâche à faire ?</item>
+         <item quantity="other">Marquer %1$d tâches à faire ?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_postpone">
+         <item quantity="one">Reporter 1 tâche ?</item>
+         <item quantity="other">Reporter %1$d tâches ?</item>
+      </plurals>
+      <plurals name="select_multiple_tasks_dlg_delete">
+         <item quantity="one">Supprimer 1 tâche ?</item>
+         <item quantity="other">Supprimer %1$d tâches ?</item>
+      </plurals>
+
+   <!-- TasksList activity -->
+   	<!-- Menus -->
+   	<plurals name="taskslist_listitem_ctx_notes">
+   		<item quantity="one">Ouvrir la note</item>
+   		<item quantity="other">Ouvrir les notes</item>
+   	</plurals>
+   	<plurals name="taskslist_listitem_ctx_tags">
+   		<item quantity="one">Afficher les tâches avec \'%1$s\'</item>
+   		<item quantity="other">Afficher les tâches marquées avec...</item>
+   	</plurals>
+   
+</resources>

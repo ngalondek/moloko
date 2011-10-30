@@ -48,6 +48,7 @@ import dev.drsoran.moloko.content.TransactionalAccess;
 import dev.drsoran.moloko.service.RtmServiceConstants;
 import dev.drsoran.moloko.sync.elements.InSyncRtmTaskSeries;
 import dev.drsoran.moloko.sync.elements.OutSyncTask;
+import dev.drsoran.moloko.sync.elements.ServerSourceSyncRtmTaskList;
 import dev.drsoran.moloko.sync.elements.SyncRtmTaskList;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
@@ -123,9 +124,9 @@ public final class RtmTasksSync
             local_SyncTaskList = new SyncRtmTaskList( tasks );
       }
       
-      final SyncRtmTaskList server_SyncTaskList = getServerTasksList( service,
-                                                                      lastSync,
-                                                                      syncResult );
+      final ServerSourceSyncRtmTaskList server_SyncTaskList = getServerTasksList( service,
+                                                                                  lastSync,
+                                                                                  syncResult );
       if ( server_SyncTaskList == null )
       {
          return false;
@@ -201,6 +202,11 @@ public final class RtmTasksSync
                                                                                          local_SyncList,
                                                                                          lastSync == null );
          syncResult.localOps.addAll( syncOperations );
+         
+         // Process the taskserieses with deleted tasks at last. Otherwise we could remove local taskserieses and insert
+         // them again during inDiff
+         final List< IContentProviderSyncOperation > removeDeletedTasksOps = server_SyncTaskList.removeDeletedTasks();
+         syncResult.localOps.addAll( removeDeletedTasksOps );
       }
       
       // Sync notes
@@ -215,16 +221,16 @@ public final class RtmTasksSync
    
    
    
-   public static SyncRtmTaskList getServerTasksList( Service service,
-                                                     Date lastSync,
-                                                     MolokoSyncResult syncResult )
+   public static ServerSourceSyncRtmTaskList getServerTasksList( Service service,
+                                                                 Date lastSync,
+                                                                 MolokoSyncResult syncResult )
    {
-      SyncRtmTaskList server_SyncTaskList = null;
+      ServerSourceSyncRtmTaskList server_SyncTaskList = null;
       {
          try
          {
             final RtmTasks tasks = service.tasks_getList( null, null, lastSync );
-            server_SyncTaskList = new SyncRtmTaskList( tasks );
+            server_SyncTaskList = new ServerSourceSyncRtmTaskList( tasks );
          }
          catch ( ServiceException e )
          {

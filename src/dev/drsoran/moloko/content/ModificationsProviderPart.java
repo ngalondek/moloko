@@ -78,7 +78,7 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
    }
    
    
-
+   
    public final static ContentValues getContentValues( ContentResolver contentResolver,
                                                        Modification modification,
                                                        boolean withId )
@@ -122,8 +122,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       return values;
    }
    
-
-
+   
+   
    public final static Modification getModification( ContentProviderClient client,
                                                      Uri entityUri,
                                                      String colName )
@@ -162,8 +162,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       return modification;
    }
    
-
-
+   
+   
    public final static List< Modification > getModifications( ContentProviderClient client,
                                                               Uri[] entityUris )
    {
@@ -231,8 +231,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       return modifications;
    }
    
-
-
+   
+   
    public final static boolean isModified( ContentProviderClient client,
                                            Uri entityUri ) throws RemoteException
    {
@@ -264,8 +264,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
    }
    
-
-
+   
+   
    public final static boolean applyModifications( ContentResolver contentResolver,
                                                    Collection< Modification > modifications )
    {
@@ -396,8 +396,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       return ok;
    }
    
-
-
+   
+   
    public static String getSyncedValue( ContentResolver contentResolver,
                                         Uri entityUri,
                                         String colName ) throws RemoteException
@@ -437,8 +437,56 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
       }
    }
    
-
-
+   
+   
+   @Override
+   public Uri insert( ContentValues initialValues )
+   {
+      final Uri insertUri = super.insert( initialValues );
+      
+      if ( insertUri != null )
+      {
+         Log.d( TAG,
+                String.format( "INSERT id=%s, %s",
+                               insertUri.getLastPathSegment(),
+                               initialValues.toString() ) );
+      }
+      else
+      {
+         Log.d( TAG,
+                String.format( "INSERT of %s failed", initialValues.toString() ) );
+      }
+      
+      return insertUri;
+   }
+   
+   
+   
+   @Override
+   public int update( String id,
+                      ContentValues values,
+                      String where,
+                      String[] whereArgs )
+   {
+      Log.d( TAG, String.format( "UPDATE %s, %s",
+                                 ( id != null ? id : where ),
+                                 values.toString() ) );
+      
+      return super.update( id, values, where, whereArgs );
+   }
+   
+   
+   
+   @Override
+   public int delete( String id, String where, String[] whereArgs )
+   {
+      Log.d( TAG, String.format( "DELETE %s", ( id != null ? id : where ) ) );
+      
+      return super.delete( id, where, whereArgs );
+   }
+   
+   
+   
    public static ContentProviderOperation getRemoveModificationOps( Uri contentUri,
                                                                     String entityId )
    {
@@ -446,8 +494,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                                                                  entityId ) );
    }
    
-
-
+   
+   
    public static ContentProviderOperation getRemoveModificationOps( Uri entityUri )
    {
       return ContentProviderOperation.newDelete( Modifications.CONTENT_URI )
@@ -459,8 +507,8 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                                      .build();
    }
    
-
-
+   
+   
    private static Modification createModification( Cursor c )
    {
       return new Modification( c.getString( COL_INDICES.get( Modifications._ID ) ),
@@ -475,15 +523,16 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
                                c.getLong( COL_INDICES.get( Modifications.TIMESTAMP ) ) );
    }
    
-
-
+   
+   
    public ModificationsProviderPart( Context context, SQLiteOpenHelper dbAccess )
    {
       super( context, dbAccess, Modifications.PATH );
    }
    
-
-
+   
+   
+   @Override
    public void create( SQLiteDatabase db ) throws SQLException
    {
       db.execSQL( "CREATE TABLE "
@@ -497,54 +546,57 @@ public class ModificationsProviderPart extends AbstractRtmProviderPart
          + " TEXT, " + Modifications.TIMESTAMP + " INTEGER NOT NULL " + ");" );
    }
    
-
-
+   
+   
    @Override
    protected String getContentItemType()
    {
       return Modifications.CONTENT_ITEM_TYPE;
    }
    
-
-
+   
+   
    @Override
    protected String getContentType()
    {
       return Modifications.CONTENT_TYPE;
    }
    
-
-
+   
+   
    @Override
    public Uri getContentUri()
    {
       return Modifications.CONTENT_URI;
    }
    
-
-
+   
+   
    @Override
    protected String getDefaultSortOrder()
    {
       return Modifications.DEFAULT_SORT_ORDER;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, String > getProjectionMap()
    {
       return PROJECTION_MAP;
    }
    
-
-
+   
+   
+   @Override
    public HashMap< String, Integer > getColumnIndices()
    {
       return COL_INDICES;
    }
    
-
-
+   
+   
+   @Override
    public String[] getProjection()
    {
       return PROJECTION;

@@ -46,22 +46,22 @@ public class ContentProviderSyncOperation implements
       private final ArrayList< ContentProviderOperation > operations = new ArrayList< ContentProviderOperation >();
       
       
-
+      
       public Builder( Op operationType )
       {
          this.operationType = operationType;
       }
       
-
-
+      
+      
       public Builder( Builder other )
       {
          this.operationType = other.operationType;
          this.operations.addAll( other.operations );
       }
       
-
-
+      
+      
       public Builder( Op operationType, ContentProviderOperation operation )
       {
          if ( operation == null )
@@ -71,8 +71,8 @@ public class ContentProviderSyncOperation implements
          operations.add( operation );
       }
       
-
-
+      
+      
       public Builder( Op operationType,
          Collection< ContentProviderOperation > operations )
       {
@@ -83,8 +83,8 @@ public class ContentProviderSyncOperation implements
          this.operations.addAll( operations );
       }
       
-
-
+      
+      
       public Builder add( ContentProviderOperation operation )
       {
          if ( operation == null )
@@ -94,8 +94,8 @@ public class ContentProviderSyncOperation implements
          return this;
       }
       
-
-
+      
+      
       public Builder addAll( Collection< ? extends ContentProviderOperation > operations )
       {
          if ( operations == null )
@@ -109,8 +109,8 @@ public class ContentProviderSyncOperation implements
          return this;
       }
       
-
-
+      
+      
       public Builder add( IContentProviderSyncOperation operation )
       {
          if ( !( operation instanceof INoopSyncOperation ) )
@@ -127,8 +127,8 @@ public class ContentProviderSyncOperation implements
          return this;
       }
       
-
-
+      
+      
       public Builder add( Collection< ? extends IContentProviderSyncOperation > operations )
       {
          for ( IContentProviderSyncOperation operation : operations )
@@ -140,8 +140,8 @@ public class ContentProviderSyncOperation implements
          return this;
       }
       
-
-
+      
+      
       public IContentProviderSyncOperation build()
       {
          if ( operations.size() == 0 )
@@ -150,8 +150,8 @@ public class ContentProviderSyncOperation implements
             return new ContentProviderSyncOperation( this );
       }
       
-
-
+      
+      
       public List< IContentProviderSyncOperation > asList()
       {
          if ( operations.size() == 0 )
@@ -166,37 +166,39 @@ public class ContentProviderSyncOperation implements
    private final Op operationType;
    
    
-
+   
    private ContentProviderSyncOperation( Builder builder )
    {
       this.operationType = builder.operationType;
       this.operations = new ArrayList< ContentProviderOperation >( builder.operations );
+      
+      LogOperations();
    }
    
-
-
+   
+   
    public int getBatch( List< ContentProviderOperation > batch )
    {
       batch.addAll( operations );
       return operations.size();
    }
    
-
-
+   
+   
    public Op getOperationType()
    {
       return operationType;
    }
    
-
-
+   
+   
    public int size()
    {
       return operations.size();
    }
    
-
-
+   
+   
    public boolean applyTransactional( RtmProvider rtmProvider )
    {
       final TransactionalAccess transactionalAccess = rtmProvider.newTransactionalAccess();
@@ -224,8 +226,8 @@ public class ContentProviderSyncOperation implements
       return true;
    }
    
-
-
+   
+   
    public static void updateSyncResult( SyncResult syncResult,
                                         Op operationType,
                                         int count )
@@ -246,8 +248,8 @@ public class ContentProviderSyncOperation implements
       }
    }
    
-
-
+   
+   
    public final static Builder fromType( ISyncOperation.Op type )
    {
       switch ( type )
@@ -263,85 +265,101 @@ public class ContentProviderSyncOperation implements
       }
    }
    
-
-
+   
+   
+   private void LogOperations()
+   {
+      final StringBuilder stringBuilder = new StringBuilder( String.format( "%s: ",
+                                                                            operationType ) );
+      
+      for ( ContentProviderOperation op : operations )
+      {
+         stringBuilder.append( op.toString() ).append( "; " );
+      }
+      
+      Log.d( LogUtils.toTag( ContentProviderSyncOperation.class ),
+             stringBuilder.toString() );
+   }
+   
+   
+   
    public final static Builder newInsert()
    {
       return new Builder( Op.INSERT );
    }
    
-
-
+   
+   
    public final static Builder newInsert( ContentProviderOperation operation )
    {
       return new Builder( Op.INSERT, operation );
    }
    
-
-
+   
+   
    public final static Builder newInsert( Collection< ContentProviderOperation > operations )
    {
       return new Builder( Op.INSERT, operations );
    }
    
-
-
+   
+   
    public final static Builder newInsert( IContentProviderSyncOperation operation )
    {
       return new Builder( Op.INSERT ).add( operation );
    }
    
-
-
+   
+   
    public final static Builder newUpdate()
    {
       return new Builder( Op.UPDATE );
    }
    
-
-
+   
+   
    public final static Builder newUpdate( ContentProviderOperation operation )
    {
       return new Builder( Op.UPDATE, operation );
    }
    
-
-
+   
+   
    public final static Builder newUpdate( Collection< ContentProviderOperation > operations )
    {
       return new Builder( Op.UPDATE, operations );
    }
    
-
-
+   
+   
    public final static Builder newUpdate( IContentProviderSyncOperation operation )
    {
       return new Builder( Op.UPDATE ).add( operation );
    }
    
-
-
+   
+   
    public final static Builder newDelete()
    {
       return new Builder( Op.DELETE );
    }
    
-
-
+   
+   
    public final static Builder newDelete( ContentProviderOperation operation )
    {
       return new Builder( Op.DELETE, operation );
    }
    
-
-
+   
+   
    public final static Builder newDelete( Collection< ContentProviderOperation > operations )
    {
       return new Builder( Op.DELETE, operations );
    }
    
-
-
+   
+   
    public final static Builder newDelete( IContentProviderSyncOperation operation )
    {
       return new Builder( Op.DELETE ).add( operation );

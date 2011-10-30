@@ -1500,7 +1500,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          }
          
          // Recurrence
-         if ( hasChange( Tasks.RECURRENCE ) )
+         if ( hasChange( Tasks.RECURRENCE )
+            || hasChange( Tasks.RECURRENCE_EVERY ) )
          {
             final String recurrence = getCurrentValue( Tasks.RECURRENCE,
                                                        String.class );
@@ -1511,19 +1512,20 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                                                                                           task.getTaskSeriesId() ),
                                                                 TaskSeries.RECURRENCE,
                                                                 recurrence ) );
-               
-               final boolean isEveryRecurrence = getCurrentValue( Tasks.RECURRENCE_EVERY,
-                                                                  Boolean.class );
-               
-               if ( SyncUtils.hasChanged( task.isEveryRecurrence(),
-                                          isEveryRecurrence ) )
-               {
-                  modifications.add( Modification.newModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
-                                                                                             task.getTaskSeriesId() ),
-                                                                   TaskSeries.RECURRENCE_EVERY,
-                                                                   isEveryRecurrence ) );
-               }
-               
+               anyChanges = true;
+            }
+            
+            final boolean isEveryRecurrence = getCurrentValue( Tasks.RECURRENCE_EVERY,
+                                                               Boolean.class );
+            
+            if ( SyncUtils.hasChanged( task.isEveryRecurrence(),
+                                       isEveryRecurrence ) )
+            {
+               // The flag RECURRENCE_EVERY will not be synced out. RTM parses only the recurrence sentence.
+               modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
+                                                                                                       task.getTaskSeriesId() ),
+                                                                             TaskSeries.RECURRENCE_EVERY,
+                                                                             isEveryRecurrence ) );
                anyChanges = true;
             }
          }

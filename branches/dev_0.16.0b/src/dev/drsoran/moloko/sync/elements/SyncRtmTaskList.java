@@ -43,7 +43,7 @@ public class SyncRtmTaskList
    }
    
    
-   private static enum GetMode implements IGetModeAction
+   protected static enum GetMode implements IGetModeAction
    {
       AS_IS
       {
@@ -62,7 +62,7 @@ public class SyncRtmTaskList
       
    }
    
-   private static final Comparator< RtmTaskSeries > LESS_ID = new Comparator< RtmTaskSeries >()
+   protected static final Comparator< RtmTaskSeries > LESS_ID = new Comparator< RtmTaskSeries >()
    {
       public int compare( RtmTaskSeries object1, RtmTaskSeries object2 )
       {
@@ -116,14 +116,7 @@ public class SyncRtmTaskList
    
    public List< InSyncRtmTaskSeries > getInSyncTasksSeries()
    {
-      final List< InSyncRtmTaskSeries > res = new ArrayList< InSyncRtmTaskSeries >( series.size() );
-      
-      for ( RtmTaskSeries taskSeries : series )
-         res.add( new InSyncRtmTaskSeries( taskSeries ) );
-      
-      GetMode.SORTED.perform( res, InSyncRtmTaskSeries.LESS_ID );
-      
-      return res;
+      return rtmTaskSeriesToInSyncRtmTaskSeries( series );
    }
    
    
@@ -236,5 +229,19 @@ public class SyncRtmTaskList
    public String toString()
    {
       return "<" + series.size() + ">";
+   }
+   
+   
+   
+   protected static List< InSyncRtmTaskSeries > rtmTaskSeriesToInSyncRtmTaskSeries( List< RtmTaskSeries > rtmTaskSeries )
+   {
+      final List< InSyncRtmTaskSeries > res = new ArrayList< InSyncRtmTaskSeries >( rtmTaskSeries.size() );
+      
+      for ( RtmTaskSeries taskSeries : rtmTaskSeries )
+         res.add( new InSyncRtmTaskSeries( taskSeries ) );
+      
+      GetMode.SORTED.perform( res, InSyncRtmTaskSeries.LESS_ID );
+      
+      return res;
    }
 }

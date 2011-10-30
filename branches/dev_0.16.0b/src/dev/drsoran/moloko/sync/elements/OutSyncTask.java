@@ -78,7 +78,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
    private final RtmTask task;
    
    
-
+   
    public OutSyncTask( RtmTaskSeries taskSeries )
    {
       if ( taskSeries == null )
@@ -92,15 +92,15 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       this.task = taskSeries.getTasks().get( 0 );
    }
    
-
-
+   
+   
    public OutSyncTask( RtmTaskSeries taskSeries, String taskId )
    {
       this( taskSeries, taskSeries.getTask( taskId ) );
    }
    
-
-
+   
+   
    public OutSyncTask( RtmTaskSeries taskSeries, RtmTask task )
    {
       if ( taskSeries == null )
@@ -112,8 +112,8 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       this.task = task;
    }
    
-
-
+   
+   
    public final static List< OutSyncTask > fromTaskSeries( RtmTaskSeries taskSeries )
    {
       final List< OutSyncTask > result = new ArrayList< OutSyncTask >();
@@ -124,43 +124,43 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       return result;
    }
    
-
-
+   
+   
    public RtmTaskSeries getTaskSeries()
    {
       return taskSeries;
    }
    
-
-
+   
+   
    public RtmTask getTask()
    {
       return task;
    }
    
-
-
+   
+   
    public Date getCreatedDate()
    {
       return taskSeries.getCreatedDate();
    }
    
-
-
+   
+   
    public Date getModifiedDate()
    {
       return taskSeries.getModifiedDate();
    }
    
-
-
+   
+   
    public Date getDeletedDate()
    {
       return task.getDeletedDate();
    }
    
-
-
+   
+   
    public boolean hasModification( ModificationSet modificationSet )
    {
       return modificationSet.hasModification( Queries.contentUriWithId( TaskSeries.CONTENT_URI,
@@ -170,8 +170,8 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation handleAfterServerInsert( OutSyncTask serverElement )
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newUpdate();
@@ -209,8 +209,8 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       return operation.build();
    }
    
-
-
+   
+   
    /**
     * This stores only outgoing differences between the local task and the server task as modification.
     * 
@@ -315,8 +315,8 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       return operation.build();
    }
    
-
-
+   
+   
    public IServerSyncOperation< RtmTaskList > computeServerUpdateOperation( RtmTimeline timeline,
                                                                             ModificationSet modifications,
                                                                             OutSyncTask serverElement )
@@ -390,19 +390,11 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
             // The RTM API needs the repeat parameter as sentence, not pattern.
             final String repeat = taskSeries.getRecurrenceSentence();
             
-            final List< Modification > modsList = new ArrayList< Modification >( 2 );
-            modsList.add( properties.getModification( TaskSeries.RECURRENCE ) );
-            
-            final Modification isEvryMod = properties.getModification( TaskSeries.RECURRENCE_EVERY );
-            
-            if ( isEvryMod != null )
-               modsList.add( isEvryMod );
-            
             operation.add( timeline.tasks_setRecurrence( taskSeries.getListId(),
                                                          taskSeries.getId(),
                                                          task.getId(),
                                                          repeat ),
-                           modsList );
+                           properties.getModification( TaskSeries.RECURRENCE ) );
          }
          
          // Tags
@@ -593,8 +585,8 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
       return operation.build( TaskServerSyncOperation.class );
    }
    
-
-
+   
+   
    public IServerSyncOperation< RtmTaskList > computeServerDeleteOperation( RtmTimeline timeLine )
    {
       return ServerSyncOperation.newDelete( timeLine.tasks_delete( taskSeries.getListId(),

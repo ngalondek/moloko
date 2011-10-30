@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -54,8 +56,8 @@ public class RtmTaskSeries extends RtmData
          return new RtmTaskSeries( source );
       }
       
-
-
+      
+      
       public RtmTaskSeries[] newArray( int size )
       {
          return new RtmTaskSeries[ size ];
@@ -63,7 +65,7 @@ public class RtmTaskSeries extends RtmData
    };
    
    
-
+   
    public static RtmTaskSeries findTask( String taskSeriesId, RtmTasks rtmTasks )
    {
       for ( RtmTaskList list : rtmTasks.getLists() )
@@ -115,7 +117,7 @@ public class RtmTaskSeries extends RtmData
    private final ParticipantList participants;
    
    
-
+   
    public RtmTaskSeries( String id, String listId, Date created, Date modified,
       String name, String source, List< RtmTask > tasks, RtmTaskNotes notes,
       String locationId, String url, String recurrence,
@@ -140,8 +142,8 @@ public class RtmTaskSeries extends RtmData
             participants );
    }
    
-
-
+   
+   
    public RtmTaskSeries( String id, String listId, Date created, Date modified,
       String name, String source, List< RtmTask > tasks, RtmTaskNotes notes,
       String locationId, String url, String recurrence,
@@ -167,8 +169,8 @@ public class RtmTaskSeries extends RtmData
                                               : participants;
    }
    
-
-
+   
+   
    public RtmTaskSeries( Element elt, String listId )
    {
       this.id = textNullIfEmpty( elt, "id" );
@@ -243,8 +245,8 @@ public class RtmTaskSeries extends RtmData
          this.participants = new ParticipantList( id );
    }
    
-
-
+   
+   
    public RtmTaskSeries( Element elt, String listId, boolean deleted )
    {
       id = elt.getAttribute( "id" );
@@ -254,7 +256,16 @@ public class RtmTaskSeries extends RtmData
       modified = null;
       name = null;
       
-      final List< Element > tasks = children( elt, "task" );
+      List< Element > tasks = children( elt, "tasks" );
+      
+      // Fallback for former API
+      if ( tasks.size() == 0 )
+         tasks = children( elt, "task" );
+      
+      if ( tasks.size() == 0 )
+         throw new IllegalStateException( String.format( "Found deleted RtmTaskSeries '%s' with no tasks.",
+                                                         id ) );
+      
       this.tasks = new ArrayList< RtmTask >( tasks.size() );
       
       for ( Element task : tasks )
@@ -272,8 +283,8 @@ public class RtmTaskSeries extends RtmData
       participants = null;
    }
    
-
-
+   
+   
    public RtmTaskSeries( Parcel source )
    {
       id = source.readString();
@@ -292,70 +303,91 @@ public class RtmTaskSeries extends RtmData
       participants = source.readParcelable( ParticipantList.class.getClassLoader() );
    }
    
-
-
+   
+   
    public String getId()
    {
       return id;
    }
    
-
-
+   
+   
    public String getListId()
    {
       return listId;
    }
    
-
-
+   
+   
    public Date getCreatedDate()
    {
       return ( created != null ) ? created.getDate() : null;
    }
    
-
-
+   
+   
    public Date getModifiedDate()
    {
       return ( modified != null ) ? modified.getDate() : null;
    }
    
-
-
-   public Date getDeletedDate()
-   {
-      for ( RtmTask task : tasks )
-      {
-         if ( task.getDeletedDate() != null )
-            return task.getDeletedDate();
-      }
-      
-      return null;
-   }
    
-
-
+   
    public String getName()
    {
       return name;
    }
    
-
-
+   
+   
    public String getSource()
    {
       return source;
    }
    
-
-
+   
+   
    public List< RtmTask > getTasks()
    {
       return tasks;
    }
    
-
-
+   
+   
+   public List< RtmTask > getDeletedTasks()
+   {
+      List< RtmTask > deletedTasks = new LinkedList< RtmTask >();
+      
+      for ( RtmTask task : tasks )
+      {
+         if ( task.isDeleted() )
+            deletedTasks.add( task );
+      }
+      
+      return deletedTasks;
+   }
+   
+   
+   
+   public List< RtmTask > getAndRemoveDeletedTasks()
+   {
+      List< RtmTask > deletedTasks = new LinkedList< RtmTask >();
+      
+      for ( Iterator< RtmTask > i = tasks.iterator(); i.hasNext(); )
+      {
+         final RtmTask rtmTask = i.next();
+         if ( rtmTask.isDeleted() )
+         {
+            deletedTasks.add( rtmTask );
+            i.remove();
+         }
+      }
+      
+      return deletedTasks;
+   }
+   
+   
+   
    public RtmTask getTask( String id )
    {
       for ( RtmTask task : tasks )
@@ -365,15 +397,15 @@ public class RtmTaskSeries extends RtmData
       return null;
    }
    
-
-
+   
+   
    public RtmTaskNotes getNotes()
    {
       return notes == null ? new RtmTaskNotes() : notes;
    }
    
-
-
+   
+   
    public List< String > getTags()
    {
       if ( tags == null )
@@ -382,8 +414,8 @@ public class RtmTaskSeries extends RtmData
          return tags;
    }
    
-
-
+   
+   
    public String getTagsJoined()
    {
       if ( !hasTags() )
@@ -392,43 +424,43 @@ public class RtmTaskSeries extends RtmData
          return TextUtils.join( TaskSeries.TAGS_SEPARATOR, tags );
    }
    
-
-
+   
+   
    public boolean hasTags()
    {
       return tags != null && !tags.isEmpty();
    }
    
-
-
+   
+   
    public ParticipantList getParticipants()
    {
       return participants == null ? new ParticipantList( id ) : participants;
    }
    
-
-
+   
+   
    public String getLocationId()
    {
       return locationId;
    }
    
-
-
+   
+   
    public String getURL()
    {
       return url;
    }
    
-
-
+   
+   
    public String getRecurrence()
    {
       return recurrence;
    }
    
-
-
+   
+   
    public String getRecurrenceSentence()
    {
       final String repeat;
@@ -442,22 +474,22 @@ public class RtmTaskSeries extends RtmData
       return repeat;
    }
    
-
-
+   
+   
    public boolean isEveryRecurrence()
    {
       return isEveryRecurrence;
    }
    
-
-
+   
+   
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( id );
@@ -476,8 +508,8 @@ public class RtmTaskSeries extends RtmData
       dest.writeParcelable( participants, flags );
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {

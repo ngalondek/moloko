@@ -68,43 +68,41 @@ public class InSyncRtmTaskSeries implements
    public final static LessIdComperator LESS_ID = new LessIdComperator();
    
    
-
+   
    public InSyncRtmTaskSeries( RtmTaskSeries taskSeries )
    {
       if ( taskSeries == null )
          throw new NullPointerException( "taskSeries is null" );
       
       this.taskSeries = taskSeries;
-      this.inSyncTasks = new ArrayList< InSyncRtmTask >( taskSeries.getTasks()
-                                                                   .size() );
-      for ( RtmTask task : taskSeries.getTasks() )
-         this.inSyncTasks.add( new InSyncRtmTask( task ) );
+      this.inSyncTasks = rtmTasksToInSyncTasks( taskSeries );
    }
    
-
-
+   
+   
    public List< InSyncRtmTask > getInSyncTasks()
    {
       return inSyncTasks;
    }
    
-
-
+   
+   
    public Date getDeletedDate()
    {
-      return taskSeries.getDeletedDate();
+      // Always return null here since taskserieses have no deleted date.
+      return null;
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {
       return taskSeries.toString();
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newInsert();
@@ -134,8 +132,8 @@ public class InSyncRtmTaskSeries implements
       return operation.build();
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       // RtmTaskSeries, Notes, Participant gets deleted by a RtmTaskSeriesProvider DB trigger if it references no more
@@ -152,8 +150,8 @@ public class InSyncRtmTaskSeries implements
       return operation.build();
    }
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( InSyncRtmTaskSeries serverElement )
    {
       final ContentProviderSyncOperation.Builder operations = ContentProviderSyncOperation.newUpdate();
@@ -260,4 +258,17 @@ public class InSyncRtmTaskSeries implements
       
       return operations.build();
    }
+   
+   
+   
+   protected static List< InSyncRtmTask > rtmTasksToInSyncTasks( RtmTaskSeries taskSeries )
+   {
+      List< InSyncRtmTask > inSyncTasks = new ArrayList< InSyncRtmTask >( taskSeries.getTasks()
+                                                                                    .size() );
+      for ( RtmTask task : taskSeries.getTasks() )
+         inSyncTasks.add( new InSyncRtmTask( task ) );
+      
+      return inSyncTasks;
+   }
+   
 }

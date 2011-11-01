@@ -81,6 +81,25 @@
    <string name="time_1h">1 heure</string>
    <string name="time_12h">12 heures</string>
    <string name="time_24h">1 jour</string>
+   <!-- Date/Time format -->
+      <!-- Example: 12/25 -->
+      <string name="numeric_date_pattern">%1$s/%2$s</string>
+      <string name="numeric_date_format">M/d</string>
+      <!-- Example: 12/25/2000 -->
+      <string name="numeric_date_pattern_year">%1$s/%2$s/%3$s</string>
+      <string name="numeric_date_format_year">M/d/yyyy</string>
+      <!-- %1 - month pattern, MMM or MMMM -->
+      <string name="date_with_text_month">%1$s d</string>
+      <string name="date_with_text_month_year">%1$s d, yyyy</string>
+      <!--  %1 - weekday pattern, EEE or EEEE
+            %2 - month pattern, MMM or MMMM -->
+      <string name="date_with_weekday_text_month">%1$s, %2$s dd</string>
+      <string name="date_with_weekday_text_month_year">%1$s, %2$s d, yyyy</string>
+      <!-- %1 - time, %2 - date
+           Example: 12:00am, 12/25/2000 -->
+      <string name="date_with_time_pattern">%1$s, %2$s</string>
+      <string name="time_pattern_12">h:mma</string>
+      <string name="time_pattern_24">k:mm</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Patientez</string>
@@ -353,6 +372,7 @@
       <string name="auth_err_cause_inv_auth_token">Le jeton d\'authentification reçu est incorrect</string>
       <string name="auth_err_cause_scurity">Problème de sécurité</string>
       <string name="auth_err_cause_inv_login_url">La page de connexion reçue n\'est pas la bonne</string>
+      <string name="auth_err_cause_no_service">An error occurred during the creation of the RTM service connection</string>
 
    <!-- AccountPreferences + activity -->
    <string name="acc_pref_title">Paramètres généraux</string>

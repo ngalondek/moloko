@@ -41,10 +41,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
 import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserFactory;
-import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternDateFormatter;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternLexer;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
@@ -64,7 +64,7 @@ public final class RecurrenceParsing
    private static IRecurrenceParser recurrenceParser;
    
    
-
+   
    public final static void initPatternLanguage( Resources resources )
    {
       try
@@ -79,23 +79,23 @@ public final class RecurrenceParsing
       }
    }
    
-
-
+   
+   
    public synchronized final static RecurrPatternLanguage getPatternLanguage()
    {
       return new RecurrPatternLanguage( lang );
    }
    
-
-
+   
+   
    public synchronized final static String parseRecurrencePattern( String pattern,
                                                                    boolean isEvery )
    {
       return parseRecurrencePattern( null, pattern, isEvery );
    }
    
-
-
+   
+   
    public synchronized final static String parseRecurrencePattern( Context context,
                                                                    String pattern,
                                                                    boolean isEvery )
@@ -116,9 +116,9 @@ public final class RecurrenceParsing
          patternParser.setTokenStream( antlrTokens );
          
          if ( context != null )
-            patternParser.setDateFormatter( new RecurrencePatternDateFormatter( context ) );
+            patternParser.setDateFormatContext( new AndroidDateFormatContext( context ) );
          else
-            patternParser.setDateFormatter( null );
+            patternParser.setDateFormatContext( null );
          
          try
          {
@@ -137,8 +137,8 @@ public final class RecurrenceParsing
       return result;
    }
    
-
-
+   
+   
    /**
     * @return Map< Token type, values >
     */
@@ -169,8 +169,8 @@ public final class RecurrenceParsing
       }
    }
    
-
-
+   
+   
    public final static String ensureRecurrencePatternOrder( String recurrencePattern )
    {
       final String[] operators = recurrencePattern.split( RecurrencePatternParser.OPERATOR_SEP );
@@ -179,8 +179,8 @@ public final class RecurrenceParsing
       return TextUtils.join( RecurrencePatternParser.OPERATOR_SEP, operators );
    }
    
-
-
+   
+   
    public synchronized final static Pair< String, Boolean > parseRecurrence( String recurrence )
    {
       Pair< String, Boolean > result = null;
@@ -217,8 +217,8 @@ public final class RecurrenceParsing
       return result;
    }
    
-
-
+   
+   
    public synchronized final static Pair< String, Boolean > parseRecurrence( String recurrence,
                                                                              Locale locale )
    {
@@ -242,8 +242,8 @@ public final class RecurrenceParsing
       return result;
    }
    
-
-
+   
+   
    public final static String joinRecurrencePattern( Map< String, Object > parts )
    {
       final StringBuilder sb = new StringBuilder();

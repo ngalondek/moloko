@@ -166,7 +166,6 @@
    <string name="phr_loading">Loading...</string>
    <string name="phr_edit_dlg_done">Applying changes?</string>
    <string name="phr_edit_dlg_cancel">Cancel editing and lose all changes?</string>
-   <string name="phr_hint">Hint</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>
@@ -179,7 +178,7 @@
    <string name="err_db_typed">Error during database access of %1$s.</string>
    <string name="err_entity_not_found">The %1$s could not be retrieved from the database.\n\nPlease check if the element exists.</string>
    <string name="err_unsupported_intent_action">The action %1$s is not supported by this activity.</string>
-   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nYou can change this by removing your local RTM account and create a new one with \'Read, Write and Delete\' permission.\n\nYour data remains unchanged.</string>
+   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nData you have changed with Moloko so far remains untouched. Nevertheless your made changes in Moloko are not going to be synchronized with the RTM server and are replaced by the server version, if newer.\n\nYou can change this by removing your RTM account from the device and create a new one with \'Read, Write and Delete\' permission.</string>
 
 	<!-- Global buttons -->
    <string name="btn_ok">OK</string>
@@ -453,8 +452,8 @@
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Settings</string>
    <string name="moloko_prefs_rtm_summary">Time and date format, default list etc.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s.</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click.</string>
+   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click</string>
    <string name="moloko_prefs_rtm_timezone_title">Timezone</string>
    <string name="moloko_prefs_rtm_dateformat_title">Date Format</string>
    <string name="moloko_prefs_rtm_dateformat_eu">European\n(14.02.2000)</string>

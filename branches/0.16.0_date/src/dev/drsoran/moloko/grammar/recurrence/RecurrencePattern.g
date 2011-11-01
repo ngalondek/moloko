@@ -20,7 +20,7 @@ grammar RecurrencePattern;
    import java.util.TimeZone;
 
    import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
-   import dev.drsoran.moloko.grammar.IDateFormatter;
+   import dev.drsoran.moloko.grammar.IDateFormatContext;
 }
 
 @lexer::header
@@ -81,9 +81,9 @@ grammar RecurrencePattern;
    }
 
 
-   public void setDateFormatter( IDateFormatter formatter )
+   public void setDateFormatContext( IDateFormatContext formatContext )
    {
-      dateFormatter = formatter;
+      dateFormatContext = formatContext;
    }
 
    
@@ -110,9 +110,9 @@ grammar RecurrencePattern;
       {
          sdf.parse( value );
          
-         if ( dateFormatter != null )
+         if ( dateFormatContext != null )
          {
-            return dateFormatter.formatDate( sdf.getCalendar().getTimeInMillis() );
+            return dateFormatContext.formatDateNumeric( sdf.getCalendar().getTimeInMillis() );
          }
          else
          {
@@ -172,7 +172,7 @@ grammar RecurrencePattern;
    
    public final static DateFormat DATE_FORMAT   = new SimpleDateFormat( DATE_PATTERN );
    
-   private IDateFormatter dateFormatter;
+   private IDateFormatContext dateFormatContext;
    
    static
    {

@@ -110,7 +110,6 @@
    <string name="phr_loading">Chargement...</string>
    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
-   <string name="phr_hint">Hint</string>
 
    <!-- Global errors -->
    <string name="err_error">Erreur</string>
@@ -123,7 +122,7 @@
    <string name="err_db_typed">Erreur d\'accès à la base de données de %1$s.</string>
    <string name="err_entity_not_found">Le %1$s n\'a pas pu être récupéré dans la base de données.\n\nVeuillez vérifier si l\'élément existe.</string>
    <string name="err_unsupported_intent_action">L\'action %1$s n\'est pas supportée.</string>
-   <string name="err_modify_access_level_read">Moloko accède vos données en \'Lecture seule\'.\n\nVous pouvez changer cela en supprimant votre compte RTM local (celui de Moloko) et en le recréant avec les permissions \'Lecture, Ecriture, Suppression\'.\n\nVos données ne seront pas modifiées.</string>
+   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nData you have changed with Moloko so far remains untouched. Nevertheless your made changes in Moloko are not going to be synchronized with the RTM server and are replaced by the server version, if newer.\n\nYou can change this by removing your RTM account from the device and create a new one with \'Read, Write and Delete\' permission.</string>
 
    <!-- Global buttons -->
    <string name="btn_ok">OK</string>
@@ -373,7 +372,7 @@
    <string name="moloko_prefs_rtm_title">Paramètres RTM</string>
    <string name="moloko_prefs_rtm_summary">Format d\'heure et de date, liste par défaut etc.</string>
    <string name="moloko_prefs_rtm_sync_text_in_sync">Les paramètres ont été récupéré du serveur pour la dernière fois le %1$s</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur.</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur</string>
    <string name="moloko_prefs_rtm_timezone_title">Fuseau horaire</string>
    <string name="moloko_prefs_rtm_dateformat_title">Format de la date</string>
    <string name="moloko_prefs_rtm_dateformat_eu">Européen\n(14.02.2000)</string>

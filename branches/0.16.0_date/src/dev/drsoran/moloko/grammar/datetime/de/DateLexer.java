@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Date.g 2011-06-24 15:58:34
+// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Date.g 2011-11-01 15:28:17
 
 package dev.drsoran.moloko.grammar.datetime.de;
 
@@ -114,6 +114,7 @@ public class DateLexer extends Lexer
    
    
    
+   @Override
    public String getGrammarFileName()
    {
       return "D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Date.g";
@@ -2716,6 +2717,7 @@ public class DateLexer extends Lexer
    
    // $ANTLR end "WS"
    
+   @Override
    public void mTokens() throws RecognitionException
    {
       // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Date.g:1:8: ( A |
@@ -3042,6 +3044,7 @@ public class DateLexer extends Lexer
       
       
       
+      @Override
       public String getDescription()
       {
          return "420:1: MONTH : ( 'jan' | 'januar' ( SUFF_MALE )? | 'feb' | 'februar' ( SUFF_MALE )? | 'm' ( 'a' | 'ä' | 'ae' ) 'r' | 'm' ( 'a' | 'ä' | 'ae' ) 'rz' ( SUFF_MALE )? | 'mai' ( SUFF_FMALE )? | 'jun' | 'juni' ( SUFF_MALE )? | 'jul' | 'juli' ( SUFF_MALE )? | 'aug' | 'august' ( SUFF_MALE )? | 'sep' | 'september' ( SUFF_MALE )? | 'okt' | 'oktober' ( SUFF_MALE )? | 'nov' | 'november' ( SUFF_MALE )? | 'dez' | 'dezember' ( SUFF_MALE )? );";
@@ -3112,6 +3115,7 @@ public class DateLexer extends Lexer
       
       
       
+      @Override
       public String getDescription()
       {
          return "432:1: WEEKDAY : ( 'mo' | 'montag' ( SUFF_MALE )? | 'di' | 'dienstag' ( SUFF_MALE )? | 'mi' | 'mittwoch' ( SUFF_MALE )? | 'do' | 'donnestag' ( SUFF_MALE )? | 'fr' | 'freitag' ( SUFF_MALE )? | 'sa' | 'samstag' ( SUFF_MALE )? | 'so' | 'sonntag' ( SUFF_MALE )? );";
@@ -3180,6 +3184,7 @@ public class DateLexer extends Lexer
       
       
       
+      @Override
       public String getDescription()
       {
          return "440:1: NUM_STR : ( 'eins' | 'zwei' | 'drei' | 'vier' | 'f' ( 'u' | 'ü' | 'ue' ) 'nf' | 'sechs' | 'sieben' | 'acht' | 'neun' | 'zehn' );";
@@ -3269,6 +3274,7 @@ public class DateLexer extends Lexer
       
       
       
+      @Override
       public String getDescription()
       {
          return "1:1: Tokens : ( A | ON | OF | OF_THE | IN | AND | END | NOW | NEVER | TODAY | TOMORROW | YESTERDAY | NEXT | YEARS | MONTHS | WEEKS | DAYS | MONTH | WEEKDAY | NUM_STR | DATE_SEP | DOT | COLON | MINUS | COMMA | DATE_TIME_SEPARATOR | SUFF_FMALE | INT | WS );";

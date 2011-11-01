@@ -61,22 +61,22 @@ public abstract class AbstractRecurrenceParser extends Parser
    protected String resolutionVal;
    
    
-
+   
    protected AbstractRecurrenceParser( TokenStream input )
    {
       super( input );
    }
    
-
-
+   
+   
    protected AbstractRecurrenceParser( TokenStream input,
       RecognizerSharedState state )
    {
       super( input, state );
    }
    
-
-
+   
+   
    protected Map< String, Object > startParseRecurrence()
    {
       res = new TreeMap< String, Object >( RecurrencePatternParser.CMP_OPERATORS );
@@ -86,8 +86,8 @@ public abstract class AbstractRecurrenceParser extends Parser
       return res;
    }
    
-
-
+   
+   
    protected Map< String, Object > finishedParseRecurrence()
    {
       res.put( RecurrencePatternParser.OP_FREQ_LIT, freq );
@@ -102,8 +102,8 @@ public abstract class AbstractRecurrenceParser extends Parser
       return res;
    }
    
-
-
+   
+   
    protected void setUntil( String dateTimeString )
    {
       final MolokoCalendar untilDate = RtmDateTimeParsing.parseDateTimeSpec( dateTimeString );
@@ -116,8 +116,8 @@ public abstract class AbstractRecurrenceParser extends Parser
       }
    }
    
-
-
+   
+   
    protected int limitMonthDay( int rawMonthDay )
    {
       if ( rawMonthDay < 1 )
@@ -128,8 +128,8 @@ public abstract class AbstractRecurrenceParser extends Parser
          return rawMonthDay;
    }
    
-
-
+   
+   
    protected int textMonthToMonthNumber( String textMonth, Locale locale )
    {
       int number;
@@ -152,8 +152,8 @@ public abstract class AbstractRecurrenceParser extends Parser
       return number;
    }
    
-
-
+   
+   
    public void clearState()
    {
       res = null;
@@ -193,8 +193,9 @@ public abstract class AbstractRecurrenceParser extends Parser
             return 1;
       }
       
-
-
+      
+      
+      @Override
       public int compare( String wd1, String wd2 )
       {
          return weekdayToInt( wd1 ) - weekdayToInt( wd2 );
@@ -202,7 +203,7 @@ public abstract class AbstractRecurrenceParser extends Parser
    }
    
    
-
+   
    protected final static < E > String join( String delim, Iterable< E > values )
    {
       final StringBuilder result = new StringBuilder();

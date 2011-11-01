@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.grammar.datetime;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,6 +34,7 @@ import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
 import dev.drsoran.moloko.util.ANTLRIncrementalTokenStream;
 import dev.drsoran.moloko.util.MolokoCalendar;
@@ -40,6 +42,8 @@ import dev.drsoran.moloko.util.MolokoCalendar;
 
 public abstract class AbstractDateParser extends Parser
 {
+   protected IDateFormatContext dateFormatContext;
+   
    private boolean success;
    
    
@@ -58,17 +62,19 @@ public abstract class AbstractDateParser extends Parser
    
    
    
-   protected void handleFullDate( MolokoCalendar cal,
-                                  String part1,
-                                  String part2,
-                                  String part3 ) throws RecognitionException
+   public void setDateFormatContext( IDateFormatContext context )
    {
-      final boolean yearFirst = part3 != null && part1.length() > 2;
-      
-      parseFullDate( cal, yearFirst ? part2 : part1, // day
-                     yearFirst ? part3 : part2, // month
-                     yearFirst ? part1 : part3, // year
-                     false );
+      dateFormatContext = context;
+   }
+   
+   
+   
+   protected void handleNumericDate( MolokoCalendar cal,
+                                     String part1,
+                                     String part2,
+                                     String part3 ) throws RecognitionException
+   {
+      parseNumericDate( cal, part1, part2, part3 );
       
       // if year is missing and the date is
       // before now we roll to the next year.
@@ -144,18 +150,6 @@ public abstract class AbstractDateParser extends Parser
    
    
    
-   protected abstract int numberStringToNumber( String string );
-   
-   
-   
-   protected abstract int weekdayStringToNumber( String string );
-   
-   
-   
-   protected abstract int monthStringToNumber( String string );
-   
-   
-   
    protected int getMonthNumber( String month )
    {
       // Only take the 1st three chars of the month as key.
@@ -172,49 +166,42 @@ public abstract class AbstractDateParser extends Parser
    
    
    
-   protected void parseFullDate( MolokoCalendar cal,
-                                 String day,
-                                 String month,
-                                 String year,
-                                 boolean textMonth ) throws RecognitionException
+   protected void parseNumericDate( MolokoCalendar cal,
+                                    String pt1,
+                                    String pt2,
+                                    String pt3 ) throws RecognitionException
    {
       try
       {
-         final StringBuffer pattern = new StringBuffer( "dd.MM" );
+         final boolean withYear = pt3 != null;
+         final DateFormat df;
          
-         int monthNum = -1;
-         
-         if ( textMonth )
+         if ( dateFormatContext != null )
          {
-            monthNum = getMonthNumber( month );
+            df = new SimpleDateFormat( dateFormatContext.getNumericDateFormatPattern( withYear ) );
+            
+            final String dateInstance;
+            if ( withYear )
+               dateInstance = dateFormatContext.formatDateNumeric( pt1,
+                                                                   pt2,
+                                                                   pt3 );
+            else
+               dateInstance = dateFormatContext.formatDateNumeric( pt1, pt2 );
+            
+            df.parse( dateInstance );
          }
          else
          {
-            monthNum = Integer.parseInt( month );
+            throw new RecognitionException();
          }
          
-         if ( monthNum == -1 )
-            throw new RecognitionException();
+         final Calendar dfCal = df.getCalendar();
          
-         if ( year != null )
-            pattern.append( ".yyyy" );
+         cal.set( Calendar.DAY_OF_MONTH, dfCal.get( Calendar.DAY_OF_MONTH ) );
+         cal.set( Calendar.MONTH, dfCal.get( Calendar.MONTH ) );
          
-         final SimpleDateFormat sdf = new SimpleDateFormat( pattern.toString() );
-         
-         sdf.parse( day + "." + monthNum
-            + ( ( year != null ) ? "." + year : "" ) );
-         
-         final Calendar sdfCal = sdf.getCalendar();
-         
-         cal.set( Calendar.DAY_OF_MONTH, sdfCal.get( Calendar.DAY_OF_MONTH ) );
-         cal.set( Calendar.MONTH, sdfCal.get( Calendar.MONTH ) );
-         
-         if ( year != null )
-            cal.set( Calendar.YEAR, sdfCal.get( Calendar.YEAR ) );
-      }
-      catch ( NumberFormatException nfe )
-      {
-         throw new RecognitionException();
+         if ( withYear )
+            cal.set( Calendar.YEAR, dfCal.get( Calendar.YEAR ) );
       }
       catch ( ParseException e )
       {
@@ -350,4 +337,16 @@ public abstract class AbstractDateParser extends Parser
    {
       success = false;
    }
+   
+   
+   
+   protected abstract int numberStringToNumber( String string );
+   
+   
+   
+   protected abstract int weekdayStringToNumber( String string );
+   
+   
+   
+   protected abstract int monthStringToNumber( String string );
 }

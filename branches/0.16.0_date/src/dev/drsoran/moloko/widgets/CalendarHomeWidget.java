@@ -63,6 +63,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    
    private final Runnable reloadRunnable = new Runnable()
    {
+      @Override
       public void run()
       {
          asyncReload();
@@ -70,7 +71,7 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
    };
    
    
-
+   
    public CalendarHomeWidget( Context context, AttributeSet attrs, int labelId,
       int type )
    {
@@ -105,8 +106,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       };
    }
    
-
-
+   
+   
    @Override
    public void start()
    {
@@ -117,8 +118,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
    @Override
    public void stop()
    {
@@ -127,8 +128,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       TasksProviderPart.unregisterContentObserver( getContext(), dbObserver );
    }
    
-
-
+   
+   
    public View getWidgetView()
    {
       final View view = LayoutInflater.from( getContext() )
@@ -137,8 +138,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return view;
    }
    
-
-
+   
+   
    private MolokoCalendar getCalendar()
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -155,13 +156,13 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return cal;
    }
    
-
-
+   
+   
+   @Override
    public Intent getIntent()
    {
       final MolokoCalendar cal = getCalendar();
-      final RtmSmartFilter filter = new RtmSmartFilter( RtmSmartFilterLexer.OP_DUE_LIT
-         + MolokoDateUtils.formatParser( getContext(), cal ) );
+      final RtmSmartFilter filter = new RtmSmartFilter( getFilterExpression( cal ) );
       
       final String title = getContext().getString( ( ( type == TODAY )
                                                                       ? R.string.phr_today_with_date
@@ -173,23 +174,21 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return Intents.createSmartFilterIntent( getContext(), filter, title );
    }
    
-
-
+   
+   
+   @Override
    public Runnable getRunnable()
    {
       return null;
    }
    
-
-
+   
+   
    @Override
    protected Integer doBackgroundQuery()
    {
       final MolokoCalendar cal = getCalendar();
-      
-      final String selection = RtmSmartFilter.evaluate( RtmSmartFilterLexer.OP_DUE_LIT
-                                                           + MolokoDateUtils.formatParser( getContext(),
-                                                                                           cal ),
+      final String selection = RtmSmartFilter.evaluate( getFilterExpression( cal ),
                                                         true );
       
       final Cursor c = getContext().getContentResolver()
@@ -207,8 +206,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       return null;
    }
    
-
-
+   
+   
    @Override
    protected void onMidnight()
    {
@@ -216,8 +215,8 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
    @Override
    protected void onSystemTimeChanged()
    {
@@ -225,8 +224,18 @@ public class CalendarHomeWidget extends AsyncTimeDependentHomeWidget
       setCalendarDayInWidget();
    }
    
-
-
+   
+   
+   private String getFilterExpression( final MolokoCalendar cal )
+   {
+      return RtmSmartFilterLexer.OP_DUE_LIT
+         + RtmSmartFilterLexer.quotify( MolokoDateUtils.formatDate( getContext(),
+                                                                    cal.getTimeInMillis(),
+                                                                    MolokoDateUtils.FORMAT_WITH_YEAR ) );
+   }
+   
+   
+   
    private void setCalendarDayInWidget()
    {
       final MolokoCalendar cal = getCalendar();

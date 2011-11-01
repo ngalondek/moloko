@@ -10,7 +10,7 @@ public class RecurrenceTestCase_en
 {
    private final static SimpleDateFormat SDF_FORMAT = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
    
-   private final static SimpleDateFormat SDF_PARSE = new SimpleDateFormat( "dd.MM.yyyy" );
+   private final static SimpleDateFormat SDF_PARSE = new SimpleDateFormat( "MM/dd/yyyy" );
    
    
 
@@ -187,14 +187,14 @@ public class RecurrenceTestCase_en
                        RecurrencePatternParser.OP_BYMONTH_LIT,
                        "1",
                        true );
-      parseRecurrence( "every monday, wednesday until 10.10.2010",
+      parseRecurrence( "every monday, wednesday until 10/1/2010",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
                        "MO,WE",
                        null,
                        null,
-                       SDF_FORMAT.format( SDF_PARSE.parse( "10.10.2010" ) ),
+                       SDF_FORMAT.format( SDF_PARSE.parse( "10/1/2010" ) ),
                        -1,
                        true );
       {

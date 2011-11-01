@@ -25,16 +25,19 @@ package dev.drsoran.moloko.util.parsing;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.antlr.runtime.RecognitionException;
 
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.grammar.datetime.DateParserFactory;
 import dev.drsoran.moloko.grammar.datetime.IDateParser;
-import dev.drsoran.moloko.grammar.datetime.ITimeParser;
-import dev.drsoran.moloko.grammar.datetime.TimeParserFactory;
 import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
 import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
+import dev.drsoran.moloko.grammar.datetime.ITimeParser;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser.ParseTimeReturn;
+import dev.drsoran.moloko.grammar.datetime.TimeParserFactory;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
@@ -44,12 +47,23 @@ public final class RtmDateTimeParsing
    private final static String TAG = "Moloko."
       + RtmDateTimeParsing.class.getSimpleName();
    
+   private final static Pattern TIME_PREFIX_PATTERN = Pattern.compile( "^\\s*\\d+(:\\d){0,2}.*[,|\\s]" );
+   
    private static IDateParser dateParser;
    
    private static ITimeParser timeParser;
    
+   private static IDateFormatContext dateFormatContext;
    
-
+   
+   
+   public synchronized final static void setDateFormatContext( IDateFormatContext context )
+   {
+      dateFormatContext = context;
+   }
+   
+   
+   
    public synchronized final static MolokoCalendar parseTimeOrTimeSpec( String spec )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -75,8 +89,8 @@ public final class RtmDateTimeParsing
       return ( !error ) ? cal : null;
    }
    
-
-
+   
+   
    public synchronized final static MolokoCalendar parseDateTimeSpec( String spec )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -91,17 +105,15 @@ public final class RtmDateTimeParsing
       // first try to parse time spec
       try
       {
-         final String[] parts = spec.split( "^\\s*\\d.*\\d*,?" );
+         final Matcher timePrefixMatcher = TIME_PREFIX_PATTERN.matcher( spec );
          
-         if ( parts != null && parts.length > 1 )
+         if ( timePrefixMatcher.find() )
          {
             // The parser can adjust the day of week
             // for times in the past.
-            final ParseTimeReturn ret = parseTimeSpec( parts[ 0 ],
-                                                       cal,
-                                                       !hasDate );
-            eof = ret.isEof;
-            startOfDatePos = ret.lastParsedCharPos;
+            parseTimeSpec( timePrefixMatcher.group(), cal, !hasDate );
+            
+            startOfDatePos = timePrefixMatcher.end();
             hasTime = cal.hasTime();
          }
       }
@@ -167,8 +179,8 @@ public final class RtmDateTimeParsing
       return ( !error ) ? cal : null;
    }
    
-
-
+   
+   
    public synchronized final static long parseEstimated( String estimated )
    {
       try
@@ -181,8 +193,8 @@ public final class RtmDateTimeParsing
       }
    }
    
-
-
+   
+   
    public synchronized final static ParseDateWithinReturn parseDateWithin( String range,
                                                                            boolean past )
    {
@@ -196,8 +208,8 @@ public final class RtmDateTimeParsing
       }
    }
    
-
-
+   
+   
    private synchronized final static ParseTimeReturn parseTime( final String time,
                                                                 final MolokoCalendar cal,
                                                                 final boolean adjustDay ) throws RecognitionException
@@ -205,6 +217,7 @@ public final class RtmDateTimeParsing
       return detectLanguageAndParseTime( time,
                                          new Callable< ParseTimeReturn >()
                                          {
+                                            @Override
                                             public ParseTimeReturn call() throws RecognitionException
                                             {
                                                return timeParser.parseTime( time,
@@ -214,8 +227,8 @@ public final class RtmDateTimeParsing
                                          } );
    }
    
-
-
+   
+   
    private synchronized final static ParseTimeReturn parseTimeSpec( final String timeSpec,
                                                                     final MolokoCalendar cal,
                                                                     final boolean adjustDay ) throws RecognitionException
@@ -223,6 +236,7 @@ public final class RtmDateTimeParsing
       return detectLanguageAndParseTime( timeSpec,
                                          new Callable< ParseTimeReturn >()
                                          {
+                                            @Override
                                             public ParseTimeReturn call() throws RecognitionException
                                             {
                                                return timeParser.parseTimeSpec( timeSpec,
@@ -232,12 +246,13 @@ public final class RtmDateTimeParsing
                                          } );
    }
    
-
-
+   
+   
    private synchronized final static long parseTimeEstimate( final String timeEstimate ) throws RecognitionException
    {
       return detectLanguageAndParseTime( timeEstimate, new Callable< Long >()
       {
+         @Override
          public Long call() throws RecognitionException
          {
             final Long res = timeParser.parseTimeEstimate( timeEstimate );
@@ -246,8 +261,8 @@ public final class RtmDateTimeParsing
       } );
    }
    
-
-
+   
+   
    private synchronized final static ParseDateReturn parseDate( final String date,
                                                                 final MolokoCalendar cal,
                                                                 final boolean clearTime ) throws RecognitionException
@@ -255,6 +270,7 @@ public final class RtmDateTimeParsing
       return detectLanguageAndParseDate( date,
                                          new Callable< ParseDateReturn >()
                                          {
+                                            @Override
                                             public ParseDateReturn call() throws RecognitionException
                                             {
                                                return dateParser.parseDate( date,
@@ -264,14 +280,15 @@ public final class RtmDateTimeParsing
                                          } );
    }
    
-
-
+   
+   
    private synchronized final static ParseDateWithinReturn parseDateWithinImpl( final String range,
                                                                                 final boolean past ) throws RecognitionException
    {
       return detectLanguageAndParseDate( range,
                                          new Callable< ParseDateWithinReturn >()
                                          {
+                                            @Override
                                             public ParseDateWithinReturn call() throws RecognitionException
                                             {
                                                return dateParser.parseDateWithin( range,
@@ -280,8 +297,8 @@ public final class RtmDateTimeParsing
                                          } );
    }
    
-
-
+   
+   
    private synchronized final static < T > T detectLanguageAndParseTime( String time,
                                                                          Callable< T > parserFunc ) throws RecognitionException
    {
@@ -333,8 +350,8 @@ public final class RtmDateTimeParsing
       return result;
    }
    
-
-
+   
+   
    private synchronized final static < T > T detectLanguageAndParseDate( String date,
                                                                          Callable< T > parserFunc ) throws RecognitionException
    {
@@ -367,6 +384,8 @@ public final class RtmDateTimeParsing
                try
                {
                   dateParser = parser;
+                  dateParser.setDateFormatContext( dateFormatContext );
+                  
                   result = parserFunc.call();
                   break;
                }

@@ -35,8 +35,8 @@ public abstract class AbstractParserFactory
       throw new AssertionError();
    }
    
-
-
+   
+   
    protected final static < T > T createParserForLocale( Locale locale,
                                                          List< Class< ? extends T > > availableParserClasses )
    {
@@ -53,8 +53,8 @@ public abstract class AbstractParserFactory
       return createDefaultParser( availableParserClasses );
    }
    
-
-
+   
+   
    protected static < T > T createDefaultParser( List< Class< ? extends T > > availableParserClasses )
    {
       if ( availableParserClasses.size() > 0 )
@@ -63,8 +63,8 @@ public abstract class AbstractParserFactory
          return null;
    }
    
-
-
+   
+   
    protected final static < T > List< T > getAvailableParsers( List< Class< ? extends T > > availableParserClasses )
    {
       final List< T > availableParsers = new ArrayList< T >( availableParserClasses.size() );
@@ -79,8 +79,8 @@ public abstract class AbstractParserFactory
       return availableParsers;
    }
    
-
-
+   
+   
    protected final static < T > Locale getDefaultParserLocale( List< Class< ? extends T > > availableParserClasses )
    {
       if ( availableParserClasses.size() > 0 )
@@ -91,8 +91,8 @@ public abstract class AbstractParserFactory
       return null;
    }
    
-
-
+   
+   
    protected final static < T > Locale getNearestParserLocale( Locale refLocale,
                                                                List< Class< ? extends T > > availableParserClasses )
    {
@@ -117,8 +117,8 @@ public abstract class AbstractParserFactory
       return nearestLocale;
    }
    
-
-
+   
+   
    protected final static < T > List< Locale > getAvailableParserLocales( List< Class< ? extends T > > availableParserClasses )
    {
       List< Locale > locales = new ArrayList< Locale >( availableParserClasses.size() );
@@ -134,16 +134,16 @@ public abstract class AbstractParserFactory
       return locales;
    }
    
-
-
+   
+   
    private final static boolean equalLocales( Locale locale1, Locale locale2 )
    {
       return locale1.hashCode() == locale2.hashCode()
          || locale1.getLanguage().equalsIgnoreCase( locale2.getLanguage() );
    }
    
-
-
+   
+   
    private final static < T > Locale getParserLocale( Class< ? extends T > parserClass )
    {
       try
@@ -156,8 +156,8 @@ public abstract class AbstractParserFactory
       }
    }
    
-
-
+   
+   
    private final static < T > T createParser( Class< ? extends T > parserClass )
    {
       try

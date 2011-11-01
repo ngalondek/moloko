@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.util;
 
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import android.content.Context;
@@ -36,7 +35,6 @@ import com.mdt.rtm.data.RtmData;
 
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.grammar.datetime.DateParserFactory;
 import dev.drsoran.rtm.ParcelableDate;
 
 
@@ -54,9 +52,7 @@ public class MolokoDateUtils
    
    public final static int FORMAT_ABR_ALL = DateUtils.FORMAT_ABBREV_ALL;
    
-   public final static int FORMAT_PARSER_WITH_DATE = 1 << 0;
-   
-   public final static int FORMAT_PARSER_WITH_TIME = 1 << 1;
+   public final static int FORMAT_PARSER = FORMAT_NUMERIC;
    
    
    public final static class EstimateStruct
@@ -68,7 +64,7 @@ public class MolokoDateUtils
       public final int minutes;
       
       
-
+      
       public EstimateStruct( int days, int hours, int minutes )
       {
          this.days = days;
@@ -78,14 +74,14 @@ public class MolokoDateUtils
    }
    
    
-
+   
    private MolokoDateUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-
-
+   
+   
    public final static MolokoCalendar newCalendar( long millis )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -93,8 +89,8 @@ public class MolokoDateUtils
       return cal;
    }
    
-
-
+   
+   
    public final static MolokoCalendar newCalendarUTC( long millis )
    {
       final MolokoCalendar cal = MolokoCalendar.getUTCInstance();
@@ -102,8 +98,8 @@ public class MolokoDateUtils
       return cal;
    }
    
-
-
+   
+   
    public final static Time newTime()
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
@@ -111,8 +107,8 @@ public class MolokoDateUtils
       return t;
    }
    
-
-
+   
+   
    public final static Time newTime( long millis )
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
@@ -120,29 +116,29 @@ public class MolokoDateUtils
       return t;
    }
    
-
-
+   
+   
    public static boolean isToday( long when )
    {
       return ( getTimespanInDays( System.currentTimeMillis(), when ) == 0 );
    }
    
-
-
+   
+   
    public static boolean isBefore( long when, long reference )
    {
       return ( getTimespanInDays( when, reference ) > 0 );
    }
    
-
-
+   
+   
    public static boolean isAfter( long when, long reference )
    {
       return ( getTimespanInDays( when, reference ) < 0 );
    }
    
-
-
+   
+   
    public static int getTimespanInDays( long start, long end )
    {
       final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
@@ -155,8 +151,8 @@ public class MolokoDateUtils
       return span;
    }
    
-
-
+   
+   
    public static long getFittingDateUtilsResolution( long time, long now )
    {
       final int diff = (int) ( ( ( time >= now ) ? time - now : now - time ) / 1000 );
@@ -183,8 +179,8 @@ public class MolokoDateUtils
       }
    }
    
-
-
+   
+   
    public final static Date parseRtmDate( String rtmDateStr )
    {
       try
@@ -197,8 +193,8 @@ public class MolokoDateUtils
       }
    }
    
-
-
+   
+   
    public final static String getDayOfWeekString( int calendarDayOfWeek,
                                                   boolean abbrev )
    {
@@ -207,8 +203,17 @@ public class MolokoDateUtils
                                                  : DateUtils.LENGTH_LONG );
    }
    
-
-
+   
+   
+   public static String getNumericDateFormatPattern( Context context,
+                                                     boolean withYear )
+   {
+      return getNumericDatePatternForSettings( context,
+                                               withYear ? FORMAT_WITH_YEAR : 0 );
+   }
+   
+   
+   
    public final static String formatDate( Context context,
                                           long millis,
                                           int dateStyle )
@@ -218,8 +223,33 @@ public class MolokoDateUtils
                        .toString();
    }
    
-
-
+   
+   
+   public static String formatDateNumeric( Context context,
+                                           String part1,
+                                           String part2 )
+   {
+      return formatDateNumeric( context, part1, part2, null );
+   }
+   
+   
+   
+   public static String formatDateNumeric( Context context,
+                                           String part1,
+                                           String part2,
+                                           String part3 )
+   {
+      if ( part3 == null )
+         return context.getString( R.string.numeric_date_pattern, part1, part2 );
+      else
+         return context.getString( R.string.numeric_date_pattern_year,
+                                   part1,
+                                   part2,
+                                   part3 );
+   }
+   
+   
+   
    public final static String formatDateTime( Context context,
                                               long millis,
                                               int dateStyle )
@@ -228,67 +258,23 @@ public class MolokoDateUtils
                                 millis ).toString();
    }
    
-
-
+   
+   
    public final static String formatTime( Context context, long millis )
    {
       return DateFormat.format( buildPattern( context, false, true, 0 ), millis )
                        .toString();
    }
    
-
-
-   public final static String formatParser( Context context, MolokoCalendar cal )
-   {
-      return formatParser( context,
-                           cal.getTimeInMillis(),
-                           getFormatParserFlags( cal ) );
-   }
    
-
-
-   public final static String formatParser( Context context,
-                                            long millis,
-                                            int flags )
-   {
-      final Locale oldSystemLocale = Locale.getDefault();
-      final Locale parserLocale = DateParserFactory.getNearesMatchingDateParserLocale( Locale.getDefault() );
-      
-      String result;
-      
-      Locale.setDefault( parserLocale );
-      
-      if ( ( ( FORMAT_PARSER_WITH_DATE | FORMAT_PARSER_WITH_TIME ) & flags ) != 0 )
-         result = formatDateTime( context, millis, FORMAT_NUMERIC );
-      else if ( ( FORMAT_PARSER_WITH_DATE & flags ) != 0 )
-         result = formatDate( context, millis, FORMAT_NUMERIC );
-      else
-         result = formatTime( context, millis );
-      
-      Locale.setDefault( oldSystemLocale );
-      
-      return result;
-   }
    
-
-
-   public final static int getFormatParserFlags( MolokoCalendar cal )
-   {
-      int flags = cal.hasDate() ? FORMAT_PARSER_WITH_DATE : 0;
-      flags |= cal.hasTime() ? FORMAT_PARSER_WITH_TIME : 0;
-      
-      return flags;
-   }
-   
-
-
    public final static Date getDate( ParcelableDate parcelableDate )
    {
       return getDate( parcelableDate, null );
    }
    
-
-
+   
+   
    public final static Date getDate( ParcelableDate parcelableDate,
                                      Date defaultValue )
    {
@@ -300,15 +286,15 @@ public class MolokoDateUtils
       return ret;
    }
    
-
-
+   
+   
    public final static Long getTime( ParcelableDate parcelableDate )
    {
       return getTime( parcelableDate, null );
    }
    
-
-
+   
+   
    public final static Long getTime( ParcelableDate parcelableDate,
                                      Long defaultValue )
    {
@@ -320,15 +306,15 @@ public class MolokoDateUtils
       return ret;
    }
    
-
-
+   
+   
    public final static Long getTime( Date date )
    {
       return getTime( date, null );
    }
    
-
-
+   
+   
    public final static Long getTime( Date date, Long defaultValue )
    {
       Long ret = defaultValue;
@@ -339,8 +325,8 @@ public class MolokoDateUtils
       return ret;
    }
    
-
-
+   
+   
    public final static EstimateStruct parseEstimated( long millis )
    {
       int days = 0;
@@ -377,8 +363,8 @@ public class MolokoDateUtils
       return new EstimateStruct( days, hours, minutes );
    }
    
-
-
+   
+   
    public final static String formatEstimated( Context context, long millis )
    {
       final Resources res = context.getResources();
@@ -431,8 +417,8 @@ public class MolokoDateUtils
       }
    }
    
-
-
+   
+   
    public final static String buildPattern( Context context,
                                             boolean date,
                                             boolean time,
@@ -501,8 +487,8 @@ public class MolokoDateUtils
       return template;
    }
    
-
-
+   
+   
    private static String getNumericDatePatternForSettings( Context context,
                                                            int flags )
    {
@@ -528,25 +514,11 @@ public class MolokoDateUtils
                                                  expandedDateFormatOrder[ 1 ] );
       }
       
-      // final String settingsDateFormat = MolokoApp.getSettings().getDateformat();
-      //      
-      // if ( settingsDateFormat != null )
-      // {
-      // DateFormat.getDateFormatOrder( context );
-      // final int posDate = settingsDateFormat.in
-      // }
-      // else
-      // {
-      // numericDatePattern = isWithYear
-      // ? context.getString( R.string.numeric_date_format_year )
-      // : context.getString( R.string.numeric_date_format );
-      // }
-      
       return numericDatePattern;
    }
    
-
-
+   
+   
    private final static String[] expandDateFormatOrder( char[] dateFormatOrder,
                                                         boolean withYear )
    {

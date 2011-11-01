@@ -21,6 +21,7 @@ options
    import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractDateParser;
    import dev.drsoran.moloko.grammar.LexerException;
+   import dev.drsoran.moloko.grammar.IDateFormatContext;
    import dev.drsoran.moloko.util.MolokoCalendar;
 }
 
@@ -119,7 +120,7 @@ options
                   }
             }      
          case 'a': 
-            switch( string.charAt( 2 ) )
+            switch( string.charAt( 1 ) )
             {
                case 'p' : return Calendar.APRIL;
                case 'u' : return Calendar.AUGUST;
@@ -167,7 +168,7 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn resul
       result = finishedDateParsing( cal );
    }
    : (
-       (   date_full         [$cal]
+       (   date_numeric      [$cal]
          | date_on           [$cal]
          | date_in_X_YMWD    [$cal]
          | date_end_of_the_MW[$cal]
@@ -235,7 +236,7 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
       throw new RecognitionException();
    }
 
-date_full [MolokoCalendar cal]
+date_numeric [MolokoCalendar cal]
    @init
    {
       String pt1Str = null;
@@ -257,7 +258,7 @@ date_full [MolokoCalendar cal]
         }
      )?
      {
-        handleFullDate( cal, pt1Str, pt2Str, pt3Str );
+        handleNumericDate( cal, pt1Str, pt2Str, pt3Str );
      }
      ;
 

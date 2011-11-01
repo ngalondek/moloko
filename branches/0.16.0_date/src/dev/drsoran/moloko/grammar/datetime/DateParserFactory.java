@@ -40,42 +40,42 @@ public final class DateParserFactory extends AbstractParserFactory
    }
    
    
-
+   
    public final static IDateParser createDateParserForLocale( Locale locale )
    {
       return createParserForLocale( locale, availableParserClasses );
    }
    
-
-
+   
+   
    public static IDateParser createDefaultDateParser()
    {
       return createDefaultParser( availableParserClasses );
    }
    
-
-
+   
+   
    public final static List< IDateParser > getAvailableDateParsers()
    {
       return getAvailableParsers( availableParserClasses );
    }
    
-
-
+   
+   
    public final static Locale getDefaultDateParserLocale()
    {
       return getDefaultParserLocale( availableParserClasses );
    }
    
-
-
+   
+   
    public final static Locale getNearesMatchingDateParserLocale( Locale locale )
    {
       return getNearestParserLocale( locale, availableParserClasses );
    }
    
-
-
+   
+   
    public final static List< Locale > getAvailableDateParserLocales()
    {
       return getAvailableParserLocales( availableParserClasses );

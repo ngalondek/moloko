@@ -127,7 +127,6 @@
    <string name="phr_loading">Lädt gerade...</string>
    <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
-   <string name="phr_hint">Hinweis</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -140,7 +139,7 @@
    <string name="err_db_typed">Datenbank-Zugriffsfehler beim Zugriff auf %1$s.</string>
    <string name="err_entity_not_found">%1$s konnte nicht aus der Datenbank geladen werden.\n\nBitte überprüfen Sie ob das Element existiert.</string>
    <string name="err_unsupported_intent_action">Die Aktion %1$s wird von dieser Activity nicht unterstützt.</string>
-   <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten.\n\nSie können dies Ändern, indem Sie Ihr aktuelles, lokales RTM Konto entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.\n\nIhre Daten bleiben unverändert.</string>
+   <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten.\n\nDaten, die Sie mit Moloko bis jetzt geändert haben, bleiben erhalten. Dennoch werden die Änderungen nicht mit dem RTM Server synchronisiert und ggf. durch eine neuere Serverversion ersetzt.\n\nSie können dies ändern, indem Sie Ihr aktuelles, lokales RTM Konto vom Gerät entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.</string>
    
 	<!-- Global buttons -->
 	<string name="btn_continue">Weiter</string>
@@ -389,8 +388,8 @@
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
    <string name="moloko_prefs_rtm_summary">Zeit- und Datumsformat, Standardliste usw.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen.</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken.</string>
+   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken</string>
    <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
    <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
    <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(14.02.2000)</string>

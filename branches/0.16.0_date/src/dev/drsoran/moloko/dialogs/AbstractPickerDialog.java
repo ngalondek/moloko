@@ -22,8 +22,6 @@
 
 package dev.drsoran.moloko.dialogs;
 
-
-
 public abstract class AbstractPickerDialog
 {
    public enum CloseReason
@@ -62,4 +60,8 @@ public abstract class AbstractPickerDialog
 
 
    abstract public void show();
+   
+
+
+   abstract public void dismiss();
 }

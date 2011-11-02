@@ -32,12 +32,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
 public class DuePickerDialog extends AbstractPickerDialog
@@ -54,21 +55,7 @@ public class DuePickerDialog extends AbstractPickerDialog
    
    private final MolokoCalendar calendar;
    
-   private String dateFormat;
-   
    private final boolean is24hTimeFormat;
-   
-   // TODO: Remove
-   private final static int DATEFORMAT_EU = 0;
-   
-   // TODO: Remove
-   private final static int DATEFORMAT_US = 1;
-   
-   // TODO: Remove
-   private final static int TIMEFORMAT_12 = 0;
-   
-   // TODO: Remove
-   private final static int TIMEFORMAT_24 = 1;
    
    
 
@@ -98,22 +85,9 @@ public class DuePickerDialog extends AbstractPickerDialog
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
       
-      final Settings settings = MolokoApp.getSettings();
+      final char[] dateFormatOrder = MolokoDateUtils.getDateFormatOrder( activity );
       
-      dateFormat = settings.getDateformat();
-      
-      if ( dateFormat == "DATEFORMAT_EU" )
-      {
-         dateDayWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_1 );
-         dateMonthWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_2 );
-      }
-      else
-      {
-         dateDayWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_2 );
-         dateMonthWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_1 );
-      }
-      
-      dateYearWheel = (WheelView) view.findViewById( R.id.due_dlg_year_wheel );
+      assignWheelsByDateFormat( view, dateFormatOrder );
       
       initDaysWheel( activity );
       initMonthsWheel( activity );
@@ -190,6 +164,14 @@ public class DuePickerDialog extends AbstractPickerDialog
    
 
 
+   @Override
+   public void dismiss()
+   {
+      impl.dismiss();
+   }
+   
+
+
    public MolokoCalendar getCalendar()
    {
       updateCalendarDate();
@@ -223,6 +205,35 @@ public class DuePickerDialog extends AbstractPickerDialog
          day = calendar.getActualMaximum( Calendar.DAY_OF_MONTH );
       
       calendar.set( Calendar.DAY_OF_MONTH, day );
+   }
+   
+
+
+   private void assignWheelsByDateFormat( View content, char[] dateFormatOrder )
+   {
+      final int[] genericWheels = new int[]
+      { R.id.due_dlg_date_wheel_1, R.id.due_dlg_date_wheel_2,
+       R.id.due_dlg_date_wheel_3 };
+      
+      for ( int i = 0; i < genericWheels.length || i < dateFormatOrder.length; i++ )
+      {
+         final char symbol = dateFormatOrder[ i ];
+         switch ( symbol )
+         {
+            case DateFormat.DATE:
+               dateDayWheel = (WheelView) content.findViewById( genericWheels[ i ] );
+               break;
+            case DateFormat.MONTH:
+               dateMonthWheel = (WheelView) content.findViewById( genericWheels[ i ] );
+               break;
+            case DateFormat.YEAR:
+               dateYearWheel = (WheelView) content.findViewById( genericWheels[ i ] );
+               break;
+            default :
+               break;
+            
+         }
+      }
    }
    
 

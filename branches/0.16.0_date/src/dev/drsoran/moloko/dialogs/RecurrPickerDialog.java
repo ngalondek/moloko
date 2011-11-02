@@ -145,6 +145,14 @@ public class RecurrPickerDialog extends AbstractPickerDialog
    
 
 
+   @Override
+   public void dismiss()
+   {
+      impl.dismiss();
+   }
+   
+
+
    public int getInterval()
    {
       return intervalWheel.getCurrentItem() + 1;

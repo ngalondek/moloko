@@ -142,7 +142,7 @@
    <string name="phr_please_wait">Please wait</string>
    <string name="phr_now">Now</string>
    <string name="phr_today">Today</string>
-   <string name="phr_today_with_date">Today the %1$s</string>
+   <string name="phr_today_with_date">Today %1$s</string>
    <string name="phr_tomorrow">Tomorrow</string>
    <string name="phr_tomorrow_with_date">Tomorrow the %1$s</string>
    <string name="phr_establish_connection">Establish an Internet connection to continue.</string>

@@ -64,7 +64,7 @@ public class MolokoDateUtils
       public final int minutes;
       
       
-      
+
       public EstimateStruct( int days, int hours, int minutes )
       {
          this.days = days;
@@ -74,14 +74,14 @@ public class MolokoDateUtils
    }
    
    
-   
+
    private MolokoDateUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-   
-   
+
+
    public final static MolokoCalendar newCalendar( long millis )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -89,8 +89,8 @@ public class MolokoDateUtils
       return cal;
    }
    
-   
-   
+
+
    public final static MolokoCalendar newCalendarUTC( long millis )
    {
       final MolokoCalendar cal = MolokoCalendar.getUTCInstance();
@@ -98,8 +98,8 @@ public class MolokoDateUtils
       return cal;
    }
    
-   
-   
+
+
    public final static Time newTime()
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
@@ -107,8 +107,8 @@ public class MolokoDateUtils
       return t;
    }
    
-   
-   
+
+
    public final static Time newTime( long millis )
    {
       final Time t = new Time( MolokoApp.getSettings().getTimezone().getID() );
@@ -116,29 +116,29 @@ public class MolokoDateUtils
       return t;
    }
    
-   
-   
+
+
    public static boolean isToday( long when )
    {
       return ( getTimespanInDays( System.currentTimeMillis(), when ) == 0 );
    }
    
-   
-   
+
+
    public static boolean isBefore( long when, long reference )
    {
       return ( getTimespanInDays( when, reference ) > 0 );
    }
    
-   
-   
+
+
    public static boolean isAfter( long when, long reference )
    {
       return ( getTimespanInDays( when, reference ) < 0 );
    }
    
-   
-   
+
+
    public static int getTimespanInDays( long start, long end )
    {
       final TimeZone timeZone = MolokoApp.getSettings().getTimezone();
@@ -151,8 +151,8 @@ public class MolokoDateUtils
       return span;
    }
    
-   
-   
+
+
    public static long getFittingDateUtilsResolution( long time, long now )
    {
       final int diff = (int) ( ( ( time >= now ) ? time - now : now - time ) / 1000 );
@@ -179,8 +179,8 @@ public class MolokoDateUtils
       }
    }
    
-   
-   
+
+
    public final static Date parseRtmDate( String rtmDateStr )
    {
       try
@@ -193,8 +193,8 @@ public class MolokoDateUtils
       }
    }
    
-   
-   
+
+
    public final static String getDayOfWeekString( int calendarDayOfWeek,
                                                   boolean abbrev )
    {
@@ -203,17 +203,24 @@ public class MolokoDateUtils
                                                  : DateUtils.LENGTH_LONG );
    }
    
-   
-   
-   public static String getNumericDateFormatPattern( Context context,
-                                                     boolean withYear )
+
+
+   public final static String getNumericDateFormatPattern( Context context,
+                                                           boolean withYear )
    {
       return getNumericDatePatternForSettings( context,
                                                withYear ? FORMAT_WITH_YEAR : 0 );
    }
    
+
+
+   public final static char[] getDateFormatOrder( Context context )
+   {
+      return DateFormat.getDateFormatOrder( context );
+   }
    
-   
+
+
    public final static String formatDate( Context context,
                                           long millis,
                                           int dateStyle )
@@ -223,8 +230,8 @@ public class MolokoDateUtils
                        .toString();
    }
    
-   
-   
+
+
    public static String formatDateNumeric( Context context,
                                            String part1,
                                            String part2 )
@@ -232,8 +239,8 @@ public class MolokoDateUtils
       return formatDateNumeric( context, part1, part2, null );
    }
    
-   
-   
+
+
    public static String formatDateNumeric( Context context,
                                            String part1,
                                            String part2,
@@ -248,8 +255,8 @@ public class MolokoDateUtils
                                    part3 );
    }
    
-   
-   
+
+
    public final static String formatDateTime( Context context,
                                               long millis,
                                               int dateStyle )
@@ -258,23 +265,23 @@ public class MolokoDateUtils
                                 millis ).toString();
    }
    
-   
-   
+
+
    public final static String formatTime( Context context, long millis )
    {
       return DateFormat.format( buildPattern( context, false, true, 0 ), millis )
                        .toString();
    }
    
-   
-   
+
+
    public final static Date getDate( ParcelableDate parcelableDate )
    {
       return getDate( parcelableDate, null );
    }
    
-   
-   
+
+
    public final static Date getDate( ParcelableDate parcelableDate,
                                      Date defaultValue )
    {
@@ -286,15 +293,15 @@ public class MolokoDateUtils
       return ret;
    }
    
-   
-   
+
+
    public final static Long getTime( ParcelableDate parcelableDate )
    {
       return getTime( parcelableDate, null );
    }
    
-   
-   
+
+
    public final static Long getTime( ParcelableDate parcelableDate,
                                      Long defaultValue )
    {
@@ -306,15 +313,15 @@ public class MolokoDateUtils
       return ret;
    }
    
-   
-   
+
+
    public final static Long getTime( Date date )
    {
       return getTime( date, null );
    }
    
-   
-   
+
+
    public final static Long getTime( Date date, Long defaultValue )
    {
       Long ret = defaultValue;
@@ -325,8 +332,8 @@ public class MolokoDateUtils
       return ret;
    }
    
-   
-   
+
+
    public final static EstimateStruct parseEstimated( long millis )
    {
       int days = 0;
@@ -363,8 +370,8 @@ public class MolokoDateUtils
       return new EstimateStruct( days, hours, minutes );
    }
    
-   
-   
+
+
    public final static String formatEstimated( Context context, long millis )
    {
       final Resources res = context.getResources();
@@ -417,8 +424,8 @@ public class MolokoDateUtils
       }
    }
    
-   
-   
+
+
    public final static String buildPattern( Context context,
                                             boolean date,
                                             boolean time,
@@ -487,8 +494,8 @@ public class MolokoDateUtils
       return template;
    }
    
-   
-   
+
+
    private static String getNumericDatePatternForSettings( Context context,
                                                            int flags )
    {
@@ -517,8 +524,8 @@ public class MolokoDateUtils
       return numericDatePattern;
    }
    
-   
-   
+
+
    private final static String[] expandDateFormatOrder( char[] dateFormatOrder,
                                                         boolean withYear )
    {

@@ -41,12 +41,14 @@ options
      
    protected int numberStringToNumber( String string )
    {
-      switch( string.charAt( 0 ) )
+      final String numStr = string.toLowerCase();
+      
+      switch( numStr.charAt( 0 ) )
       {
          case 'e' : return 1;
          case 'z' :
          {
-            switch( string.charAt( 1 ) )
+            switch( numStr.charAt( 1 ) )
             {
                case 'w' : return 2;
                case 'e' : return 10;
@@ -57,7 +59,7 @@ options
          case 'f' : return 5;
          case 's' :
          {
-            switch( string.charAt( 1 ) )
+            switch( numStr.charAt( 1 ) )
             {
                case 'e' : return 6;
                case 'i' : return 7;
@@ -70,22 +72,24 @@ options
    
    protected int weekdayStringToNumber( String string )
    {
-      switch( string.charAt( 0 ) )
+      final String weekDayStr = string.toLowerCase();
+      
+      switch( weekDayStr.charAt( 0 ) )
       {
          case 'm':
-            switch( string.charAt( 1 ) )
+            switch( weekDayStr.charAt( 1 ) )
             {
                case 'o' : return Calendar.MONDAY;
                case 'i' : return Calendar.WEDNESDAY;
             }
          case 'd':
-           switch( string.charAt( 1 ) )
+           switch( weekDayStr.charAt( 1 ) )
             {
                case 'i' : return Calendar.TUESDAY;
                case 'o' : return Calendar.THURSDAY;
             }
          case 's':
-            switch( string.charAt( 1 ) )
+            switch( weekDayStr.charAt( 1 ) )
             {
                case 'a' : return Calendar.SATURDAY;
                case 'o' : return Calendar.SUNDAY;
@@ -96,29 +100,31 @@ options
    
    protected int monthStringToNumber( String string )
    {
-      switch( string.charAt( 0 ) )
+      final String monthStr = string.toLowerCase();
+      
+      switch( monthStr.charAt( 0 ) )
       {
          case 'f': return Calendar.FEBRUARY;           
          case 'm':
-         	switch( string.charAt( 2 ) )
+         	switch( monthStr.charAt( 2 ) )
             {               
                case 'e' : // Maerz
                case 'r' : return Calendar.MARCH; // März
                case 'i' : return Calendar.MAY;
             }
          case 'j':
-            switch( string.charAt( 1 ) )
+            switch( monthStr.charAt( 1 ) )
             {
                case 'a' : return Calendar.JANUARY;
                default  :
-                  switch( string.charAt( 2 ) )
+                  switch( monthStr.charAt( 2 ) )
                   {
                      case 'n' : return Calendar.JUNE;
                      case 'l' : return Calendar.JULY;
                   }
             }      
          case 'a':
-            switch( string.charAt( 1 ) )
+            switch( monthStr.charAt( 1 ) )
             {
                case 'p' : return Calendar.APRIL;
                case 'u' : return Calendar.AUGUST;

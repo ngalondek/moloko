@@ -59,4 +59,25 @@ public final class DateParserFactory extends AbstractParserFactory
    {
       return getAvailableParsers( availableParserClasses );
    }
+   
+   
+   
+   public final static Locale getDefaultDateParserLocale()
+   {
+      return getDefaultParserLocale( availableParserClasses );
+   }
+   
+   
+   
+   public final static Locale getNearesMatchingDateParserLocale( Locale locale )
+   {
+      return getNearestParserLocale( locale, availableParserClasses );
+   }
+   
+   
+   
+   public final static List< Locale > getAvailableDateParserLocales()
+   {
+      return getAvailableParserLocales( availableParserClasses );
+   }
 }

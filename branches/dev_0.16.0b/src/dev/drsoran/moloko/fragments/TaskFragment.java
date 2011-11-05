@@ -114,7 +114,7 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
    private View urlSection;
    
    
-   
+
    public final static TaskFragment newInstance( Bundle config )
    {
       final TaskFragment fragment = new TaskFragment();
@@ -124,15 +124,15 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       return fragment;
    }
    
-   
-   
+
+
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -144,8 +144,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          listener = new NullTaskFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -153,8 +153,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       listener = null;
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -180,8 +180,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -192,28 +192,30 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                                   config.getString( Config.TASK_ID ) );
    }
    
-   
-   
+
+
    public String getConfiguredTaskId()
    {
       return configuration.getString( Config.TASK_ID );
    }
    
-   
-   
+
+
    @Override
    public void initContent( ViewGroup container )
    {
       final Task task = getLoaderDataAssertNotNull();
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( task.getAdded()
+      addedDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+                                                         task.getAdded()
                                                              .getTime(),
                                                          FULL_DATE_FLAGS ) );
       
       if ( task.getCompleted() != null )
       {
          completedDate.setVisibility( View.VISIBLE );
-         completedDate.setText( MolokoDateUtils.formatDateTime( task.getCompleted()
+         completedDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+                                                                task.getCompleted()
                                                                     .getTime(),
                                                                 FULL_DATE_FLAGS ) );
       }
@@ -269,8 +271,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-   
-   
+
+
    private void setDateTimeSection( View view, Task task )
    {
       final boolean hasDue = task.getDue() != null;
@@ -292,13 +294,15 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          {
             if ( task.hasDueTime() )
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDateTime( task.getDue()
+                                        MolokoDateUtils.formatDateTime( getFragmentActivity(),
+                                                                        task.getDue()
                                                                             .getTime(),
                                                                         MolokoDateUtils.FORMAT_WITH_YEAR
                                                                            | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
             else
                UIUtils.appendAtNewLine( textBuffer,
-                                        MolokoDateUtils.formatDate( task.getDue()
+                                        MolokoDateUtils.formatDate( getFragmentActivity(),
+                                                                    task.getDue()
                                                                         .getTime(),
                                                                     MolokoDateUtils.FORMAT_WITH_YEAR
                                                                        | MolokoDateUtils.FORMAT_SHOW_WEEKDAY ) );
@@ -307,7 +311,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          
          if ( isRecurrent )
          {
-            final String sentence = RecurrenceParsing.parseRecurrencePattern( task.getRecurrence(),
+            final String sentence = RecurrenceParsing.parseRecurrencePattern( getFragmentActivity(),
+                                                                              task.getRecurrence(),
                                                                               task.isEveryRecurrence() );
             
             // In this case we add the 'repeat' to the beginning of the pattern, otherwise
@@ -355,8 +360,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-   
-   
+
+
    private void setLocationSection( View view, final Task task )
    {
       String locationName = null;
@@ -430,8 +435,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-   
-   
+
+
    private void setParticipantsSection( ViewGroup view, Task task )
    {
       final ParticipantList participants = task.getParticipants();
@@ -466,8 +471,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
       }
    }
    
-   
-   
+
+
    @Override
    public Loader< Task > newLoaderInstance( int id, Bundle args )
    {
@@ -475,32 +480,32 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
                              args.getString( Config.TASK_ID ) );
    }
    
-   
-   
+
+
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_task );
    }
    
-   
-   
+
+
    @Override
    public int getLoaderId()
    {
       return TASK_LOADER_ID;
    }
    
-   
-   
+
+
    @Override
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
    }
    
-   
-   
+
+
    @Override
    public boolean canBeEdited()
    {
@@ -508,8 +513,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          && AccountUtils.isWriteableAccess( getFragmentActivity() );
    }
    
-   
-   
+
+
    @Override
    public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {

@@ -24,6 +24,7 @@ package dev.drsoran.moloko.notification;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -60,6 +61,7 @@ import dev.drsoran.moloko.util.LogUtils;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.RtmSmartFilter;
 import dev.drsoran.rtm.Task;
@@ -90,15 +92,21 @@ public class MolokoNotificationManager implements
    
    private final static int NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED = 3;
    
-   private final static String DUE_TASKS_QUERY = Tasks.DUE_DATE + " >= ? AND "
-      + Tasks.DUE_DATE + " < ? AND " + Tasks.HAS_DUE_TIME + " != 0 AND "
-      + Tasks.COMPLETED_DATE + " IS NULL AND " + Tasks.DELETED_DATE
-      + " IS NULL";
+   private final static String DUE_TASKS_QUERY_WITH_REMIND_BEFORE = Tasks.DUE_DATE
+      + " >= ? AND "
+      + Tasks.DUE_DATE
+      + " < ? AND "
+      + Tasks.HAS_DUE_TIME
+      + " != 0 AND "
+      + Tasks.COMPLETED_DATE
+      + " IS NULL AND "
+      + Tasks.DELETED_DATE + " IS NULL";
    
    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
    
    private final Runnable refreshNotificationsRunnable = new Runnable()
    {
+      @Override
       public void run()
       {
          reEvaluatePermanentNotifications();
@@ -115,7 +123,7 @@ public class MolokoNotificationManager implements
    private final List< DueTaskNotification > dueTaskNotifications;
    
    
-
+   
    public MolokoNotificationManager( Context context )
    {
       this.context = context;
@@ -141,8 +149,7 @@ public class MolokoNotificationManager implements
       MolokoApp.get( context )
                .registerOnTimeChangedListener( IOnTimeChangedListener.ALL, this );
       MolokoApp.get( context )
-               .registerOnSettingsChangedListener( IOnSettingsChangedListener.RTM_DATEFORMAT
-                                                      | IOnSettingsChangedListener.RTM_TIMEFORMAT,
+               .registerOnSettingsChangedListener( IOnSettingsChangedListener.DATE_TIME_RELATED,
                                                    this );
       {
          final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
@@ -159,8 +166,8 @@ public class MolokoNotificationManager implements
       reCreateDueTaskNotifications();
    }
    
-
-
+   
+   
    public void shutdown()
    {
       cancelAllDueTaskNotifications();
@@ -184,8 +191,9 @@ public class MolokoNotificationManager implements
       }
    }
    
-
-
+   
+   
+   @Override
    public void onBootCompleted()
    {
       MolokoApp.get( context ).unregisterOnBootCompletedListener( this );
@@ -193,8 +201,9 @@ public class MolokoNotificationManager implements
       reCreateDueTaskNotifications();
    }
    
-
-
+   
+   
+   @Override
    public void onTimeChanged( int which )
    {
       switch ( which )
@@ -217,18 +226,19 @@ public class MolokoNotificationManager implements
       }
    }
    
-
-
+   
+   
+   @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
       switch ( which )
       {
-         case IOnSettingsChangedListener.RTM_DATEFORMAT:
+         case IOnSettingsChangedListener.DATEFORMAT:
             reEvaluatePermanentNotifications();
             break;
          
-         case IOnSettingsChangedListener.RTM_TIMEFORMAT:
+         case IOnSettingsChangedListener.TIMEFORMAT:
             reEvaluateDueTaskNotifications( NOTIFICATION_DUE_UPD_TIME_FORMAT_CHANGED );
             break;
          
@@ -238,14 +248,16 @@ public class MolokoNotificationManager implements
       
    }
    
-
-
+   
+   
+   @Override
    public void onSharedPreferenceChanged( final SharedPreferences sharedPreferences,
                                           final String key )
    {
       if ( sharedPreferences != null && key != null )
       {
-         if ( key.equals( context.getString( R.string.key_notify_permanent ) ) )
+         if ( key.equals( context.getString( R.string.key_notify_permanent ) )
+            || key.equals( context.getString( R.string.key_notify_permanent_overdue ) ) )
          {
             reEvaluatePermanentNotifications();
          }
@@ -266,12 +278,13 @@ public class MolokoNotificationManager implements
       }
    }
    
-
-
+   
+   
    public void reCreateDueTaskNotifications()
    {
       executorService.execute( new Runnable()
       {
+         @Override
          public void run()
          {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
@@ -313,12 +326,13 @@ public class MolokoNotificationManager implements
       } );
    }
    
-
-
+   
+   
    public void reEvaluateDueTaskNotifications( final int what )
    {
       executorService.execute( new Runnable()
       {
+         @Override
          public void run()
          {
             if ( dueTaskNotifications.size() > 0 )
@@ -332,12 +346,13 @@ public class MolokoNotificationManager implements
       } );
    }
    
-
-
+   
+   
    public void cancelAllDueTaskNotifications()
    {
       executorService.execute( new Runnable()
       {
+         @Override
          public void run()
          {
             for ( DueTaskNotification notification : dueTaskNotifications )
@@ -350,12 +365,13 @@ public class MolokoNotificationManager implements
       } );
    }
    
-
-
+   
+   
    private void reEvaluatePermanentNotifications()
    {
       executorService.execute( new Runnable()
       {
+         @Override
          public void run()
          {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
@@ -364,6 +380,8 @@ public class MolokoNotificationManager implements
             {
                final int type = Integer.parseInt( prefs.getString( context.getString( R.string.key_notify_permanent ),
                                                                    "0" ) );
+               final boolean showOverdue = prefs.getBoolean( context.getString( R.string.key_notify_permanent_overdue ),
+                                                             false );
                final ContentProviderClient client = context.getContentResolver()
                                                            .acquireContentProviderClient( Tasks.CONTENT_URI );
                
@@ -372,38 +390,74 @@ public class MolokoNotificationManager implements
                   switch ( type )
                   {
                      case NOTIFICATION_PERM_TODAY:
+                     {
+                        String filterSting = RtmSmartFilterLexer.OP_DUE_LIT
+                           + DateParser.tokenNames[ DateParser.TODAY ];
+                        
+                        if ( showOverdue )
+                           filterSting = includeOverdueTasks( filterSting );
+                        
                         updatePermanentNotification( client,
-                                                     context.getString( R.string.phr_today_with_date,
-                                                                        MolokoDateUtils.formatDate( getCalendar( 0 ).getTimeInMillis(),
+                                                     context.getString( R.string.notification_permanent_today_title,
+                                                                        MolokoDateUtils.formatDate( context,
+                                                                                                    getCalendar( 0 ).getTimeInMillis(),
                                                                                                     0 ) ),
-                                                     RtmSmartFilterLexer.OP_DUE_LIT
-                                                        + DateParser.tokenNames[ DateParser.TODAY ] );
+                                                     filterSting );
+                     }
                         break;
                      
                      case NOTIFICATION_PERM_TOMORROW:
+                     {
+                        String filterSting = RtmSmartFilterLexer.OP_DUE_LIT
+                           + DateParser.tokenNames[ DateParser.TOMORROW ];
+                        
+                        if ( showOverdue )
+                           filterSting = includeOverdueTasks( filterSting );
+                        
                         updatePermanentNotification( client,
-                                                     context.getString( R.string.phr_tomorrow_with_date,
-                                                                        MolokoDateUtils.formatDate( getCalendar( 1 ).getTimeInMillis(),
+                                                     context.getString( R.string.notification_permanent_tomorrow_title,
+                                                                        MolokoDateUtils.formatDate( context,
+                                                                                                    getCalendar( 1 ).getTimeInMillis(),
                                                                                                     0 ) ),
-                                                     RtmSmartFilterLexer.OP_DUE_LIT
-                                                        + DateParser.tokenNames[ DateParser.TOMORROW ] );
+                                                     filterSting );
+                     }
                         break;
                      
                      case NOTIFICATION_PERM_TODAY_AND_TOMORROW:
+                     {
+                        String filterSting = RtmSmartFilterLexer.OP_DUE_WITHIN_LIT
+                           + RtmSmartFilterLexer.quotify( "2 of "
+                              + DateParser.tokenNames[ DateParser.TODAY ] );
+                        
+                        if ( showOverdue )
+                           filterSting = includeOverdueTasks( filterSting );
+                        
                         updatePermanentNotification( client,
-                                                     context.getString( R.string.notification_due_today_and_tomorrow_title,
-                                                                        MolokoDateUtils.formatDate( getCalendar( 0 ).getTimeInMillis(),
+                                                     context.getString( R.string.notification_permanent_today_and_tomorrow_title,
+                                                                        MolokoDateUtils.formatDate( context,
+                                                                                                    getCalendar( 0 ).getTimeInMillis(),
                                                                                                     MolokoDateUtils.FORMAT_NUMERIC ),
-                                                                        MolokoDateUtils.formatDate( getCalendar( 1 ).getTimeInMillis(),
+                                                                        MolokoDateUtils.formatDate( context,
+                                                                                                    getCalendar( 1 ).getTimeInMillis(),
                                                                                                     MolokoDateUtils.FORMAT_NUMERIC ) ),
-                                                     RtmSmartFilterLexer.OP_DUE_WITHIN_LIT
-                                                        + "\"2 of "
-                                                        + DateParser.tokenNames[ DateParser.TODAY ]
-                                                        + "\"" );
+                                                     filterSting );
+                     }
                         break;
                      
                      case NOTIFICATION_PERM_OFF:
-                        permanentNotification.cancel();
+                     {
+                        if ( showOverdue )
+                        {
+                           updatePermanentNotification( client,
+                                                        context.getString( R.string.notification_permanent_overdue_title ),
+                                                        RtmSmartFilterLexer.OP_DUE_BEFORE_LIT
+                                                           + DateParser.tokenNames[ DateParser.NOW ] );
+                        }
+                        else
+                        {
+                           permanentNotification.cancel();
+                        }
+                     }
                         break;
                      
                      default :
@@ -412,29 +466,43 @@ public class MolokoNotificationManager implements
                }
             }
          }
+         
+         
+         
+         private String includeOverdueTasks( String filterSting )
+         {
+            final StringBuilder stringBuilder = new StringBuilder( filterSting );
+            
+            stringBuilder.append( " " )
+                         .append( RtmSmartFilterLexer.OR_LIT )
+                         .append( " " )
+                         .append( RtmSmartFilterLexer.OP_DUE_BEFORE_LIT )
+                         .append( DateParser.tokenNames[ DateParser.NOW ] );
+            
+            return stringBuilder.toString();
+         }
       } );
    }
    
-
-
+   
+   
    private void updatePermanentNotification( ContentProviderClient client,
                                              String title,
                                              String filterString )
    {
       RtmSmartFilter filter = null;
-      Pair< String, Integer > text = null;
+      Pair< String, Integer > permNotificationInfo = null;
       
       filter = new RtmSmartFilter( filterString );
-      
-      text = buildPermanentNotificationRowText( client, filter );
+      permNotificationInfo = buildPermanentNotificationRowText( client, filter );
       
       // Has tasks
-      final boolean show = text.second > 0;
+      final boolean show = permNotificationInfo.second > 0;
       
       if ( show )
          permanentNotification.update( title,
-                                       text.first,
-                                       text.second,
+                                       permNotificationInfo.first,
+                                       permNotificationInfo.second,
                                        Intents.createSmartFilterIntent( context,
                                                                         filter,
                                                                         title ) );
@@ -442,8 +510,8 @@ public class MolokoNotificationManager implements
          permanentNotification.cancel();
    }
    
-
-
+   
+   
    private void updateDueTaskNotification( DueTaskNotification notification,
                                            int what )
    {
@@ -492,13 +560,13 @@ public class MolokoNotificationManager implements
       }
    }
    
-
-
+   
+   
    private Pair< String, Integer > buildPermanentNotificationRowText( ContentProviderClient client,
                                                                       RtmSmartFilter filter )
    {
-      int count = 0;
-      String result = null;
+      int tasksCount = 0;
+      String result = Strings.EMPTY_STRING;
       
       final String evalFilter = filter.getEvaluatedFilterString( false );
       
@@ -509,42 +577,130 @@ public class MolokoNotificationManager implements
                                                                 null );
          if ( tasks != null )
          {
-            int numHighPrioTasks = 0;
+            tasksCount = tasks.size();
             
-            count = tasks.size();
-            
-            if ( count > 0 )
+            if ( tasksCount > 0 )
             {
-               for ( Iterator< Task > i = tasks.iterator(); i.hasNext(); )
+               final Pair< Integer, Integer > numHighPrioAndOverdueTasks = countHighPrioAndOverdueTasks( tasks );
+               final int highPrioCnt = numHighPrioAndOverdueTasks.first.intValue();
+               final int overdueCnt = numHighPrioAndOverdueTasks.second.intValue();
+               final int tasksDueCnt = tasksCount - overdueCnt;
+               
+               if ( tasksCount == 1 )
                {
-                  if ( i.next().getPriority() == RtmTask.Priority.High )
-                     ++numHighPrioTasks;
+                  result = context.getString( R.string.notification_permanent_text_one_task,
+                                              tasks.get( 0 ).getName() );
+               }
+               
+               else if ( tasksDueCnt > 0 )
+               {
+                  if ( overdueCnt == 0 )
+                     result = context.getString( R.string.notification_permanent_text_multiple,
+                                                 tasksDueCnt,
+                                                 context.getResources()
+                                                        .getQuantityString( R.plurals.g_task,
+                                                                            tasksDueCnt ),
+                                                 highPrioCnt );
+                  else if ( overdueCnt > 0 )
+                     result = context.getString( R.string.notification_permanent_text_multiple_w_overdue,
+                                                 tasksDueCnt,
+                                                 context.getResources()
+                                                        .getQuantityString( R.plurals.g_task,
+                                                                            tasksDueCnt ),
+                                                 overdueCnt,
+                                                 context.getResources()
+                                                        .getQuantityString( R.plurals.g_task,
+                                                                            overdueCnt ) );
+               }
+               
+               else if ( tasksDueCnt == 0 && overdueCnt > 1 )
+               {
+                  result = context.getString( R.string.notification_permanent_text_multiple_overdue,
+                                              overdueCnt,
+                                              context.getResources()
+                                                     .getQuantityString( R.plurals.g_task,
+                                                                         overdueCnt ) );
+               }
+               
+               else
+               {
+                  result = String.format( "Unhandled case tasks:%d, due:%d, overdue %d",
+                                          tasksCount,
+                                          tasksDueCnt,
+                                          overdueCnt );
                }
             }
-            
-            result = context.getString( R.string.notification_permanent,
-                                        count,
-                                        context.getResources()
-                                               .getQuantityString( R.plurals.g_task,
-                                                                   count ),
-                                        numHighPrioTasks );
          }
          else
          {
-            Log.e( TAG, "Error during database query." );
+            Log.e( TAG, LogUtils.GENERIC_DB_ERROR );
          }
       }
       else
       {
-         Log.e( TAG, "Error evaluating RtmSmartFilter "
-            + filter.getFilterString() );
+         Log.e( TAG,
+                "Error evaluating RtmSmartFilter " + filter.getFilterString() );
       }
       
-      return new Pair< String, Integer >( result, count );
+      return Pair.create( result, Integer.valueOf( tasksCount ) );
    }
    
-
-
+   
+   
+   private Pair< Integer, Integer > countHighPrioAndOverdueTasks( List< Task > tasks )
+   {
+      int numOverdueTasks = 0;
+      int numHighPrioTasks = 0;
+      
+      final int tasksCount = tasks.size();
+      
+      if ( tasksCount > 0 )
+      {
+         MolokoCalendar nowCal = null;
+         
+         for ( Iterator< Task > i = tasks.iterator(); i.hasNext(); )
+         {
+            final Task task = i.next();
+            
+            if ( task.getPriority() == RtmTask.Priority.High )
+            {
+               ++numHighPrioTasks;
+            }
+            
+            final Date due = task.getDue();
+            
+            if ( due != null )
+            {
+               if ( nowCal == null )
+                  nowCal = MolokoCalendar.getInstance();
+               
+               // If the task has a due time then it can be overdue
+               // even today.
+               if ( task.hasDueTime()
+                  && MolokoDateUtils.isBefore( due.getTime(),
+                                               nowCal.getTimeInMillis() ) )
+               {
+                  ++numOverdueTasks;
+               }
+               
+               // If the task has no due time then it can be overdue
+               // only before today.
+               else if ( !MolokoDateUtils.isToday( due.getTime() )
+                  && !MolokoDateUtils.isAfter( due.getTime(),
+                                               nowCal.getTimeInMillis() ) )
+               {
+                  ++numOverdueTasks;
+               }
+            }
+         }
+      }
+      
+      return Pair.create( Integer.valueOf( numHighPrioTasks ),
+                          Integer.valueOf( numOverdueTasks ) );
+   }
+   
+   
+   
    private String getDueTasksSelection( long remindBeforeMillis )
    {
       final MolokoCalendar cal = getDateOnlyCalendar( 0 );
@@ -555,14 +711,17 @@ public class MolokoNotificationManager implements
       final long tomorrowPlusReminder = cal.getTimeInMillis()
          + remindBeforeMillis;
       
-      final String result = Queries.bindAll( DUE_TASKS_QUERY, new String[]
-      { String.valueOf( today ), String.valueOf( tomorrowPlusReminder ) } );
+      final String result = Queries.bindAll( DUE_TASKS_QUERY_WITH_REMIND_BEFORE,
+                                             new String[]
+                                             {
+                                              String.valueOf( today ),
+                                              String.valueOf( tomorrowPlusReminder ) } );
       
       return result;
    }
    
-
-
+   
+   
    private static MolokoCalendar getCalendar( int dayOffset )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -571,8 +730,8 @@ public class MolokoNotificationManager implements
       return cal;
    }
    
-
-
+   
+   
    private static MolokoCalendar getDateOnlyCalendar( int dayOffset )
    {
       final MolokoCalendar cal = getCalendar( dayOffset );
@@ -581,8 +740,8 @@ public class MolokoNotificationManager implements
       return cal;
    }
    
-
-
+   
+   
    private void diffDueNotifications( List< Task > tasks )
    {
       // Build a snapshot of the currently scheduled notifications
@@ -628,8 +787,8 @@ public class MolokoNotificationManager implements
          addNewDueTaskNotifications( newNotifications );
    }
    
-
-
+   
+   
    private void addNewDueTaskNotifications( List< Task > tasks )
    {
       final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
@@ -664,8 +823,8 @@ public class MolokoNotificationManager implements
       }
    }
    
-
-
+   
+   
    private void cancelDueTaskNotifications( List< DueTaskNotification > notifications )
    {
       for ( DueTaskNotification dueTaskNotification : notifications )
@@ -678,8 +837,8 @@ public class MolokoNotificationManager implements
       }
    }
    
-
-
+   
+   
    private void shutdownExecutorService()
    {
       // Disable new tasks from being submitted

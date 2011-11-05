@@ -57,15 +57,15 @@ public class RecurrPickerDialog extends AbstractPickerDialog
    private WheelView freqWheel;
    
    
-   
+
    public RecurrPickerDialog( Activity activity, String pattern, boolean isEvery )
    {
       this.activity = activity;
       init( pattern, isEvery );
    }
    
-   
-   
+
+
    private void init( String pattern, boolean isEvery )
    {
       final Map< Integer, List< Object >> elements = RecurrenceParsing.parseRecurrencePattern( pattern );
@@ -99,8 +99,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
          {
          }
          
-         
-         
+
+
          public void onScrollingFinished( WheelView wheel )
          {
             initFreqWheel( null );
@@ -135,23 +135,31 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       this.impl.setOwnerActivity( activity );
    }
    
-   
-   
+
+
    @Override
    public void show()
    {
       impl.show();
    }
    
+
+
+   @Override
+   public void dismiss()
+   {
+      impl.dismiss();
+   }
    
-   
+
+
    public int getInterval()
    {
       return intervalWheel.getCurrentItem() + 1;
    }
    
-   
-   
+
+
    public int getFreqValue()
    {
       switch ( freqWheel.getCurrentItem() )
@@ -169,8 +177,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       }
    }
    
-   
-   
+
+
    public String getFreqValueAsString()
    {
       switch ( freqWheel.getCurrentItem() )
@@ -188,15 +196,15 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       }
    }
    
-   
-   
+
+
    public boolean isEvery()
    {
       return evAftWheel.getCurrentItem() == 0;
    }
    
-   
-   
+
+
    public String getPattern()
    {
       final StringBuilder sb = new StringBuilder();
@@ -212,15 +220,17 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       return RecurrenceParsing.ensureRecurrencePatternOrder( sb.toString() );
    }
    
-   
-   
+
+
    public String getSentence()
    {
-      return RecurrenceParsing.parseRecurrencePattern( getPattern(), isEvery() );
+      return RecurrenceParsing.parseRecurrencePattern( activity,
+                                                       getPattern(),
+                                                       isEvery() );
    }
    
-   
-   
+
+
    private void initEvAftWheel( boolean isEvery )
    {
       final Resources res = activity.getResources();
@@ -232,8 +242,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       evAftWheel.setCurrentItem( isEvery ? 0 : 1 );
    }
    
-   
-   
+
+
    private void initIntervalWheel( Integer interval )
    {
       intervalWheel.setViewAdapter( new NumericWheelAdapter( activity, 1, 999 ) );
@@ -244,8 +254,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
          intervalWheel.setCurrentItem( 0 );
    }
    
-   
-   
+
+
    private void initFreqWheel( Map< Integer, List< Object >> elements )
    {
       final Resources res = activity.getResources();
@@ -304,8 +314,8 @@ public class RecurrPickerDialog extends AbstractPickerDialog
       }
    }
    
-   
-   
+
+
    private final static < V > V getPatternElement( Map< Integer, List< Object > > elements,
                                                    int key,
                                                    Class< V > type )

@@ -61,7 +61,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
    private EditText text;
    
    
-   
+
    public final static NoteEditFragment newInstance( Bundle config )
    {
       final NoteEditFragment fragment = new NoteEditFragment();
@@ -71,8 +71,8 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -90,8 +90,8 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -99,8 +99,8 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       text.requestFocus();
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -111,34 +111,35 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
                                       config.getParcelable( Config.NOTE ) );
    }
    
-   
-   
+
+
    public String getNoteTitle()
    {
       return title.getText().toString();
    }
    
-   
-   
+
+
    public String getNoteText()
    {
       return text.getText().toString();
    }
    
-   
-   
+
+
    private void showNote( View content, RtmTaskNote note )
    {
       final TextView createdDate = (TextView) content.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
+      createdDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+                                                           note.getCreatedDate()
                                                                .getTime(),
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
       title.setText( note.getTitle() );
       text.setText( note.getText() );
    }
    
-   
-   
+
+
    public RtmTaskNote getConfiguredNoteAssertNotNull()
    {
       final RtmTaskNote note = configuration.getParcelable( Config.NOTE );
@@ -149,8 +150,8 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       return note;
    }
    
-   
-   
+
+
    @Override
    public boolean hasChanges()
    {
@@ -162,8 +163,8 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
                                   Strings.nullIfEmpty( UIUtils.getTrimmedText( text ) ) );
    }
    
-   
-   
+
+
    @Override
    public boolean saveChanges()
    {
@@ -194,8 +195,8 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
       return ok;
    }
    
-   
-   
+
+
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

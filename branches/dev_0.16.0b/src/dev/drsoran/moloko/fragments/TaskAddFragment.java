@@ -118,7 +118,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
    }
    
    
-   
+
    public final static TaskAddFragment newInstance( Bundle config )
    {
       final TaskAddFragment fragment = new TaskAddFragment();
@@ -128,15 +128,15 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return fragment;
    }
    
-   
-   
+
+
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-   
-   
+
+
    @Override
    protected Bundle getInitialValues()
    {
@@ -184,14 +184,15 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return initialValues;
    }
    
-   
-   
+
+
    @Override
    protected void initializeHeadSection()
    {
       final ParcelableDate created = getConfiguredCreatedDateAssertNotNull();
       
-      addedDate.setText( MolokoDateUtils.formatDateTime( created.getTime(),
+      addedDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+                                                         created.getTime(),
                                                          FULL_DATE_FLAGS ) );
       completedDate.setVisibility( View.GONE );
       postponed.setVisibility( View.GONE );
@@ -200,8 +201,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                                  getString( R.string.app_name ) ) );
    }
    
-   
-   
+
+
    @Override
    protected void registerInputListeners()
    {
@@ -218,8 +219,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                       } );
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -271,8 +272,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                                   config.getString( Config.NEW_TASK_URI ) );
    }
    
-   
-   
+
+
    @Override
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -282,8 +283,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                             ParcelableDate.newInstanceIfNotNull( new Date() ) );
    }
    
-   
-   
+
+
    private ParcelableDate getConfiguredCreatedDateAssertNotNull()
    {
       final ParcelableDate date = configuration.getParcelable( Config.CREATED_DATE );
@@ -294,22 +295,22 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return date;
    }
    
-   
-   
+
+
    private Uri getConfiguredNewTaskUri()
    {
       return configuration.getParcelable( Config.NEW_TASK_URI );
    }
    
-   
-   
+
+
    private void configuredNewTaskUri( Uri newTaskUri )
    {
       configuration.putParcelable( Config.NEW_TASK_URI, newTaskUri );
    }
    
-   
-   
+
+
    private String getConfiguredListId()
    {
       if ( configuration.containsKey( Tasks.LIST_ID ) )
@@ -321,8 +322,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
          return null;
    }
    
-   
-   
+
+
    private String getConfiguredLocationId()
    {
       if ( configuration.containsKey( Tasks.LOCATION_ID ) )
@@ -334,16 +335,16 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
          return null;
    }
    
-   
-   
+
+
    private List< String > getConfiguredTags()
    {
       return new ArrayList< String >( Arrays.asList( TextUtils.split( Strings.emptyIfNull( configuration.getString( Tasks.TAGS ) ),
                                                                       Tasks.TAGS_SEPARATOR ) ) );
    }
    
-   
-   
+
+
    /**
     * @return the list ID of the last removed list name
     */
@@ -365,8 +366,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return listId;
    }
    
-   
-   
+
+
    private String getIdByName( List< Pair< String, String >> idsToNames,
                                String name )
    {
@@ -383,8 +384,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return res;
    }
    
-   
-   
+
+
    @Override
    public boolean saveChanges()
    {
@@ -407,8 +408,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                   return R.string.toast_insert_task;
                }
                
-               
-               
+
+
                @Override
                protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
                                                                                Task entity )
@@ -429,16 +430,16 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                   return operations;
                }
                
-               
-               
+
+
                @Override
                protected Uri getContentUri()
                {
                   return Tasks.CONTENT_URI;
                }
                
-               
-               
+
+
                @Override
                protected String getPath()
                {
@@ -472,8 +473,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       return ok;
    }
    
-   
-   
+
+
    private final Task newTask()
    {
       final Date created = getConfiguredCreatedDateAssertNotNull().getDate();
@@ -513,8 +514,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
                        Strings.EMPTY_STRING );
    }
    
-   
-   
+
+
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
@@ -536,8 +537,8 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
       }
    }
    
-   
-   
+
+
    @Override
    protected TextView getCommitTextView()
    {

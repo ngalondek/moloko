@@ -1,37 +1,39 @@
+/* 
+ * Copyright (c) 2011 Ronny Röhricht
+ *
+ * This file is part of Moloko.
+ *
+ * Moloko is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Moloko is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Contributors:
+ * Ronny Röhricht - implementation
+ */
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternLexer;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
-
-/* 
- *	Copyright (c) 2011 Ronny Röhricht
- *
- *	This file is part of Moloko.
- *
- *	Moloko is free software: you can redistribute it and/or modify
- *	it under the terms of the GNU General Public License as published by
- *	the Free Software Foundation, either version 3 of the License, or
- *	(at your option) any later version.
- *
- *	Moloko is distributed in the hope that it will be useful,
- *	but WITHOUT ANY WARRANTY; without even the implied warranty of
- *	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *	GNU General Public License for more details.
- *
- *	You should have received a copy of the GNU General Public License
- *	along with Moloko.  If not, see <http://www.gnu.org/licenses/>.
- *
- *	Contributors:
- * Ronny Röhricht - implementation
- */
 
 public class RecurrencePatternTestCase
 {
@@ -39,17 +41,24 @@ public class RecurrencePatternTestCase
    
    private final static SimpleDateFormat SDF_PARSE = new SimpleDateFormat( "dd.MM.yyyy" );
    
+   private final static String SDF_PARSE_FORMAT = "%s.%s.";
+   
+   private final static String SDF_PARSE_FORMAT_YEAR = "%s.%s.%s";
+   
    private final static SimpleDateFormat SDF_FORMAT = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
    
    
-
+   
    private static void parseRecurrencePattern( String string,
                                                String expected,
                                                boolean isEvery )
    {
       final RecurrencePatternLexer lexer = new RecurrencePatternLexer( new ANTLRStringStream( string ) );
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
+      
       final RecurrencePatternParser parser = new RecurrencePatternParser( antlrTokens );
+      parser.setDateFormatContext( new TestDateFormaterContext( "%s.%s.",
+                                                                "%s.%s.%s" ) );
       
       System.out.println( ">input: " + string );
       
@@ -67,8 +76,8 @@ public class RecurrencePatternTestCase
       }
    }
    
-
-
+   
+   
    private static String buildPattern( String freq,
                                        int interval,
                                        String... resolution )
@@ -94,8 +103,8 @@ public class RecurrencePatternTestCase
       return result.toString();
    }
    
-
-
+   
+   
    public final static void execute() throws ParseException
    {
       parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_YEARLY_LIT,

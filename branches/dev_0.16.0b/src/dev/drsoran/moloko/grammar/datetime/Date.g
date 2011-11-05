@@ -21,6 +21,7 @@ options
    import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateReturn;
    import dev.drsoran.moloko.grammar.datetime.AbstractDateParser;
    import dev.drsoran.moloko.grammar.LexerException;
+   import dev.drsoran.moloko.grammar.IDateFormatContext;
    import dev.drsoran.moloko.util.MolokoCalendar;
 }
 
@@ -41,12 +42,14 @@ options
    
    protected int numberStringToNumber( String string )
    {
-      switch( string.charAt( 0 ) )
+   	final String numStr = string.toLowerCase();
+
+      switch( numStr.charAt( 0 ) )
       {
          case 'o' : return 1;
          case 't' :
          {
-            switch( string.charAt( 1 ) )
+            switch( numStr.charAt( 1 ) )
             {
                case 'w' : return 2;
                case 'h' : return 3;
@@ -54,7 +57,7 @@ options
          }
          case 'f' :
          {
-            switch( string.charAt( 1 ) )
+            switch( numStr.charAt( 1 ) )
             {
                case 'o' : return 4;
                case 'i' : return 5;
@@ -62,7 +65,7 @@ options
          }
          case 's' :
          {
-            switch( string.charAt( 1 ) )
+            switch( numStr.charAt( 1 ) )
             {
                case 'i' : return 6;
                case 'e' : return 7;
@@ -76,18 +79,20 @@ options
    
    protected int weekdayStringToNumber( String string )
    {
-      switch( string.charAt( 0 ) )
+      final String weekDayStr = string.toLowerCase();
+     
+      switch( weekDayStr.charAt( 0 ) )
       {
          case 'm': return Calendar.MONDAY;
          case 't':
-           switch( string.charAt( 1 ) )
+           switch( weekDayStr.charAt( 1 ) )
             {
                case 'u' : return Calendar.TUESDAY;
                case 'h' : return Calendar.THURSDAY;
             }
          case 'w': return Calendar.WEDNESDAY;
          case 's':
-            switch( string.charAt( 1 ) )
+            switch( weekDayStr.charAt( 1 ) )
             {
                case 'a' : return Calendar.SATURDAY;
                case 'u' : return Calendar.SUNDAY;
@@ -98,28 +103,30 @@ options
    
    protected int monthStringToNumber( String string )
    {
-      switch( string.charAt( 0 ) )
+      final String monthStr = string.toLowerCase();
+      
+      switch( monthStr.charAt( 0 ) )
       {
          case 'f': return Calendar.FEBRUARY;           
          case 'm':
-         	switch( string.charAt( 2 ) )
+         	switch( monthStr.charAt( 2 ) )
             {
                case 'r' : return Calendar.MARCH;
                case 'y' : return Calendar.MAY;
             }
          case 'j':
-            switch( string.charAt( 1 ) )
+            switch( monthStr.charAt( 1 ) )
             {
                case 'a' : return Calendar.JANUARY;
                default  :
-                  switch( string.charAt( 2 ) )
+                  switch( monthStr.charAt( 2 ) )
                   {
                      case 'n' : return Calendar.JUNE;
                      case 'l' : return Calendar.JULY;
                   }
             }      
          case 'a': 
-            switch( string.charAt( 2 ) )
+            switch( monthStr.charAt( 1 ) )
             {
                case 'p' : return Calendar.APRIL;
                case 'u' : return Calendar.AUGUST;
@@ -167,7 +174,7 @@ parseDate [MolokoCalendar cal, boolean clearTime] returns [ParseDateReturn resul
       result = finishedDateParsing( cal );
    }
    : (
-       (   date_full         [$cal]
+       (   date_numeric      [$cal]
          | date_on           [$cal]
          | date_in_X_YMWD    [$cal]
          | date_end_of_the_MW[$cal]
@@ -235,7 +242,7 @@ parseDateWithin[boolean past] returns [MolokoCalendar epochStart, MolokoCalendar
       throw new RecognitionException();
    }
 
-date_full [MolokoCalendar cal]
+date_numeric [MolokoCalendar cal]
    @init
    {
       String pt1Str = null;
@@ -257,7 +264,7 @@ date_full [MolokoCalendar cal]
         }
      )?
      {
-        handleFullDate( cal, pt1Str, pt2Str, pt3Str );
+        handleNumericDate( cal, pt1Str, pt2Str, pt3Str );
      }
      ;
 

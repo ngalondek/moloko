@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import org.antlr.runtime.RecognitionException;
 
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
@@ -78,4 +79,8 @@ public interface IDateParser
    
    
    MolokoCalendar getCalendar();
+   
+   
+   
+   void setDateFormatContext( IDateFormatContext context );
 }

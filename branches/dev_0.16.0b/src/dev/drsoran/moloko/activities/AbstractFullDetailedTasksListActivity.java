@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
@@ -51,6 +52,16 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    }
    
    
+
+   @Override
+   protected void onNewIntent( Intent intent )
+   {
+      super.onNewIntent( intent );
+      
+      newTasksListFragmentbyIntent( intent );
+   }
+   
+
 
    @Override
    public boolean onCreateOptionsMenu( Menu menu )

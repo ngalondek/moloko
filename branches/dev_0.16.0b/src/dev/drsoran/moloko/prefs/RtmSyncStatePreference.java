@@ -36,8 +36,8 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.SyncStatusObserver;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -169,7 +169,8 @@ public class RtmSyncStatePreference extends InfoTextPreference implements
          }
          else
          {
-            final String date = MolokoDateUtils.formatDate( settings.getSyncTimeStamp()
+            final String date = MolokoDateUtils.formatDate( getContext(),
+                                                            settings.getSyncTimeStamp()
                                                                     .getTime(),
                                                             MolokoDateUtils.FORMAT_NUMERIC
                                                                | MolokoDateUtils.FORMAT_WITH_YEAR );

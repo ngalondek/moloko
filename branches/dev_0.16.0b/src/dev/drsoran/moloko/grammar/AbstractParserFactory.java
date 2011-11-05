@@ -35,33 +35,26 @@ public abstract class AbstractParserFactory
       throw new AssertionError();
    }
    
-
-
+   
+   
    protected final static < T > T createParserForLocale( Locale locale,
                                                          List< Class< ? extends T > > availableParserClasses )
    {
       for ( Class< ? extends T > parserClass : availableParserClasses )
       {
-         try
+         final Locale parserLocale = getParserLocale( parserClass );
+         
+         if ( parserLocale != null && equalLocales( parserLocale, locale ) )
          {
-            final Locale parserLocale = (Locale) parserClass.getField( "LOCALE" )
-                                                            .get( null );
-            
-            if ( parserLocale.hashCode() == locale.hashCode()
-               || parserLocale.getLanguage()
-                              .equalsIgnoreCase( locale.getLanguage() ) )
-               return createParser( parserClass );
-         }
-         catch ( Throwable e )
-         {
+            return createParser( parserClass );
          }
       }
       
       return createDefaultParser( availableParserClasses );
    }
    
-
-
+   
+   
    protected static < T > T createDefaultParser( List< Class< ? extends T > > availableParserClasses )
    {
       if ( availableParserClasses.size() > 0 )
@@ -70,8 +63,8 @@ public abstract class AbstractParserFactory
          return null;
    }
    
-
-
+   
+   
    protected final static < T > List< T > getAvailableParsers( List< Class< ? extends T > > availableParserClasses )
    {
       final List< T > availableParsers = new ArrayList< T >( availableParserClasses.size() );
@@ -86,8 +79,85 @@ public abstract class AbstractParserFactory
       return availableParsers;
    }
    
-
-
+   
+   
+   protected final static < T > Locale getDefaultParserLocale( List< Class< ? extends T > > availableParserClasses )
+   {
+      if ( availableParserClasses.size() > 0 )
+      {
+         return getParserLocale( availableParserClasses.get( 0 ) );
+      }
+      
+      return null;
+   }
+   
+   
+   
+   protected final static < T > Locale getNearestParserLocale( Locale refLocale,
+                                                               List< Class< ? extends T > > availableParserClasses )
+   {
+      Locale nearestLocale = null;
+      
+      if ( availableParserClasses.size() > 0 )
+      {
+         for ( Class< ? extends T > parserClass : availableParserClasses )
+         {
+            final Locale parserLocale = getParserLocale( parserClass );
+            
+            if ( parserLocale != null && equalLocales( parserLocale, refLocale ) )
+            {
+               nearestLocale = parserLocale;
+            }
+         }
+         
+         if ( nearestLocale == null )
+            nearestLocale = getDefaultParserLocale( availableParserClasses );
+      }
+      
+      return nearestLocale;
+   }
+   
+   
+   
+   protected final static < T > List< Locale > getAvailableParserLocales( List< Class< ? extends T > > availableParserClasses )
+   {
+      List< Locale > locales = new ArrayList< Locale >( availableParserClasses.size() );
+      
+      for ( Class< ? extends T > parserClass : availableParserClasses )
+      {
+         final Locale parserLocale = getParserLocale( parserClass );
+         
+         if ( parserLocale != null )
+            locales.add( parserLocale );
+      }
+      
+      return locales;
+   }
+   
+   
+   
+   private final static boolean equalLocales( Locale locale1, Locale locale2 )
+   {
+      return locale1.hashCode() == locale2.hashCode()
+         || locale1.getLanguage().equalsIgnoreCase( locale2.getLanguage() );
+   }
+   
+   
+   
+   private final static < T > Locale getParserLocale( Class< ? extends T > parserClass )
+   {
+      try
+      {
+         return (Locale) parserClass.getField( "LOCALE" ).get( null );
+      }
+      catch ( Throwable e )
+      {
+         return null;
+      }
+   }
+   
+   
+   
    private final static < T > T createParser( Class< ? extends T > parserClass )
    {
       try

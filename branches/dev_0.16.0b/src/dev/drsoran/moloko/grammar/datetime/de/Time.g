@@ -119,17 +119,30 @@ time_point_in_time [MolokoCalendar cal]
           cal.set( Calendar.SECOND, 0 );
        }
      )
-   )
+     am_pm[$cal]?)
+   ;
+   catch[ RecognitionException e ]
+   {
+      throw e;
+   }
+   
+am_pm [MolokoCalendar cal]
+   : AM
+   | PM
+   {
+      cal.add( Calendar.HOUR_OF_DAY, 12 );
+   }
    ;
    catch[ RecognitionException e ]
    {
       throw e;
    }
 
+
 /*
    This parses time in the format:
-      - @|at|,? [0-9]+(:[0-9]+(:[0-9]+)?)?
-      - @|at|,? [0-9]+ h|m|s ([0-9]+ h|m|s ([0-9]+ h|m|s)?)?
+      - @|at|,? [0-9]+(:[0-9]+(:[0-9]+)?)? am_pm? ,?
+      - @|at|,? [0-9]+ h|m|s ([0-9]+ h|m|s ([0-9]+ h|m|s)?)? am_pm? ,?
 
    return true in case of EOF.
 */
@@ -157,6 +170,7 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn r
                        ( time_naturalspec[$cal]
                          time_naturalspec[$cal]?)?)
                    )
+      am_pm[$cal]? COMMA?
    {
       if ( adjustDay && getCalendar().after( cal ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );
@@ -337,6 +351,10 @@ HOURS     : 'stunden'  | 'stunde'  | 'std'         | 'h';
 MINUTES   : 'minuten'  | 'minute'  | 'min'         | 'm';
 
 SECONDS   : 'sekunden' | 'sekunde' | 'se'('c'|'k') | 's';
+
+AM        : 'vorm'DOT? | 'vormittag'('s')?;
+
+PM        : 'nachm'DOT? | 'nachmittag'('s')?;
 
 COMMA     : ',';
 

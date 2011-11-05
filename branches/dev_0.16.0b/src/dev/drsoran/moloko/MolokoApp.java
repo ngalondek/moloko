@@ -37,6 +37,8 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import dev.drsoran.moloko.grammar.AndroidDateFormatContext;
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.notification.MolokoNotificationManager;
 import dev.drsoran.moloko.receivers.TimeTickReceiver;
 import dev.drsoran.moloko.sync.periodic.IPeriodicSyncHandler;
@@ -45,6 +47,7 @@ import dev.drsoran.moloko.util.ListenerList;
 import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 @ReportsCrashes( formKey = "dDVHTDhVTmdYcXJ5cURtU2w0Q0EzNmc6MQ", mode = ReportingInteractionMode.NOTIFICATION, resNotifTickerText = R.string.acra_crash_notif_ticker_text, resNotifTitle = R.string.acra_crash_notif_title, resNotifText = R.string.acra_crash_notif_text, resNotifIcon = android.R.drawable.stat_notify_error, resDialogText = R.string.acra_crash_dialog_text, resDialogIcon = android.R.drawable.ic_dialog_info, resDialogTitle = R.string.acra_crash_dialog_title, resDialogCommentPrompt = R.string.acra_crash_comment_prompt, resDialogOkToast = R.string.acra_crash_dialog_ok_toast )
@@ -68,6 +71,8 @@ public class MolokoApp extends Application
    private ListenerList< IOnBootCompletedListener > bootCompletedListeners;
    
    private ListenerList< IOnNetworkStatusChangedListener > networkStatusListeners;
+   
+   private IDateFormatContext dateFormatContext;
    
    
    
@@ -101,7 +106,7 @@ public class MolokoApp extends Application
          throw new IllegalStateException( e );
       }
       
-      SETTINGS = new Settings( this );
+      SETTINGS = Settings.getInstance( getApplicationContext() );
       
       MOLOKO_NOTIFICATION_MANAGER = new MolokoNotificationManager( this );
       
@@ -112,6 +117,7 @@ public class MolokoApp extends Application
       PERIODIC_SNYC_HANDLER = PeriodicSyncHandlerFactory.createPeriodicSyncHandler( getApplicationContext() );
       
       initParserLanguages();
+      initDateFormatContext();
    }
    
    
@@ -121,11 +127,15 @@ public class MolokoApp extends Application
    {
       super.onTerminate();
       
+      SETTINGS.release();
+      
       MOLOKO_NOTIFICATION_MANAGER.shutdown();
       
       PERIODIC_SNYC_HANDLER.shutdown();
       
       unregisterReceiver( TIME_TICK_RECEIVER );
+      
+      deleteDateFormatContext();
    }
    
    
@@ -143,6 +153,22 @@ public class MolokoApp extends Application
    private void initParserLanguages()
    {
       RecurrenceParsing.initPatternLanguage( getResources() );
+   }
+   
+   
+   
+   private void initDateFormatContext()
+   {
+      dateFormatContext = new AndroidDateFormatContext( getApplicationContext() );
+      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
+   }
+   
+   
+   
+   private void deleteDateFormatContext()
+   {
+      dateFormatContext = null;
+      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
    }
    
    
@@ -175,6 +201,20 @@ public class MolokoApp extends Application
    public Handler getHandler()
    {
       return handler;
+   }
+   
+   
+   
+   public static IDateFormatContext getDateFormatContext( Context context )
+   {
+      return MolokoApp.get( context ).getDateFormatContext();
+   }
+   
+   
+   
+   public IDateFormatContext getDateFormatContext()
+   {
+      return dateFormatContext;
    }
    
    

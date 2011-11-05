@@ -45,10 +45,12 @@ public class MolokoPreferencesActivity extends PreferenceActivity
       
       getWindow().setFeatureDrawableResource( Window.FEATURE_LEFT_ICON,
                                               R.drawable.ic_title_raw_launcher );
+      
+      enablePreferences( getPreferenceScreen() );
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -57,8 +59,25 @@ public class MolokoPreferencesActivity extends PreferenceActivity
       cleanUpPreferences( getPreferenceScreen() );
    }
    
-
-
+   
+   
+   private void enablePreferences( PreferenceGroup group )
+   {
+      final int count = group.getPreferenceCount();
+      
+      for ( int i = 0; i < count; i++ )
+      {
+         final Preference pref = group.getPreference( i );
+         
+         if ( pref instanceof PreferenceGroup )
+            enablePreferences( (PreferenceGroup) pref );
+         else if ( pref instanceof IMolokoPreference )
+            ( (IMolokoPreference) pref ).checkEnabled();
+      }
+   }
+   
+   
+   
    private void cleanUpPreferences( PreferenceGroup group )
    {
       final int count = group.getPreferenceCount();

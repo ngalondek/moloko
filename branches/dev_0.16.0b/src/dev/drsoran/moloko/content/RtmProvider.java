@@ -45,7 +45,7 @@ public class RtmProvider extends ContentProvider
    private final static String TAG = "Moloko."
       + RtmProvider.class.getSimpleName();
    
-   private final static String DATABASE_NAME = "rtm.db";
+   public final static String DATABASE_NAME = "rtm.db";
    
    private final static int DATABASE_VERSION = 1;
    
@@ -61,8 +61,8 @@ public class RtmProvider extends ContentProvider
          super( context, DATABASE_NAME, null, DATABASE_VERSION );
       }
       
-
-
+      
+      
       @Override
       public void onCreate( SQLiteDatabase db )
       {
@@ -74,8 +74,8 @@ public class RtmProvider extends ContentProvider
          }
       }
       
-
-
+      
+      
       @Override
       public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion )
       {
@@ -88,7 +88,7 @@ public class RtmProvider extends ContentProvider
       }
    }
    
-
+   
    private final static class MatchType< T extends IProviderPart >
    {
       public T part = null;
@@ -99,7 +99,7 @@ public class RtmProvider extends ContentProvider
    private RtmProviderOpenHelper dbHelper = null;
    
    
-
+   
    @Override
    public boolean onCreate()
    {
@@ -135,15 +135,15 @@ public class RtmProvider extends ContentProvider
       return true;
    }
    
-
-
+   
+   
    public TransactionalAccess newTransactionalAccess() throws SQLException
    {
       return TransactionalAccess.newTransactionalAccess( dbHelper );
    }
    
-
-
+   
+   
    @Override
    public Cursor query( Uri uri,
                         String[] projection,
@@ -180,8 +180,8 @@ public class RtmProvider extends ContentProvider
       return cursor;
    }
    
-
-
+   
+   
    @Override
    public String getType( Uri uri )
    {
@@ -198,8 +198,8 @@ public class RtmProvider extends ContentProvider
       return type;
    }
    
-
-
+   
+   
    public IProviderPart getPart( Uri uri )
    {
       // Find the DB part that can handle the URI.
@@ -210,15 +210,15 @@ public class RtmProvider extends ContentProvider
       return null;
    }
    
-
-
+   
+   
    public List< IRtmProviderPart > getMutableParts()
    {
       return mutableParts;
    }
    
-
-
+   
+   
    @Override
    public Uri insert( Uri uri, ContentValues values )
    {
@@ -240,8 +240,8 @@ public class RtmProvider extends ContentProvider
       return resUri;
    }
    
-
-
+   
+   
    @Override
    public int delete( Uri uri, String where, String[] whereArgs )
    {
@@ -275,8 +275,8 @@ public class RtmProvider extends ContentProvider
       return numDeleted;
    }
    
-
-
+   
+   
    public synchronized void clear( List< ? extends IRtmProviderPart > parts ) throws OperationApplicationException
    {
       final ArrayList< ContentProviderOperation > deleteOps = new ArrayList< ContentProviderOperation >();
@@ -311,8 +311,8 @@ public class RtmProvider extends ContentProvider
       }
    }
    
-
-
+   
+   
    @Override
    public int update( Uri uri,
                       ContentValues values,
@@ -350,8 +350,8 @@ public class RtmProvider extends ContentProvider
       return numUpdated;
    }
    
-
-
+   
+   
    private < T extends IProviderPart > MatchType< T > matchUriToPart( List< T > parts,
                                                                       Uri uri )
    {

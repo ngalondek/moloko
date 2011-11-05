@@ -371,4 +371,6 @@
       android:name="android.permission.VIBRATE" />
    <uses-permission
       android:name="android.permission.READ_CONTACTS" />
+   <uses-permission
+      android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest> 

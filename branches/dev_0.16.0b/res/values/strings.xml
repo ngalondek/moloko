@@ -477,6 +477,7 @@
    <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>
    <string name="moloko_prefs_acra_summary_off">Please send error reports to support development</string>
    <string name="moloko_prefs_send_log_text">Send Moloko device log to developers</string>
+   <string name="moloko_prefs_send_db_text">Send Moloko database to delvelopers</string>
    <string name="moloko_prefs_clear_db_text">Clear the database and swipe all data</string>
    <string name="moloko_about_text">About Moloko</string>
    <!-- Dialogs -->
@@ -487,6 +488,7 @@
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Database cleared</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Clearing the database failed</string>
+      <string name="moloko_prefs_send_db_toast_failed">Could not access the database</string>
 
    <!-- Error reporting -->
    <string name="acra_crash_notif_ticker_text">Moloko has or had entered an unexpected state. Please send an error report.</string>

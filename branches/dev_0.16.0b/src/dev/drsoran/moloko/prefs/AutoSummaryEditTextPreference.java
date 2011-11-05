@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -25,8 +25,8 @@ package dev.drsoran.moloko.prefs;
 import android.content.Context;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.util.Strings;
 
@@ -40,8 +40,8 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
       super( context, attrs );
    }
    
-
-
+   
+   
    @Override
    protected void onAttachedToHierarchy( PreferenceManager preferenceManager )
    {
@@ -50,15 +50,23 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
       setOnPreferenceChangeListener( this );
    }
    
-
-
+   
+   
+   @Override
+   public void checkEnabled()
+   {
+   }
+   
+   
+   
+   @Override
    public void cleanUp()
    {
       setOnPreferenceChangeListener( null );
    }
    
-
-
+   
+   
    @Override
    public CharSequence getSummary()
    {
@@ -75,8 +83,8 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public void setSummary( CharSequence summary )
    {
@@ -94,8 +102,9 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
       }
    }
    
-
-
+   
+   
+   @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
       if ( newValue != null && newValue instanceof String
@@ -106,5 +115,4 @@ public class AutoSummaryEditTextPreference extends EditTextPreference implements
       
       return true;
    }
-   
 }

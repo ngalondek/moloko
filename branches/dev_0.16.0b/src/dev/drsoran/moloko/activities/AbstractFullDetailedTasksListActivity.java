@@ -51,18 +51,39 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       public final static int SHOW_LISTS = R.id.menu_show_lists;
    }
    
+   /**
+    * This flag indicates that a new Intent has been received. Activities which are singleTop are paused before the new
+    * Intent is delivered. So replacing the fragment directly in onNewIntent can cause a state loss exception due to
+    * pause. So we store the state and reload in onResume().
+    */
+   private boolean newTasksListFragmentbyIntent = false;
    
-
+   
+   
    @Override
    protected void onNewIntent( Intent intent )
    {
       super.onNewIntent( intent );
       
-      newTasksListFragmentbyIntent( intent );
+      newTasksListFragmentbyIntent = true;
    }
    
-
-
+   
+   
+   @Override
+   protected void onResume()
+   {
+      super.onResume();
+      
+      if ( newTasksListFragmentbyIntent )
+      {
+         newTasksListFragmentbyIntent( getIntent() );
+         newTasksListFragmentbyIntent = false;
+      }
+   }
+   
+   
+   
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -97,8 +118,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       return true;
    }
    
-
-
+   
+   
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -113,16 +134,16 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       }
    }
    
-
-
+   
+   
    @Override
    public void onOpenTask( int pos )
    {
       startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-
-
+   
+   
    @Override
    public void onSelectTasks()
    {
@@ -131,16 +152,16 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                               getTaskSort() ) );
    }
    
-
-
+   
+   
    @Override
    public void onEditTask( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ) ) );
    }
    
-
-
+   
+   
    @Override
    public void onOpenList( int pos, String listId )
    {
@@ -149,8 +170,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                  null ) );
    }
    
-
-
+   
+   
    @Override
    public void onOpenLocation( int pos, String locationId )
    {
@@ -158,8 +179,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                  getTask( pos ).getLocationName() ) );
    }
    
-
-
+   
+   
    @Override
    public void onShowTasksWithTag( String tag )
    {
@@ -167,8 +188,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                             tag ) );
    }
    
-
-
+   
+   
    @Override
    public void onShowTasksWithTags( List< String > tags, String logicalOperator )
    {

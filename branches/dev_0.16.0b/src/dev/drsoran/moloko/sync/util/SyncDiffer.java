@@ -37,6 +37,7 @@ import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.INoopSyncOperation;
 import dev.drsoran.moloko.sync.operation.IServerSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncableList;
 import dev.drsoran.moloko.sync.syncable.IServerSyncable;
 
 
@@ -48,8 +49,8 @@ public class SyncDiffer
       throw new AssertionError();
    }
    
-
-
+   
+   
    public final static < T extends IContentProviderSyncable< T >> List< IContentProviderSyncOperation > inDiff( Iterable< T > serverIterable,
                                                                                                                 ContentProviderSyncableList< T > localList,
                                                                                                                 boolean fullSync )
@@ -102,7 +103,8 @@ public class SyncDiffer
          //
          // If we have no full sync, we have to delete local elements which have been
          // created and deleted locally but never synced to the server.
-         if ( fullSync || localElement.getDeletedDate() != null )
+         if ( fullSync || localElement.getDeletedDate() != null
+            || hasDeletedElements( localElement ) )
          {
             final IContentProviderSyncOperation operation = localElement.computeContentProviderDeleteOperation();
             
@@ -117,8 +119,8 @@ public class SyncDiffer
       return operations;
    }
    
-
-
+   
+   
    public final static < T extends IServerSyncable< T, V >, V > List< IServerSyncOperation< V > > outDiff( List< ? extends T > sortedServerList,
                                                                                                            List< ? extends T > sortedLocalList,
                                                                                                            Comparator< ? super T > comp,
@@ -218,5 +220,15 @@ public class SyncDiffer
       }
       
       return operations;
+   }
+   
+   
+   
+   private static < T extends IContentProviderSyncable< ? >> boolean hasDeletedElements( T element )
+   {
+      if ( element instanceof IContentProviderSyncableList< ? > )
+         return ( (IContentProviderSyncableList< ? >) element ).hasDeletedElements();
+      else
+         return false;
    }
 }

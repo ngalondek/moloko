@@ -31,15 +31,15 @@ public interface IContentProviderSyncable< T extends IContentProviderSyncable< T
 {
    public Date getDeletedDate();
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderInsertOperation();
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( T serverElement );
    
-
-
+   
+   
    public IContentProviderSyncOperation computeContentProviderDeleteOperation();
 }

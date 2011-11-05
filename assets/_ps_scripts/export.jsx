@@ -1,3 +1,5 @@
+﻿$.localize = true;
+
 var preProdFolder = Folder.selectDialog( "Select _pre_production folder",
                                          "/f/Programmierung/Projects/java/Moloko/assets/_pre_production" );
 var startFolder = Folder.selectDialog( "Select start folder", preProdFolder );
@@ -27,6 +29,8 @@ if ( preProdFolder != null && startFolder != null )
 		}
 	}
 	
+    loadMolokoStyles();
+    
 	exportFolder( startFolder, prefix );
 	
 	alert( "Finished!" );
@@ -695,4 +699,44 @@ function resolveLink( file )
 		return fileResolved;
    else
    	return null;
+}
+
+function loadMolokoStyles()
+{
+     var idsetd = charIDToTypeID( "setd" );
+    var desc1 = new ActionDescriptor();
+    var idnull = charIDToTypeID( "null" );
+        var ref1 = new ActionReference();
+        var idPrpr = charIDToTypeID( "Prpr" );
+        var idStyl = charIDToTypeID( "Styl" );
+        ref1.putProperty( idPrpr, idStyl );
+        var idcapp = charIDToTypeID( "capp" );
+        var idOrdn = charIDToTypeID( "Ordn" );
+        var idTrgt = charIDToTypeID( "Trgt" );
+        ref1.putEnumerated( idcapp, idOrdn, idTrgt );
+    desc1.putReference( idnull, ref1 );
+    var idT = charIDToTypeID( "T   " );
+    desc1.putPath( idT, new File( preProdFolder + "/../_ps_resources\\Moloko_Styles.asl" ) );
+    var idAppe = charIDToTypeID( "Appe" );
+    desc1.putBoolean( idAppe, true );
+    executeAction( idsetd, desc1, DialogModes.NO );
+}
+
+function applyMenuIconStyle()
+{
+   var idASty = charIDToTypeID( "ASty" );
+    var desc3 = new ActionDescriptor();
+    var idnull = charIDToTypeID( "null" );
+        var ref2 = new ActionReference();
+        var idStyl = charIDToTypeID( "Styl" );
+        ref2.putName( idStyl, "AndroidMenuIcon" );
+    desc3.putReference( idnull, ref2 );
+    var idT = charIDToTypeID( "T   " );
+        var ref3 = new ActionReference();
+        var idLyr = charIDToTypeID( "Lyr " );
+        var idOrdn = charIDToTypeID( "Ordn" );
+        var idTrgt = charIDToTypeID( "Trgt" );
+        ref3.putEnumerated( idLyr, idOrdn, idTrgt );
+    desc3.putReference( idT, ref3 );
+    executeAction( idASty, desc3, DialogModes.NO )
 }

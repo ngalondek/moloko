@@ -97,6 +97,7 @@
    <string name="key_notify_due_tasks_vibrate">notify_due_tasks_vibrate</string>
    <string name="key_notify_due_tasks_led">notify_due_tasks_led</string>
    <string name="key_notify_permanent">notify_permanent</string>
+   <string name="key_notify_permanent_overdue">notify_permanent_overdue</string>
    <string name="key_conn_use_https">conn_use_https</string>
    <string name="key_conn_use_proxy">conn_use_proxy</string>
    <string name="key_conn_proxy_host">conn_proxy_host</string>
@@ -336,10 +337,20 @@
      <string name="tasklists_menu_ctx_remove_def_list">Reset as default list</string>
 
    <!-- NotificationManager -->
-   <string name="notification_permanent">%1$d %2$s due, %3$d with high priority</string>
+   <string name="notification_permanent_today_title">Tasks for today</string>
+   <string name="notification_permanent_tomorrow_title">Tasks for tomorrow</string>
+   <string name="notification_permanent_today_and_tomorrow_title">Tasks for %1$s, %2$s</string>
+   <string name="notification_permanent_overdue_title">Overdue tasks</string>
+      <!-- >1 task due, 0 tasks overdue -->
+   <string name="notification_permanent_text_multiple">%1$d %2$s due, %3$d with high priority</string>
+      <!-- >0 task due, >0 tasks overdue -->
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s due, %1$d %2$s overdue</string>
+      <!-- 0 tasks due, >1 task overdue -->
+   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s overdue</string>
+      <!-- 1 task due or overdue, show task name -->
+   <string name="notification_permanent_text_one_task">%1$s</string>
    <string name="notification_due_ticker">%1$s due %2$s</string>
-   <string name="notification_due">due at %1$s</string>
-   <string name="notification_due_today_and_tomorrow_title">Tasks for %1$s, %2$s</string>
+   <string name="notification_due">due at %1$s</string>   
 
    <!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">No tasks to display</string>
@@ -485,6 +496,7 @@
    <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
    <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tasks due today and tomorrow</string>
    <string name="moloko_prefs_notification_permanent_default_value">2</string>
+   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Remind overdue tasks</string>
    <string name="moloko_prefs_cat_help_dev_title">Support development</string>
    <string name="moloko_prefs_acra_title">Enable error reporting</string>
    <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>

@@ -291,10 +291,18 @@
      <string name="tasklists_menu_ctx_remove_def_list">Ne plus utiliser comme liste par défaut</string>
 
    <!-- NotificationManager -->
-   <string name="notification_permanent">%1$d %2$s à faire, %3$d avec une priorité haute</string>
+   <string name="notification_permanent_today_title">Tasks for today</string>
+   <string name="notification_permanent_tomorrow_title">Tasks for tomorrow</string>
+   <string name="notification_permanent_today_and_tomorrow_title">Tâches du %1$s au %2$s</string>
+   <string name="notification_permanent_overdue_title">Overdue tasks</string>
+      <!-- >1 task due, 0 tasks overdue -->
+   <string name="notification_permanent_text_multiple">%1$d %2$s à faire, %3$d avec une priorité haute</string>
+      <!-- >0 task due, >0 tasks overdue -->
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s due, %1$d %2$s overdue</string>
+      <!-- 0 tasks due, >1 task overdue -->
+   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s overdue</string>
    <string name="notification_due_ticker">À faire du %1$s au %2$s</string>
    <string name="notification_due">à faire à %1$s</string>
-   <string name="notification_due_today_and_tomorrow_title">Tâches du %1$s au %2$s</string>
 
    <!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Aucune tâche</string>
@@ -422,6 +430,7 @@
    <string name="moloko_prefs_notification_permanent_today">Tâches à faire aujourd\'hui</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Tâches à faire demain</string>
    <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tâches à faire aujourd\'hui et demain</string>
+   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Remind overdue tasks</string>
    <string name="moloko_prefs_cat_help_dev_title">Support development</string>
    <string name="moloko_prefs_acra_title">Activer les rapports d\'erreurs</string>
    <string name="moloko_prefs_acra_summary_on">Merci d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -151,7 +151,7 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
                   && dueTime.after( now ) )
                {
                   // we only show the week day
-                  dueText = MolokoDateUtils.getDayOfWeekString( dueTime.weekDay,
+                  dueText = MolokoDateUtils.getDayOfWeekString( dueTime.weekDay + 1,
                                                                 false );
                }
                

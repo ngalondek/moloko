@@ -84,7 +84,7 @@
    
    <!-- Date/Time format -->
       <!-- Example: 12.25 -->
-      <string name="numeric_date_pattern">%1$s.%2$s</string>
+      <string name="numeric_date_pattern">%1$s.%2$s.</string>
       <string name="numeric_date_format">d.M.</string>
       <!-- Example: 12.25.2000 -->
       <string name="numeric_date_pattern_year">%1$s.%2$s.%3$s</string>
@@ -286,10 +286,18 @@
      <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
      
    <!-- NotificationManager -->
-   <string name="notification_permanent">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
+   <string name="notification_permanent_today_title">Aufgaben für heute</string>
+   <string name="notification_permanent_tomorrow_title">Aufgaben für morgen</string>
+   <string name="notification_permanent_today_and_tomorrow_title">Aufgaben für %1$s, %2$s</string>
+   <string name="notification_permanent_overdue_title">Überfällige Aufgaben</string>
+      <!-- >1 task due, 0 tasks overdue -->
+   <string name="notification_permanent_text_multiple">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
+      <!-- >0 task due, >0 tasks overdue -->
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s fällig, %1$d %2$s überfällig</string>
+      <!-- 0 tasks due, >1 task overdue -->
+   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s überfällig</string>
    <string name="notification_due_ticker">%1$s fällig %2$s</string>
    <string name="notification_due">fällig um %1$s</string>
-   <string name="notification_due_today_and_tomorrow_title">Aufgaben für %1$s, %2$s</string>
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
@@ -419,6 +427,7 @@
    <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
    <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Heutige und morgige Aufgaben</string>
+   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">An überfällige Aufgaben erinnern</string>
    <string name="moloko_prefs_cat_help_dev_title">Helfen Sie bei der Entwicklung</string>
    <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
    <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>

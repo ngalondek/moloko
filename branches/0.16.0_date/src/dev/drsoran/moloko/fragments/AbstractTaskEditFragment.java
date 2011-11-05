@@ -810,7 +810,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       boolean ok = validateName();
       
       // Due
-      ok = ok && validateDue() != null;
+      ok = ok && isEditDueEmpty() || validateDue() != null;
       
       // Recurrence
       ok = ok && validateRecurrence() != null;
@@ -890,8 +890,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       
       if ( UIUtils.hasInputCommitted( actionId ) )
       {
-         if ( !TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_DUE_TEXT,
-                                                   String.class ) ) )
+         if ( !isEditDueEmpty() )
          {
             final MolokoCalendar cal = validateDue();
             stayInEditText = cal == null;
@@ -968,6 +967,14 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
       
       return cal;
+   }
+   
+
+
+   protected boolean isEditDueEmpty()
+   {
+      return TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_DUE_TEXT,
+                                                 String.class ) );
    }
    
 
@@ -1050,8 +1057,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       
       if ( UIUtils.hasInputCommitted( actionId ) )
       {
-         if ( !TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
-                                                   String.class ) ) )
+         if ( !isEditRecurrenceEmpty() )
          {
             final Pair< String, Boolean > recurrence = validateRecurrence();
             stayInEditText = recurrence == null;
@@ -1132,6 +1138,14 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
 
 
+   protected boolean isEditRecurrenceEmpty()
+   {
+      return TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
+                                                 String.class ) );
+   }
+   
+
+
    private void commitEditRecurrence()
    {
       final String recurrStr = getCurrentValue( ExtraInitialValues.EDIT_RECURRENCE_TEXT,
@@ -1205,8 +1219,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       
       if ( UIUtils.hasInputCommitted( actionId ) )
       {
-         if ( !TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_ESTIMATE_TEXT,
-                                                   String.class ) ) )
+         if ( !isEditEstimateEmpty() )
          {
             final long millis = validateEstimate();
             stayInEditText = millis == -1;
@@ -1277,6 +1290,14 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
       
       return millis;
+   }
+   
+
+
+   protected boolean isEditEstimateEmpty()
+   {
+      return TextUtils.isEmpty( getCurrentValue( ExtraInitialValues.EDIT_ESTIMATE_TEXT,
+                                                 String.class ) );
    }
    
 

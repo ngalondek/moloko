@@ -56,14 +56,14 @@ public class EstimatePickerDialog extends AbstractPickerDialog
    private WheelView unitWheel;
    
    
-   
+
    public EstimatePickerDialog( Activity activity )
    {
       this( activity, -1 );
    }
    
-   
-   
+
+
    public EstimatePickerDialog( Activity activity, long initial )
    {
       this.context = activity;
@@ -94,8 +94,8 @@ public class EstimatePickerDialog extends AbstractPickerDialog
       init( activity, value, unit );
    }
    
-   
-   
+
+
    private void init( final Activity activity, int initialValue, int unit )
    {
       if ( initialValue == 0 )
@@ -120,8 +120,8 @@ public class EstimatePickerDialog extends AbstractPickerDialog
          {
          }
          
-         
-         
+
+
          public void onScrollingFinished( WheelView wheel )
          {
             // 0-based
@@ -157,30 +157,38 @@ public class EstimatePickerDialog extends AbstractPickerDialog
       this.impl.setOwnerActivity( activity );
    }
    
-   
-   
+
+
    @Override
    public void show()
    {
       impl.show();
    }
    
+
+
+   @Override
+   public void dismiss()
+   {
+      impl.dismiss();
+   }
    
-   
+
+
    public int getValue()
    {
       return numberWheel.getCurrentItem() + 1;
    }
    
-   
-   
+
+
    public int getUnit()
    {
       return unitWheel.getCurrentItem();
    }
    
-   
-   
+
+
    public long getMillis()
    {
       long millis = 1000 * getValue(); // s -> ms
@@ -205,8 +213,8 @@ public class EstimatePickerDialog extends AbstractPickerDialog
       return millis;
    }
    
-   
-   
+
+
    private void setUnits( int pos )
    {
       final Resources res = context.getResources();

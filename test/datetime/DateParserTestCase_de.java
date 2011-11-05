@@ -269,6 +269,48 @@ public class DateParserTestCase_de
                     0 );
       }
       {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.set( Calendar.YEAR, 2010 );
+         cal.set( Calendar.MONTH, Calendar.OCTOBER );
+         cal.set( Calendar.DAY_OF_MONTH, 10 );
+         
+         parseDate( "4:10 vormittags, 10.10.2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    4,
+                    10,
+                    0 );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.set( Calendar.YEAR, 2010 );
+         cal.set( Calendar.MONTH, Calendar.OCTOBER );
+         cal.set( Calendar.DAY_OF_MONTH, 10 );
+         
+         parseDate( "4:10 nachm., 10.10.2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    16,
+                    10,
+                    0 );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.set( Calendar.YEAR, 2010 );
+         cal.set( Calendar.MONTH, Calendar.OCTOBER );
+         cal.set( Calendar.DAY_OF_MONTH, 10 );
+         
+         parseDate( "4:10, 10.10.2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    4,
+                    10,
+                    0 );
+      }
+      {
          final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();     
          parseDate( "heute@12",
                     cal.get( Calendar.DAY_OF_MONTH ),

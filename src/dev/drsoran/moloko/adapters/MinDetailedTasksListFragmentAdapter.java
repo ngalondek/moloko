@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
-import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,14 +50,14 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
    private final int resourceId;
    
    
-   
+
    public MinDetailedTasksListFragmentAdapter( Context context, int resourceId )
    {
       this( context, resourceId, Collections.< Task > emptyList() );
    }
    
-   
-   
+
+
    public MinDetailedTasksListFragmentAdapter( Context context, int resourceId,
       List< Task > tasks )
    {
@@ -68,15 +67,15 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
       this.resourceId = resourceId;
    }
    
-   
-   
+
+
    public int getLayoutRessource()
    {
       return resourceId;
    }
    
-   
-   
+
+
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
@@ -115,8 +114,8 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
       return convertView;
    }
    
-   
-   
+
+
    private final void setDueDate( TextView view, Task task )
    {
       // if has a due date
@@ -134,7 +133,7 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
          {
             // If it has a time, we show the time
             if ( hasDueTime )
-               dueText = MolokoDateUtils.formatTime( dueMillis );
+               dueText = MolokoDateUtils.formatTime( context, dueMillis );
             else
                // We only show the 'Today' phrase
                dueText = context.getString( R.string.phr_today );
@@ -152,18 +151,16 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
                   && dueTime.after( now ) )
                {
                   // we only show the week day
-                  dueText = DateUtils.getRelativeTimeSpanString( dueMillis,
-                                                                 System.currentTimeMillis(),
-                                                                 DateUtils.WEEK_IN_MILLIS,
-                                                                 DateUtils.FORMAT_SHOW_WEEKDAY )
-                                     .toString();
+                  dueText = MolokoDateUtils.getDayOfWeekString( dueTime.weekDay + 1,
+                                                                false );
                }
                
                // Not the same week or same week but in the past
                else
                {
                   // we show the date but w/o year
-                  dueText = MolokoDateUtils.formatDate( dueMillis,
+                  dueText = MolokoDateUtils.formatDate( context,
+                                                        dueMillis,
                                                         MolokoDateUtils.FORMAT_ABR_MONTH );
                }
             }
@@ -172,7 +169,8 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
             else
             {
                // we show the full date with year
-               dueText = MolokoDateUtils.formatDate( dueMillis,
+               dueText = MolokoDateUtils.formatDate( context,
+                                                     dueMillis,
                                                      MolokoDateUtils.FORMAT_ABR_MONTH
                                                         | MolokoDateUtils.FORMAT_WITH_YEAR );
             }
@@ -186,8 +184,8 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
          view.setVisibility( View.GONE );
    }
    
-   
-   
+
+
    private void setCompleted( ImageView view, Task task )
    {
       view.setEnabled( task.getCompleted() != null );

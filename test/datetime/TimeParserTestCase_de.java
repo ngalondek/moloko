@@ -34,10 +34,13 @@ public class TimeParserTestCase_de
       parseTime( "@mitternacht", 23, 59, 59 );
       parseTime( "um 23:00", 23, 00, 00 );
       parseTime( "@11", 11, 00, 00 );
+      parseTime( "1:13 vorm", 1, 13, 0 );
+      parseTime( "1:13 vorm.", 1, 13, 0 );
+      parseTime( "1:13 nachmittags", 13, 13, 0 );      
       
       parseTimeSpec( "12", 12, 0, 0 );
       parseTimeSpec( "1210", 12, 0, 0 );
-      parseTimeSpec( "12:13", 12, 13, 0 );
+      parseTimeSpec( "12:13", 12, 13, 0 );      
       parseTimeSpec( "12:13:25", 12, 13, 25 );
       parseTimeSpec( "12 h", 12, 0, 0 );
       parseTimeSpec( "12 h 13 minuten", 12, 13, 0 );

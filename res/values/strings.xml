@@ -85,12 +85,6 @@
 
 	<!-- Global keys -->
 	<string name="key_sync_inverval">sync_interval</string>
-	<string name="key_timezone_local">timezone_local</string>
-	<string name="key_timezone_sync_with_rtm">timezone_sync_with_rtm</string>
-	<string name="key_dateformat_local">dateformat_local</string>
-	<string name="key_dateformat_sync_with_rtm">dateformat_sync_with_rtm</string>
-	<string name="key_timeformat_local">timeformat_local</string>
-	<string name="key_timeformat_sync_with_rtm">timeformat_sync_with_rtm</string>
 	<string name="key_def_list_local">def_list_local</string>
 	<string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
 	<string name="key_lang_local">lang_local</string>
@@ -103,6 +97,7 @@
    <string name="key_notify_due_tasks_vibrate">notify_due_tasks_vibrate</string>
    <string name="key_notify_due_tasks_led">notify_due_tasks_led</string>
    <string name="key_notify_permanent">notify_permanent</string>
+   <string name="key_notify_permanent_overdue">notify_permanent_overdue</string>
    <string name="key_conn_use_https">conn_use_https</string>
    <string name="key_conn_use_proxy">conn_use_proxy</string>
    <string name="key_conn_proxy_host">conn_proxy_host</string>
@@ -123,12 +118,32 @@
    <string name="time_1h">1 hour</string>
    <string name="time_12h">12 hours</string>
    <string name="time_24h">1 day</string>
+   
+   <!-- Date/Time format -->
+      <!-- Example: 12/25 -->
+      <string name="numeric_date_pattern">%1$s/%2$s</string>
+      <string name="numeric_date_format">M/d</string>
+      <!-- Example: 12/25/2000 -->
+      <string name="numeric_date_pattern_year">%1$s/%2$s/%3$s</string>
+      <string name="numeric_date_format_year">M/d/yyyy</string>
+      <!-- %1 - month pattern, MMM or MMMM -->
+      <string name="date_with_text_month">%1$s d</string>
+      <string name="date_with_text_month_year">%1$s d, yyyy</string>
+      <!--  %1 - weekday pattern, EEE or EEEE
+            %2 - month pattern, MMM or MMMM -->
+      <string name="date_with_weekday_text_month">%1$s, %2$s dd</string>
+      <string name="date_with_weekday_text_month_year">%1$s, %2$s d, yyyy</string>
+      <!-- %1 - time, %2 - date
+           Example: 12:00am, 12/25/2000 -->
+      <string name="date_with_time_pattern">%1$s, %2$s</string>
+      <string name="time_pattern_12">h:mma</string>
+      <string name="time_pattern_24">k:mm</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Please wait</string>
    <string name="phr_now">Now</string>
    <string name="phr_today">Today</string>
-   <string name="phr_today_with_date">Today the %1$s</string>
+   <string name="phr_today_with_date">Today %1$s</string>
    <string name="phr_tomorrow">Tomorrow</string>
    <string name="phr_tomorrow_with_date">Tomorrow the %1$s</string>
    <string name="phr_establish_connection">Establish an Internet connection to continue.</string>
@@ -152,7 +167,6 @@
    <string name="phr_loading">Loading...</string>
    <string name="phr_edit_dlg_done">Applying changes?</string>
    <string name="phr_edit_dlg_cancel">Cancel editing and lose all changes?</string>
-   <string name="phr_hint">Hint</string>
 
    <!-- Global errors -->
    <string name="err_error">Error</string>
@@ -165,7 +179,7 @@
    <string name="err_db_typed">Error during database access of %1$s.</string>
    <string name="err_entity_not_found">The %1$s could not be retrieved from the database.\n\nPlease check if the element exists.</string>
    <string name="err_unsupported_intent_action">The action %1$s is not supported by this activity.</string>
-   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nYou can change this by removing your local RTM account and create a new one with \'Read, Write and Delete\' permission.\n\nYour data remains unchanged.</string>
+   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nData you have changed with Moloko so far remains untouched. Nevertheless your made changes in Moloko are not going to be synchronized with the RTM server and are replaced by the server version, if newer.\n\nYou can change this by removing your RTM account from the device and create a new one with \'Read, Write and Delete\' permission.</string>
 
 	<!-- Global buttons -->
    <string name="btn_ok">OK</string>
@@ -323,10 +337,20 @@
      <string name="tasklists_menu_ctx_remove_def_list">Reset as default list</string>
 
    <!-- NotificationManager -->
-   <string name="notification_permanent">%1$d %2$s due, %3$d with high priority</string>
+   <string name="notification_permanent_today_title">Tasks for today</string>
+   <string name="notification_permanent_tomorrow_title">Tasks for tomorrow</string>
+   <string name="notification_permanent_today_and_tomorrow_title">Tasks for %1$s, %2$s</string>
+   <string name="notification_permanent_overdue_title">Overdue tasks</string>
+      <!-- >1 task due, 0 tasks overdue -->
+   <string name="notification_permanent_text_multiple">%1$d %2$s due, %3$d with high priority</string>
+      <!-- >0 task due, >0 tasks overdue -->
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s due, %3$d %4$s overdue</string>
+      <!-- 0 tasks due, >1 task overdue -->
+   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s overdue</string>
+      <!-- 1 task due or overdue, show task name -->
+   <string name="notification_permanent_text_one_task">%1$s</string>
    <string name="notification_due_ticker">%1$s due %2$s</string>
-   <string name="notification_due">due at %1$s</string>
-   <string name="notification_due_today_and_tomorrow_title">Tasks for %1$s, %2$s</string>
+   <string name="notification_due">due at %1$s</string>   
 
    <!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">No tasks to display</string>
@@ -439,8 +463,8 @@
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Settings</string>
    <string name="moloko_prefs_rtm_summary">Time and date format, default list etc.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s.</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click.</string>
+   <string name="moloko_prefs_rtm_sync_text_in_sync">Settings were last obtained from RTM server on %1$s</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">No RTM settings available. It uses local settings. To obtain settings please click</string>
    <string name="moloko_prefs_rtm_timezone_title">Timezone</string>
    <string name="moloko_prefs_rtm_dateformat_title">Date Format</string>
    <string name="moloko_prefs_rtm_dateformat_eu">European\n(14.02.2000)</string>
@@ -472,6 +496,7 @@
    <string name="moloko_prefs_notification_permanent_tomorrow">Tasks due tomorrow</string>
    <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tasks due today and tomorrow</string>
    <string name="moloko_prefs_notification_permanent_default_value">2</string>
+   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Remind overdue tasks</string>
    <string name="moloko_prefs_cat_help_dev_title">Support development</string>
    <string name="moloko_prefs_acra_title">Enable error reporting</string>
    <string name="moloko_prefs_acra_summary_on">Thanks for sending error reports to support development</string>

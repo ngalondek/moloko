@@ -7,7 +7,7 @@ grammar RecurrencePattern;
 
 @header
 {
-   package dev.drsoran.moloko.grammar;
+   package dev.drsoran.moloko.grammar.recurrence;
 
    import java.text.DateFormat;
    import java.text.ParseException;
@@ -20,12 +20,12 @@ grammar RecurrencePattern;
    import java.util.TimeZone;
 
    import dev.drsoran.moloko.grammar.lang.RecurrPatternLanguage;
-   import dev.drsoran.moloko.util.MolokoDateUtils;
+   import dev.drsoran.moloko.grammar.IDateFormatContext;
 }
 
 @lexer::header
 {
-   package dev.drsoran.moloko.grammar;
+   package dev.drsoran.moloko.grammar.recurrence;
 }
 
 @members
@@ -80,6 +80,12 @@ grammar RecurrencePattern;
       }
    }
 
+
+   public void setDateFormatContext( IDateFormatContext formatContext )
+   {
+      dateFormatContext = formatContext;
+   }
+
    
    private final static void addElement( Map< Integer, List< Object > > elements,
                                          int element,
@@ -93,6 +99,31 @@ grammar RecurrencePattern;
       values.add( value );
       elements.put( element, values );
    }      
+
+
+   private final String formatDateUntil( String value )
+   {
+      final SimpleDateFormat sdf = new SimpleDateFormat( DATE_PATTERN );
+      sdf.setTimeZone( TimeZone.getDefault() );
+      
+      try
+      {
+         sdf.parse( value );
+         
+         if ( dateFormatContext != null )
+         {
+            return dateFormatContext.formatDateNumeric( sdf.getCalendar().getTimeInMillis() );
+         }
+         else
+         {
+            return DateFormat.getDateInstance( DateFormat.SHORT ).format( sdf.getCalendar().getTime() );
+         }
+      }
+      catch ( ParseException e )
+      {
+         return null;
+      }
+   }
 
 
    public final static CmpOperators CMP_OPERATORS = new CmpOperators();
@@ -140,6 +171,8 @@ grammar RecurrencePattern;
    public final static String DATE_PATTERN      = "yyyyMMdd'T'HHmmss";
    
    public final static DateFormat DATE_FORMAT   = new SimpleDateFormat( DATE_PATTERN );
+   
+   private IDateFormatContext dateFormatContext;
    
    static
    {
@@ -212,9 +245,7 @@ parseRecurrencePattern [RecurrPatternLanguage lang,
      (
           OP_UNTIL date=VAL_DATE
           {
-             final String formatedDate = MolokoDateUtils.formatDate( DATE_PATTERN,
-                                                                     $date.text,
-                                                                     MolokoDateUtils.FORMAT_WITH_YEAR );
+             final String formatedDate = formatDateUntil( $date.text );
 
              if ( formatedDate != null )
              {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (c) 2010 Ronny Röhricht   
+  Copyright (c) 2011 Ronny Röhricht   
   
   This file is part of Moloko.
   
@@ -81,7 +81,26 @@
    <string name="time_1h">1 Stunde</string>
    <string name="time_12h">12 Stunden</string>
    <string name="time_24h">1 Tag</string>
-
+   
+   <!-- Date/Time format -->
+      <!-- Example: 12.25 -->
+      <string name="numeric_date_pattern">%1$s.%2$s.</string>
+      <string name="numeric_date_format">d.M.</string>
+      <!-- Example: 12.25.2000 -->
+      <string name="numeric_date_pattern_year">%1$s.%2$s.%3$s</string>
+      <string name="numeric_date_format_year">d.M.yyyy</string>
+      <!-- %1 - month pattern,  MMM or MMMM -->
+      <string name="date_with_text_month">d. %1$s</string>
+      <string name="date_with_text_month_year">d. %1$s yyyy</string>
+      <!--  %1 - weekday pattern, EEE or EEEE
+            %2 - month pattern, MMM or MMMM -->
+      <string name="date_with_weekday_text_month">%1$s, d. %2$s</string>
+      <string name="date_with_weekday_text_month_year">%1$s, d. %2$s yyyy</string>
+      <!-- %1 - time, %2 - date
+           Example: 12/25/2000, 12:00 -->
+      <string name="date_with_time_pattern">%2$s, %1$s</string>
+      <string name="time_pattern_12">h:mm a</string>
+      
    <!-- Global phrases -->
    <string name="phr_please_wait">Bitte warten</string>
    <string name="phr_now">Jetzt</string>
@@ -109,7 +128,6 @@
    <string name="phr_loading">Lädt gerade...</string>
    <string name="phr_edit_dlg_done">Änderungen übernehmen?</string>
    <string name="phr_edit_dlg_cancel">Bearbeitung abbrechen und alle Änderungen verwerfen?</string>
-   <string name="phr_hint">Hinweis</string>
 
    <!-- Global errors -->
    <string name="err_error">Fehler</string>
@@ -122,7 +140,7 @@
    <string name="err_db_typed">Datenbank-Zugriffsfehler beim Zugriff auf %1$s.</string>
    <string name="err_entity_not_found">%1$s konnte nicht aus der Datenbank geladen werden.\n\nBitte überprüfen Sie ob das Element existiert.</string>
    <string name="err_unsupported_intent_action">Die Aktion %1$s wird von dieser Activity nicht unterstützt.</string>
-   <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten.\n\nSie können dies Ändern, indem Sie Ihr aktuelles, lokales RTM Konto entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.\n\nIhre Daten bleiben unverändert.</string>
+   <string name="err_modify_access_level_read">Moloko hat nur \'Lese\' Zugriff auf Ihre Daten.\n\nDaten, die Sie mit Moloko bis jetzt geändert haben, bleiben erhalten. Dennoch werden die Änderungen nicht mit dem RTM Server synchronisiert und ggf. durch eine neuere Serverversion ersetzt.\n\nSie können dies ändern, indem Sie Ihr aktuelles, lokales RTM Konto vom Gerät entfernen und ein neues mit \'Lesen, Schreiben und Löschen\' Berechtigungen erstellen.</string>
    
 	<!-- Global buttons -->
 	<string name="btn_continue">Weiter</string>
@@ -186,6 +204,7 @@
    <string name="dlg_add_list_title">Neue Liste</string>
    <string name="dlg_rename_list_title">Liste umbenennen</string>
    <string name="dlg_add_rename_list_list_name_hint">Name der Liste</string>
+   <string name="dlg_add_rename_list_smart_filter_hint">SmartList-Filter</string>
       <!-- Toasts -->
       <string name="dlg_add_rename_list_toast_empty_list_name">Der Name der Liste darf nicht leer sein</string>
       <string name="dlg_add_rename_list_toast_invalid_list_name">Der Name der Liste darf nicht \'Inbox\' oder \'Sent\' sein</string>
@@ -267,10 +286,18 @@
      <string name="tasklists_menu_ctx_remove_def_list">Als Standardliste entfernen</string>
      
    <!-- NotificationManager -->
-   <string name="notification_permanent">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
+   <string name="notification_permanent_today_title">Aufgaben für heute</string>
+   <string name="notification_permanent_tomorrow_title">Aufgaben für morgen</string>
+   <string name="notification_permanent_today_and_tomorrow_title">Aufgaben für %1$s, %2$s</string>
+   <string name="notification_permanent_overdue_title">Überfällige Aufgaben</string>
+      <!-- >1 task due, 0 tasks overdue -->
+   <string name="notification_permanent_text_multiple">%1$d %2$s fällig, %3$d mit hoher Priorität</string>
+      <!-- >0 task due, >0 tasks overdue -->
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s fällig, %3$d %4$s überfällig</string>
+      <!-- 0 tasks due, >1 task overdue -->
+   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s überfällig</string>
    <string name="notification_due_ticker">%1$s fällig %2$s</string>
    <string name="notification_due">fällig um %1$s</string>
-   <string name="notification_due_today_and_tomorrow_title">Aufgaben für %1$s, %2$s</string>
    
 	<!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Keine Aufgaben zum Anzeigen</string>
@@ -371,8 +398,8 @@
    <!-- MolokoPreferences activity -->
    <string name="moloko_prefs_rtm_title">RTM Einstellungen</string>
    <string name="moloko_prefs_rtm_summary">Zeit- und Datumsformat, Standardliste usw.</string>
-   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen.</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken.</string>
+   <string name="moloko_prefs_rtm_sync_text_in_sync">Einstellungen wurden zuletzt am %1$s vom RTM Server abgerufen</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">Keine RTM Einstellungen vorhanden. Es werden lokale Einstellungen verwendet. Zum Abrufen vom RTM Server klicken</string>
    <string name="moloko_prefs_rtm_timezone_title">Zeitzone</string>
    <string name="moloko_prefs_rtm_dateformat_title">Datumsformat</string>
    <string name="moloko_prefs_rtm_dateformat_eu">Europäisch\n(14.02.2000)</string>
@@ -400,6 +427,7 @@
    <string name="moloko_prefs_notification_permanent_today">Heutige Aufgaben</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Morgige Aufgaben</string>
    <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Heutige und morgige Aufgaben</string>
+   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">An überfällige Aufgaben erinnern</string>
    <string name="moloko_prefs_cat_help_dev_title">Helfen Sie bei der Entwicklung</string>
    <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
    <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>

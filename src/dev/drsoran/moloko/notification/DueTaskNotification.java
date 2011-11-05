@@ -199,7 +199,8 @@ public class DueTaskNotification
    private String getDueTimeText()
    {
       return context.getString( R.string.notification_due,
-                                MolokoDateUtils.formatTime( dueTimeMillis ) );
+                                MolokoDateUtils.formatTime( context,
+                                                            dueTimeMillis ) );
    }
    
 

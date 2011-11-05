@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -27,11 +27,11 @@ import java.util.HashMap;
 
 public interface IOnSettingsChangedListener
 {
-   public final static int RTM_TIMEZONE = 1 << 0;
+   public final static int TIMEZONE = 1 << 0;
    
-   public final static int RTM_DATEFORMAT = 1 << 1;
+   public final static int DATEFORMAT = 1 << 1;
    
-   public final static int RTM_TIMEFORMAT = 1 << 2;
+   public final static int TIMEFORMAT = 1 << 2;
    
    public final static int RTM_DEFAULTLIST = 1 << 3;
    
@@ -39,13 +39,13 @@ public interface IOnSettingsChangedListener
    
    public final static int TASK_SORT = 1 << 5;
    
-   public final static int DATE_TIME_RELATED = RTM_TIMEZONE | RTM_DATEFORMAT
-      | RTM_TIMEFORMAT;
+   public final static int DATE_TIME_RELATED = TIMEZONE | DATEFORMAT
+      | TIMEFORMAT;
    
    public final static int ALL = Integer.MAX_VALUE;
    
    
-   
+
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues );
 }

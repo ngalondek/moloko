@@ -59,4 +59,25 @@ public final class TimeParserFactory extends AbstractParserFactory
    {
       return getAvailableParsers( availableParserClasses );
    }
+   
+   
+   
+   public final static Locale getDefaultTimeParserLocale()
+   {
+      return getDefaultParserLocale( availableParserClasses );
+   }
+   
+   
+   
+   public final static Locale getNearesMatchingTimeParserLocale( Locale locale )
+   {
+      return getNearestParserLocale( locale, availableParserClasses );
+   }
+   
+   
+   
+   public final static List< Locale > getAvailableTimeParserLocales()
+   {
+      return getAvailableParserLocales( availableParserClasses );
+   }
 }

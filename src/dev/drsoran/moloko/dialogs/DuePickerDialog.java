@@ -32,12 +32,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.util.MolokoCalendar;
+import dev.drsoran.moloko.util.MolokoDateUtils;
 
 
 public class DuePickerDialog extends AbstractPickerDialog
@@ -54,50 +55,39 @@ public class DuePickerDialog extends AbstractPickerDialog
    
    private final MolokoCalendar calendar;
    
-   private int dateFormat;
+   private final boolean is24hTimeFormat;
    
    
-   
+
    public DuePickerDialog( Activity activity )
    {
       this( activity, System.currentTimeMillis(), false );
    }
    
-   
-   
+
+
    public DuePickerDialog( Activity activity, long initial, boolean hasDueTime )
    {
-      this.calendar = MolokoCalendar.getInstance();
-      this.calendar.setTimeInMillis( initial != -1 ? initial
-                                                  : System.currentTimeMillis() );
-      this.calendar.setHasTime( hasDueTime );
+      calendar = MolokoCalendar.getInstance();
+      calendar.setTimeInMillis( initial != -1 ? initial
+                                             : System.currentTimeMillis() );
+      calendar.setHasTime( hasDueTime );
+      
+      is24hTimeFormat = MolokoApp.getSettings().Is24hTimeformat();
       
       init( activity, hasDueTime );
    }
    
-   
-   
+
+
    private void init( final Activity activity, boolean hasTime )
    {
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
       
-      final Settings settings = MolokoApp.getSettings();
+      final char[] dateFormatOrder = MolokoDateUtils.getDateFormatOrder( activity );
       
-      dateFormat = settings.getDateformat();
-      
-      if ( dateFormat == Settings.DATEFORMAT_EU )
-      {
-         dateDayWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_1 );
-         dateMonthWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_2 );
-      }
-      else
-      {
-         dateDayWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_2 );
-         dateMonthWheel = (WheelView) view.findViewById( R.id.due_dlg_date_wheel_1 );
-      }
-      
-      dateYearWheel = (WheelView) view.findViewById( R.id.due_dlg_year_wheel );
+      assignWheelsByDateFormat( view, dateFormatOrder );
       
       initDaysWheel( activity );
       initMonthsWheel( activity );
@@ -111,8 +101,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          {
          }
          
-         
-         
+
+
          public void onScrollingFinished( WheelView wheel )
          {
             updateCalendarDate();
@@ -126,8 +116,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          {
          }
          
-         
-         
+
+
          public void onScrollingFinished( WheelView wheel )
          {
             updateCalendarDate();
@@ -164,16 +154,24 @@ public class DuePickerDialog extends AbstractPickerDialog
       this.impl.setOwnerActivity( activity );
    }
    
-   
-   
+
+
    @Override
    public void show()
    {
       impl.show();
    }
    
+
+
+   @Override
+   public void dismiss()
+   {
+      impl.dismiss();
+   }
    
-   
+
+
    public MolokoCalendar getCalendar()
    {
       updateCalendarDate();
@@ -184,15 +182,15 @@ public class DuePickerDialog extends AbstractPickerDialog
       return timeWheelGroup.putTime( cal );
    }
    
-   
-   
+
+
    public boolean hasTime()
    {
       return timeWheelGroup.hasTime;
    }
    
-   
-   
+
+
    private void updateCalendarDate()
    {
       // First set the calendar to the first. Otherwise we get a wrap-around
@@ -209,8 +207,37 @@ public class DuePickerDialog extends AbstractPickerDialog
       calendar.set( Calendar.DAY_OF_MONTH, day );
    }
    
+
+
+   private void assignWheelsByDateFormat( View content, char[] dateFormatOrder )
+   {
+      final int[] genericWheels = new int[]
+      { R.id.due_dlg_date_wheel_1, R.id.due_dlg_date_wheel_2,
+       R.id.due_dlg_date_wheel_3 };
+      
+      for ( int i = 0; i < genericWheels.length || i < dateFormatOrder.length; i++ )
+      {
+         final char symbol = dateFormatOrder[ i ];
+         switch ( symbol )
+         {
+            case DateFormat.DATE:
+               dateDayWheel = (WheelView) content.findViewById( genericWheels[ i ] );
+               break;
+            case DateFormat.MONTH:
+               dateMonthWheel = (WheelView) content.findViewById( genericWheels[ i ] );
+               break;
+            case DateFormat.YEAR:
+               dateYearWheel = (WheelView) content.findViewById( genericWheels[ i ] );
+               break;
+            default :
+               break;
+            
+         }
+      }
+   }
    
-   
+
+
    private void initDaysWheel( Context context )
    {
       dateDayWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
@@ -222,8 +249,8 @@ public class DuePickerDialog extends AbstractPickerDialog
       dateDayWheel.setCurrentItem( calendar.get( Calendar.DAY_OF_MONTH ) - 1 );
    }
    
-   
-   
+
+
    private void initMonthsWheel( Context context )
    {
       dateMonthWheel.setViewAdapter( new DateFormatWheelTextAdapter( context,
@@ -235,8 +262,8 @@ public class DuePickerDialog extends AbstractPickerDialog
       dateMonthWheel.setCurrentItem( calendar.get( Calendar.MONTH ) );
    }
    
-   
-   
+
+
    private void initYearsWheel( Context context )
    {
       dateYearWheel.setViewAdapter( new NumericWheelAdapter( context,
@@ -263,7 +290,7 @@ public class DuePickerDialog extends AbstractPickerDialog
       private boolean hasTime;
       
       
-      
+
       public TimeWheelGroup( Context context, View view, int offIndex,
          boolean hasTime )
       {
@@ -287,14 +314,14 @@ public class DuePickerDialog extends AbstractPickerDialog
          wheelViews[ 2 ].addScrollingListener( this );
       }
       
-      
-      
+
+
       public void onScrollingStarted( WheelView wheel )
       {
       }
       
-      
-      
+
+
       public void onScrollingFinished( WheelView wheel )
       {
          if ( !notifying )
@@ -320,15 +347,15 @@ public class DuePickerDialog extends AbstractPickerDialog
          setLastIndex( wheel );
       }
       
-      
-      
+
+
       public MolokoCalendar putTime( MolokoCalendar cal )
       {
          if ( !hasTime )
             cal.setHasTime( false );
          else
          {
-            if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
+            if ( is24hTimeFormat )
                cal.set( Calendar.HOUR_OF_DAY,
                         wheelViews[ 0 ].getCurrentItem() - 1 );
             else
@@ -336,7 +363,7 @@ public class DuePickerDialog extends AbstractPickerDialog
             
             cal.set( Calendar.MINUTE, wheelViews[ 1 ].getCurrentItem() - 1 );
             
-            if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_12 )
+            if ( !is24hTimeFormat )
                cal.set( Calendar.AM_PM, wheelViews[ 2 ].getCurrentItem() - 1 );
             else
                cal.clear( Calendar.AM_PM );
@@ -348,11 +375,11 @@ public class DuePickerDialog extends AbstractPickerDialog
          return cal;
       }
       
-      
-      
+
+
       private void initHourWheel( Context context )
       {
-         if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_24 )
+         if ( is24hTimeFormat )
          {
             wheelViews[ 0 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
                                                                          calendar,
@@ -374,8 +401,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       }
       
-      
-      
+
+
       private void initMinuteWheel( Context context )
       {
          wheelViews[ 1 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
@@ -387,11 +414,11 @@ public class DuePickerDialog extends AbstractPickerDialog
             wheelViews[ 1 ].setCurrentItem( calendar.get( Calendar.MINUTE ) + 1 );
       }
       
-      
-      
+
+
       private void initAmPmWheel( Context context )
       {
-         if ( MolokoApp.getSettings().getTimeformat() == Settings.TIMEFORMAT_12 )
+         if ( !is24hTimeFormat )
          {
             wheelViews[ 2 ].setViewAdapter( new DueTimeWheelTextAdapter( context,
                                                                          calendar,
@@ -409,8 +436,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       }
       
-      
-      
+
+
       private void setOtherWheelsOff( WheelView wheel )
       {
          final int wheelIdx = getWheelIndex( wheel );
@@ -420,8 +447,8 @@ public class DuePickerDialog extends AbstractPickerDialog
                                                                                true );
       }
       
-      
-      
+
+
       private void restoreOtherWheels( WheelView wheel )
       {
          final int wheelIdx = getWheelIndex( wheel );
@@ -441,8 +468,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       }
       
-      
-      
+
+
       private int getWheelIndex( WheelView wheel )
       {
          for ( int i = 0; i < wheelViews.length; i++ )
@@ -452,8 +479,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          return -1;
       }
       
-      
-      
+
+
       private void setLastIndex( WheelView wheel )
       {
          final int wheelIdx = getWheelIndex( wheel );
@@ -474,8 +501,8 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       }
       
-      
-      
+
+
       private int getLastIndex( WheelView wheel )
       {
          final int wheelIdx = getWheelIndex( wheel );

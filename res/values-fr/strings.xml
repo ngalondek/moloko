@@ -81,6 +81,25 @@
    <string name="time_1h">1 heure</string>
    <string name="time_12h">12 heures</string>
    <string name="time_24h">1 jour</string>
+   <!-- Date/Time format -->
+      <!-- Example: 12/25 -->
+      <string name="numeric_date_pattern">%1$s/%2$s</string>
+      <string name="numeric_date_format">M/d</string>
+      <!-- Example: 12/25/2000 -->
+      <string name="numeric_date_pattern_year">%1$s/%2$s/%3$s</string>
+      <string name="numeric_date_format_year">M/d/yyyy</string>
+      <!-- %1 - month pattern, MMM or MMMM -->
+      <string name="date_with_text_month">%1$s d</string>
+      <string name="date_with_text_month_year">%1$s d, yyyy</string>
+      <!--  %1 - weekday pattern, EEE or EEEE
+            %2 - month pattern, MMM or MMMM -->
+      <string name="date_with_weekday_text_month">%1$s, %2$s dd</string>
+      <string name="date_with_weekday_text_month_year">%1$s, %2$s d, yyyy</string>
+      <!-- %1 - time, %2 - date
+           Example: 12:00am, 12/25/2000 -->
+      <string name="date_with_time_pattern">%1$s, %2$s</string>
+      <string name="time_pattern_12">h:mma</string>
+      <string name="time_pattern_24">k:mm</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Patientez</string>
@@ -110,7 +129,6 @@
    <string name="phr_loading">Chargement...</string>
    <string name="phr_edit_dlg_done">Appliquer les modifications?</string>
    <string name="phr_edit_dlg_cancel">Arrêter l\'édition et perdre les modifications?</string>
-   <string name="phr_hint">Hint</string>
 
    <!-- Global errors -->
    <string name="err_error">Erreur</string>
@@ -123,7 +141,7 @@
    <string name="err_db_typed">Erreur d\'accès à la base de données de %1$s.</string>
    <string name="err_entity_not_found">Le %1$s n\'a pas pu être récupéré dans la base de données.\n\nVeuillez vérifier si l\'élément existe.</string>
    <string name="err_unsupported_intent_action">L\'action %1$s n\'est pas supportée.</string>
-   <string name="err_modify_access_level_read">Moloko accède vos données en \'Lecture seule\'.\n\nVous pouvez changer cela en supprimant votre compte RTM local (celui de Moloko) et en le recréant avec les permissions \'Lecture, Ecriture, Suppression\'.\n\nVos données ne seront pas modifiées.</string>
+   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nData you have changed with Moloko so far remains untouched. Nevertheless your made changes in Moloko are not going to be synchronized with the RTM server and are replaced by the server version, if newer.\n\nYou can change this by removing your RTM account from the device and create a new one with \'Read, Write and Delete\' permission.</string>
 
    <!-- Global buttons -->
    <string name="btn_ok">OK</string>
@@ -273,10 +291,18 @@
      <string name="tasklists_menu_ctx_remove_def_list">Ne plus utiliser comme liste par défaut</string>
 
    <!-- NotificationManager -->
-   <string name="notification_permanent">%1$d %2$s à faire, %3$d avec une priorité haute</string>
+   <string name="notification_permanent_today_title">Tasks for today</string>
+   <string name="notification_permanent_tomorrow_title">Tasks for tomorrow</string>
+   <string name="notification_permanent_today_and_tomorrow_title">Tâches du %1$s au %2$s</string>
+   <string name="notification_permanent_overdue_title">Overdue tasks</string>
+      <!-- >1 task due, 0 tasks overdue -->
+   <string name="notification_permanent_text_multiple">%1$d %2$s à faire, %3$d avec une priorité haute</string>
+      <!-- >0 task due, >0 tasks overdue -->
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s due, %3$d %4$s overdue</string>
+      <!-- 0 tasks due, >1 task overdue -->
+   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s overdue</string>
    <string name="notification_due_ticker">À faire du %1$s au %2$s</string>
    <string name="notification_due">à faire à %1$s</string>
-   <string name="notification_due_today_and_tomorrow_title">Tâches du %1$s au %2$s</string>
 
    <!-- AbstractTasksList -->
    <string name="abstaskslist_no_tasks">Aucune tâche</string>
@@ -354,6 +380,7 @@
       <string name="auth_err_cause_inv_auth_token">Le jeton d\'authentification reçu est incorrect</string>
       <string name="auth_err_cause_scurity">Problème de sécurité</string>
       <string name="auth_err_cause_inv_login_url">La page de connexion reçue n\'est pas la bonne</string>
+      <string name="auth_err_cause_no_service">An error occurred during the creation of the RTM service connection</string>
 
    <!-- AccountPreferences + activity -->
    <string name="acc_pref_title">Paramètres généraux</string>
@@ -373,7 +400,7 @@
    <string name="moloko_prefs_rtm_title">Paramètres RTM</string>
    <string name="moloko_prefs_rtm_summary">Format d\'heure et de date, liste par défaut etc.</string>
    <string name="moloko_prefs_rtm_sync_text_in_sync">Les paramètres ont été récupéré du serveur pour la dernière fois le %1$s</string>
-   <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur.</string>
+   <string name="moloko_prefs_rtm_sync_text_no_settings">Aucun paramètre RTM disponible. On utilise les paramètres locaux. Cliquez pour récupérer les paramètres du serveur</string>
    <string name="moloko_prefs_rtm_timezone_title">Fuseau horaire</string>
    <string name="moloko_prefs_rtm_dateformat_title">Format de la date</string>
    <string name="moloko_prefs_rtm_dateformat_eu">Européen\n(14.02.2000)</string>
@@ -403,6 +430,7 @@
    <string name="moloko_prefs_notification_permanent_today">Tâches à faire aujourd\'hui</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Tâches à faire demain</string>
    <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tâches à faire aujourd\'hui et demain</string>
+   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Remind overdue tasks</string>
    <string name="moloko_prefs_cat_help_dev_title">Support development</string>
    <string name="moloko_prefs_acra_title">Activer les rapports d\'erreurs</string>
    <string name="moloko_prefs_acra_summary_on">Merci d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>

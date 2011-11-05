@@ -199,7 +199,36 @@ public class DateParserTestCase_en
          cal.set( Calendar.MONTH, Calendar.OCTOBER );
          cal.set( Calendar.DAY_OF_MONTH, 10 );
          
-         parseDate( "10.10.2010",
+         parseDate( "10/10/2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ) );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.set( Calendar.YEAR, 2010 );
+         cal.set( Calendar.MONTH, Calendar.JANUARY );
+         cal.set( Calendar.DAY_OF_MONTH, 13 );
+         
+         // d/M/y
+         parseDate( "13/1/2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ) );
+         // M/d/y
+         parseDate( "1/13/2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ) );
+         
+         // y/M/d
+         parseDate( "2010/1/13",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ) );
+         
+         // y/d/M
+         parseDate( "2010/13/1",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ) );
@@ -220,7 +249,7 @@ public class DateParserTestCase_en
          cal.set( Calendar.MONTH, Calendar.OCTOBER );
          cal.set( Calendar.DAY_OF_MONTH, 10 );
          
-         parseDate( "10.10.2010 1 PM",
+         parseDate( "10/10/2010 1 PM",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ),
@@ -234,7 +263,7 @@ public class DateParserTestCase_en
          cal.set( Calendar.MONTH, Calendar.OCTOBER );
          cal.set( Calendar.DAY_OF_MONTH, 10 );
          
-         parseDate( "10.10.2010, 13h 15 minutes",
+         parseDate( "10/10/2010, 13h 15 minutes",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ),
@@ -248,12 +277,54 @@ public class DateParserTestCase_en
          cal.set( Calendar.MONTH, Calendar.OCTOBER );
          cal.set( Calendar.DAY_OF_MONTH, 10 );
          
-         parseDate( "13:15 10.10.2010",
+         parseDate( "13:15 10/10/2010",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ),
                     13,
                     15,
+                    0 );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.set( Calendar.YEAR, 2010 );
+         cal.set( Calendar.MONTH, Calendar.OCTOBER );
+         cal.set( Calendar.DAY_OF_MONTH, 10 );
+         
+         parseDate( "4:10am, 10/10/2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    4,
+                    10,
+                    0 );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.set( Calendar.YEAR, 2010 );
+         cal.set( Calendar.MONTH, Calendar.OCTOBER );
+         cal.set( Calendar.DAY_OF_MONTH, 10 );
+         
+         parseDate( "4:10p, 10/10/2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    16,
+                    10,
+                    0 );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.set( Calendar.YEAR, 2010 );
+         cal.set( Calendar.MONTH, Calendar.OCTOBER );
+         cal.set( Calendar.DAY_OF_MONTH, 10 );
+         
+         parseDate( "4:10, 10/10/2010",
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    4,
+                    10,
                     0 );
       }
       {

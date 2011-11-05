@@ -233,7 +233,7 @@ public class OutSyncTask implements IServerSyncable< OutSyncTask, RtmTaskList >
                                     serverElement.taskSeries.getRecurrence() ) )
             operation.add( Modification.newModificationOperation( newUri,
                                                                   TaskSeries.RECURRENCE,
-                                                                  taskSeries.getRecurrenceSentence(),
+                                                                  taskSeries.getRecurrence(),
                                                                   serverElement.taskSeries.getRecurrence() ) );
          
          // Tags

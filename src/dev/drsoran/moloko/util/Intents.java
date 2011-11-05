@@ -298,7 +298,7 @@ public final class Intents
                                                                Intent onClickIntent )
    {
       onClickIntent.setFlags( onClickIntent.getFlags()
-         | Intent.FLAG_ACTIVITY_CLEAR_TOP );
+         | Intent.FLAG_ACTIVITY_SINGLE_TOP );
       return PendingIntent.getActivity( context,
                                         0,
                                         onClickIntent,

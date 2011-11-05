@@ -58,7 +58,7 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
    private final static int NOTE_LOADER_ID = 1;
    
    
-   
+
    public final static NoteFragment newInstance( Bundle config )
    {
       final NoteFragment fragment = new NoteFragment();
@@ -68,8 +68,8 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -82,15 +82,16 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void initContent( ViewGroup container )
    {
       final RtmTaskNote note = getLoaderDataAssertNotNull();
       
       final TextView createdDate = (TextView) container.findViewById( R.id.note_created_date );
-      createdDate.setText( MolokoDateUtils.formatDateTime( note.getCreatedDate()
+      createdDate.setText( MolokoDateUtils.formatDateTime( getFragmentActivity(),
+                                                           note.getCreatedDate()
                                                                .getTime(),
                                                            MolokoDateUtils.FORMAT_WITH_YEAR ) );
       
@@ -100,8 +101,8 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
          throw new AssertionError( "UIUtils.initializeTitleWithTextLayout" );
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -112,22 +113,22 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
                                   config.getString( Config.NOTE_ID ) );
    }
    
-   
-   
+
+
    public String getConfiguredNoteId()
    {
       return configuration.getString( Config.NOTE_ID );
    }
    
-   
-   
+
+
    public RtmTaskNote getNote()
    {
       return getLoaderData();
    }
    
-   
-   
+
+
    @Override
    public Loader< RtmTaskNote > newLoaderInstance( int id, Bundle args )
    {
@@ -135,24 +136,24 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
                                     args.getString( Config.NOTE_ID ) );
    }
    
-   
-   
+
+
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_note );
    }
    
-   
-   
+
+
    @Override
    public int getLoaderId()
    {
       return NOTE_LOADER_ID;
    }
    
-   
-   
+
+
    @Override
    public boolean canBeEdited()
    {
@@ -160,8 +161,8 @@ public class NoteFragment extends MolokoLoaderFragment< RtmTaskNote > implements
          && AccountUtils.isWriteableAccess( getFragmentActivity() );
    }
    
-   
-   
+
+
    @Override
    public IEditFragment< ? extends Fragment > createEditFragmentInstance()
    {

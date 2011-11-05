@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import android.app.SearchManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.DialogFragment;
@@ -63,16 +62,6 @@ public class TaskSearchResultActivity extends
    private boolean lastQuerySucceeded = true;
    
    
-
-   @Override
-   protected void onNewIntent( Intent intent )
-   {
-      super.onNewIntent( intent );
-      
-      newTasksListFragmentbyIntent( intent );
-   }
-   
-
 
    @Override
    public boolean onCreateOptionsMenu( Menu menu )

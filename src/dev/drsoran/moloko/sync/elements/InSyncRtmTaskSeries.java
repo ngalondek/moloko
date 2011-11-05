@@ -25,6 +25,7 @@ package dev.drsoran.moloko.sync.elements;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.ContentProviderOperation;
@@ -38,7 +39,7 @@ import dev.drsoran.moloko.content.RtmTaskSeriesProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncableList;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 import dev.drsoran.moloko.util.MolokoDateUtils;
@@ -48,11 +49,12 @@ import dev.drsoran.rtm.ParticipantList;
 
 
 public class InSyncRtmTaskSeries implements
-         IContentProviderSyncable< InSyncRtmTaskSeries >
+         IContentProviderSyncableList< InSyncRtmTaskSeries >
 {
    private static final class LessIdComperator implements
             Comparator< InSyncRtmTaskSeries >
    {
+      @Override
       public int compare( InSyncRtmTaskSeries object1,
                           InSyncRtmTaskSeries object2 )
       {
@@ -87,10 +89,44 @@ public class InSyncRtmTaskSeries implements
    
    
    
+   @Override
    public Date getDeletedDate()
    {
       // Always return null here since taskserieses have no deleted date.
       return null;
+   }
+   
+   
+   
+   @Override
+   public boolean hasDeletedElements()
+   {
+      boolean hasDeleted = false;
+      
+      // Deleted tasks?
+      for ( Iterator< InSyncRtmTask > i = inSyncTasks.iterator(); i.hasNext()
+         && !hasDeleted; )
+      {
+         hasDeleted = i.next().getDeletedDate() != null;
+      }
+      
+      return hasDeleted;
+   }
+   
+   
+   
+   public boolean hasUndeletedTasks()
+   {
+      boolean hasUndeleted = false;
+      
+      // Deleted tasks?
+      for ( Iterator< InSyncRtmTask > i = inSyncTasks.iterator(); i.hasNext()
+         && !hasUndeleted; )
+      {
+         hasUndeleted = i.next().getDeletedDate() == null;
+      }
+      
+      return hasUndeleted;
    }
    
    
@@ -103,30 +139,36 @@ public class InSyncRtmTaskSeries implements
    
    
    
+   @Override
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       final ContentProviderSyncOperation.Builder operation = ContentProviderSyncOperation.newInsert();
       
-      // Insert new taskseries
+      if ( hasUndeletedTasks() )
       {
-         operation.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
-                                                .withValues( RtmTaskSeriesProviderPart.getContentValues( taskSeries,
-                                                                                                         true ) )
-                                                .build() );
-      }
-      
-      // Insert tasks
-      {
-         for ( InSyncRtmTask inSyncTask : inSyncTasks )
+         // Insert new taskseries
          {
-            operation.add( inSyncTask.computeContentProviderInsertOperation() );
+            operation.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
+                                                   .withValues( RtmTaskSeriesProviderPart.getContentValues( taskSeries,
+                                                                                                            true ) )
+                                                   .build() );
          }
-      }
-      
-      // Insert participants
-      {
-         final ParticipantList participantList = taskSeries.getParticipants();
-         operation.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
+         
+         // Insert tasks
+         {
+            for ( InSyncRtmTask inSyncTask : inSyncTasks )
+            {
+               // For mixed deleted tasks and non-deleted tasks in one taskseries
+               if ( inSyncTask.getDeletedDate() == null )
+                  operation.add( inSyncTask.computeContentProviderInsertOperation() );
+            }
+         }
+         
+         // Insert participants
+         {
+            final ParticipantList participantList = taskSeries.getParticipants();
+            operation.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
+         }
       }
       
       return operation.build();
@@ -134,6 +176,7 @@ public class InSyncRtmTaskSeries implements
    
    
    
+   @Override
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       // RtmTaskSeries, Notes, Participant gets deleted by a RtmTaskSeriesProvider DB trigger if it references no more
@@ -143,6 +186,7 @@ public class InSyncRtmTaskSeries implements
       // Delete tasks
       for ( InSyncRtmTask inSyncTask : inSyncTasks )
       {
+         // For mixed deleted tasks and non-deleted tasks in one taskseries
          if ( inSyncTask.getDeletedDate() != null )
             operation.add( inSyncTask.computeContentProviderDeleteOperation() );
       }
@@ -152,6 +196,7 @@ public class InSyncRtmTaskSeries implements
    
    
    
+   @Override
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( InSyncRtmTaskSeries serverElement )
    {
       final ContentProviderSyncOperation.Builder operations = ContentProviderSyncOperation.newUpdate();
@@ -270,5 +315,4 @@ public class InSyncRtmTaskSeries implements
       
       return inSyncTasks;
    }
-   
 }

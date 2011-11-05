@@ -41,12 +41,12 @@ import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
-import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
+import dev.drsoran.moloko.sync.syncable.IContentProviderSyncableList;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 
 
 public class ParticipantList implements
-         IContentProviderSyncable< ParticipantList >, Parcelable
+         IContentProviderSyncableList< ParticipantList >, Parcelable
 {
    private final static String TAG = "Moloko."
       + ParticipantList.class.getSimpleName();
@@ -178,6 +178,14 @@ public class ParticipantList implements
    public Date getDeletedDate()
    {
       return null;
+   }
+   
+   
+   
+   @Override
+   public boolean hasDeletedElements()
+   {
+      return false;
    }
    
    

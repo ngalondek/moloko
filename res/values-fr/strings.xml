@@ -408,6 +408,7 @@
    <string name="moloko_prefs_acra_summary_on">Merci d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
    <string name="moloko_prefs_acra_summary_off">S\'il vous plait, veuillez envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
    <string name="moloko_prefs_send_log_text">Envoyer le rapports d\'erreur de Moloko à l\'équipe de développement</string>
+   <string name="moloko_prefs_send_db_text">Send Moloko database to delvelopers</string>
    <string name="moloko_prefs_clear_db_text">Effacer la base de données et supprimer toutes les données</string>
    <string name="moloko_about_text">A propos de Moloko</string>
    <!-- Dialogs -->
@@ -418,6 +419,7 @@
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Base de données effacée</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Echec de l\'effacement de la base de données</string>
+      <string name="moloko_prefs_send_db_toast_failed">Could not access the database</string>
 
    <!-- Error reporting -->
    <string name="acra_crash_notif_ticker_text">Moloko est ou a été dans un état inattendu. Veuillez envoyer un rapport d\'erreur.</string>

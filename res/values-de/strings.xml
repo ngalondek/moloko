@@ -404,7 +404,8 @@
    <string name="moloko_prefs_acra_title">Fehlerberichte senden</string>
    <string name="moloko_prefs_acra_summary_on">Danke für Ihre Unterstützung bei der Entwicklung</string>
    <string name="moloko_prefs_acra_summary_off">Bitte unterstützen Sie die Entwicklung durch das Senden von Fehlerberichten</string>
-   <string name="moloko_prefs_send_log_text">Moloko Geräte-Log an Entwickler senden</string> 
+   <string name="moloko_prefs_send_log_text">Moloko Geräte-Log an Entwickler senden</string>
+   <string name="moloko_prefs_send_db_text">Moloko Datenbank an Entwickler senden</string>
    <string name="moloko_prefs_clear_db_text">Alle Daten aus der Datenbank entfernen</string>  
       <!-- Dialogs -->
       <string name="moloko_prefs_rtm_sync_dlg_message">Einstellungen werden vom RTM Server abgerufen</string>
@@ -414,6 +415,7 @@
       <!-- Toasts -->
       <string name="moloko_prefs_clear_db_toast_cleared">Datenbank gesäubert</string>
       <string name="moloko_prefs_clear_db_toast_clearing_failed">Säubern der Datenbank fehlgeschlagen</string>
+      <string name="moloko_prefs_send_db_toast_failed">Auf die Datenbank konnte nicht zugegriffen werden</string>
     
    <!-- Error reporting -->   
    <string name="acra_crash_notif_ticker_text">Moloko ist oder war in einem fehlerhaften Zustand. Bitte senden Sie den Bericht</string>

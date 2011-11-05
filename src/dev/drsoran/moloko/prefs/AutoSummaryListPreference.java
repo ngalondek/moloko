@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -27,8 +27,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import dev.drsoran.moloko.sync.util.SyncUtils;
 
@@ -40,14 +40,14 @@ public class AutoSummaryListPreference extends ListPreference implements
    private int clickedDialogIndex;
    
    
-
+   
    public AutoSummaryListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
    }
    
-
-
+   
+   
    @Override
    protected void onAttachedToHierarchy( PreferenceManager preferenceManager )
    {
@@ -62,8 +62,16 @@ public class AutoSummaryListPreference extends ListPreference implements
       }
    }
    
-
-
+   
+   
+   @Override
+   public void checkEnabled()
+   {
+   }
+   
+   
+   
+   @Override
    public void cleanUp()
    {
       setOnPreferenceChangeListener( null );
@@ -76,8 +84,8 @@ public class AutoSummaryListPreference extends ListPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public CharSequence getSummary()
    {
@@ -94,8 +102,8 @@ public class AutoSummaryListPreference extends ListPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public void setSummary( CharSequence summary )
    {
@@ -113,8 +121,8 @@ public class AutoSummaryListPreference extends ListPreference implements
       }
    }
    
-
-
+   
+   
    public String getClickedDialogValue()
    {
       if ( clickedDialogIndex > -1
@@ -124,8 +132,9 @@ public class AutoSummaryListPreference extends ListPreference implements
          return null;
    }
    
-
-
+   
+   
+   @Override
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
    {
@@ -143,8 +152,9 @@ public class AutoSummaryListPreference extends ListPreference implements
       }
    }
    
-
-
+   
+   
+   @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
       if ( newValue != null && newValue instanceof String
@@ -155,5 +165,4 @@ public class AutoSummaryListPreference extends ListPreference implements
       
       return true;
    }
-   
 }

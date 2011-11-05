@@ -40,6 +40,7 @@ import dev.drsoran.moloko.content.ParticipantsProviderPart;
 import dev.drsoran.moloko.sync.lists.ContentProviderSyncableList;
 import dev.drsoran.moloko.sync.operation.ContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
+import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.syncable.IContentProviderSyncable;
 import dev.drsoran.moloko.sync.util.SyncDiffer;
 
@@ -53,13 +54,15 @@ public class ParticipantList implements
    public static final Parcelable.Creator< ParticipantList > CREATOR = new Parcelable.Creator< ParticipantList >()
    {
       
+      @Override
       public ParticipantList createFromParcel( Parcel source )
       {
          return new ParticipantList( source );
       }
       
-
-
+      
+      
+      @Override
       public ParticipantList[] newArray( int size )
       {
          return new ParticipantList[ size ];
@@ -72,23 +75,23 @@ public class ParticipantList implements
    private final List< Participant > participants;
    
    
-
+   
    public ParticipantList( String taskSeriesId )
    {
       this.taskSeriesId = taskSeriesId;
       this.participants = new ArrayList< Participant >( 0 );
    }
    
-
-
+   
+   
    public ParticipantList( String taskSeriesId, List< Participant > participants )
    {
       this.taskSeriesId = taskSeriesId;
       this.participants = new ArrayList< Participant >( participants );
    }
    
-
-
+   
+   
    public ParticipantList( String taskSeriesId, Element elt )
    {
       this.taskSeriesId = taskSeriesId;
@@ -116,74 +119,79 @@ public class ParticipantList implements
       }
    }
    
-
-
+   
+   
    public ParticipantList( Parcel source )
    {
       this.taskSeriesId = source.readString();
       this.participants = source.createTypedArrayList( Participant.CREATOR );
    }
    
-
-
+   
+   
    public String getTaskSeriesId()
    {
       return taskSeriesId;
    }
    
-
-
+   
+   
    public List< Participant > getParticipants()
    {
       return Collections.unmodifiableList( participants );
    }
    
-
-
+   
+   
    public void addParticipant( Participant participant )
    {
       participants.add( participant );
    }
    
-
-
+   
+   
    public int getCount()
    {
       return participants.size();
    }
    
-
-
+   
+   
+   @Override
    public int describeContents()
    {
       return 0;
    }
    
-
-
+   
+   
+   @Override
    public void writeToParcel( Parcel dest, int flags )
    {
       dest.writeString( taskSeriesId );
       dest.writeTypedList( participants );
    }
    
-
-
+   
+   
+   @Override
    public Date getDeletedDate()
    {
       return null;
    }
    
-
-
+   
+   
+   @Override
    public IContentProviderSyncOperation computeContentProviderInsertOperation()
    {
       return ContentProviderSyncOperation.newInsert( ParticipantsProviderPart.insertParticipants( this ) )
                                          .build();
    }
    
-
-
+   
+   
+   @Override
    public IContentProviderSyncOperation computeContentProviderDeleteOperation()
    {
       final ContentProviderSyncOperation.Builder result = ContentProviderSyncOperation.newDelete();
@@ -196,16 +204,22 @@ public class ParticipantList implements
       return result.build();
    }
    
-
-
+   
+   
+   @Override
    public IContentProviderSyncOperation computeContentProviderUpdateOperation( ParticipantList update )
    {
       final ContentProviderSyncableList< Participant > syncList = new ContentProviderSyncableList< Participant >( participants,
-                                                                                                                  Participant.LESS_ID );
-      return ContentProviderSyncOperation.newUpdate()
-                                         .add( SyncDiffer.inDiff( update.participants,
-                                                                  syncList,
-                                                                  true /* always full sync */) )
-                                         .build();
+                                                                                                                  Participant.LESS_CONTACT_ID );
+      final List< IContentProviderSyncOperation > operations = SyncDiffer.inDiff( update.participants,
+                                                                                  syncList,
+                                                                                  true /* always full sync */);
+      
+      if ( operations.size() > 0 )
+         return ContentProviderSyncOperation.newUpdate()
+                                            .add( operations )
+                                            .build();
+      else
+         return NoopContentProviderSyncOperation.INSTANCE;
    }
 }

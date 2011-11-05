@@ -129,6 +129,10 @@
          moloko:infoText="@string/moloko_prefs_send_log_text"
          moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
 
+      <dev.drsoran.moloko.prefs.SendDbPreference
+         moloko:infoText="@string/moloko_prefs_send_db_text"
+         moloko:infoWidget="@layout/moloko_prefs_widget_send_log" />
+         
       <dev.drsoran.moloko.prefs.ClearDbPreference
          moloko:infoText="@string/moloko_prefs_clear_db_text"
          moloko:infoWidget="@layout/moloko_prefs_widget_clear_db" />

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -24,5 +24,9 @@ package dev.drsoran.moloko.prefs;
 
 public interface IMolokoPreference
 {
+   public void checkEnabled();
+   
+   
+   
    public void cleanUp();
 }

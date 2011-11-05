@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -39,7 +39,7 @@ public class PermanentNotification
    private final int id;
    
    
-
+   
    public PermanentNotification( Context context, int id )
    {
       this.context = context;
@@ -53,8 +53,8 @@ public class PermanentNotification
          | Notification.FLAG_ONGOING_EVENT;
    }
    
-
-
+   
+   
    public void update( String title,
                        String text,
                        int count,
@@ -69,15 +69,15 @@ public class PermanentNotification
       getNotificationManager().notify( id, notification );
    }
    
-
-
+   
+   
    public void cancel()
    {
       getNotificationManager().cancel( id );
    }
    
-
-
+   
+   
    private NotificationManager getNotificationManager()
    {
       return (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );

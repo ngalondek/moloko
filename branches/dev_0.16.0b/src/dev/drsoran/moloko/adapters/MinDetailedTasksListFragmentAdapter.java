@@ -22,7 +22,9 @@
 
 package dev.drsoran.moloko.adapters;
 
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -35,6 +37,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
@@ -48,6 +51,8 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
    private final Context context;
    
    private final int resourceId;
+   
+   private final MolokoCalendar setDueDateCalendar = MolokoCalendar.getInstance();
    
    
 
@@ -116,17 +121,35 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
    
 
 
-   private final void setDueDate( TextView view, Task task )
+   private void setDueDate( TextView view, Task task )
+   {
+      Date dateToSet = task.getCompleted();
+      
+      if ( dateToSet == null )
+         dateToSet = task.getDue();
+      
+      if ( dateToSet != null )
+         setDueDateCalendar.setTime( dateToSet );
+      
+      setDueDateCalendar.setHasDate( dateToSet != null );
+      setDueDateCalendar.setHasTime( task.hasDueTime() );
+      
+      setDueDate( view, setDueDateCalendar );
+   }
+   
+
+
+   private void setDueDate( TextView view, MolokoCalendar cal )
    {
       // if has a due date
-      if ( task.getDue() != null )
+      if ( cal.hasDate() )
       {
          view.setVisibility( View.VISIBLE );
          
          String dueText = null;
          
-         final long dueMillis = task.getDue().getTime();
-         final boolean hasDueTime = task.hasDueTime();
+         final long dueMillis = cal.getTimeInMillis();
+         final boolean hasDueTime = cal.hasTime();
          
          // Today
          if ( MolokoDateUtils.isToday( dueMillis ) )
@@ -138,20 +161,20 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
                // We only show the 'Today' phrase
                dueText = context.getString( R.string.phr_today );
          }
+         
+         // Not today
          else
          {
             final Time now = MolokoDateUtils.newTime();
-            final Time dueTime = MolokoDateUtils.newTime( dueMillis );
             
             // If it is the same year
-            if ( dueTime.year == now.year )
+            if ( cal.get( Calendar.YEAR ) == now.year )
             {
-               // If the same week and in the future
-               if ( now.getWeekNumber() == dueTime.getWeekNumber()
-                  && dueTime.after( now ) )
+               // If the same week
+               if ( now.getWeekNumber() == cal.get( Calendar.WEEK_OF_YEAR ) )
                {
                   // we only show the week day
-                  dueText = MolokoDateUtils.getDayOfWeekString( dueTime.weekDay + 1,
+                  dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
                                                                 false );
                }
                

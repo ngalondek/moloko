@@ -585,17 +585,6 @@ public class RtmTaskSeriesProviderPart extends
 
 
    @Override
-   protected int getInsertConflictAlgorithm()
-   {
-      // The sync flattens the hierarchy of TaskSeries->Task (see InSyncTask).
-      // So TaskSerieses with multiple tasks can get inserted multiple times.
-      // So simply replace them.
-      return SQLiteDatabase.CONFLICT_REPLACE;
-   }
-   
-
-
-   @Override
    protected String getContentItemType()
    {
       return TaskSeries.CONTENT_ITEM_TYPE;

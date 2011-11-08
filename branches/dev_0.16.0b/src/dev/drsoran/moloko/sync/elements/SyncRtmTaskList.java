@@ -42,7 +42,7 @@ public class SyncRtmTaskList
       < T > void perform( List< T > list, Comparator< ? super T > cmp );
    }
    
-   
+
    protected static enum GetMode implements IGetModeAction
    {
       AS_IS
@@ -73,14 +73,14 @@ public class SyncRtmTaskList
    private final List< RtmTaskSeries > series;
    
    
-   
+
    public SyncRtmTaskList()
    {
       series = new ArrayList< RtmTaskSeries >();
    }
    
-   
-   
+
+
    public SyncRtmTaskList( List< RtmTaskSeries > taskSeries )
    {
       if ( taskSeries == null )
@@ -91,15 +91,15 @@ public class SyncRtmTaskList
       Collections.sort( series, LESS_ID );
    }
    
-   
-   
+
+
    public SyncRtmTaskList( RtmTaskList taskList )
    {
       this( taskList.getSeries() );
    }
    
-   
-   
+
+
    public SyncRtmTaskList( RtmTasks tasks )
    {
       if ( tasks == null )
@@ -112,27 +112,28 @@ public class SyncRtmTaskList
             this.series.add( series );
    }
    
-   
-   
-   public List< InSyncRtmTaskSeries > getInSyncTasksSeries()
-   {
-      return rtmTaskSeriesToInSyncRtmTaskSeries( series );
-   }
-   
-   
-   
+
+
    public List< OutSyncTask > getOutSyncTasks()
    {
       return getOutSyncTasks( OutSyncTask.LESS_ID );
    }
    
-   
-   
+
+
    public List< OutSyncTask > getOutSyncTasks( Comparator< ? super OutSyncTask > cmp )
+   {
+      return collectOutSyncTasks( series, cmp );
+   }
+   
+
+
+   protected List< OutSyncTask > collectOutSyncTasks( List< ? extends RtmTaskSeries > seriesList,
+                                                      Comparator< ? super OutSyncTask > cmp )
    {
       final List< OutSyncTask > res = new LinkedList< OutSyncTask >();
       
-      for ( RtmTaskSeries taskSeries : series )
+      for ( RtmTaskSeries taskSeries : seriesList )
          for ( RtmTask task : taskSeries.getTasks() )
             res.add( new OutSyncTask( taskSeries, task ) );
       
@@ -142,21 +143,59 @@ public class SyncRtmTaskList
       return res;
    }
    
+
+
+   public List< InSyncTask > getInSyncTasks()
+   {
+      return getInSyncTasks( InSyncTask.LESS_ID );
+   }
    
+
+
+   public List< InSyncTask > getInSyncTasks( Comparator< ? super InSyncTask > cmp )
+   {
+      return collectInSyncTasks( series, cmp );
+   }
    
+
+
+   protected List< InSyncTask > collectInSyncTasks( List< ? extends RtmTaskSeries > seriesList,
+                                                    Comparator< ? super InSyncTask > cmp )
+   {
+      final List< InSyncTask > res = new LinkedList< InSyncTask >();
+      
+      for ( RtmTaskSeries taskSeries : seriesList )
+         for ( RtmTask task : taskSeries.getTasks() )
+            res.add( new InSyncTask( taskSeries, task ) );
+      
+      if ( cmp != null )
+         GetMode.SORTED.perform( res, cmp );
+      
+      return res;
+   }
+   
+
+
    public SyncRtmTaskNotesList getSyncNotesList()
+   {
+      return collectSyncNotes( series );
+   }
+   
+
+
+   protected SyncRtmTaskNotesList collectSyncNotes( List< ? extends RtmTaskSeries > seriesList )
    {
       final SyncRtmTaskNotesList res = new SyncRtmTaskNotesList();
       
-      for ( RtmTaskSeries taskSeries : series )
+      for ( RtmTaskSeries taskSeries : seriesList )
          for ( RtmTaskNote note : taskSeries.getNotes().getNotes() )
             res.add( new SyncNote( taskSeries, note ) );
       
       return res;
    }
    
-   
-   
+
+
    public List< String > getTaskSeriesIds()
    {
       final List< String > res = new ArrayList< String >( series.size() );
@@ -167,8 +206,8 @@ public class SyncRtmTaskList
       return res;
    }
    
-   
-   
+
+
    public void remove( RtmTaskSeries taskSeries )
    {
       final int pos = Collections.binarySearch( series, taskSeries, LESS_ID );
@@ -177,22 +216,22 @@ public class SyncRtmTaskList
          series.remove( pos );
    }
    
-   
-   
+
+
    public RtmTaskSeries get( int location )
    {
       return series.get( location );
    }
    
-   
-   
+
+
    public int size()
    {
       return series.size();
    }
    
-   
-   
+
+
    public void update( RtmTaskList taskList )
    {
       if ( taskList == null )
@@ -216,32 +255,18 @@ public class SyncRtmTaskList
       }
    }
    
-   
-   
+
+
    public RtmTaskList toRtmTaskList()
    {
       return new RtmTaskList( null, series, null );
    }
    
-   
-   
+
+
    @Override
    public String toString()
    {
       return "<" + series.size() + ">";
-   }
-   
-   
-   
-   protected static List< InSyncRtmTaskSeries > rtmTaskSeriesToInSyncRtmTaskSeries( List< RtmTaskSeries > rtmTaskSeries )
-   {
-      final List< InSyncRtmTaskSeries > res = new ArrayList< InSyncRtmTaskSeries >( rtmTaskSeries.size() );
-      
-      for ( RtmTaskSeries taskSeries : rtmTaskSeries )
-         res.add( new InSyncRtmTaskSeries( taskSeries ) );
-      
-      GetMode.SORTED.perform( res, InSyncRtmTaskSeries.LESS_ID );
-      
-      return res;
    }
 }

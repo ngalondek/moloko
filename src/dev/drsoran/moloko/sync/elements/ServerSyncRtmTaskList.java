@@ -35,29 +35,29 @@ import dev.drsoran.moloko.sync.operation.IContentProviderSyncOperation;
 import dev.drsoran.moloko.sync.operation.NoopContentProviderSyncOperation;
 
 
-public class ServerSourceSyncRtmTaskList extends SyncRtmTaskList
+public class ServerSyncRtmTaskList extends SyncRtmTaskList
 {
    private final List< RtmTaskSeries > seriesWithDeletedTasks;
    
    
-   
-   public ServerSourceSyncRtmTaskList()
+
+   public ServerSyncRtmTaskList()
    {
       super();
       seriesWithDeletedTasks = Collections.emptyList();
    }
    
-   
-   
-   public ServerSourceSyncRtmTaskList( List< RtmTaskSeries > taskSeries )
+
+
+   public ServerSyncRtmTaskList( List< RtmTaskSeries > taskSeries )
    {
       super( taskSeries );
       seriesWithDeletedTasks = Collections.emptyList();
    }
    
-   
-   
-   public ServerSourceSyncRtmTaskList( RtmTaskList taskList )
+
+
+   public ServerSyncRtmTaskList( RtmTaskList taskList )
    {
       super( taskList );
       seriesWithDeletedTasks = new ArrayList< RtmTaskSeries >();
@@ -65,9 +65,9 @@ public class ServerSourceSyncRtmTaskList extends SyncRtmTaskList
       fillSeriesesWithDeletedTasks( taskList );
    }
    
-   
-   
-   public ServerSourceSyncRtmTaskList( RtmTasks tasks )
+
+
+   public ServerSyncRtmTaskList( RtmTasks tasks )
    {
       super( tasks );
       seriesWithDeletedTasks = new ArrayList< RtmTaskSeries >();
@@ -78,8 +78,8 @@ public class ServerSourceSyncRtmTaskList extends SyncRtmTaskList
       }
    }
    
-   
-   
+
+
    @Override
    public void update( RtmTaskList taskList )
    {
@@ -104,8 +104,8 @@ public class ServerSourceSyncRtmTaskList extends SyncRtmTaskList
       }
    }
    
-   
-   
+
+
    public List< IContentProviderSyncOperation > removeDeletedTasks()
    {
       final List< IContentProviderSyncOperation > ops;
@@ -114,10 +114,11 @@ public class ServerSourceSyncRtmTaskList extends SyncRtmTaskList
       {
          ops = new LinkedList< IContentProviderSyncOperation >();
          
-         final List< InSyncRtmTaskSeries > inSyncRtmTaskSeries = rtmTaskSeriesToInSyncRtmTaskSeries( seriesWithDeletedTasks );
-         for ( InSyncRtmTaskSeries taskSeries : inSyncRtmTaskSeries )
+         final List< InSyncTask > inSynTasks = collectInSyncTasks( seriesWithDeletedTasks,
+                                                                   null );
+         for ( InSyncTask inSyncTask : inSynTasks )
          {
-            IContentProviderSyncOperation op = taskSeries.computeContentProviderDeleteOperation();
+            IContentProviderSyncOperation op = inSyncTask.computeContentProviderDeleteOperation();
             
             if ( op != null
                && !( op instanceof NoopContentProviderSyncOperation ) )
@@ -134,8 +135,8 @@ public class ServerSourceSyncRtmTaskList extends SyncRtmTaskList
       return ops;
    }
    
-   
-   
+
+
    private void fillSeriesesWithDeletedTasks( RtmTaskList taskList )
    {
       seriesWithDeletedTasks.addAll( taskList.getSeriesWithDeletedTasks() );

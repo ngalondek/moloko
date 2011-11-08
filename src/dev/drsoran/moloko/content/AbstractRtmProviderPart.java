@@ -81,7 +81,10 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
          
          final String id = initialValues.getAsString( BaseColumns._ID );
          final SQLiteDatabase db = dbAccess.getWritableDatabase();
-         final long rowId = db.insert( path, BaseColumns._ID, initialValues );
+         final long rowId = db.insertWithOnConflict( path,
+                                                     BaseColumns._ID,
+                                                     initialValues,
+                                                     getInsertConflictAlgorithm() );
          
          if ( rowId > 0 )
          {
@@ -97,6 +100,13 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
    
 
 
+   protected int getInsertConflictAlgorithm()
+   {
+      return SQLiteDatabase.CONFLICT_ROLLBACK;
+   }
+   
+
+
    public int update( String id,
                       ContentValues values,
                       String where,
@@ -108,7 +118,11 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
       
       if ( id == null )
       {
-         count = db.update( path, values, where, whereArgs );
+         count = db.updateWithOnConflict( path,
+                                          values,
+                                          where,
+                                          whereArgs,
+                                          getUpdateConflictAlgorithm() );
       }
       else
       {
@@ -119,10 +133,21 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
             sb.append( " AND (" ).append( where ).append( ')' );
          }
          
-         count = db.update( path, values, sb.toString(), whereArgs );
+         count = db.updateWithOnConflict( path,
+                                          values,
+                                          sb.toString(),
+                                          whereArgs,
+                                          getUpdateConflictAlgorithm() );
       }
       
       return count;
+   }
+   
+
+
+   protected int getUpdateConflictAlgorithm()
+   {
+      return SQLiteDatabase.CONFLICT_ROLLBACK;
    }
    
 

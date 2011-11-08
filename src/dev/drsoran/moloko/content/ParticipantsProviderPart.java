@@ -316,17 +316,6 @@ public class ParticipantsProviderPart extends AbstractRtmProviderPart
 
 
    @Override
-   protected int getInsertConflictAlgorithm()
-   {
-      // The sync flattens the hierarchy of TaskSeries->Task (see InSyncTask).
-      // So TaskSerieses with multiple tasks can insert participants multiple times.
-      // So simply replace them.
-      return SQLiteDatabase.CONFLICT_REPLACE;
-   }
-   
-
-
-   @Override
    protected String getContentItemType()
    {
       return Participants.CONTENT_ITEM_TYPE;

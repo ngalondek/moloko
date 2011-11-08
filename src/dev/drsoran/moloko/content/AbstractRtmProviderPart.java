@@ -102,7 +102,7 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
 
    protected int getInsertConflictAlgorithm()
    {
-      return SQLiteDatabase.CONFLICT_ROLLBACK;
+      return SQLiteDatabase.CONFLICT_REPLACE;
    }
    
 
@@ -147,7 +147,7 @@ public abstract class AbstractRtmProviderPart extends AbstractProviderPart
 
    protected int getUpdateConflictAlgorithm()
    {
-      return SQLiteDatabase.CONFLICT_ROLLBACK;
+      return SQLiteDatabase.CONFLICT_REPLACE;
    }
    
 

@@ -307,11 +307,15 @@ public class DuePickerDialog extends AbstractPickerDialog
          
          setLastIndex( wheelViews[ 0 ] );
          setLastIndex( wheelViews[ 1 ] );
-         setLastIndex( wheelViews[ 2 ] );
          
          wheelViews[ 0 ].addScrollingListener( this );
          wheelViews[ 1 ].addScrollingListener( this );
-         wheelViews[ 2 ].addScrollingListener( this );
+         
+         if ( !is24hTimeFormat )
+         {
+            setLastIndex( wheelViews[ 2 ] );
+            wheelViews[ 2 ].addScrollingListener( this );
+         }
       }
       
 

@@ -250,21 +250,26 @@ abstract class AbstractTasksListActivity extends MolokoFragmentActivity
 
    protected boolean isInDropDownNavigationMode()
    {
-      return getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
+      return getSupportActionBar() != null
+         && getSupportActionBar().getNavigationMode() == ActionBar.NAVIGATION_MODE_LIST;
    }
    
 
 
    protected void setDropDownNavigationMode( SpinnerAdapter spinnerAdapter )
    {
-      if ( spinnerAdapter != null )
+      if ( getSupportActionBar() != null )
       {
-         getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
-         getSupportActionBar().setListNavigationCallbacks( spinnerAdapter, this );
-      }
-      else
-      {
-         getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+         if ( spinnerAdapter != null )
+         {
+            getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_LIST );
+            getSupportActionBar().setListNavigationCallbacks( spinnerAdapter,
+                                                              this );
+         }
+         else
+         {
+            getSupportActionBar().setNavigationMode( ActionBar.NAVIGATION_MODE_STANDARD );
+         }
       }
    }
    

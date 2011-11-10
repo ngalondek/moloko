@@ -22,11 +22,14 @@
 
 package dev.drsoran.moloko.fragments;
 
+import java.util.List;
+
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.Loader;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +38,7 @@ import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
 import dev.drsoran.rtm.RtmSmartFilter;
+import dev.drsoran.rtm.Task;
 
 
 public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
@@ -62,7 +66,7 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
    private boolean queryEvalFailed;
    
    
-   
+
    public static TaskSearchResultListFragment newInstance( Bundle configuration )
    {
       final TaskSearchResultListFragment fragment = new TaskSearchResultListFragment();
@@ -72,8 +76,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -85,8 +89,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
          listener = null;
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -94,23 +98,23 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       listener = null;
    }
    
-   
-   
+
+
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-   
-   
+
+
    @Override
    public Intent newDefaultIntent()
    {
       return new Intent( INTENT_FILTER.getAction( 0 ) );
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -120,8 +124,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
          configuration.putString( Config.QUERY, config.getString( Config.QUERY ) );
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -130,8 +134,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       return inflater.inflate( R.layout.taskslist_fragment, container, false );
    }
    
-   
-   
+
+
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -142,8 +146,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
          super.onViewCreated( view, savedInstanceState );
    }
    
-   
-   
+
+
    @Override
    public void startLoader()
    {
@@ -152,8 +156,6 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       if ( !queryEvalFailed )
       {
          startLoaderWithConfiguration( loaderConfig );
-         if ( listener != null )
-            listener.onQuerySucceeded( getConfiguredQueryString() );
       }
       else
       {
@@ -162,16 +164,16 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       }
    }
    
-   
-   
+
+
    @Override
    public IFilter getFilter()
    {
       return getRtmSmartFilter();
    }
    
-   
-   
+
+
    @Override
    public RtmSmartFilter getRtmSmartFilter()
    {
@@ -188,8 +190,19 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       return filter;
    }
    
+
+
+   @Override
+   public void onLoadFinished( Loader< List< Task >> loader, List< Task > data )
+   {
+      super.onLoadFinished( loader, data );
+      
+      if ( listener != null )
+         listener.onQuerySucceeded( getConfiguredQueryString() );
+   }
    
-   
+
+
    private Bundle transformQueryToSmartFilterConfig( Bundle config )
    {
       final RtmSmartFilter filter = getRtmSmartFilter();
@@ -207,8 +220,8 @@ public class TaskSearchResultListFragment extends FullDetailedTasksListFragment
       return config;
    }
    
-   
-   
+
+
    private String getConfiguredQueryString()
    {
       return configuration.getString( Config.QUERY );

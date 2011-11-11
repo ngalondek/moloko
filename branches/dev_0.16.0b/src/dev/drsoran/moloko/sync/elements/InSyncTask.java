@@ -107,14 +107,35 @@ public class InSyncTask extends SyncTaskBase implements
    {
       final ContentProviderSyncOperation.Builder operations = ContentProviderSyncOperation.newUpdate();
       
+      // Check for a moved task. The task with the same ID is now in another taskseries.
+      final boolean hasTaskMoved = SyncUtils.hasChanged( serverElement.taskSeries.getId(),
+                                                         taskSeries.getId() );
+      
       // Sync task
       syncTask( serverElement, operations );
       
-      // Sync participants
-      syncParticipants( serverElement, operations );
-      
-      // Sync RtmTaskSeries
-      syncTaskSeries( serverElement, operations );
+      if ( hasTaskMoved )
+      {
+         // Insert new taskseries
+         operations.add( ContentProviderOperation.newInsert( TaskSeries.CONTENT_URI )
+                                                 .withValues( RtmTaskSeriesProviderPart.getContentValues( taskSeries,
+                                                                                                          true ) )
+                                                 .build() );
+         
+         // Insert participants
+         final ParticipantList participantList = taskSeries.getParticipants();
+         
+         if ( participantList.getCount() > 0 )
+            operations.addAll( ParticipantsProviderPart.insertParticipants( participantList ) );
+      }
+      else
+      {
+         // Sync participants
+         syncParticipants( serverElement, operations );
+         
+         // Sync RtmTaskSeries
+         syncTaskSeries( serverElement, operations );
+      }
       
       return operations.build();
    }
@@ -125,6 +146,17 @@ public class InSyncTask extends SyncTaskBase implements
    {
       final Uri contentUri = Queries.contentUriWithId( RawTasks.CONTENT_URI,
                                                        task.getId() );
+      
+      // Check for a moved task. The task with the same ID is now in another taskseries.
+      //
+      // The former taskseries will be removed by a trigger in RtmTasksProviderPart if it
+      // references no more rawtasks after move.
+      if ( SyncUtils.hasChanged( serverElement.taskSeries.getId(),
+                                 taskSeries.getId() ) )
+         operations.add( ContentProviderOperation.newUpdate( contentUri )
+                                                 .withValue( RawTasks.TASKSERIES_ID,
+                                                             serverElement.taskSeries.getId() )
+                                                 .build() );
       
       if ( SyncUtils.hasChanged( serverElement.task.getDue(), task.getDue() ) )
          operations.add( ContentProviderOperation.newUpdate( contentUri )

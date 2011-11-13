@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,14 +54,14 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
    private final MolokoCalendar setDueDateCalendar = MolokoCalendar.getInstance();
    
    
-
+   
    public MinDetailedTasksListFragmentAdapter( Context context, int resourceId )
    {
       this( context, resourceId, Collections.< Task > emptyList() );
    }
    
-
-
+   
+   
    public MinDetailedTasksListFragmentAdapter( Context context, int resourceId,
       List< Task > tasks )
    {
@@ -72,15 +71,15 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
       this.resourceId = resourceId;
    }
    
-
-
+   
+   
    public int getLayoutRessource()
    {
       return resourceId;
    }
    
-
-
+   
+   
    @Override
    public View getView( int position, View convertView, ViewGroup parent )
    {
@@ -119,8 +118,8 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
       return convertView;
    }
    
-
-
+   
+   
    private void setDueDate( TextView view, Task task )
    {
       Date dateToSet = task.getCompleted();
@@ -137,8 +136,8 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
       setDueDate( view, setDueDateCalendar );
    }
    
-
-
+   
+   
    private void setDueDate( TextView view, MolokoCalendar cal )
    {
       // if has a due date
@@ -165,27 +164,57 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
          // Not today
          else
          {
-            final Time now = MolokoDateUtils.newTime();
+            final long nowMillis = System.currentTimeMillis();
+            MolokoCalendar nowCal = MolokoDateUtils.newCalendar( nowMillis );
             
             // If it is the same year
-            if ( cal.get( Calendar.YEAR ) == now.year )
+            if ( cal.get( Calendar.YEAR ) == nowCal.get( Calendar.YEAR ) )
             {
                // If the same week
-               if ( now.getWeekNumber() == cal.get( Calendar.WEEK_OF_YEAR ) )
+               if ( nowCal.get( Calendar.WEEK_OF_YEAR ) == cal.get( Calendar.WEEK_OF_YEAR ) )
                {
-                  // we only show the week day
-                  dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
-                                                                false );
+                  // is in the past?
+                  if ( cal.before( nowCal ) )
+                  {
+                     // we show the date but w/o year
+                     dueText = MolokoDateUtils.formatDate( context,
+                                                           dueMillis,
+                                                           MolokoDateUtils.FORMAT_ABR_MONTH );
+                  }
+                  
+                  // later this week
+                  else
+                  {
+                     // we only show the week day
+                     dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
+                                                                   false );
+                  }
                }
                
-               // Not the same week or same week but in the past
+               // Is it next week?
                else
                {
-                  // we show the date but w/o year
-                  dueText = MolokoDateUtils.formatDate( context,
-                                                        dueMillis,
-                                                        MolokoDateUtils.FORMAT_ABR_MONTH );
+                  MolokoCalendar calNextWeek = nowCal;
+                  calNextWeek.roll( Calendar.WEEK_OF_YEAR, true );
+                  nowCal = null;
+                  
+                  if ( calNextWeek.get( Calendar.WEEK_OF_YEAR ) == cal.get( Calendar.WEEK_OF_YEAR ) )
+                  {
+                     // we only show the week day
+                     dueText = MolokoDateUtils.getDayOfWeekString( cal.get( Calendar.DAY_OF_WEEK ),
+                                                                   false );
+                  }
+                  
+                  // Not the same week and not next week
+                  else
+                  {
+                     // we show the date but w/o year
+                     dueText = MolokoDateUtils.formatDate( context,
+                                                           dueMillis,
+                                                           MolokoDateUtils.FORMAT_ABR_MONTH );
+                  }
                }
+               
             }
             
             // Not the same year
@@ -207,8 +236,8 @@ public class MinDetailedTasksListFragmentAdapter extends ArrayAdapter< Task >
          view.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    private void setCompleted( ImageView view, Task task )
    {
       view.setEnabled( task.getCompleted() != null );

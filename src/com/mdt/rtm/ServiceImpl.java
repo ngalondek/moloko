@@ -1055,8 +1055,6 @@ public class ServiceImpl implements Service
    private final static TimeLineResult< RtmTaskList > newTaskResult( String timelineId,
                                                                      Element elt ) throws ServiceException
    {
-      // TODO: Check for Android > 2.1
-      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
       if ( nodes.getLength() < 2 )
@@ -1112,8 +1110,6 @@ public class ServiceImpl implements Service
                                                                      String noteId,
                                                                      String taskSeriesId ) throws ServiceException
    {
-      // TODO: Check for Android > 2.1
-      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
       if ( nodes.getLength() < 1 )
@@ -1169,8 +1165,6 @@ public class ServiceImpl implements Service
    private final static TimeLineResult< RtmList > newListResult( String timelineId,
                                                                  Element elt ) throws ServiceException
    {
-      // TODO: Check for Android > 2.1
-      // This is necessary due to a bug in Android < 2.2 (see http://code.google.com/p/android/issues/detail?id=779 )
       final NodeList nodes = elt.getParentNode().getChildNodes(); // <rsp>
       
       if ( nodes.getLength() < 1 )

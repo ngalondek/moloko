@@ -334,6 +334,8 @@
    <string name="tasksearchresult_wrong_syntax_html">La recherche de :&lt;b>\'%1$s\'&lt;/b> ne peut pas être réalisée. Vérifier la requête.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Effacer l\'historique de recherche</string>
+     <!-- Toasts -->
+     <string name="tasksearchresult_toast_history_cleared">Search history has been cleared</string>
 
    <!-- SelectMultipleTasks activity -->
    <string name="select_multiple_tasks_sort_selection">Sélectionnées ou pas</string>

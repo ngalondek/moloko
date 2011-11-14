@@ -32,6 +32,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
@@ -100,7 +101,10 @@ public class TaskSearchResultActivity extends
       {
          case OptionsMenu.CLEAR_HISTORY:
             getRecentSuggestions().clearHistory();
-            // TODO: Show toast that history was cleared
+            
+            Toast.makeText( this,
+                            R.string.tasksearchresult_toast_history_cleared,
+                            Toast.LENGTH_SHORT ).show();
             return true;
             
          case OptionsMenu.ADD_LIST:

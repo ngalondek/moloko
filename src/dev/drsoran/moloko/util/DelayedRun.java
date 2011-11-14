@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -34,9 +34,13 @@ public class DelayedRun
    
 
 
-   public static void run( Handler handler, Runnable action, long after )
+   public static Runnable run( Handler handler,
+                               Runnable action,
+                               long afterMillis )
    {
       handler.removeCallbacks( action );
-      handler.postDelayed( action, after );
+      handler.postDelayed( action, afterMillis );
+      
+      return action;
    }
 }

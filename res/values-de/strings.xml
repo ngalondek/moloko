@@ -329,6 +329,8 @@
    <string name="tasksearchresult_wrong_syntax_html">Die Suche nach:&lt;b>\'%1$s\'&lt;/b> konnte nicht ausgeführt werden. Überprüfen Sie die Such-Syntax.</string>
      <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Lösche Suchverlauf</string>
+     <!-- Toasts -->
+     <string name="tasksearchresult_toast_history_cleared">Der Suchverlauf wurde gelöscht</string>
      
    <!-- SelectMultipleTasks activity -->
       <string name="select_multiple_tasks_sort_selection">Auswahl</string>

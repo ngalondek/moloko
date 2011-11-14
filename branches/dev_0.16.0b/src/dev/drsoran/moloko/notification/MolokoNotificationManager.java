@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.database.ContentObserver;
@@ -123,7 +124,7 @@ public class MolokoNotificationManager implements
    private final List< DueTaskNotification > dueTaskNotifications;
    
    
-   
+
    public MolokoNotificationManager( Context context )
    {
       this.context = context;
@@ -166,8 +167,8 @@ public class MolokoNotificationManager implements
       reCreateDueTaskNotifications();
    }
    
-   
-   
+
+
    public void shutdown()
    {
       cancelAllDueTaskNotifications();
@@ -191,8 +192,8 @@ public class MolokoNotificationManager implements
       }
    }
    
-   
-   
+
+
    @Override
    public void onBootCompleted()
    {
@@ -201,8 +202,8 @@ public class MolokoNotificationManager implements
       reCreateDueTaskNotifications();
    }
    
-   
-   
+
+
    @Override
    public void onTimeChanged( int which )
    {
@@ -226,8 +227,8 @@ public class MolokoNotificationManager implements
       }
    }
    
-   
-   
+
+
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -248,8 +249,8 @@ public class MolokoNotificationManager implements
       
    }
    
-   
-   
+
+
    @Override
    public void onSharedPreferenceChanged( final SharedPreferences sharedPreferences,
                                           final String key )
@@ -278,8 +279,8 @@ public class MolokoNotificationManager implements
       }
    }
    
-   
-   
+
+
    public void reCreateDueTaskNotifications()
    {
       executorService.execute( new Runnable()
@@ -326,8 +327,8 @@ public class MolokoNotificationManager implements
       } );
    }
    
-   
-   
+
+
    public void reEvaluateDueTaskNotifications( final int what )
    {
       executorService.execute( new Runnable()
@@ -346,8 +347,8 @@ public class MolokoNotificationManager implements
       } );
    }
    
-   
-   
+
+
    public void cancelAllDueTaskNotifications()
    {
       executorService.execute( new Runnable()
@@ -365,8 +366,8 @@ public class MolokoNotificationManager implements
       } );
    }
    
-   
-   
+
+
    private void reEvaluatePermanentNotifications()
    {
       executorService.execute( new Runnable()
@@ -467,8 +468,8 @@ public class MolokoNotificationManager implements
             }
          }
          
-         
-         
+
+
          private String includeOverdueTasks( String filterSting )
          {
             final StringBuilder stringBuilder = new StringBuilder( filterSting );
@@ -484,34 +485,44 @@ public class MolokoNotificationManager implements
       } );
    }
    
-   
-   
+
+
    private void updatePermanentNotification( ContentProviderClient client,
                                              String title,
                                              String filterString )
    {
-      RtmSmartFilter filter = null;
-      Pair< String, Integer > permNotificationInfo = null;
+      final RtmSmartFilter filter = new RtmSmartFilter( filterString );
       
-      filter = new RtmSmartFilter( filterString );
-      permNotificationInfo = buildPermanentNotificationRowText( client, filter );
-      
+      // first: The complete notification text to show
+      // second: The tasks affected
+      final Pair< String, List< Task > > permNotificationInfo = buildPermanentNotificationRowText( client,
+                                                                                                   filter );
       // Has tasks
-      final boolean show = permNotificationInfo.second > 0;
+      final boolean show = permNotificationInfo.second.size() > 0;
       
       if ( show )
+      {
+         final Intent onClickIntent = permNotificationInfo.second.size() == 1
+                                                                             ? Intents.createOpenTaskIntent( context,
+                                                                                                             permNotificationInfo.second.get( 0 )
+                                                                                                                                        .getId() )
+                                                                             : Intents.createSmartFilterIntent( context,
+                                                                                                                filter,
+                                                                                                                title );
          permanentNotification.update( title,
                                        permNotificationInfo.first,
-                                       permNotificationInfo.second,
-                                       Intents.createSmartFilterIntent( context,
-                                                                        filter,
-                                                                        title ) );
+                                       permNotificationInfo.second.size(),
+                                       onClickIntent );
+         
+      }
       else
+      {
          permanentNotification.cancel();
+      }
    }
    
-   
-   
+
+
    private void updateDueTaskNotification( DueTaskNotification notification,
                                            int what )
    {
@@ -560,28 +571,27 @@ public class MolokoNotificationManager implements
       }
    }
    
-   
-   
-   private Pair< String, Integer > buildPermanentNotificationRowText( ContentProviderClient client,
-                                                                      RtmSmartFilter filter )
+
+
+   private Pair< String, List< Task > > buildPermanentNotificationRowText( ContentProviderClient client,
+                                                                           RtmSmartFilter filter )
    {
-      int tasksCount = 0;
+      List< Task > affectedTasks = null;
       String result = Strings.EMPTY_STRING;
       
       final String evalFilter = filter.getEvaluatedFilterString( false );
       
       if ( !TextUtils.isEmpty( evalFilter ) )
       {
-         final List< Task > tasks = TasksProviderPart.getTasks( client,
-                                                                evalFilter,
-                                                                null );
-         if ( tasks != null )
+         affectedTasks = TasksProviderPart.getTasks( client, evalFilter, null );
+         
+         if ( affectedTasks != null )
          {
-            tasksCount = tasks.size();
+            int tasksCount = affectedTasks.size();
             
             if ( tasksCount > 0 )
             {
-               final Pair< Integer, Integer > numHighPrioAndOverdueTasks = countHighPrioAndOverdueTasks( tasks );
+               final Pair< Integer, Integer > numHighPrioAndOverdueTasks = countHighPrioAndOverdueTasks( affectedTasks );
                final int highPrioCnt = numHighPrioAndOverdueTasks.first.intValue();
                final int overdueCnt = numHighPrioAndOverdueTasks.second.intValue();
                final int tasksDueCnt = tasksCount - overdueCnt;
@@ -589,7 +599,7 @@ public class MolokoNotificationManager implements
                if ( tasksCount == 1 )
                {
                   result = context.getString( R.string.notification_permanent_text_one_task,
-                                              tasks.get( 0 ).getName() );
+                                              affectedTasks.get( 0 ).getName() );
                }
                
                else if ( tasksDueCnt > 0 )
@@ -638,15 +648,19 @@ public class MolokoNotificationManager implements
       }
       else
       {
-         Log.e( TAG,
-                "Error evaluating RtmSmartFilter " + filter.getFilterString() );
+         Log.e( TAG, "Error evaluating RtmSmartFilter "
+            + filter.getFilterString() );
       }
       
-      return Pair.create( result, Integer.valueOf( tasksCount ) );
+      if ( affectedTasks == null )
+         return new Pair< String, List< Task > >( result,
+                                                  new ArrayList< Task >( 0 ) );
+      else
+         return new Pair< String, List< Task >>( result, affectedTasks );
    }
    
-   
-   
+
+
    private Pair< Integer, Integer > countHighPrioAndOverdueTasks( List< Task > tasks )
    {
       int numOverdueTasks = 0;
@@ -699,8 +713,8 @@ public class MolokoNotificationManager implements
                           Integer.valueOf( numOverdueTasks ) );
    }
    
-   
-   
+
+
    private String getDueTasksSelection( long remindBeforeMillis )
    {
       final MolokoCalendar cal = getDateOnlyCalendar( 0 );
@@ -720,8 +734,8 @@ public class MolokoNotificationManager implements
       return result;
    }
    
-   
-   
+
+
    private static MolokoCalendar getCalendar( int dayOffset )
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
@@ -730,8 +744,8 @@ public class MolokoNotificationManager implements
       return cal;
    }
    
-   
-   
+
+
    private static MolokoCalendar getDateOnlyCalendar( int dayOffset )
    {
       final MolokoCalendar cal = getCalendar( dayOffset );
@@ -740,8 +754,8 @@ public class MolokoNotificationManager implements
       return cal;
    }
    
-   
-   
+
+
    private void diffDueNotifications( List< Task > tasks )
    {
       // Build a snapshot of the currently scheduled notifications
@@ -787,8 +801,8 @@ public class MolokoNotificationManager implements
          addNewDueTaskNotifications( newNotifications );
    }
    
-   
-   
+
+
    private void addNewDueTaskNotifications( List< Task > tasks )
    {
       final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
@@ -823,8 +837,8 @@ public class MolokoNotificationManager implements
       }
    }
    
-   
-   
+
+
    private void cancelDueTaskNotifications( List< DueTaskNotification > notifications )
    {
       for ( DueTaskNotification dueTaskNotification : notifications )
@@ -837,8 +851,8 @@ public class MolokoNotificationManager implements
       }
    }
    
-   
-   
+
+
    private void shutdownExecutorService()
    {
       // Disable new tasks from being submitted

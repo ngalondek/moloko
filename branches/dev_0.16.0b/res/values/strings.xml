@@ -384,7 +384,9 @@
    <string name="tasksearchresult_titlebar_error">Wrong syntax</string>
    <string name="tasksearchresult_wrong_syntax_html">The search for :&lt;b>\'%1$s\'&lt;/b> could not be performed. Check the search syntax.</string>
      <!-- Menus -->
-     <string name="tasksearchresult_menu_opt_clear_history_title">Erase search history</string>
+     <string name="tasksearchresult_menu_opt_clear_history_title">Clear search history</string>
+     <!-- Toasts -->
+     <string name="tasksearchresult_toast_history_cleared">Search history has been cleared</string>
 
    <!-- SelectMultipleTasks activity -->
    <string name="select_multiple_tasks_titlebar">@string/app_task_select_multiple</string>

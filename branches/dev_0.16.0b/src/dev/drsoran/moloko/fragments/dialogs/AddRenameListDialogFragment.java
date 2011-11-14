@@ -38,11 +38,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmList;
 
@@ -80,7 +80,7 @@ public class AddRenameListDialogFragment extends
    private TextView filterEdit;
    
    
-   
+
    public final static AddRenameListDialogFragment newInstance( Bundle config )
    {
       final AddRenameListDialogFragment fragment = new AddRenameListDialogFragment();
@@ -90,8 +90,8 @@ public class AddRenameListDialogFragment extends
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -100,8 +100,8 @@ public class AddRenameListDialogFragment extends
       setStyle( STYLE_NORMAL, STYLE_NORMAL );
    }
    
-   
-   
+
+
    @Override
    public View onCreateView( LayoutInflater inflater,
                              ViewGroup container,
@@ -113,8 +113,8 @@ public class AddRenameListDialogFragment extends
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -141,8 +141,8 @@ public class AddRenameListDialogFragment extends
       registerButtonListeners( view );
    }
    
-   
-   
+
+
    private void configureAsRenameListDialog()
    {
       listNameEdit.setText( getConfiguredList().getName() );
@@ -153,8 +153,8 @@ public class AddRenameListDialogFragment extends
       filterEdit.setVisibility( View.GONE );
    }
    
-   
-   
+
+
    private void configureAsNewListDialog()
    {
       final IFilter filter = getConfiguredFilter();
@@ -163,8 +163,8 @@ public class AddRenameListDialogFragment extends
          filterEdit.setText( ( (RtmSmartFilter) filter ).getFilterString() );
    }
    
-   
-   
+
+
    private void registerCommitInputListener( TextView textView )
    {
       textView.setOnEditorActionListener( new OnEditorActionListener()
@@ -182,8 +182,8 @@ public class AddRenameListDialogFragment extends
       } );
    }
    
-   
-   
+
+
    private void registerButtonListeners( View view )
    {
       view.findViewById( android.R.id.button1 )
@@ -206,8 +206,8 @@ public class AddRenameListDialogFragment extends
           } );
    }
    
-   
-   
+
+
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
@@ -221,29 +221,29 @@ public class AddRenameListDialogFragment extends
                                       config.getParcelable( Config.FILTER ) );
    }
    
-   
-   
+
+
    private boolean isRenameMode()
    {
       return getConfiguredList() != null;
    }
    
-   
-   
+
+
    private RtmList getConfiguredList()
    {
       return configuration.getParcelable( Config.LIST );
    }
    
-   
-   
+
+
    private IFilter getConfiguredFilter()
    {
       return configuration.getParcelable( Config.FILTER );
    }
    
-   
-   
+
+
    @Override
    public boolean hasChanges()
    {
@@ -257,8 +257,8 @@ public class AddRenameListDialogFragment extends
             || !TextUtils.isEmpty( UIUtils.getTrimmedText( filterEdit ) );
    }
    
-   
-   
+
+
    @Override
    public boolean saveChanges()
    {
@@ -270,8 +270,8 @@ public class AddRenameListDialogFragment extends
          return renameList( list );
    }
    
-   
-   
+
+
    @Override
    protected boolean validateInput()
    {
@@ -283,8 +283,8 @@ public class AddRenameListDialogFragment extends
       return ok;
    }
    
-   
-   
+
+
    private boolean validateListName()
    {
       final String text = UIUtils.getTrimmedText( listNameEdit );
@@ -316,8 +316,8 @@ public class AddRenameListDialogFragment extends
       return true;
    }
    
-   
-   
+
+
    private boolean validateSmartFilter()
    {
       final String text = UIUtils.getTrimmedText( filterEdit );
@@ -339,8 +339,8 @@ public class AddRenameListDialogFragment extends
       return true;
    }
    
-   
-   
+
+
    private boolean createNewList()
    {
       boolean ok = true;
@@ -367,8 +367,8 @@ public class AddRenameListDialogFragment extends
                return R.string.toast_insert_list;
             }
             
-            
-            
+
+
             @Override
             protected List< ContentProviderOperation > getInsertOperations( ContentResolver contentResolver,
                                                                             RtmList entity )
@@ -395,16 +395,16 @@ public class AddRenameListDialogFragment extends
                return null;
             }
             
-            
-            
+
+
             @Override
             protected Uri getContentUri()
             {
                return Lists.CONTENT_URI;
             }
             
-            
-            
+
+
             @Override
             protected String getPath()
             {
@@ -431,8 +431,8 @@ public class AddRenameListDialogFragment extends
       return ok;
    }
    
-   
-   
+
+
    private boolean renameList( RtmList list )
    {
       return RtmListEditUtils.setListName( getFragmentActivity(),
@@ -440,8 +440,8 @@ public class AddRenameListDialogFragment extends
                                            UIUtils.getTrimmedText( listNameEdit ) );
    }
    
-   
-   
+
+
    private final RtmSmartFilter getEnteredSmartFilter()
    {
       RtmSmartFilter filter = null;
@@ -457,8 +457,8 @@ public class AddRenameListDialogFragment extends
       return filter;
    }
    
-   
-   
+
+
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

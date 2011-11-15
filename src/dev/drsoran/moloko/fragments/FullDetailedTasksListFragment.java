@@ -320,7 +320,7 @@ public class FullDetailedTasksListFragment extends
 
 
    @Override
-   public boolean onContextItemSelected( android.view.MenuItem item )
+   public boolean onContextItemSelected( MenuItem item )
    {
       final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
       

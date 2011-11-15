@@ -103,7 +103,7 @@ public final class TaskEditUtils
                                                                    ? R.plurals.toast_completed_task
                                                                    : R.plurals.toast_incompleted_task,
                                                            tasks.size(),
-                                                           String.valueOf( tasks.size() ) ),
+                                                           tasks.size() ),
                                activity.getString( R.string.toast_save_task_failed ),
                                ok );
       }
@@ -199,7 +199,7 @@ public final class TaskEditUtils
                                activity.getResources()
                                        .getQuantityString( R.plurals.toast_postponed_task,
                                                            tasks.size(),
-                                                           String.valueOf( tasks.size() ) ),
+                                                           tasks.size() ),
                                activity.getString( R.string.toast_save_task_failed ),
                                ok );
       }
@@ -254,7 +254,7 @@ public final class TaskEditUtils
                                activity.getResources()
                                        .getQuantityString( R.plurals.toast_deleted_task,
                                                            tasks.size(),
-                                                           String.valueOf( tasks.size() ) ),
+                                                           tasks.size() ),
                                activity.getString( R.string.toast_delete_task_failed ),
                                ok );
       }

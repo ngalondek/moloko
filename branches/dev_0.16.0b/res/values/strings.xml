@@ -83,11 +83,11 @@
 
    <string name="key_permission">permission</string>
 
-	<!-- Global keys -->
-	<string name="key_sync_inverval">sync_interval</string>
-	<string name="key_def_list_local">def_list_local</string>
-	<string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
-	<string name="key_lang_local">lang_local</string>
+   <!-- Global keys -->
+   <string name="key_sync_inverval">sync_interval</string>
+   <string name="key_def_list_local">def_list_local</string>
+   <string name="key_def_list_sync_with_rtm">def_list_sync_with_rtm</string>
+   <string name="key_lang_local">lang_local</string>
    <string name="key_lang_sync_with_rtm">lang_sync_with_rtm</string>
    <string name="key_startup_view">startup_view</string>
    <string name="key_task_sort">task_sort</string>

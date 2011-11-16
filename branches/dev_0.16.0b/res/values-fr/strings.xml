@@ -82,24 +82,18 @@
    <string name="time_12h">12 heures</string>
    <string name="time_24h">1 jour</string>
    <!-- Date/Time format -->
-      <!-- Example: 12/25 -->
-      <string name="numeric_date_pattern">%1$s/%2$s</string>
-      <string name="numeric_date_format">M/d</string>
-      <!-- Example: 12/25/2000 -->
-      <string name="numeric_date_pattern_year">%1$s/%2$s/%3$s</string>
-      <string name="numeric_date_format_year">M/d/yyyy</string>
+      <string name="numeric_date_format">d/M</string>
+      <string name="numeric_date_format_year">dd/MM/yyyy</string>
       <!-- %1 - month pattern, MMM or MMMM -->
       <string name="date_with_text_month">%1$s d</string>
-      <string name="date_with_text_month_year">%1$s d, yyyy</string>
+      <string name="date_with_text_month_year">%1$s d yyyy</string>
       <!--  %1 - weekday pattern, EEE or EEEE
             %2 - month pattern, MMM or MMMM -->
-      <string name="date_with_weekday_text_month">%1$s, %2$s dd</string>
-      <string name="date_with_weekday_text_month_year">%1$s, %2$s d, yyyy</string>
+      <string name="date_with_weekday_text_month">%2$s dd %1$s</string>
+      <string name="date_with_weekday_text_month_year">%2$s d %1$s yyyy</string>
       <!-- %1 - time, %2 - date
            Example: 12:00am, 12/25/2000 -->
-      <string name="date_with_time_pattern">%1$s, %2$s</string>
-      <string name="time_pattern_12">h:mma</string>
-      <string name="time_pattern_24">k:mm</string>
+      <string name="date_with_time_pattern">%1$s le %2$s</string>
 
    <!-- Global phrases -->
    <string name="phr_please_wait">Patientez</string>
@@ -112,7 +106,6 @@
    <string name="phr_open_with_name">Ouvrir \'%1$s\'</string>
    <string name="phr_edit_with_name">Modifier \'%1$s\'</string>
    <string name="phr_delete_with_name">Supprimer \'%1$s\'</string>
-   <string name="phr_ok">OK</string>
    <string name="phr_close">Fermer</string>
    <string name="phr_settings">Paramètres</string>
    <string name="phr_none_f">aucune</string>
@@ -144,7 +137,6 @@
    <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nData you have changed with Moloko so far remains untouched. Nevertheless your made changes in Moloko are not going to be synchronized with the RTM server and are replaced by the server version, if newer.\n\nYou can change this by removing your RTM account from the device and create a new one with \'Read, Write and Delete\' permission.</string>
 
    <!-- Global buttons -->
-   <string name="btn_ok">OK</string>
    <string name="btn_continue">Continuer</string>
    <string name="btn_cancel">Annuler</string>
    <string name="btn_new_account">Nouveau Compte</string>
@@ -394,7 +386,6 @@
    <string name="acc_pref_conn_use_https">Utiliser HTTPS (recommendé)</string>
    <string name="acc_pref_conn_use_proxy">Utiliser un Proxy</string>
    <string name="acc_pref_conn_proxy_host">Nom de la machine</string>
-   <string name="acc_pref_conn_proxy_port">Port</string>
    <string name="acc_pref_conn_proxy_user">Nom d\'utilisateur</string>
    <string name="acc_pref_conn_proxy_pass">Mot de passe</string>
 
@@ -408,15 +399,11 @@
    <string name="moloko_prefs_rtm_dateformat_eu">Européen\n(14.02.2000)</string>
    <string name="moloko_prefs_rtm_dateformat_us">Américain\n(02/14/2000)</string>
    <string name="moloko_prefs_rtm_timeformat_title">Format de l\'heure</string>
-   <string name="moloko_prefs_rtm_timeformat_12">12h</string>
-   <string name="moloko_prefs_rtm_timeformat_24">24h</string>
    <string name="moloko_prefs_rtm_defaultlist_title">Liste par défaut</string>
    <string name="moloko_prefs_rtm_language_title">Langue</string>
    <string name="moloko_prefs_startup_view_title">Start View</string>
    <string name="moloko_prefs_startup_view_def_list_choose">Choisir la liste par défaut...</string>
    <string name="moloko_prefs_startup_view_def_list_name">Liste par défaut (%1$s)</string>
-   <string name="moloko_prefs_startup_view_lists">@string/app_tasklists</string>
-   <string name="moloko_prefs_startup_view_home">@string/app_home</string>
    <string name="moloko_prefs_def_sort_title">Trier les tâches</string>
    <string name="moloko_prefs_def_sort_summary">par %s</string>
    <string name="moloko_prefs_notification_title">Notification</string>
@@ -463,10 +450,6 @@
    <string name="send_log_aquiring_text">Récupération des informations concernant Moloko...</string>
    <string name="send_log_chooser_title">Veuillez sélectionner une appliocation pour l\'envoi du rapport d\'erreur</string>
    <string name="send_log_failed">Echec de l\'envoi du rapport d\'erreur</string>
-   <string name="send_log_address">ronny.roehricht@gmail.com</string>
-   <string name="send_log_subject">Moloko device log</string>
-   <string name="send_log_format">time</string>
-
    <!-- Suggestions -->
    <string name="app_quick_add_task_recurr_sugg_every_day">tous les jours</string>
    <string name="app_quick_add_task_recurr_sugg_every_week">toutes les semaines</string>

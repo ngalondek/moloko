@@ -281,6 +281,14 @@ public class MolokoNotificationManager implements
    
 
 
+   public void onSystemLanguageChanged()
+   {
+      reEvaluatePermanentNotifications();
+      reCreateDueTaskNotifications();
+   }
+   
+
+
    public void reCreateDueTaskNotifications()
    {
       executorService.execute( new Runnable()

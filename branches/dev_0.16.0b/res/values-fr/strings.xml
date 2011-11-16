@@ -134,7 +134,7 @@
    <string name="err_db_typed">Erreur d\'accès à la base de données de %1$s.</string>
    <string name="err_entity_not_found">Le %1$s n\'a pas pu être récupéré dans la base de données.\n\nVeuillez vérifier si l\'élément existe.</string>
    <string name="err_unsupported_intent_action">L\'action %1$s n\'est pas supportée.</string>
-   <string name="err_modify_access_level_read">Moloko has \'Read\' only access to your data.\n\nData you have changed with Moloko so far remains untouched. Nevertheless your made changes in Moloko are not going to be synchronized with the RTM server and are replaced by the server version, if newer.\n\nYou can change this by removing your RTM account from the device and create a new one with \'Read, Write and Delete\' permission.</string>
+   <string name="err_modify_access_level_read">Moloko accède vos données en \'Lecture seule\'.\n\nLes données que vous avez modifié jusqu\'à présent restent inchangées. Cependant, elles ne seront pas envoyées au serveur RTM et seront remplacées par les modifications plus récentes faites directement sur le serveur.\n\nVous pouvez changer cela en supprimant votre compte RTM local (celui de Moloko) et en le recréant avec les permissions \'Lecture, Ecriture, Suppression\'.</string>
 
    <!-- Global buttons -->
    <string name="btn_continue">Continuer</string>
@@ -283,16 +283,16 @@
      <string name="tasklists_menu_ctx_remove_def_list">Ne plus utiliser comme liste par défaut</string>
 
    <!-- NotificationManager -->
-   <string name="notification_permanent_today_title">Tasks for today</string>
-   <string name="notification_permanent_tomorrow_title">Tasks for tomorrow</string>
+   <string name="notification_permanent_today_title">Tâches d\'aujourd\'hui</string>
+   <string name="notification_permanent_tomorrow_title">Tâches de demain</string>
    <string name="notification_permanent_today_and_tomorrow_title">Tâches du %1$s au %2$s</string>
-   <string name="notification_permanent_overdue_title">Overdue tasks</string>
+   <string name="notification_permanent_overdue_title">Tâches en retard</string>
       <!-- >1 task due, 0 tasks overdue -->
    <string name="notification_permanent_text_multiple">%1$d %2$s à faire, %3$d avec une priorité haute</string>
       <!-- >0 task due, >0 tasks overdue -->
-   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s due, %3$d %4$s overdue</string>
+   <string name="notification_permanent_text_multiple_w_overdue">%1$d %2$s à faire, %3$d %4$s en retard</string>
       <!-- 0 tasks due, >1 task overdue -->
-   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s overdue</string>
+   <string name="notification_permanent_text_multiple_overdue">%1$d %2$s en retard</string>
    <string name="notification_due_ticker">À faire du %1$s au %2$s</string>
    <string name="notification_due">à faire à %1$s</string>
 
@@ -327,7 +327,7 @@
      <!-- Menus -->
      <string name="tasksearchresult_menu_opt_clear_history_title">Effacer l\'historique de recherche</string>
      <!-- Toasts -->
-     <string name="tasksearchresult_toast_history_cleared">Search history has been cleared</string>
+     <string name="tasksearchresult_toast_history_cleared">Historique de recherche effacé</string>
 
    <!-- SelectMultipleTasks activity -->
    <string name="select_multiple_tasks_sort_selection">Sélectionnées ou pas</string>
@@ -374,7 +374,7 @@
       <string name="auth_err_cause_inv_auth_token">Le jeton d\'authentification reçu est incorrect</string>
       <string name="auth_err_cause_scurity">Problème de sécurité</string>
       <string name="auth_err_cause_inv_login_url">La page de connexion reçue n\'est pas la bonne</string>
-      <string name="auth_err_cause_no_service">An error occurred during the creation of the RTM service connection</string>
+      <string name="auth_err_cause_no_service">Une erreur s\'est produite lors de la création de la connexion au service RTM</string>
 
    <!-- AccountPreferences + activity -->
    <string name="acc_pref_title">Paramètres généraux</string>
@@ -419,8 +419,8 @@
    <string name="moloko_prefs_notification_permanent_today">Tâches à faire aujourd\'hui</string>
    <string name="moloko_prefs_notification_permanent_tomorrow">Tâches à faire demain</string>
    <string name="moloko_prefs_notification_permanent_today_and_tomorrow">Tâches à faire aujourd\'hui et demain</string>
-   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Remind overdue tasks</string>
-   <string name="moloko_prefs_cat_help_dev_title">Support development</string>
+   <string name="moloko_prefs_notification_permanent_show_overdue_tasks_title">Rappeler les tâches en retard</string>
+   <string name="moloko_prefs_cat_help_dev_title">Aider le développement</string>
    <string name="moloko_prefs_acra_title">Activer les rapports d\'erreurs</string>
    <string name="moloko_prefs_acra_summary_on">Merci d\'envoyer vos rapports d\'erreurs à l\'équipe de développement</string>
    <string name="moloko_prefs_acra_summary_off">S\'il vous plait, veuillez envoyer vos rapports d\'erreurs à l\'équipe de développement</string>

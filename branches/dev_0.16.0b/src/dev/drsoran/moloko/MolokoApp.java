@@ -44,8 +44,8 @@ import dev.drsoran.moloko.receivers.TimeTickReceiver;
 import dev.drsoran.moloko.sync.periodic.IPeriodicSyncHandler;
 import dev.drsoran.moloko.sync.periodic.PeriodicSyncHandlerFactory;
 import dev.drsoran.moloko.util.ListenerList;
-import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.Strings;
+import dev.drsoran.moloko.util.ListenerList.MessgageObject;
 import dev.drsoran.moloko.util.parsing.RecurrenceParsing;
 import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
@@ -75,7 +75,7 @@ public class MolokoApp extends Application
    private IDateFormatContext dateFormatContext;
    
    
-   
+
    @Override
    public void onCreate()
    {
@@ -120,8 +120,8 @@ public class MolokoApp extends Application
       initDateFormatContext();
    }
    
-   
-   
+
+
    @Override
    public void onTerminate()
    {
@@ -138,41 +138,49 @@ public class MolokoApp extends Application
       deleteDateFormatContext();
    }
    
-   
-   
+
+
    @Override
    public void onConfigurationChanged( Configuration newConfig )
    {
       super.onConfigurationChanged( newConfig );
       
       initParserLanguages();
+      recreateNotifications();
    }
    
-   
-   
+
+
    private void initParserLanguages()
    {
       RecurrenceParsing.initPatternLanguage( getResources() );
    }
    
+
+
+   private void recreateNotifications()
+   {
+      MOLOKO_NOTIFICATION_MANAGER.onSystemLanguageChanged();
+   }
    
-   
+
+
    private void initDateFormatContext()
    {
       dateFormatContext = new AndroidDateFormatContext( getApplicationContext() );
       RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
    }
    
-   
-   
+
+
    private void deleteDateFormatContext()
    {
       dateFormatContext = null;
       RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
    }
    
-   
-   
+
+
    public static MolokoApp get( Context context )
    {
       MolokoApp app = null;
@@ -185,8 +193,8 @@ public class MolokoApp extends Application
       return app;
    }
    
-   
-   
+
+
    public static Handler getHandler( Context context )
    {
       final MolokoApp app = MolokoApp.get( context );
@@ -196,29 +204,29 @@ public class MolokoApp extends Application
          return null;
    }
    
-   
-   
+
+
    public Handler getHandler()
    {
       return handler;
    }
    
-   
-   
+
+
    public static IDateFormatContext getDateFormatContext( Context context )
    {
       return MolokoApp.get( context ).getDateFormatContext();
    }
    
-   
-   
+
+
    public IDateFormatContext getDateFormatContext()
    {
       return dateFormatContext;
    }
    
-   
-   
+
+
    public void registerOnSettingsChangedListener( int which,
                                                   IOnSettingsChangedListener listener )
    {
@@ -228,8 +236,8 @@ public class MolokoApp extends Application
       }
    }
    
-   
-   
+
+
    public void unregisterOnSettingsChangedListener( IOnSettingsChangedListener listener )
    {
       if ( listener != null )
@@ -238,8 +246,8 @@ public class MolokoApp extends Application
       }
    }
    
-   
-   
+
+
    public void registerOnTimeChangedListener( int which,
                                               IOnTimeChangedListener listener )
    {
@@ -249,8 +257,8 @@ public class MolokoApp extends Application
       }
    }
    
-   
-   
+
+
    public void unregisterOnTimeChangedListener( IOnTimeChangedListener listener )
    {
       if ( listener != null )
@@ -259,8 +267,8 @@ public class MolokoApp extends Application
       }
    }
    
-   
-   
+
+
    public void registerOnBootCompletedListener( IOnBootCompletedListener listener )
    {
       if ( listener != null )
@@ -269,8 +277,8 @@ public class MolokoApp extends Application
       }
    }
    
-   
-   
+
+
    public void unregisterOnBootCompletedListener( IOnBootCompletedListener listener )
    {
       if ( listener != null )
@@ -279,8 +287,8 @@ public class MolokoApp extends Application
       }
    }
    
-   
-   
+
+
    public void registerOnNetworkStatusChangedListener( IOnNetworkStatusChangedListener listener )
    {
       if ( listener != null )
@@ -289,8 +297,8 @@ public class MolokoApp extends Application
       }
    }
    
-   
-   
+
+
    public void unregisterOnNetworkStatusChangedListener( IOnNetworkStatusChangedListener listener )
    {
       if ( listener != null )
@@ -299,57 +307,57 @@ public class MolokoApp extends Application
       }
    }
    
-   
-   
+
+
    public final static Settings getSettings()
    {
       return SETTINGS;
    }
    
-   
-   
+
+
    public final static String getRtmApiKey( Context context )
    {
       return context.getString( R.string.app_rtm_api_key );
    }
    
-   
-   
+
+
    public final static String getRtmSharedSecret( Context context )
    {
       return context.getString( R.string.app_rtm_shared_secret );
    }
    
-   
-   
+
+
    public final static void schedulePeriodicSync( long startUtc, long intervalMs )
    {
       PERIODIC_SNYC_HANDLER.setPeriodicSync( startUtc, intervalMs );
    }
    
-   
-   
+
+
    public final static IPeriodicSyncHandler getPeriodicSyncHander()
    {
       return PERIODIC_SNYC_HANDLER;
    }
    
-   
-   
+
+
    public final static void stopPeriodicSync()
    {
       PERIODIC_SNYC_HANDLER.resetPeriodicSync();
    }
    
-   
-   
+
+
    public final static MolokoNotificationManager getMolokoNotificationManager()
    {
       return MOLOKO_NOTIFICATION_MANAGER;
    }
    
-   
-   
+
+
    private final static < T > Method findMethod( Class< T > cls, String name ) throws NoSuchMethodException
    {
       Method method = null;

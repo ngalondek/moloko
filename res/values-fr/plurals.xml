@@ -53,20 +53,20 @@
    <!-- Global Toasts -->
       <!-- Task -->
       <plurals name="toast_completed_task">
-         <item quantity="one">Task has been completed</item>
-         <item quantity="other">%1$d tasks have been completed</item>
+         <item quantity="one">Tâche marquée faite</item>
+         <item quantity="other">%1$d tâches marquées faites</item>
       </plurals>
       <plurals name="toast_incompleted_task">
-         <item quantity="one">Task is now incomplete</item>
-         <item quantity="other">%1$d tasks are now incomplete</item>
+         <item quantity="one">Tâche marquée à faire</item>
+         <item quantity="other">%1$d tâches marquées à faire</item>
       </plurals>
       <plurals name="toast_postponed_task">
-         <item quantity="one">Task has been postponed</item>
-         <item quantity="other">%1$d tasks have been postponed</item>
+         <item quantity="one">Tâche reportée</item>
+         <item quantity="other">%1$d tâches reportées</item>
       </plurals>
       <plurals name="toast_deleted_task">
-         <item quantity="one">Task has been deleted</item>
-         <item quantity="other">%1$d tasks have been deleted</item>
+         <item quantity="one">Tâche supprimée</item>
+         <item quantity="other">%1$d tâches supprimées</item>
       </plurals>
    
    <!-- TaskLists fragment -->

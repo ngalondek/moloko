@@ -37,7 +37,6 @@ import android.database.ContentObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.Settings.SettingNotFoundException;
 import android.text.TextUtils;
 import dev.drsoran.moloko.content.RtmSettingsProviderPart;
 import dev.drsoran.moloko.util.ListenerList;
@@ -90,7 +89,7 @@ public class Settings implements OnSharedPreferenceChangeListener
    private int taskSort = TASK_SORT_DEFAULT;
    
    
-
+   
    private Settings( Context context )
    {
       this.context = context;
@@ -129,8 +128,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       registerSystemSettingsChangedListener();
    }
    
-
-
+   
+   
    public final static Settings getInstance( Context context )
    {
       if ( INSTANCE == null )
@@ -139,52 +138,44 @@ public class Settings implements OnSharedPreferenceChangeListener
       return INSTANCE;
    }
    
-
-
+   
+   
    public void release()
    {
       unregisterSystemSettingsChangedListener();
    }
    
-
-
+   
+   
    public TimeZone getTimezone()
    {
       return TimeZone.getDefault();
    }
    
-
-
+   
+   
    public String getDateformat()
    {
       return android.provider.Settings.System.getString( context.getContentResolver(),
                                                          android.provider.Settings.System.DATE_FORMAT );
    }
    
-
-
+   
+   
    public boolean Is24hTimeformat()
    {
-      try
-      {
-         return android.provider.Settings.System.getInt( context.getContentResolver(),
-                                                         android.provider.Settings.System.TIME_12_24 ) == 24;
-      }
-      catch ( SettingNotFoundException e )
-      {
-         return false;
-      }
+      return android.text.format.DateFormat.is24HourFormat( context );
    }
    
-
-
+   
+   
    public String getDefaultListId()
    {
       return defaultListId;
    }
    
-
-
+   
+   
    public void setDefaultListId( String id )
    {
       if ( TextUtils.isEmpty( id ) )
@@ -196,29 +187,29 @@ public class Settings implements OnSharedPreferenceChangeListener
                                       false );
    }
    
-
-
+   
+   
    public Locale getLocale()
    {
       return Locale.getDefault();
    }
    
-
-
+   
+   
    public RtmSettings getRtmSettings()
    {
       return rtmSettings;
    }
    
-
-
+   
+   
    public int getStartupView()
    {
       return startupView;
    }
    
-
-
+   
+   
    public void setStartupView( int value )
    {
       startupView = Integer.valueOf( persistSetting( context.getString( R.string.key_startup_view ),
@@ -227,15 +218,16 @@ public class Settings implements OnSharedPreferenceChangeListener
                                                      false ) );
    }
    
-
-
+   
+   
    public int getTaskSort()
    {
       return taskSort;
    }
    
-
-
+   
+   
+   @Override
    public void onSharedPreferenceChanged( SharedPreferences newValue, String key )
    {
       if ( key != null && newValue != null )
@@ -254,8 +246,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    private String setDefaultListId()
    {
       String newListId;
@@ -293,8 +285,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return null;
    }
    
-
-
+   
+   
    private Integer setTaskSort()
    {
       final int newTaskSort = Integer.valueOf( preferences.getString( context.getString( R.string.key_task_sort ),
@@ -311,8 +303,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return null;
    }
    
-
-
+   
+   
    private boolean useRtmSetting( String key )
    {
       if ( !preferences.contains( key ) )
@@ -326,8 +318,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    private String persistSetting( String key,
                                   String keySync,
                                   String value,
@@ -348,8 +340,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return value;
    }
    
-
-
+   
+   
    private String loadLocalValue( String key, String keySync, String defValue )
    {
       String value;
@@ -374,8 +366,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return value;
    }
    
-
-
+   
+   
    private int loadLocalValue( String key, String keySync, int defValue )
    {
       return Integer.parseInt( loadLocalValue( key,
@@ -383,8 +375,8 @@ public class Settings implements OnSharedPreferenceChangeListener
                                                String.valueOf( defValue ) ) );
    }
    
-
-
+   
+   
    private void loadLocalSettings()
    {
       defaultListId = loadLocalValue( context.getString( R.string.key_def_list_local ),
@@ -398,8 +390,8 @@ public class Settings implements OnSharedPreferenceChangeListener
                                  taskSort );
    }
    
-
-
+   
+   
    private int loadRtmSettings( HashMap< Integer, Object > oldValues )
    {
       int settingsChanged = 0;
@@ -421,8 +413,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       return settingsChanged;
    }
    
-
-
+   
+   
    private void registerSystemSettingsChangedListener()
    {
       final ContentResolver contentResolver = context.getContentResolver();
@@ -456,8 +448,8 @@ public class Settings implements OnSharedPreferenceChangeListener
                                                dateFormatChangedOberver );
    }
    
-
-
+   
+   
    private void unregisterSystemSettingsChangedListener()
    {
       final ContentResolver contentResolver = context.getContentResolver();
@@ -475,8 +467,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    private void sendSettingChangedMessage( int what, Object oldValues )
    {
       if ( oldValues != null )
@@ -490,8 +482,8 @@ public class Settings implements OnSharedPreferenceChangeListener
       }
    }
    
-
-
+   
+   
    private final static int addSettingIfChanged( HashMap< Integer, Object > oldValues,
                                                  Object oldValue,
                                                  int setting )

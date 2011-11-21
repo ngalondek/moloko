@@ -3,6 +3,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
 
 
@@ -10,10 +11,12 @@ public class RecurrenceTestCase_en
 {
    private final static SimpleDateFormat SDF_FORMAT = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
    
-   private final static SimpleDateFormat SDF_PARSE = new SimpleDateFormat( "MM/dd/yyyy" );
+   private static IDateFormatContext DATE_FORMAT_CONTEXT;
+   
+   private static SimpleDateFormat SDF_PARSE;
    
    
-
+   
    private static void parseRecurrence( String string,
                                         String freq,
                                         int interval,
@@ -24,8 +27,8 @@ public class RecurrenceTestCase_en
       parseRecurrence( string, freq, interval, res, resVal, null, null, isEvery );
    }
    
-
-
+   
+   
    private static void parseRecurrence( String string,
                                         String freq,
                                         int interval,
@@ -47,8 +50,8 @@ public class RecurrenceTestCase_en
                        isEvery );
    }
    
-
-
+   
+   
    private static void parseRecurrence( String string,
                                         String freq,
                                         int interval,
@@ -60,7 +63,8 @@ public class RecurrenceTestCase_en
                                         int forVal,
                                         boolean isEvery )
    {
-      RecurrenceTestHelper.parseRecurrence( Locale.ENGLISH,
+      RecurrenceTestHelper.parseRecurrence( DATE_FORMAT_CONTEXT,
+                                            Locale.ENGLISH,
                                             string,
                                             freq,
                                             interval,
@@ -73,10 +77,13 @@ public class RecurrenceTestCase_en
                                             isEvery );
    }
    
-
-
+   
+   
    public final static void execute() throws ParseException
-   {
+   {      
+      DATE_FORMAT_CONTEXT = new TestDateFormaterContext_en();
+      SDF_PARSE = new SimpleDateFormat( DATE_FORMAT_CONTEXT.getNumericDateFormatPattern( true ) );
+      
       parseRecurrence( "every year",
                        RecurrencePatternParser.VAL_YEARLY_LIT,
                        1,
@@ -187,14 +194,14 @@ public class RecurrenceTestCase_en
                        RecurrencePatternParser.OP_BYMONTH_LIT,
                        "1",
                        true );
-      parseRecurrence( "every monday, wednesday until 10/1/2010",
+      parseRecurrence( "every monday, wednesday until 1/10/2010",
                        RecurrencePatternParser.VAL_WEEKLY_LIT,
                        1,
                        RecurrencePatternParser.OP_BYDAY_LIT,
                        "MO,WE",
                        null,
                        null,
-                       SDF_FORMAT.format( SDF_PARSE.parse( "10/1/2010" ) ),
+                       SDF_FORMAT.format( SDF_PARSE.parse( "1/10/2010" ) ),
                        -1,
                        true );
       {

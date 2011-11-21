@@ -3,14 +3,17 @@ import java.util.Map;
 
 import org.antlr.runtime.RecognitionException;
 
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.grammar.recurrence.IRecurrenceParser;
 import dev.drsoran.moloko.grammar.recurrence.RecurrenceParserFactory;
 import dev.drsoran.moloko.grammar.recurrence.RecurrencePatternParser;
+import dev.drsoran.moloko.util.parsing.RtmDateTimeParsing;
 
 
 public class RecurrenceTestHelper
 {
-   public static void parseRecurrence( Locale locale,
+   public static void parseRecurrence( IDateFormatContext dateFormatContext,
+                                       Locale locale,
                                        String string,
                                        String freq,
                                        int interval,
@@ -22,6 +25,8 @@ public class RecurrenceTestHelper
                                        int forVal,
                                        boolean isEvery )
    {
+      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
+      
       final IRecurrenceParser parser = RecurrenceParserFactory.createRecurrenceParserForLocale( locale );
       
       System.out.println( ">input: " + string );

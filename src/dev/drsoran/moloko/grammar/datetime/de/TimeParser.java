@@ -1,4 +1,4 @@
-// $ANTLR 3.2 Sep 23, 2009 12:02:23 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g 2011-10-26 16:59:32
+// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g 2011-11-21 14:58:15
 
 package dev.drsoran.moloko.grammar.datetime.de;
 
@@ -26,39 +26,39 @@ public class TimeParser extends AbstractTimeParser
     "MIDNIGHT", "MIDDAY", "INT", "COLON", "DOT", "AM", "PM", "HOURS",
     "MINUTES", "SECONDS", "DAYS", "AND", "WS" };
    
-   public static final int MIDDAY = 8;
-   
-   public static final int SECONDS = 16;
-   
-   public static final int INT = 9;
-   
-   public static final int MIDNIGHT = 7;
-   
-   public static final int AND = 18;
-   
    public static final int EOF = -1;
    
    public static final int AT = 4;
    
-   public static final int COLON = 10;
-   
-   public static final int MINUTES = 15;
-   
-   public static final int DAYS = 17;
-   
-   public static final int WS = 19;
-   
    public static final int COMMA = 5;
-   
-   public static final int PM = 13;
    
    public static final int NEVER = 6;
    
+   public static final int MIDNIGHT = 7;
+   
+   public static final int MIDDAY = 8;
+   
+   public static final int INT = 9;
+   
+   public static final int COLON = 10;
+   
    public static final int DOT = 11;
+   
+   public static final int AM = 12;
+   
+   public static final int PM = 13;
    
    public static final int HOURS = 14;
    
-   public static final int AM = 12;
+   public static final int MINUTES = 15;
+   
+   public static final int SECONDS = 16;
+   
+   public static final int DAYS = 17;
+   
+   public static final int AND = 18;
+   
+   public static final int WS = 19;
    
    
    
@@ -177,7 +177,7 @@ public class TimeParser extends AbstractTimeParser
                
                state._fsp--;
                
-               if ( adjustDay && getCalendar().after( cal ) )
+               if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
                   cal.roll( Calendar.DAY_OF_WEEK, true );
                
                cal.setHasTime( true );
@@ -766,7 +766,7 @@ public class TimeParser extends AbstractTimeParser
                
                }
                
-               if ( adjustDay && getCalendar().after( cal ) )
+               if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
                   cal.roll( Calendar.DAY_OF_WEEK, true );
                
                cal.setHasTime( true );

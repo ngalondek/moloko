@@ -60,6 +60,9 @@ public final class RtmDateTimeParsing
    public synchronized final static void setDateFormatContext( IDateFormatContext context )
    {
       dateFormatContext = context;
+      
+      if ( dateParser != null )
+         dateParser.setDateFormatContext( dateFormatContext );
    }
    
    
@@ -95,10 +98,8 @@ public final class RtmDateTimeParsing
    {
       final MolokoCalendar cal = MolokoCalendar.getInstance();
       
-      boolean eof = false;
       boolean hasTime = false;
       boolean hasDate = false;
-      boolean error = false;
       
       int startOfDatePos = 0;
       
@@ -121,15 +122,14 @@ public final class RtmDateTimeParsing
       {
       }
       
+      final String datePart = spec.substring( startOfDatePos, spec.length() );
+      boolean eof = datePart.length() == 0;
+      
+      int endOfDatePos = spec.length();
       if ( !eof )
       {
-         int endOfDatePos = spec.length();
-         
          try
          {
-            final String datePart = spec.substring( startOfDatePos,
-                                                    spec.length() );
-            
             final ParseDateReturn ret = parseDate( datePart, cal, !hasTime );
             eof = ret.isEof;
             endOfDatePos = ret.lastParsedCharPos;
@@ -137,13 +137,13 @@ public final class RtmDateTimeParsing
          }
          catch ( RecognitionException e )
          {
-            error = true;
+            endOfDatePos = 0;
          }
          
-         // Check if there is a time trailing.
-         // The parser can NOT adjust the day of week
-         // for times in the past.
-         if ( !error && !eof && hasDate && !hasTime )
+         // Check if there is a time trailing or we only have a time.
+         // The parser can NOT adjust the day of week for times in the past if we have already
+         // parsed a date.
+         if ( !eof && !hasTime )
          {
             final String potentialTimePart = spec.substring( endOfDatePos,
                                                              spec.length() );
@@ -169,14 +169,13 @@ public final class RtmDateTimeParsing
                   }
                   catch ( RecognitionException re3 )
                   {
-                     error = true;
                   }
                }
             }
          }
       }
       
-      return ( !error ) ? cal : null;
+      return ( hasTime || hasDate ) ? cal : null;
    }
    
    

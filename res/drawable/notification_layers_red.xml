@@ -17,6 +17,9 @@
    xmlns:android="http://schemas.android.com/apk/res/android">
 
    <item
+      android:maxLevel="0"
+      android:drawable="@drawable/ic_launcher" />
+   <item
       android:maxLevel="1"
       android:drawable="@drawable/ic_notify_logo_layer_red_1" />       
    <item
@@ -45,5 +48,6 @@
       android:drawable="@drawable/ic_notify_logo_layer_red_9" />
    <item
       android:minLevel="10"
+      android:maxLevel="2147483647"
       android:drawable="@drawable/ic_notify_logo_layer_red_greater_9" />
 </level-list>

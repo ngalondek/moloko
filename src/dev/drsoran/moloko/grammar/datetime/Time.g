@@ -71,7 +71,7 @@ parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn resul
    }
    : (AT | COMMA)? time_point_in_time[$cal]   
    {
-      if ( adjustDay && getCalendar().after( cal ) )
+      if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );      
    }
    | EOF
@@ -169,7 +169,7 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn r
                    )
      am_pm[$cal]? COMMA?
    {
-      if ( adjustDay && getCalendar().after( cal ) )
+      if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );      
    }
    | EOF

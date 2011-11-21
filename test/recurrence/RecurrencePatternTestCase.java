@@ -23,7 +23,6 @@
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -39,13 +38,11 @@ public class RecurrencePatternTestCase
 {
    private final static RecurrPatternLanguage LANG = new RecurrPatternLanguage();
    
-   private final static SimpleDateFormat SDF_PARSE = new SimpleDateFormat( "dd.MM.yyyy" );
-   
-   private final static String SDF_PARSE_FORMAT = "%s.%s.";
-   
-   private final static String SDF_PARSE_FORMAT_YEAR = "%s.%s.%s";
-   
    private final static SimpleDateFormat SDF_FORMAT = new SimpleDateFormat( RecurrencePatternParser.DATE_PATTERN );
+   
+   private static IDateFormatContext DATE_FORMAT_CONTEXT;
+   
+   private static SimpleDateFormat SDF_PARSE;
    
    
    
@@ -57,8 +54,7 @@ public class RecurrencePatternTestCase
       final CommonTokenStream antlrTokens = new CommonTokenStream( lexer );
       
       final RecurrencePatternParser parser = new RecurrencePatternParser( antlrTokens );
-      parser.setDateFormatContext( new TestDateFormaterContext( "%s.%s.",
-                                                                "%s.%s.%s" ) );
+      parser.setDateFormatContext( DATE_FORMAT_CONTEXT );
       
       System.out.println( ">input: " + string );
       
@@ -107,6 +103,9 @@ public class RecurrencePatternTestCase
    
    public final static void execute() throws ParseException
    {
+      DATE_FORMAT_CONTEXT = new TestDateFormaterContext_en();
+      SDF_PARSE = new SimpleDateFormat( DATE_FORMAT_CONTEXT.getNumericDateFormatPattern( true ) );
+      
       parseRecurrencePattern( buildPattern( RecurrencePatternParser.VAL_YEARLY_LIT,
                                             1,
                                             RecurrencePatternParser.OP_BYDAY_LIT
@@ -185,8 +184,8 @@ public class RecurrencePatternTestCase
                                                + "=MO,WE",
                                             RecurrencePatternParser.OP_UNTIL_LIT
                                                + "="
-                                               + SDF_FORMAT.format( SDF_PARSE.parse( "10.10.2010" ) ) ),
-                              "every week on the monday, wednesday until 10.10.2010",
+                                               + SDF_FORMAT.format( SDF_PARSE.parse( "10/10/2010" ) ) ),
+                              "every week on the monday, wednesday until 10/10/2010",
                               true );
       {
          final Calendar cal = Calendar.getInstance();

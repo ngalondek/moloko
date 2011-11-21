@@ -1,17 +1,22 @@
 import java.util.Calendar;
 
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.util.MolokoCalendar;
 
 
 public class DateParserTestCase_de
 {
+   private static IDateFormatContext DATE_FORMAT_CONTEXT;
+   
+   
+   
    private static void parseDate( String string, int d, int m, int y )
    {
       parseDate( string, d, m, y, -1, -1, -1 );
    }
    
-
-
+   
+   
    private static void parseDate( String string,
                                   int d,
                                   int m,
@@ -20,11 +25,18 @@ public class DateParserTestCase_de
                                   int min,
                                   int s )
    {
-      DateTimeTestHelper.parseDate( string, d, m, y, h, min, s );
+      DateTimeTestHelper.parseDate( DATE_FORMAT_CONTEXT,
+                                    string,
+                                    d,
+                                    m,
+                                    y,
+                                    h,
+                                    min,
+                                    s );
    }
    
-
-
+   
+   
    private static void parseDateWithin( String string,
                                         boolean past,
                                         int sy,
@@ -36,7 +48,8 @@ public class DateParserTestCase_de
                                         int ew,
                                         int ed )
    {
-      DateTimeTestHelper.parseDateWithin( string,
+      DateTimeTestHelper.parseDateWithin( DATE_FORMAT_CONTEXT,
+                                          string,
                                           past,
                                           sy,
                                           sm,
@@ -48,10 +61,12 @@ public class DateParserTestCase_de
                                           ed );
    }
    
-
-
-   public final static void execute()
+   
+   
+   public final static void execute( IDateFormatContext dateFormatContext )
    {
+      DATE_FORMAT_CONTEXT = dateFormatContext;
+      
       {
          final Calendar cal = Calendar.getInstance();
          parseDate( "jetzt",
@@ -68,6 +83,39 @@ public class DateParserTestCase_de
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
                     cal.get( Calendar.YEAR ) );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.setTimeInMillis( System.currentTimeMillis() );
+         cal.roll( Calendar.HOUR_OF_DAY, 1 );
+         
+         final int hour_24 = cal.get( Calendar.HOUR_OF_DAY );
+         final String time = String.format( "%d:00", hour_24 );
+         
+         parseDate( time,
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    hour_24,
+                    0,
+                    0 );
+      }
+      {
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+         cal.setTimeInMillis( System.currentTimeMillis() );
+         
+         final int hour_24 = cal.get( Calendar.HOUR_OF_DAY );
+         cal.roll( Calendar.DAY_OF_WEEK, true );
+         
+         final String time = String.format( "%d:00", hour_24 );
+         
+         parseDate( time,
+                    cal.get( Calendar.DAY_OF_MONTH ),
+                    cal.get( Calendar.MONTH ),
+                    cal.get( Calendar.YEAR ),
+                    hour_24,
+                    0,
+                    0 );
       }
       {
          final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
@@ -311,7 +359,7 @@ public class DateParserTestCase_de
                     0 );
       }
       {
-         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();     
+         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
          parseDate( "heute@12",
                     cal.get( Calendar.DAY_OF_MONTH ),
                     cal.get( Calendar.MONTH ),
@@ -330,21 +378,21 @@ public class DateParserTestCase_de
                     10,
                     0 );
       }
-//      {
-//         final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
-//         cal.set( Calendar.DAY_OF_MONTH, 21 );
-//         
-//         if ( cal.before( DateTimeTestHelper.getDateParserCalendar() ) )
-//            cal.roll( Calendar.MONTH, true );
-//         
-//         parseDate( "am 21. 2000",
-//                    cal.get( Calendar.DAY_OF_MONTH ),
-//                    cal.get( Calendar.MONTH ),
-//                    cal.get( Calendar.YEAR ),
-//                    20,
-//                    00,
-//                    00 );
-//      }      
+      // {
+      // final MolokoCalendar cal = DateTimeTestHelper.getDateParserCalendar();
+      // cal.set( Calendar.DAY_OF_MONTH, 21 );
+      //
+      // if ( cal.before( DateTimeTestHelper.getDateParserCalendar() ) )
+      // cal.roll( Calendar.MONTH, true );
+      //
+      // parseDate( "am 21. 2000",
+      // cal.get( Calendar.DAY_OF_MONTH ),
+      // cal.get( Calendar.MONTH ),
+      // cal.get( Calendar.YEAR ),
+      // 20,
+      // 00,
+      // 00 );
+      // }
       {
          final MolokoCalendar end = DateTimeTestHelper.getDateParserCalendar();
          end.roll( Calendar.DAY_OF_YEAR, true );

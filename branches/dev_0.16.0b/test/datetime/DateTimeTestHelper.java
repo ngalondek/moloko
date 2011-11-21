@@ -4,6 +4,7 @@ import java.util.TimeZone;
 
 import org.antlr.runtime.RecognitionException;
 
+import dev.drsoran.moloko.grammar.IDateFormatContext;
 import dev.drsoran.moloko.grammar.datetime.IDateParser.ParseDateWithinReturn;
 import dev.drsoran.moloko.grammar.datetime.ITimeParser;
 import dev.drsoran.moloko.grammar.datetime.TimeParserFactory;
@@ -20,8 +21,8 @@ public class DateTimeTestHelper
       return cal;
    }
    
-
-
+   
+   
    public static void parseTime( Locale locale,
                                  String string,
                                  int h,
@@ -59,8 +60,8 @@ public class DateTimeTestHelper
       }
    }
    
-
-
+   
+   
    public static void parseTimeSpec( Locale locale,
                                      String string,
                                      int h,
@@ -99,8 +100,8 @@ public class DateTimeTestHelper
       }
    }
    
-
-
+   
+   
    public static void parseTimeEstimate( Locale locale,
                                          String string,
                                          int h,
@@ -123,9 +124,10 @@ public class DateTimeTestHelper
       }
    }
    
-
-
-   public static void parseDate( String string,
+   
+   
+   public static void parseDate( IDateFormatContext dateFormatContext,
+                                 String string,
                                  int d,
                                  int m,
                                  int y,
@@ -134,6 +136,8 @@ public class DateTimeTestHelper
                                  int s )
    {
       System.out.println( ">input: " + string );
+      
+      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
       
       final MolokoCalendar cal = RtmDateTimeParsing.parseDateTimeSpec( string );
       
@@ -173,9 +177,10 @@ public class DateTimeTestHelper
       }
    }
    
-
-
-   public static void parseDateWithin( String string,
+   
+   
+   public static void parseDateWithin( IDateFormatContext dateFormatContext,
+                                       String string,
                                        boolean past,
                                        int sy,
                                        int sm,
@@ -187,6 +192,8 @@ public class DateTimeTestHelper
                                        int ed )
    {
       System.out.println( ">input: " + string + ", past: " + past );
+      
+      RtmDateTimeParsing.setDateFormatContext( dateFormatContext );
       
       final ParseDateWithinReturn result = RtmDateTimeParsing.parseDateWithin( string,
                                                                                past );

@@ -249,19 +249,22 @@ date_numeric [MolokoCalendar cal]
       String pt2Str = null;
       String pt3Str = null;
    }
-   : pt1=INT (DOT | MINUS | COLON | DATE_SEP)
+   : pt1=INT (DOT | MINUS | DATE_SEP)
      {
         pt1Str = $pt1.getText();
      }
-     pt2=INT (DOT | MINUS | COLON | DATE_SEP)
+     pt2=INT
      {
         pt2Str = $pt2.getText();
      }
      (
-        pt3=INT
-        {
-           pt3Str = $pt3.getText();
-        }
+        (DOT | MINUS | DATE_SEP)
+        (
+           pt3=INT
+           {
+              pt3Str = $pt3.getText();
+           }
+        )?
      )?
      {
         handleNumericDate( cal, pt1Str, pt2Str, pt3Str );

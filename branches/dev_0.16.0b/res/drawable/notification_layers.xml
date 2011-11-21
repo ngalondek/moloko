@@ -48,5 +48,6 @@
       android:drawable="@drawable/ic_notify_logo_layer_9" />
    <item
       android:minLevel="10"
+      android:maxLevel="2147483647"
       android:drawable="@drawable/ic_notify_logo_layer_greater_9" />
 </level-list>

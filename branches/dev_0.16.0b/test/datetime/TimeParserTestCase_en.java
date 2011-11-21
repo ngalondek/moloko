@@ -8,22 +8,22 @@ public class TimeParserTestCase_en
       DateTimeTestHelper.parseTime( Locale.US, string, h, m, s );
    }
    
-
-
+   
+   
    private static void parseTimeSpec( String string, int h, int m, int s )
    {
       DateTimeTestHelper.parseTimeSpec( Locale.US, string, h, m, s );
    }
    
-
-
+   
+   
    private static void parseTimeEstimate( String string, int h, int m, int s )
    {
       DateTimeTestHelper.parseTimeEstimate( Locale.US, string, h, m, s );
    }
    
-
-
+   
+   
    public final static void execute()
    {
       parseTime( "@1310", 13, 10, 0 );

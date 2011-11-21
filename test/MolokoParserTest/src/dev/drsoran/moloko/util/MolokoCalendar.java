@@ -36,192 +36,196 @@ public final class MolokoCalendar
    private boolean hasTime = true;
    
    
-
+   
    private MolokoCalendar( TimeZone timezone )
    {
       impl.setTimeZone( timezone );
    }
    
-
-
+   
+   
    public void add( int field, int value )
    {
       impl.add( field, value );
    }
    
-
-
+   
+   
    public boolean after( Object calendar )
    {
-      return impl.after( calendar );
+      return impl.after( ( calendar instanceof MolokoCalendar )
+                                                               ? ( (MolokoCalendar) calendar ).toCalendar()
+                                                               : calendar );
    }
    
-
-
+   
+   
    public boolean before( Object calendar )
    {
-      return impl.before( calendar );
+      return impl.before( ( calendar instanceof MolokoCalendar )
+                                                                ? ( (MolokoCalendar) calendar ).toCalendar()
+                                                                : calendar );
    }
    
-
-
+   
+   
    public final void clear()
    {
       impl.clear();
    }
    
-
-
+   
+   
    public final void clear( int field )
    {
       impl.clear( field );
    }
    
-
-
+   
+   
    @Override
    public Object clone()
    {
       return impl.clone();
    }
    
-
-
+   
+   
    public int compareTo( Calendar anotherCalendar )
    {
       return impl.compareTo( anotherCalendar );
    }
    
-
-
+   
+   
    @Override
    public boolean equals( Object object )
    {
       return impl.equals( object );
    }
    
-
-
+   
+   
    public int get( int field )
    {
       return impl.get( field );
    }
    
-
-
+   
+   
    public int getActualMaximum( int field )
    {
       return impl.getActualMaximum( field );
    }
    
-
-
+   
+   
    public int getActualMinimum( int field )
    {
       return impl.getActualMinimum( field );
    }
    
-
-
+   
+   
    public int getFirstDayOfWeek()
    {
       return impl.getFirstDayOfWeek();
    }
    
-
-
+   
+   
    public int getGreatestMinimum( int field )
    {
       return impl.getGreatestMinimum( field );
    }
    
-
-
+   
+   
    public int getLeastMaximum( int field )
    {
       return impl.getLeastMaximum( field );
    }
    
-
-
+   
+   
    public int getMaximum( int field )
    {
       return impl.getMaximum( field );
    }
    
-
-
+   
+   
    public int getMinimalDaysInFirstWeek()
    {
       return impl.getMinimalDaysInFirstWeek();
    }
    
-
-
+   
+   
    public int getMinimum( int field )
    {
       return impl.getMinimum( field );
    }
    
-
-
+   
+   
    public final Date getTime()
    {
       return impl.getTime();
    }
    
-
-
+   
+   
    public long getTimeInMillis()
    {
       return impl.getTimeInMillis();
    }
    
-
-
+   
+   
    public TimeZone getTimeZone()
    {
       return impl.getTimeZone();
    }
    
-
-
+   
+   
    @Override
    public int hashCode()
    {
       return impl.hashCode();
    }
    
-
-
+   
+   
    public boolean isLenient()
    {
       return impl.isLenient();
    }
    
-
-
+   
+   
    public final boolean isSet( int field )
    {
       return impl.isSet( field );
    }
    
-
-
+   
+   
    public void roll( int field, boolean increment )
    {
       impl.roll( field, increment );
    }
    
-
-
+   
+   
    public void roll( int field, int value )
    {
       impl.roll( field, value );
    }
    
-
-
+   
+   
    public final void set( int year,
                           int month,
                           int day,
@@ -232,8 +236,8 @@ public final class MolokoCalendar
       impl.set( year, month, day, hourOfDay, minute, second );
    }
    
-
-
+   
+   
    public final void set( int year,
                           int month,
                           int day,
@@ -243,79 +247,79 @@ public final class MolokoCalendar
       impl.set( year, month, day, hourOfDay, minute );
    }
    
-
-
+   
+   
    public final void set( int year, int month, int day )
    {
       impl.set( year, month, day );
    }
    
-
-
+   
+   
    public void set( int field, int value )
    {
       impl.set( field, value );
    }
    
-
-
+   
+   
    public void setFirstDayOfWeek( int value )
    {
       impl.setFirstDayOfWeek( value );
    }
    
-
-
+   
+   
    public void setLenient( boolean value )
    {
       impl.setLenient( value );
    }
    
-
-
+   
+   
    public void setMinimalDaysInFirstWeek( int value )
    {
       impl.setMinimalDaysInFirstWeek( value );
    }
    
-
-
+   
+   
    public final void setTime( Date date )
    {
       impl.setTime( date );
    }
    
-
-
+   
+   
    public void setTimeInMillis( long milliseconds )
    {
       impl.setTimeInMillis( milliseconds );
    }
    
-
-
+   
+   
    public void setTimeZone( TimeZone timezone )
    {
       impl.setTimeZone( timezone );
    }
    
-
-
+   
+   
    @Override
    public String toString()
    {
       return impl.toString();
    }
    
-
-
+   
+   
    public boolean hasDate()
    {
       return hasDate;
    }
    
-
-
+   
+   
    public void setHasDate( boolean hasDate )
    {
       this.hasDate = hasDate;
@@ -329,15 +333,15 @@ public final class MolokoCalendar
       }
    }
    
-
-
+   
+   
    public boolean hasTime()
    {
       return hasTime;
    }
    
-
-
+   
+   
    public void setHasTime( boolean hasTime )
    {
       this.hasTime = hasTime;
@@ -353,15 +357,15 @@ public final class MolokoCalendar
       }
    }
    
-
-
+   
+   
    public final static MolokoCalendar getInstance()
    {
       return new MolokoCalendar( TimeZone.getTimeZone( "Europe/Berlin" ) );
    }
    
-
-
+   
+   
    public final static MolokoCalendar getDatelessAndTimelessInstance()
    {
       final MolokoCalendar cal = getInstance();
@@ -371,15 +375,15 @@ public final class MolokoCalendar
       return cal;
    }
    
-
-
+   
+   
    public Calendar toCalendar()
    {
       return impl;
    }
    
-
-
+   
+   
    public final static MolokoCalendar getUTCInstance()
    {
       return new MolokoCalendar( TimeZone.getTimeZone( "UTC" ) );

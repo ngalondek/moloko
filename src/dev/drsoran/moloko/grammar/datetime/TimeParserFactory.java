@@ -80,4 +80,12 @@ public final class TimeParserFactory extends AbstractParserFactory
    {
       return getAvailableParserLocales( availableParserClasses );
    }
+   
+   
+   
+   public final static boolean existsTimeParserWithMatchingLocale( Locale localeToMatch )
+   {
+      return existsDateParserWithMatchingLocale( localeToMatch,
+                                                 availableParserClasses );
+   }
 }

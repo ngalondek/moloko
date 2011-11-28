@@ -22,6 +22,9 @@
 -->
 
 <resources>
+   <string name="res_language">en</string>
+   <string name="res_country">*</string>
+    
    <string name="app_name">Moloko</string>
    <string name="app_home">Home</string>
    <string name="app_preferences">Settings</string>

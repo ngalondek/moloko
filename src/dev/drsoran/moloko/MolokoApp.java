@@ -23,6 +23,7 @@
 package dev.drsoran.moloko;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
@@ -223,6 +224,19 @@ public class MolokoApp extends Application
    public IDateFormatContext getDateFormatContext()
    {
       return dateFormatContext;
+   }
+   
+   
+   
+   public Locale getActiveResourcesLocale()
+   {
+      final String resourcesLangString = getString( R.string.res_language );
+      final String resourcesCountryString = getString( R.string.res_country );
+      
+      if ( resourcesCountryString.equalsIgnoreCase( "*" ) )
+         return new Locale( resourcesLangString );
+      else
+         return new Locale( resourcesLangString, resourcesCountryString );
    }
    
    

@@ -188,7 +188,7 @@
             android:layout_below="@id/task_edit_due_title"
             android:orientation="horizontal">
 
-            <dev.drsoran.moloko.widgets.ClearableEditText
+            <dev.drsoran.moloko.widgets.DueEditText
                android:id="@+id/task_edit_due_text"
                android:layout_width="0dip"
                android:layout_height="wrap_content"
@@ -234,7 +234,7 @@
             android:layout_below="@id/task_edit_recurrence_title"
             android:orientation="horizontal">
 
-            <dev.drsoran.moloko.widgets.ClearableEditText
+            <dev.drsoran.moloko.widgets.RecurrenceEditText
                android:id="@+id/task_edit_recurrence_text"
                android:layout_width="0dip"
                android:layout_height="wrap_content"
@@ -280,7 +280,7 @@
             android:layout_below="@id/task_edit_estimate_title"
             android:orientation="horizontal">
 
-            <dev.drsoran.moloko.widgets.ClearableEditText
+            <dev.drsoran.moloko.widgets.EstimateEditText
                android:id="@+id/task_edit_estim_text"
                android:layout_width="0dip"
                android:layout_height="wrap_content"

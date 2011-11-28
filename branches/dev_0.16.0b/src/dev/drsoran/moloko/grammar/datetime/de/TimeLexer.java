@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g 2011-11-21 14:58:15
+// $ANTLR 3.3 Nov 30, 2010 12:45:30 D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g 2011-11-28 12:17:32
 
 package dev.drsoran.moloko.grammar.datetime.de;
 
@@ -100,7 +100,7 @@ public class TimeLexer extends Lexer
       {
          int _type = AT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:330:11:
          // ( '@' | 'um' | 'am' | 'an' )
          int alt1 = 4;
          switch ( input.LA( 1 ) )
@@ -150,7 +150,7 @@ public class TimeLexer extends Lexer
          switch ( alt1 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:13:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:330:13:
             // '@'
             {
                match( '@' );
@@ -158,7 +158,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:19:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:330:19:
             // 'um'
             {
                match( "um" );
@@ -166,7 +166,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:26:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:330:26:
             // 'am'
             {
                match( "am" );
@@ -174,7 +174,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:337:33:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:330:33:
             // 'an'
             {
                match( "an" );
@@ -202,9 +202,9 @@ public class TimeLexer extends Lexer
       {
          int _type = AND;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:332:11:
          // ( 'und' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:339:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:332:13:
          // 'und'
          {
             match( "und" );
@@ -230,9 +230,9 @@ public class TimeLexer extends Lexer
       {
          int _type = NEVER;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:341:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:334:11:
          // ( 'nie' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:341:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:334:13:
          // 'nie'
          {
             match( "nie" );
@@ -258,14 +258,14 @@ public class TimeLexer extends Lexer
       {
          int _type = MIDNIGHT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:343:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:336:11:
          // ( 'mitternacht' ( 's' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:343:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:336:13:
          // 'mitternacht' ( 's' )?
          {
             match( "mitternacht" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:343:26:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:336:26:
             // ( 's' )?
             int alt2 = 2;
             int LA2_0 = input.LA( 1 );
@@ -277,7 +277,7 @@ public class TimeLexer extends Lexer
             switch ( alt2 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:343:26:
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:336:26:
                // 's'
                {
                   match( 's' );
@@ -308,14 +308,14 @@ public class TimeLexer extends Lexer
       {
          int _type = MIDDAY;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:345:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:338:11:
          // ( 'mittag' ( 's' )? )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:345:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:338:13:
          // 'mittag' ( 's' )?
          {
             match( "mittag" );
             
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:345:21:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:338:21:
             // ( 's' )?
             int alt3 = 2;
             int LA3_0 = input.LA( 1 );
@@ -327,7 +327,7 @@ public class TimeLexer extends Lexer
             switch ( alt3 )
             {
                case 1:
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:345:21:
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:338:21:
                // 's'
                {
                   match( 's' );
@@ -358,7 +358,7 @@ public class TimeLexer extends Lexer
       {
          int _type = DAYS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:347:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:340:11:
          // ( 'tage' | 'tag' | 'd' )
          int alt4 = 3;
          int LA4_0 = input.LA( 1 );
@@ -420,7 +420,7 @@ public class TimeLexer extends Lexer
          switch ( alt4 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:347:13:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:340:13:
             // 'tage'
             {
                match( "tage" );
@@ -428,7 +428,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:347:22:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:340:22:
             // 'tag'
             {
                match( "tag" );
@@ -436,7 +436,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:347:30:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:340:30:
             // 'd'
             {
                match( 'd' );
@@ -464,14 +464,14 @@ public class TimeLexer extends Lexer
       {
          int _type = HOURS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:349:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:342:11:
          // ( 'stunden' | 'stunde' | 'std' | 'h' )
          int alt5 = 4;
          alt5 = dfa5.predict( input );
          switch ( alt5 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:349:13:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:342:13:
             // 'stunden'
             {
                match( "stunden" );
@@ -479,7 +479,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:349:26:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:342:26:
             // 'stunde'
             {
                match( "stunde" );
@@ -487,7 +487,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:349:38:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:342:38:
             // 'std'
             {
                match( "std" );
@@ -495,7 +495,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:349:54:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:342:54:
             // 'h'
             {
                match( 'h' );
@@ -523,14 +523,14 @@ public class TimeLexer extends Lexer
       {
          int _type = MINUTES;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:351:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:344:11:
          // ( 'minuten' | 'minute' | 'min' | 'm' )
          int alt6 = 4;
          alt6 = dfa6.predict( input );
          switch ( alt6 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:351:13:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:344:13:
             // 'minuten'
             {
                match( "minuten" );
@@ -538,7 +538,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:351:26:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:344:26:
             // 'minute'
             {
                match( "minute" );
@@ -546,7 +546,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:351:38:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:344:38:
             // 'min'
             {
                match( "min" );
@@ -554,7 +554,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:351:54:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:344:54:
             // 'm'
             {
                match( 'm' );
@@ -582,14 +582,14 @@ public class TimeLexer extends Lexer
       {
          int _type = SECONDS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:353:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:346:11:
          // ( 'sekunden' | 'sekunde' | 'se' ( 'c' | 'k' ) | 's' )
          int alt7 = 4;
          alt7 = dfa7.predict( input );
          switch ( alt7 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:353:13:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:346:13:
             // 'sekunden'
             {
                match( "sekunden" );
@@ -597,7 +597,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:353:26:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:346:26:
             // 'sekunde'
             {
                match( "sekunde" );
@@ -605,7 +605,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 3:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:353:38:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:346:38:
             // 'se' ( 'c' | 'k' )
             {
                match( "se" );
@@ -626,7 +626,7 @@ public class TimeLexer extends Lexer
             }
                break;
             case 4:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:353:54:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:346:54:
             // 's'
             {
                match( 's' );
@@ -654,7 +654,7 @@ public class TimeLexer extends Lexer
       {
          int _type = AM;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:355:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:348:11:
          // ( 'vorm' ( DOT )? | 'vormittag' ( 's' )? )
          int alt10 = 2;
          int LA10_0 = input.LA( 1 );
@@ -726,12 +726,12 @@ public class TimeLexer extends Lexer
          switch ( alt10 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:355:13:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:348:13:
             // 'vorm' ( DOT )?
             {
                match( "vorm" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:355:19:
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:348:19:
                // ( DOT )?
                int alt8 = 2;
                int LA8_0 = input.LA( 1 );
@@ -743,7 +743,7 @@ public class TimeLexer extends Lexer
                switch ( alt8 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:355:19:
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:348:19:
                   // DOT
                   {
                      mDOT();
@@ -756,12 +756,12 @@ public class TimeLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:355:26:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:348:26:
             // 'vormittag' ( 's' )?
             {
                match( "vormittag" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:355:37:
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:348:37:
                // ( 's' )?
                int alt9 = 2;
                int LA9_0 = input.LA( 1 );
@@ -773,7 +773,7 @@ public class TimeLexer extends Lexer
                switch ( alt9 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:355:38:
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:348:38:
                   // 's'
                   {
                      match( 's' );
@@ -806,7 +806,7 @@ public class TimeLexer extends Lexer
       {
          int _type = PM;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:357:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:350:11:
          // ( 'nachm' ( DOT )? | 'nachmittag' ( 's' )? )
          int alt13 = 2;
          int LA13_0 = input.LA( 1 );
@@ -892,12 +892,12 @@ public class TimeLexer extends Lexer
          switch ( alt13 )
          {
             case 1:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:357:13:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:350:13:
             // 'nachm' ( DOT )?
             {
                match( "nachm" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:357:20:
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:350:20:
                // ( DOT )?
                int alt11 = 2;
                int LA11_0 = input.LA( 1 );
@@ -909,7 +909,7 @@ public class TimeLexer extends Lexer
                switch ( alt11 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:357:20:
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:350:20:
                   // DOT
                   {
                      mDOT();
@@ -922,12 +922,12 @@ public class TimeLexer extends Lexer
             }
                break;
             case 2:
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:357:27:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:350:27:
             // 'nachmittag' ( 's' )?
             {
                match( "nachmittag" );
                
-               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:357:39:
+               // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:350:39:
                // ( 's' )?
                int alt12 = 2;
                int LA12_0 = input.LA( 1 );
@@ -939,7 +939,7 @@ public class TimeLexer extends Lexer
                switch ( alt12 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:357:40:
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:350:40:
                   // 's'
                   {
                      match( 's' );
@@ -972,9 +972,9 @@ public class TimeLexer extends Lexer
       {
          int _type = COMMA;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:359:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:352:11:
          // ( ',' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:359:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:352:13:
          // ','
          {
             match( ',' );
@@ -1000,9 +1000,9 @@ public class TimeLexer extends Lexer
       {
          int _type = DOT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:361:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:354:11:
          // ( '.' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:361:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:354:13:
          // '.'
          {
             match( '.' );
@@ -1028,9 +1028,9 @@ public class TimeLexer extends Lexer
       {
          int _type = COLON;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:363:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:356:11:
          // ( ':' )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:363:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:356:13:
          // ':'
          {
             match( ':' );
@@ -1056,12 +1056,12 @@ public class TimeLexer extends Lexer
       {
          int _type = INT;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:365:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:358:11:
          // ( ( '0' .. '9' )+ )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:365:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:358:13:
          // ( '0' .. '9' )+
          {
-            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:365:13:
+            // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:358:13:
             // ( '0' .. '9' )+
             int cnt14 = 0;
             loop14: do
@@ -1077,7 +1077,7 @@ public class TimeLexer extends Lexer
                switch ( alt14 )
                {
                   case 1:
-                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:365:13:
+                  // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:358:13:
                   // '0' .. '9'
                   {
                      matchRange( '0', '9' );
@@ -1116,9 +1116,9 @@ public class TimeLexer extends Lexer
       {
          int _type = WS;
          int _channel = DEFAULT_TOKEN_CHANNEL;
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:367:11:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:360:11:
          // ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
-         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:367:13:
+         // D:\\Programmierung\\Projects\\java\\Moloko\\src\\dev\\drsoran\\moloko\\grammar\\datetime\\de\\Time.g:360:13:
          // ( ' ' | '\\t' | '\\r' | '\\n' )
          {
             if ( ( input.LA( 1 ) >= '\t' && input.LA( 1 ) <= '\n' )
@@ -1362,7 +1362,7 @@ public class TimeLexer extends Lexer
       
       public String getDescription()
       {
-         return "349:1: HOURS : ( 'stunden' | 'stunde' | 'std' | 'h' );";
+         return "342:1: HOURS : ( 'stunden' | 'stunde' | 'std' | 'h' );";
       }
    }
    
@@ -1426,7 +1426,7 @@ public class TimeLexer extends Lexer
       
       public String getDescription()
       {
-         return "351:1: MINUTES : ( 'minuten' | 'minute' | 'min' | 'm' );";
+         return "344:1: MINUTES : ( 'minuten' | 'minute' | 'min' | 'm' );";
       }
    }
    
@@ -1493,7 +1493,7 @@ public class TimeLexer extends Lexer
       
       public String getDescription()
       {
-         return "353:1: SECONDS : ( 'sekunden' | 'sekunde' | 'se' ( 'c' | 'k' ) | 's' );";
+         return "346:1: SECONDS : ( 'sekunden' | 'sekunde' | 'se' ( 'c' | 'k' ) | 's' );";
       }
    }
    

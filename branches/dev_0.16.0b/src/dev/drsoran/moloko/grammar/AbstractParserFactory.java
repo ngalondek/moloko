@@ -136,6 +136,22 @@ public abstract class AbstractParserFactory
    
    
    
+   protected final static < T > boolean existsDateParserWithMatchingLocale( Locale localeToMatch,
+                                                                            List< Class< ? extends T > > availableParserClasses )
+   {
+      final List< Locale > locales = getAvailableParserLocales( availableParserClasses );
+      
+      for ( Locale locale : locales )
+      {
+         if ( localeToMatch.equals( locale ) )
+            return true;
+      }
+      
+      return false;
+   }
+   
+   
+   
    private final static boolean equalLocales( Locale locale1, Locale locale2 )
    {
       return locale1.hashCode() == locale2.hashCode()

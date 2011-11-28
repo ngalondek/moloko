@@ -53,7 +53,6 @@ options
       - @|at|,? [0-9]{3,4] am|pm?
       - @|at|,? [0-9]{1,2] am|pm?
 
-   return true in case of EOF.
 */
 // adjustDay - if this parameter is false, the parser
 // assumes that the given cal has been initialized
@@ -74,7 +73,6 @@ parseTime [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn resul
       if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );      
    }
-   | EOF
    ;
    catch[ RecognitionException e ]
    {
@@ -141,7 +139,6 @@ am_pm [MolokoCalendar cal]
       - @|at|,? [0-9]+(:[0-9]+(:[0-9]+)?)? am_pm? ,?
       - @|at|,? [0-9]+ h|m|s ([0-9]+ h|m|s ([0-9]+ h|m|s)?)? am_pm? ,?
 
-   return true in case of EOF.
 */
 // adjustDay - if this parameter is false, the parser
 // assumes that the given cal has been initialized
@@ -172,7 +169,6 @@ parseTimeSpec [MolokoCalendar cal, boolean adjustDay] returns [ParseTimeReturn r
       if ( adjustDay && getCalendar().after( cal.toCalendar() ) )
          cal.roll( Calendar.DAY_OF_WEEK, true );      
    }
-   | EOF
    ;
    catch[ RecognitionException e ]
    {
@@ -296,7 +292,6 @@ parseTimeEstimate returns [long span]
          span += ts;
        }
      )+ (COMMA | AND)*
-   | EOF
    ;
    catch[ NumberFormatException nfe ]
    {

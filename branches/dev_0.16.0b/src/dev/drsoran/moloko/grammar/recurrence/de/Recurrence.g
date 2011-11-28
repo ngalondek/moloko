@@ -47,7 +47,7 @@ options
    @Override
    public void reportError( RecognitionException e )
    {
-      throw new LexerException( e );
+      // throw new LexerException( e );
    }
 }
 

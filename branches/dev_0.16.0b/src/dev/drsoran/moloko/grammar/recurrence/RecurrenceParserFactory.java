@@ -40,23 +40,31 @@ public final class RecurrenceParserFactory extends AbstractParserFactory
    }
    
    
-
+   
    public final static IRecurrenceParser createRecurrenceParserForLocale( Locale locale )
    {
       return createParserForLocale( locale, availableParserClasses );
    }
    
-
-
+   
+   
    public static IRecurrenceParser createDefaultRecurrenceParser()
    {
       return createDefaultParser( availableParserClasses );
    }
    
-
-
+   
+   
    public final static List< IRecurrenceParser > getAvailableRecurrenceParsers()
    {
       return getAvailableParsers( availableParserClasses );
+   }
+   
+   
+   
+   public final static boolean existsDateParserWithMatchingLocale( Locale localeToMatch )
+   {
+      return existsDateParserWithMatchingLocale( localeToMatch,
+                                                 availableParserClasses );
    }
 }

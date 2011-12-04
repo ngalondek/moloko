@@ -40,7 +40,7 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       + SelectMultipleTasksActivity.class.getSimpleName();
    
    
-
+   
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -49,8 +49,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
       setTitleWithSelectedCount( 0 );
    }
    
-
-
+   
+   
    @Override
    public void onOpenTask( int pos )
    {
@@ -58,16 +58,16 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
          getTasksListFragment().toggle( pos );
    }
    
-
-
+   
+   
    @Override
    public void onSelectionChanged( List< ? extends Task > selectedTasks )
    {
       setTitleWithSelectedCount( selectedTasks.size() );
    }
    
-
-
+   
+   
    @Override
    public void onEditSelectedTasks( List< ? extends Task > tasks )
    {
@@ -79,8 +79,8 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
             startActivity( Intents.createEditTaskIntent( this, tasks.get( 0 ) ) );
    }
    
-
-
+   
+   
    @Override
    protected SelectableTasksListsFragment getTasksListFragment()
    {
@@ -90,10 +90,11 @@ public class SelectMultipleTasksActivity extends AbstractTasksListActivity
          return null;
    }
    
-
-
+   
+   
    private void setTitleWithSelectedCount( int cnt )
    {
-      setTitle( getString( R.string.app_task_select_multiple, cnt ) );
+      getSupportActionBar().setTitle( getString( R.string.app_task_select_multiple,
+                                                 cnt ) );
    }
 }

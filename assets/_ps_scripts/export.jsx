@@ -1,13 +1,8 @@
 ﻿$.localize = true;
 
 var preProdFolder = Folder.selectDialog( "Select _pre_production folder",
-                                         "/f/Programmierung/Projects/java/Moloko/assets/_pre_production" );
+                                         "/d/Programmierung/Projects/java/Moloko/assets/_pre_production" );
 var startFolder = Folder.selectDialog( "Select start folder", preProdFolder );
-
-var drawableFolder = null;
-var ldpiFolder = null;
-var mdpiFolder = null;
-var hdpiFolder = null;
 
 
 if ( preProdFolder != null && startFolder != null )
@@ -39,121 +34,145 @@ if ( preProdFolder != null && startFolder != null )
 
 function exportFolder( folder, prefix )
 {
-	var script = loadScriptFromFolder( folder );
 	var files = folder.getFiles();
-   
+       
 	for ( var i = 0; i < files.length; i++ )
 	{      
 		var file = files[ i ];
-      
+	  
 		if ( file instanceof Folder )
 		{
 			// Skip folder starting with ".", e.g. ".svn"
 			if ( !file.name.match(/^\./) )
 				exportFolder( file,
-								  ( ( prefix != null ) ? prefix + "_" + file.name : file.name ) );
+							 ( ( prefix != null ) ? prefix + "_" + file.name : file.name ) );
 		}
 		
-		// Check if we have a script in this folder
-		else if ( script != null  )
+		else
 		{
-			// skip scripts
-			if ( file.name.match( /jsx$/ ) )
-			{
-				continue;
-			}
+			var scripts = loadScriptsFromFolder( folder );
 			
-			// resolve links
-			else if ( !file.name.match( /psd$/ ) )
+			for ( var scriptIdx = 0; scriptIdx < scripts.length; scriptIdx++ )
 			{
-				file = resolveLink( file );
-			}			
-			
-			// Export the file
-			open( file );
-		
-			var ok = true;
-         var alreadyExported = false;
-         var exportAsIs = false;
-         
-			eval( script );
+				var script = scripts[ scriptIdx ];
+				
+				// Check if we have a script in this folder
+				if ( script != null )
+				{
+					// skip scripts
+					if ( file.name.match( /jsx$/ ) )
+					{
+						continue;
+					}
+					
+					// resolve links
+					else if ( !file.name.match( /psd$/ ) )
+					{
+						file = resolveLink( file );
+					}			
+					
+					// Export the file
+					open( file );
+				
+					var ok = true;
+					var alreadyExported = false;
+					var exportAsIs = false;
+					
+					var drawableFolder = preProdFolder + "/../../res/drawable";
+					var ldpiFolder     = preProdFolder + "/../../res/drawable-ldpi";
+					var mdpiFolder 	   = preProdFolder + "/../../res/drawable-mdpi";
+					var hdpiFolder	   = preProdFolder + "/../../res/drawable-hdpi";
+					var xhdpiFolder	   = preProdFolder + "/../../res/drawable-xhdpi-v11";
+					 
+					eval( script );
 
-			if ( ok && !alreadyExported )
-			{
-            if ( exportAsIs )
-            {
-               exportDrawable( file, prefix, "" );
-            }
-            else
-            {
-               exportLDPI( file, prefix, "" );
-               exportMDPI( file, prefix, "" );
-               exportHDPI( file, prefix, "" );
-            }
-            
-            activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+					if ( ok && !alreadyExported )
+					{
+						if ( exportAsIs )
+						{
+						   if ( drawableFolder != null )
+							  exportDrawable( file, drawableFolder, prefix, "" );
+						}
+						else
+						{
+						   if ( ldpiFolder != null )
+							  exportLDPI( file, ldpiFolder, prefix, "" );
+						   
+						   if ( mdpiFolder != null )
+							  exportMDPI( file, mdpiFolder, prefix, "" );
+						   
+						   if ( hdpiFolder != null )
+							  exportHDPI( file, hdpiFolder, prefix, "" );
+						   
+						   if ( xhdpiFolder != null )
+							  exportXHDPI( file, xhdpiFolder, prefix, "" );
+						}
+						
+						activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+					}
+				}
 			}
 		}
 	}
 }
 
-function loadScriptFromFolder( folder )
+function loadScriptsFromFolder( folder )
 {
 	var script = null;	
-	var scriptFile = folder.getFiles("*.jsx");
+	var scriptFiles = folder.getFiles("*.jsx");
 	
-	if ( scriptFile != null && scriptFile.length > 0 )
+	var scriptFilesAsString = new Array();
+	if ( scriptFiles != null && scriptFiles.length > 0 )
 	{
-		scriptFile = scriptFile[ 0 ];
-		
-		if ( scriptFile.open( "r" ) )
+		for ( var scriptIdx = 0; scriptIdx < scriptFiles.length; scriptIdx++ )
 		{
-			script = "";
+			scriptFile = scriptFiles[ scriptIdx ];
 			
-			while ( !scriptFile.eof )
+			if ( scriptFile.open( "r" ) )
 			{
-				script += scriptFile.readln();
+				script = "";
+				
+				while ( !scriptFile.eof )
+				{
+					script += scriptFile.readln();
+				}
+				
+				scriptFilesAsString[scriptIdx] = script;
 			}
 		}
 	}
 		
-	return script;
+	return scriptFilesAsString;
 }
 
-function exportDrawable( file, prefix, suffix )
+function exportDrawable( file, folder, prefix, suffix )
 {	
-	if ( drawableFolder == null )
-	{
-		drawableFolder = new Folder( preProdFolder + "/../../res/drawable" );
+	var drawableFolder = new Folder( folder );
 
-		if ( !drawableFolder.exists )
-		{
-			drawableFolder = Folder.selectDialog( "Select drawable output folder", preProdFolder.toString() );
-		}
+	if ( !drawableFolder.exists )
+	{
+		drawableFolder = Folder.selectDialog( "Select drawable output folder", preProdFolder.toString() );
 	}
-	
+		
 	if ( drawableFolder != null )
 	{
 		saveForWebPNG24( drawableFolder, file, prefix, suffix );
 	}
 }
 
-function exportLDPI( file, prefix, suffix )
+function exportLDPI( file, folder, prefix, suffix )
 {	
-	if ( ldpiFolder == null )
-	{
-		ldpiFolder = new Folder( preProdFolder + "/../../res/drawable-ldpi" );
+	var ldpiFolder = new Folder( folder );
 		
-		if ( !ldpiFolder.exists )
-		{
-			ldpiFolder = Folder.selectDialog( "Select ldpi output folder", preProdFolder.toString() );
-		}
+	if ( !ldpiFolder.exists )
+	{
+		ldpiFolder = Folder.selectDialog( "Select ldpi output folder", preProdFolder.toString() );
 	}
-	
+		
 	if ( ldpiFolder != null )
 	{
 		var temp = activeDocument;
-      activeDocument = activeDocument.duplicate( "temp" );
+		activeDocument = activeDocument.duplicate( "temp" );
 
 		resizeImage( 75 );
 		saveForWebPNG24( ldpiFolder, file, prefix, suffix );
@@ -163,16 +182,13 @@ function exportLDPI( file, prefix, suffix )
 	}
 }
 
-function exportMDPI( file, prefix, suffix )
+function exportMDPI( file, folder, prefix, suffix )
 {	
-	if ( mdpiFolder == null )
+	var mdpiFolder = new Folder( folder );
+	
+	if ( !mdpiFolder.exists )
 	{
-		mdpiFolder = new Folder( preProdFolder + "/../../res/drawable-mdpi" );
-		
-		if ( !mdpiFolder.exists )
-		{
-			mdpiFolder = Folder.selectDialog( "Select mdpi output folder", preProdFolder.toString() );
-		}
+		mdpiFolder = Folder.selectDialog( "Select mdpi output folder", preProdFolder.toString() );
 	}
 	
 	if ( mdpiFolder != null )
@@ -181,24 +197,43 @@ function exportMDPI( file, prefix, suffix )
 	}
 }
 
-function exportHDPI( file, prefix, suffix, leaveOpen )
+function exportHDPI( file, folder, prefix, suffix, leaveOpen )
 {	
-	if ( hdpiFolder == null )
-	{
-		hdpiFolder = new Folder( preProdFolder + "/../../res/drawable-hdpi" );
+	var hdpiFolder = new Folder( folder );
 		
-		if ( !hdpiFolder.exists )
-		{
-			hdpiFolder = Folder.selectDialog( "Select hdpi output folder", preProdFolder.toString() );
-		}
+	if ( !hdpiFolder.exists )
+	{
+		hdpiFolder = Folder.selectDialog( "Select hdpi output folder", preProdFolder.toString() );
 	}
 	
 	if ( hdpiFolder != null )
 	{
 		var temp = activeDocument;
-   	activeDocument = activeDocument.duplicate( "temp" );
+		activeDocument = activeDocument.duplicate( "temp" );
    	
 		resizeImage( 150 );
+		saveForWebPNG24( hdpiFolder, file, prefix, suffix );
+		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
+		
+		activeDocument = temp;
+	}
+}
+
+function exportXHDPI( file, folder, prefix, suffix, leaveOpen )
+{	
+	var hdpiFolder = new Folder( folder );
+		
+	if ( !hdpiFolder.exists )
+	{
+		hdpiFolder = Folder.selectDialog( "Select hdpi output folder", preProdFolder.toString() );
+	}
+	
+	if ( hdpiFolder != null )
+	{
+		var temp = activeDocument;
+		activeDocument = activeDocument.duplicate( "temp" );
+   	
+		resizeImage( 200 );
 		saveForWebPNG24( hdpiFolder, file, prefix, suffix );
 		activeDocument.close( SaveOptions.DONOTSAVECHANGES );
 		
@@ -564,6 +599,143 @@ function fillLayerGradientWhite()
                     desc46.putDouble( idGrn, 253.996109 );
                     var idBl = charIDToTypeID( "Bl  " );
                     desc46.putDouble( idBl, 253.996109 );
+                var idRGBC = charIDToTypeID( "RGBC" );
+                desc45.putObject( idClr, idRGBC, desc46 );
+                var idType = charIDToTypeID( "Type" );
+                var idClry = charIDToTypeID( "Clry" );
+                var idUsrS = charIDToTypeID( "UsrS" );
+                desc45.putEnumerated( idType, idClry, idUsrS );
+                var idLctn = charIDToTypeID( "Lctn" );
+                desc45.putInteger( idLctn, 0 );
+                var idMdpn = charIDToTypeID( "Mdpn" );
+                desc45.putInteger( idMdpn, 50 );
+            var idClrt = charIDToTypeID( "Clrt" );
+            list5.putObject( idClrt, desc45 );
+                var desc47 = new ActionDescriptor();
+                var idClr = charIDToTypeID( "Clr " );
+                    var desc48 = new ActionDescriptor();
+                    var idRd = charIDToTypeID( "Rd  " );
+                    desc48.putDouble( idRd, 221.000002 );
+                    var idGrn = charIDToTypeID( "Grn " );
+                    desc48.putDouble( idGrn, 227.996111 );
+                    var idBl = charIDToTypeID( "Bl  " );
+                    desc48.putDouble( idBl, 237.000001 );
+                var idRGBC = charIDToTypeID( "RGBC" );
+                desc47.putObject( idClr, idRGBC, desc48 );
+                var idType = charIDToTypeID( "Type" );
+                var idClry = charIDToTypeID( "Clry" );
+                var idUsrS = charIDToTypeID( "UsrS" );
+                desc47.putEnumerated( idType, idClry, idUsrS );
+                var idLctn = charIDToTypeID( "Lctn" );
+                desc47.putInteger( idLctn, 4096 );
+                var idMdpn = charIDToTypeID( "Mdpn" );
+                desc47.putInteger( idMdpn, 74 );
+            var idClrt = charIDToTypeID( "Clrt" );
+            list5.putObject( idClrt, desc47 );
+                var desc49 = new ActionDescriptor();
+                var idClr = charIDToTypeID( "Clr " );
+                    var desc50 = new ActionDescriptor();
+                    var idRd = charIDToTypeID( "Rd  " );
+                    desc50.putDouble( idRd, 253.996109 );
+                    var idGrn = charIDToTypeID( "Grn " );
+                    desc50.putDouble( idGrn, 253.996109 );
+                    var idBl = charIDToTypeID( "Bl  " );
+                    desc50.putDouble( idBl, 253.996109 );
+                var idRGBC = charIDToTypeID( "RGBC" );
+                desc49.putObject( idClr, idRGBC, desc50 );
+                var idType = charIDToTypeID( "Type" );
+                var idClry = charIDToTypeID( "Clry" );
+                var idUsrS = charIDToTypeID( "UsrS" );
+                desc49.putEnumerated( idType, idClry, idUsrS );
+                var idLctn = charIDToTypeID( "Lctn" );
+                desc49.putInteger( idLctn, 4096 );
+                var idMdpn = charIDToTypeID( "Mdpn" );
+                desc49.putInteger( idMdpn, 50 );
+            var idClrt = charIDToTypeID( "Clrt" );
+            list5.putObject( idClrt, desc49 );
+        desc44.putList( idClrs, list5 );
+        var idTrns = charIDToTypeID( "Trns" );
+            var list6 = new ActionList();
+                var desc51 = new ActionDescriptor();
+                var idOpct = charIDToTypeID( "Opct" );
+                var idPrc = charIDToTypeID( "#Prc" );
+                desc51.putUnitDouble( idOpct, idPrc, 100.000000 );
+                var idLctn = charIDToTypeID( "Lctn" );
+                desc51.putInteger( idLctn, 0 );
+                var idMdpn = charIDToTypeID( "Mdpn" );
+                desc51.putInteger( idMdpn, 50 );
+            var idTrnS = charIDToTypeID( "TrnS" );
+            list6.putObject( idTrnS, desc51 );
+                var desc52 = new ActionDescriptor();
+                var idOpct = charIDToTypeID( "Opct" );
+                var idPrc = charIDToTypeID( "#Prc" );
+                desc52.putUnitDouble( idOpct, idPrc, 100.000000 );
+                var idLctn = charIDToTypeID( "Lctn" );
+                desc52.putInteger( idLctn, 4096 );
+                var idMdpn = charIDToTypeID( "Mdpn" );
+                desc52.putInteger( idMdpn, 50 );
+            var idTrnS = charIDToTypeID( "TrnS" );
+            list6.putObject( idTrnS, desc52 );
+        desc44.putList( idTrns, list6 );
+    var idGrdn = charIDToTypeID( "Grdn" );
+    desc41.putObject( idGrad, idGrdn, desc44 );
+    
+	executeAction( idGrdn, desc41, DialogModes.NO );
+}
+
+function fillLayerGradientDark()
+{
+	var idGrdn = charIDToTypeID( "Grdn" );
+    var desc41 = new ActionDescriptor();
+    var idFrom = charIDToTypeID( "From" );
+        var desc42 = new ActionDescriptor();
+        var idHrzn = charIDToTypeID( "Hrzn" );
+        var idPxl = charIDToTypeID( "#Pxl" );
+        desc42.putUnitDouble( idHrzn, idPxl, 24.000000 );
+        var idVrtc = charIDToTypeID( "Vrtc" );
+        var idPxl = charIDToTypeID( "#Pxl" );
+        desc42.putUnitDouble( idVrtc, idPxl, 6.000000 );
+    var idPnt = charIDToTypeID( "Pnt " );
+    desc41.putObject( idFrom, idPnt, desc42 );
+    var idT = charIDToTypeID( "T   " );
+        var desc43 = new ActionDescriptor();
+        var idHrzn = charIDToTypeID( "Hrzn" );
+        var idPxl = charIDToTypeID( "#Pxl" );
+        desc43.putUnitDouble( idHrzn, idPxl, 24.000000 );
+        var idVrtc = charIDToTypeID( "Vrtc" );
+        var idPxl = charIDToTypeID( "#Pxl" );
+        desc43.putUnitDouble( idVrtc, idPxl, 42.000000 );
+    var idPnt = charIDToTypeID( "Pnt " );
+    desc41.putObject( idT, idPnt, desc43 );
+    var idType = charIDToTypeID( "Type" );
+    var idGrdT = charIDToTypeID( "GrdT" );
+    var idLnr = charIDToTypeID( "Lnr " );
+    desc41.putEnumerated( idType, idGrdT, idLnr );
+    var idDthr = charIDToTypeID( "Dthr" );
+    desc41.putBoolean( idDthr, true );
+    var idUsMs = charIDToTypeID( "UsMs" );
+    desc41.putBoolean( idUsMs, true );
+    var idGrad = charIDToTypeID( "Grad" );
+        var desc44 = new ActionDescriptor();
+        var idNm = charIDToTypeID( "Nm  " );
+        desc44.putString( idNm, "Custom" );
+        var idGrdF = charIDToTypeID( "GrdF" );
+        var idGrdF = charIDToTypeID( "GrdF" );
+        var idCstS = charIDToTypeID( "CstS" );
+        desc44.putEnumerated( idGrdF, idGrdF, idCstS );
+        var idIntr = charIDToTypeID( "Intr" );
+        desc44.putDouble( idIntr, 4096.000000 );
+        var idClrs = charIDToTypeID( "Clrs" );
+            var list5 = new ActionList();
+                var desc45 = new ActionDescriptor();
+                var idClr = charIDToTypeID( "Clr " );
+                    var desc46 = new ActionDescriptor();
+                    var idRd = charIDToTypeID( "Rd  " );
+                    desc46.putDouble( idRd, 71.0 );
+                    var idGrn = charIDToTypeID( "Grn " );
+                    desc46.putDouble( idGrn, 71.0 );
+                    var idBl = charIDToTypeID( "Bl  " );
+                    desc46.putDouble( idBl, 71.0 );
                 var idRGBC = charIDToTypeID( "RGBC" );
                 desc45.putObject( idClr, idRGBC, desc46 );
                 var idType = charIDToTypeID( "Type" );

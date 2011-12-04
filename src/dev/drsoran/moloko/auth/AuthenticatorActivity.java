@@ -25,6 +25,7 @@ package dev.drsoran.moloko.auth;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -79,7 +80,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
    private boolean newAccount;
    
    
-
+   
    @Override
    public void onCreate( Bundle icicle )
    {
@@ -104,8 +105,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       newAccount = getIntent().getStringExtra( AccountManager.KEY_ACCOUNT_NAME ) == null;
    }
    
-
-
+   
+   
    @Override
    protected void onDestroy()
    {
@@ -113,8 +114,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       super.onDestroy();
    }
    
-
-
+   
+   
    @Override
    protected Dialog onCreateDialog( int id )
    {
@@ -125,6 +126,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       dialog.setCancelable( true );
       dialog.setOnCancelListener( new DialogInterface.OnCancelListener()
       {
+         @Override
          public void onCancel( DialogInterface dialog )
          {
             Log.d( TAG, "cancel has been invoked" );
@@ -138,8 +140,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return dialog;
    }
    
-
-
+   
+   
    @Override
    public Object onRetainNonConfigurationInstance()
    {
@@ -148,8 +150,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return o;
    }
    
-
-
+   
+   
    public void onAuthenticate( View view )
    {
       messageText.setText( null );
@@ -168,15 +170,15 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    public void onCancel( View view )
    {
       finish();
    }
    
-
-
+   
+   
    public void onPermissionInfo( View view )
    {
       new AlertDialog.Builder( this ).setTitle( R.string.app_account_preferences )
@@ -186,15 +188,15 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
                                      .show();
    }
    
-
-
+   
+   
    public void onPreBeginAuthentication()
    {
       showDialog( 0 );
    }
    
-
-
+   
+   
    public void onPostBeginAuthentication( String loginUrl, Exception e )
    {
       if ( e != null )
@@ -220,8 +222,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    public void onPostCompleteAuthentication( String authToken,
                                              Exception exception )
    {
@@ -244,8 +246,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    public void onPostCheckAuthToken( RtmAuth rtmAuth, Exception exception )
    {
       removeDialog( 0 );
@@ -326,13 +328,13 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
       if ( requestCode == RtmWebLoginActivity.ReqType.OPEN_URL
-         && resultCode == RtmWebLoginActivity.ReturnCode.SUCCESS )
+         && resultCode == Activity.RESULT_OK )
       {
          authenticator.completeAuthentication( this );
       }
@@ -345,8 +347,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    private void initializeGui()
    {
       if ( authenticator == null )
@@ -380,8 +382,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    private String getSelectedPermissionText()
    {
       final String[] rtmPermissions = getResources().getStringArray( R.array.rtm_permissions );
@@ -401,8 +403,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return text;
    }
    
-
-
+   
+   
    private RtmAuth.Perms getSelectedPermission()
    {
       RtmAuth.Perms perm = RtmAuth.Perms.nothing;
@@ -428,8 +430,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return perm;
    }
    
-
-
+   
+   
    private int selectPermission( String permissionValue )
    {
       int position = Spinner.INVALID_POSITION;
@@ -449,23 +451,23 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       return position;
    }
    
-
-
+   
+   
    private String getErrorMessage( Exception exception )
    {
       return getString( R.string.auth_err_with_cause,
                         AsyncRtmAuthenticator.getExceptionCause( exception ) );
    }
    
-
-
+   
+   
    private String getErrorMessage( int resId )
    {
       return getString( R.string.auth_err_with_cause, getString( resId ) );
    }
    
-
-
+   
+   
    private void createOrReuseAuthenticator()
    {
       authenticator = (AsyncRtmAuthenticator) getLastNonConfigurationInstance();
@@ -476,8 +478,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    private void createAuthenticator()
    {
       try
@@ -491,8 +493,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
       }
    }
    
-
-
+   
+   
    private void shutDownRtmAuthenticator()
    {
       if ( authenticator != null )

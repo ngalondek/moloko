@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010 Ronny Röhricht
+ * Copyright (c) 2011 Ronny Röhricht
  * 
  * This file is part of Moloko.
  * 
@@ -49,7 +49,7 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
    protected final String syncWithRtmKey;
    
    
-
+   
    public SyncableListPreference( Context context, AttributeSet attrs )
    {
       super( context, attrs );
@@ -70,8 +70,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
          throw new IllegalStateException( "SyncableListPreference requires a syncWithRtmKey attribute." );
    }
    
-
-
+   
+   
    @Override
    protected void onBindView( View view )
    {
@@ -82,8 +82,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       updateUi();
    }
    
-
-
+   
+   
    @Override
    protected void onBindDialogView( View view )
    {
@@ -97,8 +97,9 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       }
    }
    
-
-
+   
+   
+   @Override
    public void onClick( View v )
    {
       final boolean isChecked = checkBox.isChecked();
@@ -113,8 +114,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       getDialog().dismiss();
    }
    
-
-
+   
+   
    @Override
    public void onSharedPreferenceChanged( SharedPreferences sharedPreferences,
                                           String key )
@@ -130,8 +131,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       }
    }
    
-
-
+   
+   
    @Override
    public boolean onPreferenceChange( Preference preference, Object newValue )
    {
@@ -140,8 +141,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       return true;
    }
    
-
-
+   
+   
    private void updateUi()
    {
       if ( settingSourceText != null )
@@ -150,7 +151,7 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
             && MolokoApp.getSettings().getRtmSettings() != null )
          {
             settingSourceText.setText( R.string.g_settings_src_rtm );
-            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_white_refresh ),
+            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_black_refresh ),
                                                     null,
                                                     null,
                                                     null );
@@ -158,7 +159,7 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
          else
          {
             settingSourceText.setText( R.string.g_settings_src_local );
-            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_white_user ),
+            settingSourceText.setCompoundDrawables( createLeftDrawable( R.drawable.ic_small_black_user ),
                                                     null,
                                                     null,
                                                     null );
@@ -166,8 +167,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       }
    }
    
-
-
+   
+   
    protected void setSyncWithRtm( boolean value )
    {
       final SharedPreferences prefs = getSharedPreferences();
@@ -186,8 +187,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       }
    }
    
-
-
+   
+   
    protected boolean isSyncWithRtm()
    {
       final SharedPreferences prefs = getSharedPreferences();
@@ -200,8 +201,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       return true;
    }
    
-
-
+   
+   
    @Override
    protected void onPrepareDialogBuilder( Builder builder )
    {
@@ -211,8 +212,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
          checkBox.setChecked( isSyncWithRtm() );
    }
    
-
-
+   
+   
    @Override
    protected void onDialogClosed( boolean positiveResult )
    {
@@ -224,8 +225,8 @@ public class SyncableListPreference extends AutoSummaryListPreference implements
       super.onDialogClosed( positiveResult );
    }
    
-
-
+   
+   
    private Drawable createLeftDrawable( int resId )
    {
       final Drawable[] drawables = settingSourceText.getCompoundDrawables();

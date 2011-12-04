@@ -74,7 +74,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       {
          case OptionsMenu.DELETE_LIST:
             final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
-            UIUtils.newDeleteElementDialog( this, listName, new Runnable()
+            UIUtils.showDeleteElementDialog( this, listName, new Runnable()
             {
                @Override
                public void run()
@@ -83,8 +83,7 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
                                                      listName );
                   finish();
                }
-            },
-                                            null ).show();
+            }, null );
             return true;
             
          default :

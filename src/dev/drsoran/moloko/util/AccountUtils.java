@@ -45,8 +45,8 @@ public final class AccountUtils
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-   
-   
+
+
    public final static void registerAccountListener( Context context,
                                                      Handler handler,
                                                      OnAccountsUpdateListener listener )
@@ -57,8 +57,8 @@ public final class AccountUtils
          accountManager.addOnAccountsUpdatedListener( listener, handler, true );
    }
    
-   
-   
+
+
    public final static void unregisterAccountListener( Context context,
                                                        OnAccountsUpdateListener listener )
    {
@@ -68,8 +68,8 @@ public final class AccountUtils
          accountManager.removeOnAccountsUpdatedListener( listener );
    }
    
-   
-   
+
+
    public final static Account getRtmAccount( Context context )
    {
       final AccountManager accountManager = AccountManager.get( context );
@@ -80,8 +80,8 @@ public final class AccountUtils
          return null;
    }
    
-   
-   
+
+
    public final static Account getRtmAccount( AccountManager accountManager )
    {
       Account account = null;
@@ -101,8 +101,8 @@ public final class AccountUtils
       return account;
    }
    
-   
-   
+
+
    public final static boolean isSyncAutomatic( Context context )
    {
       final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( context );
@@ -118,8 +118,8 @@ public final class AccountUtils
       }
    }
    
-   
-   
+
+
    public final static RtmAuth.Perms getAccessLevel( Context context )
    {
       RtmAuth.Perms permission = Perms.nothing;
@@ -141,39 +141,37 @@ public final class AccountUtils
          }
          else
          {
-            // If the user has not created an account, he operates only
-            // local but has full access to his local changes.
-            permission = Perms.delete;
+            permission = Perms.nothing;
          }
       }
       
       return permission;
    }
    
-   
-   
+
+
    public final static boolean isReadOnlyAccess( Context context )
    {
       final Perms level = getAccessLevel( context );
       return isReadOnlyAccess( level );
    }
    
-   
-   
+
+
    public final static boolean isReadOnlyAccess( RtmAuth.Perms level )
    {
       return level == Perms.nothing || level == Perms.read;
    }
    
-   
-   
+
+
    public final static boolean isWriteableAccess( Context context )
    {
       return !isReadOnlyAccess( context );
    }
    
-   
-   
+
+
    public final static boolean isWriteableAccess( RtmAuth.Perms level )
    {
       return !isReadOnlyAccess( level );

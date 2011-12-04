@@ -107,7 +107,6 @@
    <string name="key_conn_proxy_port">conn_proxy_port</string>
    <string name="key_conn_proxy_user">conn_proxy_user</string>
    <string name="key_conn_proxy_pass">conn_proxy_pass</string>
-   <string name="key_notified_account_creation">notified_account_creation</string>
 
    <!-- Time phrases -->
    <string name="time_interval_15min">Every 15 min.</string>
@@ -257,7 +256,6 @@
    <!-- No account dialog -->
    <string name="dlg_no_account_title">New Remember The Milk account</string>
    <string name="dlg_no_account_text">There were no Remember The Milk (RTM) stored credentials. The RTM credentials are necessary to carry out the task synchronization with the RTM server. \n\nYou can now store your RTM credentials and thus enable background synchronization.</string>
-   <string name="dlg_no_account_btn_no_account">No account</string>
 
    <!-- Missing default list dialog -->
    <string name="dlg_missing_def_list_title">Missing default list</string>

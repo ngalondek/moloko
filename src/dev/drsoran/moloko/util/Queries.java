@@ -34,6 +34,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import dev.drsoran.moloko.Settings;
@@ -47,14 +48,14 @@ public final class Queries
    { BaseColumns._ID };
    
    
-   
+
    private Queries()
    {
       throw new AssertionError( "This class should not be instantiated." );
    }
    
-   
-   
+
+
    public final static String resolveTaskSortToSqlite( int sortValue )
    {
       switch ( sortValue )
@@ -84,8 +85,8 @@ public final class Queries
       return result.toString();
    }
    
-   
-   
+
+
    public final static String toCommaList( String[] values )
    {
       if ( values != null )
@@ -94,8 +95,8 @@ public final class Queries
          return "";
    }
    
-   
-   
+
+
    public final static < T > String toColumnList( Iterable< T > set,
                                                   String colName,
                                                   String seperator )
@@ -115,8 +116,8 @@ public final class Queries
       return sb.toString();
    }
    
-   
-   
+
+
    public final static Uri contentUriWithId( Uri contentUri, String id )
    {
       
@@ -125,8 +126,8 @@ public final class Queries
                                                       .build() : null;
    }
    
-   
-   
+
+
    public final static boolean exists( ContentProviderClient client,
                                        Uri contentUri,
                                        String id ) throws RemoteException
@@ -141,8 +142,8 @@ public final class Queries
       return exists;
    }
    
-   
-   
+
+
    public final static Cursor getItem( ContentProviderClient client,
                                        String[] projection,
                                        Uri contentUri,
@@ -158,8 +159,8 @@ public final class Queries
                                                                : null;
    }
    
-   
-   
+
+
    public final static String getNextId( ContentProviderClient client,
                                          Uri contentUri )
    {
@@ -205,71 +206,71 @@ public final class Queries
       return newId;
    }
    
-   
-   
+
+
    public final static String getOptString( Cursor c, int index )
    {
       return c.isNull( index ) ? null : c.getString( index );
    }
    
-   
-   
+
+
    public final static String getOptString( Cursor c, int index, String defValue )
    {
       return c.isNull( index ) ? defValue : c.getString( index );
    }
    
-   
-   
+
+
    public final static Date getOptDate( Cursor c, int index )
    {
       return c.isNull( index ) ? null : new Date( c.getLong( index ) );
    }
    
-   
-   
+
+
    public final static float getOptFloat( Cursor c, int index, float defValue )
    {
       return c.isNull( index ) ? defValue : c.getFloat( index );
    }
    
-   
-   
+
+
    public final static int getOptInt( Cursor c, int index, int defValue )
    {
       return c.isNull( index ) ? defValue : c.getInt( index );
    }
    
-   
-   
+
+
    public final static long getOptLong( Cursor c, int index, int defValue )
    {
       return c.isNull( index ) ? defValue : c.getLong( index );
    }
    
-   
-   
+
+
    public final static Long getOptLong( Cursor c, int index )
    {
       return c.isNull( index ) ? null : c.getLong( index );
    }
    
-   
-   
+
+
    public final static boolean getOptBool( Cursor c, int index, boolean defValue )
    {
       return c.isNull( index ) ? defValue : c.getInt( index ) != 0;
    }
    
-   
-   
+
+
    public final static String[] cursorAsStringArray( Cursor c, int columnIndex )
    {
       return fillStringArray( c, columnIndex, null, 0 );
    }
    
-   
-   
+
+
    public final static String[] fillStringArray( Cursor c,
                                                  int columnIndex,
                                                  String[] array,
@@ -300,9 +301,9 @@ public final class Queries
       return res;
    }
    
-   
-   
-   public final static boolean applyModifications( Activity activity,
+
+
+   public final static boolean applyModifications( FragmentActivity activity,
                                                    ModificationSet modifications,
                                                    int progressTextId )
    {
@@ -334,8 +335,8 @@ public final class Queries
       return ok;
    }
    
-   
-   
+
+
    @SuppressWarnings( "unchecked" )
    public final static boolean transactionalApplyOperations( Activity activity,
                                                              ArrayList< ContentProviderOperation > operations,

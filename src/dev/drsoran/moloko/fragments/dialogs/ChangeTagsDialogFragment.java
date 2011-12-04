@@ -37,12 +37,12 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.AdapterView.OnItemClickListener;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.ChangeTagsAdapter;
@@ -70,7 +70,7 @@ public class ChangeTagsDialogFragment extends
       public boolean isAvailable;
       
       
-      
+
       public ChangeTag( String tag, boolean isAvailable )
       {
          this.tag = tag;
@@ -78,7 +78,7 @@ public class ChangeTagsDialogFragment extends
       }
    }
    
-   
+
    public static class Config
    {
       public final static String TAGS = Tasks.TAGS;
@@ -97,7 +97,7 @@ public class ChangeTagsDialogFragment extends
    private ListView tagsList;
    
    
-   
+
    public final static ChangeTagsDialogFragment newInstance( Bundle config )
    {
       final ChangeTagsDialogFragment fragment = new ChangeTagsDialogFragment();
@@ -107,8 +107,8 @@ public class ChangeTagsDialogFragment extends
       return fragment;
    }
    
-   
-   
+
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -119,8 +119,8 @@ public class ChangeTagsDialogFragment extends
       setChosenTagsFromConfiguration();
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -132,8 +132,8 @@ public class ChangeTagsDialogFragment extends
          listener = null;
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -141,8 +141,8 @@ public class ChangeTagsDialogFragment extends
       listener = null;
    }
    
-   
-   
+
+
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -151,8 +151,8 @@ public class ChangeTagsDialogFragment extends
       super.onSaveInstanceState( outState );
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -164,8 +164,8 @@ public class ChangeTagsDialogFragment extends
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public Dialog onCreateDialog( Bundle savedInstanceState )
    {
@@ -176,8 +176,8 @@ public class ChangeTagsDialogFragment extends
       return dialog;
    }
    
-   
-   
+
+
    @Override
    public void initContent( ViewGroup container )
    {
@@ -210,8 +210,8 @@ public class ChangeTagsDialogFragment extends
       registerInputListeners( container );
    }
    
-   
-   
+
+
    private void registerInputListeners( ViewGroup container )
    {
       container.findViewById( android.R.id.button1 )
@@ -237,23 +237,23 @@ public class ChangeTagsDialogFragment extends
                } );
    }
    
-   
-   
+
+
    private void setChosenTagsFromConfiguration()
    {
       for ( String tag : getConfiguredTags() )
          chosenTags.add( tag );
    }
    
-   
-   
+
+
    private void setDialogTitleSection( Dialog dialog )
    {
       dialog.setTitle( getString( R.string.app_change_tags ) );
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -264,24 +264,24 @@ public class ChangeTagsDialogFragment extends
                                            config.getStringArrayList( Config.TAGS ) );
    }
    
-   
-   
+
+
    public List< String > getConfiguredTags()
    {
       final List< String > tags = configuration.getStringArrayList( Config.TAGS );
       return tags != null ? tags : new ArrayList< String >( 0 );
    }
    
-   
-   
+
+
    // Use type ArrayList for performance reasons
    public void configuredTags( ArrayList< String > tags )
    {
       configuration.putStringArrayList( Config.TAGS, tags );
    }
    
-   
-   
+
+
    public List< String > getAllTagsAssertNotNull()
    {
       final List< Tag > allTags = getLoaderDataAssertNotNull();
@@ -293,8 +293,8 @@ public class ChangeTagsDialogFragment extends
       return allTagsString;
    }
    
-   
-   
+
+
    private void onListItemClick( ListView l, View v, int position, long id )
    {
       final ChangeTag tag = (ChangeTag) l.getAdapter().getItem( position );
@@ -327,8 +327,8 @@ public class ChangeTagsDialogFragment extends
       updateTagList();
    }
    
-   
-   
+
+
    private void updateTagList()
    {
       chosenTags.clear();
@@ -373,8 +373,8 @@ public class ChangeTagsDialogFragment extends
                                                   changeTags ) );
    }
    
-   
-   
+
+
    @Override
    public Loader< List< Tag > > newLoaderInstance( int id, Bundle args )
    {
@@ -388,40 +388,40 @@ public class ChangeTagsDialogFragment extends
       return loader;
    }
    
-   
-   
+
+
    @Override
    public String getLoaderDataName()
    {
       return getString( R.string.app_tagcloud );
    }
    
-   
-   
+
+
    @Override
    public int getLoaderId()
    {
       return TAGS_LOADER_ID;
    }
    
-   
-   
+
+
    @Override
-   public boolean saveChanges()
+   protected boolean saveChanges()
    {
       return true;
    }
    
-   
-   
+
+
    @Override
    public boolean hasChanges()
    {
       return false;
    }
    
-   
-   
+
+
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {

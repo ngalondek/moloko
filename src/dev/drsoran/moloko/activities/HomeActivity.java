@@ -136,16 +136,23 @@ public class HomeActivity extends MolokoFragmentActivity implements
       switch ( item.getItemId() )
       {
          case android.R.id.home:
-            UIUtils.newAboutMolokoDialog( this );
+            UIUtils.showAboutMolokoDialog( this );
             return true;
             
          case OptionsMenu.ADD_TASK:
-            startActivity( Intents.createAddTaskIntent( this, null ) );
+            onAddTask();
             return true;
             
          default :
             return super.onOptionsItemSelected( item );
       }
+   }
+   
+
+
+   private void onAddTask()
+   {
+      startActivity( Intents.createAddTaskIntent( this, null ) );
    }
    
 
@@ -217,11 +224,12 @@ public class HomeActivity extends MolokoFragmentActivity implements
       {
          if ( addAccountWidget == null )
          {
-            getHomeAdapter().addWidget( new SimpleHomeWidgetLayout( this,
-                                                                    null,
-                                                                    R.string.btn_new_account,
-                                                                    R.drawable.ic_home_add,
-                                                                    Intents.createNewAccountIntent() ) );
+            addAccountWidget = new SimpleHomeWidgetLayout( this,
+                                                           null,
+                                                           R.string.btn_new_account,
+                                                           R.drawable.ic_home_add,
+                                                           Intents.createNewAccountIntent() );
+            getHomeAdapter().addWidget( addAccountWidget );
          }
       }
       else

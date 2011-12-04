@@ -24,8 +24,8 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.ContentProviderOperation;
+import android.support.v4.app.FragmentActivity;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
@@ -40,15 +40,15 @@ public final class NoteEditUtils
       + NoteEditUtils.class.getSimpleName();
    
    
-   
+
    private NoteEditUtils()
    {
       throw new AssertionError();
    }
    
-   
-   
-   public final static boolean setNoteTitleAndText( Activity activity,
+
+
+   public final static boolean setNoteTitleAndText( FragmentActivity activity,
                                                     String noteId,
                                                     String title,
                                                     String text )
@@ -73,9 +73,10 @@ public final class NoteEditUtils
                                                                R.string.toast_save_note ) );
    }
    
-   
-   
-   public final static boolean deleteNote( Activity activity, String noteId )
+
+
+   public final static boolean deleteNote( FragmentActivity activity,
+                                           String noteId )
    {
       final ModificationSet modifications = new ModificationSet();
       

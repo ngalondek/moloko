@@ -28,7 +28,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -45,14 +44,12 @@ public abstract class AsyncInsertEntity< T > extends AsyncTask< T, Void, Uri >
 {
    private final Activity activity;
    
-   private ProgressDialog dialog;
-   
    
 
    public AsyncInsertEntity( Activity activity )
    {
       if ( activity == null )
-         throw new NullPointerException( "activity is null" );
+         throw new NullPointerException( "activity" );
       
       this.activity = activity;
    }
@@ -73,18 +70,6 @@ public abstract class AsyncInsertEntity< T > extends AsyncTask< T, Void, Uri >
 
 
    protected abstract String getPath();
-   
-
-
-   @Override
-   protected void onPreExecute()
-   {
-      dialog = new ProgressDialog( activity );
-      dialog.setOwnerActivity( activity );
-      dialog.setMessage( activity.getString( getProgressMessageId() ) );
-      dialog.setCancelable( false );
-      dialog.show();
-   }
    
 
 
@@ -158,14 +143,5 @@ public abstract class AsyncInsertEntity< T > extends AsyncTask< T, Void, Uri >
       }
       
       return Queries.contentUriWithId( getContentUri(), newEntityId );
-   }
-   
-
-
-   @Override
-   protected void onPostExecute( Uri result )
-   {
-      if ( dialog != null )
-         dialog.dismiss();
    }
 }

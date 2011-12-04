@@ -315,26 +315,25 @@ public class TaskListsFragment extends
 
    public void deleteList( final RtmListWithTaskCount list )
    {
-      UIUtils.newDeleteElementDialog( getFragmentActivity(),
-                                      list.getName(),
-                                      new Runnable()
-                                      {
-                                         @Override
-                                         public void run()
-                                         {
-                                            performDatabaseModification( new Runnable()
-                                            {
-                                               @Override
-                                               public void run()
-                                               {
-                                                  RtmListEditUtils.deleteList( getFragmentActivity(),
-                                                                               list.getRtmList() );
-                                               }
-                                            } );
-                                         }
-                                      },
-                                      null )
-             .show();
+      UIUtils.showDeleteElementDialog( getFragmentActivity(),
+                                       list.getName(),
+                                       new Runnable()
+                                       {
+                                          @Override
+                                          public void run()
+                                          {
+                                             performDatabaseModification( new Runnable()
+                                             {
+                                                @Override
+                                                public void run()
+                                                {
+                                                   RtmListEditUtils.deleteList( getFragmentActivity(),
+                                                                                list.getRtmList() );
+                                                }
+                                             } );
+                                          }
+                                       },
+                                       null );
    }
    
 

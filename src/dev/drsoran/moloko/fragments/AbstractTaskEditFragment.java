@@ -38,15 +38,15 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.mdt.rtm.data.RtmList;
 import com.mdt.rtm.data.RtmLists;
@@ -59,11 +59,11 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.dialogs.DuePickerDialog;
 import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
 import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
+import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskEditFragmentListener;
@@ -107,15 +107,15 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       public final List< RtmLocation > locations;
       
       
-      
+
       public TaskEditDatabaseData( RtmLists lists, List< RtmLocation > locations )
       {
          this.lists = lists;
          this.locations = locations;
       }
       
-      
-      
+
+
       public List< Pair< String, String > > getListIdsToListNames()
       {
          final List< Pair< String, String > > listIdToListName = new ArrayList< Pair< String, String > >();
@@ -131,22 +131,22 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          return listIdToListName;
       }
       
-      
-      
+
+
       public List< String > getListIds()
       {
          return lists.getListIds();
       }
       
-      
-      
+
+
       public List< String > getListNames()
       {
          return lists.getListNames();
       }
       
-      
-      
+
+
       public List< Pair< String, String > > getLocationIdsToLocationNames()
       {
          final List< Pair< String, String > > locationIdToLocationName = new ArrayList< Pair< String, String > >();
@@ -161,8 +161,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          return locationIdToLocationName;
       }
       
-      
-      
+
+
       public List< String > getLocationIds()
       {
          final List< String > locationIds = new ArrayList< String >();
@@ -176,8 +176,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          return locationIds;
       }
       
-      
-      
+
+
       public List< String > getLocationNames()
       {
          final List< String > locationNames = new ArrayList< String >();
@@ -239,7 +239,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    protected AbstractPickerDialog pickerDlg;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -252,8 +252,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -265,8 +265,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          listener = new NullTaskEditFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDestroy()
    {
@@ -278,8 +278,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       pickerDlg = null;
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -287,8 +287,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       listener = null;
    }
    
-   
-   
+
+
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -298,8 +298,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          outState.putBundle( KEY_CHANGES, changes );
    }
    
-   
-   
+
+
    @Override
    public View createFragmentView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -333,8 +333,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    protected void initContent( ViewGroup content )
    {
@@ -366,8 +366,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    private void putExtaInitialValues()
    {
       dueEditText.putInitialValue( initialValues );
@@ -375,14 +375,14 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       estimateEditText.putInitialValue( initialValues );
    }
    
-   
-   
+
+
    protected void initializeHeadSection()
    {
    }
    
-   
-   
+
+
    protected void defaultInitializeHeadSectionImpl( Task task )
    {
       final Context context = getFragmentActivity();
@@ -424,8 +424,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          source.setText( "?" );
    }
    
-   
-   
+
+
    protected void registerInputListeners()
    {
       nameEditText.addTextChangedListener( new UIUtils.AfterTextChangedWatcher()
@@ -495,8 +495,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                        String.class );
          }
          
-         
-         
+
+
          @Override
          public void onNothingSelected( AdapterView< ? > arg0 )
          {
@@ -516,8 +516,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                        String.class );
          }
          
-         
-         
+
+
          @Override
          public void onNothingSelected( AdapterView< ? > arg0 )
          {
@@ -537,8 +537,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                        String.class );
          }
          
-         
-         
+
+
          @Override
          public void onNothingSelected( AdapterView< ? > arg0 )
          {
@@ -571,8 +571,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    protected void initializeListSpinner()
    {
       final TaskEditDatabaseData loaderData = getLoaderData();
@@ -584,8 +584,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    protected void createListSpinnerAdapterForValues( List< String > listIds,
                                                      List< String > listNames )
    {
@@ -597,12 +597,11 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       listsSpinner.setAdapter( adapter );
       listsSpinner.setValues( listIds );
       listsSpinner.setSelectionByValue( getCurrentValue( Tasks.LIST_ID,
-                                                         String.class ),
-                                        0 );
+                                                         String.class ), 0 );
    }
    
-   
-   
+
+
    protected void initializeLocationSpinner()
    {
       final TaskEditDatabaseData loaderData = getLoaderData();
@@ -618,8 +617,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    protected void initializeTagsSection()
    {
       UIUtils.inflateTags( getFragmentActivity(),
@@ -629,8 +628,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                            null );
    }
    
-   
-   
+
+
    protected void createLocationSpinnerAdapterForValues( List< String > locationIds,
                                                          List< String > locationNames )
    {
@@ -642,12 +641,11 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       locationSpinner.setAdapter( adapter );
       locationSpinner.setValues( new ArrayList< String >( locationIds ) );
       locationSpinner.setSelectionByValue( getCurrentValue( Tasks.LOCATION_ID,
-                                                            String.class ),
-                                           0 );
+                                                            String.class ), 0 );
    }
    
-   
-   
+
+
    protected void insertNowhereLocationEntry( List< String > locationIds,
                                               List< String > locationNames )
    {
@@ -655,16 +653,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       locationNames.add( 0, getString( R.string.task_edit_location_no ) );
    }
    
-   
-   
+
+
    protected void initializePrioritySpinner()
    {
       createPrioritySpinnerAdapterForValues( Arrays.asList( getResources().getStringArray( R.array.rtm_priorities ) ),
                                              Arrays.asList( getResources().getStringArray( R.array.rtm_priority_values ) ) );
    }
    
-   
-   
+
+
    protected void createPrioritySpinnerAdapterForValues( List< String > texts,
                                                          List< String > values )
    {
@@ -676,12 +674,11 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       prioritySpinner.setAdapter( adapter );
       prioritySpinner.setValues( values );
       prioritySpinner.setSelectionByValue( getCurrentValue( Tasks.PRIORITY,
-                                                            String.class ),
-                                           0 );
+                                                            String.class ), 0 );
    }
    
-   
-   
+
+
    protected void initDueEditText()
    {
       final long due = getCurrentValue( Tasks.DUE_DATE, Long.class );
@@ -692,8 +689,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       dueEditText.setChangesTarget( this );
    }
    
-   
-   
+
+
    protected void initRecurrenceEditText()
    {
       final String recurrence = getCurrentValue( Tasks.RECURRENCE, String.class );
@@ -705,8 +702,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       recurrEditText.setChangesTarget( this );
    }
    
-   
-   
+
+
    protected void initEstimateEditText()
    {
       final long estimateMillis = getCurrentValue( Tasks.ESTIMATE_MILLIS,
@@ -716,8 +713,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       estimateEditText.setChangesTarget( this );
    }
    
-   
-   
+
+
    public void setTags( List< String > tags )
    {
       final String joinedTags = TextUtils.join( Tasks.TAGS_SEPARATOR, tags );
@@ -730,8 +727,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    public List< String > getTags()
    {
       return Arrays.asList( TextUtils.split( getCurrentValue( Tasks.TAGS,
@@ -739,16 +736,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                                              Tasks.TAGS_SEPARATOR ) );
    }
    
-   
-   
+
+
    @Override
    public int getSettingsMask()
    {
       return IOnSettingsChangedListener.DATE_TIME_RELATED;
    }
    
-   
-   
+
+
    protected boolean validateInput()
    {
       // Task name
@@ -766,8 +763,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       return ok;
    }
    
-   
-   
+
+
    protected boolean validateName()
    {
       final boolean ok = !TextUtils.isEmpty( getCurrentValue( Tasks.TASKSERIES_NAME,
@@ -783,8 +780,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       return ok;
    }
    
-   
-   
+
+
    // DUE DATE EDITING
    
    private void onEditDueByPicker()
@@ -809,8 +806,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       pickerDlg.show();
    }
    
-   
-   
+
+
    private AbstractPickerDialog createDuePicker()
    {
       final MolokoCalendar cal;
@@ -830,22 +827,22 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                                   cal.hasTime() );
    }
    
-   
-   
+
+
    protected boolean validateDue()
    {
       return dueEditText.validate();
    }
    
-   
-   
+
+
    private void commitEditDue()
    {
       dueEditText.setDue( dueEditText.getText().toString() );
    }
    
-   
-   
+
+
    private void saveDueChanges()
    {
       MolokoCalendar dueCal = dueEditText.getDueCalendar();
@@ -870,8 +867,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    // RECURRENCE EDITING
    
    private void onEditRecurrenceByPicker()
@@ -896,8 +893,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       pickerDlg.show();
    }
    
-   
-   
+
+
    private AbstractPickerDialog createRecurrencePicker()
    {
       Pair< String, Boolean > recurrencePattern = recurrEditText.getRecurrencePattern();
@@ -910,22 +907,22 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                                      recurrencePattern.second );
    }
    
-   
-   
+
+
    protected boolean validateRecurrence()
    {
       return recurrEditText.validate();
    }
    
-   
-   
+
+
    private void commitEditRecurrence()
    {
       recurrEditText.setRecurrence( recurrEditText.getText().toString() );
    }
    
-   
-   
+
+
    private void saveRecurrenceChanges()
    {
       final Pair< String, Boolean > recurrencePattern = recurrEditText.getRecurrencePattern();
@@ -934,19 +931,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          throw new IllegalStateException( String.format( "Expected valid recurrence edit text to parse. Found %s",
                                                          recurrEditText.getText() ) );
       
-      if ( !TextUtils.isEmpty( recurrencePattern.first ) )
-      {
-         putChange( Tasks.RECURRENCE,
-                    Strings.nullIfEmpty( recurrencePattern.first ),
-                    String.class );
-         putChange( Tasks.RECURRENCE_EVERY,
-                    recurrencePattern.second,
-                    Boolean.class );
-      }
+      putChange( Tasks.RECURRENCE,
+                 Strings.nullIfEmpty( recurrencePattern.first ),
+                 String.class );
+      putChange( Tasks.RECURRENCE_EVERY,
+                 recurrencePattern.second,
+                 Boolean.class );
    }
    
-   
-   
+
+
    // ESTIMATE EDITING
    
    private void onEditEstimateByPicker()
@@ -971,8 +965,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       pickerDlg.show();
    }
    
-   
-   
+
+
    private AbstractPickerDialog createEstimatePicker()
    {
       Long millis = estimateEditText.getEstimateMillis();
@@ -984,22 +978,22 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                                        millis.longValue() );
    }
    
-   
-   
+
+
    protected boolean validateEstimate()
    {
       return estimateEditText.validate();
    }
    
-   
-   
+
+
    private void commitEditEstimate()
    {
       estimateEditText.setEstimate( estimateEditText.getText().toString() );
    }
    
-   
-   
+
+
    private void saveEstimateChanges()
    {
       final Long estimateMillis = estimateEditText.getEstimateMillis();
@@ -1022,8 +1016,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    @Override
    public final < V > V getCurrentValue( String key, Class< V > type )
    {
@@ -1045,8 +1039,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       return res;
    }
    
-   
-   
+
+
    @Override
    public final boolean hasChange( String key )
    {
@@ -1056,18 +1050,18 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       return changes.containsKey( key );
    }
    
-   
-   
+
+
    @Override
    public boolean hasChanges()
    {
       return ( changes != null && changes.size() > 0 );
    }
    
-   
-   
+
+
    @Override
-   public boolean saveChanges()
+   protected boolean saveChanges()
    {
       commitEditDue();
       commitEditRecurrence();
@@ -1085,8 +1079,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       return ok;
    }
    
-   
-   
+
+
    @Override
    public final < V > V getChange( String key, Class< V > type )
    {
@@ -1105,8 +1099,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
             + " for " + key );
    }
    
-   
-   
+
+
    @Override
    public final < V > void putChange( String key, V value, Class< V > type )
    {
@@ -1125,8 +1119,8 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
    }
    
-   
-   
+
+
    protected ModificationSet createModificationSet( List< Task > tasks )
    {
       final ModificationSet modifications = new ModificationSet();
@@ -1330,24 +1324,24 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       return modifications;
    }
    
-   
-   
+
+
    @Override
    protected String getLoaderDataName()
    {
       return TaskEditDatabaseData.class.getSimpleName();
    }
    
-   
-   
+
+
    @Override
    protected int getLoaderId()
    {
       return TASK_EDIT_LOADER;
    }
    
-   
-   
+
+
    @Override
    protected Loader< TaskEditDatabaseData > newLoaderInstance( int id,
                                                                Bundle args )
@@ -1355,11 +1349,11 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       return new TaskEditDatabaseDataLoader( getFragmentActivity() );
    }
    
-   
-   
+
+
    abstract protected Bundle getInitialValues();
    
-   
-   
+
+
    abstract protected TextView getCommitTextView();
 }

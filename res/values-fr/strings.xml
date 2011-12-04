@@ -209,7 +209,6 @@
    <!-- No account dialog -->
    <string name="dlg_no_account_title">Nouveau compte Remember The Milk</string>
    <string name="dlg_no_account_text">Il n\'y a pas d\'accréditations enregistrées pour Remember The Milk (RTM). Les accréditations RTM sont nécessaires pour permettre la synchronisation avec le serveur RTM. \n\nVous pouvez enregistrer vos accréditations maintenant et ainsi bénéficier de la synchronisation en tâche de fond.</string>
-   <string name="dlg_no_account_btn_no_account">Aucun compte</string>
 
    <!-- Missing default list dialog -->
    <string name="dlg_missing_def_list_title">Liste par défaut manquante</string>

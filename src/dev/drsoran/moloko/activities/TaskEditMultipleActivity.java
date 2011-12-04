@@ -50,7 +50,7 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
    {
    }
    
-   
+
    private static class OptionsMenu
    {
       public final static int SAVE = R.id.menu_save;
@@ -58,14 +58,14 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       public final static int ABORT = R.id.menu_abort_edit;
    }
    
-   
+
    private enum FinishEditMode
    {
       SAVE, CANCELED
    }
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -84,8 +84,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
          createTaskEditMultipleFragment( getIntent().getExtras() );
    }
    
-   
-   
+
+
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -114,8 +114,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       return true;
    }
    
-   
-   
+
+
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -138,8 +138,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       }
    }
    
-   
-   
+
+
    @Override
    public void onBackPressed()
    {
@@ -147,15 +147,15 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
          super.onBackPressed();
    }
    
-   
-   
+
+
    @Override
    public void onChangeTags( List< String > tags )
    {
    }
    
-   
-   
+
+
    @Override
    public boolean onFinishTaskEditingByInputMethod()
    {
@@ -168,8 +168,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       return false;
    }
    
-   
-   
+
+
    private boolean finishEditing( FinishEditMode how )
    {
       boolean finished = true;
@@ -191,24 +191,24 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       return finished;
    }
    
-   
-   
+
+
    @Override
    protected boolean onFinishActivityByHome()
    {
       return finishEditing( FinishEditMode.CANCELED );
    }
    
-   
-   
+
+
    private boolean saveChanges()
    {
       final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
       return taskEditMultipleFragment.onFinishEditing();
    }
    
-   
-   
+
+
    private boolean cancelChanges()
    {
       final TaskEditMultipleFragment taskEditMultipleFragment = getTaskEditMultipleFragment();
@@ -218,7 +218,7 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       {
          finish = false;
          
-         UIUtils.newCancelWithChangesDialog( this, new Runnable()
+         UIUtils.showCancelWithChangesDialog( this, new Runnable()
          {
             @Override
             public void run()
@@ -226,7 +226,7 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
                taskEditMultipleFragment.onCancelEditing();
                finish();
             }
-         }, null ).show();
+         }, null );
       }
       else
       {
@@ -236,8 +236,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       return finish;
    }
    
-   
-   
+
+
    private void createTaskEditMultipleFragment( Bundle fragmentConfig )
    {
       final Fragment fragment = TaskEditMultipleFragment.newInstance( fragmentConfig );
@@ -248,15 +248,15 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       transaction.commit();
    }
    
-   
-   
+
+
    private TaskEditMultipleFragment getTaskEditMultipleFragment()
    {
       return (TaskEditMultipleFragment) getSupportFragmentManager().findFragmentById( R.id.frag_task_edit_multiple );
    }
    
-   
-   
+
+
    private List< Task > getConfiguredTasksFromIntentConfigAssertNotNull()
    {
       final List< Task > tasks = getIntent().getExtras()
@@ -267,8 +267,8 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
       return tasks;
    }
    
-   
-   
+
+
    @Override
    protected int[] getFragmentIds()
    {

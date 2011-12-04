@@ -40,8 +40,8 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
       super.onDestroyView();
    }
    
-   
-   
+
+
    @Override
    public final boolean onFinishEditing()
    {
@@ -63,28 +63,28 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
       return ok;
    }
    
-   
-   
+
+
    @Override
    public void onCancelEditing()
    {
    }
    
-   
-   
+
+
    private boolean hasWritableDatabaseAccess()
    {
       return AccountUtils.isWriteableAccess( getFragmentActivity() );
    }
    
-   
-   
+
+
    protected void showOnlyReadableDatabaseAccessDialog()
    {
-      UIUtils.newReadOnlyAccessDialog( getFragmentActivity(), null ).show();
+      UIUtils.showReadOnlyAccessDialog( getFragmentActivity(), null );
    }
    
-   
-   
-   public abstract boolean saveChanges();
+
+
+   protected abstract boolean saveChanges();
 }

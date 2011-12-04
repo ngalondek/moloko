@@ -35,7 +35,7 @@ options
       super( null );
    }
 
-   public final static Locale LOCALE = Locale.US;  
+   public final static Locale LOCALE = Locale.ENGLISH;  
 }
 
 @lexer::members

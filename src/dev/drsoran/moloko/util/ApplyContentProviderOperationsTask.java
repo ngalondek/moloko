@@ -25,7 +25,6 @@ package dev.drsoran.moloko.util;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.os.AsyncTask;
@@ -39,38 +38,22 @@ public class ApplyContentProviderOperationsTask extends
 {
    private final Activity activity;
    
-   private final int progressTitle;
+   @SuppressWarnings( "unused" )
+   private final int progressMessageId;
    
    private final boolean transactional;
-   
-   private ProgressDialog dialog;
    
    
 
    public ApplyContentProviderOperationsTask( Activity activity,
-      int progressTitle, boolean transactional )
+      int progressMessageId, boolean transactional )
    {
       if ( activity == null )
-         throw new NullPointerException( "activity is null" );
+         throw new NullPointerException( "activity" );
       
       this.activity = activity;
-      this.progressTitle = progressTitle;
+      this.progressMessageId = progressMessageId;
       this.transactional = transactional;
-   }
-   
-
-
-   @Override
-   protected void onPreExecute()
-   {
-      dialog = new ProgressDialog( activity );
-      
-      if ( progressTitle != -1 )
-         dialog.setMessage( activity.getString( progressTitle ) );
-      
-      dialog.setOwnerActivity( activity );
-      dialog.setCancelable( false );
-      dialog.show();
    }
    
 
@@ -138,14 +121,5 @@ public class ApplyContentProviderOperationsTask extends
       }
       
       return Boolean.valueOf( ok );
-   }
-   
-
-
-   @Override
-   protected void onPostExecute( Boolean result )
-   {
-      if ( dialog != null )
-         dialog.dismiss();
    }
 }

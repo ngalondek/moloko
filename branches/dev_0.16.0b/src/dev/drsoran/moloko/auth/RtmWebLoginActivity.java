@@ -42,15 +42,7 @@ public class RtmWebLoginActivity extends Activity
       public static final int OPEN_URL = 0;
    }
    
-
-   public final class ReturnCode
-   {
-      public static final int SUCCESS = 0;
-      
-      public static final int NO_URL = 1;
-   }
    
-
    private class RtmWebViewClient extends WebViewClient
    {
       // This prevents that a new browser will be started if a link is
@@ -66,7 +58,7 @@ public class RtmWebLoginActivity extends Activity
    private WebView webView = null;
    
    
-
+   
    @Override
    protected void onCreate( Bundle savedInstanceState )
    {
@@ -86,23 +78,23 @@ public class RtmWebLoginActivity extends Activity
       webView.loadUrl( uri );
    }
    
-
-
-   public void onContinue( View v )
+   
+   
+   public void onBack( View v )
    {
-      returnWithCode( ReturnCode.SUCCESS );
+      returnWithCode( Activity.RESULT_OK );
    }
    
-
-
+   
+   
    @Override
    public void onBackPressed()
    {
-      onContinue( null );
+      returnWithCode( Activity.RESULT_OK );
    }
    
-
-
+   
+   
    private void returnWithCode( int code )
    {
       setResult( code, getIntent() );

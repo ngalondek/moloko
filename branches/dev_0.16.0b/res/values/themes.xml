@@ -2,10 +2,9 @@
 <resources>
    <style
       name="Theme.Moloko"
-      parent="Theme.Sherlock">
+      parent="Theme.Sherlock.Light">
 
-      <!-- Window attributes -->
-      <item name="android:windowNoTitle">true</item>
+      <!-- Window attributes --> 
       <item name="android:windowContentOverlay">@null</item>
       <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
       <item name="android:windowBackground">@color/app_default_bgnd</item>
@@ -42,8 +41,8 @@
       <item name="titleWithViewStyle">@style/TitleWithViewStyle</item>
       <item name="titleWithTextStyle">@style/TitleWithViewStyle.Text</item>
       <item name="titleWithSpinnerStyle">@style/TitleWithViewStyle.Spinner</item>
-      <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>      
-            
+      <item name="wrappingLayoutStyle">@style/WrappingLayoutStyle</item>
+      
       <!-- ButtonBar -->
       <item name="bottomButtonBarStyle">@style/BottomButtonBarStyle</item>      
    </style>
@@ -51,7 +50,7 @@
    <style name="Theme.Moloko.Authenticator" parent="@android:style/Theme">      
    </style>
    
-   <style name="Theme.Moloko.Preferences" parent="Theme.Sherlock">
+   <style name="Theme.Moloko.Preferences" parent="Theme.Sherlock.Light">
       <item name="android:windowNoTitle">false</item>
       <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackgroundStyle</item>
    </style>

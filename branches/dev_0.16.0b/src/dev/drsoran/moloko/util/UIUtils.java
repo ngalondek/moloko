@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -51,14 +52,14 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TextView.BufferType;
+import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
@@ -86,7 +87,7 @@ public final class UIUtils
    { android.R.attr.state_checked };
    
    
-
+   
    private UIUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
@@ -98,8 +99,8 @@ public final class UIUtils
       @Override
       abstract public void afterTextChanged( Editable s );
       
-
-
+      
+      
       @Override
       public void beforeTextChanged( CharSequence s,
                                      int start,
@@ -108,8 +109,8 @@ public final class UIUtils
       {
       }
       
-
-
+      
+      
       @Override
       public void onTextChanged( CharSequence s,
                                  int start,
@@ -120,21 +121,21 @@ public final class UIUtils
    }
    
    
-
+   
    public final static String getTrimmedText( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-
-
+   
+   
    public final static CharSequence getTrimmedSequence( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-
-
+   
+   
    public final static void showSoftInput( View view )
    {
       if ( view != null )
@@ -148,8 +149,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static boolean hasInputCommitted( int actionId )
    {
       return actionId == EditorInfo.IME_ACTION_DONE
@@ -157,8 +158,8 @@ public final class UIUtils
          || actionId == EditorInfo.IME_NULL;
    }
    
-
-
+   
+   
    public final static void hideSoftInput( View view )
    {
       if ( view != null )
@@ -172,8 +173,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static View setDropDownItemIconAndText( View dropDownView,
                                                         Pair< Integer, String > iconWithText )
    {
@@ -185,8 +186,8 @@ public final class UIUtils
       
    }
    
-
-
+   
+   
    public final static View setDropDownItemIconAndText( View dropDownView,
                                                         int iconId,
                                                         String text )
@@ -206,8 +207,8 @@ public final class UIUtils
       return dropDownView;
    }
    
-
-
+   
+   
    public final static void setTaskDescription( TextView view,
                                                 Task task,
                                                 Time timeBase )
@@ -256,8 +257,8 @@ public final class UIUtils
          view.setTypeface( Typeface.DEFAULT );
    }
    
-
-
+   
+   
    public final static void setListTasksCountView( TextView tasksCount,
                                                    RtmListWithTaskCount list )
    {
@@ -282,8 +283,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static void inflateTags( Context context,
                                          ViewGroup container,
                                          Collection< String > tags,
@@ -365,8 +366,8 @@ public final class UIUtils
          container.setVisibility( View.GONE );
    }
    
-
-
+   
+   
    public final static void setPriorityColor( View view, Task task )
    {
       switch ( task.getPriority() )
@@ -387,8 +388,8 @@ public final class UIUtils
       }
    }
    
-
-
+   
+   
    public final static StringBuilder appendAtNewLine( StringBuilder stringBuilder,
                                                       String string )
    {
@@ -400,8 +401,8 @@ public final class UIUtils
       return stringBuilder;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithViewLayout( View layout,
                                                               String title )
    {
@@ -430,8 +431,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               String text )
@@ -462,8 +463,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               Spannable text )
@@ -486,8 +487,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static void inflateErrorWithIcon( Context context,
                                                   ViewGroup container,
                                                   int errorMsgResId,
@@ -505,8 +506,8 @@ public final class UIUtils
       Log.e( LogUtils.toTag( Context.class ), msg );
    }
    
-
-
+   
+   
    public final static void inflateErrorWithIcon( Context context,
                                                   ViewGroup container,
                                                   Spanned errorText )
@@ -521,16 +522,16 @@ public final class UIUtils
       Log.e( LogUtils.toTag( Context.class ), errorText.toString() );
    }
    
-
-
+   
+   
    public final static void applySpannable( TextView textView, Spannable text )
    {
       textView.setMovementMethod( LinkMovementMethod.getInstance() );
       textView.setText( text, BufferType.SPANNABLE );
    }
    
-
-
+   
+   
    public final static MenuItem addSettingsMenuItem( final Context context,
                                                      Menu menu,
                                                      int menuOrder,
@@ -550,8 +551,8 @@ public final class UIUtils
       return menuItem;
    }
    
-
-
+   
+   
    public final static MenuItem addSearchMenuItem( final Activity activity,
                                                    Menu menu,
                                                    int menuOrder,
@@ -579,8 +580,8 @@ public final class UIUtils
       return menuItem;
    }
    
-
-
+   
+   
    public final static MenuItem addSyncMenuItem( final FragmentActivity activity,
                                                  Menu menu,
                                                  int menuOrder,
@@ -609,8 +610,8 @@ public final class UIUtils
       return menuItem;
    }
    
-
-
+   
+   
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
@@ -633,8 +634,8 @@ public final class UIUtils
                                   show );
    }
    
-
-
+   
+   
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
@@ -669,10 +670,7 @@ public final class UIUtils
          
          if ( showAsActionFlags != MenuItem.SHOW_AS_ACTION_NEVER )
          {
-            final ActionBarMenuItemView actionBarMenuItemView = new ActionBarMenuItemView( context );
-            actionBarMenuItemView.setIcon( item.getIcon() );
-            
-            item.setActionView( actionBarMenuItemView );
+            addCompatibilityActionView( context, item );
          }
       }
       else
@@ -683,8 +681,21 @@ public final class UIUtils
       return item;
    }
    
-
-
+   
+   
+   public static void addCompatibilityActionView( Context context, MenuItem item )
+   {
+      if ( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB )
+      {
+         final ActionBarMenuItemView actionBarMenuItemView = new ActionBarMenuItemView( context );
+         actionBarMenuItemView.setIcon( item.getIcon() );
+         
+         item.setActionView( actionBarMenuItemView );
+      }
+   }
+   
+   
+   
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -694,8 +705,8 @@ public final class UIUtils
                                                            activityClass ) );
    }
    
-
-
+   
+   
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -707,8 +718,8 @@ public final class UIUtils
          item.setIntent( intent );
    }
    
-
-
+   
+   
    public final static String convertSource( Context context, String source )
    {
       if ( source.equalsIgnoreCase( "js" ) )
@@ -720,8 +731,8 @@ public final class UIUtils
       return source;
    }
    
-
-
+   
+   
    public final static Pair< Integer, Integer > getTaggedViewRange( ViewGroup container,
                                                                     String tag )
    {
@@ -745,8 +756,8 @@ public final class UIUtils
          return Pair.create( 0, 0 );
    }
    
-
-
+   
+   
    public final static int getTaggedViewPos( ViewGroup container, String tag )
    {
       int pos = -1;
@@ -760,8 +771,8 @@ public final class UIUtils
       return pos;
    }
    
-
-
+   
+   
    public final static void removeTaggedViews( ViewGroup container, String tag )
    {
       List< View > views = null;
@@ -783,8 +794,8 @@ public final class UIUtils
             container.removeView( view );
    }
    
-
-
+   
+   
    public final static void showCancelWithChangesDialog( FragmentActivity activity,
                                                          Runnable yesAction,
                                                          Runnable noAction )
@@ -797,8 +808,8 @@ public final class UIUtils
                              noAction );
    }
    
-
-
+   
+   
    public final static void showApplyChangesDialog( FragmentActivity activity,
                                                     Runnable yesAction,
                                                     Runnable noAction )
@@ -811,8 +822,8 @@ public final class UIUtils
                              noAction );
    }
    
-
-
+   
+   
    public final static void showDeleteElementDialog( FragmentActivity activity,
                                                      String elementName,
                                                      Runnable yesAction,
@@ -820,16 +831,15 @@ public final class UIUtils
    {
       showDialogWithActions( activity,
                              activity.getString( R.string.phr_delete_with_name,
-                                                 elementName )
-                                + "?",
+                                                 elementName ) + "?",
                              R.string.btn_delete,
                              R.string.btn_cancel,
                              yesAction,
                              noAction );
    }
    
-
-
+   
+   
    public final static void showReadOnlyAccessDialog( final FragmentActivity activity,
                                                       Runnable noAction )
    {
@@ -848,8 +858,8 @@ public final class UIUtils
                              noAction );
    }
    
-
-
+   
+   
    public final static void showDialogWithActions( final FragmentActivity activity,
                                                    String message,
                                                    int positiveId,
@@ -886,8 +896,8 @@ public final class UIUtils
       builder.show( activity );
    };
    
-
-
+   
+   
    public final static void showAboutMolokoDialog( FragmentActivity fragActivity )
    {
       final DialogFragment dialog = AboutMolokoDialogFragment.newInstance( Bundle.EMPTY );
@@ -895,8 +905,8 @@ public final class UIUtils
                    String.valueOf( R.id.frag_about_moloko ) );
    }
    
-
-
+   
+   
    public final static void showNoAccountDialog( final FragmentActivity fragmentActivity,
                                                  final Runnable cancelAction )
    {
@@ -932,8 +942,8 @@ public final class UIUtils
                                        .show( fragmentActivity );
    }
    
-
-
+   
+   
    public final static void showDialogFragment( FragmentActivity fragmentActivity,
                                                 DialogFragment dialogFragment,
                                                 String fragmentTag )
@@ -943,8 +953,8 @@ public final class UIUtils
                               fragmentTag );
    }
    
-
-
+   
+   
    public final static boolean isDialogFragmentAdded( FragmentActivity fragmentActivity,
                                                       String fragmentTag )
    {
@@ -952,8 +962,8 @@ public final class UIUtils
                              .findFragmentByTag( fragmentTag ) != null;
    }
    
-
-
+   
+   
    public final static boolean reportStatus( Context context,
                                              int resIdOk,
                                              int resIdFailed,
@@ -965,8 +975,8 @@ public final class UIUtils
       return ok;
    }
    
-
-
+   
+   
    public final static boolean reportStatus( Context context,
                                              CharSequence strOk,
                                              CharSequence strFailed,

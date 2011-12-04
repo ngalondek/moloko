@@ -6,16 +6,18 @@
    android:layout_height="fill_parent">
 
    <WebView
-      android:id="@+id/webview"  
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_above="@+id/button_bar" />
+       android:id="@+id/webview"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:layout_above="@+id/btn_bar"
+       android:layout_alignParentTop="true" />
 
    <dev.drsoran.moloko.layouts.BottomButtonBarLayout
       android:id="@+id/btn_bar"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"      
+      android:layout_alignParentBottom="true"  
       moloko:button1Text="@string/btn_back"
+      moloko:button1OnClick="onBack"
       moloko:stretchSingleButton="false"/>
 </RelativeLayout>

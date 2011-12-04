@@ -1,5 +1,5 @@
 ﻿if ( selectLayer( activeDocument, "shape" ) )
-{
+{	
 	setForegroundColor( 71.0, 71.0, 71.0 );
 	fillLayerWithForegroundColor();
     applyMenuIconStyle();

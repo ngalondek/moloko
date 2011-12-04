@@ -22,9 +22,8 @@
 
 package dev.drsoran.moloko.util;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.content.ModificationsProviderPart;
 
@@ -32,36 +31,20 @@ import dev.drsoran.moloko.content.ModificationsProviderPart;
 public class ApplyModificationsTask extends
          AsyncTask< ModificationSet, Void, Boolean >
 {
-   private final Activity activity;
+   private final FragmentActivity activity;
    
-   private final int progressTitle;
-   
-   private ProgressDialog dialog;
+   @SuppressWarnings( "unused" )
+   private final int progressMsgId;
    
    
 
-   public ApplyModificationsTask( Activity activity, int progressTitle )
+   public ApplyModificationsTask( FragmentActivity activity, int progressMsgId )
    {
       if ( activity == null )
-         throw new NullPointerException( "context is null" );
+         throw new NullPointerException( "activity is null" );
       
       this.activity = activity;
-      this.progressTitle = progressTitle;
-   }
-   
-
-
-   @Override
-   protected void onPreExecute()
-   {
-      dialog = new ProgressDialog( activity );
-      dialog.setOwnerActivity( activity );
-      
-      if ( progressTitle != -1 )
-         dialog.setMessage( activity.getString( progressTitle ) );
-      
-      dialog.setCancelable( false );
-      dialog.show();
+      this.progressMsgId = progressMsgId;
    }
    
 
@@ -80,14 +63,5 @@ public class ApplyModificationsTask extends
       
       return Boolean.valueOf( ModificationsProviderPart.applyModifications( activity.getContentResolver(),
                                                                             params[ 0 ] ) );
-   }
-   
-
-
-   @Override
-   protected void onPostExecute( Boolean result )
-   {
-      if ( dialog != null )
-         dialog.dismiss();
    }
 }

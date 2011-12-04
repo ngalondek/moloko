@@ -24,9 +24,9 @@ package dev.drsoran.moloko.util;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
@@ -57,7 +57,7 @@ public final class RtmListEditUtils
    
 
 
-   public final static boolean setListName( Activity activity,
+   public final static boolean setListName( FragmentActivity activity,
                                             String listId,
                                             String name )
    {
@@ -79,7 +79,7 @@ public final class RtmListEditUtils
    
 
 
-   public final static boolean deleteListByName( Activity activity,
+   public final static boolean deleteListByName( FragmentActivity activity,
                                                  String listName )
    {
       final ContentProviderClient client = activity.getContentResolver()
@@ -100,7 +100,8 @@ public final class RtmListEditUtils
    
 
 
-   public final static boolean deleteList( Activity activity, RtmList list )
+   public final static boolean deleteList( FragmentActivity activity,
+                                           RtmList list )
    {
       boolean ok = true;
       

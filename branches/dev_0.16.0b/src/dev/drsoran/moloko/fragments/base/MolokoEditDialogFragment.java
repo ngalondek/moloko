@@ -46,7 +46,7 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
    protected Bundle configuration;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -58,8 +58,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          configure( savedInstanceState );
    }
    
-   
-   
+
+
    @Override
    public final void onAttach( SupportActivity activity )
    {
@@ -68,8 +68,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       onAttach( (FragmentActivity) activity );
    }
    
-   
-   
+
+
    public void onAttach( FragmentActivity activity )
    {
       final int settingsMask = getSettingsMask();
@@ -94,8 +94,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       }
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -110,8 +110,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       }
    }
    
-   
-   
+
+
    @Override
    public void setArguments( Bundle args )
    {
@@ -120,8 +120,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       configure( args );
    }
    
-   
-   
+
+
    @Override
    public void onSaveInstanceState( Bundle outState )
    {
@@ -130,16 +130,16 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       outState.putAll( getConfiguration() );
    }
    
-   
-   
+
+
    @Override
    public final Bundle getConfiguration()
    {
       return new Bundle( configuration );
    }
    
-   
-   
+
+
    @Override
    public final void configure( Bundle config )
    {
@@ -150,8 +150,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          takeConfigurationFrom( config );
    }
    
-   
-   
+
+
    @Override
    public void clearConfiguration()
    {
@@ -159,8 +159,8 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          configuration.clear();
    }
    
-   
-   
+
+
    @Override
    public final Bundle createDefaultConfiguration()
    {
@@ -171,20 +171,20 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       return bundle;
    }
    
-   
-   
+
+
    protected void takeConfigurationFrom( Bundle config )
    {
    }
    
-   
-   
+
+
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
    }
    
-   
-   
+
+
    public final ViewGroup getContentView()
    {
       final View root = getView();
@@ -195,22 +195,22 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
          return null;
    }
    
-   
-   
+
+
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
    {
    }
    
-   
-   
+
+
    public int getSettingsMask()
    {
       return 0;
    }
    
-   
-   
+
+
    @Override
    public final boolean onFinishEditing()
    {
@@ -235,23 +235,23 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       return ok;
    }
    
-   
-   
+
+
    @Override
    public final void onCancelEditing()
    {
       if ( hasChanges() )
       {
-         UIUtils.newCancelWithChangesDialog( getFragmentActivity(),
-                                             new Runnable()
-                                             {
-                                                @Override
-                                                public void run()
-                                                {
-                                                   getDialog().cancel();
-                                                }
-                                             },
-                                             null ).show();
+         UIUtils.showCancelWithChangesDialog( getFragmentActivity(),
+                                              new Runnable()
+                                              {
+                                                 @Override
+                                                 public void run()
+                                                 {
+                                                    getDialog().cancel();
+                                                 }
+                                              },
+                                              null );
       }
       else
       {
@@ -259,28 +259,28 @@ public abstract class MolokoEditDialogFragment< T extends Fragment > extends
       }
    }
    
-   
-   
+
+
    protected boolean validateInput()
    {
       return true;
    }
    
-   
-   
+
+
    private boolean hasWritableDatabaseAccess()
    {
       return AccountUtils.isWriteableAccess( getFragmentActivity() );
    }
    
-   
-   
+
+
    protected void showOnlyReadableDatabaseAccessDialog()
    {
-      UIUtils.newReadOnlyAccessDialog( getFragmentActivity(), null ).show();
+      UIUtils.showReadOnlyAccessDialog( getFragmentActivity(), null );
    }
    
-   
-   
-   public abstract boolean saveChanges();
+
+
+   protected abstract boolean saveChanges();
 }

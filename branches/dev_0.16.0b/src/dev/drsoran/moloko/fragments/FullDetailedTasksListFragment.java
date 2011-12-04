@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -463,9 +462,9 @@ public class FullDetailedTasksListFragment extends
    private void onDeleteTask( int pos )
    {
       final Task task = getTask( pos );
-      final Activity activity = getFragmentActivity();
+      final FragmentActivity activity = getFragmentActivity();
       
-      UIUtils.newDeleteElementDialog( activity, task.getName(), new Runnable()
+      UIUtils.showDeleteElementDialog( activity, task.getName(), new Runnable()
       {
          @Override
          public void run()
@@ -479,7 +478,7 @@ public class FullDetailedTasksListFragment extends
                }
             } );
          }
-      }, null ).show();
+      }, null );
    }
    
 

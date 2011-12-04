@@ -23,7 +23,6 @@
 package dev.drsoran.moloko.fragments;
 
 import java.util.Collections;
-import java.util.concurrent.ExecutionException;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -41,8 +40,8 @@ import com.mdt.rtm.data.RtmTask;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.util.ApplyModificationsTask;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -73,7 +72,7 @@ public class TaskEditFragment extends
    }
    
    
-   
+
    public final static TaskEditFragment newInstance( Bundle config )
    {
       final TaskEditFragment fragment = new TaskEditFragment();
@@ -83,15 +82,15 @@ public class TaskEditFragment extends
       return fragment;
    }
    
-   
-   
+
+
    public static IntentFilter getIntentFilter()
    {
       return INTENT_FILTER;
    }
    
-   
-   
+
+
    @Override
    protected Bundle getInitialValues()
    {
@@ -121,8 +120,8 @@ public class TaskEditFragment extends
       return initialValues;
    }
    
-   
-   
+
+
    @Override
    protected void initializeHeadSection()
    {
@@ -131,8 +130,8 @@ public class TaskEditFragment extends
       defaultInitializeHeadSectionImpl( task );
    }
    
-   
-   
+
+
    @Override
    protected void registerInputListeners()
    {
@@ -149,8 +148,8 @@ public class TaskEditFragment extends
                       } );
    }
    
-   
-   
+
+
    @Override
    public void takeConfigurationFrom( Bundle config )
    {
@@ -161,8 +160,8 @@ public class TaskEditFragment extends
                                       config.getParcelable( Config.TASK ) );
    }
    
-   
-   
+
+
    public Task getConfiguredTaskAssertNotNull()
    {
       final Task task = configuration.getParcelable( Config.TASK );
@@ -173,10 +172,10 @@ public class TaskEditFragment extends
       return task;
    }
    
-   
-   
+
+
    @Override
-   public boolean saveChanges()
+   protected boolean saveChanges()
    {
       boolean ok = super.saveChanges();
       
@@ -186,21 +185,9 @@ public class TaskEditFragment extends
          
          if ( modifications != null && modifications.size() > 0 )
          {
-            try
-            {
-               ok = new ApplyModificationsTask( getFragmentActivity(),
-                                                R.string.toast_save_task ).execute( modifications )
-                                                                          .get();
-            }
-            catch ( InterruptedException e )
-            {
-               ok = false;
-            }
-            catch ( ExecutionException e )
-            {
-               ok = false;
-            }
-            
+            ok = Queries.applyModifications( getFragmentActivity(),
+                                             modifications,
+                                             R.string.toast_save_task );
             if ( !ok )
                Toast.makeText( getFragmentActivity(),
                                R.string.toast_save_task_failed,
@@ -211,8 +198,8 @@ public class TaskEditFragment extends
       return ok;
    }
    
-   
-   
+
+
    @Override
    public IEditableFragment< ? extends Fragment > createEditableFragmentInstance()
    {
@@ -225,8 +212,8 @@ public class TaskEditFragment extends
       return fragment;
    }
    
-   
-   
+
+
    @Override
    protected TextView getCommitTextView()
    {

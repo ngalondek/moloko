@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.ContentProviderOperation;
+import android.support.v4.app.FragmentActivity;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
@@ -54,7 +54,7 @@ public final class TaskEditUtils
    
 
 
-   public final static boolean setTaskCompletion( Activity activity,
+   public final static boolean setTaskCompletion( FragmentActivity activity,
                                                   Task task,
                                                   boolean complete )
    {
@@ -65,7 +65,7 @@ public final class TaskEditUtils
    
 
 
-   public final static boolean setTasksCompletion( Activity activity,
+   public final static boolean setTasksCompletion( FragmentActivity activity,
                                                    List< ? extends Task > tasks,
                                                    boolean complete )
    {
@@ -113,14 +113,15 @@ public final class TaskEditUtils
    
 
 
-   public final static boolean postponeTask( Activity activity, Task task )
+   public final static boolean postponeTask( FragmentActivity activity,
+                                             Task task )
    {
       return postponeTasks( activity, Collections.singletonList( task ) );
    }
    
 
 
-   public final static boolean postponeTasks( Activity activity,
+   public final static boolean postponeTasks( FragmentActivity activity,
                                               List< ? extends Task > tasks )
    {
       /**
@@ -209,14 +210,14 @@ public final class TaskEditUtils
    
 
 
-   public final static boolean deleteTask( Activity activity, Task task )
+   public final static boolean deleteTask( FragmentActivity activity, Task task )
    {
       return deleteTasks( activity, Collections.singletonList( task ) );
    }
    
 
 
-   public final static boolean deleteTasks( Activity activity,
+   public final static boolean deleteTasks( FragmentActivity activity,
                                             List< ? extends Task > tasks )
    {
       boolean ok = true;

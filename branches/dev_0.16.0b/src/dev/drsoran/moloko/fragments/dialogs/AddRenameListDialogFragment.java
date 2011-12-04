@@ -260,7 +260,7 @@ public class AddRenameListDialogFragment extends
 
 
    @Override
-   public boolean saveChanges()
+   protected boolean saveChanges()
    {
       final RtmList list = getConfiguredList();
       

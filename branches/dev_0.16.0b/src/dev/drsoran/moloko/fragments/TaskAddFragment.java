@@ -387,7 +387,7 @@ public class TaskAddFragment extends AbstractTaskEditFragment< TaskAddFragment >
 
 
    @Override
-   public boolean saveChanges()
+   protected boolean saveChanges()
    {
       boolean ok = super.saveChanges();
       

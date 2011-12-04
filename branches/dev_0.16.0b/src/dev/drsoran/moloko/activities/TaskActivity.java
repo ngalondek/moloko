@@ -542,17 +542,17 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       final String noteId = (String) noteDeleteButton.getTag();
       
-      UIUtils.newDeleteElementDialog( this,
-                                      getString( R.string.app_note ),
-                                      new Runnable()
-                                      {
-                                         @Override
-                                         public void run()
-                                         {
-                                            deleteNoteImpl( noteId );
-                                         }
-                                      },
-                                      null ).show();
+      UIUtils.showDeleteElementDialog( this,
+                                       getString( R.string.app_note ),
+                                       new Runnable()
+                                       {
+                                          @Override
+                                          public void run()
+                                          {
+                                             deleteNoteImpl( noteId );
+                                          }
+                                       },
+                                       null );
    }
    
 
@@ -599,7 +599,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       final Task task = getTaskAssertNotNull();
       
-      UIUtils.newDeleteElementDialog( this, task.getName(), new Runnable()
+      UIUtils.showDeleteElementDialog( this, task.getName(), new Runnable()
       {
          @Override
          public void run()
@@ -607,7 +607,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
             TaskEditUtils.deleteTask( TaskActivity.this, task );
             finish();
          }
-      }, null ).show();
+      }, null );
    }
    
 
@@ -735,7 +735,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
    private void finishEditingShowCancelDialog( final Runnable cancelAction )
    {
-      UIUtils.newCancelWithChangesDialog( this, new Runnable()
+      UIUtils.showCancelWithChangesDialog( this, new Runnable()
       {
          @Override
          public void run()
@@ -745,8 +745,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
             if ( cancelAction != null )
                cancelAction.run();
          }
-      },
-                                          null ).show();
+      }, null );
    }
    
 
@@ -1288,21 +1287,20 @@ public class TaskActivity extends MolokoFragmentActivity implements
    {
       replaceEditNoteFragmentWithAddNoteFragment( noteId );
       
-      UIUtils.newDialogWithActions( this,
-                                    getString( R.string.task_dlg_removing_editing_note ),
-                                    R.string.btn_edit,
-                                    R.string.btn_delete,
-                                    null,
-                                    new Runnable()
-                                    {
-                                       @Override
-                                       public void run()
-                                       {
-                                          finishAddingNewNote( FinishEditMode.FORCE_CANCELED );
-                                          setActivityInEditMode( 0 );
-                                       }
-                                    } )
-             .show();
+      UIUtils.showDialogWithActions( this,
+                                     getString( R.string.task_dlg_removing_editing_note ),
+                                     R.string.btn_edit,
+                                     R.string.btn_delete,
+                                     null,
+                                     new Runnable()
+                                     {
+                                        @Override
+                                        public void run()
+                                        {
+                                           finishAddingNewNote( FinishEditMode.FORCE_CANCELED );
+                                           setActivityInEditMode( 0 );
+                                        }
+                                     } );
    }
    
 

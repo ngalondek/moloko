@@ -30,7 +30,6 @@ import android.support.v4.app.FragmentActivity;
 
 public abstract class MolokoDialogFragment extends DialogFragment
 {
-   
    private OnClickListener listenerPositive;
    
    private OnClickListener listenerNegative;
@@ -63,14 +62,14 @@ public abstract class MolokoDialogFragment extends DialogFragment
    };
    
    
-   
+
    public FragmentActivity getFragmentActivity()
    {
       return (FragmentActivity) getSupportActivity();
    }
    
-   
-   
+
+
    public void setButtonClickListener( int buttonType,
                                        DialogInterface.OnClickListener listener )
    {
@@ -90,8 +89,8 @@ public abstract class MolokoDialogFragment extends DialogFragment
       }
    }
    
-   
-   
+
+
    protected OnClickListener getGenericOnClickListener()
    {
       return genericListener;

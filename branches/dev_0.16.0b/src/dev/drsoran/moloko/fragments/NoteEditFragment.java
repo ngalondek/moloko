@@ -166,7 +166,7 @@ public class NoteEditFragment extends MolokoEditFragment< NoteEditFragment >
 
 
    @Override
-   public boolean saveChanges()
+   protected boolean saveChanges()
    {
       boolean ok = true;
       

@@ -23,27 +23,22 @@
 package dev.drsoran.moloko.activities;
 
 import android.accounts.Account;
-import android.app.Dialog;
 import android.content.ContentProviderClient;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
-import android.support.v4.app.DialogFragment;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
-import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.MissingDefaultListDialogFragment;
-import dev.drsoran.moloko.fragments.dialogs.NoAccountDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.Queries;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.ListOverviews;
 import dev.drsoran.provider.Rtm.Lists;
 
@@ -70,7 +65,7 @@ public class StartUpActivity extends MolokoFragmentActivity
    private int stateIndex = 0;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -85,8 +80,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       reEvaluateCurrentState();
    }
    
-   
-   
+
+
    @Override
    protected void onDestroy()
    {
@@ -95,8 +90,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       super.onDestroy();
    }
    
-   
-   
+
+
    @Override
    protected void onSaveInstanceState( Bundle outState )
    {
@@ -105,8 +100,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       outState.putInt( STATE_INDEX_KEY, stateIndex );
    }
    
-   
-   
+
+
    @Override
    protected void onRestoreInstanceState( Bundle savedInstanceState )
    {
@@ -117,8 +112,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       reEvaluateCurrentState();
    }
    
-   
-   
+
+
    @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
@@ -128,8 +123,8 @@ public class StartUpActivity extends MolokoFragmentActivity
          super.onActivityResult( requestCode, resultCode, data );
    }
    
-   
-   
+
+
    private void checkAccount()
    {
       boolean switchToNextState = true;
@@ -137,51 +132,24 @@ public class StartUpActivity extends MolokoFragmentActivity
       
       if ( account == null )
       {
-         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-         if ( prefs != null )
+         UIUtils.showNoAccountDialog( this, new Runnable()
          {
-            if ( !prefs.getBoolean( getString( R.string.key_notified_account_creation ),
-                                    false ) )
+            @Override
+            public void run()
             {
-               if ( !isDialogFragmentAdded( NoAccountDialogFragment.class ) )
-               {
-                  final MolokoDialogFragment molokoDialogFragment = showDialogFragment( new NoAccountDialogFragment() );
-                  molokoDialogFragment.setButtonClickListener( Dialog.BUTTON_POSITIVE,
-                                                               new OnClickListener()
-                                                               {
-                                                                  @Override
-                                                                  public void onClick( DialogInterface dialog,
-                                                                                       int which )
-                                                                  {
-                                                                     setCreateNewAccountAsNotified();
-                                                                     startActivityForResult( Intents.createNewAccountIntent(),
-                                                                                             0 );
-                                                                  }
-                                                               } );
-                  molokoDialogFragment.setButtonClickListener( Dialog.BUTTON_NEGATIVE,
-                                                               new OnClickListener()
-                                                               {
-                                                                  @Override
-                                                                  public void onClick( DialogInterface dialog,
-                                                                                       int which )
-                                                                  {
-                                                                     setCreateNewAccountAsNotified();
-                                                                     switchToNextState();
-                                                                  }
-                                                               } );
-               }
-               
-               switchToNextState = false;
+               switchToNextState();
             }
-         }
+         } );
+         
+         switchToNextState = false;
       }
       
       if ( switchToNextState )
          switchToNextState();
    }
    
-   
-   
+
+
    private void determineStartupView()
    {
       final Settings settings = MolokoApp.getSettings();
@@ -199,22 +167,25 @@ public class StartUpActivity extends MolokoFragmentActivity
             {
                if ( !existsList( defaultListId ) )
                {
-                  if ( !isDialogFragmentAdded( MissingDefaultListDialogFragment.class ) )
-                     showDialogFragment( new MissingDefaultListDialogFragment() ).setButtonClickListener( Dialog.BUTTON_NEUTRAL,
-                                                                                                          new OnClickListener()
-                                                                                                          {
-                                                                                                             @Override
-                                                                                                             public void onClick( DialogInterface dialog,
-                                                                                                                                  int which )
-                                                                                                             {
-                                                                                                                final Settings settings = MolokoApp.getSettings();
-                                                                                                                
-                                                                                                                settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
-                                                                                                                settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
-                                                                                                                
-                                                                                                                switchToNextState();
-                                                                                                             }
-                                                                                                          } );
+                  new AlertDialogFragment.Builder().setTitle( getString( R.string.dlg_missing_def_list_title ) )
+                                                   .setIcon( R.drawable.ic_prefs_info )
+                                                   .setMessage( getString( R.string.dlg_missing_def_list_text ) )
+                                                   .setNeutralButton( R.string.btn_continue,
+                                                                      new OnClickListener()
+                                                                      {
+                                                                         @Override
+                                                                         public void onClick( DialogInterface dialog,
+                                                                                              int which )
+                                                                         {
+                                                                            final Settings settings = MolokoApp.getSettings();
+                                                                            
+                                                                            settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT );
+                                                                            settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID );
+                                                                            
+                                                                            switchToNextState();
+                                                                         }
+                                                                      } )
+                                                   .show( this );
                }
             }
             catch ( RemoteException e )
@@ -233,8 +204,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       }
    }
    
-   
-   
+
+
    private void onStartUpCompleted()
    {
       final int startUpView = MolokoApp.getSettings().getStartupView();
@@ -265,8 +236,8 @@ public class StartUpActivity extends MolokoFragmentActivity
       finish();
    }
    
-   
-   
+
+
    private void switchToNextState()
    {
       if ( stateIndex + 1 < STATE_SEQUENCE.length )
@@ -280,15 +251,15 @@ public class StartUpActivity extends MolokoFragmentActivity
       }
    }
    
-   
-   
+
+
    private void reEvaluateCurrentState()
    {
       handler.sendEmptyMessage( MSG_STATE_CHANGED );
    }
    
-   
-   
+
+
    private boolean existsList( String id ) throws RemoteException
    {
       final ContentProviderClient client = getContentResolver().acquireContentProviderClient( Lists.CONTENT_URI );
@@ -296,73 +267,13 @@ public class StartUpActivity extends MolokoFragmentActivity
       return client != null && Queries.exists( client, Lists.CONTENT_URI, id );
    }
    
-   
-   
+
+
    @Override
    protected int[] getFragmentIds()
    {
       return null;
    }
-   
-   
-   
-   private void setCreateNewAccountAsNotified()
-   {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences( this );
-      prefs.edit()
-           .putBoolean( getString( R.string.key_notified_account_creation ),
-                        true )
-           .commit();
-   }
-   
-   
-   
-   private boolean isDialogFragmentAdded( Class< ? extends DialogFragment > clazz )
-   {
-      return getSupportFragmentManager().findFragmentByTag( clazz.getName() ) != null;
-   }
-   
-   
-   
-   private MolokoDialogFragment showDialogFragment( MolokoDialogFragment newInstance )
-   {
-      newInstance.show( getSupportFragmentManager(), newInstance.getClass()
-                                                                .getName() );
-      return newInstance;
-   }
-   
-   /*
-    * Must be public due to recreation if device orientation changes public class NoAccountDialogFragment extends
-    * DialogFragment {
-    * 
-    * @Override public Dialog onCreateDialog( Bundle savedInstanceState ) { return new AlertDialog.Builder(
-    * getActivity() ).setTitle( R.string.dlg_no_account_title ) .setIcon( R.drawable.rtm ) .setMessage(
-    * R.string.dlg_no_account_text ) .setPositiveButton( R.string.btn_new_account, new OnClickListener() {
-    * 
-    * @Override public void onClick( DialogInterface dialog, int which ) { setCreateNewAccountAsNotified();
-    * startActivity( Intents.createNewAccountIntent() ); } } ) .setNegativeButton(
-    * R.string.dlg_no_account_btn_no_account, new OnClickListener() {
-    * 
-    * @Override public void onClick( DialogInterface dialog, int which ) { setCreateNewAccountAsNotified();
-    * switchToNextState(); } } ) .create(); } }
-    */
-   
-   /*
-    * Must be public due to recreation if device orientation changes public final class MissingDefaultListDialogFragment
-    * extends DialogFragment {
-    * 
-    * @Override public Dialog onCreateDialog( Bundle savedInstanceState ) { return new AlertDialog.Builder(
-    * getActivity() ).setTitle( R.string.dlg_missing_def_list_title ) .setIcon( R.drawable.ic_prefs_info ) .setMessage(
-    * R.string.dlg_missing_def_list_text ) .setPositiveButton( R.string.btn_continue, new OnClickListener() {
-    * 
-    * @Override public void onClick( DialogInterface dialog, int which ) { final Settings settings =
-    * MolokoApp.getSettings();
-    * 
-    * settings.setStartupView( Settings.STARTUP_VIEW_DEFAULT ); settings.setDefaultListId( Settings.NO_DEFAULT_LIST_ID
-    * );
-    * 
-    * switchToNextState(); } } ) .create(); } }
-    */
    
    private final Handler handler = new Handler()
    {

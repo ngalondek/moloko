@@ -30,8 +30,7 @@
    <item
       type="id"
       name="title_with_spinner_layout" />
-
-
+   
    <!-- Fragment IDs -->
    <item
       type="id"
@@ -67,6 +66,22 @@
       type="id"
       name="frag_about_moloko" />
 
+   <!-- Dialog Fragment IDs -->
+   <item
+      type="id"
+      name="dlg_no_account" />
+   <item
+      type="id"
+      name="dlg_read_only_access" />
+   <item
+      type="id"
+      name="dlg_apply_changes" />
+   <item
+      type="id"
+      name="dlg_cancel_with_changes" />
+   <item
+      type="id"
+      name="dlg_delete_element" />
 
    <!-- Menu group IDs -->
    <item

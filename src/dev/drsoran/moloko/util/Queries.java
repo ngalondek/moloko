@@ -305,7 +305,7 @@ public final class Queries
 
    public final static boolean applyModifications( FragmentActivity activity,
                                                    ModificationSet modifications,
-                                                   int progressTextId )
+                                                   String progressText )
    {
       boolean ok = true;
       
@@ -313,8 +313,8 @@ public final class Queries
       {
          try
          {
-            ok = new ApplyModificationsTask( activity, progressTextId ).execute( modifications )
-                                                                       .get();
+            ok = new ApplyModificationsTask( activity, progressText ).execute( modifications )
+                                                                     .get();
          }
          catch ( InterruptedException e )
          {

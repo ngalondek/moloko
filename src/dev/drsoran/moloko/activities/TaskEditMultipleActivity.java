@@ -38,8 +38,8 @@ import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
-         ITaskEditFragmentListener
+public class TaskEditMultipleActivity extends MolokoEditFragmentActivity
+         implements ITaskEditFragmentListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -151,6 +151,27 @@ public class TaskEditMultipleActivity extends MolokoFragmentActivity implements
 
    @Override
    public void onChangeTags( List< String > tags )
+   {
+   }
+   
+
+
+   @Override
+   public void onEditDueByPicker()
+   {
+   }
+   
+
+
+   @Override
+   public void onEditRecurrenceByPicker()
+   {
+   }
+   
+
+
+   @Override
+   public void onEditEstimateByPicker()
    {
    }
    

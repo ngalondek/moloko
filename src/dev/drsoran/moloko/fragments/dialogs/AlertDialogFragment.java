@@ -25,20 +25,19 @@ package dev.drsoran.moloko.fragments.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
+import dev.drsoran.moloko.fragments.listeners.IAlertDialogFragmentListener;
 import dev.drsoran.moloko.util.UIUtils;
 
 
-public class AlertDialogFragment extends MolokoDialogFragment implements
-         IConfigurable
+public class AlertDialogFragment extends MolokoDialogFragment
 {
    public final static class Config
    {
+      private final static String DIALOG_ID = "dialog_id";
+      
       public final static String ICON_ID = "icon_id";
       
       public final static String TITLE_STRING = "title_string";
@@ -57,13 +56,21 @@ public class AlertDialogFragment extends MolokoDialogFragment implements
    {
       private final Bundle config = new Bundle();
       
-      private OnClickListener positiveListener;
       
-      private OnClickListener negativeListener;
+
+      public Builder()
+      {
+         this( -1 );
+      }
       
-      private OnClickListener neutralListener;
+
+
+      public Builder( int dialogId )
+      {
+         config.putInt( Config.DIALOG_ID, dialogId );
+      }
       
-      
+
 
       public Builder setTitle( String title )
       {
@@ -89,28 +96,25 @@ public class AlertDialogFragment extends MolokoDialogFragment implements
       
 
 
-      public Builder setPositiveButton( int textId, OnClickListener listener )
+      public Builder setPositiveButton( int textId )
       {
          config.putInt( Config.POSITIVE_TEXT_ID, textId );
-         positiveListener = listener;
          return this;
       }
       
 
 
-      public Builder setNegativeButton( int textId, OnClickListener listener )
+      public Builder setNegativeButton( int textId )
       {
          config.putInt( Config.NEGATIVE_TEXT_ID, textId );
-         negativeListener = listener;
          return this;
       }
       
 
 
-      public Builder setNeutralButton( int textId, OnClickListener listener )
+      public Builder setNeutralButton( int textId )
       {
          config.putInt( Config.NEUTRAL_TEXT_ID, textId );
-         neutralListener = listener;
          return this;
       }
       
@@ -119,14 +123,6 @@ public class AlertDialogFragment extends MolokoDialogFragment implements
       public AlertDialogFragment create()
       {
          AlertDialogFragment frag = AlertDialogFragment.newInstance( config );
-         
-         frag.setButtonClickListener( DialogInterface.BUTTON_POSITIVE,
-                                      positiveListener );
-         frag.setButtonClickListener( DialogInterface.BUTTON_NEGATIVE,
-                                      negativeListener );
-         frag.setButtonClickListener( DialogInterface.BUTTON_NEUTRAL,
-                                      neutralListener );
-         
          return frag;
       }
       
@@ -137,9 +133,13 @@ public class AlertDialogFragment extends MolokoDialogFragment implements
          final AlertDialogFragment frag = create();
          UIUtils.showDialogFragment( activity,
                                      frag,
-                                     AlertDialogFragment.class.getName() );
+                                     String.format( "%s:%d",
+                                                    AlertDialogFragment.class.getName(),
+                                                    config.getInt( Config.DIALOG_ID ) ) );
       }
-   }
+   } // Builder
+   
+   private IAlertDialogFragmentListener listener;
    
    
 
@@ -152,18 +152,26 @@ public class AlertDialogFragment extends MolokoDialogFragment implements
       return fragment;
    }
    
-   private Bundle configuration;
-   
-   
+
 
    @Override
-   public void onCreate( Bundle savedInstanceState )
+   public void onAttach( FragmentActivity activity )
    {
-      super.onCreate( savedInstanceState );
+      super.onAttach( activity );
       
-      configure( getArguments() );
-      
-      setRetainInstance( true );
+      if ( activity instanceof IAlertDialogFragmentListener )
+         listener = (IAlertDialogFragmentListener) activity;
+      else
+         listener = null;
+   }
+   
+
+
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      listener = null;
    }
    
 
@@ -205,55 +213,38 @@ public class AlertDialogFragment extends MolokoDialogFragment implements
 
 
    @Override
-   public void clearConfiguration()
+   protected void takeConfigurationFrom( Bundle config )
    {
-      configuration.clear();
-   }
-   
-
-
-   @Override
-   public void configure( Bundle config )
-   {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
+      super.takeConfigurationFrom( config );
       
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.ICON_ID ) )
-            configuration.putInt( Config.ICON_ID,
-                                  config.getInt( Config.ICON_ID ) );
-         if ( config.containsKey( Config.TITLE_STRING ) )
-            configuration.putString( Config.TITLE_STRING,
-                                     config.getString( Config.TITLE_STRING ) );
-         if ( config.containsKey( Config.MESSAGE_STRING ) )
-            configuration.putString( Config.MESSAGE_STRING,
-                                     config.getString( Config.MESSAGE_STRING ) );
-         if ( config.containsKey( Config.POSITIVE_TEXT_ID ) )
-            configuration.putInt( Config.POSITIVE_TEXT_ID,
-                                  config.getInt( Config.POSITIVE_TEXT_ID ) );
-         if ( config.containsKey( Config.NEGATIVE_TEXT_ID ) )
-            configuration.putInt( Config.NEGATIVE_TEXT_ID,
-                                  config.getInt( Config.NEGATIVE_TEXT_ID ) );
-         if ( config.containsKey( Config.NEUTRAL_TEXT_ID ) )
-            configuration.putInt( Config.NEUTRAL_TEXT_ID,
-                                  config.getInt( Config.NEUTRAL_TEXT_ID ) );
-      }
+      configuration.putInt( Config.DIALOG_ID, config.getInt( Config.DIALOG_ID ) );
+      
+      if ( config.containsKey( Config.ICON_ID ) )
+         configuration.putInt( Config.ICON_ID, config.getInt( Config.ICON_ID ) );
+      if ( config.containsKey( Config.TITLE_STRING ) )
+         configuration.putString( Config.TITLE_STRING,
+                                  config.getString( Config.TITLE_STRING ) );
+      if ( config.containsKey( Config.MESSAGE_STRING ) )
+         configuration.putString( Config.MESSAGE_STRING,
+                                  config.getString( Config.MESSAGE_STRING ) );
+      if ( config.containsKey( Config.POSITIVE_TEXT_ID ) )
+         configuration.putInt( Config.POSITIVE_TEXT_ID,
+                               config.getInt( Config.POSITIVE_TEXT_ID ) );
+      if ( config.containsKey( Config.NEGATIVE_TEXT_ID ) )
+         configuration.putInt( Config.NEGATIVE_TEXT_ID,
+                               config.getInt( Config.NEGATIVE_TEXT_ID ) );
+      if ( config.containsKey( Config.NEUTRAL_TEXT_ID ) )
+         configuration.putInt( Config.NEUTRAL_TEXT_ID,
+                               config.getInt( Config.NEUTRAL_TEXT_ID ) );
    }
    
 
 
    @Override
-   public Bundle createDefaultConfiguration()
+   protected void onButtonClicked( int which )
    {
-      return new Bundle();
-   }
-   
-
-
-   @Override
-   public Bundle getConfiguration()
-   {
-      return new Bundle( configuration );
+      if ( listener != null )
+         listener.onAlertDialogFragmentClick( configuration.getInt( Config.DIALOG_ID ),
+                                              which );
    }
 }

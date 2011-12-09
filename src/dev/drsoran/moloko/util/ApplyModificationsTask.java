@@ -34,17 +34,17 @@ public class ApplyModificationsTask extends
    private final FragmentActivity activity;
    
    @SuppressWarnings( "unused" )
-   private final int progressMsgId;
+   private final String progressMsg;
    
    
 
-   public ApplyModificationsTask( FragmentActivity activity, int progressMsgId )
+   public ApplyModificationsTask( FragmentActivity activity, String progressText )
    {
       if ( activity == null )
          throw new NullPointerException( "activity is null" );
       
       this.activity = activity;
-      this.progressMsgId = progressMsgId;
+      this.progressMsg = progressText;
    }
    
 

@@ -22,18 +22,12 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-import android.content.Intent;
+import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.content.ModificationSet;
 
 
-public interface ITaskListsFragmentListener extends IEditFragmentListener
+public interface IEditFragmentListener
 {
-   void openList( int pos );
-   
-
-
-   void openChild( Intent intent );
-   
-
-
-   void renameList( int pos );
+   void applyModifications( ModificationSet modificationSet,
+                            ApplyChangesInfo applyInfo );
 }

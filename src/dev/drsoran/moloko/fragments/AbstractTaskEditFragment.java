@@ -33,7 +33,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -53,17 +52,12 @@ import com.mdt.rtm.data.RtmLists;
 import com.mdt.rtm.data.RtmLocation;
 import com.mdt.rtm.data.RtmTask;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IChangesTarget;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.Modification;
 import dev.drsoran.moloko.content.ModificationSet;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog;
-import dev.drsoran.moloko.dialogs.DuePickerDialog;
-import dev.drsoran.moloko.dialogs.EstimatePickerDialog;
-import dev.drsoran.moloko.dialogs.RecurrPickerDialog;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.CloseReason;
-import dev.drsoran.moloko.dialogs.AbstractPickerDialog.IOnDialogClosedListener;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderEditFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskEditFragmentListener;
@@ -236,8 +230,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
    
    protected TitleWithEditTextLayout urlEditText;
    
-   protected AbstractPickerDialog pickerDlg;
-   
    
 
    @Override
@@ -263,19 +255,6 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
          listener = (ITaskEditFragmentListener) activity;
       else
          listener = new NullTaskEditFragmentListener();
-   }
-   
-
-
-   @Override
-   public void onDestroy()
-   {
-      super.onDestroy();
-      
-      if ( pickerDlg != null )
-         pickerDlg.dismiss();
-      
-      pickerDlg = null;
    }
    
 
@@ -458,7 +437,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                     @Override
                     public void onClick( View v )
                     {
-                       onEditDueByPicker();
+                       listener.onEditDueByPicker();
                     }
                  } );
       
@@ -468,7 +447,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                     @Override
                     public void onClick( View v )
                     {
-                       onEditRecurrenceByPicker();
+                       listener.onEditRecurrenceByPicker();
                     }
                  } );
       
@@ -478,7 +457,7 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
                     @Override
                     public void onClick( View v )
                     {
-                       onEditEstimateByPicker();
+                       listener.onEditEstimateByPicker();
                     }
                  } );
       
@@ -784,47 +763,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
 
    // DUE DATE EDITING
    
-   private void onEditDueByPicker()
+   public MolokoCalendar getDue()
    {
-      pickerDlg = createDuePicker();
-      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
-      {
-         @Override
-         public void onDialogClosed( CloseReason reason,
-                                     Object value,
-                                     Object... extras )
-         {
-            pickerDlg = null;
-            
-            if ( reason == CloseReason.OK )
-            {
-               dueEditText.setDue( ( (Long) value ).longValue(),
-                                   ( (Boolean) extras[ 0 ] ).booleanValue() );
-            }
-         }
-      } );
-      pickerDlg.show();
+      return dueEditText.getDueCalendar();
    }
    
 
 
-   private AbstractPickerDialog createDuePicker()
+   public void setDue( MolokoCalendar due )
    {
-      final MolokoCalendar cal;
-      
-      if ( dueEditText.hasDate() )
-      {
-         cal = dueEditText.getDueCalendar();
-      }
-      else
-      {
-         cal = MolokoDateUtils.newCalendar( System.currentTimeMillis() );
-         cal.setHasTime( false );
-      }
-      
-      return new DuePickerDialog( getFragmentActivity(),
-                                  cal.getTimeInMillis(),
-                                  cal.hasTime() );
+      dueEditText.setDue( due.getTimeInMillis(), due.hasTime() );
    }
    
 
@@ -871,40 +819,18 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
 
    // RECURRENCE EDITING
    
-   private void onEditRecurrenceByPicker()
+   public Pair< String, Boolean > getRecurrencePattern()
    {
-      pickerDlg = createRecurrencePicker();
-      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
-      {
-         @Override
-         public void onDialogClosed( CloseReason reason,
-                                     Object value,
-                                     Object... extras )
-         {
-            pickerDlg = null;
-            
-            if ( reason == CloseReason.OK )
-            {
-               recurrEditText.setRecurrence( (String) value,
-                                             ( (Boolean) extras[ 0 ] ).booleanValue() );
-            }
-         }
-      } );
-      pickerDlg.show();
+      return recurrEditText.getRecurrencePattern();
    }
    
 
 
-   private AbstractPickerDialog createRecurrencePicker()
+   public void setRecurrencePattern( Pair< String, Boolean > recurrPattern )
    {
-      Pair< String, Boolean > recurrencePattern = recurrEditText.getRecurrencePattern();
-      
-      if ( recurrencePattern == null )
-         recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
-      
-      return new RecurrPickerDialog( getFragmentActivity(),
-                                     recurrencePattern.first,
-                                     recurrencePattern.second );
+      recurrEditText.setRecurrence( recurrPattern.first,
+                                    Boolean.valueOf( recurrPattern.second ) );
+      recurrEditText.requestFocus();
    }
    
 
@@ -943,39 +869,22 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
 
    // ESTIMATE EDITING
    
-   private void onEditEstimateByPicker()
-   {
-      pickerDlg = createEstimatePicker();
-      pickerDlg.setOnDialogClosedListener( new IOnDialogClosedListener()
-      {
-         @Override
-         public void onDialogClosed( CloseReason reason,
-                                     Object value,
-                                     Object... extras )
-         {
-            pickerDlg = null;
-            
-            if ( reason == CloseReason.OK )
-            {
-               final long millis = ( (Long) value ).longValue();
-               estimateEditText.setEstimate( millis );
-            }
-         }
-      } );
-      pickerDlg.show();
-   }
-   
-
-
-   private AbstractPickerDialog createEstimatePicker()
+   public long getEstimateMillis()
    {
       Long millis = estimateEditText.getEstimateMillis();
       
       if ( millis == null || millis == Long.valueOf( -1 ) )
-         millis = Long.valueOf( DateUtils.DAY_IN_MILLIS );
+         millis = Long.valueOf( -1 );
       
-      return new EstimatePickerDialog( getFragmentActivity(),
-                                       millis.longValue() );
+      return millis;
+   }
+   
+
+
+   public void setEstimateMillis( long estimateMillis )
+   {
+      estimateEditText.setEstimate( estimateMillis );
+      estimateEditText.requestFocus();
    }
    
 
@@ -1322,6 +1231,16 @@ public abstract class AbstractTaskEditFragment< T extends Fragment >
       }
       
       return modifications;
+   }
+   
+
+
+   protected void applyModifications( ModificationSet modificationSet )
+   {
+      final ApplyChangesInfo applyChangesInfo = new ApplyChangesInfo( getString( R.string.toast_save_task ),
+                                                                      getString( R.string.toast_save_task_ok ),
+                                                                      getString( R.string.toast_save_task_failed ) );
+      listener.applyModifications( modificationSet, applyChangesInfo );
    }
    
 

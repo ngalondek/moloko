@@ -1,5 +1,5 @@
 /* 
- *	Copyright (c) 2010 Ronny Röhricht
+ *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
  *
@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.dialogs;
+package dev.drsoran.moloko.fragments.dialogs;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +28,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -37,6 +38,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -51,22 +54,33 @@ import com.mdt.rtm.data.RtmLocation;
 
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.RtmLocationsProviderPart;
+import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 import dev.drsoran.moloko.util.LogUtils;
+import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.provider.Rtm.Locations;
 import dev.drsoran.rtm.Task;
 
 
-public class LocationChooser
+public class LocationChooserDialogFragment extends MolokoDialogFragment
 {
    private final static String TAG = "Moloko."
-      + LocationChooser.class.getSimpleName();
-   
-   private final Activity activity;
-   
-   private ArrayList< Pair< Intent, ResolveInfo > > resolvedIntents;
+      + LocationChooserDialogFragment.class.getSimpleName();
    
    
-   private class Adapter extends ArrayAdapter< Pair< Intent, ResolveInfo > >
+   public final static class Config
+   {
+      public final static String LONGITUDE = "lon";
+      
+      public final static String LATITUDE = "lat";
+      
+      public final static String ZOOM = "zoom";
+      
+      public final static String ADDRESS = "address";
+   }
+   
+
+   private final static class Adapter extends
+            ArrayAdapter< Pair< Intent, ResolveInfo > >
    {
       private final Context context;
       
@@ -116,43 +130,67 @@ public class LocationChooser
       }
    }
    
+   private List< Pair< Intent, ResolveInfo > > resolvedIntents;
+   
    
 
-   public LocationChooser( Activity context, Task task )
+   public final static void show( FragmentActivity activity, Task task )
    {
-      this.activity = context;
-      setIntents( task.getLongitude(),
-                  task.getLatitude(),
-                  task.getZoom(),
-                  task.getLocationAddress() );
+      show( activity,
+            task.getLongitude(),
+            task.getLatitude(),
+            task.getZoom(),
+            task.getLocationAddress() );
    }
    
 
 
-   public LocationChooser( Activity context, RtmLocation location )
+   public final static void show( FragmentActivity activity,
+                                  RtmLocation location )
    {
-      this.activity = context;
-      setIntents( location.longitude,
-                  location.latitude,
-                  location.zoom,
-                  location.address );
+      show( activity,
+            location.longitude,
+            location.latitude,
+            location.zoom,
+            location.address );
    }
    
 
 
-   public LocationChooser( Activity context, float lon, float lat, int zoom,
-      String address )
+   public final static void show( FragmentActivity activity,
+                                  float lon,
+                                  float lat,
+                                  int zoom,
+                                  String address )
    {
-      this.activity = context;
-      setIntents( lon, lat, zoom, address );
+      final Bundle config = new Bundle( 2 );
+      config.putFloat( Config.LONGITUDE, lon );
+      config.putFloat( Config.LATITUDE, lat );
+      config.putInt( Config.ZOOM, zoom );
+      config.putString( Config.ADDRESS, address );
+      
+      show( activity, config );
    }
    
 
 
-   public LocationChooser( Activity context, Intent[] intents )
+   public final static void show( FragmentActivity activity, Bundle config )
    {
-      this.activity = context;
-      resolveLocationIntents( intents );
+      final LocationChooserDialogFragment frag = newInstance( config );
+      UIUtils.showDialogFragment( activity,
+                                  frag,
+                                  LocationChooserDialogFragment.class.getName() );
+   }
+   
+
+
+   public final static LocationChooserDialogFragment newInstance( Bundle config )
+   {
+      final LocationChooserDialogFragment frag = new LocationChooserDialogFragment();
+      
+      frag.setArguments( config );
+      
+      return frag;
    }
    
 
@@ -164,8 +202,41 @@ public class LocationChooser
    
 
 
-   public void showChooser()
+   @Override
+   public Dialog onCreateDialog( Bundle savedInstanceState )
    {
+      if ( savedInstanceState != null )
+         configure( savedInstanceState );
+      
+      resolveLocationIntentsByConfiguation();
+      final Dialog dialog = createDialogImpl();
+      
+      return dialog;
+   }
+   
+
+
+   @Override
+   protected void takeConfigurationFrom( Bundle config )
+   {
+      super.takeConfigurationFrom( config );
+      
+      if ( config.containsKey( Config.LONGITUDE ) )
+         config.putFloat( Config.LONGITUDE, config.getFloat( Config.LONGITUDE ) );
+      if ( config.containsKey( Config.LATITUDE ) )
+         config.putFloat( Config.LATITUDE, config.getFloat( Config.LATITUDE ) );
+      if ( config.containsKey( Config.ZOOM ) )
+         config.putInt( Config.ZOOM, config.getInt( Config.ZOOM ) );
+      if ( config.containsKey( Config.ADDRESS ) )
+         config.putString( Config.ADDRESS, config.getString( Config.ADDRESS ) );
+   }
+   
+
+
+   private Dialog createDialogImpl()
+   {
+      final Activity activity = getFragmentActivity();
+      
       final AlertDialog.Builder builder = new AlertDialog.Builder( activity );
       builder.setTitle( R.string.task_dlg_choose_location_app );
       builder.setAdapter( new Adapter( activity,
@@ -185,17 +256,66 @@ public class LocationChooser
          }
       } );
       
-      AlertDialog dialog = builder.create();
-      
-      dialog.setOwnerActivity( activity );
-      dialog.show();
+      return builder.create();
    }
    
 
 
-   public static void showChooser( Activity context,
-                                   String locationName,
-                                   boolean onlyViewableLocation )
+   private Intent[] createIntentsByConfiguration()
+   {
+      final float lon = configuration.getFloat( Config.LONGITUDE );
+      final float lat = configuration.getFloat( Config.LATITUDE );
+      final int zoom = configuration.getInt( Config.ZOOM );
+      final String address = configuration.getString( Config.ADDRESS );
+      
+      return createIntents( lon, lat, zoom, address );
+   }
+   
+
+
+   private void resolveLocationIntentsByConfiguation()
+   {
+      resolvedIntents = new ArrayList< Pair< Intent, ResolveInfo > >();
+      
+      final PackageManager pm = getFragmentActivity().getPackageManager();
+      final ResolveInfo.DisplayNameComparator cmp = new ResolveInfo.DisplayNameComparator( pm );
+      final Intent[] intents = createIntentsByConfiguration();
+      
+      for ( int i = 0; i < intents.length; i++ )
+      {
+         final Intent intent = intents[ i ];
+         
+         if ( intent != null )
+         {
+            final List< ResolveInfo > resolveInfos = pm.queryIntentActivities( intent,
+                                                                               PackageManager.MATCH_DEFAULT_ONLY );
+            Collections.sort( resolveInfos, cmp );
+            
+            for ( ResolveInfo resolveInfo : resolveInfos )
+            {
+               boolean alreadyResolved = false;
+               
+               // Check if the Intent was not resolved by an Activity that responded to a previous
+               // Intent.
+               for ( Pair< Intent, ResolveInfo > alreadyResolvedIntent : resolvedIntents )
+               {
+                  if ( alreadyResolvedIntent.second.activityInfo.name.equals( resolveInfo.activityInfo.name ) )
+                  {
+                     alreadyResolved = true;
+                     break;
+                  }
+               }
+               
+               if ( !alreadyResolved )
+                  resolvedIntents.add( Pair.create( intent, resolveInfo ) );
+            }
+         }
+      }
+   }
+   
+
+
+   public static void showChooser( FragmentActivity context, String locationName )
    {
       boolean ok = true;
       
@@ -210,15 +330,15 @@ public class LocationChooser
                                                                                + " like '"
                                                                                + locationName
                                                                                + "'" );
+         client.release();
+         
          if ( location != null )
          {
-            if ( onlyViewableLocation && location.viewable )
+            if ( location.viewable
+               && LocationChooserDialogFragment.hasIntentHandler( context,
+                                                                  location.address ) )
             {
-               final LocationChooser locationChooser = new LocationChooser( context,
-                                                                            location );
-               
-               if ( locationChooser.hasIntents() )
-                  locationChooser.showChooser();
+               LocationChooserDialogFragment.show( context, location );
             }
          }
          else
@@ -293,54 +413,5 @@ public class LocationChooser
       }
       
       return intents;
-   }
-   
-
-
-   private void setIntents( float lon, float lat, int zoom, String address )
-   {
-      resolveLocationIntents( createIntents( lon, lat, zoom, address ) );
-   }
-   
-
-
-   private void resolveLocationIntents( Intent[] intents )
-   {
-      resolvedIntents = new ArrayList< Pair< Intent, ResolveInfo > >();
-      
-      final PackageManager pm = activity.getPackageManager();
-      final ResolveInfo.DisplayNameComparator cmp = new ResolveInfo.DisplayNameComparator( pm );
-      
-      for ( int i = 0; i < intents.length; i++ )
-      {
-         final Intent intent = intents[ i ];
-         
-         if ( intent != null )
-         {
-            final List< ResolveInfo > resolveInfos = pm.queryIntentActivities( intent,
-                                                                               PackageManager.MATCH_DEFAULT_ONLY );
-            Collections.sort( resolveInfos, cmp );
-            
-            for ( ResolveInfo resolveInfo : resolveInfos )
-            {
-               boolean alreadyResolved = false;
-               
-               // Check if the Intent was not resolved by an Activity that responded to a previous
-               // Intent.
-               for ( Pair< Intent, ResolveInfo > alreadyResolvedIntent : resolvedIntents )
-               {
-                  if ( alreadyResolvedIntent.second.activityInfo.name.equals( resolveInfo.activityInfo.name ) )
-                  {
-                     alreadyResolved = true;
-                     break;
-                  }
-               }
-               
-               if ( !alreadyResolved )
-                  resolvedIntents.add( new Pair< Intent, ResolveInfo >( intent,
-                                                                        resolveInfo ) );
-            }
-         }
-      }
    }
 }

@@ -22,14 +22,11 @@
 
 package dev.drsoran.moloko.fragments;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnClickListener;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -37,6 +34,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -46,12 +44,13 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.FullDetailedTasksListFragmentAdapter;
-import dev.drsoran.moloko.dialogs.MultiChoiceDialog;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
@@ -351,12 +350,8 @@ public class FullDetailedTasksListFragment extends
             return true;
             
          case CtxtMenu.TAG:
-            listener.onShowTasksWithTag( getTask( info.position ).getTags()
-                                                                 .get( 0 ) );
-            return true;
-            
          case CtxtMenu.TAGS:
-            showChooseTagsDialog( getTask( info.position ).getTags() );
+            listener.onShowTasksWithTags( getTask( info.position ).getTags() );
             return true;
             
          case CtxtMenu.TASKS_AT_LOCATION:
@@ -378,7 +373,7 @@ public class FullDetailedTasksListFragment extends
       {
          case R.id.tags_layout_btn_tag:
             final String tag = ( (TextView) view ).getText().toString();
-            listener.onShowTasksWithTag( tag );
+            listener.onShowTasksWithTags( Collections.singletonList( tag ) );
             break;
          
          case R.id.taskslist_listitem_btn_list_name:
@@ -398,25 +393,6 @@ public class FullDetailedTasksListFragment extends
    
 
 
-   protected void showChooseTagsDialog( List< String > tags )
-   {
-      final List< CharSequence > tmp = new ArrayList< CharSequence >( tags.size() );
-      
-      for ( String tag : tags )
-         tmp.add( tag );
-      
-      new MultiChoiceDialog( getFragmentActivity(),
-                             tmp,
-                             chooseMultipleTagsDialogListener ).setTitle( getResources().getQuantityString( R.plurals.taskslist_listitem_ctx_tags,
-                                                                                                            tags.size() ) )
-                                                               .setIcon( R.drawable.ic_dialog_tag )
-                                                               .setButtonText( getString( R.string.abstaskslist_dlg_show_tags_and ) )
-                                                               .setButton2Text( getString( R.string.abstaskslist_dlg_show_tags_or ) )
-                                                               .show();
-   }
-   
-
-
    @Override
    protected int getDefaultTaskSort()
    {
@@ -428,17 +404,10 @@ public class FullDetailedTasksListFragment extends
    private void onCompleteTask( int pos )
    {
       final Task task = getTask( pos );
-      
-      performDatabaseModification( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            TaskEditUtils.setTaskCompletion( getFragmentActivity(),
-                                             task,
-                                             task.getCompleted() == null );
-         }
-      } );
+      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.setTaskCompletion( getFragmentActivity(),
+                                                                                                       task,
+                                                                                                       task.getCompleted() == null );
+      listener.applyModifications( modifications.first, modifications.second );
    }
    
 
@@ -446,15 +415,9 @@ public class FullDetailedTasksListFragment extends
    private void onPostponeTask( int pos )
    {
       final Task task = getTask( pos );
-      
-      performDatabaseModification( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            TaskEditUtils.postponeTask( getFragmentActivity(), task );
-         }
-      } );
+      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.postponeTask( getFragmentActivity(),
+                                                                                                  task );
+      listener.applyModifications( modifications.first, modifications.second );
    }
    
 
@@ -462,23 +425,9 @@ public class FullDetailedTasksListFragment extends
    private void onDeleteTask( int pos )
    {
       final Task task = getTask( pos );
-      final FragmentActivity activity = getFragmentActivity();
-      
-      UIUtils.showDeleteElementDialog( activity, task.getName(), new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            performDatabaseModification( new Runnable()
-            {
-               @Override
-               public void run()
-               {
-                  TaskEditUtils.deleteTask( activity, task );
-               }
-            } );
-         }
-      }, null );
+      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.deleteTask( getFragmentActivity(),
+                                                                                                task );
+      listener.applyModifications( modifications.first, modifications.second );
    }
    
 
@@ -529,29 +478,4 @@ public class FullDetailedTasksListFragment extends
    {
       return (FullDetailedTasksListFragmentAdapter) super.getListAdapter();
    }
-   
-   private final DialogInterface.OnClickListener chooseMultipleTagsDialogListener = new OnClickListener()
-   {
-      @Override
-      public void onClick( DialogInterface dialog, int which )
-      {
-         final boolean andLink = ( which == DialogInterface.BUTTON1 );
-         final List< String > chosenTags = new LinkedList< String >();
-         
-         {
-            final MultiChoiceDialog tagsChoice = (MultiChoiceDialog) dialog;
-            final CharSequence[] tags = tagsChoice.getItems();
-            final boolean[] states = tagsChoice.getStates();
-            
-            // filter out the chosen tags
-            for ( int i = 0; i < states.length; i++ )
-               if ( states[ i ] )
-                  chosenTags.add( tags[ i ].toString() );
-         }
-         
-         listener.onShowTasksWithTags( chosenTags,
-                                       andLink ? RtmSmartFilterLexer.AND_LIT
-                                              : RtmSmartFilterLexer.OR_LIT );
-      }
-   };
 }

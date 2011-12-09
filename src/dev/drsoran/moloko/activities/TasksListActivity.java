@@ -22,6 +22,7 @@
 
 package dev.drsoran.moloko.activities;
 
+import android.app.Dialog;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
@@ -74,20 +75,26 @@ public class TasksListActivity extends AbstractFullDetailedTasksListActivity
       {
          case OptionsMenu.DELETE_LIST:
             final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
-            UIUtils.showDeleteElementDialog( this, listName, new Runnable()
-            {
-               @Override
-               public void run()
-               {
-                  RtmListEditUtils.deleteListByName( TasksListActivity.this,
-                                                     listName );
-                  finish();
-               }
-            }, null );
+            UIUtils.showDeleteElementDialog( this, listName );
             return true;
             
          default :
             return super.onOptionsItemSelected( item );
       }
    }
+   
+
+
+   @Override
+   protected void handleDeleteElementDialogClick( int which )
+   {
+      if ( which == Dialog.BUTTON_POSITIVE )
+      {
+         final String listName = getIntent().getStringExtra( Lists.LIST_NAME );
+         
+         RtmListEditUtils.deleteListByName( TasksListActivity.this, listName );
+         finish();
+      }
+   }
+   
 }

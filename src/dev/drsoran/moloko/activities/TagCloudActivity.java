@@ -26,7 +26,7 @@ import java.util.Collections;
 
 import android.os.Bundle;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.dialogs.LocationChooser;
+import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITagCloudFragmentListener;
 import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.Intents;
@@ -79,7 +79,7 @@ public class TagCloudActivity extends MolokoFragmentActivity implements
    @Override
    public void onLocationNameLongClicked( String locationName )
    {
-      LocationChooser.showChooser( this, locationName, true );
+      LocationChooserDialogFragment.showChooser( this, locationName );
    }
    
 

@@ -20,41 +20,20 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.fragments.base;
+package dev.drsoran.moloko.fragments.listeners;
 
-import dev.drsoran.moloko.util.AccountUtils;
-import dev.drsoran.moloko.util.UIUtils;
+import java.util.List;
 
 
-public abstract class MolokoEditListFragment< D > extends
-         MolokoListFragment< D >
+public interface IShowTasksWithTagsListener
 {
-   public final void performDatabaseModification( Runnable action )
+   public enum LogicalOperation
    {
-      if ( action != null )
-      {
-         if ( !hasWritableDatabaseAccess() )
-         {
-            showOnlyReadableDatabaseAccessDialog();
-         }
-         else
-         {
-            action.run();
-         }
-      }
+      AND, OR
    }
    
-
-
-   private boolean hasWritableDatabaseAccess()
-   {
-      return AccountUtils.isWriteableAccess( getFragmentActivity() );
-   }
    
 
-
-   protected void showOnlyReadableDatabaseAccessDialog()
-   {
-      UIUtils.showReadOnlyAccessDialog( getFragmentActivity(), null );
-   }
+   public void onShowTasksWithTags( List< String > tags,
+                                    LogicalOperation operation );
 }

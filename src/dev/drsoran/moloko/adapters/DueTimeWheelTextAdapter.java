@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.dialogs;
+package dev.drsoran.moloko.adapters;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

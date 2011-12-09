@@ -28,7 +28,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -52,14 +51,14 @@ import android.util.Pair;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 import android.widget.Toast;
+import android.widget.TextView.BufferType;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.activities.MolokoPreferencesActivity;
 import dev.drsoran.moloko.fragments.dialogs.AboutMolokoDialogFragment;
@@ -87,7 +86,7 @@ public final class UIUtils
    { android.R.attr.state_checked };
    
    
-   
+
    private UIUtils()
    {
       throw new AssertionError( "This class should not be instantiated." );
@@ -99,8 +98,8 @@ public final class UIUtils
       @Override
       abstract public void afterTextChanged( Editable s );
       
-      
-      
+
+
       @Override
       public void beforeTextChanged( CharSequence s,
                                      int start,
@@ -109,8 +108,8 @@ public final class UIUtils
       {
       }
       
-      
-      
+
+
       @Override
       public void onTextChanged( CharSequence s,
                                  int start,
@@ -121,21 +120,21 @@ public final class UIUtils
    }
    
    
-   
+
    public final static String getTrimmedText( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-   
-   
+
+
    public final static CharSequence getTrimmedSequence( TextView textView )
    {
       return textView.getText().toString().trim();
    }
    
-   
-   
+
+
    public final static void showSoftInput( View view )
    {
       if ( view != null )
@@ -149,8 +148,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static boolean hasInputCommitted( int actionId )
    {
       return actionId == EditorInfo.IME_ACTION_DONE
@@ -158,8 +157,8 @@ public final class UIUtils
          || actionId == EditorInfo.IME_NULL;
    }
    
-   
-   
+
+
    public final static void hideSoftInput( View view )
    {
       if ( view != null )
@@ -173,8 +172,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static View setDropDownItemIconAndText( View dropDownView,
                                                         Pair< Integer, String > iconWithText )
    {
@@ -186,8 +185,8 @@ public final class UIUtils
       
    }
    
-   
-   
+
+
    public final static View setDropDownItemIconAndText( View dropDownView,
                                                         int iconId,
                                                         String text )
@@ -207,8 +206,8 @@ public final class UIUtils
       return dropDownView;
    }
    
-   
-   
+
+
    public final static void setTaskDescription( TextView view,
                                                 Task task,
                                                 Time timeBase )
@@ -257,8 +256,8 @@ public final class UIUtils
          view.setTypeface( Typeface.DEFAULT );
    }
    
-   
-   
+
+
    public final static void setListTasksCountView( TextView tasksCount,
                                                    RtmListWithTaskCount list )
    {
@@ -283,8 +282,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static void inflateTags( Context context,
                                          ViewGroup container,
                                          Collection< String > tags,
@@ -366,8 +365,8 @@ public final class UIUtils
          container.setVisibility( View.GONE );
    }
    
-   
-   
+
+
    public final static void setPriorityColor( View view, Task task )
    {
       switch ( task.getPriority() )
@@ -388,8 +387,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static StringBuilder appendAtNewLine( StringBuilder stringBuilder,
                                                       String string )
    {
@@ -401,8 +400,8 @@ public final class UIUtils
       return stringBuilder;
    }
    
-   
-   
+
+
    public final static boolean initializeTitleWithViewLayout( View layout,
                                                               String title )
    {
@@ -431,8 +430,8 @@ public final class UIUtils
       return ok;
    }
    
-   
-   
+
+
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               String text )
@@ -463,8 +462,8 @@ public final class UIUtils
       return ok;
    }
    
-   
-   
+
+
    public final static boolean initializeTitleWithTextLayout( View layout,
                                                               String title,
                                                               Spannable text )
@@ -487,8 +486,8 @@ public final class UIUtils
       return ok;
    }
    
-   
-   
+
+
    public final static void inflateErrorWithIcon( Context context,
                                                   ViewGroup container,
                                                   int errorMsgResId,
@@ -506,8 +505,8 @@ public final class UIUtils
       Log.e( LogUtils.toTag( Context.class ), msg );
    }
    
-   
-   
+
+
    public final static void inflateErrorWithIcon( Context context,
                                                   ViewGroup container,
                                                   Spanned errorText )
@@ -522,16 +521,16 @@ public final class UIUtils
       Log.e( LogUtils.toTag( Context.class ), errorText.toString() );
    }
    
-   
-   
+
+
    public final static void applySpannable( TextView textView, Spannable text )
    {
       textView.setMovementMethod( LinkMovementMethod.getInstance() );
       textView.setText( text, BufferType.SPANNABLE );
    }
    
-   
-   
+
+
    public final static MenuItem addSettingsMenuItem( final Context context,
                                                      Menu menu,
                                                      int menuOrder,
@@ -551,8 +550,8 @@ public final class UIUtils
       return menuItem;
    }
    
-   
-   
+
+
    public final static MenuItem addSearchMenuItem( final Activity activity,
                                                    Menu menu,
                                                    int menuOrder,
@@ -580,8 +579,8 @@ public final class UIUtils
       return menuItem;
    }
    
-   
-   
+
+
    public final static MenuItem addSyncMenuItem( final FragmentActivity activity,
                                                  Menu menu,
                                                  int menuOrder,
@@ -610,8 +609,8 @@ public final class UIUtils
       return menuItem;
    }
    
-   
-   
+
+
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
@@ -634,8 +633,8 @@ public final class UIUtils
                                   show );
    }
    
-   
-   
+
+
    public final static MenuItem addOptionalMenuItem( Context context,
                                                      Menu menu,
                                                      int itemId,
@@ -681,8 +680,8 @@ public final class UIUtils
       return item;
    }
    
-   
-   
+
+
    public static void addCompatibilityActionView( Context context, MenuItem item )
    {
       if ( Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB )
@@ -694,8 +693,8 @@ public final class UIUtils
       }
    }
    
-   
-   
+
+
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -705,8 +704,8 @@ public final class UIUtils
                                                            activityClass ) );
    }
    
-   
-   
+
+
    public final static void addOptionsMenuIntent( Context context,
                                                   Menu menu,
                                                   int id,
@@ -718,8 +717,8 @@ public final class UIUtils
          item.setIntent( intent );
    }
    
-   
-   
+
+
    public final static String convertSource( Context context, String source )
    {
       if ( source.equalsIgnoreCase( "js" ) )
@@ -731,8 +730,8 @@ public final class UIUtils
       return source;
    }
    
-   
-   
+
+
    public final static Pair< Integer, Integer > getTaggedViewRange( ViewGroup container,
                                                                     String tag )
    {
@@ -756,8 +755,8 @@ public final class UIUtils
          return Pair.create( 0, 0 );
    }
    
-   
-   
+
+
    public final static int getTaggedViewPos( ViewGroup container, String tag )
    {
       int pos = -1;
@@ -771,8 +770,8 @@ public final class UIUtils
       return pos;
    }
    
-   
-   
+
+
    public final static void removeTaggedViews( ViewGroup container, String tag )
    {
       List< View > views = null;
@@ -794,110 +793,51 @@ public final class UIUtils
             container.removeView( view );
    }
    
-   
-   
-   public final static void showCancelWithChangesDialog( FragmentActivity activity,
-                                                         Runnable yesAction,
-                                                         Runnable noAction )
+
+
+   public final static void showApplyChangesDialog( FragmentActivity activity )
    {
-      showDialogWithActions( activity,
-                             activity.getString( R.string.phr_edit_dlg_cancel ),
-                             android.R.string.yes,
-                             android.R.string.no,
-                             yesAction,
-                             noAction );
+      new AlertDialogFragment.Builder( R.id.dlg_apply_changes ).setMessage( activity.getString( R.string.phr_edit_dlg_done ) )
+                                                               .setPositiveButton( android.R.string.yes )
+                                                               .setNegativeButton( android.R.string.no )
+                                                               .show( activity );
    }
    
-   
-   
-   public final static void showApplyChangesDialog( FragmentActivity activity,
-                                                    Runnable yesAction,
-                                                    Runnable noAction )
+
+
+   public final static void showCancelWithChangesDialog( FragmentActivity activity )
    {
-      showDialogWithActions( activity,
-                             activity.getString( R.string.phr_edit_dlg_done ),
-                             android.R.string.yes,
-                             android.R.string.no,
-                             yesAction,
-                             noAction );
+      new AlertDialogFragment.Builder( R.id.dlg_read_only_access ).setMessage( activity.getString( R.string.phr_edit_dlg_cancel ) )
+                                                                  .setPositiveButton( android.R.string.yes )
+                                                                  .setNegativeButton( android.R.string.no )
+                                                                  .show( activity );
    }
    
-   
-   
+
+
    public final static void showDeleteElementDialog( FragmentActivity activity,
-                                                     String elementName,
-                                                     Runnable yesAction,
-                                                     Runnable noAction )
+                                                     String elementName )
    {
-      showDialogWithActions( activity,
-                             activity.getString( R.string.phr_delete_with_name,
-                                                 elementName ) + "?",
-                             R.string.btn_delete,
-                             R.string.btn_cancel,
-                             yesAction,
-                             noAction );
+      new AlertDialogFragment.Builder( R.id.dlg_read_only_access ).setMessage( activity.getString( R.string.phr_delete_with_name,
+                                                                                                   elementName )
+                                                                     + "?" )
+                                                                  .setPositiveButton( R.string.btn_delete )
+                                                                  .setNegativeButton( R.string.btn_cancel )
+                                                                  .show( activity );
    }
    
-   
-   
-   public final static void showReadOnlyAccessDialog( final FragmentActivity activity,
-                                                      Runnable noAction )
+
+
+   public final static void showReadOnlyAccessDialog( FragmentActivity activity )
    {
-      showDialogWithActions( activity,
-                             activity.getString( R.string.err_modify_access_level_read ),
-                             R.string.btn_account_settings,
-                             R.string.btn_cancel,
-                             new Runnable()
-                             {
-                                @Override
-                                public void run()
-                                {
-                                   activity.startActivity( Intents.createOpenSystemAccountSettingsIntent() );
-                                }
-                             },
-                             noAction );
+      new AlertDialogFragment.Builder( R.id.dlg_read_only_access ).setMessage( activity.getString( R.string.err_modify_access_level_read ) )
+                                                                  .setPositiveButton( R.string.btn_account_settings )
+                                                                  .setNegativeButton( R.string.btn_cancel )
+                                                                  .show( activity );
    }
    
-   
-   
-   public final static void showDialogWithActions( final FragmentActivity activity,
-                                                   String message,
-                                                   int positiveId,
-                                                   int negativeId,
-                                                   final Runnable yesAction,
-                                                   final Runnable noAction )
-   {
-      final AlertDialogFragment.Builder builder = new AlertDialogFragment.Builder().setMessage( message );
-      
-      if ( positiveId != -1 )
-         builder.setPositiveButton( positiveId,
-                                    yesAction != null
-                                                     ? new DialogInterface.OnClickListener()
-                                                     {
-                                                        @Override
-                                                        public void onClick( DialogInterface dialog,
-                                                                             int which )
-                                                        {
-                                                           yesAction.run();
-                                                        }
-                                                     } : null );
-      if ( negativeId != -1 )
-         builder.setNegativeButton( negativeId,
-                                    noAction != null
-                                                    ? new DialogInterface.OnClickListener()
-                                                    {
-                                                       @Override
-                                                       public void onClick( DialogInterface dialog,
-                                                                            int which )
-                                                       {
-                                                          noAction.run();
-                                                       }
-                                                    } : null );
-      builder.show( activity );
-   };
-   
-   
-   
+
+
    public final static void showAboutMolokoDialog( FragmentActivity fragActivity )
    {
       final DialogFragment dialog = AboutMolokoDialogFragment.newInstance( Bundle.EMPTY );
@@ -905,45 +845,20 @@ public final class UIUtils
                    String.valueOf( R.id.frag_about_moloko ) );
    }
    
-   
-   
-   public final static void showNoAccountDialog( final FragmentActivity fragmentActivity,
-                                                 final Runnable cancelAction )
+
+
+   public final static void showNoAccountDialog( FragmentActivity fragmentActivity )
    {
-      final DialogInterface.OnClickListener posListener = new DialogInterface.OnClickListener()
-      {
-         @Override
-         public void onClick( DialogInterface dialog, int which )
-         {
-            fragmentActivity.startActivityForResult( Intents.createNewAccountIntent(),
-                                                     0 );
-         }
-      };
-      
-      final DialogInterface.OnClickListener negListener = cancelAction != null
-                                                                              ? new DialogInterface.OnClickListener()
-                                                                              {
-                                                                                 @Override
-                                                                                 public void onClick( DialogInterface dialog,
-                                                                                                      int which )
-                                                                                 {
-                                                                                    cancelAction.run();
-                                                                                 }
-                                                                              }
-                                                                              : null;
-      
-      new AlertDialogFragment.Builder().setTitle( fragmentActivity.getString( R.string.dlg_no_account_title ) )
-                                       .setIcon( R.drawable.rtm )
-                                       .setMessage( fragmentActivity.getString( R.string.dlg_no_account_text ) )
-                                       .setPositiveButton( R.string.btn_new_account,
-                                                           posListener )
-                                       .setNegativeButton( R.string.btn_cancel,
-                                                           negListener )
-                                       .show( fragmentActivity );
+      new AlertDialogFragment.Builder( R.id.dlg_no_account ).setTitle( fragmentActivity.getString( R.string.dlg_no_account_title ) )
+                                                            .setIcon( R.drawable.rtm )
+                                                            .setMessage( fragmentActivity.getString( R.string.dlg_no_account_text ) )
+                                                            .setPositiveButton( R.string.btn_new_account )
+                                                            .setNegativeButton( R.string.btn_cancel )
+                                                            .show( fragmentActivity );
    }
    
-   
-   
+
+
    public final static void showDialogFragment( FragmentActivity fragmentActivity,
                                                 DialogFragment dialogFragment,
                                                 String fragmentTag )
@@ -953,8 +868,8 @@ public final class UIUtils
                               fragmentTag );
    }
    
-   
-   
+
+
    public final static boolean isDialogFragmentAdded( FragmentActivity fragmentActivity,
                                                       String fragmentTag )
    {
@@ -962,8 +877,8 @@ public final class UIUtils
                              .findFragmentByTag( fragmentTag ) != null;
    }
    
-   
-   
+
+
    public final static boolean reportStatus( Context context,
                                              int resIdOk,
                                              int resIdFailed,
@@ -975,8 +890,8 @@ public final class UIUtils
       return ok;
    }
    
-   
-   
+
+
    public final static boolean reportStatus( Context context,
                                              CharSequence strOk,
                                              CharSequence strFailed,

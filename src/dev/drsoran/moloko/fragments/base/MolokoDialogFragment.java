@@ -22,46 +22,188 @@
 
 package dev.drsoran.moloko.fragments.base;
 
+import java.util.HashMap;
+
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.SupportActivity;
+import dev.drsoran.moloko.IConfigurable;
+import dev.drsoran.moloko.IOnSettingsChangedListener;
+import dev.drsoran.moloko.MolokoApp;
 
 
-public abstract class MolokoDialogFragment extends DialogFragment
+public abstract class MolokoDialogFragment extends DialogFragment implements
+         IConfigurable
 {
-   private OnClickListener listenerPositive;
-   
-   private OnClickListener listenerNegative;
-   
-   private OnClickListener listenerNeutral;
    
    private final DialogInterface.OnClickListener genericListener = new OnClickListener()
    {
       @Override
       public void onClick( DialogInterface dialog, int which )
       {
-         switch ( which )
-         {
-            case DialogInterface.BUTTON_POSITIVE:
-               if ( listenerPositive != null )
-                  listenerPositive.onClick( getDialog(), which );
-               break;
-            case DialogInterface.BUTTON_NEGATIVE:
-               if ( listenerNegative != null )
-                  listenerNegative.onClick( getDialog(), which );
-               break;
-            case DialogInterface.BUTTON_NEUTRAL:
-               if ( listenerNeutral != null )
-                  listenerNeutral.onClick( getDialog(), which );
-               break;
-            default :
-               break;
-         }
+         onButtonClicked( which );
       }
    };
    
+   private IOnSettingsChangedListener onSettingsChangedListener;
    
+   protected Bundle configuration;
+   
+   
+
+   @Override
+   public void onCreate( Bundle savedInstanceState )
+   {
+      super.onCreate( savedInstanceState );
+      
+      if ( savedInstanceState == null )
+         configure( getArguments() );
+      else
+         configure( savedInstanceState );
+   }
+   
+
+
+   @Override
+   public final void onAttach( SupportActivity activity )
+   {
+      super.onAttach( activity );
+      
+      onAttach( (FragmentActivity) activity );
+   }
+   
+
+
+   public void onAttach( FragmentActivity activity )
+   {
+      final int settingsMask = getSettingsMask();
+      
+      if ( settingsMask != 0 )
+      {
+         onSettingsChangedListener = new IOnSettingsChangedListener()
+         {
+            @Override
+            public void onSettingsChanged( int which,
+                                           HashMap< Integer, Object > oldValues )
+            {
+               if ( isAdded() && !isDetached() )
+                  MolokoDialogFragment.this.onSettingsChanged( which, oldValues );
+            }
+         };
+         
+         MolokoApp.get( activity )
+                  .registerOnSettingsChangedListener( settingsMask,
+                                                      onSettingsChangedListener );
+      }
+   }
+   
+
+
+   @Override
+   public void onDetach()
+   {
+      super.onDetach();
+      
+      if ( onSettingsChangedListener != null )
+      {
+         MolokoApp.get( getFragmentActivity() )
+                  .unregisterOnSettingsChangedListener( onSettingsChangedListener );
+         
+         onSettingsChangedListener = null;
+      }
+   }
+   
+
+
+   @Override
+   public void setArguments( Bundle args )
+   {
+      super.setArguments( args );
+      
+      configure( args );
+   }
+   
+
+
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      super.onSaveInstanceState( outState );
+      
+      outState.putAll( getConfiguration() );
+   }
+   
+
+
+   @Override
+   public final void configure( Bundle config )
+   {
+      if ( configuration == null )
+         configuration = createDefaultConfiguration();
+      
+      if ( config != null )
+         takeConfigurationFrom( config );
+   }
+   
+
+
+   @Override
+   public void clearConfiguration()
+   {
+      if ( configuration != null )
+         configuration.clear();
+   }
+   
+
+
+   @Override
+   public final Bundle createDefaultConfiguration()
+   {
+      final Bundle bundle = new Bundle();
+      
+      putDefaultConfigurationTo( bundle );
+      
+      return bundle;
+   }
+   
+
+
+   @Override
+   public Bundle getConfiguration()
+   {
+      return new Bundle( configuration );
+   }
+   
+
+
+   protected void takeConfigurationFrom( Bundle config )
+   {
+   }
+   
+
+
+   protected void putDefaultConfigurationTo( Bundle bundle )
+   {
+   }
+   
+
+
+   public void onSettingsChanged( int which,
+                                  HashMap< Integer, Object > oldValues )
+   {
+   }
+   
+
+
+   public int getSettingsMask()
+   {
+      return 0;
+   }
+   
+
 
    public FragmentActivity getFragmentActivity()
    {
@@ -70,23 +212,8 @@ public abstract class MolokoDialogFragment extends DialogFragment
    
 
 
-   public void setButtonClickListener( int buttonType,
-                                       DialogInterface.OnClickListener listener )
+   protected void onButtonClicked( int which )
    {
-      switch ( buttonType )
-      {
-         case DialogInterface.BUTTON_POSITIVE:
-            listenerPositive = listener;
-            break;
-         case DialogInterface.BUTTON_NEGATIVE:
-            listenerNegative = listener;
-            break;
-         case DialogInterface.BUTTON_NEUTRAL:
-            listenerNeutral = listener;
-            break;
-         default :
-            break;
-      }
    }
    
 

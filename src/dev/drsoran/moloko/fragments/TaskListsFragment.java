@@ -46,7 +46,7 @@ import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
 import dev.drsoran.moloko.adapters.TaskListsAdapter;
 import dev.drsoran.moloko.adapters.TaskListsAdapter.IOnGroupIndicatorClickedListener;
-import dev.drsoran.moloko.fragments.base.MolokoExpandableEditListFragment;
+import dev.drsoran.moloko.fragments.base.MolokoExpandableListFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskListsFragmentListener;
 import dev.drsoran.moloko.loaders.RtmListWithTaskCountLoader;
 import dev.drsoran.moloko.util.AccountUtils;
@@ -56,8 +56,8 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 
 
 public class TaskListsFragment extends
-         MolokoExpandableEditListFragment< List< RtmListWithTaskCount > >
-         implements IOnGroupIndicatorClickedListener
+         MolokoExpandableListFragment< List< RtmListWithTaskCount > > implements
+         IOnGroupIndicatorClickedListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."

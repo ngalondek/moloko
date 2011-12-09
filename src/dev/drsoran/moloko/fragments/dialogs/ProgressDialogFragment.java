@@ -26,12 +26,10 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
-import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.fragments.base.MolokoDialogFragment;
 
 
-public class ProgressDialogFragment extends MolokoDialogFragment implements
-         IConfigurable
+public class ProgressDialogFragment extends MolokoDialogFragment
 {
    public final static class Config
    {
@@ -59,18 +57,6 @@ public class ProgressDialogFragment extends MolokoDialogFragment implements
       return fragment;
    }
    
-   private Bundle configuration;
-   
-   
-
-   @Override
-   public void onCreate( Bundle savedInstanceState )
-   {
-      super.onCreate( savedInstanceState );
-      
-      configure( getArguments() );
-   }
-   
 
 
    @Override
@@ -90,41 +76,11 @@ public class ProgressDialogFragment extends MolokoDialogFragment implements
 
 
    @Override
-   public void clearConfiguration()
+   protected void takeConfigurationFrom( Bundle config )
    {
-      configuration.clear();
-   }
-   
-
-
-   @Override
-   public void configure( Bundle config )
-   {
-      if ( configuration == null )
-         configuration = createDefaultConfiguration();
-      
-      if ( config != null )
-      {
-         if ( config.containsKey( Config.MESSAGE_ID ) )
-            configuration.putInt( Config.MESSAGE_ID,
-                                  config.getInt( Config.MESSAGE_ID ) );
-      }
-   }
-   
-
-
-   @Override
-   public Bundle createDefaultConfiguration()
-   {
-      return new Bundle();
-   }
-   
-
-
-   @Override
-   public Bundle getConfiguration()
-   {
-      return new Bundle( configuration );
+      if ( config.containsKey( Config.MESSAGE_ID ) )
+         configuration.putInt( Config.MESSAGE_ID,
+                               config.getInt( Config.MESSAGE_ID ) );
    }
    
 

@@ -26,27 +26,23 @@ import java.util.List;
 
 
 public interface IFullDetailedTasksListFragmentListener extends
-         ITasksListFragmentListener
+         ITasksListFragmentListener, IEditFragmentListener
 {
    void onEditTask( int pos );
    
-   
-   
+
+
    void onSelectTasks();
    
-   
-   
+
+
    void onOpenList( int pos, String listId );
    
-   
-   
+
+
    void onOpenLocation( int pos, String locationId );
    
-   
-   
-   void onShowTasksWithTag( String tag );
-   
-   
-   
-   void onShowTasksWithTags( List< String > tags, String logicalOperator );
+
+
+   void onShowTasksWithTags( List< String > tags );
 }

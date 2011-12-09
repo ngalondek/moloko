@@ -33,7 +33,6 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullLoaderFragmentListener;
@@ -42,8 +41,7 @@ import dev.drsoran.moloko.util.UIUtils;
 
 
 public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
-         extends MolokoEditDialogFragment< T > implements IConfigurable,
-         LoaderCallbacks< D >
+         extends MolokoEditDialogFragment< T > implements LoaderCallbacks< D >
 {
    private final static class Config
    {
@@ -59,7 +57,7 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
    private boolean loaderNotDataFound;
    
    
-   
+
    @Override
    public void onCreate( Bundle savedInstanceState )
    {
@@ -69,8 +67,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
          startLoader();
    }
    
-   
-   
+
+
    @Override
    public void onAttach( FragmentActivity activity )
    {
@@ -82,8 +80,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
          loaderListener = new NullLoaderFragmentListener();
    }
    
-   
-   
+
+
    @Override
    public void onDetach()
    {
@@ -91,8 +89,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       loaderListener = null;
    }
    
-   
-   
+
+
    @Override
    public final View onCreateView( LayoutInflater inflater,
                                    ViewGroup container,
@@ -104,8 +102,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       return fragmentView;
    }
    
-   
-   
+
+
    @Override
    public void onViewCreated( View view, Bundle savedInstanceState )
    {
@@ -119,8 +117,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
          showLoadingSpinner();
    }
    
-   
-   
+
+
    @Override
    protected void takeConfigurationFrom( Bundle config )
    {
@@ -131,8 +129,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
                                    config.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES ) );
    }
    
-   
-   
+
+
    @Override
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
@@ -141,15 +139,15 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       bundle.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, true );
    }
    
-   
-   
+
+
    public D getLoaderData()
    {
       return loaderData;
    }
    
-   
-   
+
+
    public D getLoaderDataAssertNotNull()
    {
       if ( getLoaderData() == null )
@@ -158,15 +156,15 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       return getLoaderData();
    }
    
-   
-   
+
+
    public boolean hasLoaderDataFound()
    {
       return !loaderNotDataFound;
    }
    
-   
-   
+
+
    protected final void showLoadingSpinner()
    {
       if ( getView() != null )
@@ -181,8 +179,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       }
    }
    
-   
-   
+
+
    protected final void showContent()
    {
       if ( getView() != null )
@@ -200,8 +198,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       }
    }
    
-   
-   
+
+
    protected final void showContentAsync()
    {
       handler.post( new Runnable()
@@ -214,8 +212,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       } );
    }
    
-   
-   
+
+
    protected final void showElementNotFoundError()
    {
       if ( getView() != null )
@@ -238,8 +236,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       }
    }
    
-   
-   
+
+
    @Override
    public void onSettingsChanged( int which,
                                   HashMap< Integer, Object > oldValues )
@@ -248,15 +246,15 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
          initContent( getContentView() );
    }
    
-   
-   
+
+
    public final void startLoader()
    {
       getLoaderManager().initLoader( getLoaderId(), getConfiguration(), this );
    }
    
-   
-   
+
+
    public final void setRespectContentChanges( boolean respect )
    {
       configuration.putBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES, respect );
@@ -270,16 +268,16 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       }
    }
    
-   
-   
+
+
    public final boolean isRespectingContentChanges()
    {
       return configuration.getBoolean( Config.LOADER_RESPECT_CONTENT_CHANGES,
                                        false );
    }
    
-   
-   
+
+
    @Override
    public final Loader< D > onCreateLoader( int id, Bundle args )
    {
@@ -295,8 +293,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       return loader;
    }
    
-   
-   
+
+
    @Override
    public void onLoadFinished( Loader< D > loader, D data )
    {
@@ -313,8 +311,8 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
                                              !loaderNotDataFound );
    }
    
-   
-   
+
+
    @Override
    public void onLoaderReset( Loader< D > loader )
    {
@@ -322,33 +320,33 @@ public abstract class MolokoLoaderEditDialogFragment< T extends Fragment, D >
       loaderNotDataFound = false;
    }
    
-   
-   
+
+
    @Override
    public int getSettingsMask()
    {
       return 0;
    }
    
-   
-   
+
+
    abstract protected View createFragmentView( LayoutInflater inflater,
                                                ViewGroup container,
                                                Bundle savedInstanceState );
    
-   
-   
+
+
    abstract protected void initContent( ViewGroup content );
    
-   
-   
+
+
    abstract protected Loader< D > newLoaderInstance( int id, Bundle args );
    
-   
-   
+
+
    abstract protected String getLoaderDataName();
    
-   
-   
+
+
    abstract protected int getLoaderId();
 }

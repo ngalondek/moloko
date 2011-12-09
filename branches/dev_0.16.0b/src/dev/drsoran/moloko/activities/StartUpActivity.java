@@ -23,6 +23,7 @@
 package dev.drsoran.moloko.activities;
 
 import android.accounts.Account;
+import android.app.Dialog;
 import android.content.ContentProviderClient;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -115,9 +116,20 @@ public class StartUpActivity extends MolokoFragmentActivity
 
 
    @Override
+   public void onAlertDialogFragmentClick( int dialogId, int which )
+   {
+      if ( dialogId == R.id.dlg_no_account && which == Dialog.BUTTON_NEGATIVE )
+         switchToNextState();
+      else
+         super.onAlertDialogFragmentClick( dialogId, which );
+   }
+   
+
+
+   @Override
    protected void onActivityResult( int requestCode, int resultCode, Intent data )
    {
-      if ( requestCode == 0 )
+      if ( requestCode == StartActivityRequestCode.ADD_ACCOUNT )
          switchToNextState();
       else
          super.onActivityResult( requestCode, resultCode, data );
@@ -132,15 +144,7 @@ public class StartUpActivity extends MolokoFragmentActivity
       
       if ( account == null )
       {
-         UIUtils.showNoAccountDialog( this, new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               switchToNextState();
-            }
-         } );
-         
+         UIUtils.showNoAccountDialog( this );
          switchToNextState = false;
       }
       

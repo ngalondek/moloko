@@ -28,7 +28,10 @@ import android.content.Intent;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.dialogs.ChooseTagsDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.IFullDetailedTasksListFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.IShowTasksWithTagsListener;
+import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
@@ -37,7 +40,7 @@ import dev.drsoran.moloko.util.UIUtils;
 
 public abstract class AbstractFullDetailedTasksListActivity extends
          AbstractTasksListActivity implements
-         IFullDetailedTasksListFragmentListener
+         IFullDetailedTasksListFragmentListener, IShowTasksWithTagsListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -59,7 +62,7 @@ public abstract class AbstractFullDetailedTasksListActivity extends
    private boolean newTasksListFragmentbyIntent = false;
    
    
-   
+
    @Override
    protected void onNewIntent( Intent intent )
    {
@@ -68,8 +71,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       newTasksListFragmentbyIntent = true;
    }
    
-   
-   
+
+
    @Override
    protected void onResume()
    {
@@ -82,8 +85,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       }
    }
    
-   
-   
+
+
    @Override
    public boolean onCreateOptionsMenu( Menu menu )
    {
@@ -118,8 +121,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       return true;
    }
    
-   
-   
+
+
    @Override
    public boolean onOptionsItemSelected( MenuItem item )
    {
@@ -134,16 +137,16 @@ public abstract class AbstractFullDetailedTasksListActivity extends
       }
    }
    
-   
-   
+
+
    @Override
    public void onOpenTask( int pos )
    {
       startActivity( Intents.createOpenTaskIntent( this, getTask( pos ).getId() ) );
    }
    
-   
-   
+
+
    @Override
    public void onSelectTasks()
    {
@@ -152,16 +155,16 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                               getTaskSort() ) );
    }
    
-   
-   
+
+
    @Override
    public void onEditTask( int pos )
    {
       startActivity( Intents.createEditTaskIntent( this, getTask( pos ) ) );
    }
    
-   
-   
+
+
    @Override
    public void onOpenList( int pos, String listId )
    {
@@ -170,8 +173,8 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                  null ) );
    }
    
-   
-   
+
+
    @Override
    public void onOpenLocation( int pos, String locationId )
    {
@@ -179,22 +182,75 @@ public abstract class AbstractFullDetailedTasksListActivity extends
                                                                                  getTask( pos ).getLocationName() ) );
    }
    
-   
-   
+
+
    @Override
-   public void onShowTasksWithTag( String tag )
+   public final void onShowTasksWithTags( List< String > tags )
    {
-      reloadTasksListWithConfiguration( Intents.Extras.createOpenTagExtras( this,
-                                                                            tag ) );
+      if ( tags.size() == 1 )
+      {
+         onOpenChoosenTags( tags, null );
+      }
+      else if ( tags.size() > 1 )
+      {
+         showChooseTagsDialog( tags );
+      }
    }
    
-   
-   
+
+
+   /*
+    * Callback from ChooseTagsDialogFragment after choosing tags and a logical operation on them.
+    */
    @Override
-   public void onShowTasksWithTags( List< String > tags, String logicalOperator )
+   public final void onShowTasksWithTags( List< String > tags,
+                                          LogicalOperation operation )
    {
-      reloadTasksListWithConfiguration( Intents.Extras.createOpenTagsExtras( this,
-                                                                             tags,
-                                                                             logicalOperator ) );
+      final String logOpString = determineLogicalOperantionString( operation );
+      onOpenChoosenTags( tags, logOpString );
+   }
+   
+
+
+   protected void onOpenChoosenTags( List< String > tags,
+                                     String logicalOperation )
+   {
+      if ( tags.size() == 1 )
+         reloadTasksListWithConfiguration( Intents.Extras.createOpenTagExtras( this,
+                                                                               tags.get( 0 ) ) );
+      else
+         reloadTasksListWithConfiguration( Intents.Extras.createOpenTagsExtras( this,
+                                                                                tags,
+                                                                                logicalOperation ) );
+   }
+   
+
+
+   private static String determineLogicalOperantionString( LogicalOperation operation )
+   {
+      final String logOpString;
+      
+      switch ( operation )
+      {
+         case AND:
+            logOpString = RtmSmartFilterLexer.AND_LIT;
+            break;
+         
+         case OR:
+            logOpString = RtmSmartFilterLexer.OR_LIT;
+            break;
+         
+         default :
+            logOpString = null;
+            break;
+      }
+      return logOpString;
+   }
+   
+
+
+   private void showChooseTagsDialog( List< String > tags )
+   {
+      ChooseTagsDialogFragment.show( this, tags );
    }
 }

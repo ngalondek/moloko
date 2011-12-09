@@ -31,8 +31,8 @@ import android.widget.ExpandableListView;
 import android.widget.ListAdapter;
 
 
-public abstract class MolokoExpandableEditListFragment< D > extends
-         MolokoEditListFragment< D > implements
+public abstract class MolokoExpandableListFragment< D > extends
+         MolokoListFragment< D > implements
          ExpandableListView.OnGroupClickListener,
          ExpandableListView.OnChildClickListener,
          ExpandableListView.OnGroupCollapseListener,
@@ -51,8 +51,8 @@ public abstract class MolokoExpandableEditListFragment< D > extends
       expandableListView.setOnGroupExpandListener( this );
    }
    
-   
-   
+
+
    @Override
    public View getEmptyView()
    {
@@ -64,8 +64,8 @@ public abstract class MolokoExpandableEditListFragment< D > extends
       return emptyView;
    }
    
-   
-   
+
+
    @Override
    public boolean onGroupClick( ExpandableListView parent,
                                 View v,
@@ -75,8 +75,8 @@ public abstract class MolokoExpandableEditListFragment< D > extends
       return false;
    }
    
-   
-   
+
+
    @Override
    public boolean onChildClick( ExpandableListView parent,
                                 View v,
@@ -87,67 +87,67 @@ public abstract class MolokoExpandableEditListFragment< D > extends
       return false;
    }
    
-   
-   
+
+
    @Override
    public void onGroupExpand( int groupPosition )
    {
    }
    
-   
-   
+
+
    @Override
    public void onGroupCollapse( int groupPosition )
    {
    }
    
-   
-   
+
+
    public ExpandableListView getExpandableListView()
    {
       return (ExpandableListView) super.getListView();
    }
    
-   
-   
+
+
    public void setExpandableListAdapter( ExpandableListAdapter adapter )
    {
       getExpandableListView().setAdapter( adapter );
    }
    
-   
-   
+
+
    public ExpandableListAdapter getExpandableListAdapter()
    {
       return getExpandableListView().getExpandableListAdapter();
    }
    
-   
-   
+
+
    @Override
    public boolean hasListAdapter()
    {
       return getExpandableListAdapter() != null;
    }
    
-   
-   
+
+
    @Override
    public final void setListAdapter( ListAdapter adapter )
    {
       throw new UnsupportedOperationException( "use setExpandableListAdapter" );
    }
    
-   
-   
+
+
    @Override
    public final ListAdapter getListAdapter()
    {
       throw new UnsupportedOperationException( "use getExpandableListAdapter" );
    }
    
-   
-   
+
+
    @Override
    public void onLoadFinished( Loader< D > loader, D data )
    {
@@ -157,8 +157,8 @@ public abstract class MolokoExpandableEditListFragment< D > extends
          getLoaderManager().destroyLoader( getLoaderId() );
    }
    
-   
-   
+
+
    @Override
    protected void invalidateOptionsMenu()
    {
@@ -166,8 +166,8 @@ public abstract class MolokoExpandableEditListFragment< D > extends
          getFragmentActivity().invalidateOptionsMenu();
    }
    
-   
-   
+
+
    @Override
    protected void notifyDataSetChanged()
    {
@@ -175,27 +175,27 @@ public abstract class MolokoExpandableEditListFragment< D > extends
          ( (BaseExpandableListAdapter) getExpandableListAdapter() ).notifyDataSetChanged();
    }
    
-   
-   
+
+
    @Override
    protected final ListAdapter createEmptyListAdapter()
    {
       throw new UnsupportedOperationException( "use createEmptyExpandableListAdapter" );
    }
    
-   
-   
+
+
    @Override
    protected final ListAdapter createListAdapterForResult( D result )
    {
       throw new UnsupportedOperationException( "use createExpandableListAdapterForResult" );
    }
    
-   
-   
+
+
    abstract protected ExpandableListAdapter createEmptyExpandableListAdapter();
    
-   
-   
+
+
    abstract protected ExpandableListAdapter createExpandableListAdapterForResult( D result );
 }

@@ -24,6 +24,9 @@ package dev.drsoran.moloko.fragments.listeners;
 
 import java.util.List;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
+import dev.drsoran.moloko.content.ModificationSet;
+
 
 public class NullTaskEditFragmentListener implements ITaskEditFragmentListener
 {
@@ -32,11 +35,40 @@ public class NullTaskEditFragmentListener implements ITaskEditFragmentListener
    {
    }
    
+
+
+   @Override
+   public void onEditDueByPicker()
+   {
+   }
    
+
+
+   @Override
+   public void onEditRecurrenceByPicker()
+   {
+   }
    
+
+
+   @Override
+   public void onEditEstimateByPicker()
+   {
+   }
+   
+
+
    @Override
    public boolean onFinishTaskEditingByInputMethod()
    {
       return true;
+   }
+   
+
+
+   @Override
+   public void applyModifications( ModificationSet modificationSet,
+                                   ApplyChangesInfo applyInfo )
+   {
    }
 }

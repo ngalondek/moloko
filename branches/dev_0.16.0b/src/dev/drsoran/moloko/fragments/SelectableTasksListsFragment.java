@@ -36,6 +36,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.SubMenu;
+import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -45,12 +46,14 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Checkable;
 import android.widget.ListAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.IFilter;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter;
 import dev.drsoran.moloko.adapters.SelectableTasksListFragmentAdapter.ISelectionChangedListener;
+import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.fragments.dialogs.AlertDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ISelectableTasksListFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTasksListFragmentListener;
@@ -562,16 +565,10 @@ public class SelectableTasksListsFragment extends
 
    private void onCompleteSelectedTasks( final List< ? extends Task > tasks )
    {
-      performDatabaseModification( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            TaskEditUtils.setTasksCompletion( getFragmentActivity(),
-                                              tasks,
-                                              true );
-         }
-      } );
+      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.setTasksCompletion( getFragmentActivity(),
+                                                                                                        tasks,
+                                                                                                        true );
+      listener.applyModifications( modifications.first, modifications.second );
    }
    
 
@@ -602,16 +599,10 @@ public class SelectableTasksListsFragment extends
 
    private void onIncompleteSelectedTasks( final List< ? extends Task > tasks )
    {
-      performDatabaseModification( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            TaskEditUtils.setTasksCompletion( getFragmentActivity(),
-                                              tasks,
-                                              false );
-         }
-      } );
+      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.setTasksCompletion( getFragmentActivity(),
+                                                                                                        tasks,
+                                                                                                        false );
+      listener.applyModifications( modifications.first, modifications.second );
    }
    
 
@@ -639,14 +630,9 @@ public class SelectableTasksListsFragment extends
 
    private void onPostponeSelectedTasks( final List< ? extends Task > tasks )
    {
-      performDatabaseModification( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            TaskEditUtils.postponeTasks( getFragmentActivity(), tasks );
-         }
-      } );
+      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.postponeTasks( getFragmentActivity(),
+                                                                                                   tasks );
+      listener.applyModifications( modifications.first, modifications.second );
    }
    
 
@@ -674,14 +660,9 @@ public class SelectableTasksListsFragment extends
 
    private void onDeleteSelectedTasks( final List< ? extends Task > tasks )
    {
-      performDatabaseModification( new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            TaskEditUtils.deleteTasks( getFragmentActivity(), tasks );
-         }
-      } );
+      final Pair< ModificationSet, ApplyChangesInfo > modifications = TaskEditUtils.deleteTasks( getFragmentActivity(),
+                                                                                                 tasks );
+      listener.applyModifications( modifications.first, modifications.second );
    }
    
 

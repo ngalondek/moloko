@@ -30,6 +30,8 @@ import java.util.List;
 
 import android.content.ContentProviderOperation;
 import android.support.v4.app.FragmentActivity;
+import android.util.Pair;
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.CreationsProviderPart;
 import dev.drsoran.moloko.content.Modification;
@@ -54,9 +56,9 @@ public final class TaskEditUtils
    
 
 
-   public final static boolean setTaskCompletion( FragmentActivity activity,
-                                                  Task task,
-                                                  boolean complete )
+   public final static Pair< ModificationSet, ApplyChangesInfo > setTaskCompletion( FragmentActivity activity,
+                                                                                    Task task,
+                                                                                    boolean complete )
    {
       return setTasksCompletion( activity,
                                  Collections.singletonList( task ),
@@ -65,64 +67,52 @@ public final class TaskEditUtils
    
 
 
-   public final static boolean setTasksCompletion( FragmentActivity activity,
-                                                   List< ? extends Task > tasks,
-                                                   boolean complete )
+   public final static Pair< ModificationSet, ApplyChangesInfo > setTasksCompletion( FragmentActivity activity,
+                                                                                     List< ? extends Task > tasks,
+                                                                                     boolean complete )
    {
-      boolean ok = true;
+      final ModificationSet modifications = new ModificationSet();
       
-      if ( !tasks.isEmpty() )
+      for ( Task task : tasks )
       {
-         final ModificationSet modifications = new ModificationSet();
+         final Date complDate = task.getCompleted();
          
-         for ( Task task : tasks )
+         if ( complDate == null && complete || complDate != null && !complete )
          {
-            final Date complDate = task.getCompleted();
+            modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
+                                                             task.getId(),
+                                                             RawTasks.COMPLETED_DATE,
+                                                             complete
+                                                                     ? System.currentTimeMillis()
+                                                                     : null ) );
             
-            if ( complDate == null && complete || complDate != null
-               && !complete )
-            {
-               modifications.add( Modification.newModification( RawTasks.CONTENT_URI,
-                                                                task.getId(),
-                                                                RawTasks.COMPLETED_DATE,
-                                                                complete
-                                                                        ? System.currentTimeMillis()
-                                                                        : null ) );
-               
-               modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
-            }
+            modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
          }
-         
-         ok = Queries.applyModifications( activity,
-                                          modifications,
-                                          R.string.toast_save_task );
-         
-         UIUtils.reportStatus( activity,
-                               activity.getResources()
-                                       .getQuantityString( complete
-                                                                   ? R.plurals.toast_completed_task
-                                                                   : R.plurals.toast_incompleted_task,
-                                                           tasks.size(),
-                                                           tasks.size() ),
-                               activity.getString( R.string.toast_save_task_failed ),
-                               ok );
       }
       
-      return ok;
+      return Pair.create( modifications,
+                          new ApplyChangesInfo( activity.getString( R.string.toast_save_task ),
+                                                activity.getResources()
+                                                        .getQuantityString( complete
+                                                                                    ? R.plurals.toast_completed_task
+                                                                                    : R.plurals.toast_incompleted_task,
+                                                                            tasks.size(),
+                                                                            tasks.size() ),
+                                                activity.getString( R.string.toast_save_task_failed ) ) );
    }
    
 
 
-   public final static boolean postponeTask( FragmentActivity activity,
-                                             Task task )
+   public final static Pair< ModificationSet, ApplyChangesInfo > postponeTask( FragmentActivity activity,
+                                                                               Task task )
    {
       return postponeTasks( activity, Collections.singletonList( task ) );
    }
    
 
 
-   public final static boolean postponeTasks( FragmentActivity activity,
-                                              List< ? extends Task > tasks )
+   public final static Pair< ModificationSet, ApplyChangesInfo > postponeTasks( FragmentActivity activity,
+                                                                                List< ? extends Task > tasks )
    {
       /**
        * NOTE: RTM has no API to set the postponed count. One can only postpone a task and the count is the number of
@@ -134,11 +124,10 @@ public final class TaskEditUtils
        * synced out.
        **/
       
-      boolean ok = true;
+      final ModificationSet modifications = new ModificationSet();
       
       if ( !tasks.isEmpty() )
       {
-         final ModificationSet modifications = new ModificationSet();
          final MolokoCalendar cal = MolokoCalendar.getUTCInstance();
          
          for ( Task task : tasks )
@@ -191,40 +180,34 @@ public final class TaskEditUtils
             
             modifications.add( Modification.newTaskModified( task.getTaskSeriesId() ) );
          }
-         
-         ok = Queries.applyModifications( activity,
-                                          modifications,
-                                          R.string.toast_save_task );
-         
-         UIUtils.reportStatus( activity,
-                               activity.getResources()
-                                       .getQuantityString( R.plurals.toast_postponed_task,
-                                                           tasks.size(),
-                                                           tasks.size() ),
-                               activity.getString( R.string.toast_save_task_failed ),
-                               ok );
       }
       
-      return ok;
+      return Pair.create( modifications,
+                          new ApplyChangesInfo( activity.getString( R.string.toast_save_task ),
+                                                activity.getResources()
+                                                        .getQuantityString( R.plurals.toast_postponed_task,
+                                                                            tasks.size(),
+                                                                            tasks.size() ),
+                                                activity.getString( R.string.toast_save_task_failed ) ) );
    }
    
 
 
-   public final static boolean deleteTask( FragmentActivity activity, Task task )
+   public final static Pair< ModificationSet, ApplyChangesInfo > deleteTask( FragmentActivity activity,
+                                                                             Task task )
    {
       return deleteTasks( activity, Collections.singletonList( task ) );
    }
    
 
 
-   public final static boolean deleteTasks( FragmentActivity activity,
-                                            List< ? extends Task > tasks )
+   public final static Pair< ModificationSet, ApplyChangesInfo > deleteTasks( FragmentActivity activity,
+                                                                              List< ? extends Task > tasks )
    {
-      boolean ok = true;
+      final ModificationSet modifications = new ModificationSet();
       
       if ( !tasks.isEmpty() )
       {
-         final ModificationSet modifications = new ModificationSet();
          final ArrayList< ContentProviderOperation > removeCreatedOperations = new ArrayList< ContentProviderOperation >();
          
          for ( Task task : tasks )
@@ -241,25 +224,14 @@ public final class TaskEditUtils
             removeCreatedOperations.add( CreationsProviderPart.deleteCreation( RawTasks.CONTENT_URI,
                                                                                task.getId() ) );
          }
-         
-         ok = Queries.applyModifications( activity,
-                                          modifications,
-                                          R.string.toast_delete_task );
-         
-         ok = ok
-            && Queries.transactionalApplyOperations( activity,
-                                                     removeCreatedOperations,
-                                                     R.string.toast_delete_task );
-         
-         UIUtils.reportStatus( activity,
-                               activity.getResources()
-                                       .getQuantityString( R.plurals.toast_deleted_task,
-                                                           tasks.size(),
-                                                           tasks.size() ),
-                               activity.getString( R.string.toast_delete_task_failed ),
-                               ok );
       }
       
-      return ok;
+      return Pair.create( modifications,
+                          new ApplyChangesInfo( activity.getString( R.string.toast_delete_task ),
+                                                activity.getResources()
+                                                        .getQuantityString( R.plurals.toast_deleted_task,
+                                                                            tasks.size(),
+                                                                            tasks.size() ),
+                                                activity.getString( R.string.toast_delete_task_failed ) ) );
    }
 }

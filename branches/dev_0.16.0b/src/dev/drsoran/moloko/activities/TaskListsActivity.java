@@ -44,7 +44,7 @@ import dev.drsoran.rtm.RtmListWithTaskCount;
 import dev.drsoran.rtm.RtmSmartFilter;
 
 
-public class TaskListsActivity extends MolokoFragmentActivity implements
+public class TaskListsActivity extends MolokoEditFragmentActivity implements
          ITaskListsFragmentListener
 {
    @SuppressWarnings( "unused" )
@@ -222,5 +222,4 @@ public class TaskListsActivity extends MolokoFragmentActivity implements
       return new int[]
       { R.id.frag_tasklists };
    }
-   
 }

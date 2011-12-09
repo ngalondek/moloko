@@ -33,7 +33,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmTask;
 
@@ -41,7 +40,6 @@ import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.content.ModificationSet;
 import dev.drsoran.moloko.util.MolokoDateUtils;
-import dev.drsoran.moloko.util.Queries;
 import dev.drsoran.provider.Rtm.Tasks;
 import dev.drsoran.rtm.Task;
 
@@ -185,13 +183,7 @@ public class TaskEditFragment extends
          
          if ( modifications != null && modifications.size() > 0 )
          {
-            ok = Queries.applyModifications( getFragmentActivity(),
-                                             modifications,
-                                             R.string.toast_save_task );
-            if ( !ok )
-               Toast.makeText( getFragmentActivity(),
-                               R.string.toast_save_task_failed,
-                               Toast.LENGTH_LONG ).show();
+            applyModifications( modifications );
          }
       }
       

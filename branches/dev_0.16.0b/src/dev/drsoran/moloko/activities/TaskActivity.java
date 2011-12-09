@@ -36,6 +36,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -46,31 +47,39 @@ import com.mdt.rtm.data.RtmAuth.Perms;
 import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.fragments.AbstractTaskEditFragment;
 import dev.drsoran.moloko.fragments.NoteAddFragment;
 import dev.drsoran.moloko.fragments.NoteEditFragment;
 import dev.drsoran.moloko.fragments.NoteFragment;
 import dev.drsoran.moloko.fragments.TaskEditFragment;
 import dev.drsoran.moloko.fragments.TaskFragment;
+import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
 import dev.drsoran.moloko.fragments.dialogs.ChangeTagsDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.DuePickerDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.EstimatePickerDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
+import dev.drsoran.moloko.fragments.dialogs.RecurrPickerDialogFragment;
 import dev.drsoran.moloko.fragments.factories.TaskFragmentFactory;
 import dev.drsoran.moloko.fragments.listeners.IChangeTagsFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ILoaderFragmentListener;
+import dev.drsoran.moloko.fragments.listeners.IPickerDialogListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskEditFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 import dev.drsoran.moloko.util.MenuCategory;
+import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.NoteEditUtils;
+import dev.drsoran.moloko.util.Strings;
 import dev.drsoran.moloko.util.TaskEditUtils;
 import dev.drsoran.moloko.util.UIUtils;
 import dev.drsoran.rtm.Task;
 
 
-public class TaskActivity extends MolokoFragmentActivity implements
+public class TaskActivity extends MolokoEditFragmentActivity implements
          ITaskFragmentListener, ITaskEditFragmentListener,
-         ILoaderFragmentListener, IChangeTagsFragmentListener
+         ILoaderFragmentListener, IChangeTagsFragmentListener,
+         IPickerDialogListener
 {
    @SuppressWarnings( "unused" )
    private final static String TAG = "Moloko."
@@ -505,6 +514,47 @@ public class TaskActivity extends MolokoFragmentActivity implements
 
 
    @Override
+   public void onEditDueByPicker()
+   {
+      MolokoCalendar due = getTaskEditFragment().getDue();
+      
+      if ( due == null || !due.hasDate() )
+      {
+         due = MolokoCalendar.getInstance();
+         due.setHasTime( false );
+      }
+      
+      DuePickerDialogFragment.show( this, due.getTimeInMillis(), due.hasTime() );
+   }
+   
+
+
+   @Override
+   public void onEditRecurrenceByPicker()
+   {
+      Pair< String, Boolean > recurrencePattern = getTaskEditFragment().getRecurrencePattern();
+      
+      if ( recurrencePattern == null )
+         recurrencePattern = Pair.create( Strings.EMPTY_STRING, Boolean.FALSE );
+      
+      RecurrPickerDialogFragment.show( this,
+                                       recurrencePattern.first,
+                                       recurrencePattern.second );
+   }
+   
+
+
+   @Override
+   public void onEditEstimateByPicker()
+   {
+      final long estimateMillis = getTaskEditFragment().getEstimateMillis();
+      
+      EstimatePickerDialogFragment.show( this, estimateMillis );
+   }
+   
+
+
+   @Override
    public boolean onFinishTaskEditingByInputMethod()
    {
       boolean finished = true;
@@ -616,8 +666,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    public void onOpenLocation( String locationId )
    {
       final Task task = getTaskAssertNotNull();
-      
-      new LocationChooser( this, task ).showChooser();
+      LocationChooserDialogFragment.show( this, task );
    }
    
 
@@ -635,6 +684,32 @@ public class TaskActivity extends MolokoFragmentActivity implements
       intent.addFlags( Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
       
       startActivity( intent );
+   }
+   
+
+
+   @Override
+   public void onPickerDialogClosed( AbstractPickerDialogFragment dialog,
+                                     CloseReason reason )
+   {
+      if ( reason == CloseReason.OK )
+      {
+         if ( dialog instanceof DuePickerDialogFragment )
+         {
+            final DuePickerDialogFragment frag = (DuePickerDialogFragment) dialog;
+            getTaskEditFragment().setDue( frag.getCalendar() );
+         }
+         else if ( dialog instanceof RecurrPickerDialogFragment )
+         {
+            final RecurrPickerDialogFragment frag = (RecurrPickerDialogFragment) dialog;
+            getTaskEditFragment().setRecurrencePattern( frag.getPattern() );
+         }
+         else if ( dialog instanceof EstimatePickerDialogFragment )
+         {
+            final EstimatePickerDialogFragment frag = (EstimatePickerDialogFragment) dialog;
+            getTaskEditFragment().setEstimateMillis( frag.getMillis() );
+         }
+      }
    }
    
 
@@ -1351,10 +1426,7 @@ public class TaskActivity extends MolokoFragmentActivity implements
    @Override
    public void onTagsChanged( List< String > tags )
    {
-      if ( getConfiguredEditModeFragmentId() != R.id.frag_task )
-         throw new AssertionError( "expected to be in task editing mode" );
-      
-      final AbstractTaskEditFragment< ? > taskEditFragment = (AbstractTaskEditFragment< ? >) findAddedFragmentById( R.id.frag_task );
+      final AbstractTaskEditFragment< ? > taskEditFragment = getTaskEditFragment();
       taskEditFragment.setTags( tags );
    }
    
@@ -1430,6 +1502,17 @@ public class TaskActivity extends MolokoFragmentActivity implements
          && ( (IEditableFragment< ? >) fragment ).canBeEdited();
       
       return canEdit;
+   }
+   
+
+
+   private AbstractTaskEditFragment< ? > getTaskEditFragment() throws AssertionError
+   {
+      if ( getConfiguredEditModeFragmentId() != R.id.frag_task )
+         throw new AssertionError( "expected to be in task editing mode" );
+      
+      final AbstractTaskEditFragment< ? > taskEditFragment = (AbstractTaskEditFragment< ? >) findAddedFragmentById( R.id.frag_task );
+      return taskEditFragment;
    }
    
 

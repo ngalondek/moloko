@@ -22,7 +22,6 @@
 
 package dev.drsoran.moloko.activities;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.app.SearchManager;
@@ -36,7 +35,6 @@ import android.widget.Toast;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.fragments.dialogs.AddRenameListDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITasksSearchResultListFragmentListener;
-import dev.drsoran.moloko.grammar.RtmSmartFilterLexer;
 import dev.drsoran.moloko.search.TasksSearchRecentSuggestionsProvider;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
@@ -168,19 +166,10 @@ public class TaskSearchResultActivity extends
 
 
    @Override
-   public void onShowTasksWithTag( String tag )
+   protected void onOpenChoosenTags( List< String > tags,
+                                     String logicalOperation )
    {
-      startActivity( Intents.createOpenTagsIntent( this,
-                                                   Collections.singletonList( tag ),
-                                                   RtmSmartFilterLexer.AND_LIT ) );
-   }
-   
-
-
-   @Override
-   public void onShowTasksWithTags( List< String > tags, String logicalOperator )
-   {
-      startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperator ) );
+      startActivity( Intents.createOpenTagsIntent( this, tags, logicalOperation ) );
    }
    
 

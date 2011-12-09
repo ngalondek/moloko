@@ -24,6 +24,7 @@ package dev.drsoran.moloko.activities;
 
 import android.accounts.Account;
 import android.accounts.OnAccountsUpdateListener;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,13 +37,20 @@ import com.mdt.rtm.data.RtmAuth;
 
 import dev.drsoran.moloko.IConfigurable;
 import dev.drsoran.moloko.IRtmAccessLevelAware;
+import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.fragments.listeners.IAlertDialogFragmentListener;
 import dev.drsoran.moloko.util.AccountUtils;
 import dev.drsoran.moloko.util.Intents;
 
 
 public abstract class MolokoFragmentActivity extends FragmentActivity implements
-         IConfigurable, OnAccountsUpdateListener
+         IConfigurable, IAlertDialogFragmentListener, OnAccountsUpdateListener
 {
+   public final static class StartActivityRequestCode
+   {
+      public final static int ADD_ACCOUNT = 1;
+   }
+   
    protected final Handler handler = new Handler();
    
    protected Bundle configuration;
@@ -251,6 +259,33 @@ public abstract class MolokoFragmentActivity extends FragmentActivity implements
 
    protected void putDefaultConfigurationTo( Bundle bundle )
    {
+   }
+   
+
+
+   @Override
+   public void onAlertDialogFragmentClick( int dialogId, int which )
+   {
+      switch ( dialogId )
+      {
+         case R.id.dlg_no_account:
+            handleNoAccountDialogClick( which );
+            break;
+         
+         default :
+            break;
+      }
+   }
+   
+
+
+   protected void handleNoAccountDialogClick( int which )
+   {
+      if ( which == Dialog.BUTTON_POSITIVE )
+      {
+         startActivityForResult( Intents.createNewAccountIntent(),
+                                 StartActivityRequestCode.ADD_ACCOUNT );
+      }
    }
    
 

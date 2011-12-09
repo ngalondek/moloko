@@ -22,18 +22,7 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-import android.content.Intent;
-
-
-public interface ITaskListsFragmentListener extends IEditFragmentListener
+public interface IAlertDialogFragmentListener
 {
-   void openList( int pos );
-   
-
-
-   void openChild( Intent intent );
-   
-
-
-   void renameList( int pos );
+   void onAlertDialogFragmentClick( int dialogId, int which );
 }

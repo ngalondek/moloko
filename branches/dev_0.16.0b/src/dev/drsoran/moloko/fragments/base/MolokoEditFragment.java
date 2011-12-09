@@ -81,7 +81,7 @@ public abstract class MolokoEditFragment< T extends Fragment > extends
 
    protected void showOnlyReadableDatabaseAccessDialog()
    {
-      UIUtils.showReadOnlyAccessDialog( getFragmentActivity(), null );
+      UIUtils.showReadOnlyAccessDialog( getFragmentActivity() );
    }
    
 

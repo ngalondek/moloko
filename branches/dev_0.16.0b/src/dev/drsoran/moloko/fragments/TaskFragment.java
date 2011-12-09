@@ -1,4 +1,5 @@
 /* 
+
  *	Copyright (c) 2011 Ronny Röhricht
  *
  *	This file is part of Moloko.
@@ -40,8 +41,8 @@ import dev.drsoran.moloko.IEditFragment;
 import dev.drsoran.moloko.IEditableFragment;
 import dev.drsoran.moloko.IOnSettingsChangedListener;
 import dev.drsoran.moloko.R;
-import dev.drsoran.moloko.dialogs.LocationChooser;
 import dev.drsoran.moloko.fragments.base.MolokoLoaderFragment;
+import dev.drsoran.moloko.fragments.dialogs.LocationChooserDialogFragment;
 import dev.drsoran.moloko.fragments.listeners.ITaskFragmentListener;
 import dev.drsoran.moloko.fragments.listeners.NullTaskFragmentListener;
 import dev.drsoran.moloko.loaders.TaskLoader;
@@ -402,8 +403,8 @@ public class TaskFragment extends MolokoLoaderFragment< Task > implements
          if ( locationIsClickable )
          {
             // Check if we can click the location
-            if ( LocationChooser.hasIntentHandler( getFragmentActivity(),
-                                                   task.getLocationAddress() ) )
+            if ( LocationChooserDialogFragment.hasIntentHandler( getFragmentActivity(),
+                                                                 task.getLocationAddress() ) )
             {
                final SpannableString clickableLocation = new SpannableString( locationName );
                clickableLocation.setSpan( new ClickableSpan()

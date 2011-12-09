@@ -20,7 +20,7 @@
  * Ronny Röhricht - implementation
  */
 
-package dev.drsoran.moloko.dialogs;
+package dev.drsoran.moloko.fragments.dialogs;
 
 import java.util.Calendar;
 
@@ -29,21 +29,37 @@ import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.NumericWheelAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
+import dev.drsoran.moloko.adapters.DateFormatWheelTextAdapter;
+import dev.drsoran.moloko.adapters.DueTimeWheelTextAdapter;
+import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
 import dev.drsoran.moloko.util.MolokoCalendar;
 import dev.drsoran.moloko.util.MolokoDateUtils;
+import dev.drsoran.moloko.util.UIUtils;
 
 
-public class DuePickerDialog extends AbstractPickerDialog
+public class DuePickerDialogFragment extends AbstractPickerDialogFragment
 {
-   private AlertDialog impl;
+   public final static class Config
+   {
+      public final static String DUE_MILLIS = "due_millis";
+      
+      public final static String HAS_DUE_TIME = "has_due_time";
+   }
+   
+   private MolokoCalendar calendar;
+   
+   private boolean is24hTimeFormat;
    
    private WheelView dateDayWheel;
    
@@ -53,35 +69,114 @@ public class DuePickerDialog extends AbstractPickerDialog
    
    private TimeWheelGroup timeWheelGroup;
    
-   private final MolokoCalendar calendar;
-   
-   private final boolean is24hTimeFormat;
-   
    
 
-   public DuePickerDialog( Activity activity )
+   public final static void show( FragmentActivity activity,
+                                  long dueMillis,
+                                  boolean hasDueTime )
    {
-      this( activity, System.currentTimeMillis(), false );
+      final Bundle config = new Bundle( 2 );
+      config.putLong( Config.DUE_MILLIS, dueMillis );
+      config.putBoolean( Config.HAS_DUE_TIME, hasDueTime );
+      
+      show( activity, config );
    }
    
 
 
-   public DuePickerDialog( Activity activity, long initial, boolean hasDueTime )
+   public final static void show( FragmentActivity activity, Bundle config )
+   {
+      final DuePickerDialogFragment frag = newInstance( config );
+      UIUtils.showDialogFragment( activity,
+                                  frag,
+                                  DuePickerDialogFragment.class.getName() );
+   }
+   
+
+
+   public final static DuePickerDialogFragment newInstance( Bundle config )
+   {
+      final DuePickerDialogFragment frag = new DuePickerDialogFragment();
+      
+      frag.setArguments( config );
+      
+      return frag;
+   }
+   
+
+
+   @Override
+   public void onSaveInstanceState( Bundle outState )
+   {
+      if ( configuration != null )
+      {
+         configuration.putLong( Config.DUE_MILLIS,
+                                getCalendar().getTimeInMillis() );
+         configuration.putBoolean( Config.HAS_DUE_TIME, hasTime() );
+      }
+      
+      super.onSaveInstanceState( outState );
+   }
+   
+
+
+   @Override
+   protected void takeConfigurationFrom( Bundle config )
+   {
+      super.takeConfigurationFrom( config );
+      
+      if ( config.containsKey( Config.DUE_MILLIS ) )
+         configuration.putLong( Config.DUE_MILLIS,
+                                config.getLong( Config.DUE_MILLIS ) );
+      if ( config.containsKey( Config.HAS_DUE_TIME ) )
+         configuration.putBoolean( Config.HAS_DUE_TIME,
+                                   config.getBoolean( Config.HAS_DUE_TIME ) );
+   }
+   
+
+
+   @Override
+   protected void putDefaultConfigurationTo( Bundle bundle )
+   {
+      super.putDefaultConfigurationTo( bundle );
+      
+      bundle.putLong( Config.DUE_MILLIS,
+                      Long.valueOf( System.currentTimeMillis() ) );
+      bundle.putBoolean( Config.HAS_DUE_TIME, false );
+   }
+   
+
+
+   @Override
+   public Dialog onCreateDialog( Bundle savedInstanceState )
+   {
+      if ( savedInstanceState != null )
+         configure( savedInstanceState );
+      
+      initCalendarAndTimeFormat();
+      
+      final View content = initWheels();
+      final Dialog dialog = createDialogImpl( content );
+      
+      return dialog;
+   }
+   
+
+
+   private void initCalendarAndTimeFormat()
    {
       calendar = MolokoCalendar.getInstance();
-      calendar.setTimeInMillis( initial != -1 ? initial
-                                             : System.currentTimeMillis() );
-      calendar.setHasTime( hasDueTime );
+      calendar.setTimeInMillis( configuration.getLong( Config.DUE_MILLIS ) );
+      calendar.setHasTime( configuration.getBoolean( Config.HAS_DUE_TIME ) );
       
       is24hTimeFormat = MolokoApp.getSettings().Is24hTimeformat();
-      
-      init( activity, hasDueTime );
    }
    
 
 
-   private void init( final Activity activity, boolean hasTime )
+   private View initWheels()
    {
+      final Activity activity = getFragmentActivity();
       final LayoutInflater inflater = LayoutInflater.from( activity );
       final View view = inflater.inflate( R.layout.due_picker_dialog, null );
       
@@ -93,7 +188,10 @@ public class DuePickerDialog extends AbstractPickerDialog
       initMonthsWheel( activity );
       initYearsWheel( activity );
       
-      timeWheelGroup = new TimeWheelGroup( activity, view, 0, hasTime );
+      timeWheelGroup = new TimeWheelGroup( activity,
+                                           view,
+                                           0,
+                                           configuration.getBoolean( Config.HAS_DUE_TIME ) );
       
       dateMonthWheel.addScrollingListener( new OnWheelScrollListener()
       {
@@ -125,49 +223,37 @@ public class DuePickerDialog extends AbstractPickerDialog
          }
       } );
       
-      this.impl = new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_time )
-                                                     .setTitle( R.string.dlg_due_picker_title )
-                                                     .setView( view )
-                                                     .setPositiveButton( R.string.btn_ok,
-                                                                         new OnClickListener()
-                                                                         {
-                                                                            public void onClick( DialogInterface dialog,
-                                                                                                 int which )
-                                                                            {
-                                                                               final MolokoCalendar cal = getCalendar();
-                                                                               notifyOnDialogCloseListener( CloseReason.OK,
-                                                                                                            cal.getTimeInMillis(),
-                                                                                                            Boolean.valueOf( hasTime() ) );
-                                                                            }
-                                                                         } )
-                                                     .setNegativeButton( R.string.btn_cancel,
-                                                                         new OnClickListener()
-                                                                         {
-                                                                            public void onClick( DialogInterface dialog,
-                                                                                                 int which )
-                                                                            {
-                                                                               notifyOnDialogCloseListener( CloseReason.CANCELED,
-                                                                                                            null );
-                                                                            }
-                                                                         } )
-                                                     .create();
-      this.impl.setOwnerActivity( activity );
+      return view;
    }
    
 
 
-   @Override
-   public void show()
+   private Dialog createDialogImpl( View content )
    {
-      impl.show();
-   }
-   
-
-
-   @Override
-   public void dismiss()
-   {
-      impl.dismiss();
+      final Activity activity = getFragmentActivity();
+      
+      return new AlertDialog.Builder( activity ).setIcon( R.drawable.ic_dialog_time )
+                                                .setTitle( R.string.dlg_due_picker_title )
+                                                .setView( content )
+                                                .setPositiveButton( R.string.btn_ok,
+                                                                    new OnClickListener()
+                                                                    {
+                                                                       public void onClick( DialogInterface dialog,
+                                                                                            int which )
+                                                                       {
+                                                                          DuePickerDialogFragment.this.notifiyDialogClosedOk();
+                                                                       }
+                                                                    } )
+                                                .setNegativeButton( R.string.btn_cancel,
+                                                                    new OnClickListener()
+                                                                    {
+                                                                       public void onClick( DialogInterface dialog,
+                                                                                            int which )
+                                                                       {
+                                                                          DuePickerDialogFragment.this.notifiyDialogClosedCancel();
+                                                                       }
+                                                                    } )
+                                                .create();
    }
    
 
@@ -273,7 +359,7 @@ public class DuePickerDialog extends AbstractPickerDialog
    }
    
    
-   private class TimeWheelGroup implements OnWheelScrollListener
+   private final class TimeWheelGroup implements OnWheelScrollListener
    {
       private final WheelView[] wheelViews = new WheelView[ 3 ];
       

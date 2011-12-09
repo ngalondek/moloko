@@ -27,10 +27,12 @@ import java.util.ArrayList;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.support.v4.app.FragmentActivity;
+import android.util.Pair;
 import android.widget.Toast;
 
 import com.mdt.rtm.data.RtmList;
 
+import dev.drsoran.moloko.ApplyChangesInfo;
 import dev.drsoran.moloko.MolokoApp;
 import dev.drsoran.moloko.R;
 import dev.drsoran.moloko.Settings;
@@ -57,9 +59,9 @@ public final class RtmListEditUtils
    
 
 
-   public final static boolean setListName( FragmentActivity activity,
-                                            String listId,
-                                            String name )
+   public final static Pair< ModificationSet, ApplyChangesInfo > setListName( FragmentActivity activity,
+                                                                              String listId,
+                                                                              String name )
    {
       final ModificationSet modifications = new ModificationSet();
       
@@ -69,18 +71,16 @@ public final class RtmListEditUtils
                                                        name ) );
       modifications.add( Modification.newListModified( listId ) );
       
-      return UIUtils.reportStatus( activity,
-                                   R.string.toast_save_list_ok,
-                                   R.string.toast_save_list_failed,
-                                   Queries.applyModifications( activity,
-                                                               modifications,
-                                                               R.string.toast_save_list ) );
+      return Pair.create( modifications,
+                          new ApplyChangesInfo( activity.getString( R.string.toast_save_list ),
+                                                activity.getString( R.string.toast_save_list_ok ),
+                                                activity.getString( R.string.toast_save_list_failed ) ) );
    }
    
 
 
-   public final static boolean deleteListByName( FragmentActivity activity,
-                                                 String listName )
+   public final static Pair< ModificationSet, ApplyChangesInfo > deleteListByName( FragmentActivity activity,
+                                                                                   String listName )
    {
       final ContentProviderClient client = activity.getContentResolver()
                                                    .acquireContentProviderClient( Lists.CONTENT_URI );
@@ -95,21 +95,21 @@ public final class RtmListEditUtils
             return deleteList( activity, list );
       }
       
-      return false;
+      return null;
    }
    
 
 
-   public final static boolean deleteList( FragmentActivity activity,
-                                           RtmList list )
+   public final static Pair< ModificationSet, ApplyChangesInfo > deleteList( FragmentActivity activity,
+                                                                             RtmList list )
    {
-      boolean ok = true;
+      final ModificationSet modifications = new ModificationSet();
       
       if ( list.getLocked() == 0 )
       {
-         final String listId = list.getId();
-         final ModificationSet modifications = new ModificationSet();
+         boolean ok = true;
          
+         final String listId = list.getId();
          modifications.add( Modification.newNonPersistentModification( Queries.contentUriWithId( Lists.CONTENT_URI,
                                                                                                  listId ),
                                                                        Lists.LIST_DELETED,

@@ -22,18 +22,18 @@
 
 package dev.drsoran.moloko.fragments.listeners;
 
-import android.content.Intent;
+import dev.drsoran.moloko.fragments.base.AbstractPickerDialogFragment;
 
 
-public interface ITaskListsFragmentListener extends IEditFragmentListener
+public interface IPickerDialogListener
 {
-   void openList( int pos );
+   public enum CloseReason
+   {
+      OK, CANCELED;
+   }
+   
    
 
-
-   void openChild( Intent intent );
-   
-
-
-   void renameList( int pos );
+   void onPickerDialogClosed( AbstractPickerDialogFragment dialog,
+                              CloseReason reason );
 }
